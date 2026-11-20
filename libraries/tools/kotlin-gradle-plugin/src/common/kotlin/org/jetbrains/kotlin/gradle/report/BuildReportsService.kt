@@ -192,30 +192,6 @@ class BuildReportsService {
     }
 
     internal fun addBuildScanReport(
-        event: TaskFinishEvent,
-        buildOperationRecord: BuildOperationRecord,
-        parameters: BuildReportParameters,
-        buildScan: BuildScanAdapter,
-    ) {
-        val buildScanSettings = parameters.reportingSettings.buildScanReportSettings ?: return
-
-        val (collectDataDuration, compileStatData) = measureTimeMillisWithResult {
-            prepareData(
-                event,
-                parameters.projectName, buildUuid, parameters.label,
-                parameters.kotlinVersion,
-                buildOperationRecord,
-                metricsToShow = buildScanSettings.metrics
-            )
-        }
-        log.debug("Collect data takes $collectDataDuration: $compileStatData")
-
-        compileStatData?.also {
-            addBuildScanReport(it, buildScanSettings.customValueLimit, buildScan)
-        }
-    }
-
-    internal fun addBuildScanReport(
         buildOperationRecords: Collection<BuildOperationRecord>,
         parameters: BuildReportParameters,
         buildScan: BuildScanAdapter,

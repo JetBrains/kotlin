@@ -1,0 +1,50 @@
+KaNamedFunctionSymbol:
+  anchorPsi: KtClass
+  annotations: [
+    kotlin/jvm/JvmStatic()
+      psi: null
+  ]
+  callableId: /Range.Companion.empty
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: empty
+  origin: PLUGIN
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: Range
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: Range.Companion
+  getContainingFileSymbol: KaFileSymbol(noArgsConstructorStaticNameInDeclaredCompanion.kt)
+  getContainingJvmClassName: Range.Companion
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  returnValueStatus: Unspecified
+  javaMethodName: empty
+  importableFqName: Range.Companion.empty

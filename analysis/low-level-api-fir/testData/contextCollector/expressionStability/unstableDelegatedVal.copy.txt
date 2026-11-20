@@ -18,7 +18,7 @@ Tower Data Context:
 Expression Stability: DELEGATED_PROPERTY
 
 FILE: [ResolvedTo(IMPORTS)] unstableDelegatedVal.kt
-    public? final? [ResolvedTo(RAW_FIR)] val delegated: Stringby LAZY_EXPRESSION
+    public? final? [ResolvedTo(RAW_FIR)] val delegated: String by LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
         R|/delegated|

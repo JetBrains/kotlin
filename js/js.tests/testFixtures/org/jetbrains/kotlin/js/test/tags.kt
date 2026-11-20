@@ -25,3 +25,10 @@ annotation class JsNightlyOnlyTest
 @Tag("jsInlineAnonymousFunctions")
 @JsNightlyOnlyTest
 annotation class JsInlineAnonymousFunctionsTest
+
+/**
+ * Tests marked with this annotation test compilation with the `-Xes-const-let` flag.
+ */
+@Tag("jsConstLet")
+@JsNightlyOnlyTest
+annotation class JsConstLetTest

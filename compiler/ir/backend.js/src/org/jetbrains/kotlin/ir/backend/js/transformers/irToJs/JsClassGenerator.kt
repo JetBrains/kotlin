@@ -311,7 +311,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private fun IrSimpleFunction.isDefinedInsideExportedInterface(): Boolean {
         val irClass = parentClassOrNull ?: return false
         if (isJsExportIgnore() || correspondingPropertySymbol?.owner?.isJsExportIgnore() == true) return false
-        if (!isFakeOverride) return irClass.isExportedInterface(backendContext)
+        if (!isFakeOverride && irClass.isExportedInterface(backendContext)) return true
         return overriddenSymbols.any { it.owner.isDefinedInsideExportedInterface() }
     }
 
@@ -390,7 +390,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                         missedOverrides.add(it)
                     }
                 }
-                .find { it.modality != Modality.ABSTRACT }
+                .find { it.modality != Modality.ABSTRACT && !it.isEffectivelyExternal() }
                 ?.let { realOverride ->
                     val implClassDeclaration = realOverride.parent as IrClass
 

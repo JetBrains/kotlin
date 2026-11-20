@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.web.nodejs
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 
 /**
  * Defines a common Node.js plugin interface for Gradle projects.
@@ -16,4 +17,5 @@ import org.gradle.api.Project
  * CommonNodeJsPlugin works in conjunction with Node.js root plugins and environment specifications
  * to ensure a proper configuration and installation of the necessary Node.js runtime components.
  */
+@ObsoleteJsAndWasmToolingProvisioning
 interface CommonNodeJsPlugin : Plugin<Project>

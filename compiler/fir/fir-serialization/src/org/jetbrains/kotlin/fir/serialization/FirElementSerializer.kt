@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.metadata.serialization.MutableTypeTable
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ScriptNames
 import org.jetbrains.kotlin.protobuf.ByteString
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
@@ -167,9 +168,11 @@ class FirElementSerializer private constructor(
             regularClass?.isData == true,
             regularClass?.isExternal == true,
             regularClass?.isExpect == true,
-            regularClass?.isInlineOrValue == true,
+            regularClass?.isValue == true,
             regularClass?.isFun == true,
             hasEnumEntries,
+            regularClass?.isRichError == true,
+            regularClass?.isFullValueClass == true,
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -232,7 +235,7 @@ class FirElementSerializer private constructor(
             if (declaration.isGeneratedStaticEnumMember(klass)) continue // ??? Miss values() & valueOf()
             if (!declaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib)) continue
             // We have such declarations when compiling stdlib, but we don't need them as serialized bultins metadata
-            if (declaration.origin == FirDeclarationOrigin.Enhancement
+            if (declaration.origin is FirDeclarationOrigin.Enhancement
                 || declaration.origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) {
                 continue
             }
@@ -341,6 +344,8 @@ class FirElementSerializer private constructor(
             /* isValue = */ false,
             /* isFun = */ false,
             /* hasEnumEntries = */ false,
+            /* isRichError = */ false,
+            /* isFullValue = */ false,
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -453,7 +458,7 @@ class FirElementSerializer private constructor(
                 val dispatchReceiverLookupTag = declaration.dispatchReceiverClassLookupTagOrNull()
                 // Special case for data/value class equals/hashCode/toString, see KT-57510
                 val isFakeOverrideOfAnyFunctionInDataOrValueClass = this@collectDeclarations is FirRegularClass &&
-                        (this@collectDeclarations.isData || this@collectDeclarations.isInlineOrValue && this@collectDeclarations.isFinal) &&
+                        (this@collectDeclarations.isData || this@collectDeclarations.isValue && this@collectDeclarations.isFinal) &&
                         dispatchReceiverLookupTag?.classId == StandardClassIds.Any && !declaration.isFinal
                 // Related: https://youtrack.jetbrains.com/issue/KT-20427#focus=Comments-27-8652759.0-0
                 if (isFakeOverrideOfAnyFunctionInDataOrValueClass && !this@collectDeclarations.isExpect ||
@@ -1001,7 +1006,8 @@ class FirElementSerializer private constructor(
         // So, the abbreviated type may have been set already by an inner call.
         // Note that in case of an `expect typealias`, the second expansion will
         // erase `AbbreviatedTypeAttribute` of `type`.
-        if (abbreviation != mainType && !mainTypeProto.hasAbbreviatedType() && !abbreviation.containsCapturedTypes) {
+        // In case of a union type, we do have a separate attribute, so we proceed.
+        if (abbreviation != mainType && (mainType is ConeUnionType || !mainTypeProto.hasAbbreviatedType()) && !abbreviation.containsCapturedTypes) {
             val abbreviationProto = typeOrTypealiasProto(
                 abbreviation, toSuper, correspondingTypeRef, isDefinitelyNotNullType,
                 abbreviationOnly = false,
@@ -1009,9 +1015,17 @@ class FirElementSerializer private constructor(
             )
 
             if (useTypeTable()) {
-                mainTypeProto.abbreviatedTypeId = typeTable[abbreviationProto]
+                if (type is ConeUnionType) {
+                    mainTypeProto.unionAbbreviatedTypeId = typeTable[abbreviationProto]
+                } else {
+                    mainTypeProto.abbreviatedTypeId = typeTable[abbreviationProto]
+                }
             } else {
-                mainTypeProto.setAbbreviatedType(abbreviationProto)
+                if (type is ConeUnionType) {
+                    mainTypeProto.setUnionAbbreviatedType(abbreviationProto)
+                } else {
+                    mainTypeProto.setAbbreviatedType(abbreviationProto)
+                }
             }
         }
 
@@ -1028,13 +1042,12 @@ class FirElementSerializer private constructor(
         isAbbreviation: Boolean = false,
         abbreviationOnly: Boolean = false,
     ): ProtoBuf.Type.Builder {
-        val builder = ProtoBuf.Type.newBuilder()
-        val typeAnnotations = mutableListOf<FirAnnotation>()
-        when (type) {
+        val builder = when (type) {
             is ConeDefinitelyNotNullType -> return typeProto(type.original, toSuper, correspondingTypeRef, isDefinitelyNotNullType = true)
             is ConeErrorType -> {
-                extension.serializeErrorType(type, builder)
-                return builder
+                return ProtoBuf.Type.newBuilder().also {
+                    extension.serializeErrorType(type, it)
+                }
             }
             is ConeFlexibleType -> {
                 val lowerBound = typeProto(type.lowerBound)
@@ -1064,18 +1077,22 @@ class FirElementSerializer private constructor(
                         return typeProto(type.customFunctionTypeToSimpleFunctionType(session))
                     }
                 }
-                fillFromPossiblyInnerType(builder, type, abbreviationOnly)
+                ProtoBuf.Type.newBuilder().also {
+                    fillFromPossiblyInnerType(it, type, abbreviationOnly)
+                }
             }
             is ConeTypeParameterType -> {
-                val typeParameter = type.lookupTag.typeParameterSymbol.fir
-                if (typeParameter in ((currentDeclaration as? FirMemberDeclaration)?.typeParameters ?: emptyList())) {
-                    builder.typeParameterName = getSimpleNameIndex(typeParameter.name)
-                } else {
-                    builder.typeParameter = getTypeParameterId(typeParameter)
-                }
+                ProtoBuf.Type.newBuilder().also { builder ->
+                    val typeParameter = type.lookupTag.typeParameterSymbol.fir
+                    if (typeParameter in ((currentDeclaration as? FirMemberDeclaration)?.typeParameters ?: emptyList())) {
+                        builder.typeParameterName = getSimpleNameIndex(typeParameter.name)
+                    } else {
+                        builder.typeParameter = getTypeParameterId(typeParameter)
+                    }
 
-                if (isDefinitelyNotNullType) {
-                    builder.flags = Flags.getTypeFlags(/* isSuspend = */ false, /* isDefinitelyNotNull = */ true)
+                    if (isDefinitelyNotNullType) {
+                        builder.flags = Flags.getTypeFlags(/* isSuspend = */ false, /* isDefinitelyNotNull = */ true)
+                    }
                 }
             }
             is ConeIntersectionType -> {
@@ -1092,6 +1109,27 @@ class FirElementSerializer private constructor(
                 }
                 return typeProto(approximatedType)
             }
+            is ConeUnionType -> {
+                // Union types share the same slot as the primary type.
+                // Rich errors are serialized in the respective repeated field.
+                // Both, union types and their primary type can be annotated and can have abbreviations.
+                // The primary type uses abbreviated_type/abbreviated_type_id and annotation while
+                // the union type uses union_abbreviated_type/union_abbreviated_type_id and union_type_annotation.
+                // Example: @A {X =} (@B {Y =} String) | E1 is serialized with
+                // union_type_annotation=A, union_abbreviated_type=X, annotation=B, abbreviated_type=Y
+                return typeProto(type.primaryType).apply {
+                    val useTypeTable = useTypeTable()
+                    type.richErrorTypes.forEach {
+                        val richErrorProto = typeProto(it)
+                        if (useTypeTable) {
+                            addRichErrorId(typeTable[richErrorProto])
+                        } else {
+                            addRichError(richErrorProto)
+                        }
+                    }
+                    type.getAnnotations().serializeAnnotationsToMetadata(extension.annotationSerializer, this::addUnionTypeAnnotation)
+                }
+            }
             is ConeIntegerLiteralType -> {
                 throw IllegalStateException("Integer literal types should not persist up to the serializer: ${type.renderForDebugging()}")
             }
@@ -1107,6 +1145,12 @@ class FirElementSerializer private constructor(
             builder.nullable = type.isMarkedNullable
         }
 
+        extension.serializeTypeAnnotations(type.getAnnotations(), builder)
+        return builder
+    }
+
+    private fun ConeKotlinType.getAnnotations(): List<FirAnnotation> {
+        val typeAnnotations = mutableListOf<FirAnnotation>()
         val extensionAttributes = mutableListOf<ConeAttribute<*>>()
         // KT-67474: In K1, iteration order of `type.attributes` is the following: 1) custom attrs, then 2) builtin attrs;
         //   see it in `Annotations.withExtensionFunctionAnnotation` in functionTypes.kt
@@ -1114,7 +1158,7 @@ class FirElementSerializer private constructor(
         // - `ConeAttributes.WithExtensionFunctionType` in ConeAttributes.kt and
         // - `ConeAttributes.custom` in CustomAnnotationTypeAttribute.kt
         // To put custom attrs before builtin ones, as K1 does, the following partial sorting is used.
-        val sortedAttributes = type.attributes.sortedBy { it !is CustomAnnotationTypeAttribute }
+        val sortedAttributes = attributes.sortedBy { it !is CustomAnnotationTypeAttribute }
         for (attribute in sortedAttributes) {
             when {
                 attribute is CustomAnnotationTypeAttribute -> typeAnnotations.addAll(attribute.annotations.nonSourceAnnotations(session))
@@ -1130,9 +1174,7 @@ class FirElementSerializer private constructor(
                 typeAnnotations.addIfNotNull(attributeExtension.convertAttributeToAnnotation(attribute))
             }
         }
-
-        extension.serializeTypeAnnotations(typeAnnotations, builder)
-        return builder
+        return typeAnnotations
     }
 
     private fun createAnnotationForCompilerDefinedTypeAttribute(attribute: ConeAttribute<*>): FirAnnotation? {
@@ -1532,4 +1574,4 @@ class FirElementSerializer private constructor(
 }
 
 internal fun scriptClassId(script: FirScript): ClassId =
-    ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, NameUtils.getScriptTargetClassName(script.name))
+    ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, ScriptNames.getScriptTargetClassName(script.name))

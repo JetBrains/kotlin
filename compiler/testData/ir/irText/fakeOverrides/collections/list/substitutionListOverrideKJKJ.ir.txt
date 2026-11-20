@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun ensureCapacity (p0: kotlin.Int): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractList<@[FlexibleNullability] T of <root>.A?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<@[FlexibleNullability] T of <root>.A?>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Any?
       overridden:
         public open fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java1
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun get (p0: kotlin.Int): @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractList<@[FlexibleNullability] T of <root>.A?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<@[FlexibleNullability] T of <root>.A?>
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.Java1
     FUN FAKE_OVERRIDE name:indexOf visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
@@ -173,6 +173,12 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>? declared in <root>.Java1
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>? [fake_override]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] T of <root>.A?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?>?
+      overridden:
+        public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] T of <root>.A?>
       overridden:
@@ -246,7 +252,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun ensureCapacity (p0: kotlin.Int): kotlin.Unit declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractList<@[FlexibleNullability] T of <root>.KotlinClass?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<T of <root>.KotlinClass>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Any?
       overridden:
         public open fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.ArrayList
@@ -261,7 +267,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun get (p0: kotlin.Int): @[EnhancedNullability] E of java.util.ArrayList declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractList<@[FlexibleNullability] T of <root>.KotlinClass?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<T of <root>.KotlinClass>
       overridden:
         public open fun hashCode (): kotlin.Int declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:indexOf visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
@@ -366,6 +372,12 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.KotlinClass.toArray?>?
       overridden:
         public open fun toArray <T> (p0: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>? declared in java.util.ArrayList
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.KotlinClass.toArray?>? [fake_override]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<T of <root>.KotlinClass>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.KotlinClass.toArray?>?>?
+      overridden:
+        public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>? declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] T of <root>.KotlinClass?>
       overridden:

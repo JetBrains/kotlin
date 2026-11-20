@@ -312,7 +312,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassWithInlineClassProperty.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassWithInlineClassProperty.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
             super<R|kotlin/Any|>()
         }

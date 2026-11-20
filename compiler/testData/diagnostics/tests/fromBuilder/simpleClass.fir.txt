@@ -30,7 +30,7 @@ FILE: simpleClass.kt
             public set(value: R|kotlin/Double|): R|kotlin/Unit|
 
     }
-    public final inline class InlineClass : R|kotlin/Any| {
+    public final inline value class InlineClass : R|kotlin/Any| {
         public constructor(): R|InlineClass| {
             super<R|kotlin/Any|>()
         }

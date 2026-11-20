@@ -79,7 +79,7 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
                     expression = "modifierList?.contextParameterList",
                     imports = {}
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     @Nullable
@@ -106,7 +106,7 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
                     expression = "modifierList?.contextParameterLists.orEmpty()",
                     imports = {}
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     @SuppressWarnings("unchecked")

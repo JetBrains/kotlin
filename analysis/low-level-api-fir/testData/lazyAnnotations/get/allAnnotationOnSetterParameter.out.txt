@@ -1,0 +1,2 @@
+Param()
+  psi: KtAnnotationEntry

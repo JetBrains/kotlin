@@ -11,10 +11,10 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetType
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
-import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -26,15 +26,12 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
-
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.CompilationDependenciesPair.Companion.toFormattedString
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.NpmDependencyInGradleScopeUsage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.ResolvedVariant
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.UnresolvedComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
-import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
-import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.normalized
@@ -1736,30 +1733,22 @@ internal object KotlinToolingDiagnostics {
 
         operator fun invoke(
             pluginId: String,
-        ): ToolingDiagnostic {
-            val severity = if (GradleVersion.current() >= GradleVersion.version("8.7")) ERROR else WARNING
-            return when (pluginId) {
-                "application" -> buildDiagnosticForApplicationPlugin(severity)
-                "java-library" -> buildDiagnosticForJavaPlugin(
-                    severity = severity,
-                    pluginId = pluginId,
-                    pluginString = "'$pluginId' (also applies 'java' plugin)",
-                )
-                else -> buildDiagnosticForJavaPlugin(
-                    severity = severity,
-                    pluginId = pluginId,
-                    pluginString = "'$pluginId'",
-                )
-            }
+        ): ToolingDiagnostic = when (pluginId) {
+            "application" -> buildDiagnosticForApplicationPlugin()
+            "java-library" -> buildDiagnosticForJavaPlugin(
+                pluginId = pluginId,
+                pluginString = "'$pluginId' (also applies 'java' plugin)",
+            )
+            else -> buildDiagnosticForJavaPlugin(
+                pluginId = pluginId,
+                pluginString = "'$pluginId'",
+            )
         }
 
         private fun buildDiagnosticForJavaPlugin(
-            severity: KotlinToolingDiagnosticsSeverity,
             pluginId: String,
             pluginString: String,
-        ) = build(
-            severity = severity
-        ) {
+        ) = build {
             title(diagnosticTitle(pluginId))
                 .description(diagnosticDescription(pluginString))
                 .solution {
@@ -1767,9 +1756,7 @@ internal object KotlinToolingDiagnostics {
                 }
         }
 
-        private fun buildDiagnosticForApplicationPlugin(
-            severity: KotlinToolingDiagnosticsSeverity,
-        ) = build(severity = severity) {
+        private fun buildDiagnosticForApplicationPlugin() = build {
             title(diagnosticTitle("application"))
                 .description(diagnosticDescription("'application' (also applies 'java' plugin)"))
                 .solution {
@@ -1858,20 +1845,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion :
-        ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(
-            currentGradleVersion: GradleVersion,
-            minimumSupportedGradleVersion: GradleVersion,
-        ) = build {
-            title("Kotlin Top Level Dependencies Used With Incompatible Gradle Version")
-                .description("Kotlin top-level dependencies is not available in $currentGradleVersion. Minimum supported version is $minimumSupportedGradleVersion.")
-                .solution("Please upgrade your Gradle version or keep using source set dependencies block (https://kotl.in/source-set-dependencies)")
-                .documentationLink(URI("https://kotl.in/kmp-top-level-dependencies"))
-        }
-    }
-
-
     internal object KotlinScriptingMisconfiguration : ToolingDiagnosticFactory(
         predefinedSeverity = WARNING,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration
@@ -1891,13 +1864,64 @@ internal object KotlinToolingDiagnostics {
     }
 
     object SwiftExportInvalidModuleName : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(moduleName: String) = build {
+        /**
+         * @param module the project path or coordinates of the module the name is for
+         * @param dsl where to provide a name instead of the one generated from [module], `null` if the name was provided
+         * @param severity FATAL when reported while the Swift Export task runs, where an ERROR is only logged
+         */
+        operator fun invoke(
+            moduleName: String,
+            module: String,
+            dsl: String? = null,
+            severity: KotlinToolingDiagnosticsSeverity = ERROR,
+        ) = build(severity = severity) {
             title("Invalid Swift Module Name")
                 .description {
-                    "The Swift module name '$moduleName' is invalid"
+                    if (dsl == null) "The provided Swift module name '$moduleName' for module '$module' is invalid."
+                    else "The Swift module name '$moduleName' generated for module '$module' is invalid."
                 }
                 .solution {
-                    "Use only alphanumeric characters and underscores."
+                    val requirement = "The module name should be a valid Swift identifier, see https://kotl.in/swift-identifiers."
+                    if (dsl == null) "$requirement Please change the module name to a valid one."
+                    else "$requirement Please rename the module, or provide a valid module name using the $dsl DSL."
+                }
+        }
+    }
+
+    object SwiftPackageBlankProductName : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        /**
+         * @param project the path of the project that exports the Swift package
+         */
+        operator fun invoke(project: String) = build {
+            title("Blank Swift Package Product Name")
+                .description("The Swift package product name of project '$project' is blank.")
+                .solution(
+                    "Set 'productName' in the 'swiftPackageIntegration' DSL to a name that is not blank, " +
+                            "or remove it to use the default one."
+                )
+        }
+    }
+
+    object SwiftExportReservedModuleName : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        /**
+         * @param reservedModuleName the reserved Swift module name
+         * @param module the project path or coordinates of the module the name is for
+         * @param integrationDsl the DSL block of the integration that exports the module, such as `xcodeIntegration`;
+         * `null` when no single integration is in play, such as during configuration
+         * @param severity FATAL when reported while the Swift Export task runs, where an ERROR is only logged
+         */
+        operator fun invoke(
+            reservedModuleName: String,
+            module: String,
+            integrationDsl: String? = null,
+            severity: KotlinToolingDiagnosticsSeverity = ERROR,
+        ) = build(severity = severity) {
+            title("Reserved Swift Module Name")
+                .description("The Swift module name '$reservedModuleName' for module '$module' is reserved by Swift Export.")
+                .solution {
+                    "Set a different module name with 'export { swift { moduleName = \"...\" } }' for the module being exported" +
+                            if (integrationDsl == null) "."
+                            else ", or with 'export { swift { $integrationDsl { configure(dependency) { moduleName = \"...\" } } } }' for a dependency."
                 }
         }
     }
@@ -1906,8 +1930,14 @@ internal object KotlinToolingDiagnostics {
         /**
          * @param modules the modules that were requested but not found, rendered for the user
          * @param dsl the DSL snippet the request came from, so the message points at the right place
+         * @param severity FATAL for a missing `export()` module. The diagnostic is reported while the Swift Export task
+         * runs, after `checkKotlinGradlePluginConfigurationErrors`, so an ERROR is only logged and the build goes on.
          */
-        operator fun invoke(modules: List<String>, dsl: String = "swiftExport { export() }") = build {
+        operator fun invoke(
+            modules: List<String>,
+            dsl: String = "swiftExport { export() }",
+            severity: KotlinToolingDiagnosticsSeverity = ERROR,
+        ) = build(severity = severity) {
             title("Swift Module Resolution Error")
                 .description {
                     "The following modules specified in $dsl were not found in the resolved components: ${
@@ -1929,8 +1959,9 @@ internal object KotlinToolingDiagnostics {
     object SwiftExportDuplicateModuleNames : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         /**
          * @param duplicates final Swift module name to the components that produced it
+         * @param integrationDsl the DSL block of the integration that exports them, such as `xcodeIntegration`
          */
-        operator fun invoke(duplicates: Map<String, List<String>>) = build {
+        operator fun invoke(duplicates: Map<String, List<String>>, integrationDsl: String) = build {
             title("Duplicate Swift Module Names")
                 .description {
                     "The following Swift module names are produced by more than one module (compared ignoring case):\n" +
@@ -1940,7 +1971,7 @@ internal object KotlinToolingDiagnostics {
                 }
                 .solution {
                     "Give each module a distinct name with " +
-                            "export { swift { xcodeIntegration { configure(dependency) { moduleName = \"...\" } } } }. " +
+                            "export { swift { $integrationDsl { configure(dependency) { moduleName = \"...\" } } } }. " +
                             "If the collision is with the root module's own name, rename the root module instead with " +
                             "export { swift { moduleName = \"...\" } }."
                 }
@@ -2002,23 +2033,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object SwiftExportPackageModulesMismatch : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
-        /**
-         * @param differences one line per module that differs
-         */
-        operator fun invoke(referenceTarget: String, otherTarget: String, differences: List<String>) = build {
-            title("Swift Modules Differ Between Targets")
-                .description {
-                    "Swift Export produced different Swift modules for '$referenceTarget' and '$otherTarget', " +
-                            "so their output cannot be combined into one Swift package:\n" +
-                            differences.joinToString("\n") { "  $it" }
-                }
-                .solution {
-                    "Make every Apple target of the project export the same Swift modules with the same dependencies."
-                }
-        }
-    }
-
     object SwiftExportWithoutAppleTargets : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke() = build {
             title("Swift Export Configured Without Apple Targets")
@@ -2027,10 +2041,29 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object SwiftPackageExportUnsupportedHost : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(currentHost: String) = build {
+            title("Swift Package Export Is Not Supported on This Host")
+                .description(
+                    "'swiftPackageIntegration { }' is configured, but the current host ($currentHost) is not macOS. " +
+                            "The Swift package export tasks require Xcode, so they are skipped on this host."
+                )
+                .solutions {
+                    listOf(
+                        "Run the Swift package export on a macOS host.",
+                        "To suppress this warning, add '$KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS=true' to gradle.properties.",
+                    )
+                }
+        }
+    }
+
     internal object DeprecatedSwiftExportDsl : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke() = build {
             title("Deprecated 'swiftExport { }' DSL")
-                .description("The 'swiftExport { }' DSL is deprecated and will be removed in Kotlin 2.7.")
+                .description(
+                    "The 'swiftExport { }' DSL is deprecated. It will become an error in Kotlin 2.5.20 " +
+                            "and will be removed in Kotlin 2.6.0."
+                )
                 .solution(
                     "Move the configuration to 'export { swift { } }'. Rename 'flattenPackage' to 'rootPackage' " +
                             "and call 'xcodeIntegration()' to register the task that embeds Swift Export's " +
@@ -2106,6 +2139,54 @@ internal object KotlinToolingDiagnostics {
                 .solution {
                     "Please update Kotlin language version in your build scripts at least to 2.0"
                 }
+        }
+    }
+
+    object BlankFreeCompilerArgs : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(taskPath: String) = build {
+            title("Blank Free Compiler Arguments")
+                .description {
+                    "Task '$taskPath' has blank values in 'freeCompilerArgs'. " +
+                            "The Kotlin compiler can interpret them as source paths, " +
+                            "which can fail the compilation or compile unrelated files."
+                }
+                .solution { "Remove blank values from 'freeCompilerArgs'" }
+        }
+    }
+
+    object KaptClassLoadersCacheWithCompileClasspathDiscovery : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration
+    ) {
+        operator fun invoke(classLoadersCacheSize: Int) = build {
+            title("Kapt annotation processor classloaders cache is disabled")
+                .description(
+                    "The cache cannot be used together with annotation processor discovery from the compilation classpath," +
+                            " which is deprecated. 'kapt.classloaders.cache.size=$classLoadersCacheSize' has no effect" +
+                            " until 'kapt.include.compile.classpath=false' is also set."
+                )
+                .solutions(
+                    "Set 'kapt.include.compile.classpath=false' together with 'kapt.classloaders.cache.size' in 'gradle.properties'.",
+                    "If you disable discovery, declare every annotation processor in a 'kapt' configuration.",
+                )
+        }
+    }
+
+    object KaptMemoryLeakDetectionWithClassLoadersCache : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration
+    ) {
+        operator fun invoke() = build {
+            title("Kapt memory leak detection may report false positives")
+                .description(
+                    "Cached annotation processor classloaders are kept alive between builds on purpose, so the 'standard'" +
+                            " memory leak detection mode cannot tell them from leaked ones and reports suspicious static fields" +
+                            " of cached processors as the 'paranoid' mode does."
+                )
+                .solutions(
+                    "Set 'kapt.classloaders.cache.size=0' in 'gradle.properties' to disable the classloaders cache.",
+                    "Set 'detectMemoryLeaks = \"none\"' in the 'kapt' extension to disable memory leak detection.",
+                )
         }
     }
 
@@ -2489,6 +2570,40 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object KotlinCompilerArgumentsRejected : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Compiler.Warning) {
+        operator fun invoke(rejection: String?, compilerVersion: String, pluginVersion: String) = build {
+            title { "Kotlin compiler rejected compiler arguments" }
+                .description {
+                    val versions = "This build uses Kotlin compiler $compilerVersion with Kotlin Gradle Plugin $pluginVersion."
+                    if (rejection != null) {
+                        "$rejection\n$versions"
+                    } else {
+                        "Kotlin compiler failed without reporting a source error, so a compiler argument is likely unsupported. " +
+                                "See the errors above.\n$versions"
+                    }
+                }
+                .solution {
+                    "Remove the unsupported compiler argument, or align 'kotlin.compilerVersion' with the Kotlin Gradle Plugin version."
+                }
+        }
+    }
+
+    internal object KotlinCompilerVersionNotFound : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(compilerVersion: String, attemptedVersion: String, resolutionFailure: String?) = build {
+            val message = if (attemptedVersion == compilerVersion) {
+                "Could not find Kotlin compiler version '$attemptedVersion' set via 'kotlin.compilerVersion'."
+            } else {
+                "Could not find Kotlin compiler version '$attemptedVersion'. " +
+                        "A dependency resolution rule replaced version '$compilerVersion' set via 'kotlin.compilerVersion'."
+            }
+            title { "Kotlin compiler version not found" }
+                .description { message + resolutionFailure?.let { "\n$it" }.orEmpty() }
+                .solution {
+                    "Check that Kotlin compiler version '$attemptedVersion' exists and that a repository hosting it is configured."
+                }
+        }
+    }
+
     internal object DuplicateJsBrowserTestFrameworkConfiguration : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
@@ -2726,19 +2841,22 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-internal object SharedNpmProjectInvalidPackageJson : ToolingDiagnosticFactory(
-        WARNING,
+    internal object SharedNpmProjectInvalidNpmDependencyReport : ToolingDiagnosticFactory(
+        FATAL,
         DiagnosticGroup.Kgp.Misconfiguration,
     ) {
-        operator fun invoke(file: File) = build {
-            title { "Skipping '$file': not a valid package.json" }
-                .description { "The file could not be parsed or has no 'name', so it is left out of the shared npm project." }
-                .solution { "Check the projects declared on the 'kotlinNpmSharedDependencies' / 'kotlinWasmNpmSharedDependencies' configurations." }
+        operator fun invoke(files: List<File>) = build {
+            title { "Invalid npm dependency reports" }
+                .description {
+                    "These files could not be parsed or have a compilation without a name, so their npm dependencies would be missing from the shared npm project:\n" +
+                            files.joinToString("\n") { "  - $it" }
+                }
+                .solution { "Rebuild the projects that produced them, declared on the 'kotlinNpmSharedDependenciesJs' / 'kotlinNpmSharedDependenciesWasmJs' configurations." }
         }
     }
 
     internal object RichTypeScriptDeclarationsUnsupportedBuildToolsApiVersion : ToolingDiagnosticFactory(
-        ERROR,
+        FATAL,
         DiagnosticGroup.Kgp.Misconfiguration,
     ) {
         operator fun invoke(buildToolsApiVersion: String, minimalSupportedVersion: String) = build {

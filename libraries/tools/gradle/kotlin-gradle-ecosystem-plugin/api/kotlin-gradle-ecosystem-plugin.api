@@ -1,14 +1,16 @@
 public abstract interface class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension {
+	public abstract fun native (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun native (Lorg/gradle/api/Action;)V
 	public abstract fun toolchainManagement (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun toolchainManagement (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension$DefaultImpls {
+	public static fun native (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension;Lorg/gradle/api/Action;)V
 	public static fun toolchainManagement (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension;Lorg/gradle/api/Action;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemPlugin : org/gradle/api/Plugin {
-	public fun <init> ()V
+public abstract class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemPlugin : org/gradle/api/Plugin {
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/initialization/Settings;)V
 }
@@ -16,9 +18,15 @@ public final class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemPlugin :
 public abstract interface class org/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl {
 	public abstract fun nodeJs (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun nodeJs (Lorg/gradle/api/Action;)V
+	public abstract fun wasiAdapter (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun wasiAdapter (Lorg/gradle/api/Action;)V
+	public abstract fun wasmTools (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun wasmTools (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl$DefaultImpls {
 	public static fun nodeJs (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl;Lorg/gradle/api/Action;)V
+	public static fun wasiAdapter (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl;Lorg/gradle/api/Action;)V
+	public static fun wasmTools (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl;Lorg/gradle/api/Action;)V
 }
 

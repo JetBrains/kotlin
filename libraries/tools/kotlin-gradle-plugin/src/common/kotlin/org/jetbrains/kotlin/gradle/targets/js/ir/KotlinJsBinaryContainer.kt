@@ -9,6 +9,7 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary.Companion.configLinkTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
 
@@ -58,14 +60,19 @@ constructor(
         throw GradleException("Target should be KotlinJsIrTarget, but found $target")
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     internal fun executableIrInternal(compilation: KotlinJsIrCompilation): List<JsIrBinary> = createBinaries(
         compilation = compilation,
         jsBinaryType = KotlinJsBinaryType.EXECUTABLE,
         create = { jsCompilation, name, mode ->
-            if (target.platformType == KotlinPlatformType.wasm) {
-                ExecutableWasm(jsCompilation, name, mode)
-            } else {
-                Executable(jsCompilation, name, mode)
+            when (compilation.wasmTarget) {
+                null -> Executable(jsCompilation, name, mode)
+                WasmTarget.JS -> ExecutableWasm(jsCompilation, name, mode)
+                WasmTarget.WASI -> if (compilation.isMain()) {
+                    ExecutableWasmWasi(jsCompilation, name, mode)
+                } else {
+                    ExecutableWasm(jsCompilation, name, mode)
+                }
             }
         }
     )

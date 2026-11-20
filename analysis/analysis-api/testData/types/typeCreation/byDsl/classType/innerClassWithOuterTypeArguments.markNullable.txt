@@ -1,0 +1,120 @@
+KaType
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: Outer.Middle.Inner
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Outer
+      symbol: KaNamedClassSymbol(Outer)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: Middle
+      symbol: KaNamedClassSymbol(Outer.Middle)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Boolean
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Boolean
+              symbol: KaNamedClassSymbol(kotlin/Boolean)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Boolean)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Char
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Char
+              symbol: KaNamedClassSymbol(kotlin/Char)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Char)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+    KaResolvedClassTypeQualifier:
+      name: Inner
+      symbol: KaNamedClassSymbol(Outer.Middle.Inner)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Long
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Long
+              symbol: KaNamedClassSymbol(kotlin/Long)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Long)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Double
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Double
+              symbol: KaNamedClassSymbol(kotlin/Double)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Double)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(Outer.Middle.Inner)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Long
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Long
+          symbol: KaNamedClassSymbol(kotlin/Long)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Long)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Double
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Double
+          symbol: KaNamedClassSymbol(kotlin/Double)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Double)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type:
+Outer.Middle<kotlin.Boolean, kotlin.Char>.Inner<kotlin.Long, kotlin.Double>?

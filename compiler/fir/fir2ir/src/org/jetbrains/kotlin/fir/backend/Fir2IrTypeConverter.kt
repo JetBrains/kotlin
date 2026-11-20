@@ -42,6 +42,7 @@ class Fir2IrTypeConverter(
         mapOf(
             StandardClassIds.Nothing to builtins.nothingClass,
             StandardClassIds.Any to builtins.anyClass,
+            StandardClassIds.NonError to builtins.anyClass,
             StandardClassIds.Unit to builtins.unitClass,
             StandardClassIds.Boolean to builtins.booleanClass,
             StandardClassIds.CharSequence to builtins.charSequenceClass,
@@ -65,6 +66,7 @@ class Fir2IrTypeConverter(
             StandardClassIds.Boolean to builtins.booleanType,
             StandardClassIds.String to builtins.stringType,
             StandardClassIds.Any to builtins.anyType,
+            StandardClassIds.NonError to builtins.anyType,
             StandardClassIds.Long to builtins.longType,
             StandardClassIds.Int to builtins.intType,
             StandardClassIds.Short to builtins.shortType,
@@ -251,8 +253,22 @@ class Fir2IrTypeConverter(
                 val approximated = type.approximateForIrOrNull()!!
                 approximated.toIrType(typeOrigin)
             }
-            // TODO(KT-89110)
-            is ConeUnionType -> createErrorType()
+            is ConeUnionType -> {
+                val errorUnionElements = (sequenceOf(type.primaryType) + type.richErrorTypes.asSequence())
+                    .mapTo(ArrayList(type.richErrorTypes.size + 1)) {
+                        when (val irType = it.toIrType()) {
+                            is IrSimpleType -> irType
+                            is IrDynamicType -> error("unexpected dynamic type in a union type")
+                            is IrErrorType -> return irType
+                        }
+                    }
+                irRichErrorType(
+                    anyClassifier = builtins.anyClass,
+                    nullability = if (canBeNull(session)) SimpleTypeNullability.MARKED_NULLABLE else SimpleTypeNullability.NOT_SPECIFIED,
+                    errorUnionElements = errorUnionElements,
+                    annotations = with(annotationGenerator) { annotations.toIrAnnotations() },
+                )
+            }
             is ConeStubType, is ConeIntegerLiteralType, is ConeTypeVariableType -> createErrorType()
         }
     }

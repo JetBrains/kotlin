@@ -3,6 +3,7 @@ Qualified.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Qualified, fqName=Qualified, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Qualified, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
           valueArguments: [
@@ -61,6 +62,7 @@ Simple.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Simple, fqName=Simple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Simple, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
           valueArguments: [

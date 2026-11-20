@@ -17,11 +17,20 @@ import org.jetbrains.kotlin.build.report.metrics.SOURCE_LINES_NUMBER
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.DefaultNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.DisabledNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.PreInstalledNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.DefaultWasiAdapterToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.DisabledWasiAdapterToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.PreInstalledWasiAdapterToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.DefaultWasmToolsToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.DisabledWasmToolsToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.PreInstalledWasmToolsToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsToolchainService
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -354,8 +363,10 @@ internal object KotlinJsBrowserTestMetrics : FusMetrics {
     }
 
     internal fun collectMetrics(project: Project, jdBrowserRunner: KotlinBrowserTestRunnerDsl) {
+        // KT-90126: runners of unsupported types are reported via a diagnostic, FUS should not fail on them
+        val browserKind = jdBrowserRunner.getBrowserKindOrNull() ?: return
         project.addConfigurationMetrics { metricContainer ->
-            metricContainer.put(StringListMetrics.JS_TEST_BROWSER_TYPE, jdBrowserRunner.getBrowserKind().browserName)
+            metricContainer.put(StringListMetrics.JS_TEST_BROWSER_TYPE, browserKind.browserName)
             metricContainer.put(StringListMetrics.JS_TEST_BROWSER_CHANGED_OPTION, jdBrowserRunner.optionsChangedFromDefaults())
         }
     }
@@ -513,6 +524,43 @@ internal object NodeJsToolchainServiceMetrics : FusMetrics {
             }
 
             it.put(StringListMetrics.NODE_JS_TOOLCHAIN_SERVICE, metric)
+        }
+    }
+}
+
+internal object WasiAdapterToolchainServiceMetrics : FusMetrics {
+    @OptIn(ExperimentalWasmDsl::class)
+    internal fun collectServiceCreated(project: Project, serviceProvider: Provider<out WasiAdapterToolchainService<out WasiAdapterToolchainService.Parameters>>) {
+        project.addConfigurationMetrics {
+            val service = serviceProvider.orNull ?: return@addConfigurationMetrics
+            val metric = when (service) {
+                is DisabledWasiAdapterToolchainService -> "disable"
+                is PreInstalledWasiAdapterToolchainService -> "preinstalled"
+                is DefaultWasiAdapterToolchainService -> "download"
+                else -> "custom"
+            }
+
+            it.put(StringListMetrics.WASI_ADAPTER_TOOLCHAIN_SERVICE, metric)
+        }
+    }
+}
+
+internal object WasmToolsToolchainServiceMetrics : FusMetrics {
+    @OptIn(ExperimentalWasmDsl::class)
+    internal fun collectServiceCreated(
+        project: Project,
+        serviceProvider: Provider<out WasmToolsToolchainService<out WasmToolsToolchainService.Parameters>>,
+    ) {
+        project.addConfigurationMetrics {
+            val service = serviceProvider.orNull ?: return@addConfigurationMetrics
+            val metric = when (service) {
+                is DisabledWasmToolsToolchainService -> "disable"
+                is PreInstalledWasmToolsToolchainService -> "preinstalled"
+                is DefaultWasmToolsToolchainService -> "download"
+                else -> "custom"
+            }
+
+            it.put(StringListMetrics.WASM_TOOLS_TOOLCHAIN_SERVICE, metric)
         }
     }
 }

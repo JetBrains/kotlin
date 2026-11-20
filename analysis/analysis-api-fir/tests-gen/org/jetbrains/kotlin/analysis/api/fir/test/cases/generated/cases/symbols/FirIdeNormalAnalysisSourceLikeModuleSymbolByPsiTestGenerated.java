@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.AbstractSymbolByPsiTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -162,6 +162,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByPsiTestGenerated extend
   @TestMetadata("classWithTypeParamsAndSupertypes.kt")
   public void testClassWithTypeParamsAndSupertypes() {
     run("classWithTypeParamsAndSupertypes.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingTypeConstraint.kt")
+  public void testDanglingTypeConstraint() {
+    run("danglingTypeConstraint.kt");
   }
 
   @Test
@@ -501,6 +507,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByPsiTestGenerated extend
   }
 
   @Test
+  @TestMetadata("overloadsWithDifferentTypeParameterBounds.kt")
+  public void testOverloadsWithDifferentTypeParameterBounds() {
+    run("overloadsWithDifferentTypeParameterBounds.kt");
+  }
+
+  @Test
+  @TestMetadata("overloadsWithMultipleVarargParameters.kt")
+  public void testOverloadsWithMultipleVarargParameters() {
+    run("overloadsWithMultipleVarargParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("overloadsWithVarargAndArrayParameters.kt")
+  public void testOverloadsWithVarargAndArrayParameters() {
+    run("overloadsWithVarargAndArrayParameters.kt");
+  }
+
+  @Test
   @TestMetadata("propertiesFromCompanion.kt")
   public void testPropertiesFromCompanion() {
     run("propertiesFromCompanion.kt");
@@ -648,6 +672,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByPsiTestGenerated extend
   @TestMetadata("valueClassAsContextParameter.kt")
   public void testValueClassAsContextParameter() {
     run("valueClassAsContextParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassCompanionBlockMembers.kt")
+  public void testValueClassCompanionBlockMembers() {
+    run("valueClassCompanionBlockMembers.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassCompanionExtensions.kt")
+  public void testValueClassCompanionExtensions() {
+    run("valueClassCompanionExtensions.kt");
   }
 
   @Test

@@ -19,4 +19,5 @@ import org.gradle.api.Project
  * Implementing this interface allows projects to configure and apply NPM dependency
  * resolution strategies specific to their needs.
  */
+@ObsoleteNpmDependencyModel
 interface CommonNpmResolverPlugin : Plugin<Project>

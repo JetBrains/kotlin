@@ -28,12 +28,12 @@ FILE: replPropertyDelegated.repl.kts
 
             }
 
-            public? final? [ReplSnippetTopLevelDeclaration=true] val foo: <implicit>by REPL_EXPRESSION_REF
+            public? final? [ReplSnippetTopLevelDeclaration=true] val foo: <implicit> by REPL_EXPRESSION_REF
                 public? [ContainingClassKey=ReplPropertyDelegated_repl] get(): <implicit> {
                     ^ this@R|/ReplPropertyDelegated_repl|.D|/ReplPropertyDelegated_repl.foo|.getValue#(this@R|/ReplPropertyDelegated_repl|, ::R|/ReplPropertyDelegated_repl.foo|)
                 }
 
-            public? final? [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+            public? final? [ReplSnippetTopLevelDeclaration=true] val bar: <implicit> by REPL_EXPRESSION_REF
                 public? [ContainingClassKey=ReplPropertyDelegated_repl] get(): <implicit> {
                     ^ this@R|/ReplPropertyDelegated_repl|.D|/ReplPropertyDelegated_repl.bar|.getValue#(this@R|/ReplPropertyDelegated_repl|, ::R|/ReplPropertyDelegated_repl.bar|)
                 }

@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -114,7 +116,21 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
                 public B.Y<? extends B> foo() { return null; }
             }
         """.trimIndent()
-        val parsed = parseSource(source)
+        val aId = ClassId(FqName.ROOT, Name.identifier("A"))
+        val aXId = aId.createNestedClassId(Name.identifier("X"))
+        val bId = ClassId(FqName.ROOT, Name.identifier("B"))
+        val bYId = bId.createNestedClassId(Name.identifier("Y"))
+        val bImplId = ClassId(FqName.ROOT, Name.identifier("BImpl"))
+        val parsed = parseSourceWithSymbols(
+            source,
+            mapOf(
+                aId to libraryClassSymbol(aId),
+                aXId to libraryClassSymbol(aXId),
+                bId to libraryClassSymbol(bId),
+                bYId to libraryClassSymbol(bYId),
+                bImplId to libraryClassSymbol(bImplId),
+            ),
+        )
         val root = parsed.root
         val tree = parsed.tree
         val context = parsed.context

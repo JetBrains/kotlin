@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SoftKeywordRemapOnRollbackKt
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUNCTION[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
-    origin: Facade(className=SoftKeywordRemapOnRollbackKt, jvmClassName=null)
+    origin: Facade(className=SoftKeywordRemapOnRollbackKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE

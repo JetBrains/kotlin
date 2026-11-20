@@ -10,7 +10,6 @@ plugins {
 dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
-    runtimeOnly(project(":core:deserialization"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(libs.intellij.asm)
     implementation(libs.guava)
@@ -18,8 +17,8 @@ dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:cli"))
     api(project(":compiler:cli-jvm"))
-    implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:frontend.java"))
+    implementation(project(":core:language.targets.jvm"))
+    implementation(project(":compiler:config.jvm"))
     implementation(project(":compiler:backend.jvm"))
     api(project(":compiler:cli-js"))
     api(project(":compiler:cli-metadata"))
@@ -60,21 +59,9 @@ sourceSets {
 }
 
 projectTests {
-    testTask(
-        javaLauncher = JdkMajorVersion.JDK_1_8,
-        // Use Parallel GC because this test runs on JDK 8.
-        garbageCollector = GarbageCollector.Parallel,
-    ) {
+    testTask {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
-
-    testTask("testJvmICWithJdk11", javaLauncher = JdkMajorVersion.JDK_11_0, skipInLocalBuild = false) {
-        useJsIrBoxTests(buildDir = layout.buildDirectory)
-        filter {
-            includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerTestGenerated*")
-        }
-    }
-
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForICTestsKt")
     testData(project.isolated, "testData")

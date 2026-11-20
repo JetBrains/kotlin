@@ -29,7 +29,7 @@ internal expect fun doubleArraySetUnsafe(array: DoubleArray, index: Int, value: 
 internal expect fun intArrayGetUnsafe(array: IntArray, index: Int): Int
 internal expect fun intArraySetUnsafe(array: IntArray, index: Int, value: Int)
 
-internal value class ULongUnsafeArray(val array: ULongArray)
+internal inline value class ULongUnsafeArray(val array: ULongArray)
 
 internal inline fun ULongUnsafeArray(size: Int): ULongUnsafeArray = ULongUnsafeArray(ULongArray(size))
 
@@ -50,7 +50,7 @@ internal inline fun ULongUnsafeArray.fill(element: ULong, fromIndex: Int = 0, to
     }
 }
 
-internal value class DoubleUnsafeArray(val array: DoubleArray)
+internal inline value class DoubleUnsafeArray(val array: DoubleArray)
 
 internal inline fun doubleUnsafeArrayOf(vararg values: Double): DoubleUnsafeArray = DoubleUnsafeArray(values)
 
@@ -60,7 +60,7 @@ internal inline operator fun DoubleUnsafeArray.get(index: Int): Double =
 internal inline operator fun DoubleUnsafeArray.set(index: Int, value: Double): Unit =
     doubleArraySetUnsafe(array, index, value)
 
-internal value class IntUnsafeArray(val array: IntArray)
+internal inline value class IntUnsafeArray(val array: IntArray)
 
 internal inline fun intUnsafeArrayOf(vararg values: Int): IntUnsafeArray = IntUnsafeArray(values)
 

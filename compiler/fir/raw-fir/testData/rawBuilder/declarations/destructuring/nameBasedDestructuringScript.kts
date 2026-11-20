@@ -1,4 +1,3 @@
-// IGNORE_TREE_ACCESS: KT-89821
 // LANGUAGE: +EnableNameBasedDestructuringShortForm
 
 class Tuple(val first: String, val second: Int)

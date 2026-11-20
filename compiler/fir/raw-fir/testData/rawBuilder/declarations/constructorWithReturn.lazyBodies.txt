@@ -1,0 +1,13 @@
+FILE: constructorWithReturn.kt
+    public open class Base : R|kotlin/Any| {
+        public? [ContainingClassKey=Base] constructor(x: Int): R|Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? class Owner : Base {
+        public? [ContainingClassKey=Owner] constructor(x: Int = LAZY_EXPRESSION): R|Owner| { LAZY_BLOCK }
+
+        public? final? fun bar(i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }

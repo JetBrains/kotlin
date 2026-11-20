@@ -12,12 +12,6 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DeclarationAfterDotSelectorE
     FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
       VALUE_PARAMETER_LIST
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-    FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=String]
-      VALUE_PARAMETER_LIST
-      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=A.z, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=z]
@@ -37,12 +31,6 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DeclarationAfterDotSelectorE
         DOT_QUALIFIED_EXPRESSION
           STRING_TEMPLATE
             LITERAL_STRING_TEMPLATE_ENTRY[text=c]
-          FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=String]
-            VALUE_PARAMETER_LIST
-            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=6]
       PROPERTY[fqName=A.a, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=a]
         DOT_QUALIFIED_EXPRESSION
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=24]

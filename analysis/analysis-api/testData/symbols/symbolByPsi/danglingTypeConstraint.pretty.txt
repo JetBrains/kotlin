@@ -1,0 +1,15 @@
+fun <T, AA : kotlin.Number> foo(a: AA, t: T): AA
+
+fun <T : kotlin.Any, U, AA : kotlin.Any> annotated(t: T, u: U)
+
+fun <@Declared T : kotlin.Any> annotatedDeclaration(t: T)
+
+class Foo<T, AA : kotlin.Any>
+
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE_PARAMETER])
+annotation class Anno
+
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE_PARAMETER])
+annotation class Declared
+
+class AnnotatedClass<@Declared T : kotlin.Any, AA : kotlin.Any>

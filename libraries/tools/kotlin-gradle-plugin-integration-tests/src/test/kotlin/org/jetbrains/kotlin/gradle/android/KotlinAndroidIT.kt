@@ -11,6 +11,10 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJvm
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Files
 import kotlin.io.path.appendText
@@ -22,9 +26,12 @@ import kotlin.test.assertContains
 
 @DisplayName("base kotlin-android tests")
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
 class KotlinAndroidIT : KGPBaseTest() {
 
+    @TestMetadata("AndroidProject")
     @DisplayName("android project compilation smoke test")
+    @MustRunOnChangesInJvm
     @GradleAndroidTest
     fun testSimpleCompile(
         gradleVersion: GradleVersion,
@@ -75,6 +82,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidProject")
     @DisplayName("KT-16897: the `assembleAndroidTest` task builds fine without the `build` task")
     @GradleAndroidTest
     fun testAssembleAndroidTest(
@@ -85,15 +93,17 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
-            buildJdk = jdkVersion.location
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location,
         ) {
             build("assembleAndroidTest")
         }
     }
 
+    @TestMetadata("AndroidIcepickProject")
     @DisplayName("KT-12303: compilation works fine with icepick")
     @GradleAndroidTest
+    @MustRunOnChangesInCompilerPlugins
     fun testAndroidIcepickProject(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -102,7 +112,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidIcepickProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
                 setOf("https://clojars.org/repo/")
@@ -112,8 +122,10 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidParcelizeProject")
     @DisplayName("compilation works fine with parcelize")
     @GradleAndroidTest
+    @MustRunOnChangesInCompilerPlugins
     fun testParcelize(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -122,13 +134,14 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidParcelizeProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug")
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("KT-46626: kotlin-android produces clear error message when no android plugin is applied")
     @GradleAndroidTest
     fun shouldAllowToApplyPluginWhenAndroidPluginIsMissing(
@@ -169,6 +182,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidProject")
     @DisplayName("KT-49483: lint dependencies are resolved properly")
     @GradleAndroidTest
     fun testLintDependencyResolutionKt49483(
@@ -179,7 +193,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             buildGradle.modify {
@@ -234,6 +248,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidProject")
     @DisplayName("publish with omitted stdlib version sets proper version")
     @GradleAndroidTest
     fun testOmittedStdlibVersion(
@@ -244,7 +259,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             subProject("Lib").buildGradle.modify {
@@ -294,6 +309,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidSimpleApp")
     @DisplayName("KT-77288: android.kotlinOptions should not cause generated accessors compilation error")
     @GradleAndroidTest
     // Precompiled plugin in buildSrc; AGP 9+ stub compilation refuses kotlin-android + com.android.library.
@@ -307,7 +323,7 @@ class KotlinAndroidIT : KGPBaseTest() {
             "AndroidSimpleApp",
             gradleVersion,
             buildJdk = jdkVersion.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
         ) {
             val buildSrcDir = projectPath.resolve("buildSrc").also { it.createDirectory() }
             buildSrcDir.resolve("build.gradle.kts").writeText(
@@ -445,6 +461,94 @@ class KotlinAndroidIT : KGPBaseTest() {
                 assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
                 assertNoDiagnostic(KotlinToolingDiagnostics.KotlinAndroidIsIncompatibleWithTheNewAgpDsl)
                 assertNoDiagnostic(KotlinToolingDiagnostics.KMPIsIncompatibleWithTheNewAgpDsl)
+            }
+        }
+    }
+
+    @DisplayName("KT-88622: KMP with 'com.android.library' plugin deprecation warning on AGP <9.0")
+    @GradleAndroidTest
+    @AndroidTestVersions(
+        minVersion = TestVersions.AGP.MIN_SUPPORTED,
+        maxVersion = TestVersions.AGP.AGP_813,
+    )
+    fun testKmpWithAndroidLibraryAGP8DeprecationDiagnostic(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+                id("com.android.library")
+            }
+
+            buildScriptInjection {
+                @Suppress("DEPRECATION")
+                kotlinMultiplatform.androidTarget()
+
+                with(androidLibrary) {
+                    compileSdk = 36
+                    namespace = "com.example"
+                }
+            }
+
+            build("help") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.NonKmpAgpIsDeprecated,
+                    withSubstring = "Please update your project to AGP 9.0 or newer (see https://kotl.in/agp9-blog) and " +
+                            "use the 'com.android.kotlin.multiplatform.library' plugin instead of 'com.android.library'.",
+                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.KMPIsIncompatibleWithTheNewAgpDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
+            }
+        }
+    }
+
+    @DisplayName("KT-88622: KMP with 'com.android.application' plugin deprecation warning on AGP <9.0")
+    @GradleAndroidTest
+    @AndroidTestVersions(
+        minVersion = TestVersions.AGP.MIN_SUPPORTED,
+        maxVersion = TestVersions.AGP.AGP_813,
+    )
+    fun testKmpWithAndroidApplicationAGP8DeprecationDiagnostic(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+                id("com.android.application")
+            }
+
+            buildScriptInjection {
+                @Suppress("DEPRECATION")
+                kotlinMultiplatform.androidTarget()
+
+                with(androidApp) {
+                    compileSdkVersion(36)
+                    namespace = "com.example"
+                }
+            }
+
+            build("help") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.NonKmpAgpIsDeprecated,
+                    withSubstring = "Please update your project to AGP 9.0 or newer (see https://kotl.in/agp9-blog), change the " +
+                            "structure of your project and move the usage of 'com.android.application' into a separate subproject.",
+                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.KMPIsIncompatibleWithTheNewAgpDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
             }
         }
     }

@@ -423,6 +423,24 @@ KtFile: ExportedKdoc.kt
           PsiElement(IDENTIFIER)('Int')
     PsiWhiteSpace('\n    ')
     PROPERTY_ACCESSOR
+      KDoc
+        PsiElement(KDOC_START)('/**')
+        PsiWhiteSpace('\n     ')
+        KDOC_SECTION
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' Top-level')
+          PsiWhiteSpace('\n     ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' property')
+          PsiWhiteSpace('\n     ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' getter')
+          PsiWhiteSpace('\n     ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' documentation.')
+        PsiWhiteSpace('\n     ')
+        PsiElement(KDOC_END)('*/')
+      PsiWhiteSpace('\n    ')
       PsiElement(get)('get')
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
@@ -432,3 +450,73 @@ KtFile: ExportedKdoc.kt
       PsiWhiteSpace(' ')
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('0')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' Top-level')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' mutable')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' property')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' documentation.')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(var)('var')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('topLevelVar')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('0')
+    PsiWhiteSpace('\n    ')
+    PROPERTY_ACCESSOR
+      KDoc
+        PsiElement(KDOC_START)('/**')
+        PsiWhiteSpace('\n     ')
+        KDOC_SECTION
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' Bodyless')
+          PsiWhiteSpace('\n     ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' getter')
+          PsiWhiteSpace('\n     ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' documentation.')
+        PsiWhiteSpace('\n     ')
+        PsiElement(KDOC_END)('*/')
+      PsiWhiteSpace('\n    ')
+      PsiElement(get)('get')
+    PsiWhiteSpace('\n    ')
+    PROPERTY_ACCESSOR
+      KDoc
+        PsiElement(KDOC_START)('/**')
+        PsiWhiteSpace('\n     ')
+        KDOC_SECTION
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' Bodyless')
+          PsiWhiteSpace('\n     ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' setter')
+          PsiWhiteSpace('\n     ')
+          PsiElement(KDOC_LEADING_ASTERISK)('*')
+          PsiElement(KDOC_TEXT)(' documentation.')
+        PsiWhiteSpace('\n     ')
+        PsiElement(KDOC_END)('*/')
+      PsiWhiteSpace('\n    ')
+      PsiElement(set)('set')

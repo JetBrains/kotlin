@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.PsiSourceManager
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.isJavaValueClass
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isArray
@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_JVM_IR_FLAG
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG
+import org.jetbrains.kotlin.load.kotlin.ACC_IDENTITY
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.internalName
@@ -55,8 +56,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ
 import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
@@ -138,9 +138,9 @@ class ClassCodegen private constructor(
 
     private var generated = false
 
-    // Descriptors of this class's fields whose type is a Valhalla value class, collected during field generation and emitted as
-    // the `LoadableDescriptors` attribute (JEP 401).
-    private val loadableFieldDescriptors = mutableSetOf<String>()
+    // Descriptors of the Valhalla value classes mentioned by this class's field and method signatures, collected during generation
+    // and emitted as the `LoadableDescriptors` attribute (JEP 401).
+    private val loadableDescriptors = mutableSetOf<String>()
 
     fun generate() {
         // TODO: reject repeated generate() calls; currently, these can happen for objects in finally
@@ -148,14 +148,8 @@ class ClassCodegen private constructor(
         if (generated) return
         generated = true
 
-        // Respect the [GenerateClassFilter] installed in the generation state
-        if (shouldSkipCodeGenerationAccordingToGenerationFilter()) return
-
         // Generate PermittedSubclasses attribute for sealed class.
-        if (config.languageVersionSettings.supportsFeature(LanguageFeature.JvmPermittedSubclassesAttributeForSealed) &&
-            irClass.modality == Modality.SEALED &&
-            config.target >= JvmTarget.JVM_17
-        ) {
+        if (irClass.modality == Modality.SEALED && config.target >= JvmTarget.JVM_17) {
             generatePermittedSubclasses()
         }
 
@@ -190,7 +184,6 @@ class ClassCodegen private constructor(
 
         visitor.visitSMAP(
             smap,
-            !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax),
             parentFunction != null && parentFunction.isInline,
             config.shouldValidateBytecode
         )
@@ -206,14 +199,6 @@ class ClassCodegen private constructor(
         jvmFieldSignatureClashDetector.reportErrorsTo(context.diagnosticReporter)
     }
 
-    private fun shouldSkipCodeGenerationAccordingToGenerationFilter(): Boolean {
-        val filter = state.generateDeclaredClassFilter
-        val ktFile = PsiSourceManager.findPsiElement(irClass, irClass, KtFile::class)
-        val ktClass = PsiSourceManager.findPsiElement(irClass, irClass, KtClassOrObject::class)
-        return (ktFile != null && filter != null && !filter.shouldGeneratePackagePart(ktFile))
-                || (ktClass != null && filter != null && !filter.shouldGenerateClass(ktClass))
-    }
-
     private fun generatePermittedSubclasses() {
         val sealedSubclasses = irClass.sealedSubclasses
         if (sealedSubclasses.isEmpty()) return
@@ -224,26 +209,54 @@ class ClassCodegen private constructor(
     }
 
     private fun generateLoadableDescriptorsAttribute() {
-        if (loadableFieldDescriptors.isEmpty()) return
-        visitor.visitor.visitAttribute(LoadableDescriptorsAttribute(loadableFieldDescriptors.toList()))
+        if (loadableDescriptors.isEmpty()) return
+        visitor.visitor.visitAttribute(LoadableDescriptorsAttribute(loadableDescriptors.toList()))
     }
 
-    private fun IrField.isValhallaLoadableFieldType(descriptor: String): Boolean {
-        val languageVersionSettings = config.languageVersionSettings
-        if (!languageVersionSettings.isValhallaSupportEnabled()) return false
-        val fieldClass = type.classOrNull?.owner
+    // Whether the class named by [descriptor], the JVM descriptor of this type in a field or method signature of [owner], is a value class
+    // listed in `LoadableDescriptors`. [owner] is null for an object regenerated by the inliner, which is never a value class.
+    internal fun IrType.isValhallaLoadable(descriptor: String, owner: IrClass? = irClass): Boolean {
+        if (!context.isJvmTargetValhallaCompatible) return false
+        val namedClass = classNamedBy(descriptor)
         return when {
-            // A field of the class's own type is never listed: the class is already being loaded, so there is nothing to preload
+            // The class's own type is never listed: the class is already being loaded, so there is nothing to preload
             // (matches javac, which excludes only the exact self-type — mutually-referential value classes still list each other).
-            fieldClass == irClass -> false
-            // A Kotlin value class compiled as a Valhalla value class
-            fieldClass?.isKotlinValhallaValueClass(languageVersionSettings) == true -> true
+            owner != null && namedClass == owner -> false
+            // Neither is an abstract value class (matches javac): only concrete value classes can be flattened or scalarized.
+            namedClass?.modality == Modality.ABSTRACT || namedClass?.modality == Modality.SEALED -> false
+            // A Kotlin value class compiled as a Valhalla value class, or of a library expected to be recompiled like this compilation.
+            namedClass?.isCompiledAsValhallaValueClass(config.languageVersionSettings) == true ||
+                    namedClass?.isKotlinValhallaValueClass(config.languageVersionSettings) == true -> true
+            // A Kotlin value class compiled as an identity class because of its superclass becomes a value class once its superclass is
+            // recompiled, so it is listed just the same, like a class annotated with `@WillBecomeValue`.
+            namedClass?.isKotlinValueClassCompiledAsIdentityClassBySuperclass(config.languageVersionSettings) == true -> true
             // A value class defined in Java (`value class`, resolved from source or a binary/jar dependency).
-            fieldClass?.isJavaValueClass == true -> true
-            // A field of a JDK value-based class (JEP 401 migrates all of them to value classes) is loadable, exactly like javac.
-            // The set covers the whole value-based list (wrappers, java.time, Optional, …), not just boxed primitives.
-            descriptor in JDK_VALUE_BASED_FIELD_DESCRIPTORS -> true
+            namedClass?.isJavaValueClass == true -> true
+            // A class annotated with `@WillBecomeValue` is going to become a value class, so it is listed just the same.
+            namedClass?.hasAnnotation(WILL_BECOME_VALUE_ANNOTATION_FQ_NAME) == true -> true
+            // A JDK value class, also as the Java class of a Kotlin type like `Int?`, exactly like javac.
+            descriptor.removeSurrounding("L", ";") in JDK_VALUE_CLASSES -> true
             else -> false
+        }
+    }
+
+    // The class of this type that [descriptor] names: the erasure, which javac also lists for a type parameter, or the class named by the
+    // underlying type of a `@JvmInline` class. Null if it names neither, e.g. for the box of a primitive type.
+    private fun IrType.classNamedBy(descriptor: String): IrClass? {
+        val erasure = (this as? IrSimpleType)?.erasedUpperBound ?: return null
+        if (descriptor == typeMapper.mapClass(erasure).descriptor) return erasure
+        return InlineClassAbi.unboxType(eraseIfTypeParameter())?.classNamedBy(descriptor)
+    }
+
+    private fun collectLoadableMethodDescriptors(method: IrFunction, methodDescriptor: String) {
+        if (!context.isJvmTargetValhallaCompatible) return
+        // The descriptor has a type for each parameter but the dispatch receiver, and it may box one, like the `Int` of an override.
+        val types = method.nonDispatchParameters.map { it.type } + method.returnType
+        val asmTypes = Type.getArgumentTypes(methodDescriptor).asList() + Type.getReturnType(methodDescriptor)
+        for ([type, asmType] in types zip asmTypes) {
+            if (type.isValhallaLoadable(asmType.descriptor)) {
+                loadableDescriptors.add(asmType.descriptor)
+            }
         }
     }
 
@@ -403,8 +416,8 @@ class ClassCodegen private constructor(
 
     private fun generateField(field: IrField) {
         val fieldType = typeMapper.mapType(field)
-        if (field.isValhallaLoadableFieldType(fieldType.descriptor)) {
-            loadableFieldDescriptors.add(fieldType.descriptor)
+        if (field.type.isValhallaLoadable(fieldType.descriptor)) {
+            loadableDescriptors.add(fieldType.descriptor)
         }
         val fieldSignature =
             if (field.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) null
@@ -484,6 +497,7 @@ class ClassCodegen private constructor(
         }
 
         (val node, val smap = classSMAP) = generateMethodNode(method)
+        collectLoadableMethodDescriptors(method, node.desc)
         node.preprocessSuspendMarkers(
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE || method.isEffectivelyInlineOnly(),
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
@@ -629,36 +643,13 @@ class ClassCodegen private constructor(
     }
 }
 
-// The JDK value-based classes (marked `@jdk.internal.ValueBased`). JEP 401 migrates all of them to value classes, so a field of
-// such a type must be listed in `LoadableDescriptors` exactly like a field of a user value class (this mirrors javac's output).
-// The set is the whole list of publicly-nameable value-based classes, retrieved from the target JDK (JEP 401 EA) rather than
-// limited to primitive wrappers; regenerate it by scanning the JDK image for classes carrying `@jdk.internal.ValueBased`:
-//   jimage extract --dir out "$JDK/lib/modules" && grep -rl 'jdk/internal/ValueBased' out
-// (internal implementation classes, which can never be a declared field type, are omitted.)
-private val JDK_VALUE_BASED_FIELD_DESCRIPTORS = setOf(
-    // java.lang primitive wrappers
-    "Ljava/lang/Boolean;", "Ljava/lang/Byte;", "Ljava/lang/Character;", "Ljava/lang/Short;",
-    "Ljava/lang/Integer;", "Ljava/lang/Long;", "Ljava/lang/Float;", "Ljava/lang/Double;",
-    // other java.lang value-based classes
-    "Ljava/lang/Record;", "Ljava/lang/Runtime\$Version;",
-    // java.time
-    "Ljava/time/Duration;", "Ljava/time/Instant;", "Ljava/time/LocalDate;", "Ljava/time/LocalDateTime;",
-    "Ljava/time/LocalTime;", "Ljava/time/MonthDay;", "Ljava/time/OffsetDateTime;", "Ljava/time/OffsetTime;",
-    "Ljava/time/Period;", "Ljava/time/Year;", "Ljava/time/YearMonth;", "Ljava/time/ZonedDateTime;",
-    "Ljava/time/ZoneId;", "Ljava/time/ZoneOffset;",
-    "Ljava/time/chrono/HijrahDate;", "Ljava/time/chrono/JapaneseDate;", "Ljava/time/chrono/MinguoDate;",
-    "Ljava/time/chrono/ThaiBuddhistDate;",
-    // java.util
-    "Ljava/util/Optional;", "Ljava/util/OptionalDouble;", "Ljava/util/OptionalInt;", "Ljava/util/OptionalLong;",
-    // jdk.incubator.vector
-    "Ljdk/incubator/vector/Float16;",
-)
+private val WILL_BECOME_VALUE_ANNOTATION_FQ_NAME = StandardClassIds.Annotations.WillBecomeValue.asSingleFqName()
 
 private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or
             getVisibilityAccessFlagForClass() or
             (if (isAnnotatedWithDeprecated) Opcodes.ACC_DEPRECATED else 0) or
-            getSynthAccessFlag(languageVersionSettings) or
+            getSynthAccessFlag() or
             when {
                 isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
@@ -667,17 +658,13 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
                 else -> Opcodes.ACC_SUPER or modality.flags
             }.let { if (isKotlinValhallaValueClass(languageVersionSettings)) it and ACC_IDENTITY.inv() else it }
 
-private fun IrClass.getSynthAccessFlag(languageVersionSettings: LanguageVersionSettings): Int {
+private fun IrClass.getSynthAccessFlag(): Int {
     if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME))
         return Opcodes.ACC_SYNTHETIC
-    if (origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION &&
-        languageVersionSettings.supportsFeature(LanguageFeature.SamWrapperClassesAreSynthetic)
-    )
+    if (origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION)
         return Opcodes.ACC_SYNTHETIC
     return 0
 }
-
-const val ACC_IDENTITY = Opcodes.ACC_SUPER
 
 private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or visibility.flags or
@@ -689,12 +676,11 @@ private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersio
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
             (if (hasAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)) Opcodes.ACC_TRANSIENT else 0) or
             (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
-                isPrivateCompanionFieldInInterface(languageVersionSettings)
+                isPrivateCompanionFieldInInterface()
             ) Opcodes.ACC_SYNTHETIC else 0)
 
-private fun IrField.isPrivateCompanionFieldInInterface(languageVersionSettings: LanguageVersionSettings): Boolean =
+private fun IrField.isPrivateCompanionFieldInInterface(): Boolean =
     origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
-            languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
             parentAsClass.isJvmInterface &&
             DescriptorVisibilities.isPrivate(parentAsClass.companionObject()!!.visibility)
 

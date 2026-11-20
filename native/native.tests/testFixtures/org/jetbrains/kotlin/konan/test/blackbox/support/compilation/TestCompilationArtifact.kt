@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
-import java.nio.file.*
 
 sealed interface TestCompilationArtifact {
     val logFile: File

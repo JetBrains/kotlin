@@ -11,7 +11,6 @@ import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.*
 import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.hasAnnotationsInBytecode
-import kotlin.metadata.jvm.signature
 import kotlin.reflect.ExperimentalCompanionExtensions
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -32,15 +31,12 @@ internal class KotlinKNamedFunction(
     override val valueParameters: List<KmValueParameter> get() = kmFunction.valueParameters
     override val typeParameterTable: TypeParameterTable get() = _typeParameterTable.value
 
-    override val jvmSignature: JvmMethodSignature
-        // In JVM metadata, functions always have `signature`. In builtins metadata, they don't, so we compute it manually from the
-        // `signature` parameter that comes from the function reference.
-        get() = kmFunction.signature ?: convertSignatureForBuiltinFunction(signature)
+    override val jvmSignature: JvmMethodSignature get() = parseSignature(signature)
     override val metadataAnnotations: List<KmAnnotation> get() = kmFunction.annotations
     override val hasAnnotationsInBytecode: Boolean get() = kmFunction.hasAnnotationsInBytecode
 
     private val _typeParameterTable: Lazy<TypeParameterTable> = lazy(PUBLICATION) {
-        val parent = ((overriddenStorage.originalContainerIfFakeOverride ?: container) as? KClassImpl<*>)?.typeParameterTable
+        val parent = ((overriddenStorage.originalContainerIfFakeOverride ?: container) as? MemberContainer<*>)?.typeParameterTable
         TypeParameterTable.create(kmFunction.typeParameters, parent, this, container.jClass.safeClassLoader)
     }
 
@@ -65,10 +61,10 @@ internal class KotlinKNamedFunction(
 
     @OptIn(ExperimentalCompanionBlocks::class)
     override val isCompanionBlockMember: Boolean
-        get() = container is KClassImpl<*> && kmFunction.isCompanionBlockMember
+        get() = container is MemberContainer<*> && kmFunction.isCompanionBlockMember
 
     override val overridden: Collection<ReflectKFunction> by lazy(PUBLICATION) {
-        computeOverriddenFunctions(this)
+        computeOverriddenCallables(this)
     }
 
     @ExperimentalCompanionExtensions
@@ -84,8 +80,7 @@ internal class KotlinKNamedFunction(
     override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<Any?> =
         KotlinKNamedFunction(container, signature, boundReceiver, boundContextArguments, kmFunction, overriddenStorage)
 
-
-    private fun convertSignatureForBuiltinFunction(signature: String): JvmMethodSignature =
+    private fun parseSignature(signature: String): JvmMethodSignature =
         with(signature) {
             val paren = indexOfLast { it == '(' }
             JvmMethodSignature(substring(0, paren), substring(paren))

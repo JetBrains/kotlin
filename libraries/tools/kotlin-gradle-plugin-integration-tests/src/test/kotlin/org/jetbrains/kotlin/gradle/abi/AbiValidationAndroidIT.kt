@@ -35,7 +35,6 @@ class AbiValidationAndroidIT : KGPBaseTest() {
             }
             build(
                 *tasks.toTypedArray(),
-                buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion),
             ) {
                 assertTasksAreNotInTaskGraph(":checkKotlinAbi")
             }
@@ -52,7 +51,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
             abiValidation()
 
             // create the reference dumps to check
-            build("updateKotlinAbi", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion))
+            build("updateKotlinAbi")
 
             // skip lint as it shows the deprecation warning
             // Skip test due to the bug in 8.8: https://issuetracker.google.com/issues/363264994
@@ -77,15 +76,14 @@ class AbiValidationAndroidIT : KGPBaseTest() {
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
-        androidProject(gradleVersion, agpVersion, jdkVersion, applyBcvPlugin = true) {
+        androidProject(gradleVersion, agpVersion, jdkVersion) {
             abiValidation { }
 
-            build("updateKotlinAbi", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion))
+            build("updateKotlinAbi")
             assertFileExists(referenceJvmDumpFile())
             assertTrue(referenceJvmDumpFile().length() > 0)
 
             build("checkKotlinAbi")
-            build("apiCheck")
         }
     }
 
@@ -96,7 +94,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
-        kmpWithAndroidProject(gradleVersion, agpVersion, jdkVersion, applyBcvPlugin = true) {
+        kmpWithAndroidProject(gradleVersion, agpVersion, jdkVersion) {
             abiValidation()
 
             buildScriptInjection {
@@ -105,7 +103,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
                 }
             }
 
-            build("updateKotlinAbi", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion))
+            build("updateKotlinAbi")
 
             val referenceMixedJvmDumpFile = referenceMixedJvmDumpFile()
             assertFileExists(referenceMixedJvmDumpFile)
@@ -116,7 +114,6 @@ class AbiValidationAndroidIT : KGPBaseTest() {
             assertFileContains(referenceMixedAndroidDumpFile.toPath(), "class SimpleClass")
 
             build("checkKotlinAbi")
-            build("apiCheck")
         }
     }
 }

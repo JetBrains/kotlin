@@ -156,6 +156,7 @@ fun SirDeclaration.conflictsWith(other: SirDeclaration): Boolean = when (this) {
     is SirFunction -> when (other) {
         is SirFunction -> this.name == other.name
                 && this.isInstance == other.isInstance
+                && this.contextParameter == other.contextParameter
                 && this.extensionReceiverParameter == other.extensionReceiverParameter
                 && this.errorType == other.errorType
                 && this.parameters == other.parameters

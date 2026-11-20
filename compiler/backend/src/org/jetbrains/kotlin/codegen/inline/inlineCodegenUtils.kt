@@ -6,20 +6,22 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.optimization.common.intConstantOrError
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.isJvmTargetValhallaCompatible
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -99,8 +101,7 @@ fun argumentsSize(descriptor: String, isStatic: Boolean): Int =
     (Type.getArgumentsAndReturnSizes(descriptor) shr 2) - (if (isStatic) 1 else 0)
 
 internal fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
-    val moduleInfo = state.module.getCapability(ModuleInfo.Capability)
-    return VirtualFileFinder.getInstance(state.project, moduleInfo).findVirtualFileWithHeader(classId)
+    return VirtualFileFinder.getInstance(state.project).findVirtualFileWithHeader(classId)
 }
 
 internal fun findVirtualFileImprecise(state: GenerationState, internalClassName: String): VirtualFile? {
@@ -481,24 +482,13 @@ private fun isFinallyMarker(node: AbstractInsnNode, name: String): Boolean {
     return INLINE_MARKER_CLASS_NAME == node.owner && name == node.name
 }
 
-fun getConstant(ins: AbstractInsnNode): Int {
-    val opcode = ins.opcode
-    return when (opcode) {
-        in Opcodes.ICONST_0..Opcodes.ICONST_5 -> opcode - Opcodes.ICONST_0
-        Opcodes.BIPUSH, Opcodes.SIPUSH -> (ins as IntInsnNode).operand
-        else -> {
-            (ins as LdcInsnNode).cst as Int
-        }
-    }
-}
 fun removeFinallyMarkers(intoNode: MethodNode) {
     val instructions = intoNode.instructions
     var curInstr: AbstractInsnNode? = instructions.first
     while (curInstr != null) {
         if (isFinallyMarker(curInstr)) {
             val marker = curInstr
-            //just to assert
-            getConstant(marker.previous)
+            marker.previous.intConstantOrError //just to assert
             curInstr = curInstr.next
             instructions.remove(marker.previous)
             instructions.remove(marker)
@@ -516,7 +506,7 @@ fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
     )
 }
 
-fun generateResumePathUnboxing(v: InstructionAdapter, inlineClass: KotlinTypeMarker, typeMapper: KotlinTypeMapperBase) {
+fun generateResumePathUnboxing(v: InstructionAdapter, inlineClass: IrType, typeMapper: KotlinTypeMapperBase) {
     addBeforeUnboxInlineClassMarker(v)
     StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, inlineClass, v, typeMapper)
     // Suspend functions always returns Any?, but the unboxing disrupts type analysis of the bytecode.
@@ -713,4 +703,22 @@ fun resolveCatchStoreInstruction(insn: AbstractInsnNode): AbstractInsnNode? {
     if (afterMarker.opcode == Opcodes.ASTORE) return afterMarker
 
     return null
+}
+
+// The minor version of a class version, `0xFFFF` in a class file that uses preview features, is in its upper 16 bits. A regenerated class
+// gets the current compilation's minor version.
+internal fun regeneratedClassVersion(originalVersion: Int, classFileVersion: Int): Int =
+    (classFileVersion and 0xFFFF.inv()) or maxOf(originalVersion and 0xFFFF, classFileVersion and 0xFFFF)
+
+// Identity classes have `ACC_IDENTITY` (JEP 401) in the `InnerClasses` entries of a Valhalla-compatible class file, and reflection reads a
+// nested class's identity from them. A class file of an older version has no such flag, and the classes of its entries except interfaces
+// were identity classes when it was compiled.
+internal fun regeneratedInnerClassAccess(access: Int, originalVersion: Int, classFileVersion: Int): Int =
+    if (access and Opcodes.ACC_INTERFACE == 0 && !originalVersion.isValhallaCompatible() && classFileVersion.isValhallaCompatible())
+        access or Opcodes.ACC_SUPER
+    else access
+
+private fun Int.isValhallaCompatible(): Boolean {
+    val jvmTarget = JvmTarget.entries.find { it.majorVersion == this and 0xFFFF } ?: return false
+    return isJvmTargetValhallaCompatible(jvmTarget, isJvmPreviewEnabled = this ushr 16 == 0xFFFF)
 }

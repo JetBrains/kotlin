@@ -39,13 +39,11 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 @Suppress("IncorrectFormatting")
 object FirJsErrors : KtDiagnosticsContainer() {
     // Annotations
-    val JS_MODULE_PROHIBITED_ON_NON_NATIVE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_NON_NATIVE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE", ProhibitVarInJsModuleFile, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtElement::class, getRendererFactory())
     val CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE: KtDiagnosticFactory0 = KtDiagnosticFactory0("CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, PsiElement::class, getRendererFactory())
-    val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NATIVE_INDEXER_WRONG_PARAMETER_COUNT: KtDiagnosticFactory2<Int, String> = KtDiagnosticFactory2("NATIVE_INDEXER_WRONG_PARAMETER_COUNT", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
@@ -83,13 +81,11 @@ object FirJsErrors : KtDiagnosticsContainer() {
     val JS_EXTERNAL_ARGUMENT: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("JS_EXTERNAL_ARGUMENT", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtExpression::class, getRendererFactory())
 
     // Export
-    val WRONG_EXPORTED_DECLARATION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WRONG_EXPORTED_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NON_EXPORTABLE_TYPE: KtDiagnosticFactory2<String, ConeKotlinType> = KtDiagnosticFactory2("NON_EXPORTABLE_TYPE", WARNING, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_FUNCTION_WITH_EXPOSED_COPY_VISIBILITY: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_FUNCTION_WITH_EXPOSED_COPY_VISIBILITY", WARNING, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_WITHOUT_CONSISTENT_VISIBILITY: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_WITHOUT_CONSISTENT_VISIBILITY", WARNING, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NON_CONSUMABLE_EXPORTED_IDENTIFIER: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NON_CONSUMABLE_EXPORTED_IDENTIFIER", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val NAMED_COMPANION_IN_EXPORTED_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NAMED_COMPANION_IN_EXPORTED_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
-    val NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED: KtDiagnosticFactory0 = KtDiagnosticFactory0("NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val EXPOSED_NOT_EXPORTED_SUPER_INTERFACE: KtDiagnosticFactoryForDeprecation1<FirClassLikeSymbol<*>> = KtDiagnosticFactoryForDeprecation1("EXPOSED_NOT_EXPORTED_SUPER_INTERFACE", JsExposedNotExportedSuperInterfaceApiByExportedOne, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // Dynamics

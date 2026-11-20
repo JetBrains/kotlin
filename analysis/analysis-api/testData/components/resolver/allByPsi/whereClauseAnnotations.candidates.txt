@@ -1,0 +1,866 @@
+KtFile: 'whereClauseAnnotations.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,16): 'package lowlevel'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,16): 'lowlevel'
+  NO_CANDIDATES
+
+KtImportList(16,16): ''
+  NO_CANDIDATES
+
+KtClass(18,54): 'annotation class Anno(val s: String)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(18,28): 'annotation'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(39,54): '(val s: String)'
+  NO_CANDIDATES
+
+KtParameterList(39,54): '(val s: String)'
+  NO_CANDIDATES
+
+KtParameter(40,53): 'val s: String'
+  NO_CANDIDATES
+
+KtTypeReference(47,53): 'String'
+  NO_CANDIDATES
+
+KtUserType(47,53): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(47,53): 'String'
+  NO_CANDIDATES
+
+KtProperty(56,78): 'const val prop = "str"'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(56,61): 'const'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(73,78): '"str"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(74,77): 'str'
+  NO_CANDIDATES
+
+KtNamedFunction(80,182): 'fun <T, U> function(t: T, u: U) where @Anno("declared $prop") U : Any, T : @Anno("bound $prop") Any {}'
+  NO_CANDIDATES
+
+KtTypeParameterList(84,90): '<T, U>'
+  NO_CANDIDATES
+
+KtTypeParameter(85,86): 'T'
+  NO_CANDIDATES
+
+KtTypeParameter(88,89): 'U'
+  NO_CANDIDATES
+
+KtParameterList(99,111): '(t: T, u: U)'
+  NO_CANDIDATES
+
+KtParameter(100,104): 't: T'
+  NO_CANDIDATES
+
+KtTypeReference(103,104): 'T'
+  NO_CANDIDATES
+
+KtUserType(103,104): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(103,104): 'T'
+  NO_CANDIDATES
+
+KtParameter(106,110): 'u: U'
+  NO_CANDIDATES
+
+KtTypeReference(109,110): 'U'
+  NO_CANDIDATES
+
+KtUserType(109,110): 'U'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(109,110): 'U'
+  NO_CANDIDATES
+
+KtTypeConstraintList(118,179): '@Anno("declared $prop") U : Any, T : @Anno("bound $prop") Any'
+  NO_CANDIDATES
+
+KtTypeConstraint(118,149): '@Anno("declared $prop") U : Any'
+  NO_CANDIDATES
+
+KtAnnotationEntry(118,141): '@Anno("declared $prop")'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(119,123): 'Anno'
+  NO_CANDIDATES
+
+KtTypeReference(119,123): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(119,123): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(119,123): 'Anno'
+  NO_CANDIDATES
+
+KtValueArgumentList(123,141): '("declared $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(124,140): '"declared $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(124,140): '"declared $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(125,134): 'declared '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(134,139): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(135,139): 'prop'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = lowlevel/prop
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(142,143): 'U'
+  NO_CANDIDATES
+
+KtTypeReference(146,149): 'Any'
+  NO_CANDIDATES
+
+KtUserType(146,149): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(146,149): 'Any'
+  NO_CANDIDATES
+
+KtTypeConstraint(151,179): 'T : @Anno("bound $prop") Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(151,152): 'T'
+  NO_CANDIDATES
+
+KtTypeReference(155,179): '@Anno("bound $prop") Any'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(155,175): '@Anno("bound $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(155,175): '@Anno("bound $prop")'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(s: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "bound $prop" -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(156,160): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(s: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "bound $prop" -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(156,160): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(156,160): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(156,160): 'Anno'
+  KaApplicableCallCandidate:
+    candidate = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(s: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "bound $prop" -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(160,175): '("bound $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(161,174): '"bound $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(161,174): '"bound $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(162,168): 'bound '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(168,173): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(169,173): 'prop'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = lowlevel/prop
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(176,179): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(176,179): 'Any'
+  NO_CANDIDATES
+
+KtBlockExpression(180,182): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(184,296): 'fun <T> functionWithUndeclared(t: T) where @Anno("undeclared $prop") AA : Any, @Anno("declared $prop") T : AA {}'
+  NO_CANDIDATES
+
+KtTypeParameterList(188,191): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(189,190): 'T'
+  NO_CANDIDATES
+
+KtParameterList(214,220): '(t: T)'
+  NO_CANDIDATES
+
+KtParameter(215,219): 't: T'
+  NO_CANDIDATES
+
+KtTypeReference(218,219): 'T'
+  NO_CANDIDATES
+
+KtUserType(218,219): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(218,219): 'T'
+  NO_CANDIDATES
+
+KtTypeConstraintList(227,293): '@Anno("undeclared $prop") AA : Any, @Anno("declared $prop") T : AA'
+  NO_CANDIDATES
+
+KtTypeConstraint(227,261): '@Anno("undeclared $prop") AA : Any'
+  NO_CANDIDATES
+
+KtAnnotationEntry(227,252): '@Anno("undeclared $prop")'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(228,232): 'Anno'
+  NO_CANDIDATES
+
+KtTypeReference(228,232): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(228,232): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(228,232): 'Anno'
+  NO_CANDIDATES
+
+KtValueArgumentList(232,252): '("undeclared $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(233,251): '"undeclared $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(233,251): '"undeclared $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(234,245): 'undeclared '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(245,250): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(246,250): 'prop'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = lowlevel/prop
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(253,255): 'AA'
+  NO_CANDIDATES
+
+KtTypeReference(258,261): 'Any'
+  NO_CANDIDATES
+
+KtUserType(258,261): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(258,261): 'Any'
+  NO_CANDIDATES
+
+KtTypeConstraint(263,293): '@Anno("declared $prop") T : AA'
+  NO_CANDIDATES
+
+KtAnnotationEntry(263,286): '@Anno("declared $prop")'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(264,268): 'Anno'
+  NO_CANDIDATES
+
+KtTypeReference(264,268): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(264,268): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(264,268): 'Anno'
+  NO_CANDIDATES
+
+KtValueArgumentList(268,286): '("declared $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(269,285): '"declared $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(269,285): '"declared $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(270,279): 'declared '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(279,284): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(280,284): 'prop'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = lowlevel/prop
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(287,288): 'T'
+  NO_CANDIDATES
+
+KtTypeReference(291,293): 'AA'
+  NO_CANDIDATES
+
+KtUserType(291,293): 'AA'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(291,293): 'AA'
+  NO_CANDIDATES
+
+KtBlockExpression(294,296): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(298,377): 'fun functionWithoutTypeParameters() where @Anno("undeclared $prop") AA : Any {}'
+  NO_CANDIDATES
+
+KtParameterList(331,333): '()'
+  NO_CANDIDATES
+
+KtTypeConstraintList(340,374): '@Anno("undeclared $prop") AA : Any'
+  NO_CANDIDATES
+
+KtTypeConstraint(340,374): '@Anno("undeclared $prop") AA : Any'
+  NO_CANDIDATES
+
+KtAnnotationEntry(340,365): '@Anno("undeclared $prop")'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(341,345): 'Anno'
+  NO_CANDIDATES
+
+KtTypeReference(341,345): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(341,345): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(341,345): 'Anno'
+  NO_CANDIDATES
+
+KtValueArgumentList(345,365): '("undeclared $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(346,364): '"undeclared $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(346,364): '"undeclared $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(347,358): 'undeclared '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(358,363): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(359,363): 'prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(366,368): 'AA'
+  NO_CANDIDATES
+
+KtTypeReference(371,374): 'Any'
+  NO_CANDIDATES
+
+KtUserType(371,374): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(371,374): 'Any'
+  NO_CANDIDATES
+
+KtBlockExpression(375,377): '{}'
+  NO_CANDIDATES
+
+KtClass(379,470): 'class Klass<T, U> where @Anno("declared $prop") U : Any, @Anno("undeclared $prop") AA : Any'
+  NO_CANDIDATES
+
+KtTypeParameterList(390,396): '<T, U>'
+  NO_CANDIDATES
+
+KtTypeParameter(391,392): 'T'
+  NO_CANDIDATES
+
+KtTypeParameter(394,395): 'U'
+  NO_CANDIDATES
+
+KtTypeConstraintList(403,470): '@Anno("declared $prop") U : Any, @Anno("undeclared $prop") AA : Any'
+  NO_CANDIDATES
+
+KtTypeConstraint(403,434): '@Anno("declared $prop") U : Any'
+  NO_CANDIDATES
+
+KtAnnotationEntry(403,426): '@Anno("declared $prop")'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(404,408): 'Anno'
+  NO_CANDIDATES
+
+KtTypeReference(404,408): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(404,408): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(404,408): 'Anno'
+  NO_CANDIDATES
+
+KtValueArgumentList(408,426): '("declared $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(409,425): '"declared $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(409,425): '"declared $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(410,419): 'declared '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(419,424): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(420,424): 'prop'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = lowlevel/prop
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(427,428): 'U'
+  NO_CANDIDATES
+
+KtTypeReference(431,434): 'Any'
+  NO_CANDIDATES
+
+KtUserType(431,434): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(431,434): 'Any'
+  NO_CANDIDATES
+
+KtTypeConstraint(436,470): '@Anno("undeclared $prop") AA : Any'
+  NO_CANDIDATES
+
+KtAnnotationEntry(436,461): '@Anno("undeclared $prop")'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(437,441): 'Anno'
+  NO_CANDIDATES
+
+KtTypeReference(437,441): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(437,441): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(437,441): 'Anno'
+  NO_CANDIDATES
+
+KtValueArgumentList(441,461): '("undeclared $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(442,460): '"undeclared $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(442,460): '"undeclared $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(443,454): 'undeclared '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(454,459): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(455,459): 'prop'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = lowlevel/prop
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(462,464): 'AA'
+  NO_CANDIDATES
+
+KtTypeReference(467,470): 'Any'
+  NO_CANDIDATES
+
+KtUserType(467,470): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(467,470): 'Any'
+  NO_CANDIDATES
+
+KtProperty(472,590): 'val <T, U> Map<T, U>.property: Int where @Anno("declared $prop") U : Any, @Anno("undeclared $prop") AA : Any get() = 1'
+  NO_CANDIDATES
+
+KtTypeParameterList(476,482): '<T, U>'
+  NO_CANDIDATES
+
+KtTypeParameter(477,478): 'T'
+  NO_CANDIDATES
+
+KtTypeParameter(480,481): 'U'
+  NO_CANDIDATES
+
+KtTypeReference(483,492): 'Map<T, U>'
+  NO_CANDIDATES
+
+KtUserType(483,492): 'Map<T, U>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(483,486): 'Map'
+  NO_CANDIDATES
+
+KtTypeArgumentList(486,492): '<T, U>'
+  NO_CANDIDATES
+
+KtTypeProjection(487,488): 'T'
+  NO_CANDIDATES
+
+KtTypeReference(487,488): 'T'
+  NO_CANDIDATES
+
+KtUserType(487,488): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(487,488): 'T'
+  NO_CANDIDATES
+
+KtTypeProjection(490,491): 'U'
+  NO_CANDIDATES
+
+KtTypeReference(490,491): 'U'
+  NO_CANDIDATES
+
+KtUserType(490,491): 'U'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(490,491): 'U'
+  NO_CANDIDATES
+
+KtTypeReference(503,506): 'Int'
+  NO_CANDIDATES
+
+KtUserType(503,506): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(503,506): 'Int'
+  NO_CANDIDATES
+
+KtTypeConstraintList(513,580): '@Anno("declared $prop") U : Any, @Anno("undeclared $prop") AA : Any'
+  NO_CANDIDATES
+
+KtTypeConstraint(513,544): '@Anno("declared $prop") U : Any'
+  NO_CANDIDATES
+
+KtAnnotationEntry(513,536): '@Anno("declared $prop")'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(514,518): 'Anno'
+  NO_CANDIDATES
+
+KtTypeReference(514,518): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(514,518): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(514,518): 'Anno'
+  NO_CANDIDATES
+
+KtValueArgumentList(518,536): '("declared $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(519,535): '"declared $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(519,535): '"declared $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(520,529): 'declared '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(529,534): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(530,534): 'prop'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = lowlevel/prop
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(537,538): 'U'
+  NO_CANDIDATES
+
+KtTypeReference(541,544): 'Any'
+  NO_CANDIDATES
+
+KtUserType(541,544): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(541,544): 'Any'
+  NO_CANDIDATES
+
+KtTypeConstraint(546,580): '@Anno("undeclared $prop") AA : Any'
+  NO_CANDIDATES
+
+KtAnnotationEntry(546,571): '@Anno("undeclared $prop")'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(547,551): 'Anno'
+  NO_CANDIDATES
+
+KtTypeReference(547,551): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(547,551): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(547,551): 'Anno'
+  NO_CANDIDATES
+
+KtValueArgumentList(551,571): '("undeclared $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(552,570): '"undeclared $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(552,570): '"undeclared $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(553,564): 'undeclared '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(564,569): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(565,569): 'prop'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = lowlevel/prop
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(572,574): 'AA'
+  NO_CANDIDATES
+
+KtTypeReference(577,580): 'Any'
+  NO_CANDIDATES
+
+KtUserType(577,580): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(577,580): 'Any'
+  NO_CANDIDATES
+
+KtPropertyAccessor(581,590): 'get() = 1'
+  NO_CANDIDATES
+
+KtParameterList(584,586): '()'
+  NO_CANDIDATES
+
+KtConstantExpression(589,590): '1'
+  NO_CANDIDATES

@@ -7,19 +7,18 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportModuleGraphMismatch
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportSourceVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTargetModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftPackageSourceLanguage
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.combineSwiftExportSources
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.findSwiftExportModuleGraphMismatch
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.combineSwiftExportModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.swiftPackageDestinationCondition
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertNull
 
 class SwiftExportSourcesCombinerTest {
 
@@ -48,18 +47,18 @@ class SwiftExportSourcesCombinerTest {
     fun `c conditions of every apple target`() {
         assertEquals(
             mapOf(
-                "ios_arm64" to "TARGET_OS_IOS && !TARGET_OS_SIMULATOR && !TARGET_OS_MACCATALYST && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "ios_simulator_arm64" to "TARGET_OS_IOS && TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "ios_x64" to "TARGET_OS_IOS && TARGET_OS_SIMULATOR && TARGET_CPU_X86_64",
-                "macos_arm64" to "TARGET_OS_OSX && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "macos_x64" to "TARGET_OS_OSX && TARGET_CPU_X86_64",
-                "tvos_arm64" to "TARGET_OS_TV && !TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "tvos_simulator_arm64" to "TARGET_OS_TV && TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "tvos_x64" to "TARGET_OS_TV && TARGET_OS_SIMULATOR && TARGET_CPU_X86_64",
-                "watchos_arm64" to "TARGET_OS_WATCH && !TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && !TARGET_RT_64_BIT",
-                "watchos_device_arm64" to "TARGET_OS_WATCH && !TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "watchos_simulator_arm64" to "TARGET_OS_WATCH && TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "watchos_x64" to "TARGET_OS_WATCH && TARGET_OS_SIMULATOR && TARGET_CPU_X86_64",
+                "ios_arm64" to "__is_target_os(ios) && __is_target_environment(unknown) && __is_target_arch(arm64)",
+                "ios_simulator_arm64" to "__is_target_os(ios) && __is_target_environment(simulator) && __is_target_arch(arm64)",
+                "ios_x64" to "__is_target_os(ios) && __is_target_environment(simulator) && __is_target_arch(x86_64)",
+                "macos_arm64" to "__is_target_os(macos) && __is_target_arch(arm64)",
+                "macos_x64" to "__is_target_os(macos) && __is_target_arch(x86_64)",
+                "tvos_arm64" to "__is_target_os(tvos) && __is_target_environment(unknown) && __is_target_arch(arm64)",
+                "tvos_simulator_arm64" to "__is_target_os(tvos) && __is_target_environment(simulator) && __is_target_arch(arm64)",
+                "tvos_x64" to "__is_target_os(tvos) && __is_target_environment(simulator) && __is_target_arch(x86_64)",
+                "watchos_arm64" to "__is_target_os(watchos) && __is_target_environment(unknown) && __is_target_arch(arm64_32)",
+                "watchos_device_arm64" to "__is_target_os(watchos) && __is_target_environment(unknown) && __is_target_arch(arm64)",
+                "watchos_simulator_arm64" to "__is_target_os(watchos) && __is_target_environment(simulator) && __is_target_arch(arm64)",
+                "watchos_x64" to "__is_target_os(watchos) && __is_target_environment(simulator) && __is_target_arch(x86_64)",
             ),
             appleTargets.associate { it.name to it.swiftPackageDestinationCondition(SwiftPackageSourceLanguage.C_HEADER) },
         )
@@ -156,13 +155,11 @@ class SwiftExportSourcesCombinerTest {
 
         assertEquals(
             """
-            #include <TargetConditionals.h>
-
-            #if TARGET_OS_IOS && !TARGET_OS_SIMULATOR && !TARGET_OS_MACCATALYST && TARGET_CPU_ARM64 && TARGET_RT_64_BIT
+            #if __is_target_os(ios) && __is_target_environment(unknown) && __is_target_arch(arm64)
             #include <stdint.h>
 
             int32_t device();
-            #elif TARGET_OS_WATCH && !TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && !TARGET_RT_64_BIT
+            #elif __is_target_os(watchos) && __is_target_environment(unknown) && __is_target_arch(arm64_32)
             #include <stdint.h>
 
             int32_t watch();
@@ -173,67 +170,178 @@ class SwiftExportSourcesCombinerTest {
     }
 
     @Test
-    fun `the same module graph is accepted whatever the file locations and the order`() {
-        assertNull(
-            findSwiftExportModuleGraphMismatch(
-                listOf(
-                    SwiftExportTargetModules(
-                        "iosArm64", KonanTarget.IOS_ARM64,
-                        listOf(bridged("Shared", "ios", listOf("Dependency", "Runtime")), swiftOnly("Dependency", "ios")),
-                    ),
-                    SwiftExportTargetModules(
-                        "macosArm64", KonanTarget.MACOS_ARM64,
-                        listOf(swiftOnly("Dependency", "macos"), bridged("Shared", "macos", listOf("Runtime", "Dependency"))),
-                    ),
-                )
+    fun `a source that only some targets have is wrapped in their branch`() {
+        val ios = "public func ios() {}\n"
+        val combined = combineSwiftExportSources(
+            listOf(
+                SwiftExportSourceVariant(KonanTarget.IOS_ARM64, ios),
+                SwiftExportSourceVariant(KonanTarget.IOS_SIMULATOR_ARM64, ios),
+            ),
+            SwiftPackageSourceLanguage.SWIFT,
+            packageTargets = setOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.MACOS_ARM64),
+        )
+
+        assertEquals(
+            """
+            #if (os(iOS) && !targetEnvironment(simulator) && !targetEnvironment(macCatalyst) && arch(arm64)) || (os(iOS) && targetEnvironment(simulator) && arch(arm64))
+            public func ios() {}
+            #endif
+            """.trimIndent() + "\n",
+            combined,
+        )
+    }
+
+    @Test
+    fun `a repeated target is a single condition`() {
+        val ios = "public func ios() {}\n"
+        val combined = combineSwiftExportSources(
+            listOf(
+                SwiftExportSourceVariant(KonanTarget.IOS_ARM64, ios),
+                SwiftExportSourceVariant(KonanTarget.IOS_ARM64, ios),
+                SwiftExportSourceVariant(KonanTarget.MACOS_ARM64, "public func macos() {}\n"),
+            ),
+            SwiftPackageSourceLanguage.SWIFT,
+        )
+
+        assertEquals(
+            """
+            #if os(iOS) && !targetEnvironment(simulator) && !targetEnvironment(macCatalyst) && arch(arm64)
+            public func ios() {}
+            #elseif os(macOS) && arch(arm64)
+            public func macos() {}
+            #endif
+            """.trimIndent() + "\n",
+            combined,
+        )
+    }
+
+    @Test
+    fun `an identical source of a repeated target is kept as it is`() {
+        val source = "public func foo() {}\n"
+        val combined = combineSwiftExportSources(
+            listOf(
+                SwiftExportSourceVariant(KonanTarget.IOS_ARM64, source),
+                SwiftExportSourceVariant(KonanTarget.IOS_ARM64, source),
+            ),
+            SwiftPackageSourceLanguage.SWIFT,
+            packageTargets = setOf(KonanTarget.IOS_ARM64),
+        )
+
+        assertEquals(source, combined)
+    }
+
+    @Test
+    fun `the package has every module and every dependency of any target`() {
+        val modules = combineSwiftExportModules(perPlatformTargets)
+
+        assertEquals(
+            mapOf(
+                "Shared" to listOf("IosOnly", "MacosOnly", "Runtime"),
+                "Runtime" to emptyList(),
+                "IosOnly" to listOf("Runtime"),
+                "MacosOnly" to emptyList(),
+            ),
+            modules.associate { it.module.name to it.module.dependencies },
+        )
+        assertEquals(
+            mapOf(
+                "Shared" to setOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.MACOS_ARM64),
+                "Runtime" to setOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.MACOS_ARM64),
+                "IosOnly" to setOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_SIMULATOR_ARM64),
+                "MacosOnly" to setOf(KonanTarget.MACOS_ARM64),
+            ),
+            modules.associate { it.module.name to it.variants.keys },
+        )
+    }
+
+    @Test
+    fun `the order of the targets doesn't change the order of the dependencies`() {
+        assertEquals(
+            combineSwiftExportModules(perPlatformTargets).associate { it.module.name to it.module.dependencies },
+            combineSwiftExportModules(perPlatformTargets.reversed()).associate { it.module.name to it.module.dependencies },
+        )
+    }
+
+    @Test
+    fun `a dependency that every target of a platform has is limited to that platform`() {
+        assertEquals(
+            mapOf(
+                // Only the dependencies of Shared need a condition: IosOnly always depends on Runtime where it's exported.
+                "Shared" to mapOf("IosOnly" to setOf(Family.IOS), "MacosOnly" to setOf(Family.OSX)),
+                "Runtime" to emptyMap(),
+                "IosOnly" to emptyMap(),
+                "MacosOnly" to emptyMap(),
+            ),
+            combineSwiftExportModules(perPlatformTargets).associate { it.module.name to it.dependencyPlatforms },
+        )
+    }
+
+    @Test
+    fun `a dependency that only some targets of a platform have is not limited`() {
+        val modules = combineSwiftExportModules(
+            listOf(
+                SwiftExportTargetModules(
+                    KonanTarget.IOS_ARM64,
+                    listOf(bridged("Shared", "ios", listOf("DeviceOnly")), swiftOnly("DeviceOnly", "ios")),
+                ),
+                SwiftExportTargetModules(KonanTarget.IOS_SIMULATOR_ARM64, listOf(bridged("Shared", "sim"))),
+                SwiftExportTargetModules(KonanTarget.MACOS_ARM64, listOf(bridged("Shared", "macos"))),
             )
         )
+
+        assertEquals(emptyMap(), modules.single { it.module.name == "Shared" }.dependencyPlatforms)
     }
 
     @Test
-    fun `a module missing for one target is a mismatch`() {
-        assertEquals(
-            SwiftExportModuleGraphMismatch(
-                referenceTarget = "iosArm64",
-                otherTarget = "macosArm64",
-                differences = listOf("OnlyIos: only for iosArm64", "OnlyMacos: only for macosArm64"),
-            ),
-            findSwiftExportModuleGraphMismatch(
-                listOf(
-                    SwiftExportTargetModules(
-                        "iosArm64", KonanTarget.IOS_ARM64,
-                        listOf(bridged("Shared", "ios"), swiftOnly("OnlyIos", "ios")),
+    fun `a target that doesn't export a module doesn't keep its dependencies from being limited`() {
+        val modules = combineSwiftExportModules(
+            listOf(
+                SwiftExportTargetModules(
+                    KonanTarget.IOS_ARM64,
+                    listOf(
+                        bridged("Shared", "ios", listOf("Partial")),
+                        bridged("Partial", "ios", listOf("IosOnly")),
+                        swiftOnly("IosOnly", "ios"),
                     ),
-                    SwiftExportTargetModules(
-                        "macosArm64", KonanTarget.MACOS_ARM64,
-                        listOf(bridged("Shared", "macos"), swiftOnly("OnlyMacos", "macos")),
-                    ),
-                )
-            ),
+                ),
+                // Partial is empty on the simulator, so its iOS-only dependency can still be limited to iOS.
+                SwiftExportTargetModules(KonanTarget.IOS_SIMULATOR_ARM64, listOf(bridged("Shared", "sim"))),
+                SwiftExportTargetModules(
+                    KonanTarget.MACOS_ARM64,
+                    listOf(bridged("Shared", "macos", listOf("Partial")), bridged("Partial", "macos")),
+                ),
+            )
         )
+
+        assertEquals(mapOf("IosOnly" to setOf(Family.IOS)), modules.single { it.module.name == "Partial" }.dependencyPlatforms)
     }
 
-    @Test
-    fun `different dependencies of a module are a mismatch with the first target that differs`() {
-        assertEquals(
-            SwiftExportModuleGraphMismatch(
-                referenceTarget = "iosArm64",
-                otherTarget = "macosArm64",
-                differences = listOf("Shared: depends on [A, B] for iosArm64 and on [A] for macosArm64"),
+    private val perPlatformTargets = listOf(
+        SwiftExportTargetModules(
+            KonanTarget.IOS_ARM64,
+            listOf(
+                bridged("Shared", "ios", listOf("Runtime", "IosOnly")),
+                swiftOnly("Runtime", "ios"),
+                bridged("IosOnly", "ios", listOf("Runtime")),
             ),
-            findSwiftExportModuleGraphMismatch(
-                listOf(
-                    SwiftExportTargetModules("iosArm64", KonanTarget.IOS_ARM64, listOf(bridged("Shared", "ios", listOf("A", "B")))),
-                    SwiftExportTargetModules(
-                        "iosSimulatorArm64",
-                        KonanTarget.IOS_SIMULATOR_ARM64,
-                        listOf(bridged("Shared", "sim", listOf("A", "B")))
-                    ),
-                    SwiftExportTargetModules("macosArm64", KonanTarget.MACOS_ARM64, listOf(bridged("Shared", "macos", listOf("A")))),
-                )
+        ),
+        SwiftExportTargetModules(
+            KonanTarget.IOS_SIMULATOR_ARM64,
+            listOf(
+                bridged("Shared", "sim", listOf("Runtime", "IosOnly")),
+                swiftOnly("Runtime", "sim"),
+                bridged("IosOnly", "sim", listOf("Runtime")),
             ),
-        )
-    }
+        ),
+        SwiftExportTargetModules(
+            KonanTarget.MACOS_ARM64,
+            listOf(
+                bridged("Shared", "macos", listOf("Runtime", "MacosOnly")),
+                swiftOnly("Runtime", "macos"),
+                swiftOnly("MacosOnly", "macos"),
+            ),
+        ),
+    )
 
     // Every Apple target, the deprecated ones included. watchosArm32 is the one Swift Export doesn't support:
     // it has no AppleArchitecture.

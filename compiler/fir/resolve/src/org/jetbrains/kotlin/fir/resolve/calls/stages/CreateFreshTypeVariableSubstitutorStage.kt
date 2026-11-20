@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.stages
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
 import org.jetbrains.kotlin.fir.isEnabled
@@ -81,7 +82,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 is FirStarProjection -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
                     typeParameter.symbol.resolvedBounds.firstOrNull()?.coneType
-                        ?: context.session.builtinTypes.nullableAnyType.coneType,
+                        ?: StandardTypes.NullableAny,
                     SimpleConstraintSystemConstraintPosition
                 )
                 else -> assert(typeArgument is FirPlaceholderProjection) {

@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.EXTERNAL_D
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.EXTERNAL_DECLARATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.FIELD_IN_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.FUNCTION_DELEGATE_MEMBER_NAME_CLASH
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ILLEGAL_JVM_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE
@@ -72,7 +71,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_NAME_IS_NOT_JAVA_IDENTIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_REQUIRES_NAME
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_PACKAGE_NAME_CANNOT_BE_EMPTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_PACKAGE_NAME_MUST_BE_VALID_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES
@@ -97,6 +95,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_SOURCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NO_REFLECTION_IN_CLASS_PATH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_ERROR
@@ -139,7 +138,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.USELESS_JVM_EXPOSE_BOXED
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.WRONG_TYPE_FOR_JAVA_OVERRIDE
 
@@ -219,7 +218,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE,
-            "This function accidentally overrides both {0} and {1} {2} from JVM point of view because of mixed Java/Kotlin hierarchy.\n" +
+            "This function overrides both {0} and {1} {2} because of mixed Java/Kotlin hierarchy.\n" +
                     "This situation provokes a JVM clash and is forbidden. To fix it, delete either this or one of the overridden functions.",
             SYMBOL_WITH_CONTAINING_DECLARATION,
             STRING,
@@ -260,7 +259,11 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(STRICTFP_ON_CLASS, "'@Strictfp' annotation on classes is not yet supported.")
         map.put(SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions.")
         map.put(SYNCHRONIZED_ON_INLINE, "'@Synchronized' annotation has no effect on inline functions.")
-        map.put(SYNCHRONIZED_ON_VALUE_CLASS, "'@Synchronized' annotation has no effect on value classes.")
+        map.put(SYNCHRONIZED_ON_VALUE_CLASS, "'@Synchronized' cannot be applied to members of value classes.")
+        map.put(
+            SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS,
+            "'@Synchronized' annotation cannot be used on classes annotated with '@WillBecomeValue'."
+        )
         map.put(
             SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS,
             "Synchronizing on an instance of Java value-based class ''{0}'' will produce a runtime exception in future JVM releases.",
@@ -306,13 +309,21 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(JVM_RECORD_NOT_VAL_PARAMETER, "Constructor parameter of '@JvmRecord' class must be a 'val'.")
         map.put(JVM_RECORD_NOT_LAST_VARARG_PARAMETER, "Only the last constructor parameter of '@JvmRecord' can be a vararg.")
         map.put(JVM_RECORD_EXTENDS_CLASS, "Record cannot extend a class.", RENDER_TYPE)
+        map.put(
+            VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS,
+            "Value class ''{0}'' extends ''{1}'', which is compiled as an identity class, " +
+                    "so ''{0}'' is compiled as an identity class, too. " +
+                    "Recompile ''{1}'' with ''-Xvalhalla-value-classes'', JVM target 28 or later, and ''-Xjvm-enable-preview''.",
+            DECLARATION_NAME,
+            RENDER_TYPE,
+        )
         map.put(INNER_JVM_RECORD, "'@JvmRecord' class cannot be inner.")
         map.put(FIELD_IN_JVM_RECORD, "Non-constructor properties with backing field in '@JvmRecord' class are prohibited.")
         map.put(DELEGATION_BY_IN_JVM_RECORD, "Delegation is prohibited for '@JvmRecord' classes.")
         map.put(NON_DATA_CLASS_JVM_RECORD, "Only data classes are allowed to be marked as '@JvmRecord'.")
         map.put(
             NON_DATA_VALUE_CLASS_JVM_RECORD,
-            "Only data classes and non-@JvmInline value classes are allowed to be marked as '@JvmRecord'."
+            "Only data classes and full value classes are allowed to be marked as '@JvmRecord'."
         )
         map.put(ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, "Classes cannot have explicit 'java.lang.Record' supertype.")
         map.put(
@@ -326,7 +337,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE,
-            "Symbol is declared in an unnamed module which is not read by current module."
+            "Symbol is declared in an unnamed module which is not read by the current module."
         )
         map.put(
             JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE,
@@ -360,9 +371,6 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(FUNCTION_DELEGATE_MEMBER_NAME_CLASH, "Spread operator is prohibited for arguments to signature-polymorphic calls.")
 
-        map.put(VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, "Value classes without '@JvmInline' annotation are not yet supported.")
-        map.put(JVM_INLINE_WITHOUT_VALUE_CLASS, "'@JvmInline' annotation is applicable only to value classes.")
-
         map.put(INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME, "'@JvmExposeBoxed' with name is applicable only to functions, getters and setters.")
         map.put(
             USELESS_JVM_EXPOSE_BOXED,
@@ -386,7 +394,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT,
-            "'@JvmExposeBoxed' cannot expose functions which are open or abstract, or member of an interface."
+            "'@JvmExposeBoxed' cannot expose functions which are open, abstract, or members of an interface."
         )
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC,
@@ -491,7 +499,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR,
-            "Repeatable annotation cannot have a nested class named 'Container'. This name is reserved for auto-generated container class."
+            "Repeatable annotation cannot have a nested class named 'Container'. This name is reserved for the auto-generated container class."
         )
         map.put(
             SUSPENSION_POINT_INSIDE_CRITICAL_SECTION,
@@ -552,7 +560,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NO_REFLECTION_IN_CLASS_PATH,
-            "Call uses reflection API which is not found in compilation classpath. " +
+            "Call uses reflection API which is not found in the compilation classpath. " +
                     "Make sure you have kotlin-reflect.jar in the classpath."
         )
 
@@ -567,9 +575,9 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY,
-            "This variable access is resolved to Java field, but it is clashed with Kotlin property ''{0}'' with backing field " +
-                    "which leads to the incorrect bytecode generation and failure at runtime. So such calls are prohibited until " +
-                    "corresponding bug will be fixed. See https://youtrack.jetbrains.com/issue/KT-56386 for more details.",
+            "This variable access resolves to a Java field, but it clashes with the Kotlin property with backing field ''{0}'' " +
+                    "which leads to incorrect bytecode generation and failures at runtime. " +
+                    "Until the corresponding bug is fixed, such calls are prohibited. See https://youtrack.jetbrains.com/issue/KT-56386 for more details.",
             SYMBOL
         )
 
@@ -591,11 +599,6 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             STRING
         )
 
-        map.put(
-            IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE,
-            "Identity-sensitive operation on an instance of value type ''{0}'' may cause unexpected behavior or errors.",
-            RENDER_TYPE,
-        )
 
 
         map.put(

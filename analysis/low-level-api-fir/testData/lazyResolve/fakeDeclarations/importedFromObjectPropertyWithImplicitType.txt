@@ -1,0 +1,214 @@
+STATUS:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirRegularPropertySymbol test/O.bar), ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: <implicit>
+    @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] get(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithImplicitType.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] object O : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=O] constructor(): R|test/O| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] val bar: <implicit> = LAZY_EXPRESSION
+            @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=O] get(): <implicit> { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirRegularPropertySymbol test/O.bar), ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: <implicit>
+    @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithImplicitType.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] object O : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=O] constructor(): R|test/O| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] val bar: <implicit> = LAZY_EXPRESSION
+            @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=O] get(): <implicit> { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirRegularPropertySymbol test/O.bar), ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: <implicit>
+    @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] get(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithImplicitType.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] object O : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=O] constructor(): R|test/O| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] val bar: <implicit> = LAZY_EXPRESSION
+            @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=O] get(): <implicit> { LAZY_BLOCK }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|kotlin/String|
+    @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithImplicitType.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val C: R|kotlin/String| = String(c)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(STATUS)] object O : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=O] constructor(): R|test/O| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val bar: R|kotlin/String| = String(initializer).R|kotlin/String.plus|(R|test/C|)
+            @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=O] get(): R|kotlin/String| {
+                ^ field#.plus#(C#)
+            }
+
+    }
+
+CONSTANT_EVALUATION:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|kotlin/String|
+    @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithImplicitType.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val C: R|kotlin/String| = String(c)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(STATUS)] object O : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=O] constructor(): R|test/O| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val bar: R|kotlin/String| = String(initializer).R|kotlin/String.plus|(R|test/C|)
+            @R|test/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=O] get(): R|kotlin/String| {
+                ^ field#.plus#(C#)
+            }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+TARGET: @R|test/Anno|[Types](s = String(property).R|kotlin/String.plus|(R|test/C|) [evaluated = String(propertyc)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|kotlin/String|
+    @R|test/Anno|[Types](s = String(getter).R|kotlin/String.plus|(R|test/C|) [evaluated = String(getterc)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithImplicitType.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=test/Anno.s] s: R|kotlin/String|): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val C: R|kotlin/String| = String(c)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(STATUS)] object O : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=O] constructor(): R|test/O| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](s = String(property).R|kotlin/String.plus|(R|test/C|) [evaluated = String(propertyc)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val bar: R|kotlin/String| = String(initializer).R|kotlin/String.plus|(R|test/C|)
+            @R|test/Anno|[Types](s = String(getter).R|kotlin/String.plus|(R|test/C|) [evaluated = String(getterc)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=O] get(): R|kotlin/String| {
+                ^ field#.plus#(C#)
+            }
+
+    }
+
+BODY_RESOLVE:
+TARGET: @R|test/Anno|[Types](s = String(property).R|kotlin/String.plus|(R|test/C|) [evaluated = String(propertyc)]) public final [ResolvedTo(BODY_RESOLVE)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|kotlin/String|
+    @R|test/Anno|[Types](s = String(getter).R|kotlin/String.plus|(R|test/C|) [evaluated = String(getterc)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithImplicitType.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=test/Anno.s] s: R|kotlin/String|): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val C: R|kotlin/String| = String(c)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(STATUS)] object O : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=O] constructor(): R|test/O| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|test/Anno|[Types](s = String(property).R|kotlin/String.plus|(R|test/C|) [evaluated = String(propertyc)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val bar: R|kotlin/String| = String(initializer).R|kotlin/String.plus|(R|test/C|)
+            @R|test/Anno|[Types](s = String(getter).R|kotlin/String.plus|(R|test/C|) [evaluated = String(getterc)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=O] get(): R|kotlin/String| {
+                ^ field#.plus#(C#)
+            }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] importedFromObjectPropertyWithImplicitType.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Anno.s] s: R|kotlin/String|): R|test/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(c)] val C: R|kotlin/String| = String(c)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] object O : R|kotlin/Any| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=O] constructor(): R|test/O| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|test/Anno|[Types](s = String(property).R|kotlin/String.plus|(R|test/C|) [evaluated = String(propertyc)]) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true] val bar: R|kotlin/String| = String(initializer).R|kotlin/String.plus|(R|test/C|)
+            @R|test/Anno|[Types](s = String(getter).R|kotlin/String.plus|(R|test/C|) [evaluated = String(getterc)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=O] get(): R|kotlin/String| {
+                ^ this@R|test/O|.F|test/O.bar|.R|kotlin/String.plus|(R|test/C|)
+            }
+
+    }

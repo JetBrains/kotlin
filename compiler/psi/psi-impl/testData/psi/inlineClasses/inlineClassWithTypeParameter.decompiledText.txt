@@ -2,7 +2,7 @@
 // Implementation of methods is not available
 
 @kotlin.jvm.JvmInline
-public final value class GenericValue<T> public constructor(value: T) {
+public final inline value class GenericValue<T> public constructor(value: T) {
     private final val value: T /* compiled code */
 
     public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }

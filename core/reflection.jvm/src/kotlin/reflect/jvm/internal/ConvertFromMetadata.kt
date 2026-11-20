@@ -30,7 +30,6 @@ import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 import kotlin.reflect.jvm.internal.types.SimpleKType
-import kotlin.reflect.jvm.jvmErasure
 
 internal fun ClassName.toClassId(): ClassId {
     val isLocal = startsWith(".")
@@ -211,7 +210,7 @@ private fun KmClassifier.toClassifier(
 ): KClassifier = when (this) {
     is KmClassifier.Class ->
         if (name == "kotlin/Array")
-            (typeArguments.single().type ?: StandardKTypes.ANY).jvmErasure.java.createArrayType().kotlin
+            computeArrayClassifier(typeArguments)
         else
             classLoader.loadKClass(name, forceWrapperClass)
                 ?: throw KotlinReflectionInternalError("Class not found: $name")
@@ -302,7 +301,7 @@ internal fun Visibility.toKVisibility(): KVisibility? = when (this) {
 
 internal fun KmProperty.computeJvmSignature(container: KDeclarationContainerImpl): JvmMethodSignature {
     getterSignature?.let { return it }
-    val fieldSignature = mapSignature((container as? KClassImpl<*>)?.kmClass)
+    val fieldSignature = mapSignature((container as? MemberContainer<*>)?.kmClass)
     val getterName = getBuiltinSpecialPropertyGetterName(name, container)
         ?: (JvmAbi.getterName(fieldSignature.name) + getManglingSuffix(container))
     return JvmMethodSignature(getterName, "()" + fieldSignature.descriptor)
@@ -330,7 +329,7 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
         property.isCompanionBlockMember -> 0
         else ->
             (if (property.receiverParameterType != null) 1 else 0) +
-                    (if (container is KClassImpl<*>) 1 else 0)
+                    (if (container is MemberContainer<*>) 1 else 0)
     }
     val signature = property.computeJvmSignature(container).toString()
     val boundReceiver = CallableReference.NO_RECEIVER
@@ -354,13 +353,22 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
     )
 }
 
+internal fun KmFunction.computeJvmSignature(container: KDeclarationContainerImpl): JvmMethodSignature {
+    val mapped = mapSignature((container as? MemberContainer<*>)?.kmClass)
+    // When builtins metadata is read by kotlin-metadata-jvm, JVM signatures are computed and stored by
+    // `JvmMetadataExtensions.readFunctionExtensions`, but this happens only in the case when they can be easily computed
+    // (see `JvmProtoBufUtil.getJvmMethodSignature`). This lightweight computation doesn't support special builtin names, so it uses,
+    // for example, `get` instead of `charAt` for `kotlin.CharSequence.get`. So, we need to manually fix the name here.
+    val specialName = getBuiltinSpecialFunctionJvmName(name, mapped.descriptor, container) ?: return mapped
+    return JvmMethodSignature(specialName, mapped.descriptor)
+}
+
 internal fun createUnboundFunction(function: KmFunction, container: KDeclarationContainerImpl): KotlinKFunction {
-    // In JVM metadata, functions always have `signature`. In builtins metadata, they don't (*), so we compute it manually. In JVM metadata,
-    // this might also help in cases when metadata was corrupted or generated incorrectly for some reason and lacks the signature.
-    // (*) Actually, when builtins metadata is read by kotlin-metadata-jvm, JVM signatures are computed and stored by
-    // `JvmMetadataExtensions.readFunctionExtensions` in case they can be easily computed (see `JvmProtoBufUtil.getJvmMethodSignature`).
-    val signature = function.mapSignature((container as? KClassImpl<*>)?.kmClass)
-    return KotlinKNamedFunction(container, signature.toString(), CallableReference.NO_RECEIVER, rawBoundContextArguments = emptyList(), function, KCallableOverriddenStorage.EMPTY)
+    val signature = function.computeJvmSignature(container)
+    return KotlinKNamedFunction(
+        container, signature.toString(), CallableReference.NO_RECEIVER, rawBoundContextArguments = emptyList(), function,
+        KCallableOverriddenStorage.EMPTY,
+    )
 }
 
 internal fun createUnboundConstructor(constructor: KmConstructor, container: KDeclarationContainerImpl): KotlinKFunction {

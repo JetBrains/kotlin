@@ -40,7 +40,12 @@ open class CandidateCollector(
      * Diagnostics that should not be bound to specific candidates but should be put to the resulting call.
      * For instance, a case when declaration order affects resolution (see KT-76240).
      */
-    private val forwardedDiagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
+    val forwardedDiagnostics: List<ResolutionDiagnostic>
+        field = mutableListOf()
+
+    fun addForwardedDiagnostic(diagnostic: ResolutionDiagnostic) {
+        forwardedDiagnostics.add(diagnostic)
+    }
 
     fun newDataSet() {
         groupNumbers.clear()
@@ -90,12 +95,6 @@ open class CandidateCollector(
 
         return applicability
     }
-
-    fun addForwardedDiagnostic(diagnostic: ResolutionDiagnostic) {
-        forwardedDiagnostics.add(diagnostic)
-    }
-
-    fun forwardedDiagnostics(): List<ResolutionDiagnostic> = forwardedDiagnostics
 
     open fun bestCandidates(): List<Candidate> = candidates
 

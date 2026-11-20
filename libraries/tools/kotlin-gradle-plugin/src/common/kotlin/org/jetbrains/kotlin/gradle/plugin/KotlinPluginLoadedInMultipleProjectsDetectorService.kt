@@ -72,7 +72,7 @@ internal abstract class KotlinPluginLoadedInMultipleProjectsDetectorService : Bu
                 .registerIfAbsent(
                     "KotlinPluginLoadedInMultipleProjectsDetectorService",
                     KotlinPluginLoadedInMultipleProjectsDetectorService::class.java
-                ) {} // Switch to the overload without the configure block when minimum supported Gradle version is 8.7.
+                )
                 .get()
 
             synchronized(service) {

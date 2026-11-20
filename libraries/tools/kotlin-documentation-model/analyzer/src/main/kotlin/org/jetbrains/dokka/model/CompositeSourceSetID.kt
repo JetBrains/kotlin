@@ -13,34 +13,34 @@ import org.jetbrains.dokka.DokkaSourceSetID
  *
  * Should not be constructed or copied outside of [DisplaySourceSet] instantiation.
  */
-public data class CompositeSourceSetID(
+internal data class CompositeSourceSetID(
     private val children: Set<DokkaSourceSetID>
 ) {
-    public constructor(sourceSetIDs: Iterable<DokkaSourceSetID>) : this(sourceSetIDs.toSet())
-    public constructor(sourceSetId: DokkaSourceSetID) : this(setOf(sourceSetId))
+    constructor(sourceSetIDs: Iterable<DokkaSourceSetID>) : this(sourceSetIDs.toSet())
+    constructor(sourceSetId: DokkaSourceSetID) : this(setOf(sourceSetId))
 
     init {
         require(children.isNotEmpty()) { "Expected at least one source set id" }
     }
 
-    public val merged: DokkaSourceSetID = children.sortedBy { it.scopeId + it.sourceSetName }.let { sortedChildren ->
+    val merged: DokkaSourceSetID = children.sortedBy { it.scopeId + it.sourceSetName }.let { sortedChildren ->
         DokkaSourceSetID(
             scopeId = sortedChildren.joinToString(separator = "+") { it.scopeId },
             sourceSetName = sortedChildren.joinToString(separator = "+") { it.sourceSetName }
         )
     }
 
-    public val all: Set<DokkaSourceSetID> = setOf(merged, *children.toTypedArray())
+    val all: Set<DokkaSourceSetID> = setOf(merged, *children.toTypedArray())
 
-    public operator fun contains(sourceSetId: DokkaSourceSetID): Boolean {
+    operator fun contains(sourceSetId: DokkaSourceSetID): Boolean {
         return sourceSetId in all
     }
 
-    public operator fun contains(sourceSet: DokkaConfiguration.DokkaSourceSet): Boolean {
+    operator fun contains(sourceSet: DokkaConfiguration.DokkaSourceSet): Boolean {
         return sourceSet.sourceSetID in this
     }
 
-    public operator fun plus(other: DokkaSourceSetID): CompositeSourceSetID {
+    operator fun plus(other: DokkaSourceSetID): CompositeSourceSetID {
         return copy(children = children + other)
     }
 }

@@ -35,6 +35,12 @@ You can also produce native image distribution release artifacts in
 ./gradlew :kotlin-compiler-native-image:kotlincNativeImageArtifacts
 ```
 
+Additional build properties that require Oracle GraalVM:
+* `-Pkotlin.build.native-image.use-g1=true` enables the G1 garbage collector for the compiler native image. It provides significant performance benefits.
+* `-Pkotlin.build.native-image.dynamic-plugins=true` enables dynamic plugin loading support, see [Plugins](#plugins) for more details.
+* `-Pkotlin.build.native-image.pgo-profile=file.iprof` enable profile-guided optimizations using `file.iprof` as an input profile. 
+See [Profile-Guided Optimizations](#profile-guided-optimizations) for more details.
+
 ## Running
 
 Similar to JVM `kotlinc`, the native image binary requires some configuration. To simplify
@@ -135,3 +141,52 @@ of the native image size.
 dynamically loading currently bundled compiler plugins. This list may not be complete, meaning that attmpting to load other compiler plugins
 may result in a runtime error. In that case, you may need to add the missing packages to the file and rebuild the native image.
 
+## Profile-Guided Optimizations
+
+GraalVM Native Image supports [Profile-Guided Optimizations](https://www.graalvm.org/latest/reference-manual/native-image/optimizations-and-performance/PGO/).
+PGO provides native image a way to compete with JVM's JIT compiler: a way to optimize the performance and size of the native image based
+on the execution profile of the application. However, while JIT can do that at the runtime using the actual runtime behaviour, native image
+requires the profile to be collected ahead of time.
+
+Currently, we do not provide a ready-to-use profile, however our experiments show that even basic up-to-date profile can provide some
+[performance benefits](https://youtrack.jetbrains.com/issue/KT-90902/Native-Image-enable-g1-garbage-collector#focus=Comments-27-14594504.0-0).
+We are planning to collect and provide a comprehensive profile for the Kotlin compiler in the future, for now one can collect a custom profile
+if necessary.
+
+### Collecting a custom profile
+
+To collect a custom profile you need to rebuild the compiler native image with `--pgo-instrument` option. You may use `-Pkotlin.build.native-image.pgo-instrument=true`
+option to do so:
+```bash
+./gradlew -Pkotlin.build.native-image.pgo-instrument=true :kotlin-compiler-native-image:kotlincNativeImageArtifacts
+```
+
+After that, you can use the newly built image to collect a profile on a given workload. You can also specify where to
+store the collected profile using `-XX:ProfilesDumpFile=file.iprof` option, be default it will produce a `default.iprof` file.
+```bash
+./prepare/compiler-native-image/build/dist/bin/kotlinc-native-image.sh -XX:ProfilesDumpFile=prepare/compiler-native-image/kotlin-compiler-embeddable.iprof HelloWorld.kt
+```
+
+You can also collect multiple profiles and merge them into a single file using `native-image-utils`, see [GraalVM documentation](https://www.graalvm.org/latest/reference-manual/native-image/optimizations-and-performance/PGO/merging-profiles/)
+for more details.
+
+## Kotlin Compiler Daemon Native Image
+
+We also provide an option to include the Kotlin Compiler Daemon native image in the distribution, `-Pkotlin.build.native-image.kotlin-daemon=true`.
+Daemon native image is not yet production ready and is not integrated with the Build Tools API. The main purpose of it is to ensure that the
+daemon native image can be compiled and correctly responds to compilation requests.
+
+You can run the native image tests using the native image daemon (instead of CLI native image):
+```bash
+./gradlew -Pkotlin.build.native-image.kotlin-daemon=true :kotlin-compiler-native-image:nativeImageDaemonBoxTest
+```
+
+And update reachability metadata for the daemon:
+```bash
+./gradlew -Pkotlin.build.native-image.kotlin-daemon=true :kotlin-compiler-native-image:generateReachabilityMetadataDaemonBox
+```
+
+Currently, we're using the same `reachability-metadata.json` for both daemon and CLI native image. Ideally, they would be separate and each one
+would include only the classes and methods that are used by the respective native image. However, using the single merged metadata JSON does
+not significantly affect the size of the native image (<1MB change), so it is not worth the effort for now. This is a place to look into 
+when optimizing the native image size in the future.

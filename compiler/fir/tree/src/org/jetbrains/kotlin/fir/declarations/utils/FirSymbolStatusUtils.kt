@@ -53,14 +53,11 @@ inline val FirClassLikeSymbol<*>.isInner: Boolean get() = rawStatus.isInner
 inline val FirClassLikeSymbol<*>.isStatic: Boolean get() = rawStatus.isStatic
 inline val FirClassLikeSymbol<*>.isRichError: Boolean get() = rawStatus.isRichError
 
-@SuspiciousValueClassCheck
-inline val FirClassLikeSymbol<*>.isInline: Boolean get() = rawStatus.isInline
-
-@SuspiciousValueClassCheck
+inline val FirClassLikeSymbol<*>.isInline: Boolean get() = resolvedStatus.isInline
 inline val FirClassLikeSymbol<*>.isValue: Boolean get() = rawStatus.isValue
 
-@OptIn(SuspiciousValueClassCheck::class)
-inline val FirClassLikeSymbol<*>.isInlineOrValue: Boolean get() = isInline || isValue
+@Deprecated("Use `isValue` instead.", ReplaceWith("isValue"), level = ERROR)
+inline val FirClassLikeSymbol<*>.isInlineOrValue: Boolean get() = isValue
 
 inline val FirClassLikeSymbol<*>.isExternal: Boolean get() = rawStatus.isExternal
 inline val FirClassLikeSymbol<*>.isFromSealedClass: Boolean get() = rawStatus.isFromSealedClass

@@ -1,4 +1,7 @@
 public abstract class SIterable /* test.SIterable*/ implements java.lang.Iterable<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  @java.lang.Override()
+  public java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
+
   public  SIterable();//  .ctor()
 }
 

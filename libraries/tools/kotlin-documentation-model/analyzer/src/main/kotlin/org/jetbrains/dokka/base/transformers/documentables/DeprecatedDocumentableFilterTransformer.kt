@@ -22,7 +22,7 @@ import org.jetbrains.dokka.transformers.documentation.sourceSet
  * Documentables with [kotlin.Deprecated.level] set to [DeprecationLevel.HIDDEN]
  * are suppressed regardless of global and package options.
  */
-public class DeprecatedDocumentableFilterTransformer(
+internal class DeprecatedDocumentableFilterTransformer(
     context: DokkaContext
 ) : SuppressedByConditionDocumentableFilterTransformer(context) {
 

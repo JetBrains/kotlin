@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
@@ -35,7 +36,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         val jvmName = declaration.findJvmNameAnnotation() ?: return
         val name = jvmName.findArgumentByName(StandardNames.NAME) ?: return
 
-        if (name.resolvedType != context.session.builtinTypes.stringType.coneType) {
+        if (name.resolvedType != StandardTypes.String) {
             return
         }
 
@@ -45,19 +46,21 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             reporter.reportOn(jvmName.source, FirJvmErrors.ILLEGAL_JVM_NAME)
         }
 
-        if (declaration is FirFunction && !isRenamableFunction(declaration)) {
+        if (declaration is FirCallableDeclaration && !isApplicableTo(declaration)) {
             reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME)
-        } else if (declaration is FirCallableDeclaration) {
-            val containingClass = declaration.getContainingClass()
-
-            if (
-                declaration.isOverride ||
-                containingClass != null && containingClass.modality != Modality.FINAL && declaration.isOverridable ||
-                containingClass?.symbol?.isInlineClassThatRequiresMangling() == true
-            ) {
-                reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME)
-            }
         }
+    }
+
+    /**
+     * Returns `true` when `@JvmName` on [declaration] does not cause [FirJvmErrors.INAPPLICABLE_JVM_NAME].
+     */
+    fun isApplicableTo(declaration: FirCallableDeclaration): Boolean {
+        if (declaration is FirFunction && !isRenamableFunction(declaration)) return false
+
+        val containingClass = declaration.getContainingClass()
+        return !declaration.isOverride &&
+                !(containingClass != null && containingClass.modality != Modality.FINAL && declaration.isOverridable) &&
+                containingClass?.symbol?.isInlineClassThatRequiresMangling() != true
     }
 
     private fun isRenamableFunction(function: FirFunction): Boolean {

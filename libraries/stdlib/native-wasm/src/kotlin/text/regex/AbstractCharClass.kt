@@ -29,23 +29,29 @@ import kotlin.experimental.ExperimentalNativeApi
 import kotlin.collections.associate
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.AtomicReference
-import kotlin.math.min
 import kotlin.native.BitSet
 import kotlin.native.ObsoleteNativeApi
+import kotlin.text.unicode.ExperimentalUnicodeApi
+import kotlin.text.unicode.category
+import kotlin.text.unicode.toCodePoint
 
 /**
  * Unicode category (i.e. Ll, Lu).
  */
 internal open class UnicodeCategory(protected val category: Int) : AbstractCharClass() {
-    override fun contains(ch: Int): Boolean = alt xor (ch.toChar().category.value == category)
+    @OptIn(ExperimentalUnicodeApi::class)
+    override fun contains(ch: Int): Boolean {
+        return alt xor (ch.toCodePoint().category.value == category)
+    }
 }
 
 /**
  * Unicode category scope (i.e IsL, IsM, ...)
  */
 internal class UnicodeCategoryScope(category: Int) : UnicodeCategory(category) {
+    @OptIn(ExperimentalUnicodeApi::class)
     override fun contains(ch: Int): Boolean {
-        return alt xor (((category shr ch.toChar().category.value) and 1) != 0)
+        return alt xor (((category shr ch.toCodePoint().category.value) and 1) != 0)
     }
 }
 
@@ -790,10 +796,11 @@ internal abstract class AbstractCharClass : SpecialToken() {
                     ),
                     true
                 )
+                // TODO: add tests checking that mayContainSupplCodepoints flag is aligned with bundled Unicode table
                 CharClasses.LU -> CachedCategory(CharCategory.UPPERCASE_LETTER.value, true)
                 CharClasses.LL -> CachedCategory(CharCategory.LOWERCASE_LETTER.value, true)
                 CharClasses.LT -> CachedCategory(CharCategory.TITLECASE_LETTER.value, false)
-                CharClasses.LM -> CachedCategory(CharCategory.MODIFIER_LETTER.value, false)
+                CharClasses.LM -> CachedCategory(CharCategory.MODIFIER_LETTER.value, true)
                 CharClasses.LO -> CachedCategory(CharCategory.OTHER_LETTER.value, true)
                 CharClasses.ISM -> CachedCategoryScope(
                     buildMajorCharCategoryMask(
@@ -855,7 +862,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
                     ),
                     true
                 )
-                CharClasses.PD -> CachedCategory(CharCategory.DASH_PUNCTUATION.value, false)
+                CharClasses.PD -> CachedCategory(CharCategory.DASH_PUNCTUATION.value, true)
                 CharClasses.PS -> CachedCategory(CharCategory.START_PUNCTUATION.value, false)
                 CharClasses.PE -> CachedCategory(CharCategory.END_PUNCTUATION.value, false)
                 CharClasses.PC -> CachedCategory(CharCategory.CONNECTOR_PUNCTUATION.value, false)
@@ -870,8 +877,8 @@ internal abstract class AbstractCharClass : SpecialToken() {
                     true
                 )
                 CharClasses.SM -> CachedCategory(CharCategory.MATH_SYMBOL.value, true)
-                CharClasses.SC -> CachedCategory(CharCategory.CURRENCY_SYMBOL.value, false)
-                CharClasses.SK -> CachedCategory(CharCategory.MODIFIER_SYMBOL.value, false)
+                CharClasses.SC -> CachedCategory(CharCategory.CURRENCY_SYMBOL.value, true)
+                CharClasses.SK -> CachedCategory(CharCategory.MODIFIER_SYMBOL.value, true)
                 CharClasses.SO -> CachedCategory(CharCategory.OTHER_SYMBOL.value, true)
                 CharClasses.PI -> CachedCategory(CharCategory.INITIAL_QUOTE_PUNCTUATION.value, false)
                 CharClasses.PF -> CachedCategory(CharCategory.FINAL_QUOTE_PUNCTUATION.value, false)

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -185,6 +185,12 @@ public class FirStandaloneNormalAnalysisSourceModuleOverriddenDeclarationProvide
   @TestMetadata("javaGetterImplementingKotlinProperty_MethodMode.kt")
   public void testJavaGetterImplementingKotlinProperty_MethodMode() {
     run("javaGetterImplementingKotlinProperty_MethodMode.kt");
+  }
+
+  @Test
+  @TestMetadata("javaGetterImplementingKotlinProperty_MethodMode_Plugin.kt")
+  public void testJavaGetterImplementingKotlinProperty_MethodMode_Plugin() {
+    run("javaGetterImplementingKotlinProperty_MethodMode_Plugin.kt");
   }
 
   @Test

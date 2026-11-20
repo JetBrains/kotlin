@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 
 @KtModuleBuilderDsl
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KtModuleBuilder {
     protected val directRegularDependencies: MutableList<KaModule> = mutableListOf()
     protected val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()

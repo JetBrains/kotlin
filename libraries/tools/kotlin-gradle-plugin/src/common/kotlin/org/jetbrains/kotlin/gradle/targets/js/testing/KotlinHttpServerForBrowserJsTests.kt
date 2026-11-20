@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.URI
+import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.extension
@@ -43,16 +44,19 @@ internal abstract class KotlinHttpServerForBrowserJsTests : BuildService<BuildSe
         }
     }
 
-    fun serve(fullTaskPath: String, bundleDirectory: Directory): URI {
-        val path = bundleDirectory.asFile.toPath()
+    /**
+     * Serves files from [directory] at [prefix], i.e. `{serverAddress}/{prefix}/{relative path in directory}`.
+     * Returns the URL with `serverAddress` and [prefix]` i.e. http://localhost:8080/prefix
+     */
+    fun serve(prefix: String, directory: Directory): URI {
+        val path = directory.asFile.toPath()
         require(path.isDirectory()) { "Can't serve files from non-directory $path" }
 
         val server = jdkHttpServer ?: createAndStart()
         check(server.isActive) { "Can't serve files HTTP Server is already stopped" }
 
-        val bundleDirPath = bundleDirectory.asFile.toPath()
-        val url = server.serveStaticFiles(fullTaskPath, bundleDirPath)
-        logger.debug("Serving JS test bundle directory ($bundleDirPath) at $url")
+        val url = server.serveStaticFiles(prefix, path)
+        logger.debug("Serving static files directory ($path) at $url")
         return url
     }
 
@@ -110,18 +114,8 @@ internal class SimpleJdkHttpServer {
 
     init {
         server.createContext("/") { exchange ->
-            val requestPath = exchange.requestURI.path.trimStart('/')
-
-            val (prefix, root) = locator.findClosestGreaterPrefix(requestPath) ?: run {
-                exchange.sendResponseHeaders(404, -1)
-                exchange.close()
-                return@createContext
-            }
-
-            val relativePath = requestPath.removePrefix(prefix).trimStart('/')
-            val file: Path = root.resolve(relativePath).normalize()
-
-            if (!file.startsWith(root) || !file.isRegularFile()) {
+            val file = resolveFile(exchange.requestURI.path)
+            if (file == null) {
                 exchange.sendResponseHeaders(404, -1)
                 exchange.close()
                 return@createContext
@@ -141,7 +135,27 @@ internal class SimpleJdkHttpServer {
         }
     }
 
+    private fun resolveFile(rawRequestPath: String): Path? {
+        val requestPath = rawRequestPath.trimStart('/')
+        val (prefix, dir) = locator.findClosestGreaterPrefix(requestPath) ?: return null
+
+        val relativePath = requestPath.removePrefix(prefix)
+        // prefix should match only complete path segments, e.g. prefix "build/wasm" shouldn't match "build/wasmFoo/file.js"
+        if (relativePath.isNotEmpty() && !relativePath.startsWith('/')) return null
+
+        val file = try {
+            dir.resolve(relativePath.trimStart('/')).normalize()
+        } catch (_: InvalidPathException) {
+            return null
+        }
+
+        if (!file.startsWith(dir) || !file.isRegularFile()) return null
+        return file
+    }
+
     fun serveStaticFiles(prefix: String, location: Path): URI {
+        val prefix = prefix.trim('/')
+        val location = location.toAbsolutePath().normalize()
         val previousLocation = locator.add(prefix, location)
         if (previousLocation != null && previousLocation != location) {
             throw IllegalArgumentException("Can't register path $location at prefix $prefix, as it is already registered to a different location $previousLocation")

@@ -7,7 +7,7 @@ class C {
 
         fun foo() {
             class Local {
-                companion {
+                <!ILLEGAL_COMPANION_BLOCK!>companion<!> {
                     <!COMPANION_BLOCK_NESTED!>companion<!> {
 
                     }

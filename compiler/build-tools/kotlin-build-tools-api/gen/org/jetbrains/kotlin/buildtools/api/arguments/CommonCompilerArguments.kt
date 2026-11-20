@@ -143,9 +143,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Temporarily allow running Kotlin compiler with JDK older than JDK 17. This option will not work starting Kotlin 2.5.20-Beta1. See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_ALLOW_PRE_17_RUNTIME_JDK: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_ALLOW_PRE_17_RUNTIME_JDK", KotlinReleaseVersion(2, 5, 0))
 
@@ -802,6 +805,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_RETURN_VALUE_CHECKER", KotlinReleaseVersion(2, 2, 0))
 
     /**
+     * Enable experimental language support for Rich Errors.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_RICH_ERRORS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_RICH_ERRORS", KotlinReleaseVersion(2, 5, 20))
+
+    /**
      * Allow loading classes with bad metadata versions and pre-release classes.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -919,10 +932,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      *
      * Deprecated in Kotlin version 2.4.20.
+     *
+     * Removed in Kotlin version 2.5.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    @DeprecatedCompilerArgument
+    @RemovedCompilerArgument
     public val X_USE_FIR_LT: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_USE_FIR_LT", KotlinReleaseVersion(1, 7, 0))
 

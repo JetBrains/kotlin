@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
+
+@ObsoleteNpmDependencyModel
 data class NpmEnv(
     val executable: String,
     val ignoreScripts: Boolean,

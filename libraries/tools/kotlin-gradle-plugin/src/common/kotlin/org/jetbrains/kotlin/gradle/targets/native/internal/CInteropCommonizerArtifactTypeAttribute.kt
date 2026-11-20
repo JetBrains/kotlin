@@ -16,6 +16,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute.KLIB
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute.KLIB_COLLECTION_DIR
 import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
@@ -74,6 +75,7 @@ internal object CInteropCommonizerArtifactTypeAttribute {
     abstract class KlibCollectionDirTransform : TransformAction<TransformParameters.None> {
 
         @get:InputArtifact
+        @get:NormalizeLineEndings
         @get:PathSensitive(PathSensitivity.RELATIVE)
         abstract val inputArtifact: Provider<FileSystemLocation>
 

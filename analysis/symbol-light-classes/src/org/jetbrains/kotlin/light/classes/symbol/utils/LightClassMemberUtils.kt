@@ -13,11 +13,21 @@ import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiMethods
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightMethodForDecompiledDeclaration
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.classes.KtExtensibleLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.analysis.api.javaInterop.KaElementJavaView
 import org.jetbrains.kotlin.analysis.api.javaInterop.KaSymbolJavaView
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
+import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethod
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 
@@ -67,6 +77,7 @@ internal object LightClassMemberUtils {
         }
     }
 
+    @OptIn(KtImplementationDetail::class)
     context(session: KaSession)
     fun getLightClassBackingField(
         declarationSymbol: KaSymbol,
@@ -81,11 +92,19 @@ internal object LightClassMemberUtils {
         val declarationSymbolPointer = declarationSymbol.createPointer()
         val declarationSymbolPsi = declarationSymbol.getPsiForMatching()
 
-        return psiClass.fields.find { psiField: PsiField ->
+        val fields = psiClass.candidateMembers(
+            symbol = declarationSymbol,
+            symbolPsi = declarationSymbolPsi,
+            allMembers = PsiClass::getFields,
+            membersByKotlinOrigin = KtExtensibleLightClass::findOwnFieldsByKotlinOrigin,
+        )
+
+        return fields.find { psiField: PsiField ->
             psiField.isCreatedFrom(declarationSymbolPsi, declarationSymbolPointer)
         }
     }
 
+    @OptIn(KtImplementationDetail::class)
     context(session: KaSession)
     fun getLightClassMethods(
         functionSymbol: KaFunctionSymbol,
@@ -96,7 +115,14 @@ internal object LightClassMemberUtils {
         val functionSymbolPsi = functionSymbol.getPsiForMatching()
 
         return getWrappingClasses(functionSymbol)
-            .flatMap { it.methods.asSequence() }
+            .flatMap { wrappingClass ->
+                wrappingClass.candidateMembers(
+                    symbol = functionSymbol,
+                    symbolPsi = functionSymbolPsi,
+                    allMembers = PsiClass::getMethods,
+                    membersByKotlinOrigin = KtExtensibleLightClass::findOwnMethodsByKotlinOrigin,
+                )
+            }
             .filterIsInstance<KtLightMethod>()
             .filter { lightMethod ->
                 when {
@@ -122,6 +148,60 @@ internal object LightClassMemberUtils {
                     else -> false
                 }
             }
+    }
+
+    /**
+     * Returns the members from [allMembers] of this class which [isCreatedFrom] can match for [symbol], in their order in [allMembers].
+     *
+     * A symbol light class answers it from its cached [membersByKotlinOrigin] map by the `kotlinOrigin` of the members of [symbol]
+     * ([lightMemberKotlinOrigin]). The other members are skipped, so the lookup is not a scan of all members for each symbol.
+     *
+     * Members without a pointer match by [symbolPsi] instead, so all members are returned if it differs from that `kotlinOrigin`
+     * and some member has it as its `kotlinOrigin`.
+     */
+    @OptIn(KtImplementationDetail::class)
+    context(_: KaSession)
+    private inline fun <T : PsiMember> PsiClass.candidateMembers(
+        symbol: KaSymbol,
+        symbolPsi: Lazy<KtElement?>,
+        allMembers: PsiClass.() -> Array<T>,
+        membersByKotlinOrigin: KtExtensibleLightClass.(KtElement) -> List<T>,
+    ): List<T> {
+        @Suppress("DEPRECATION")
+        val lightClass = with(LightClassUtil) { asLightClassWithKotlinOriginLookup() } ?: return allMembers().asList()
+        val kotlinOrigin = symbol.lightMemberKotlinOrigin() ?: return allMembers().asList()
+
+        val psiForMatching = symbolPsi.value
+        if (psiForMatching != null && psiForMatching != kotlinOrigin && lightClass.membersByKotlinOrigin(psiForMatching).isNotEmpty()) {
+            return allMembers().asList()
+        }
+
+        return lightClass.membersByKotlinOrigin(kotlinOrigin)
+    }
+
+    /**
+     * Returns the [kotlinOrigin][KaElementJavaView.kotlinOrigin] of every light member created from this symbol, or `null` if the
+     * symbol doesn't fix it.
+     *
+     * A member which [isCreatedFrom] matches by its pointer was created from the same symbol, and its `kotlinOrigin` is computed
+     * from that symbol as here:
+     * - named functions: [SymbolLightMethod];
+     * - property accessors: [SymbolLightAccessorMethod.Companion.getLightMemberOriginForAccessor];
+     * - backing fields: [SymbolLightFieldForProperty];
+     * - enum entries: [SymbolLightClassForClassOrObject.addFieldsForEnumEntries].
+     *
+     * A change there must be mirrored here.
+     * Other symbols, such as constructors and non-source declarations, are matched against all members.
+     */
+    context(_: KaSession)
+    private fun KaSymbol.lightMemberKotlinOrigin(): KtElement? = when (this) {
+        is KaNamedFunctionSymbol -> sourcePsiSafe<KtDeclaration>()
+        is KaPropertyAccessorSymbol -> (containingDeclaration as? KaPropertySymbol)
+            ?.takeIf { it.origin == KaSymbolOrigin.SOURCE }
+            ?.psiSafe<KtDeclaration>()
+        is KaBackingFieldSymbol -> owningProperty.sourcePsiSafe<KtCallableDeclaration>()
+        is KaEnumEntrySymbol -> sourcePsiSafe<KtEnumEntry>()
+        else -> null
     }
 
     context(_: KaSession)

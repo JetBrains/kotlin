@@ -15,9 +15,11 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.getLightClassQualifiedName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import javax.swing.Icon
@@ -36,7 +38,8 @@ abstract class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
     override fun getDelegate(): PsiClass = _delegate
     abstract override fun copy(): KtFakeLightClass
 
-    override fun getQualifiedName(): String? = kotlinOrigin.fqName?.asString()
+    @OptIn(KtImplementationDetail::class)
+    override fun getQualifiedName(): String? = kotlinOrigin.getLightClassQualifiedName()
     abstract override fun getContainingClass(): KtFakeLightClass?
     override fun getNavigationElement(): PsiElement = kotlinOrigin.navigationElement
     override fun getIcon(flags: Int): Icon? = kotlinOrigin.getIcon(flags)

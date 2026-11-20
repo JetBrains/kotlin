@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
-import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeProjection
+import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.types.*
 
 internal class ReflectSignatureParts(
@@ -53,7 +50,7 @@ internal class ReflectSignatureParts(
         get() = null
     override val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?
         get() = (this as AbstractKType).mutableCollectionClass?.qualifiedName?.let(::FqNameUnsafe)
-            ?: (classifier as? KClassImpl<*>)?.classId?.asSingleFqName()?.toUnsafe()
+            ?: (classifier as? MemberContainer<*>)?.classId?.asSingleFqName()?.toUnsafe()
 
     override fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean =
         areEqualKTypes(this as KType, other as KType)
@@ -93,11 +90,11 @@ private object ReflectAnnotationTypeQualifierResolver : AbstractAnnotationTypeQu
 
 private fun KTypeParameterImpl.isFromJava(): Boolean {
     val containingClass = when (val container = container) {
-        is KClassImpl<*> -> container
-        is ReflectKCallable<*> -> container.container as? KClassImpl<*>
+        is MemberContainer<*> -> container
+        is ReflectKCallable<*> -> container.container as? MemberContainer<*>
         else -> null
     }
-    return containingClass != null && containingClass.kmClass == null
+    return containingClass != null && !containingClass.isKotlin
 }
 
 internal fun AbstractKType.enhance(qualifiers: IndexedJavaTypeQualifiers, isSuperTypesEnhancement: Boolean = false): AbstractKType {
@@ -149,7 +146,7 @@ private fun AbstractKType.enhanceInflexible(
 
     val typeConstructor = enhancedClassifier ?: originalClass
     var globalArgIndex = index + 1
-    val enhancedArguments = arguments.map { arg ->
+    val enhancedArguments = arguments.mapIndexed { argIndex, arg ->
         val enhanced = when {
             !shouldEnhanceArguments -> EnhancementResult(null, 0)
             arg != KTypeProjection.STAR ->
@@ -169,8 +166,8 @@ private fun AbstractKType.enhanceInflexible(
         }
         globalArgIndex += enhanced.subtreeSize
         when {
-            enhanced.type != null -> KTypeProjection(arg.variance, enhanced.type)
-            enhancedClassifier != null && arg != KTypeProjection.STAR -> KTypeProjection(arg.variance, arg.type)
+            enhanced.type != null -> createProjection(enhanced.type, arg.variance, typeConstructor, argIndex)
+            enhancedClassifier != null && arg != KTypeProjection.STAR -> createProjection(arg.type, arg.variance, typeConstructor, argIndex)
             enhancedClassifier != null -> KTypeProjection.STAR
             else -> null
         }
@@ -180,8 +177,9 @@ private fun AbstractKType.enhanceInflexible(
     if (enhancedClassifier == null && enhancedNullability == null && enhancedArguments.all { it == null })
         return EnhancementResult(null, subtreeSize)
 
+    val mutableCollectionClass = typeConstructor as? MutableCollectionKClass<*>
     val enhancedType = SimpleKType(
-        typeConstructor,
+        mutableCollectionClass?.readonlyClass ?: typeConstructor,
         enhancedArguments.zip(arguments) { enhanced, original -> enhanced ?: original },
         enhancedNullability ?: isMarkedNullable,
         lazyAnnotations, // In contrast to the compiler, we're not adding synthetic EnhancedNullability/EnhancedMutability annotations.
@@ -189,10 +187,16 @@ private fun AbstractKType.enhanceInflexible(
         isDefinitelyNotNullType || (effectiveQualifiers.definitelyNotNull && !effectiveQualifiers.isNullabilityQualifierForWarning),
         isNothingType,
         isSuspendFunctionType,
-        enhancedClassifier as? MutableCollectionKClass<*>,
+        mutableCollectionClass,
     )
 
     return EnhancementResult(enhancedType, subtreeSize)
+}
+
+private fun createProjection(type: KType?, variance: KVariance?, typeConstructor: KClassifier, index: Int): KTypeProjection {
+    if (variance == null || variance == KVariance.INVARIANT) return KTypeProjection(variance, type)
+    val typeParameter = (typeConstructor as? KClass<*>)?.allTypeParameters()?.getOrNull(index)
+    return KTypeProjection(if (typeParameter?.variance == variance) KVariance.INVARIANT else variance, type)
 }
 
 private fun KClassifier.enhanceMutability(

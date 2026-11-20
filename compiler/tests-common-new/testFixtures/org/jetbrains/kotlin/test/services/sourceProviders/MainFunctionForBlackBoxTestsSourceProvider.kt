@@ -8,15 +8,12 @@ package org.jetbrains.kotlin.test.services.sourceProviders
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
-open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
+abstract class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
         private val PACKAGE_REGEX = """(^|\n)package\s+([\w.]+)""".toRegex()
         private val BOX_METHOD_REGEX = """(^|\n|public\s+)fun\s+box\(\)""".toRegex()
@@ -93,10 +90,6 @@ open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
-        if (REQUIRES_SEPARATE_PROCESS !in module.directives && module.directives.singleOrZeroValue(JDK_KIND)?.requiresSeparateProcess != true) {
-            return emptyList()
-        }
-
         // ModuleStructureExtractor invokes additional source providers before it registers the structure in TestServices.
         // Inspect the original content here instead of asking SourceFileProvider to resolve it through the not-yet-registered structure.
         val fileWithBox = findFileWithBoxMethod(module, SourceContentView.ORIGINAL) ?: return emptyList()

@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.utils.inferReturnTypeByPsi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -70,6 +71,8 @@ internal class KaFirValueParameterSymbol private constructor(
 
     override val returnType: KaType
         get() = withValidityAssertion {
+            backingPsi?.inferReturnTypeByPsi(analysisSession = analysisSession)?.let { return it }
+
             val returnType = firSymbol.resolvedReturnType
             if (firSymbol.isVararg) {
                 builder.typeBuilder.buildKtType(returnType.varargElementType())
@@ -115,7 +118,7 @@ internal class KaFirValueParameterSymbol private constructor(
             if (backingPsi != null && backingPsi.annotationEntries.isEmpty()) {
                 val property = (backingPsi.ownerDeclaration as? KtPropertyAccessor)?.property
                 if (property?.hasAnnotation(AnnotationUseSiteTarget.SETTER_PARAMETER) != true) {
-                    return@withValidityAssertion KaBaseEmptyAnnotationList(token)
+                    return@withValidityAssertion KaFirEmptyAnnotationList(token)
                 }
             }
 

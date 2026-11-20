@@ -12,7 +12,7 @@
     <properties>
         <kotlin.compiler.jdkHome>${kotlinCompilerJdk}</kotlin.compiler.jdkHome>
         <junit.version>4.13.1</junit.version>
-        <dagger.version>2.9</dagger.version>
+        <dagger.version>2.60.1</dagger.version>
         <main.class>coffee.CoffeeApp</main.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -26,6 +26,11 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-metadata-jvm</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
@@ -45,6 +50,10 @@
                 <extensions>true</extensions>
 
                 <configuration>
+                    <args>
+                        <arg>-Xskip-metadata-version-check</arg>
+                        <arg>-Xskip-prerelease-check</arg>
+                    </args>
                     <compilerPlugins>
                         <plugin>all-open</plugin>
                     </compilerPlugins>
@@ -52,6 +61,11 @@
                         <option>all-open:annotation=coffee.AllOpen</option>
                     </pluginOptions>
                     <annotationProcessorPaths>
+                        <annotationProcessorPath>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-metadata-jvm</artifactId>
+                            <version>${kotlin.version}</version>
+                        </annotationProcessorPath>
                         <annotationProcessorPath>
                             <groupId>com.google.dagger</groupId>
                             <artifactId>dagger-compiler</artifactId>

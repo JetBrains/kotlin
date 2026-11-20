@@ -9,12 +9,12 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.Documentable
 
 @InternalDokkaApi
-public interface InheritanceBuilder {
-    public fun build(documentables: Map<DRI, Documentable>): List<InheritanceNode>
+internal interface InheritanceBuilder {
+    fun build(documentables: Map<DRI, Documentable>): List<InheritanceNode>
 }
 
 @InternalDokkaApi
-public data class InheritanceNode(
+internal data class InheritanceNode(
     val dri: DRI,
     val children: List<InheritanceNode> = emptyList(),
     val interfaces: List<DRI> = emptyList(),

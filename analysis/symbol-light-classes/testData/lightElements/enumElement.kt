@@ -1,5 +1,6 @@
 // EXPECTED: org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry(AA)
 // EXPECTED: org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry(AA)
+// EXPECTED_BY_PSI: org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry(AA)
 
 enum class MyEnum {
     A<caret>A {

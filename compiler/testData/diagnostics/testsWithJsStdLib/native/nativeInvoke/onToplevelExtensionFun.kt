@@ -1,8 +1,8 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER, -DEPRECATION
 
-@nativeInvoke
+<!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeInvoke<!>
 fun Int.ext() = 1
 
-@nativeInvoke
+<!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeInvoke<!>
 fun Int.invoke(a: String, b: Int) = "OK"

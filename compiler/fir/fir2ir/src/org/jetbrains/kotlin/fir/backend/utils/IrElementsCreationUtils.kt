@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -129,6 +129,40 @@ fun Fir2IrComponents.createWhenForSafeFall(
     }
 }
 
+
+fun Fir2IrComponents.createErrorSafeCallConstruction(
+    receiverVariable: IrVariable,
+    receiverVariableSymbol: IrValueSymbol,
+    expressionOnNotError: IrExpression,
+    resultType: IrType,
+): IrExpression {
+    val startOffset = expressionOnNotError.startOffset
+    val endOffset = expressionOnNotError.endOffset
+
+    return IrBlockImpl(startOffset, endOffset, resultType, ERROR_SAFE_CALL).apply {
+        statements += receiverVariable
+
+        val startOffset = expressionOnNotError.startOffset
+        val endOffset = expressionOnNotError.endOffset
+
+        statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
+            val condition = IrTypeOperatorCallImpl(
+                startOffset, endOffset, builtins.booleanType,
+                INSTANCEOF,
+                StandardTypes.RichError.toIrType(),
+                IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
+            )
+            branches += IrBranchImpl(
+                condition, IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
+            )
+            branches += IrElseBranchImpl(
+                IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
+                expressionOnNotError
+            )
+        }
+    }
+}
+
 fun Fir2IrConversionScope.createTemporaryVariable(
     receiverExpression: IrExpression,
     nameHint: String? = null
@@ -147,7 +181,7 @@ fun Fir2IrConversionScope.createTemporaryVariableForSafeCallConstruction(
 fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<IrSimpleType>? {
     val valueClassRepresentation = klass.valueClassRepresentation
     if (valueClassRepresentation == null) {
-        require(!klass.isInlineOrValue || klass.isExpect) {
+        require(!klass.isValue || klass.isExpect) {
             "Value class has no representation: ${klass.render()}"
         }
         return null

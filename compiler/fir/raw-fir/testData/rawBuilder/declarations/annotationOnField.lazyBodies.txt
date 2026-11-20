@@ -24,7 +24,7 @@ FILE: annotationOnField.kt
         field:@FIELD:Ann() protected final? val simplePropertyWithAnnotationList: String = LAZY_EXPRESSION
             protected [ContainingClassKey=SomeClass] get(): String
 
-        field:@FIELD:Ann() protected final? val delegatedProperty: Stringby LAZY_EXPRESSION
+        field:@FIELD:Ann() protected final? val delegatedProperty: String by LAZY_EXPRESSION
             protected [ContainingClassKey=SomeClass] get(): <implicit> { LAZY_BLOCK }
 
         field:@FIELD:Ann() public? final? val propertyWithCustomGetter: Int

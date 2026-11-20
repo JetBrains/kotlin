@@ -59,7 +59,12 @@ open class LazyStorage<KEY, VALUE>(
         return storage ?: createMap().also { storage = it }
     }
 
-    private fun createMap() = PersistentHashMap(storageFile.toPath(), keyDescriptor, valueExternalizer)
+    private fun createMap(): PersistentHashMap<KEY, VALUE> {
+        // Note: if we are not creating the dir in advance, the map ctor
+        // will do that along with forceful Thread.sleep(10). See `ResizeableMappedFile()`
+        storageFile.parentFile?.mkdirs()
+        return PersistentHashMap(storageFile.toPath(), keyDescriptor, valueExternalizer)
+    }
 
     @get:Synchronized
     override val keys: Set<KEY>

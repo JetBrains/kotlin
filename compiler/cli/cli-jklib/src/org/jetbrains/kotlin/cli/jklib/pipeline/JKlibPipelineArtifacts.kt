@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.jklib.pipeline
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
@@ -16,11 +15,12 @@ import org.jetbrains.kotlin.cli.pipeline.PipelineArtifactWithExitCode
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.library.KotlinLibrary
 
 data class JKlibFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
+    val resolvedLibraries: List<KotlinLibrary>,
     val projectEnvironment: VfsBasedProjectEnvironment,
     val rootDisposable: Disposable,
 ) : FrontendPipelineArtifact() {
@@ -39,6 +39,7 @@ data class JKlibFir2IrPipelineArtifact(
     override val result: Fir2IrActualizedResult,
     override val configuration: CompilerConfiguration,
     val frontendOutput: AllModulesFrontendOutput,
+    val resolvedLibraries: List<KotlinLibrary>,
     val projectEnvironment: VfsBasedProjectEnvironment,
     val rootDisposable: Disposable,
 ) : Fir2IrPipelineArtifact() {
@@ -53,18 +54,6 @@ data class JKlibSerializationArtifact(
     override val configuration: CompilerConfiguration,
     val projectEnvironment: VfsBasedProjectEnvironment,
     val rootDisposable: Disposable,
-    override val exitCode: ExitCode = ExitCode.OK,
-) : PipelineArtifactWithExitCode() {
-    @CliPipelineInternals(OPT_IN_MESSAGE)
-    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): PipelineArtifact {
-        return copy(configuration = newConfiguration)
-    }
-}
-
-data class JKlibIrCompilationArtifact(
-    val pluginContext: IrPluginContext,
-    val moduleFragment: IrModuleFragment,
-    override val configuration: CompilerConfiguration,
     override val exitCode: ExitCode = ExitCode.OK,
 ) : PipelineArtifactWithExitCode() {
     @CliPipelineInternals(OPT_IN_MESSAGE)

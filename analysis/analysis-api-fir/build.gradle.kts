@@ -10,25 +10,27 @@ plugins {
     id("test-inputs-check")
 }
 
+val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
+    isTransitive = false
+}
+
 dependencies {
+    jvmAbiGenPlugin(project(":plugins:jvm-abi-gen"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:language.targets.jvm"))
     implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":compiler:ir.tree"))
     implementation(project(":compiler:cli-base"))
-    implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:frontend.java"))
-    implementation(project(":compiler:ir.psi2ir"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":analysis:low-level-api-fir"))
     api(project(":analysis:analysis-api"))
-    api(project(":analysis:analysis-api-impl-base"))
+    api(project(":analysis:analysis-api-platform-interface"))
     api(project(":analysis:light-classes-base"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
+    implementation(project(":core:descriptors.jvm"))
     api(intellijCore())
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:analysis-api-fir-diagnostics"))
-    implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:symbol-light-classes"))
     implementation(project(":native:native.config"))
     implementation(libs.caffeine)
@@ -36,11 +38,12 @@ dependencies {
 
     testFixturesImplementation(testFixtures(project(":analysis:low-level-api-fir")))
     testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
-    testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testFixturesImplementation(project(":core:error.handling"))
+    testFixturesImplementation(project(":compiler:psi:psi-utils"))
+    testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
 
     testFixturesImplementation(kotlinTest("junit5"))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
@@ -77,6 +80,8 @@ projectTests {
                 includeAutoSamples(percentage = 3)
             }
         }
+
+        addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.api.fir.test.TestGeneratorKt")

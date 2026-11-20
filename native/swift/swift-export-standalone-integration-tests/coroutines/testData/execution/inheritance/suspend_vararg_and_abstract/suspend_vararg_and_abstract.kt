@@ -9,9 +9,10 @@ open class AsyncVararg {
 
 suspend fun callJoin(v: AsyncVararg): String = v.join("a", "b", "c")
 
-
-abstract class AbstractAsyncVarargRoot {
-    abstract suspend fun abstractJoin(vararg parts: String): String
+abstract class AsyncAbstractRoot {
+    abstract suspend fun abstractGreet(): String
+    open suspend fun concreteGreet(): String = "kotlin-concrete"
 }
 
-suspend fun callAbstractJoin(value: AbstractAsyncVarargRoot): String = value.abstractJoin("a", "b", "c")
+suspend fun callAbstractGreet(value: AsyncAbstractRoot): String = value.abstractGreet()
+suspend fun callConcreteGreet(value: AsyncAbstractRoot): String = value.concreteGreet()

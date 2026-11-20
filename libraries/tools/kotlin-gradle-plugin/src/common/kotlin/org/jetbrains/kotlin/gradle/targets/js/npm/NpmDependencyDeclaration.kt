@@ -7,12 +7,17 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
+import org.jetbrains.kotlin.gradle.npm.encodedVersionSpec
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.Serializable
 
 @InternalKotlinGradlePluginApi
+@ObsoleteNpmDependencyModel
 data class NpmDependencyDeclaration(
     @Input
     @Suppress("DEPRECATION")
@@ -20,13 +25,15 @@ data class NpmDependencyDeclaration(
     @Input
     val name: String,
     @Input
-    val version: String
+    val version: String,
 ) : Serializable
 
 @InternalKotlinGradlePluginApi
+@ObsoleteNpmDependencyModel
 fun NpmDependencyDeclaration.uniqueRepresentation() =
     "$scope $name:$version"
 
+@ObsoleteNpmDependencyModel
 internal fun NpmDependencyDeprecated.toNpmDependencyDeclaration(): NpmDependencyDeclaration =
     NpmDependencyDeclaration(
         scope = this.scope,
@@ -34,17 +41,35 @@ internal fun NpmDependencyDeprecated.toNpmDependencyDeclaration(): NpmDependency
         version = this.version,
     )
 
-internal fun KotlinNpmDependency.toNpmDependencyDeclaration(): NpmDependencyDeclaration =
-    NpmDependencyDeclaration(
-        scope = this.scope.toDeprecatedScope(),
-        name = this.name,
-        version = this.version,
-    )
-
-internal fun KotlinNpmDependency.Scope.toDeprecatedScope(): NpmDependencyScopeDeprecated =
-    when (this) {
-        KotlinNpmDependency.Scope.NORMAL -> NpmDependencyScopeDeprecated.NORMAL
-        KotlinNpmDependency.Scope.DEV -> NpmDependencyScopeDeprecated.DEV
-        KotlinNpmDependency.Scope.OPTIONAL -> NpmDependencyScopeDeprecated.OPTIONAL
-        KotlinNpmDependency.Scope.PEER -> NpmDependencyScopeDeprecated.PEER
+@ObsoleteNpmDependencyModel
+internal fun KotlinNpmDependency.toNpmDependencyDeclaration(): Provider<NpmDependencyDeclaration> {
+    return encodedVersionSpec().map { version ->
+        NpmDependencyDeclaration(
+            scope = this.dependencyType.toDeprecatedScope(),
+            name = this.name,
+            version = version,
+        )
     }
+}
+
+internal fun KotlinNpmDependency.DependencyType.toDeprecatedScope(): NpmDependencyScopeDeprecated =
+    when (this) {
+        KotlinNpmDependency.DependencyType.NORMAL -> NpmDependencyScopeDeprecated.NORMAL
+        KotlinNpmDependency.DependencyType.DEV -> NpmDependencyScopeDeprecated.DEV
+        KotlinNpmDependency.DependencyType.OPTIONAL -> NpmDependencyScopeDeprecated.OPTIONAL
+        KotlinNpmDependency.DependencyType.PEER -> NpmDependencyScopeDeprecated.PEER
+    }
+
+internal fun NpmDependencyDeprecated.toKotlinNpmDependency(
+    providers: ProviderFactory,
+): KotlinNpmDependency =
+    KotlinNpmDependency(
+        name = name,
+        version = providers.provider { version },
+        dependencyType = when (scope) {
+            NpmDependencyScopeDeprecated.NORMAL -> KotlinNpmDependency.DependencyType.NORMAL
+            NpmDependencyScopeDeprecated.DEV -> KotlinNpmDependency.DependencyType.DEV
+            NpmDependencyScopeDeprecated.OPTIONAL -> KotlinNpmDependency.DependencyType.OPTIONAL
+            NpmDependencyScopeDeprecated.PEER -> KotlinNpmDependency.DependencyType.PEER
+        },
+    )

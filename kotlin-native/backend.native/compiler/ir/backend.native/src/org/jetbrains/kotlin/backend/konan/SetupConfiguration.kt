@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING
@@ -51,7 +52,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.toList())
 
     if (arguments.optimization && arguments.debug) {
-        report(KONAN_ARGUMENT_WARNING, "Unsupported combination of flags: -opt and -g. Please pick one.")
+        report(KONAN_ARGUMENT_ERROR, "Unsupported combination of flags: -opt and -g. Please pick one.")
     }
 
     val outputKind = konanProducedArtifactKind!!
@@ -262,9 +263,10 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     konanTarget = config.target.toString()
     put(DEBUG, config.debug)
     put(OPTIMIZATION, config.optimizationsEnabled)
+    put(ENABLE_ASSERTIONS, config.assertsEnabled)
     put(BinaryOptions.enableReleaseBinaryCache, config.enableReleaseBinaryCache)
     config.configuration.phaseConfig?.let { phaseConfig = it }
-    setupPartialLinkageConfig(config.partialLinkageConfig)
+    setupPartialLinkageConfig(config.configuration.partialLinkageConfig)
     putIfNotNull(EXTERNAL_DEPENDENCIES, config.externalDependenciesFile?.absolutePathString())
     put(PROPERTY_LAZY_INITIALIZATION, config.propertyLazyInitialization)
     put(BinaryOptions.genericSafeCasts, config.genericSafeCasts)
@@ -279,6 +281,15 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     putIfNotNull(BinaryOptions.minidumpLocation, config.minidumpLocation)
     putIfNotNull(BinaryOptions.macabi, config.macabi)
     putIfNotNull(BinaryOptions.cCallMode, config.cCallMode)
+    put(BinaryOptions.latin1Strings, config.latin1Strings)
+    put(BinaryOptions.stackProtector, config.stackProtectorMode)
+    putIfNotNull(BinaryOptions.sanitizer, config.sanitizer)
+    put(BinaryOptions.disableMmap, config.disableMmap)
+    put(BinaryOptions.gcMarkSingleThreaded, config.gcMarkSingleThreaded)
+    put(BinaryOptions.fixedBlockPageSize, config.fixedBlockPageSize)
+    put(BinaryOptions.pagedAllocator, config.pagedAllocator)
+    put(BinaryOptions.concurrentWeakSweep, config.concurrentWeakSweep)
+    put(BinaryOptions.checkStateAtExternalCalls, config.checkStateAtExternalCalls)
     putIfNotNull(RUNTIME_LOGS, config.configuration.runtimeLogs)
 }
 

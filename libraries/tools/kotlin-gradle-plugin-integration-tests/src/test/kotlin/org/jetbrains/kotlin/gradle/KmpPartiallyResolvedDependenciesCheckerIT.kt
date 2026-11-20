@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsBecauseOfJsAn
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
-import org.jetbrains.kotlin.gradle.testbase.suppressAgpWarningIsProperty
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
@@ -34,10 +33,12 @@ import org.jetbrains.kotlin.gradle.uklibs.includeBuild
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.gradle.uklibs.publishJava
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Tests for diagnostic about partially unresolved KMP dependencies")
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
 
     @GradleTest
@@ -257,7 +258,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
             include(producer, "producer")
         }
 
-        consumer.build("compileKotlinLinuxArm64", buildOptions = buildOpions.suppressAgpWarningIsProperty(gradleVersion)) {
+        consumer.build("compileKotlinLinuxArm64") {
             assertOutputDoesNotContain("Configuration 'jvmCompileClasspath' was resolved during configuration time")
             assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
         }
@@ -347,7 +348,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     jvm()
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
 
                     sourceSets.commonMain.dependencies {
@@ -379,7 +380,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
                     project.applyMultiplatform {
                         jvm()
                         iosArm64()
-                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                         iosX64()
                         sourceSets.getByName("commonMain").compileStubSourceWithSourceSetName()
                         sourceSets.commonMain.dependencies {
@@ -443,7 +444,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
                     project.applyMultiplatform {
                         jvm()
                         iosArm64()
-                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                         iosX64()
                         sourceSets.getByName("commonMain").compileStubSourceWithSourceSetName()
                         sourceSets.commonMain.dependencies {

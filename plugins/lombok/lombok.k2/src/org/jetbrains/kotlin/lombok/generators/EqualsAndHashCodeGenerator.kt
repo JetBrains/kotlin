@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.builtins.StandardNames.EQUALS_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -26,7 +28,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.lombokService
@@ -89,6 +90,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
                     LombokNames.EQUALS_AND_HASH_CODE,
                     LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID.asSingleFqName(),
                     LombokNames.EQUALS_AND_HASH_CODE_EXCLUDE_ID.asSingleFqName(),
+                    LombokNames.DATA,
                 )
             )
         }
@@ -102,8 +104,9 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
         session.firCachesFactory.createCache(::initializeMembersIfNeeded)
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        val members = cache.getValue(classSymbol, context) ?: return emptySet()
-        return if (members.canEqual != null) callableNames + LombokNames.CAN_EQUAL else callableNames
+        // This can be called as early as the SUPERTYPES stage, so only cheap syntactic checks are allowed here:
+        // the names are over-approximated, and `generateFunctions` decides what is actually generated (KT-90086).
+        return if (getApplicableAnnotation(classSymbol) != null) callableNames + LombokNames.CAN_EQUAL else emptySet()
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
@@ -119,21 +122,31 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
         )
     }
 
+    /**
+     * The `@EqualsAndHashCode` (or `@Data`) configuration of [classSymbol] if it is a class `equals`/`hashCode` may be
+     * generated for. Only a plain class gets them: an annotation class can hold no member at all, an enum's
+     * `equals`/`hashCode` are final, and an object is compared by identity. Every other kind is already reported as
+     * `ANNOTATION_HAS_NO_EFFECT`.
+     */
+    private fun getApplicableAnnotation(classSymbol: FirClassSymbol<*>): ConeLombokAnnotations.EqualsAndHashCode? {
+        if (classSymbol !is FirRegularClassSymbol || !classSymbol.isPlainClass) return null
+        return session.lombokService.getEqualsAndHashCode(classSymbol)
+    }
+
     private fun initializeMembersIfNeeded(
         classSymbol: FirClassSymbol<*>,
         context: MemberGenerationContext,
     ): EqualsAndHashCodeMembers? {
-        // Only a plain class gets `equals`/`hashCode`: an annotation class can hold no member at all, an enum's
-        // `equals`/`hashCode` are final, and an object is compared by identity. Every other kind is already
-        // reported as `ANNOTATION_HAS_NO_EFFECT`.
-        if (classSymbol !is FirRegularClassSymbol || !classSymbol.isPlainClass) return null
-
-        val annotation = session.lombokService.getEqualsAndHashCode(classSymbol) ?: return null
+        if (classSymbol !is FirRegularClassSymbol) return null
+        val annotation = getApplicableAnnotation(classSymbol) ?: return null
         val declaredScope = context.declaredScope
 
         // Skip-both rule: if the user has explicitly declared either `equals` or `hashCode`, generate neither.
         // The checker reports the partial-override error or the "both already exist" warning.
         if (hasUserDeclaredEqualsOrHashCode(declaredScope)) return null
+
+        // The same is true for value classes, as equals/hashCode are reserved for them
+        if (classSymbol.isValue) return null
 
         // A user-declared `canEqual` is called by `equals` as is: generating one on top would clash with it on the JVM.
         val hasUserDeclaredCanEqual = hasUserDeclaredCanEqual(declaredScope)
@@ -170,7 +183,8 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
             visibility = Visibilities.Public,
             modality = Modality.OPEN,
             isOverride = true,
-            createKey = { key },
+            isOperator = true,
+            key = key,
         )
         val hashCodeSymbol = createJavaOrKotlinMemberFunction(
             owner = classSymbol,
@@ -180,7 +194,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
             visibility = Visibilities.Public,
             modality = Modality.OPEN,
             isOverride = true,
-            createKey = { key },
+            key = key,
         )
         val canEqualSymbol = runIf(generatesCanEqual) {
             createJavaOrKotlinMemberFunction(
@@ -188,10 +202,10 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
                 name = LombokNames.CAN_EQUAL,
                 valueParameters = listOf(ConeLombokValueParameter(OTHER, session.builtinTypes.nullableAnyType)),
                 returnTypeRef = session.builtinTypes.booleanType,
-                visibility = Visibilities.Protected,
+                visibility = if (classSymbol.hasJavaOrigin) JavaVisibilities.ProtectedAndPackage else Visibilities.Protected,
                 modality = Modality.OPEN,
                 isOverride = superclassCanEqual != null,
-                createKey = { key },
+                key = key,
             )
         }
 
@@ -199,9 +213,9 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
     }
 
     /**
-     * Whether [this] is final, without resolving [FirRegularClassSymbol.resolvedStatus]: this can be called from
-     * `getCallableNamesForClass`, itself callable as early as the SUPERTYPES stage, at which point requesting a
-     * lazy resolve to STATUS - even for this class's own declaration - is a phase contract violation.
+     * Whether [this] is final, without resolving [FirRegularClassSymbol.resolvedStatus]: the members can be requested
+     * before the STATUS stage, at which point requesting a lazy resolve to STATUS - even for this class's own
+     * declaration - is a phase contract violation.
      *
      * A `null` raw modality is read as final: a class with no modality modifier is final by default.
      */
@@ -217,7 +231,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
 
             // Match the canonical `equals(other: Any?)` or `hashCode` signatures only.
             found = found || (it.name == EQUALS_NAME &&
-                    it.valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isNullableAny == true ||
+                    it.valueParameterSymbols.singleOrNull()?.isAnyOrJavaObjectType == true ||
                     it.name == HASHCODE_NAME &&
                     it.valueParameterSymbols.isEmpty())
         }

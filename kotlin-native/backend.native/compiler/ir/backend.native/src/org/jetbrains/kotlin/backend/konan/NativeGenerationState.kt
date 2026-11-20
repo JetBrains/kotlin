@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModulesConfig
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
+import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
@@ -58,13 +59,16 @@ internal class NativeGenerationState(
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
         val context: NativeBackendContext,
-        val cacheDeserializationStrategy: CacheDeserializationStrategy?,
+        val cacheInfo: PartialCacheInfo?,
         val dependenciesTracker: DependenciesTracker,
         val llvmModuleSpecification: LlvmModuleSpecification,
         val outputFiles: OutputFiles,
         val llvmModuleName: String,
         override val performanceManager: PerformanceManager?,
 ) : BasicNativeBackendPhaseContext(config), NativeLoweringContext by context, LlvmIrHolder, BitcodePostProcessingContext {
+    val cacheDeserializationStrategy: CacheDeserializationStrategy?
+        get() = cacheInfo?.strategy
+
     val outputFile = outputFiles.mainFileName
 
     var klibHash: FingerprintHash = FingerprintHash(Hash128Bits(0U, 0U))

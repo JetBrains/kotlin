@@ -16,6 +16,7 @@ enum class TestSubset {
     ContractTestsForCoreLibs,
     ContractTestsForAnalysisApi,
     ContractTestsForBuildToolsApi,
+    ContractTestsForBuildToolsLibraries,
     ContractTestsForSwiftExport,
     ContractTestsForCompilerPlugins,
     ContractTestsForDocumentationModel,
@@ -38,6 +39,7 @@ fun contractTestsSubsetOf(domain: Domain): TestSubset = when (domain) {
     Domain.CoreLibs -> TestSubset.ContractTestsForCoreLibs
     Domain.AnalysisApi -> TestSubset.ContractTestsForAnalysisApi
     Domain.BuildToolsApi -> TestSubset.ContractTestsForBuildToolsApi
+    Domain.BuildToolsLibraries -> TestSubset.ContractTestsForBuildToolsLibraries
     Domain.SwiftExport -> TestSubset.ContractTestsForSwiftExport
     Domain.CompilerPlugins -> TestSubset.ContractTestsForCompilerPlugins
     Domain.DocumentationModel -> TestSubset.ContractTestsForDocumentationModel
@@ -59,6 +61,7 @@ val contractSubsets = setOf(
     TestSubset.ContractTestsForCoreLibs,
     TestSubset.ContractTestsForAnalysisApi,
     TestSubset.ContractTestsForBuildToolsApi,
+    TestSubset.ContractTestsForBuildToolsLibraries,
     TestSubset.ContractTestsForSwiftExport,
     TestSubset.ContractTestsForCompilerPlugins,
     TestSubset.ContractTestsForDocumentationModel,

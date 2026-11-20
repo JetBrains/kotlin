@@ -16,6 +16,6 @@ import org.jetbrains.dokka.analysis.test.api.util.AnalysisTestDslMarker
  * and then passed as input files into it.
  */
 @AnalysisTestDslMarker
-interface TestData {
+internal interface TestData {
     fun getFiles(): List<TestDataFile>
 }

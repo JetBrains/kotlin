@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
+import org.jetbrains.kotlin.light.classes.symbol.classes.hasFieldInClassFile
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
@@ -61,6 +62,7 @@ internal class SymbolLightFieldForProperty private constructor(
         containingClass = containingClass,
         lightMemberOrigin = lightMemberOrigin,
         isStatic = isStatic,
+        // `LightClassMemberUtils.lightMemberKotlinOrigin` relies on this `kotlinOrigin`
         kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
         symbolPointer = backingFieldSymbol.createPointer(),
     )
@@ -110,11 +112,12 @@ internal class SymbolLightFieldForProperty private constructor(
     private val _name: String by lazyPub {
         withPropertySymbol { symbol ->
             val propertyName = symbol.name
-            if (symbol.isJvmField) {
+            if (symbol.hasPublicApiField) {
                 return@withPropertySymbol propertyName.asString()
             }
 
-            val baseFieldName = propertyName.asString() + if (symbol.isDelegated) {
+            val isDelegated = symbol.isDelegated
+            val baseFieldName = propertyName.asString() + if (isDelegated) {
                 JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX
             } else {
                 ""
@@ -123,56 +126,64 @@ internal class SymbolLightFieldForProperty private constructor(
             val containingClass = this@SymbolLightFieldForProperty.containingClass as? SymbolLightClassForNamedClassLike
                 ?: return@withPropertySymbol baseFieldName
 
-            if (hasClash(propertyName, containingClass)) "$baseFieldName$1" else baseFieldName
+            if (hasClash(propertyName, isDelegated, containingClass)) "$baseFieldName$1" else baseFieldName
         }
     }
 
     /**
-     * Checks if the property name clashes with a higher-priority member in the containing class.
+     * Whether the JVM backend renames the field of this property because another field of the class has the same name.
+     *
+     * `RenameFieldsLowering` lets public API fields claim their names first, then static fields, and then instance fields, and it renames a
+     * field whose name is already claimed:
+     * - A public API field, see [hasPublicApiField], keeps its name, so it isn't checked here.
+     * - The static field of a companion object or companion block property is renamed if a public API instance field, such as a `@JvmField`
+     *   or `lateinit` one, or an enum entry has the same name. Neither of them is delegated, so the `$delegate` field of a delegated
+     *   property never clashes with them.
+     * - An instance field is renamed if a static field has the same name, see [hasFieldWithSameName].
+     *
+     * [isDelegated] tells whether this property is delegated, which gives its field the `$delegate` suffix.
      */
-    private fun hasClash(propertyName: Name, containingClass: SymbolLightClassForNamedClassLike): Boolean {
+    private fun hasClash(propertyName: Name, isDelegated: Boolean, containingClass: SymbolLightClassForNamedClassLike): Boolean {
+        if (isStatic && isDelegated) return false
+
         return containingClass.withClassSymbol { classSymbol ->
             if (isStatic) {
-                // Class fields are preferred to the companion ones only in the case of JvmField
                 classSymbol.declaredMemberScope
                     .callables(propertyName)
                     .filterIsInstance<KaPropertySymbol>()
-                    .any(KaPropertySymbol::isJvmField) ||
-                        // Enum entries are always preferred to the companion fields
+                    .any(KaPropertySymbol::hasPublicApiField) ||
                         (containingClass.isEnum &&
                                 classSymbol.staticDeclaredMemberScope
                                     .callables(propertyName)
                                     .filterIsInstance<KaEnumEntrySymbol>()
                                     .any())
             } else {
-                // Companion object fields are preferred to the class ones
-                classSymbol.companionObject
-                    ?.declaredMemberScope
-                    ?.callables(propertyName)
-                    ?.filterIsInstance<KaPropertySymbol>()
-                    .orEmpty()
-                    .any()
+                val companionObjectProperties = classSymbol.companionObject?.declaredMemberScope?.callables(propertyName).orEmpty()
+                val companionBlockProperties = classSymbol.staticDeclaredMemberScope.callables(propertyName)
+                (companionObjectProperties + companionBlockProperties)
+                    .filterIsInstance<KaPropertySymbol>()
+                    .any { it.hasFieldWithSameName(isDelegated) }
             }
         }
     }
+
+    /**
+     * Whether the field of this property in the class file has the same name as the light field, given that both properties have the same
+     * name. The field of a delegated property has the `$delegate` suffix, so it doesn't clash with the field of a regular property, and
+     * [isDelegated] tells whether the property of the light field is delegated. A `@JvmSynthetic` field has no light field, but it still
+     * takes its name in the class file.
+     */
+    private fun KaPropertySymbol.hasFieldWithSameName(isDelegated: Boolean): Boolean =
+        this.isDelegated == isDelegated && hasFieldInClassFile
 
     override fun getName(): String = _name
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
-            val visibility = withPropertySymbol { propertySymbol ->
-                when {
-                    propertySymbol.visibility == KaSymbolVisibility.PRIVATE -> PsiModifier.PRIVATE
-                    propertySymbol.canHaveNonPrivateField -> {
-                        val declaration = propertySymbol.setter ?: propertySymbol
-                        declaration.toPsiVisibilityForMember()
-                    }
-                    else -> PsiModifier.PRIVATE
-                }
-            }
-
+            val visibility = withPropertySymbol { it.fieldVisibility.toPsiVisibilityForMember() }
             GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(visibility)
         }
+
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
             val modality = withPropertySymbol { propertySymbol ->
                 if (propertySymbol.isVal || propertySymbol.isDelegated) {
@@ -264,7 +275,7 @@ internal class SymbolLightFieldForProperty private constructor(
     override fun getInitializer(): PsiExpression? = _initializer
 
     private val _constantValue by lazyPub {
-        _initializerValue?.value?.takeIf {
+        _initializerValue?.jvmValue?.takeIf {
             withPropertySymbol { propertySymbol ->
                 // val => final
                 propertySymbol.isVal &&
@@ -298,3 +309,21 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: propertySymbolPointer.isValid(useSiteModule)
 }
+
+/**
+ * The Kotlin visibility of the field of this property.
+ */
+private val KaPropertySymbol.fieldVisibility: KaSymbolVisibility
+    get() = when {
+        visibility == KaSymbolVisibility.PRIVATE || !canHaveNonPrivateField -> KaSymbolVisibility.PRIVATE
+        else -> (setter ?: this).visibility
+    }
+
+/**
+ * Whether the field of this property is public API, i.e., public or protected, so the JVM backend keeps its name on a clash.
+ */
+private val KaPropertySymbol.hasPublicApiField: Boolean
+    get() = when (fieldVisibility) {
+        KaSymbolVisibility.PUBLIC, KaSymbolVisibility.PROTECTED -> true
+        else -> false
+    }

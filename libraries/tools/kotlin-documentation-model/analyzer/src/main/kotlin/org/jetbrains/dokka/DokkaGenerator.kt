@@ -16,12 +16,12 @@ import org.jetbrains.dokka.utilities.DokkaLogger
  *
  * [generate] method has been split into submethods for test reasons
  */
-public class DokkaGenerator(
+internal class DokkaGenerator(
     private val configuration: DokkaConfiguration,
     private val logger: DokkaLogger
 ) {
 
-    public fun generate() {
+    fun generate() {
         timed(logger) {
             report("Initializing plugins")
             val context = initializePlugins(configuration, logger)
@@ -37,7 +37,7 @@ public class DokkaGenerator(
         }.dump("\n\n === TIME MEASUREMENT ===\n")
     }
 
-    public fun initializePlugins(
+    fun initializePlugins(
         configuration: DokkaConfiguration,
         logger: DokkaLogger,
         additionalPlugins: List<DokkaPlugin> = emptyList()
@@ -51,15 +51,15 @@ public class DokkaGenerator(
     }
 }
 
-public class Timer internal constructor(startTime: Long, private val logger: DokkaLogger?) {
+internal class Timer internal constructor(startTime: Long, private val logger: DokkaLogger?) {
     private val steps = mutableListOf("" to startTime)
 
-    public fun report(name: String) {
+    fun report(name: String) {
         logger?.progress(name)
         steps += (name to System.currentTimeMillis())
     }
 
-    public fun dump(prefix: String = "") {
+    fun dump(prefix: String = "") {
         if (logger == null) return
         val msg = buildString {
             appendLine(prefix)

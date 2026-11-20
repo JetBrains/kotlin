@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: annotation.kt
@@ -31,3 +32,6 @@ class AKeptSerializer(val serializer: KSerializer<*>)
 @Serializable(AKeptSerializer::class)
 @KeepGeneratedSerializer
 class AKept<T>(val values: <!GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED!>Array<T><!>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, nullableType, primaryConstructor,
+propertyDeclaration, starProjection, typeParameter */

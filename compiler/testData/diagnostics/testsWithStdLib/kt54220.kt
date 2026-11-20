@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE_FEATURE_TOGGLED: IntrinsicConstEvaluation
 const val c = 1u + 2u
 

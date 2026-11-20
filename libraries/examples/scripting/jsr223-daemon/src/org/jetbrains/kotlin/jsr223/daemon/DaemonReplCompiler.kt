@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacade
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.name.ScriptNames
 import org.jetbrains.kotlin.scripting.compiler.plugin.KOTLIN_SCRIPTING_PLUGIN_ID
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplSnippetConfigurationCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptTemplateWithClasspath
@@ -324,7 +324,7 @@ class DaemonReplCompiler(
     }
 
     private fun snippetClassId(scriptFile: File): ClassId =
-        ClassId(ROOT, NameUtils.getSnippetTargetClassName(scriptFile.name))
+        ClassId(ROOT, ScriptNames.getSnippetTargetClassName(scriptFile.name))
 
     companion object {
         private val clientIsAliveFile: File by lazy { makeAutodeletingFlagFile(keyword = "jsr223-daemon-client") }

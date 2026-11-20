@@ -41,7 +41,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
             "this.removeRedundantConstructorKeyword()",
             "org.jetbrains.kotlin.idea.base.psi.removeRedundantConstructorKeyword",
         ),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     fun removeRedundantConstructorKeywordAndSpace() {
         KtPsiMutationService.getInstance().removeRedundantConstructorKeyword(this)
@@ -50,7 +50,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     @Deprecated(
         message = "Use addModifierKeyword(modifier) instead",
         replaceWith = ReplaceWith("this.addModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     override fun addModifier(modifier: KtModifierKeywordToken) {
         KtPsiMutationService.getInstance().addModifierKeyword(this, modifier)
@@ -59,7 +59,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     @Deprecated(
         message = "Use removeModifierKeyword(modifier) instead",
         replaceWith = ReplaceWith("this.removeModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     override fun removeModifier(modifier: KtModifierKeywordToken) {
         KtPsiMutationService.getInstance().removeModifierKeyword(this, modifier)
@@ -68,7 +68,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     @Deprecated(
         message = "Use addAnnotation(annotationEntry) instead",
         replaceWith = ReplaceWith("this.addAnnotation(annotationEntry)", "org.jetbrains.kotlin.idea.base.psi.addAnnotation"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     override fun addAnnotationEntry(annotationEntry: KtAnnotationEntry): KtAnnotationEntry =
         KtPsiMutationService.getInstance().addAnnotation(this, annotationEntry)

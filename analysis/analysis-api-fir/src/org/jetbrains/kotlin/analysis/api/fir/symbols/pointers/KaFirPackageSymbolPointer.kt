@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.name.FqName
 internal class KaFirPackageSymbolPointer(
     private val fqName: FqName,
     originalSymbol: KaPackageSymbol?,
-) : KaBaseCachedSymbolPointer<KaPackageSymbol>(originalSymbol) {
+) : KaFirCachedSymbolPointer<KaPackageSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaPackageSymbol? {
         check(analysisSession is KaFirSession)

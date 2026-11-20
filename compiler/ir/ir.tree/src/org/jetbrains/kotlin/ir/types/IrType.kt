@@ -79,6 +79,14 @@ abstract class IrSimpleType : IrType(), SimpleTypeMarker, TypeArgumentListMarker
     abstract val nullability: SimpleTypeNullability
     abstract val arguments: List<IrTypeArgument>
 
+    /**
+     * Rich errors are approximated as `Any`/`Any?`.
+     *
+     * If this type represents an error union, this list must contain the primary type followed by the error variants.
+     * If this type is not an error union, this is an empty list.
+     */
+    open val errorUnionElements: List<IrSimpleType> get() = emptyList()
+
     override val variance: Variance
         get() = Variance.INVARIANT
 }

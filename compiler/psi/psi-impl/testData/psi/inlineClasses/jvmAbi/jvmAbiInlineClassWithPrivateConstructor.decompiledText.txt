@@ -2,7 +2,7 @@
 // Implementation of methods is not available
 
 @kotlin.jvm.JvmInline
-public final value class ThreadLocalDelegate<T> {
+public final inline value class ThreadLocalDelegate<T> {
     public companion object {
         public final fun <T> create(): ThreadLocalDelegate<T> { /* compiled code */ }
     }

@@ -17,8 +17,8 @@ fun String.parseLanguageFeature(): Pair<LanguageFeature, LanguageFeature.State> 
     checkTestInfrastructure (matcher.find()) {
         """Wrong syntax in the '// LANGUAGE: ...' directive:
                    found: '${this}'
-                   Must be '((+|-|warn:)LanguageFeatureName)+'
-                   where '+' means 'enable', '-' means 'disable', 'warn:' means 'enable with warning'
+                   Must be '((+|-)LanguageFeatureName)+'
+                   where '+' means 'enable', '-' means 'disable'
                    and language feature names are names of enum entries in LanguageFeature enum class"""
     }
     val mode = when (val mode = matcher.group(1)) {

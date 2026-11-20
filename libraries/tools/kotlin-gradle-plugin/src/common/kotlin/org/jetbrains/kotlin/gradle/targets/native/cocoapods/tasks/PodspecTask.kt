@@ -98,7 +98,7 @@ abstract class PodspecTask @Inject constructor(private val projectLayout: Projec
 
     @get:Input
     @get:Optional
-    internal abstract val gradleWrapperFile: Property<File?>
+    internal abstract val gradleWrapperFile: Property<File>
 
     @get:Input
     internal abstract val projectPath: Property<String>

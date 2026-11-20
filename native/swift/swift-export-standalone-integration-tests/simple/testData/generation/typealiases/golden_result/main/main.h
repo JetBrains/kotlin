@@ -47,6 +47,8 @@ _Bool OBJECT_WITH_GENERIC_INHERITANCE_previous(void * self) __attribute((noretur
 
 int32_t OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(void * self);
 
+_Bool OUTSIDE_PROTO_INSIDE_PROTO_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * SEALED_O_get();
 
 _Bool __root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -67,9 +69,17 @@ void * __root___GENERIC_CLASS_init_allocate();
 
 _Bool __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+void * __root___INHERITANCE_COUPLE_init_allocate();
+
+_Bool __root___INHERITANCE_COUPLE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___INHERITANCE_SINGLE_CLASS_init_allocate();
 
 _Bool __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___INHERITANCE_SINGLE_PROTO_init_allocate();
+
+_Bool __root___INHERITANCE_SINGLE_PROTO_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * __root___INLINE_CLASS_WITH_REF_init_allocate();
 

@@ -27,6 +27,7 @@ plugins {
     id("signing-convention")
     id("binaryen-configuration")
     id("nodejs-configuration")
+    id("wasmtime-configuration")
 }
 
 description = "Kotlin Test Library"
@@ -152,7 +153,7 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
         if (!buildFeatures.isolatedProjects.active.get()) {
-            nodejs()
+            wasmtime()
         }
         // cast is necessary because of KT-85971
         // update after bootstrap

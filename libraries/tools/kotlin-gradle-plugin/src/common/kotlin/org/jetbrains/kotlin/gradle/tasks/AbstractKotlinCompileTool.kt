@@ -19,6 +19,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.api.tasks.util.PatternSet
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
@@ -83,7 +84,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
         sourceFileFilter.setExcludes(excludes)
     }
 
-    final override fun include(vararg includes: String?): PatternFilterable = also {
+    final override fun include(vararg includes: String): PatternFilterable = also {
         sourceFileFilter.include(*includes)
     }
 
@@ -99,7 +100,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
         sourceFileFilter.include(includeSpec)
     }
 
-    final override fun exclude(vararg excludes: String?): PatternFilterable = also {
+    final override fun exclude(vararg excludes: String): PatternFilterable = also {
         sourceFileFilter.exclude(*excludes)
     }
 
@@ -125,6 +126,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
      * Empty classpath will fail the build.
      */
     @get:Classpath
+    @get:NormalizeLineEndings
     internal val defaultCompilerClasspath: ConfigurableFileCollection =
         project.objects.fileCollection()
 

@@ -18,8 +18,6 @@ FILE fqName:<root> fileName:/valueClassEquals.kt
         RETURN type=kotlin.Nothing from='public final fun <get-equals> (): kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = "other")] kotlin.Any?, kotlin.Boolean> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:equals type:kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = "other")] kotlin.Any?, kotlin.Boolean> visibility:private [final,static]' type=kotlin.reflect.KFunction2<<root>.Z, @[ParameterName(name = "other")] kotlin.Any?, kotlin.Boolean> origin=null
   CLASS CLASS name:Z modality:FINAL visibility:public [value] superTypes:[kotlin.Any]
-    annotations:
-      JvmInline
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Z
     PROPERTY name:s visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]

@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.util.zipTo
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import kotlin.test.*
 
 class CompositeMetadataArtifactTest: WithTemporaryFolder {
@@ -314,6 +316,206 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
                 )
             }
         }
+    }
+
+    @Test
+    fun `path traversal - malicious sourceSetName is rejected`() {
+        listOf("../../pwned", "..", ".", "", "/pwned", "..\\..\\pwned", "a/../../pwned", ".hidden").forEach { maliciousSourceSetName ->
+            val primaryArtifactFile = createZip(
+                "$maliciousSourceSetName/$KLIB_MANIFEST_PATH" to "malicious",
+            )
+
+            val metadataArtifact = createCompositeMetadataArtifact(
+                primaryArtifactFile = primaryArtifactFile,
+                kotlinProjectStructureMetadata = createProjectStructureMetadata(
+                    sourceSetBinaryLayout = mapOf(maliciousSourceSetName to SourceSetMetadataLayout.KLIB),
+                    sourceSetCInteropMetadataDirectory = mapOf(maliciousSourceSetName to "cinterop"),
+                ),
+            )
+
+            assertFailsWith<IllegalArgumentException>("Expected sourceSetName '$maliciousSourceSetName' to be rejected") {
+                metadataArtifact.read { }
+            }
+        }
+    }
+
+    @Test
+    fun `KT-91297 - version containing plus requires a version checksum`() {
+        val primaryArtifactFile = createZip(
+            "sourceSetA/$KLIB_MANIFEST_PATH" to "sourceSetA",
+            "sourceSetA-cinterop/interopA/$KLIB_MANIFEST_PATH" to "interopA",
+        )
+
+        fun test(computeVersionChecksum: Boolean, assertions: (CompositeMetadataArtifactContent.SourceSetContent) -> Unit) {
+            val metadataArtifact = createCompositeMetadataArtifact(
+                primaryArtifactFile = primaryArtifactFile,
+                moduleDependencyVersion = "1.13.0-beta02+dev5078",
+                computeVersionChecksum = computeVersionChecksum,
+                kotlinProjectStructureMetadata = createProjectStructureMetadata(
+                    sourceSetBinaryLayout = mapOf("sourceSetA" to SourceSetMetadataLayout.KLIB),
+                    sourceSetCInteropMetadataDirectory = mapOf("sourceSetA" to "sourceSetA-cinterop"),
+                ),
+            )
+
+            metadataArtifact.read { artifactContent ->
+                assertions(artifactContent.getSourceSet("sourceSetA"))
+            }
+        }
+
+        test(computeVersionChecksum = false) { sourceSet ->
+            val expectedMessage = "String '1.13.0-beta02+dev5078' is not safe for path component. " +
+                    "Only Latin characters, numbers, '-', '_' and '.' (not as the first character) are allowed. " +
+                    "Check origin of this string."
+            assertEquals(
+                expectedMessage,
+                assertFailsWith<IllegalArgumentException> { sourceSet.metadataBinary }.message,
+            )
+            assertEquals(
+                expectedMessage,
+                assertFailsWith<IllegalArgumentException> { sourceSet.cinteropMetadataBinaries }.message,
+            )
+        }
+        test(computeVersionChecksum = true) { sourceSet ->
+            assertEquals(
+                File("test-group-test-module-LmOBc7-sourceSetA-uOFzhg.klib"),
+                assertNotNull(sourceSet.metadataBinary).relativeFile,
+            )
+            assertEquals(
+                File("test-group-test-module-LmOBc7-sourceSetA-cinterop/interopA-uOFzhg.klib"),
+                sourceSet.cinteropMetadataBinaries.single().relativeFile,
+            )
+        }
+    }
+
+    @Test
+    fun `version checksums can be enabled and disabled in metadata paths`() {
+        val primaryArtifactFile = createZip(
+            "sourceSetA/$KLIB_MANIFEST_PATH" to "sourceSetA",
+            "sourceSetA-cinterop/interopA/$KLIB_MANIFEST_PATH" to "interopA",
+        )
+
+        fun test(computeVersionChecksum: Boolean, assertions: (CompositeMetadataArtifactContent.SourceSetContent) -> Unit) {
+            val metadataArtifact = createCompositeMetadataArtifact(
+                primaryArtifactFile = primaryArtifactFile,
+                computeVersionChecksum = computeVersionChecksum,
+                kotlinProjectStructureMetadata = createProjectStructureMetadata(
+                    sourceSetBinaryLayout = mapOf("sourceSetA" to SourceSetMetadataLayout.KLIB),
+                    sourceSetCInteropMetadataDirectory = mapOf("sourceSetA" to "sourceSetA-cinterop"),
+                ),
+            )
+            metadataArtifact.read { artifactContent ->
+                assertions(artifactContent.getSourceSet("sourceSetA"))
+            }
+        }
+
+        test(computeVersionChecksum = false) { sourceSet ->
+            assertEquals(
+                File("test-group-test-module-1.0.0-sourceSetA-uOFzhg.klib"),
+                assertNotNull(sourceSet.metadataBinary).relativeFile,
+            )
+            assertEquals(
+                File("test-group-test-module-1.0.0-sourceSetA-cinterop/interopA-uOFzhg.klib"),
+                sourceSet.cinteropMetadataBinaries.single().relativeFile,
+            )
+        }
+        test(computeVersionChecksum = true) { sourceSet ->
+            assertEquals(
+                File("test-group-test-module-klIfw8-sourceSetA-uOFzhg.klib"),
+                assertNotNull(sourceSet.metadataBinary).relativeFile,
+            )
+            assertEquals(
+                File("test-group-test-module-klIfw8-sourceSetA-cinterop/interopA-uOFzhg.klib"),
+                sourceSet.cinteropMetadataBinaries.single().relativeFile,
+            )
+        }
+    }
+
+    @Test
+    fun `path traversal - malicious module coordinates are rejected`() {
+        val primaryArtifactFile = createZip(
+            "sourceSetA/$KLIB_MANIFEST_PATH" to "sourceSetA",
+            "sourceSetA-cinterop/interopA/$KLIB_MANIFEST_PATH" to "interopA",
+        )
+
+        listOf(
+            ModuleDependencyIdentifier("test-group", "../../pwned") to "1.0.0",
+            ModuleDependencyIdentifier("../../pwned", "test-module") to "1.0.0",
+            ModuleDependencyIdentifier("..\\..\\pwned", "test-module") to "1.0.0",
+        ).forEach { (moduleDependencyIdentifier, moduleDependencyVersion) ->
+            val metadataArtifact = createCompositeMetadataArtifact(
+                primaryArtifactFile = primaryArtifactFile,
+                moduleDependencyIdentifier = moduleDependencyIdentifier,
+                moduleDependencyVersion = moduleDependencyVersion,
+                kotlinProjectStructureMetadata = createProjectStructureMetadata(
+                    sourceSetBinaryLayout = mapOf("sourceSetA" to SourceSetMetadataLayout.KLIB),
+                    sourceSetCInteropMetadataDirectory = mapOf("sourceSetA" to "sourceSetA-cinterop"),
+                ),
+            )
+
+            metadataArtifact.read { artifactContent ->
+                val sourceSetA = artifactContent.getSourceSet("sourceSetA")
+                assertFailsWith<IllegalArgumentException>("Expected '$moduleDependencyIdentifier:$moduleDependencyVersion' to be rejected") {
+                    sourceSetA.metadataBinary
+                }
+                assertFailsWith<IllegalArgumentException>("Expected '$moduleDependencyIdentifier:$moduleDependencyVersion' to be rejected") {
+                    sourceSetA.cinteropMetadataBinaries
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `path traversal - malicious cinterop library name in zip entries is rejected`() {
+        listOf("..", ".", "", "..\\..\\pwned", ".hidden", "pwned lib").forEach { maliciousCinteropLibraryName ->
+            val primaryArtifactFile = createZip(
+                "sourceSetA-cinterop/$maliciousCinteropLibraryName/$KLIB_MANIFEST_PATH" to "malicious",
+            )
+
+            val metadataArtifact = createCompositeMetadataArtifact(
+                primaryArtifactFile = primaryArtifactFile,
+                kotlinProjectStructureMetadata = createProjectStructureMetadata(
+                    sourceSetCInteropMetadataDirectory = mapOf("sourceSetA" to "sourceSetA-cinterop"),
+                ),
+            )
+
+            metadataArtifact.read { artifactContent ->
+                val sourceSetA = artifactContent.getSourceSet("sourceSetA")
+                assertFailsWith<IllegalArgumentException>("Expected cinterop library name '$maliciousCinteropLibraryName' to be rejected") {
+                    sourceSetA.cinteropMetadataBinaries
+                }
+            }
+        }
+    }
+
+    private fun createCompositeMetadataArtifact(
+        primaryArtifactFile: File,
+        kotlinProjectStructureMetadata: KotlinProjectStructureMetadata,
+        moduleDependencyIdentifier: ModuleDependencyIdentifier = ModuleDependencyIdentifier("test-group", "test-module"),
+        moduleDependencyVersion: String = "1.0.0",
+        computeVersionChecksum: Boolean = true,
+    ) = CompositeMetadataArtifactImpl(
+        moduleDependencyIdentifier = moduleDependencyIdentifier,
+        moduleDependencyVersion = moduleDependencyVersion,
+        kotlinProjectStructureMetadata = kotlinProjectStructureMetadata,
+        primaryArtifactFile = primaryArtifactFile,
+        hostSpecificArtifactFilesBySourceSetName = emptyMap(),
+        computeVersionChecksum = computeVersionChecksum,
+    )
+
+    /**
+     * Creates a zip with raw [entries] (name to content), which allows entry names
+     * that can't be produced from a real directory, e.g. containing `..` or starting with `/`
+     */
+    private fun createZip(vararg entries: Pair<String, String>): File {
+        val zipFile = newTempDirectory().resolve("metadata.jar").toFile()
+        ZipOutputStream(zipFile.outputStream().buffered()).use { out ->
+            entries.forEach { (name, content) ->
+                out.putNextEntry(ZipEntry(name))
+                out.write(content.toByteArray())
+                out.closeEntry()
+            }
+        }
+        return zipFile
     }
 }
 

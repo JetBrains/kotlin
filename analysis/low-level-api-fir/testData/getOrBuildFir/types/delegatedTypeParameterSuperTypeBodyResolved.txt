@@ -1,0 +1,29 @@
+KT element: KtTypeReference
+FIR element: FirErrorTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<ERROR TYPE REF: Type parameter T cannot be a supertype>
+
+FIR FILE:
+FILE: [ResolvedTo(BODY_RESOLVE)] delegatedTypeParameterSuperTypeBodyResolved.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface MyInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class MyClass<[ResolvedTo(BODY_RESOLVE)] T : R|MyInterface|> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|MyInterface|>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/MyClass.i] i: R|T|): R|MyClass<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|T| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|T|
+
+        public final inner [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=/MyClass.Inner.$$delegate_0}] class Inner<[ResolvedTo(BODY_RESOLVE)] Outer(T) : R|MyInterface|> : <ERROR TYPE REF: Type parameter T cannot be a supertype> {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner] MyClass<T>.constructor(): R|MyClass.Inner<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|T| = this@R|/MyClass|.R|/MyClass.i|
+
+        }
+
+    }

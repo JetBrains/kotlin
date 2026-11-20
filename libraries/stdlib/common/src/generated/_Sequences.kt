@@ -21,6 +21,8 @@ import kotlin.random.*
  * Returns `true` if [element] is found in the sequence.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 public operator fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.contains(element: T): Boolean {
     return indexOf(element) >= 0
@@ -450,8 +452,7 @@ public fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T> {
  * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public fun <T> Sequence<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): Sequence<T> {
-    // TODO: Rewrite with generalized MapFilterIndexingSequence
-    return TransformingSequence(FilteringSequence(IndexingSequence(this), true, { predicate(it.index, it.value) }), { it.value })
+    return FilteringIndexedSequence(this, predicate)
 }
 
 /**

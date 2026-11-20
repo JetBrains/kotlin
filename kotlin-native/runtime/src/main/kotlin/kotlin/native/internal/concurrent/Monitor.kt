@@ -21,7 +21,7 @@ import kotlin.time.TimeMark
 
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @ExperimentalForeignApi
-internal value class Monitor private constructor(private val impl: NativePtr) {
+internal inline value class Monitor private constructor(private val impl: NativePtr) {
 
     @PublishedApi
     @GCUnsafeCall("Kotlin_Monitor_enter")
@@ -52,7 +52,7 @@ internal value class Monitor private constructor(private val impl: NativePtr) {
     }
 
     @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS", "NOTHING_TO_INLINE")
-    internal value class MonitoredSection @PublishedApi internal constructor(internal val monitor: Monitor) : AutoCloseable {
+    internal inline value class MonitoredSection @PublishedApi internal constructor(internal val monitor: Monitor) : AutoCloseable {
         override fun close() {
             monitor.leave()
         }

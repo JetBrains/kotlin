@@ -33,6 +33,7 @@ dependencies {
 
     testFixturesApi(project(":native:external-projects-test-utils"))
     testRuntimeOnly(project(":native:analysis-api-based-test-utils"))
+    testImplementation(libs.junit.jupiter.api)
     testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)

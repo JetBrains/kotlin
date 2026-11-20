@@ -21,7 +21,7 @@ import org.jetbrains.dokka.plugability.DokkaPlugin
 /**
  * @see mixedJvmTestProject for an explanation and a convenient way to construct this project
  */
-class MixedJvmTestProject : TestProject, MdFileCreator, KotlinSampleFileCreator, Pluggable {
+internal class MixedJvmTestProject : TestProject, MdFileCreator, KotlinSampleFileCreator, Pluggable {
 
     private val projectConfigurationBuilder = MixedJvmTestConfigurationBuilder()
 
@@ -99,4 +99,3 @@ class MixedJvmTestProject : TestProject, MdFileCreator, KotlinSampleFileCreator,
                 ")"
     }
 }
-

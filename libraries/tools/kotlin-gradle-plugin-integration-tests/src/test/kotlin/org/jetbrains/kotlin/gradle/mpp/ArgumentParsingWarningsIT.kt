@@ -13,11 +13,15 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 @MustRunOnChangesInBuildToolsApi
+@MustRunOnChangesInFrontend
 @DisplayName("Argument-parsing warnings are reported by the Kotlin Gradle plugin")
 class ArgumentParsingWarningsIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
@@ -107,7 +111,7 @@ class ArgumentParsingWarningsIT : KGPBaseTest() {
                 forEachCompileTask { taskOutput ->
                     assertWarningReportedOnce(
                         taskOutput,
-                        "Flag is not supported by this version of the compiler: -Xnot-a-real-flag".toRegex(RegexOption.LITERAL),
+                        "Flag is not supported by this version of the compiler: '-Xnot-a-real-flag'.".toRegex(RegexOption.LITERAL),
                     )
                 }
             }
@@ -138,7 +142,7 @@ class ArgumentParsingWarningsIT : KGPBaseTest() {
             // `--continue` so that every platform is attempted, not just the first compilation to fail
             buildAndFail(*ALL_COMPILE_TASKS.toTypedArray(), "--continue") {
                 assertTasksFailed(ALL_COMPILE_TASKS)
-                assertOutputContains("Invalid argument: -not-a-real-flag")
+                assertOutputContains("Invalid argument: '-not-a-real-flag'.")
             }
         }
     }
@@ -152,7 +156,7 @@ class ArgumentParsingWarningsIT : KGPBaseTest() {
             build(JVM_TASK) {
                 assertWarningReportedOnce(
                     getOutputForTask(JVM_TASK, LogLevel.INFO),
-                    "-Xjsr305-annotations is deprecated\\. Please use -Xjsr305 instead".toRegex(),
+                    "'-Xjsr305-annotations' is deprecated\\. Use '-Xjsr305' instead\\.".toRegex(),
                 )
             }
         }

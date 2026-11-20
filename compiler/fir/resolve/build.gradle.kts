@@ -6,8 +6,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:fir:providers"))
-    api(project(":compiler:fir:semantics"))
+    api(project(":compiler:fir:semantics.api"))
     implementation(project(":core:util.runtime"))
 
     compileOnly(libs.guava)

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.KOTLIN_SCRIPT_DEFINITION
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJvmResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
@@ -66,7 +66,7 @@ abstract class AbstractFirCustomScriptCodegenTestBase(val parser: FirParser) : A
             commonFirHandlersForCodegenTest()
         }
 
-        facadeStep(::Fir2IrResultsConverter)
+        facadeStep(::Fir2IrJvmResultsConverter)
         irHandlersStep {
             useHandlers(
                 ::IrTextDumpHandler,

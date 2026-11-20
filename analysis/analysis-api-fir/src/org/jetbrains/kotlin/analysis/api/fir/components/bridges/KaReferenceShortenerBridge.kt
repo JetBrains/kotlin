@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener
 import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
 import org.jetbrains.kotlin.analysis.api.components.ShortenOptions
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.psi.KtElement
@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShor
 import org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement as collectPossibleReferenceShorteningsInElementEndpoint
 
 internal class KaReferenceShortenerBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaReferenceShortener {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaReferenceShortener {
     override fun collectPossibleReferenceShortenings(
         file: KtFile,
         selection: TextRange,

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextUtils.logger
 import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextUtils.simpleProcessor
 import org.jetbrains.kotlin.kapt.base.util.KaptBaseError
+import org.jetbrains.kotlin.kapt.base.util.doOpenInternalPackagesIfRequired
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -23,6 +24,10 @@ import javax.lang.model.element.TypeElement
 class JavaKaptContextTest {
     companion object {
         private val TEST_DATA_DIR = File("plugins/kapt/kapt-base/testData/runner")
+    }
+
+    init {
+        doOpenInternalPackagesIfRequired()
     }
 
     private fun doAnnotationProcessing(

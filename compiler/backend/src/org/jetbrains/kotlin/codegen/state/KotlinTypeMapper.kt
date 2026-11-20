@@ -5,19 +5,23 @@
 
 package org.jetbrains.kotlin.codegen.state
 
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.org.objectweb.asm.Type
 
 abstract class KotlinTypeMapper {
     companion object {
         @JvmStatic
-        fun mapUnderlyingTypeOfInlineClassType(kotlinType: KotlinTypeMarker, typeMapper: KotlinTypeMapperBase): Type {
-            val underlyingType = with(typeMapper.typeSystem) {
-                kotlinType.getUnsubstitutedUnderlyingTypeInJvm()
-            } ?: throw IllegalStateException("There should be underlying type for inline class type: $kotlinType")
-            return typeMapper.mapTypeCommon(underlyingType, TypeMappingMode.DEFAULT)
+        fun mapUnderlyingTypeOfInlineClassType(irType: IrType, typeMapper: KotlinTypeMapperBase): Type {
+            @OptIn(ValueClassBackendAgnosticApi::class)
+            val underlyingType = irType.classOrNull?.owner?.let {
+                getInlineClassUnderlyingType(it, treatCompatibleFullValueClassesAsInline = false)
+            } ?: throw IllegalStateException("There should be underlying type for inline class type: $irType")
+            return typeMapper.mapType(underlyingType, TypeMappingMode.DEFAULT)
         }
 
         const val BOX_JVM_METHOD_NAME = "box" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS

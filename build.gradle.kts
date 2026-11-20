@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
+import org.jetbrains.kotlin.testFederation.PlanTestFederationTask
 import org.jetbrains.kotlin.testFederation.TestFederationInferAffectedDomainsTask
 
 buildscript {
@@ -71,7 +72,7 @@ plugins {
     `jvm-toolchains`
     alias(libs.plugins.gradle.node) apply false
     id("gradle-plugins-documentation") apply false
-    id("com.autonomousapps.dependency-analysis")
+    id("build-health-convention")
     id("project-tests-convention") apply false
     id("test-federation-convention") apply false
     id("nodejs-configuration") apply false
@@ -147,7 +148,8 @@ val gradlePluginProjects = listOf(
     ":kotlin-parcelize-compiler",
     ":kotlin-lombok",
     ":kotlin-assignment",
-    ":kotlin-dataframe"
+    ":kotlin-dataframe",
+    ":gradle:kotlin-gradle-ecosystem-plugin"
 )
 
 // The root project applies common configuration explicitly here, after its `extra` is populated.
@@ -281,6 +283,9 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAllParallelTests")
     }
 
+
+    // Gradle Plugin Integration Tests,
+    //   grouped by Gradle Version & type of test
     testLifecycleTask("gradlePluginIntegrationMasterTest", QualityGate.Master) {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTestsGroupedByGradleVersion")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAndroidTestsGroupedByGradleVersion")
@@ -289,14 +294,23 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsTestsGroupedByGradleVersion")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpMppTestsGroupedByGradleVersion")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpOtherTestsGroupedByGradleVersion")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpWasmTestsGroupedByGradleVersion")
     }
 
+    // Gradle Plugin Integration Tests
+    //   grouped by Gradle Version
+    //   experimental: Tested against 'gradlePluginIntegrationTest' for simplicity, latency and resource usage
+    testLifecycleTask("gradlePluginIntegrationTest_master", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:testsGroupedByGradleVersion_master")
+    }
 
     // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ==/
     register("gradlePluginIntegrationTest") {
         dependsOn(":kotlin-gradle-plugin-integration-tests:check")
     }
 
+    // Nightly Gradle Plugin Integration Tests
+    //   grouped by Gradle Version & type of test
     testLifecycleTask("gradlePluginIntegrationNightlyTest", QualityGate.Nightly) {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTests")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftExportTests")
@@ -304,19 +318,21 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsBrowserTestsGroupedByGradleVersion")
     }
 
+    // Nightly Gradle Plugin Integration Tests
+    //   grouped by Gradle Version
+    //   experimental: Tested against 'gradlePluginIntegrationNightlyTest' for simplicity latency and resource usage
+    testLifecycleTask("gradlePluginIntegrationTest_nightly", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:testsGroupedByGradleVersion_nightly")
+    }
+
     testLifecycleTask("jvmCompilerTest", QualityGate.Master) {
         dependsOn(":compiler:tests-common-new:test")
-        dependsOn(":compiler:container:test")
         dependsOn(":compiler:tests-java8:test")
         dependsOn(":compiler:tests-spec:test")
     }
 
     testLifecycleTask("jvmCodegenTest", QualityGate.Master) {
-        dependsOn(":compiler:fir:fir2ir:aggregateTests")
-    }
-
-    testLifecycleTask("testsForBootstrapBuildTest", QualityGate.Master) {
-        dependsOn(":compiler:tests-common-new:test")
+        dependsOn(":compiler:jvm.tests:aggregateTests")
     }
 
     val jvmCompilerIntegrationTest = testLifecycleTask("jvmCompilerIntegrationTest", QualityGate.Master) {
@@ -327,9 +343,10 @@ tasks {
     }
 
     // === Used by Native Image builds (in a separate TC project) ===
-    testLifecycleTask("nativeImageCompilerTest", QualityGate.None) {
+    testLifecycleTask("nativeImageCompilerTest", QualityGate.Nightly) {
         dependsOn(":kotlin-compiler-native-image:nativeImageBoxTest")
         dependsOn(":kotlin-compiler-native-image:nativeImageSmokeTest")
+        dependsOn(":kotlin-compiler-native-image:nativeImageDaemonBoxTest")
     }
 
     testLifecycleTask("jsCompilerTest", QualityGate.Master) {
@@ -342,14 +359,21 @@ tasks {
         dependsOn(":js:js.tests:jsES6Test")
     }
 
-    // TODO(KT-72720): Promote to QualityGate.Nightly
-    testLifecycleTask("jsES5InlineAnonymousFunctionsTest", QualityGate.Undefined) {
+    testLifecycleTask("jsES5InlineAnonymousFunctionsTest", QualityGate.Nightly) {
         dependsOn(":js:js.tests:jsES5InlineAnonymousFunctionsTest")
     }
 
-    // TODO(KT-72720): Promote to QualityGate.Nightly
-    testLifecycleTask("jsES6InlineAnonymousFunctionsTest", QualityGate.Undefined) {
+    testLifecycleTask("jsES6InlineAnonymousFunctionsTest", QualityGate.Nightly) {
         dependsOn(":js:js.tests:jsES6InlineAnonymousFunctionsTest")
+    }
+
+    testLifecycleTask("jsES6ConstLetTest", QualityGate.Nightly) {
+        dependsOn(":js:js.tests:jsES6ConstLetTest")
+    }
+
+    // TODO(KT-82969): Promote to QualityGate.Nightly
+    testLifecycleTask("jsSwcTest", QualityGate.Undefined) {
+        dependsOn(":js:js.tests:jsSwcTest")
     }
 
     testLifecycleTask("jsKlibCompatibilityTest", QualityGate.Master) {
@@ -404,16 +428,8 @@ tasks {
         dependsOn(":compiler:ir.backend.common:test")
     }
 
-    testLifecycleTask("codegenTarget8Jvm11Test", QualityGate.Master) {
-        dependsOn(":compiler:tests-different-jdk:codegenTarget8Jvm11Test")
-    }
-
     testLifecycleTask("codegenTarget8Jvm17Test", QualityGate.Master) {
         dependsOn(":compiler:tests-different-jdk:codegenTarget8Jvm17Test")
-    }
-
-    testLifecycleTask("codegenTarget11Jvm11Test", QualityGate.Master) {
-        dependsOn(":compiler:tests-different-jdk:codegenTarget11Jvm11Test")
     }
 
     testLifecycleTask("codegenTarget17Jvm17Test", QualityGate.Master) {
@@ -433,6 +449,7 @@ tasks {
         dependsOn(":compiler:ir.serialization.native:test")
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
         dependsOn(":plugins:plugin-sandbox:nativeTest")
+        dependsOn(":plugins:compose-compiler-plugin:compiler-hosted:nativeTest")
         dependsOn(":libraries:tools:analysis-api-based-klib-reader:check")
         dependsOn(":native:native.tests:test")
         dependsOn(":native:native.tests:cli-tests:check")
@@ -494,6 +511,12 @@ tasks {
     testLifecycleTask("klibIrTest", QualityGate.Master) {
         dependsOn(":tools:binary-compatibility-validator:check")
         dependsOn(":native:native.tests:klib-ir-inliner:check")
+        dependsOn(":native:native.tests:klib-ir-inliner:withPlatformLibs:check")
+    }
+
+    testLifecycleTask("commonBackendTestOnWindows", QualityGate.Master) {
+        dependsOn(":native:native.tests:klib-ir-inliner:commonBackendTestOnWindows")
+        dependsOn(":native:native.tests:klib-ir-inliner:withPlatformLibs:commonBackendTestOnWindows")
     }
 
     testLifecycleTask("compilerFrontendTest", QualityGate.Master) {
@@ -501,11 +524,10 @@ tasks {
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
         dependsOn(":compiler:fir:raw-fir:mp-parsing2fir:test")
         dependsOn(":compiler:fir:analysis-tests:test")
-        dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
     }
 
     testLifecycleTask("nightlyFirCompilerTest", QualityGate.Nightly) {
-        dependsOn(":compiler:fir:fir2ir:nightlyTests")
+        dependsOn(":compiler:jvm.tests:nightlyTests")
         dependsOn(":compiler:fastJarFSLongTests")
     }
 
@@ -529,7 +551,6 @@ tasks {
 
     val incrementalCompilationTest = testLifecycleTask("incrementalCompilationTest", QualityGate.Master) {
         dependsOn(":compiler:incremental-compilation-impl:test")
-        dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
     }
 
     val compilerPluginTest = testLifecycleTask("compilerPluginTest", QualityGate.Master) {
@@ -579,12 +600,24 @@ tasks {
         dependsOn(":compiler:multiplatform-parsing:jvmTest")
         dependsOn(":compiler:fir:modularized-tests:test")
         dependsOn(":compiler:util:test")
+        dependsOn(":core:error.handling:check")
         dependsOn(":core:names:check")
         dependsOn(":core:language.model:check")
+        // Not `check`: it also runs Wasm tests, whose npm install task is incompatible with the configuration cache
+        dependsOn(":core:language.syntax:jvmTest")
+        dependsOn(":core:language.syntax:checkKotlinAbi")
+        dependsOn(":core:language.syntax:checkForeignClassUsage")
         dependsOn(":core:language.targets:check")
         dependsOn(":core:language.targets.jvm:check")
         dependsOn(":core:language.version-settings:check")
         dependsOn(":core:language.version-settings:test")
+    }
+
+    testLifecycleTask("miscCompilerOsSpecificTest", QualityGate.Undefined) {
+        dependsOn(scriptingTest)
+        dependsOn(":compiler:tests-integration:test")
+        dependsOn(incrementalCompilationTest)
+        dependsOn(":kotlin-daemon-tests:test")
     }
 
     val toolsTest = testLifecycleTask("toolsTest", QualityGate.Master) {
@@ -610,6 +643,7 @@ tasks {
 
     testLifecycleTask("documentationModelTest", QualityGate.Master) {
         dependsOn(":tools:kotlin-documentation-model:analyzer:check")
+        dependsOn(":tools:kotlin-documentation-model:model:check")
     }
 
     testLifecycleTask("miscTest", QualityGate.Master) {
@@ -623,12 +657,14 @@ tasks {
         dependsOn(":kotlin-util-klib-abi:test")
         dependsOn(":kotlinx-metadata-klib:test")
         dependsOn(":compiler:ir.validation:test")
+        dependsOn(":compiler:ir.serialization.common:test")
         dependsOn(":generators:test")
         dependsOn(":kotlin-gradle-plugin-dsl-codegen:test")
     }
 
     testLifecycleTask("buildToolsApiTest", QualityGate.Master) {
         dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-jps:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-impl:check")
@@ -646,11 +682,11 @@ tasks {
     testLifecycleTask("jps-tests", QualityGate.Master) {
         dependsOn(dist)
         dependsOn(":jps:jps-plugin:test")
+        dependsOn(":jps:jps-plugin:testWithBuildToolsApi")
     }
 
     testLifecycleTask("kaptTests", QualityGate.Master) {
         dependsOn(":kotlin-annotation-processing:test")
-        dependsOn(":kotlin-annotation-processing:testJdk11")
         dependsOn(":kotlin-annotation-processing-base:test")
         dependsOn(":kotlin-annotation-processing-cli:test")
     }
@@ -662,6 +698,12 @@ tasks {
     testLifecycleTask("codebaseTests", QualityGate.Master) {
         dependsOn(":repo:auto-code-review:test")
         dependsOn(":repo:codebase-tests:test")
+        dependsOn(":repo:codebase-tests:withBinariesTest")
+        dependsOn(":repo:test-runtime:test")
+    }
+
+    testLifecycleTask("codebaseTestsNightly", QualityGate.Undefined) {
+        dependsOn(":repo:codebase-tests:nightlyTests")
     }
 
     testLifecycleTask("artifactsTest", QualityGate.Master) {
@@ -876,11 +918,6 @@ afterEvaluate {
     checkExpectedGradlePropertyValues()
 }
 
-// workaround for KT-68482
-tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>().configureEach {
-    notCompatibleWithConfigurationCache("KotlinNpmInstallTask is not compatible with Configuration Cache")
-}
-
 plugins.withType<YarnPlugin> {
     extensions.configure<YarnRootEnvSpec> {
         version = libs.versions.yarn
@@ -896,3 +933,4 @@ plugins.withType<WasmYarnPlugin> {
 }
 
 tasks.register<TestFederationInferAffectedDomainsTask>("inferAffectedDomains")
+tasks.register<PlanTestFederationTask>("planTestFederation")

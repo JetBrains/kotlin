@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.compileToLibrary
 import org.jetbrains.kotlin.library.assertPackageFragmentsInKlib
+import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 @Tag("klib")
+@HostDependent
 class KlibSyntheticPackageFragmentsTest : AbstractNativeSimpleTest() {
     @Test
     fun `Regular KLIB`() {

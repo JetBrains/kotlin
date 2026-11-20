@@ -35,7 +35,7 @@ FILE: lib.kt
     public final fun <T : R|@R|TypeAnnotation|(str = <strcat>(String(SuperT), String(Anno)) [evaluated = String(SuperTAnno)])  kotlin/Any|> bar(a: R|@R|TypeAnnotation|(str = <strcat>(String(T), String(Anno)) [evaluated = String(TAnno)])  T|): R|kotlin/Unit| {
     }
     public final fun example(computeAny: R|@R|TypeAnnotation|(str = <strcat>(String(Fun), String(Anno)) [evaluated = String(FunAnno)])  () -> kotlin/Any|): R|kotlin/Unit| {
-        lval memoizedFoo: R|@R|TypeAnnotation|(str = <strcat>(String(LocalDelegate), String(Anno)) [evaluated = String(LocalDelegateAnno)])  kotlin/Any|by R|kotlin/lazy|<R|kotlin/Any|>(R|<local>/computeAny|)
+        lval memoizedFoo: R|@R|TypeAnnotation|(str = <strcat>(String(LocalDelegate), String(Anno)) [evaluated = String(LocalDelegateAnno)])  kotlin/Any| by R|kotlin/lazy|<R|kotlin/Any|>(R|<local>/computeAny|)
             local get(): R|@R|TypeAnnotation|(str = <strcat>(String(LocalDelegate), String(Anno)) [evaluated = String(LocalDelegateAnno)])  kotlin/Any| {
                 ^ D|<local>/memoizedFoo|.R|kotlin/getValue|<R|@R|TypeAnnotation|(str = <strcat>(String(LocalDelegate), String(Anno)) [evaluated = String(LocalDelegateAnno)])  kotlin/Any|>(Null(null), ::R|<local>/memoizedFoo|)
             }

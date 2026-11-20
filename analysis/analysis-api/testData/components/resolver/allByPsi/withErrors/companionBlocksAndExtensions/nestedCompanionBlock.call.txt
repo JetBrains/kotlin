@@ -16,7 +16,7 @@ KtClass(65,179): 'class C {'
 KtClassBody(73,179): '{'
   null
 
-KtCompanionBlock(79,177): 'companion {'
+KtCompanionBlockImpl(79,177): 'companion {'
   null
 
 KtDeclarationModifierList(79,88): 'companion'
@@ -25,7 +25,7 @@ KtDeclarationModifierList(79,88): 'companion'
 KtClassBody(89,177): '{'
   null
 
-KtCompanionBlock(99,147): 'companion {'
+KtCompanionBlockImpl(99,147): 'companion {'
   null
 
 KtDeclarationModifierList(99,108): 'companion'

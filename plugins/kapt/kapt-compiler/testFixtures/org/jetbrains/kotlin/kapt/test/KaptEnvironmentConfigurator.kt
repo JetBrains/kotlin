@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt.test
 
+import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -15,12 +16,12 @@ import org.jetbrains.kotlin.kapt.base.DetectMemoryLeaksMode
 import org.jetbrains.kotlin.kapt.base.KaptFlag
 import org.jetbrains.kotlin.kapt.base.StubGenerationScheme
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.PathUtil
-import kotlinx.kapt.KaptIgnored
 import java.io.File
 
 class KaptEnvironmentConfigurator(
@@ -33,7 +34,8 @@ class KaptEnvironmentConfigurator(
 
     override val directiveContainers: List<DirectivesContainer> = listOf(
         CodegenTestDirectives,
-        KaptTestDirectives
+        JvmCodegenDirectives,
+        KaptTestDirectives,
     )
 
     override val additionalServices: List<ServiceRegistrationData> = listOf(service(::KaptOptionsProvider))
@@ -49,7 +51,7 @@ class KaptEnvironmentConfigurator(
             stubsOutputDir = sourcesOutputDir
             incrementalDataOutputDir = sourcesOutputDir
 
-            for (option in module.directives[CodegenTestDirectives.JAVAC_OPTIONS]) {
+            for (option in module.directives[JvmCodegenDirectives.JAVAC_OPTIONS]) {
                 val [key, value] = option.split('=').map { it.trim() }.also { assert(it.size == 2) }
                 javacOptions[key] = value
             }

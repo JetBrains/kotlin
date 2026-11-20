@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.compilerRunner.btapi.jvm
 
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.FORCE_RECOMPILATION
+import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.ENABLE_ERROR_RECOVERY_ROUND
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -22,9 +24,12 @@ import java.nio.file.Path
 internal class JvmIncrementalConfigurationStrategy(
     val icEnv: IncrementalCompilationEnvironment,
     val outputDirs: List<Path>,
+    private val compilerVersion: KotlinReleaseVersion,
 ) : IncrementalConfigurationStrategy<JvmCompilationOperation.Builder> {
     @OptIn(ExperimentalCompilerArgument::class)
-    override fun configureIncrementalCompilationConfiguration(buildOperation: JvmCompilationOperation.Builder) {
+    override fun configureIncrementalCompilationConfiguration(
+        buildOperation: JvmCompilationOperation.Builder,
+    ) {
         val classpathChanges = icEnv.classpathChanges
         if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
             val classpathSnapshotsOptions = buildOperation.snapshotBasedIcConfigurationBuilder(
@@ -35,6 +40,9 @@ internal class JvmIncrementalConfigurationStrategy(
                 setupBaseIncrementalConfiguration(icEnv, outputDirs.toSet())
                 this[FORCE_RECOMPILATION] = classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
                 this[PRECISE_JAVA_TRACKING] = icEnv.icFeatures.usePreciseJavaTracking
+                if (compilerVersion >= ENABLE_ERROR_RECOVERY_ROUND.availableSinceVersion) {
+                    this[ENABLE_ERROR_RECOVERY_ROUND] = icEnv.icFeatures.enableErrorRecoveryRound
+                }
                 @Suppress("DEPRECATION_ERROR")
                 this[USE_FIR_RUNNER] = icEnv.useJvmFirRunner
 

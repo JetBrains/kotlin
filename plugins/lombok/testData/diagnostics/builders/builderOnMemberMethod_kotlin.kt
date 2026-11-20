@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-87683
 
@@ -70,3 +71,6 @@ class CompanionExtensionReceiver {
         fun String.create(x: Int): String = this
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, integerLiteral, objectDeclaration, stringLiteral, thisExpression */

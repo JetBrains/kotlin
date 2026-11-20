@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jv
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.unwrap
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertInstanceOf
@@ -22,7 +23,8 @@ class ScriptExtensionDiscoveryTest : BaseCompilationTest() {
     fun testScriptExtensionDiscoveryAvailability(kotlinToolchain: KotlinToolchains) {
         val version = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
         if (version < KotlinToolingVersion(2, 4, 0, "snapshot")
-            && kotlinToolchain::class.simpleName != "KotlinToolchainsV1Adapter") {
+            && kotlinToolchain.unwrap()::class.simpleName != "KotlinToolchainsV1Adapter"
+        ) {
             assertThrows<UnsupportedOperationException> {
                 kotlinToolchain.jvm.discoverScriptExtensionsOperationBuilder(emptyList())
             }

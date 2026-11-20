@@ -11,22 +11,16 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
-import org.jetbrains.kotlin.backend.jvm.lower.JvmPropertiesLowering.Companion.computeSyntheticMethodName
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irExprBody
-import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
@@ -34,7 +28,6 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 /**
@@ -100,7 +93,6 @@ internal class JvmInterfacePrivateFieldsLowering(val context: JvmBackendContext)
                 privateFieldsClass.declarations.add(declaration)
                 declaration.visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                 declaration.parent = privateFieldsClass
-                buildDelegateMethodIfNeeded(declaration, context, irClass)?.let { newDeclarations.add(it) }
                 newDeclarations
             } else {
                 if (declaration is IrClass && declaration.isCompanion) companionObjectSeen = true
@@ -112,30 +104,6 @@ internal class JvmInterfacePrivateFieldsLowering(val context: JvmBackendContext)
 
 private val IrDeclarationWithVisibility.isJvmPublic: Boolean
     get() = AsmUtil.getVisibilityAccessFlag(visibility.delegate) == Opcodes.ACC_PUBLIC
-
-private fun buildDelegateMethodIfNeeded(
-    field: IrField,
-    context: JvmBackendContext,
-    interfaceClass: IrClass
-): IrFunction? {
-    if (field.origin != IrDeclarationOrigin.PROPERTY_DELEGATE) return null
-    val property = field.correspondingPropertySymbol ?: return null
-
-    return interfaceClass.factory.buildFun {
-        name = Name.identifier(context.computeSyntheticMethodName(property.owner, JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX))
-        origin = field.origin
-        returnType = context.irBuiltIns.anyType
-        visibility = DescriptorVisibilities.PRIVATE
-    }.apply {
-        parent = interfaceClass
-        metadata = field.metadata
-        body = context.createJvmIrBuilder(symbol).run {
-            irExprBody(
-                irGetField(null, field)
-            )
-        }
-    }
-}
 
 private fun buildSyntheticInitTriggerInitializer(
     context: JvmBackendContext,

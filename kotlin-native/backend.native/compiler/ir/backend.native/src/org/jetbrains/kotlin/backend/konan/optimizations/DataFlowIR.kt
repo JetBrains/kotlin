@@ -520,6 +520,8 @@ internal object DataFlowIR {
         }
 
         fun mapClassReferenceType(irClass: IrClass): Type {
+            classMap[irClass]?.let { return it }
+
             // Do not try to devirtualize ObjC classes.
             if (irClass.moduleFragment.name == FORWARD_DECLARATIONS_MODULE_NAME || irClass.isObjCClass())
                 return Type.Virtual
@@ -527,7 +529,6 @@ internal object DataFlowIR {
             val isFinal = irClass.isFinalClass
             val isAbstract = irClass.isAbstract()
             val name = irClass.fqNameForIrSerialization.asString()
-            classMap[irClass]?.let { return it }
 
             require(!sealed) { "The symbol table has been sealed. irClass = ${irClass.render()}" }
             val placeToClassTable = true

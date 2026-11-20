@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.uklibs.publish
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.writeText
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class PreHmppDependenciesDeprecationIT : KGPBaseTest() {
 
     @GradleTest

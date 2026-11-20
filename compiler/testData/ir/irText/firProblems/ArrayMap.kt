@@ -1,7 +1,8 @@
 // WITH_STDLIB
-// DUMP_IR_DIFFERENCE: JVM
+// DUMP_IR_DIFFERENCE: JVM, JKLIB
 //   K/JVM throws actualized java.lang.IllegalStateException instead of kotlin.IllegalStateException
 //   K/JVM throws actualized java.lang.NoSuchElementException instead of kotlin.NoSuchElementException
+// ^ JKlib tests compile against JDK 17 instead of the mock JDK.
 // DUMP_IR_DIFFERENCE: JS_IR
 //   extra `out` variance in `<this>: kotlin.Array<out T of kotlin.collections.copyOf>`
 

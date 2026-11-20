@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
+import org.jetbrains.kotlin.fir.dataframe.services.DataFrameDirectives
 import org.jetbrains.kotlin.fir.dataframe.services.DataFrameEnvironmentConfigurator
 import org.jetbrains.kotlin.fir.dataframe.services.DataFrameRuntimeClasspathProvider
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -20,6 +21,9 @@ abstract class AbstractCompilerFacilityTestForDataFrame : AbstractCompilerFacili
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
+        builder.defaultDirectives {
+            +DataFrameDirectives.ENABLE_DATAFRAME
+        }
         builder.useConfigurators(::DataFrameEnvironmentConfigurator)
         builder.useCustomRuntimeClasspathProviders(::DataFrameRuntimeClasspathProvider)
     }

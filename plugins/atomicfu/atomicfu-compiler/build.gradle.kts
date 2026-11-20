@@ -1,9 +1,7 @@
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.konan.target.HostManager
 
 description = "Atomicfu Compiler Plugin"
 val buildFeatures = serviceOf<BuildFeatures>()
@@ -16,9 +14,6 @@ plugins {
     id("test-inputs-check")
     id("java-test-fixtures")
 }
-
-// WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
-val nativeTargetName = HostManager.host.name
 
 val antLauncherJar = configurations.create("antLauncherJar")
 val testJsRuntime = configurations.create("testJsRuntime") {
@@ -40,8 +35,7 @@ val atomicfuJvmClasspath = configurations.create("atomicfuJvmClasspath")
 val atomicfuNativeKlib = configurations.create("atomicfuNativeKlib") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
-        attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
+        hostKonanTargetAttribute()
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
     }
@@ -61,17 +55,13 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 
-    compileOnly(project(":compiler:fir:cones"))
-    compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:plugin-utils"))
-    compileOnly(project(":compiler:fir:checkers"))
-    compileOnly(project(":compiler:fir:fir2ir"))
-    compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":compiler:fir:plugin.api"))
+    // Required to extending 'AbstractAtomicReferenceToPrimitiveCallChecker'.
+    compileOnly(project(":compiler:fir:checkers:checkers.common"))
 
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli-base"))
-    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":compiler:frontend.common-psi"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:ir.backend.common"))
 
@@ -86,11 +76,10 @@ dependencies {
 
     compileOnly(kotlinStdlib())
 
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
-    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesApi(project(":plugins:plugin-sandbox"))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
@@ -107,6 +96,7 @@ dependencies {
     testFixturesApi(project(":native:kotlin-native-utils"))
     testFixturesApi(testFixtures(project(":native:native.tests:klib-ir-inliner")))
     testFixturesApi(project(":kotlin-util-klib-abi"))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
     testFixturesApi(commonDependency("org.jetbrains.teamcity:serviceMessages"))
 
     // todo: remove unnecessary dependencies

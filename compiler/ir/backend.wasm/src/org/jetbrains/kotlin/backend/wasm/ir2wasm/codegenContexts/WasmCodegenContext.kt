@@ -10,13 +10,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 
-enum class WasmServiceImportExportKind(val prefix: String) {
-    VTABLE($$"__vt$"),
-    ITABLE($$"__it$"),
-    RTTI($$"__rt$"),
-    FUNC($$"__fn$")
-}
-
 abstract class WasmCodegenContext(private val idSignatureRetriever: IdSignatureRetriever) {
     protected fun IrSymbol.getReferenceKey(): IdSignature =
         idSignatureRetriever.declarationSignature(this.owner as IrDeclaration)!!

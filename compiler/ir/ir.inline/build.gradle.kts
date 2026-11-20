@@ -11,6 +11,7 @@ dependencies {
 
     implementation(project(":core:descriptors"))
     implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":core:error.handling"))
     compileOnly(intellijCore())
 }
 

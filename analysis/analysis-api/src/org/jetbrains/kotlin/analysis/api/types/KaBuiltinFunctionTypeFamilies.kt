@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.types
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 
 /**
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
  *
  * @see builtinFunctionTypeFamilies
  */
-@KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaBuiltinFunctionTypeFamilies {
     /**

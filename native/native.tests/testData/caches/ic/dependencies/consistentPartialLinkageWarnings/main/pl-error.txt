@@ -1,0 +1,2 @@
+error: <user> @
+Function 'gone' can not be called

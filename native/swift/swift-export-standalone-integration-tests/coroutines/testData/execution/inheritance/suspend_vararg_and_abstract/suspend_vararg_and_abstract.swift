@@ -18,18 +18,15 @@ func swiftCanOverrideKotlinSuspendVarargMethod() async throws {
 }
 
 
-// Blocked by KT-87947
-// `.disabled(...)` cannot express this — a disabled test is still compiled — so the body is parked behind an
-// inactive `#if`, which Swift parses but never type-checks. Delete the `#if`/`#endif` once KT-87947 lands
-#if KT87947_FIXED
-@Test(.disabled("KT-87947: Swift can't inherit Kotlin abstract class"))
+@Test
 func swiftDirectSubclassOverridesAbstractKotlinSuspendMember() async throws {
-    class SwiftAbstractVararg: AbstractAsyncVarargRoot {
-        override func abstractJoin(parts: String...) async throws -> String {
-            "Swift abstract: " + parts.joined(separator: ",")
-        }
+    class SwiftAbstract: AsyncAbstractRoot {
+        override func abstractGreet() async throws -> String { "swift-abstract" }
     }
 
-    #expect(try await callAbstractJoin(value: SwiftAbstractVararg()) == "Swift abstract: a,b,c")
+    let value = SwiftAbstract()
+    #expect(try await callAbstractGreet(value: value) == "swift-abstract")
+    #expect(try await value.abstractGreet() == "swift-abstract")
+    #expect(try await callConcreteGreet(value: value) == "kotlin-concrete")
+    #expect(try await value.concreteGreet() == "kotlin-concrete")
 }
-#endif

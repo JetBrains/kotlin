@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: SuperClass.java
 
 import lombok.*;
@@ -114,3 +115,6 @@ fun test() {
     childObj.toOverride
     childObj.toOverride = 412
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction,
+javaProperty, javaType, localProperty, nullableType, override, propertyDeclaration, stringLiteral, superExpression */

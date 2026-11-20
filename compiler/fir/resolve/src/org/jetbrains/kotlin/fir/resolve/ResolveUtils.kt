@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
@@ -93,7 +92,7 @@ internal fun FirAnonymousFunction.computeReturnType(
     returnExpressions: Collection<FirAnonymousFunctionReturnExpressionInfo>,
 ): ConeKotlinType {
     val expandedExpectedReturnType = expectedReturnType?.fullyExpandedType(session)
-    val unitType = session.builtinTypes.unitType.coneType
+    val unitType = StandardTypes.Unit
     if (isLambda) {
         if (expandedExpectedReturnType?.isUnitOrFlexibleUnit == true) {
             // If the expected type is Unit or flexible Unit, always infer the lambda's type to Unit.
@@ -460,7 +459,7 @@ fun FirAbstractResolvedQualifierBuilder.initTypeAndObjectAccess() {
             }
         }
     }
-    coneTypeOrNull = components.session.builtinTypes.unitType.coneType
+    coneTypeOrNull = StandardTypes.Unit
 }
 
 internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirResolvedReifiedParameterReferenceBuilder): ConeLookupTagBasedType {
@@ -628,9 +627,11 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
     val safeReceiverType = when (kind) {
         NullSafe -> receiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
         ErrorSafe -> if (receiverType is ConeUnionType) {
+            // Mostly an optimization, though it also behaves differently if primaryType is Nothing
+            // until we teach ConeTypeIntersector to handle unions.
             receiverType.primaryType
         } else {
-            receiverType
+            ConeTypeIntersector.intersectTypes(session.typeContext, [receiverType, StandardTypes.NullableNonError])
         }
     }
 
@@ -650,12 +651,8 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
             when (kind) {
                 NullSafe -> type.withNullability(nullable = true, session.typeContext)
                 ErrorSafe -> {
-                    val receiverType = receiver.resolvedType
-                    if (receiverType is ConeUnionType) {
-                        ConeTypeUnifier.unify(type, receiverType.richErrorTypes, attributes = ConeAttributes.Empty, session.typeContext)
-                    } else {
-                        type
-                    }
+                    val richErrors = receiver.resolvedType.unionSuperTypeOrNull(session)?.richErrorTypes ?: [StandardTypes.RichError]
+                    ConeTypeUnifier.unify(type, richErrors, attributes = ConeAttributes.Empty, session.typeContext)
                 }
             }
         }
@@ -668,6 +665,27 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
 
     replaceConeTypeOrNull(resultingType)
     session.lookupTracker?.recordTypeResolveAsLookup(resultingType, source, file.source)
+}
+
+internal fun ConeKotlinType.unionSuperTypeOrNull(session: FirSession): ConeUnionType? {
+    val expandedType = fullyExpandedType(session)
+    if (expandedType is ConeUnionType) return expandedType
+
+    session.typeContext.newTypeCheckerState(
+        errorTypesEqualToAnything = false,
+        stubTypesEqualToAnything = true,
+        dnnTypesEqualToFlexible = false
+    ).anySupertype(
+        expandedType.lowerBoundIfFlexible(),
+        predicate = {
+            if (it is ConeUnionType) return it
+            false
+        },
+        // Optimization: if we encounter a class-like type, we can stop looking.
+        supertypesPolicy = { if (it is ConeClassLikeType) None else LowerIfFlexible }
+    )
+
+    return null
 }
 
 fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirRegularClassSymbol? {
@@ -726,7 +744,7 @@ internal fun FirFunction.forbiddenNamedArgumentsTargetOrNull(originScope: FirTyp
             initial.takeUnless { symbol.hasOverrideThatAllowsNamedArguments(originScope) }
         }
 
-        FirDeclarationOrigin.Enhancement -> {
+        is FirDeclarationOrigin.Enhancement -> {
             ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION.takeUnless { symbol.hasOverrideThatAllowsNamedArguments(originScope) }
         }
 
@@ -944,4 +962,23 @@ fun FirScope.toResolvedSymbolOrigin(): FirResolvedSymbolOrigin? = when (this) {
     is FirPackageMemberScope -> FirResolvedSymbolOrigin.Package
     is FirAbstractSimpleImportingScope -> FirResolvedSymbolOrigin.ExplicitImport
     else -> null
+}
+
+/**
+ * A receiver is unsafe if it's a union type, or it has a union type as supertype while not being a subtype of `NonError?`.
+ *
+ * A notable counterexample is `T & NonError` where `T : X | MyError` which is the type of the safe receiver in `t|.someCall()`.
+ */
+context(holder: SessionHolder)
+fun ConeKotlinType.isUnsafeUnion(): Boolean {
+    return unionSuperTypeOrNull(holder.session) != null &&
+            !isSubtypeOf(StandardTypes.NullableNonError, holder.session)
+}
+
+/**
+ * True when [canBeNull] or [isUnsafeUnion].
+ */
+context(_: SessionHolder)
+fun ConeKotlinType.isUnsafeAsDispatchReceiver(): Boolean {
+    return canBeNull() || isUnsafeUnion()
 }

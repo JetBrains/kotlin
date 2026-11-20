@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InfiniteLoopKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUNCTION[fqName=getCondition, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=getCondition]
-    origin: Facade(className=InfiniteLoopKt, jvmClassName=null)
+    origin: Facade(className=InfiniteLoopKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -15,7 +15,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InfiniteLoopKt]]
           isClassRef: true
   FUNCTION[fqName=test_2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_2]
     contract: [ effect:CallsInPlace(param(0), AT_LEAST_ONCE) ]
-    origin: Facade(className=InfiniteLoopKt, jvmClassName=null)
+    origin: Facade(className=InfiniteLoopKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
@@ -36,7 +36,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InfiniteLoopKt]]
           isClassRef: true
   FUNCTION[fqName=test_4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_4]
     contract: [ effect:CallsInPlace(param(0), AT_LEAST_ONCE) ]
-    origin: Facade(className=InfiniteLoopKt, jvmClassName=null)
+    origin: Facade(className=InfiniteLoopKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]

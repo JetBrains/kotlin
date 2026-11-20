@@ -16,8 +16,7 @@ dependencies {
     // `test-coverage-convention` applies JaCoCo (only with `kotlin.build.coverage.enabled`).
     jacocoAggregation(project(":compiler"))
     jacocoAggregation(project(":compiler:tests-integration"))
-    jacocoAggregation(project(":compiler:fir:analysis-tests"))
-    jacocoAggregation(project(":compiler:fir:fir2ir"))
+    jacocoAggregation(project(":compiler:jvm.tests"))
     jacocoAggregation(project(":compiler:fir:raw-fir:psi2fir"))
     jacocoAggregation(project(":compiler:fir:raw-fir:light-tree2fir"))
 
@@ -26,16 +25,14 @@ dependencies {
     // transitively — the report scope is declared explicitly and deterministically here.
     jacocoAggregation(project(":compiler:fir:cones"))
     jacocoAggregation(project(":compiler:fir:tree"))
-    jacocoAggregation(project(":compiler:fir:providers"))
-    jacocoAggregation(project(":compiler:fir:semantics"))
+    jacocoAggregation(project(":compiler:fir:semantics.api"))
     jacocoAggregation(project(":compiler:fir:resolve"))
-    jacocoAggregation(project(":compiler:fir:plugin-utils"))
+    jacocoAggregation(project(":compiler:fir:plugin.api"))
     jacocoAggregation(project(":compiler:fir:fir-serialization"))
     jacocoAggregation(project(":compiler:fir:fir-deserialization"))
     jacocoAggregation(project(":compiler:fir:fir-jvm"))
-    jacocoAggregation(project(":compiler:fir:fir-js"))
     jacocoAggregation(project(":compiler:fir:fir-native"))
-    jacocoAggregation(project(":compiler:fir:checkers"))
+    jacocoAggregation(project(":compiler:fir:checkers:checkers.common"))
     jacocoAggregation(project(":compiler:fir:checkers:checkers.jvm"))
     jacocoAggregation(project(":compiler:fir:checkers:checkers.js"))
     jacocoAggregation(project(":compiler:fir:checkers:checkers.native"))
@@ -69,7 +66,16 @@ tasks.named<JacocoReport>("firCoverageReport") {
     // to avoid a self-referencing file collection; `matching` keeps the filtering lazy and
     // configuration-cache-compatible (no Project/script references at execution time).
     val wiredClassDirs = objects.fileCollection().from(classDirectories.from.toList())
-    classDirectories.setFrom(wiredClassDirs.asFileTree.matching { include("org/jetbrains/kotlin/fir/**") })
+    classDirectories.setFrom(wiredClassDirs.asFileTree.matching {
+        include("org/jetbrains/kotlin/fir/**")
+        // `Traversals.kt` lives in both raw-fir/psi2fir and raw-fir/light-tree2fir in the same
+        // package with different bytecode (split in dea432958ca6), and JaCoCo refuses to report
+        // two different classes with one FQN. Leave the class (and any synthetic TraversalsKt$…
+        // classes, which would collide the same way) out of the report; its `inline` helpers stay
+        // measured through their call sites in PsiRawFirBuilder / TreeRawFirDeclarationBuilderProxy.
+        // Drop this exclude once the compiler side fixes the name collision.
+        exclude("org/jetbrains/kotlin/fir/analysis/TraversalsKt*.class")
+    })
 
     // Tolerate producers that didn't run (e.g. excluded with `-x`): report on the data that exists.
     val wiredExecData = objects.fileCollection().from(executionData.from.toList())

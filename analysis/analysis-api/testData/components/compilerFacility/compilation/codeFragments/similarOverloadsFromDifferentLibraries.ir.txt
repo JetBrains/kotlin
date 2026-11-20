@@ -1,0 +1,26 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:module_main_similarOverloadsFromDifferentLibraries.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL returnType:kotlin.Int [companion]
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Int origin=null
+            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+              ARG <this>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                ARG <this>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                  ARG <this>: CALL 'public final fun foo <T> (x: T of lib.foo): kotlin.Int declared in lib' type=kotlin.Int origin=null
+                    TYPE_ARG T: lib.AImpl
+                    ARG x: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in lib.AImpl' type=lib.AImpl origin=null
+                  ARG other: CALL 'public final fun foo <T> (x: T of lib.foo): kotlin.Int declared in lib' type=kotlin.Int origin=null
+                    TYPE_ARG T: lib.BImpl
+                    ARG x: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in lib.BImpl' type=lib.BImpl origin=null
+                ARG other: CALL 'public final fun bar (vararg x: kotlin.Int): kotlin.Int declared in lib' type=kotlin.Int origin=null
+                  ARG x: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                    CONST Int type=kotlin.Int value=1
+              ARG other: CALL 'public final fun bar (x: kotlin.IntArray): kotlin.Int declared in lib' type=kotlin.Int origin=null
+                ARG x: CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+                  ARG elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                    CONST Int type=kotlin.Int value=1

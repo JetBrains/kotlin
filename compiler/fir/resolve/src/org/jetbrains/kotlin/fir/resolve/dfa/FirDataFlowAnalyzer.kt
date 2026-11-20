@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
+import org.jetbrains.kotlin.fir.scopes.impl.contractOwner
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSmartcastToTypeVariable
@@ -228,8 +230,10 @@ abstract class FirDataFlowAnalyzer(
                             if (this.isNullableNothing) return false
                             return when (this) {
                                 is ConeClassLikeType -> {
-                                    val symbol =
-                                        fullyExpandedType().lookupTag.toSymbol() ?: return false
+                                    val expandedType = fullyExpandedType()
+                                    // A type alias may expand to a union type
+                                    if (expandedType is ConeUnionType) return expandedType.isAcceptableForSmartcast()
+                                    val symbol = expandedType.classLikeLookupTagIfAny?.toSymbol() ?: return false
                                     val declaration = symbol.fir as? FirRegularClass ?: return true
                                     visibilityChecker.isClassLikeVisible(
                                         declaration,
@@ -265,9 +269,6 @@ abstract class FirDataFlowAnalyzer(
     protected abstract fun implicitUpdated(info: TypeStatement)
 
     private val graphBuilder get() = context.graphBuilder
-
-    private val any = components.session.builtinTypes.anyType.coneType
-    private val nullableNothing = components.session.builtinTypes.nullableNothingType.coneType
 
     // ----------------------------------- Requests -----------------------------------
 
@@ -573,30 +574,55 @@ abstract class FirDataFlowAnalyzer(
         val operandVariable = flow.rememberVariableIfUsedOrReal(typeOperatorCall.argument) ?: return
         val siblings = typeOperatorCall.conversionTypeRef.coneType
             .toRegularClassSymbol()?.getSealedSiblings()?.takeIf { it.isNotEmpty() }
+        val expressionVariable = SyntheticVariable(typeOperatorCall)
         when (val operation = typeOperatorCall.operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
                 val isType = operation == FirOperation.IS
                 when (type) {
                     // x is Nothing? <=> x == null
-                    nullableNothing -> processEqNull(flow, typeOperatorCall, typeOperatorCall.argument, isType)
+                    StandardTypes.NullableNothing -> processEqNull(flow, typeOperatorCall, typeOperatorCall.argument, isType)
                     // x is Any <=> x != null
-                    any -> processEqNull(flow, typeOperatorCall, typeOperatorCall.argument, !isType)
+                    StandardTypes.Any -> processEqNull(flow, typeOperatorCall, typeOperatorCall.argument, !isType)
                     else -> {
-                        val expressionVariable = SyntheticVariable(typeOperatorCall)
+                        val variableIsTypeStatement = expressionVariable eq isType
+                        val variableNotIsTypeStatement = expressionVariable eq !isType
+
                         if (operandVariable.isReal()) {
-                            flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEq type))
-                            flow.addImplication((expressionVariable eq !isType) implies (operandVariable typeNotEq type))
+                            flow.addImplication(variableIsTypeStatement implies (operandVariable typeEq type))
+                            flow.addImplication(variableNotIsTypeStatement implies (operandVariable typeNotEq type))
+
+                            if (type.classId == StandardClassIds.RichError) {
+                                flow.addImplication(
+                                    variableNotIsTypeStatement implies
+                                            (operandVariable typeEq StandardTypes.NullableNonError)
+                                )
+                                flow.addImplication(variableNotIsTypeStatement implies operandVariable.isNullableNonError())
+                            } else {
+                                if (type.classId == StandardClassIds.NonError) {
+                                    flow.addImplication(
+                                        variableNotIsTypeStatement implies
+                                                (operandVariable typeEq StandardTypes.richError(isMarkedNullable = !type.isMarkedNullable))
+                                    )
+                                }
+
+                                if (operandVariable.originalType.isUnsafeUnion() &&
+                                    type.isSubtypeOf(StandardTypes.NullableNonError, session)
+                                ) {
+                                    flow.addImplication(variableIsTypeStatement implies operandVariable.isNullableNonError())
+                                }
+                            }
 
                             if (siblings != null) {
-                                flow.addImplication((expressionVariable eq isType) implies (operandVariable valueNotEq siblings))
+                                flow.addImplication(variableIsTypeStatement implies (operandVariable valueNotEq siblings))
                             }
                         }
+
                         if (!type.canBeNull()) {
                             // x is (T & Any) => x != null
-                            flow.addImplication((expressionVariable eq isType) implies (operandVariable notEq null))
+                            flow.addImplication(variableIsTypeStatement implies (operandVariable notEq null))
                         } else if (type.isMarkedNullable) {
                             // x !is T? => x != null
-                            flow.addImplication((expressionVariable eq !isType) implies (operandVariable notEq null))
+                            flow.addImplication(variableNotIsTypeStatement implies (operandVariable notEq null))
                         } // else probably a type parameter, so which implication is correct depends on instantiation
                     }
                 }
@@ -609,24 +635,41 @@ abstract class FirDataFlowAnalyzer(
                     if (siblings != null) {
                         flow.addTypeStatement(operandVariable valueNotEq siblings)
                     }
+
+                    if (operandVariable.originalType.isUnsafeUnion() &&
+                        type.isSubtypeOf(StandardTypes.NullableNonError, session)
+                    ) {
+                        flow.commitOperationStatement(operandVariable.isNullableNonError())
+                    }
                 }
                 if (!type.canBeNull()) {
                     flow.commitOperationStatement(operandVariable notEq null)
                 } else {
-                    val expressionVariable = SyntheticVariable(typeOperatorCall)
+                    val expressionVariable = expressionVariable
                     flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
                     flow.addImplication((expressionVariable eq null) implies (operandVariable eq null))
                 }
             }
 
             FirOperation.SAFE_AS -> {
-                val expressionVariable = SyntheticVariable(typeOperatorCall)
-                flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
+                val variableNotEqNull = expressionVariable notEq null
+
+                flow.addImplication(variableNotEqNull implies (operandVariable notEq null))
                 if (operandVariable.isReal()) {
-                    flow.addImplication((expressionVariable notEq null) implies (operandVariable typeEq type))
+                    flow.addImplication(variableNotEqNull implies (operandVariable typeEq type))
+
+                    if (type.classId == StandardClassIds.RichError) {
+                        flow.addImplication(expressionVariable eq null implies operandVariable.isNullableNonError())
+                    } else {
+                        if (operandVariable.originalType.isUnsafeUnion() &&
+                            type.isSubtypeOf(StandardTypes.NullableNonError, session)
+                        ) {
+                            flow.addImplication(variableNotEqNull implies operandVariable.isNullableNonError())
+                        }
+                    }
 
                     if (siblings != null) {
-                        flow.addImplication((expressionVariable notEq null) implies (operandVariable valueNotEq siblings))
+                        flow.addImplication(variableNotEqNull implies (operandVariable valueNotEq siblings))
                     }
                 }
             }
@@ -706,7 +749,9 @@ abstract class FirDataFlowAnalyzer(
         val operandVariable = flow.rememberVariableIfUsedOrReal(operand) ?: return
         val expressionVariable = SyntheticVariable(expression)
 
-        if (const.kind == ConstantValueKind.Boolean && operand.resolvedType.isBooleanOrNullableBoolean) {
+        if (const.kind == ConstantValueKind.Boolean &&
+            operand.resolvedType.let { it.isBooleanOrNullableBoolean || it is ConeUnionType && it.primaryType.isBooleanOrNullableBoolean }
+        ) {
             val expected = (const.value as Boolean)
             flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq expected))
             if (operand.resolvedType.isBoolean) {
@@ -1133,7 +1178,7 @@ abstract class FirDataFlowAnalyzer(
     fun enterSafeCallAfterNullCheck(safeCall: FirSafeCallExpression) {
         graphBuilder.enterSafeCall(safeCall).mergeIncomingFlow { _, flow ->
             val receiverVariable = flow.rememberVariableIfUsedOrReal(safeCall.receiver) ?: return@mergeIncomingFlow
-            flow.commitOperationStatement(receiverVariable notEq null)
+            flow.commitOperationStatement(safeCall.toOperationStatement(receiverVariable))
         }
     }
 
@@ -1149,7 +1194,7 @@ abstract class FirDataFlowAnalyzer(
             val expressionVariable = flow.rememberVariable(safeCall) ?: return@mergeIncomingFlow
             val previousFlow = node.lastPreviousNode.getFlow(path)
 
-            flow.addAllConditionally(expressionVariable notEq null, previousFlow)
+            flow.addAllConditionally(safeCall.toOperationStatement(expressionVariable), previousFlow)
 
             /**
              * If we have some implication about rhs of safe call in the previous flow, then we can expand them to the whole
@@ -1163,21 +1208,32 @@ abstract class FirDataFlowAnalyzer(
              *  - subj.foo() == False -> X_2
              *  - subj.foo() != Null -> X_3
              *  - subj.foo() == Null -> X_4
+             *  - subj.foo() is NonError? -> X_5 (currently there is no returnsNonError contract but there might be in the future)
              *
              * flow:
-             *  - a?.foo() == True -> X_1
-             *  - a?.foo() == False -> X_2
-             *  - a?.foo() != Null -> X_3
+             *  - a{|?}.foo() == True -> X_1
+             *  - a{|?}.foo() == False -> X_2
+             *  - a{|?}.foo() != Null -> X_3
+             *  - a|.foo() == Null -> X_4
+             *  - a{|?}.foo() is NonError? -> X_5 (currently there is no returnsNonError contract but there might be in the future)
              *
-             * Note that we don't pass implication with 'subj.foo() == Null' in the condition because there are two different ways
-             *   why `a?.foo()` may be `null` -- it's either `a` is `null` or `subj.foo()` is `null`, and we can't differentiate between
-             *   them
+             * Note that for null-safe calls (?.) we don't pass implication with 'subj.foo() == Null' in the condition
+             * because there are two different ways why `a?.foo()` may be `null` --
+             * it's either `a` is `null` or `subj.foo()` is `null`, and we can't differentiate between them.
+             * However, for error-safe calls (|.) it's unambiguous.
              */
             previousFlow.getImplications(expressionVariable)?.forEach {
-                if (it.condition.operation != Operation.EqNull) {
+                if (it.condition.operation != Operation.EqNull || safeCall.kind != NullSafe) {
                     flow.addImplication(it)
                 }
             }
+        }
+    }
+
+    private fun FirSafeCallExpression.toOperationStatement(receiverVariable: DataFlowVariable): OperationStatement {
+        return when (kind) {
+            NullSafe -> receiverVariable notEq null
+            ErrorSafe -> receiverVariable.isNullableNonError()
         }
     }
 
@@ -1328,7 +1384,7 @@ abstract class FirDataFlowAnalyzer(
             processDirectEqualsCall(flow, qualifiedAccess, callee)
         }
 
-        val originalFunction = callee.originalIfFakeOverride()
+        val originalFunction = callee.contractOwner().takeIf { it !== callee }
         val contractDescription = (originalFunction?.symbol ?: callee.symbol).resolvedContractDescription ?: return
 
         val arguments = qualifiedAccess.orderedArguments(callee) ?: return

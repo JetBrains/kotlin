@@ -1,0 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+class C {
+    val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(x, y)<!> = <!UNRESOLVED_REFERENCE!>Pair<!>(1, 2)
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral */

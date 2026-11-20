@@ -43,7 +43,7 @@ class BuildReportICReporter(
     }
 
     override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {
-        affectedFiles.forEach { recompilationReason[it] = reason }
+        affectedFiles.forEach { recompilationReason.merge(it, reason) { old, new -> "$old; $new" } }
     }
 
     override fun flush() {

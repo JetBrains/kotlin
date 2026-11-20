@@ -18,9 +18,11 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportConstants
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import javax.inject.Inject
@@ -34,7 +36,7 @@ internal abstract class AssembleSwiftPackageBinary @Inject constructor(
     private val fileSystemOperations: FileSystemOperations,
 ) : DefaultTask() {
     init {
-        onlyIf { HostManager.hostIsMac }
+        onlyIf(SwiftExportConstants.MACOS_HOST_REQUIRED) { HostManager.hostIsMac }
     }
 
     /** File name of the library inside every slice, `lib<Module>Kotlin.a`. */
@@ -55,6 +57,7 @@ internal abstract class AssembleSwiftPackageBinary @Inject constructor(
 
     /** The libraries of all targets have the same file name, so only the absolute path tells them apart. */
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     abstract val libraries: ConfigurableFileCollection
 

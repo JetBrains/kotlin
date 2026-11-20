@@ -347,6 +347,36 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
   }
 
   @Test
+  @TestMetadata("destructuringCompanionBlockEntry.kt")
+  public void testDestructuringCompanionBlockEntry() {
+    run("destructuringCompanionBlockEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringMemberContainer.kt")
+  public void testDestructuringMemberContainer() {
+    run("destructuringMemberContainer.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringMemberEntry.kt")
+  public void testDestructuringMemberEntry() {
+    run("destructuringMemberEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringMemberEntryWithAnnotatedType.kt")
+  public void testDestructuringMemberEntryWithAnnotatedType() {
+    run("destructuringMemberEntryWithAnnotatedType.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringTopLevelEntry.kt")
+  public void testDestructuringTopLevelEntry() {
+    run("destructuringTopLevelEntry.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntries.kt")
   public void testEnumEntries() {
     run("enumEntries.kt");
@@ -1385,6 +1415,24 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
       }
 
       @Test
+      @TestMetadata("explicitInlineValueClassWithFullValueClassesEnabled.kt")
+      public void testExplicitInlineValueClassWithFullValueClassesEnabled() {
+        run("explicitInlineValueClassWithFullValueClassesEnabled.kt");
+      }
+
+      @Test
+      @TestMetadata("explicitInlineValueClassWithJvmInline.kt")
+      public void testExplicitInlineValueClassWithJvmInline() {
+        run("explicitInlineValueClassWithJvmInline.kt");
+      }
+
+      @Test
+      @TestMetadata("explicitInlineValueClassWithMultipleFields.kt")
+      public void testExplicitInlineValueClassWithMultipleFields() {
+        run("explicitInlineValueClassWithMultipleFields.kt");
+      }
+
+      @Test
       @TestMetadata("fullValueClass.kt")
       public void testFullValueClass() {
         run("fullValueClass.kt");
@@ -1591,6 +1639,12 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     @TestMetadata("companionProperty.kt")
     public void testCompanionProperty() {
       run("companionProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("staticDelegatedProperty.kt")
+    public void testStaticDelegatedProperty() {
+      run("staticDelegatedProperty.kt");
     }
 
     @Test
@@ -1911,6 +1965,92 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     @TestMetadata("recursiveContract2.kt")
     public void testRecursiveContract2() {
       run("recursiveContract2.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/fakeDeclarations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FakeDeclarations {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/fakeDeclarations/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInFakeDeclarations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/fakeDeclarations"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectFunction.kt")
+    public void testImportedFromObjectFunction() {
+      run("importedFromObjectFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectFunctionWithImplicitType.kt")
+    public void testImportedFromObjectFunctionWithImplicitType() {
+      run("importedFromObjectFunctionWithImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectPropertyWithExplicitBackingField.kt")
+    public void testImportedFromObjectPropertyWithExplicitBackingField() {
+      run("importedFromObjectPropertyWithExplicitBackingField.kt");
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectPropertyWithExplicitBackingFieldAndImplicitType.kt")
+    public void testImportedFromObjectPropertyWithExplicitBackingFieldAndImplicitType() {
+      run("importedFromObjectPropertyWithExplicitBackingFieldAndImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectPropertyWithImplicitType.kt")
+    public void testImportedFromObjectPropertyWithImplicitType() {
+      run("importedFromObjectPropertyWithImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("importedStaticEnumValueOf.kt")
+    public void testImportedStaticEnumValueOf() {
+      run("importedStaticEnumValueOf.kt");
+    }
+
+    @Test
+    @TestMetadata("importedStaticFromCompanionBlockFunction.kt")
+    public void testImportedStaticFromCompanionBlockFunction() {
+      run("importedStaticFromCompanionBlockFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("importedStaticFromCompanionBlockProperty.kt")
+    public void testImportedStaticFromCompanionBlockProperty() {
+      run("importedStaticFromCompanionBlockProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("samConstructor.kt")
+    public void testSamConstructor() {
+      run("samConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("samConstructorViaTypeAlias.kt")
+    public void testSamConstructorViaTypeAlias() {
+      run("samConstructorViaTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasedConstructor.kt")
+    public void testTypeAliasedConstructor() {
+      run("typeAliasedConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasedConstructorWithTypeParameters.kt")
+    public void testTypeAliasedConstructorWithTypeParameters() {
+      run("typeAliasedConstructorWithTypeParameters.kt");
     }
   }
 
@@ -2497,20 +2637,6 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
   }
 
   @Nested
-  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/repl")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Repl {
-    private void run(String fileName) {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/repl/" + fileName);
-    }
-
-    @Test
-    public void testAllFilesPresentInRepl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/repl"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-    }
-  }
-
-  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations")
   @TestDataPath("$PROJECT_ROOT")
   public class SpecialAnnotations {
@@ -2926,6 +3052,18 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     }
 
     @Test
+    @TestMetadata("typeAliasToUnionForwardReference.kt")
+    public void testTypeAliasToUnionForwardReference() {
+      run("typeAliasToUnionForwardReference.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasToUnionForwardReferenceNonError.kt")
+    public void testTypeAliasToUnionForwardReferenceNonError() {
+      run("typeAliasToUnionForwardReferenceNonError.kt");
+    }
+
+    @Test
     @TestMetadata("typeAliasWithAnnotationOnType.kt")
     public void testTypeAliasWithAnnotationOnType() {
       run("typeAliasWithAnnotationOnType.kt");
@@ -3048,6 +3186,12 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     @TestMetadata("aliasedAnnotation.kt")
     public void testAliasedAnnotation() {
       run("aliasedAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("aliasedAnnotationWithDeprecated.kt")
+    public void testAliasedAnnotationWithDeprecated() {
+      run("aliasedAnnotationWithDeprecated.kt");
     }
 
     @Test

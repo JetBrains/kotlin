@@ -65,7 +65,7 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
             name,
             symbol,
             companionObjectSymbol,
-            superTypeRefs,
+            superTypeRefs.toMutableOrEmpty(),
             contextParameters.toMutableOrEmpty(),
         )
     }

@@ -21,6 +21,10 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
      *
      * All returned declarations are guaranteed to be non-local due to the contract of [LookupPredicate]
      * (see the documentation on [AbstractPredicate] for more details).
+     *
+     * The file of every returned declaration is recorded as referenced by a compiler plugin.
+     * Incremental compilation recompiles those files on every build.
+     * Use [AbstractPredicate.MatchingType.targets] to filter out kinds of declarations that the plugin doesn't need.
      */
     abstract fun getSymbolsByPredicate(predicate: LookupPredicate): List<FirBasedSymbol<*>>
 

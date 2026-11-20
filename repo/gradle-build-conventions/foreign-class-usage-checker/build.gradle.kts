@@ -12,6 +12,7 @@ description = "Foreign Class Usage Checker – track dependency usage in librari
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = embeddedKotlinVersion
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = embeddedKotlinVersion
     jvmToolchain(17)
 

@@ -1,0 +1,61 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=StubbedDeclarationsInBodiesKt]]
+  facadeFqName: StubbedDeclarationsInBodiesKt
+  partSimpleName: "StubbedDeclarationsInBodiesKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUNCTION[fqName=noDeclarations, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=noDeclarations]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=classLiteralBeforeLocalClass, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=classLiteralBeforeLocalClass]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=AfterClassLiteral, superNames=[]]
+  FUNCTION[fqName=localClassInLambda, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localClassInLambda]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Local, superNames=[]]
+  FUNCTION[fqName=localFunInterface, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localFunInterface]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=false, name=I, superNames=[]]
+      MODIFIER_LIST[fun]
+      CLASS_BODY
+        FUNCTION[fqName=null, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+          VALUE_PARAMETER_LIST
+  FUNCTION[fqName=objectLiteral, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=objectLiteral]
+    VALUE_PARAMETER_LIST
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=run]
+      LAMBDA_ARGUMENT[isSpread=false]
+        OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Any]]
+          SUPER_TYPE_LIST
+            SUPER_TYPE_CALL_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Any]
+              VALUE_ARGUMENT_LIST
+          CLASS_BODY
+  FUNCTION[fqName=anonymousFunction, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=anonymousFunction]
+    VALUE_PARAMETER_LIST
+  PROPERTY[fqName=lambdaInInitializer, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=lambdaInInitializer]
+    FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=local]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=property, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=property]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+      VALUE_PARAMETER_LIST
+      CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=InGetter, superNames=[]]
+  CLASS[classId=/Outer, fqName=Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Outer, superNames=[]]
+    CLASS_BODY
+      CLASS_INITIALIZER
+        OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=false, isTopLevel=false, name=InInit, superNames=[]]
+      SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Outer]
+        VALUE_PARAMETER_LIST
+        FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=inConstructor]
+          VALUE_PARAMETER_LIST
+  FUNCTION[fqName=deeplyNested, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=deeplyNested]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Deep, superNames=[]]
+  FUNCTION[fqName=inTemplate, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=inTemplate]
+    VALUE_PARAMETER_LIST
+    OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
+      CLASS_BODY

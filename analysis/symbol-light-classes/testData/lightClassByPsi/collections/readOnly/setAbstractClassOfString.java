@@ -33,6 +33,9 @@ public abstract class SSet /* test.SSet*/ implements java.util.Set<@org.jetbrain
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
+
+  @java.lang.Override()
   public void clear();//  clear()
 
   public  SSet();//  .ctor()

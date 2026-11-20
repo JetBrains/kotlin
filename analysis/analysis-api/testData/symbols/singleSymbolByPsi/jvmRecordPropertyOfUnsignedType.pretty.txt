@@ -1,0 +1,3 @@
+rc: kotlin.UInt
+
+val rc: kotlin.UInt

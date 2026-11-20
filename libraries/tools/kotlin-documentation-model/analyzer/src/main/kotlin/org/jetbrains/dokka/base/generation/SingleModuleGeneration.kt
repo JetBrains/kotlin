@@ -20,7 +20,7 @@ import org.jetbrains.dokka.transformers.sources.AsyncSourceToDocumentableTransla
 import org.jetbrains.dokka.utilities.parallelMap
 import org.jetbrains.dokka.utilities.report
 
-public class SingleModuleGeneration(private val context: DokkaContext) : Generation {
+internal class SingleModuleGeneration(private val context: DokkaContext) : Generation {
 
     override fun Timer.generate(): Unit = try {
         report("Validity check")
@@ -55,7 +55,7 @@ public class SingleModuleGeneration(private val context: DokkaContext) : Generat
      * Implementation note: it runs in a separated single thread due to existing support of coroutines (see #2936)
      */
     @OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
-    public fun createDocumentationModels(): List<DModule> = newSingleThreadContext("Generating documentable model").use { coroutineContext -> // see https://github.com/Kotlin/dokka/issues/3151
+    fun createDocumentationModels(): List<DModule> = newSingleThreadContext("Generating documentable model").use { coroutineContext -> // see https://github.com/Kotlin/dokka/issues/3151
         runBlocking(coroutineContext) {
             context.configuration.sourceSets.parallelMap { sourceSet -> translateSources(sourceSet, context) }.flatten()
                 .also { modules -> if (modules.isEmpty()) exitGenerationGracefully("Nothing to document") }
@@ -63,23 +63,23 @@ public class SingleModuleGeneration(private val context: DokkaContext) : Generat
     }
 
 
-    public fun transformDocumentationModelBeforeMerge(modulesFromPlatforms: List<DModule>): List<DModule> {
+    fun transformDocumentationModelBeforeMerge(modulesFromPlatforms: List<DModule>): List<DModule> {
         return context.plugin<DokkaBase>()
             .query { preMergeDocumentableTransformer }
             .fold(modulesFromPlatforms) { acc, t -> t(acc) }
     }
 
-    public fun mergeDocumentationModels(modulesFromPlatforms: List<DModule>): DModule? =
+    fun mergeDocumentationModels(modulesFromPlatforms: List<DModule>): DModule? =
         context.single(CoreExtensions.documentableMerger).invoke(modulesFromPlatforms)
 
-    public fun transformDocumentationModelAfterMerge(documentationModel: DModule): DModule =
+    fun transformDocumentationModelAfterMerge(documentationModel: DModule): DModule =
         context[CoreExtensions.documentableTransformer].fold(documentationModel) { acc, t -> t(acc, context) }
 
-    public fun runPostActions() {
+    fun runPostActions() {
         context[CoreExtensions.postActions].forEach { it() }
     }
 
-    public fun cleanUp() {
+    fun cleanUp() {
         // Don't allow errors to block other clean up steps from running.
         context[CoreExtensions.cleanUpActions].forEach {
             try {
@@ -90,7 +90,7 @@ public class SingleModuleGeneration(private val context: DokkaContext) : Generat
         }
     }
 
-    public fun validityCheck(context: DokkaContext) {
+    fun validityCheck(context: DokkaContext) {
         val (preGenerationCheckResult, checkMessages) = context[CoreExtensions.preGenerationCheck].fold(
             Pair(true, emptyList<String>())
         ) { acc, checker -> checker() + acc }
@@ -99,7 +99,7 @@ public class SingleModuleGeneration(private val context: DokkaContext) : Generat
         )
     }
 
-    public fun reportAfterRendering() {
+    fun reportAfterRendering() {
         context.unusedPoints.takeIf { it.isNotEmpty() }?.also {
             context.logger.info("Unused extension points found: ${it.joinToString(", ")}")
         }

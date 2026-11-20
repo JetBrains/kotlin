@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
-import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterForDefaultImplsReceiver
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSetterParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
@@ -94,12 +92,8 @@ internal class SymbolLightAccessorMethod private constructor(
     private val _name: String by lazyPub {
         withPropertySymbol { propertySymbol ->
             val accessorSymbol = propertySymbol.accessorSymbol
-            val outerClass = this@SymbolLightAccessorMethod.containingClass
             val defaultName = propertySymbol.name.identifier.let {
-                if (outerClass.isAnnotationType || outerClass.isRecord)
-                    it
-                else
-                    it.abiName()
+                if (propertySymbol.hasPrefixlessAccessorNames) it else it.abiName()
             }
 
             computeMethodName(accessorSymbol, defaultName)
@@ -109,7 +103,10 @@ internal class SymbolLightAccessorMethod private constructor(
     override fun getName(): String = _name
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
-        hasTypeParameters().ifTrue {
+        val hasTypeParameters = withPropertySymbol { it.typeParameters.isNotEmpty() } ||
+                containingClass.isDefaultImplsForInterfaceWithTypeParameters
+
+        hasTypeParameters.ifTrue {
             SymbolLightTypeParameterList(
                 owner = this,
                 symbolWithTypeParameterPointer = containingPropertySymbolPointer,
@@ -119,9 +116,7 @@ internal class SymbolLightAccessorMethod private constructor(
         }
     }
 
-    override fun hasTypeParameters(): Boolean {
-        return withPropertySymbol { it.typeParameters.isNotEmpty() } || containingClass.isDefaultImplsForInterfaceWithTypeParameters
-    }
+    override fun hasTypeParameters(): Boolean = _typeParameterList != null
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
@@ -149,10 +144,12 @@ internal class SymbolLightAccessorMethod private constructor(
         )
 
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
-            val modality = when {
-                // Annotation class members are abstract on the JVM regardless of their Kotlin modality
-                containingClass.isAnnotationType -> PsiModifier.ABSTRACT
-                else -> withPropertySymbol { computeMethodModality(it, containingClass) }
+            val modality = withPropertySymbol { propertySymbol ->
+                when {
+                    // Annotation class members are abstract on the JVM regardless of their Kotlin modality
+                    propertySymbol.isAnnotationClassMember -> PsiModifier.ABSTRACT
+                    else -> computeMethodModality(propertySymbol, containingClass)
+                }
             }
 
             GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
@@ -205,6 +202,7 @@ internal class SymbolLightAccessorMethod private constructor(
                     },
                     MethodAdditionalAnnotationsProvider,
                     JvmExposeBoxedAdditionalAnnotationsProvider,
+                    DefaultImplsAdditionalAnnotationsProvider,
                 ),
                 annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
             ),
@@ -214,7 +212,7 @@ internal class SymbolLightAccessorMethod private constructor(
     override fun isConstructor(): Boolean = false
 
     private val _isDeprecated: Boolean by lazyPub {
-        withPropertySymbol { propertySymbol ->
+        isDefaultImplsCompatibilityDelegate || withPropertySymbol { propertySymbol ->
             propertySymbol.hasDeprecatedAnnotation() || propertySymbol.accessorSymbol.hasDeprecatedAnnotation()
         }
     }
@@ -282,35 +280,23 @@ internal class SymbolLightAccessorMethod private constructor(
     override fun hashCode(): Int = propertyAccessorDeclaration?.hashCode() ?: containingPropertyDeclaration.hashCode()
 
     private val _parametersList by lazyPub {
-        val baseParameterPopulator: (LightParameterListBuilder) -> Unit = if (!isGetter) {
-            { builder ->
-                withAccessorSymbol { accessorSymbol ->
-                    val setterParameter = (accessorSymbol as? KaPropertySetterSymbol)?.parameter ?: return@withAccessorSymbol
-                    builder.addParameter(
-                        SymbolLightSetterParameter(
-                            containingPropertySymbolPointer = containingPropertySymbolPointer,
-                            parameterSymbol = setterParameter,
-                            containingMethod = this@SymbolLightAccessorMethod,
-                        )
-                    )
-                }
-            }
-        } else {
-            { }
-        }
-
-        val parameterPopulator: (LightParameterListBuilder) -> Unit = { builder ->
-            if (containingClass is SymbolLightClassForInterfaceDefaultImpls) {
-                builder.addParameter(SymbolLightParameterForDefaultImplsReceiver(this@SymbolLightAccessorMethod))
-            }
-            baseParameterPopulator(builder)
-        }
-
         SymbolLightParameterList(
             parent = this@SymbolLightAccessorMethod,
             correspondingCallablePointer = containingPropertySymbolPointer,
-            parameterPopulator = parameterPopulator,
-        )
+        ) { builder ->
+            if (isGetter) return@SymbolLightParameterList
+
+            withAccessorSymbol { accessorSymbol ->
+                val setterParameter = (accessorSymbol as? KaPropertySetterSymbol)?.parameter ?: return@withAccessorSymbol
+                builder.addParameter(
+                    SymbolLightSetterParameter(
+                        containingPropertySymbolPointer = containingPropertySymbolPointer,
+                        parameterSymbol = setterParameter,
+                        containingMethod = this@SymbolLightAccessorMethod,
+                    )
+                )
+            }
+        }
     }
 
     override fun getParameterList(): PsiParameterList = _parametersList
@@ -336,6 +322,9 @@ internal class SymbolLightAccessorMethod private constructor(
         if (!containingClass.isAnnotationType) return@lazyPub null
 
         withPropertySymbol { propertySymbol ->
+            // The static accessors copied from the companion object have no default value
+            if (!propertySymbol.isAnnotationClassMember) return@withPropertySymbol null
+
             when (val initializer = propertySymbol.initializer) {
                 is KaConstantInitializerValue -> {
                     initializer.constant.createPsiExpression(this@SymbolLightAccessorMethod)
@@ -478,7 +467,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 }
 
                 val setter = declaration.takeIf { isMutable }?.setter
-                if (setter != null && !lightClass.isAnnotationType) {
+                if (setter != null && !declaration.isAnnotationClassMember) {
                     produceSymbolLightAccessorMethodIfNeeded(
                         accessor = setter,
                         result = result,
@@ -502,16 +491,19 @@ internal class SymbolLightAccessorMethod private constructor(
             val hasInlineClassInParameterType = context.hasInlineClassInParameterType(accessor)
             val hasInlineClassInReturnType = context.hasInlineClassInReturnType(accessor)
 
-            val hasMangledNameDueToInlineClassesInSignature = hasMangledNameDueToInlineClassesInSignature(
-                // Not every inline class in a parameter position mangles the name, so 'hasInlineClassInParameterType' cannot be reused
-                hasManglingInlineClassInParameterType = context.hasManglingInlineClassInParameterType(accessor),
-                hasInlineClassInReturnType = hasInlineClassInReturnType,
-                isTopLevel = context.isTopLevel,
-            )
+            val hasMangledNameDueToInlineClassesInSignature = !property.hasPrefixlessAccessorNames &&
+                    hasMangledNameDueToInlineClassesInSignature(
+                        // Not every inline class in a parameter position mangles the name,
+                        // so 'hasInlineClassInParameterType' cannot be reused
+                        hasManglingInlineClassInParameterType = context.hasManglingInlineClassInParameterType(accessor),
+                        hasInlineClassInReturnType = hasInlineClassInReturnType,
+                        isTopLevel = context.isTopLevel,
+                    )
 
             val isNonMaterializableInlineClassProperty =
-                // Accessors with JvmStatic should be materialized inside the containing inline class
+                // Static accessors, with JvmStatic or of companion block properties, are materialized inside the containing inline class
                 !context.staticsFromCompanion &&
+                        !property.isCompanion &&
                         context.destinationLightClass.isInlineClass &&
                         // Constructor properties are materialized by default
                         (property as? KaKotlinPropertySymbol)?.primaryConstructorParameter == null &&
@@ -555,6 +547,10 @@ internal class SymbolLightAccessorMethod private constructor(
             }
         }
 
+        /**
+         * `LightClassMemberUtils.lightMemberKotlinOrigin` relies on the [LightMemberOriginForDeclaration.originalElement] given here
+         * to accessors of [KaSymbolOrigin.SOURCE] properties, as it is the `kotlinOrigin` of the accessor.
+         */
         context(context: Context)
         private fun getLightMemberOriginForAccessor(accessor: KaPropertyAccessorSymbol): LightMemberOriginForDeclaration? {
             val originalElement = property.psiSafe<KtDeclaration>() ?: return null

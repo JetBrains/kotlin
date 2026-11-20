@@ -454,7 +454,7 @@ internal object ConeTypeCompatibilityChecker {
                     firClass.isPrimitiveType() ||
                     (ctx.prohibitComparisonOfIncompatibleClasses && firClass.classId == StandardClassIds.KClass) ||
                     firClass.classId == StandardClassIds.String || firClass.classId == StandardClassIds.Unit ||
-                    (firClass is FirRegularClassSymbol && (firClass.isData || firClass.isInlineOrValue && firClass.isFinal))
+                    (firClass is FirRegularClassSymbol && (firClass.isData || firClass.isValue && firClass.isFinal))
         }
 
         private val FirClassSymbol<*>.isFinal: Boolean

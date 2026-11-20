@@ -17,3 +17,11 @@ fun mfvcToClass2() = MfvcToClass(1, 2).second
 
 fun inlineToMfvcVersionOverload() = InlineToMfvcVersionOverload(1).first
 fun mfvcVersionOverload() = MfvcVersionOverload(1).first
+
+value class ValueToIdentitySubclass(val first: Int) : ValueToIdentity()
+
+fun valueToIdentity() = ValueToIdentitySubclass(1).first
+
+value class StaysValueSubclass(val first: Int) : StaysValue()
+
+fun staysValue() = StaysValueSubclass(1).first

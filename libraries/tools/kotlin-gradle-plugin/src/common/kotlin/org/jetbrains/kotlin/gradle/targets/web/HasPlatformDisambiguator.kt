@@ -5,13 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.targets.web
 
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 /**
  * Represents entities that can provide platform-specific disambiguation for names of tasks and extensions.
  * Commonly used in scenarios where a platform's identifier needs to be prefixed
- * It is necessary to not duplicate calculation of platform-specific names
+ * It is necessary to not duplicate calculation of platform-specific names.
+ *
+ * Prefer using [KotlinWebPlatformType] instead.
  */
+@ObsoleteNpmDependencyModel
+// technically this should also have @ObsoleteJsAndWasmToolingProvisioning since it's used for both, but only one annotation is allowed.
 internal interface HasPlatformDisambiguator {
     /**
      * This property is commonly used as a prefix or part of identifier names to distinguish configurations,

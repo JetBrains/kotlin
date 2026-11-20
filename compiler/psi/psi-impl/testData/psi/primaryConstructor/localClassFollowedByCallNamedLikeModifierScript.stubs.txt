@@ -1,0 +1,34 @@
+FILE[kind=Script[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  SCRIPT[fqName=LocalClassFollowedByCallNamedLikeModifierScript, fqName=LocalClassFollowedByCallNamedLikeModifierScript, name=LocalClassFollowedByCallNamedLikeModifierScript]
+    CLASS[classId=/TopLevel, fqName=TopLevel, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=TopLevel, superNames=[]]
+    SCRIPT_INITIALIZER
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=error]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+              LITERAL_STRING_TEMPLATE_ENTRY[text=boom]
+    CLASS[classId=/TopLevelWithConstructorOnNextLine, fqName=TopLevelWithConstructorOnNextLine, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=TopLevelWithConstructorOnNextLine, superNames=[]]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TopLevelWithConstructorOnNextLine]
+        MODIFIER_LIST[private]
+        VALUE_PARAMETER_LIST
+    FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      VALUE_PARAMETER_LIST
+      CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Local, superNames=[]]
+    SCRIPT_INITIALIZER
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=run]
+        LAMBDA_ARGUMENT[isSpread=false]
+          CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=LocalInLambda, superNames=[]]
+    CLASS[classId=/Outer, fqName=Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Outer, superNames=[]]
+      CLASS_BODY
+        CLASS[classId=/Outer.Nested, fqName=Outer.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
+          PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
+            MODIFIER_LIST[private]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Int]

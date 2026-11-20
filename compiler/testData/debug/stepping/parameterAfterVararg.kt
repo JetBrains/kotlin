@@ -141,21 +141,27 @@ fun box(): String {
 
 // EXPECTATIONS JS_IR
 // test.kt:11 box
+// test.kt:6 sum
 // test.kt:7 sum
 // test.kt:12 box
 // test.kt:12 box
+// test.kt:6 sum
 // test.kt:7 sum
 // test.kt:13 box
+// test.kt:6 sum
 // test.kt:7 sum
 // test.kt:14 box
 // test.kt:14 box
+// test.kt:6 sum
 // test.kt:7 sum
 // test.kt:15 box
 // test.kt:16 box
+// test.kt:6 sum
 // test.kt:7 sum
 // test.kt:19 box
 // test.kt:20 box
 // test.kt:19 box
+// test.kt:6 sum
 // test.kt:7 sum
 // test.kt:23 box
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-86886
 // FILE: ExplicitBuilderWithTypeParametersLessThanRequired.java
 
@@ -26,3 +27,5 @@ fun main() {
     val obj = <!TYPE_MISMATCH!>ExplicitBuilderWithTypeParametersLessThanRequired.builder()<!>.<!UNRESOLVED_REFERENCE!>build<!>()
     val obj2 = <!TYPE_MISMATCH!>ExplicitBuilderWithTypeParametersMoreThanRequired.builder()<!>.<!UNRESOLVED_REFERENCE!>build<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, localProperty, propertyDeclaration */

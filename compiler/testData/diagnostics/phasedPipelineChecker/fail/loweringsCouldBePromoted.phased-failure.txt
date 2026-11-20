@@ -1,0 +1,3 @@
+Phase LOWERINGS could be promoted to CODEGEN: loweringsCouldBePromoted.kt
+- // RUN_PIPELINE_TILL: LOWERINGS
++ // RUN_PIPELINE_TILL: CODEGEN

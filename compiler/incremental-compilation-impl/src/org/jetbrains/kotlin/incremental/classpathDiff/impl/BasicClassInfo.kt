@@ -33,6 +33,8 @@ internal class BasicClassInfo(
     @OptIn(ClassIdBasedLocality::class)
     val isLocal = classId.isLocal
 
+    val isPackageInfo = classId.relativeClassName.asString() == "package-info"
+
     val isSynthetic = if (isKotlinClass) {
         // Note that this property is `true` if one of the two checks below is `true`.
         // For example, `kotlin/Metadata.DefaultImpls` is synthetic according to its [KotlinClassHeader.Kind], but not synthetic according

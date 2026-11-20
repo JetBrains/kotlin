@@ -1,0 +1,168 @@
+FILE fqName:<root> fileName:/richErrors.kt
+  CLASS ANNOTATION_CLASS name:Ann1 modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [AnnotationTarget.TYPE] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Ann1
+    CONSTRUCTOR visibility:public returnType:<root>.Ann1 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Ann1 modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+  CLASS ANNOTATION_CLASS name:Ann2 modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [AnnotationTarget.TYPE] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Ann2
+    CONSTRUCTOR visibility:public returnType:<root>.Ann2 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Ann2 modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+  CLASS ANNOTATION_CLASS name:Ann3 modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [AnnotationTarget.TYPE] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Ann3
+    CONSTRUCTOR visibility:public returnType:<root>.Ann3 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Ann3 modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+  CLASS OBJECT name:Err1 modality:FINAL visibility:public superTypes:[kotlin.RichError]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Err1
+    CONSTRUCTOR visibility:private returnType:<root>.Err1 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.RichError'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Err1 modality:FINAL visibility:public superTypes:[kotlin.RichError]' type=kotlin.Unit
+    FUN name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Err1
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.RichError
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+              ARG arg0: GET_VAR '<this>: <root>.Err1 declared in <root>.Err1.equals' type=<root>.Err1 origin=null
+              ARG arg1: GET_VAR 'other: kotlin.Any? declared in <root>.Err1.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Err1'
+              CONST Boolean type=kotlin.Boolean value=true
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.Err1
+              GET_VAR 'other: kotlin.Any? declared in <root>.Err1.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Err1'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Err1 [val]
+          TYPE_OP type=<root>.Err1 origin=IMPLICIT_CAST typeOperand=<root>.Err1
+            GET_VAR 'other: kotlin.Any? declared in <root>.Err1.equals' type=kotlin.Any? origin=null
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Err1'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Err1
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.RichError
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Err1'
+          CONST Int type=kotlin.Int value=0
+    FUN name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Err1
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.RichError
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Err1'
+          CONST String type=kotlin.String value="Err1"
+  CLASS OBJECT name:Err2 modality:FINAL visibility:public superTypes:[kotlin.RichError]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Err2
+    CONSTRUCTOR visibility:private returnType:<root>.Err2 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.RichError'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Err2 modality:FINAL visibility:public superTypes:[kotlin.RichError]' type=kotlin.Unit
+    FUN name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Err2
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.RichError
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+              ARG arg0: GET_VAR '<this>: <root>.Err2 declared in <root>.Err2.equals' type=<root>.Err2 origin=null
+              ARG arg1: GET_VAR 'other: kotlin.Any? declared in <root>.Err2.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Err2'
+              CONST Boolean type=kotlin.Boolean value=true
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.Err2
+              GET_VAR 'other: kotlin.Any? declared in <root>.Err2.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Err2'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.Err2 [val]
+          TYPE_OP type=<root>.Err2 origin=IMPLICIT_CAST typeOperand=<root>.Err2
+            GET_VAR 'other: kotlin.Any? declared in <root>.Err2.equals' type=kotlin.Any? origin=null
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Err2'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Err2
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.RichError
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Err2'
+          CONST Int type=kotlin.Int value=0
+    FUN name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Err2
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.RichError
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Err2'
+          CONST String type=kotlin.String value="Err2"
+  FUN name:bar visibility:public modality:FINAL returnType:kotlin.Any[{T of <root>.bar & Any} | <root>.Err1]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun bar <T> (): kotlin.Any[{T of <root>.bar & Any} | <root>.Err1] declared in <root>'
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+  FUN name:baz visibility:public modality:FINAL returnType:@[Ann1] kotlin.Any[kotlin.Nothing | @[Ann2] <root>.Err1 | <root>.Err2]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun baz (): @[Ann1] kotlin.Any[kotlin.Nothing | @[Ann2] <root>.Err1 | <root>.Err2] declared in <root>'
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Any[kotlin.Int | <root>.Err1 | <root>.Err2]
+    BLOCK_BODY
+  FUN name:foobar visibility:public modality:FINAL returnType:@[Ann1] kotlin.Any[@[Ann2] kotlin.String | @[Ann3] <root>.Err1]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foobar (): @[Ann1] kotlin.Any[@[Ann2] kotlin.String | @[Ann3] <root>.Err1] declared in <root>'
+        CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null

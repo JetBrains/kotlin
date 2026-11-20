@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -30,6 +32,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
         )
     )
 
+    @TestMetadata("native-incremental-simple")
     @DisplayName("KT-63742: Check that kotlinNativeLink task passes all required args for cache orchestration and ic")
     @GradleTest
     fun checkArgumentsForIncrementalCache(gradleVersion: GradleVersion) {
@@ -43,7 +46,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
             val icCacheDir = projectPath.toRealPath().resolve("build").resolve("kotlin-native-ic-cache").resolve("debugExecutable")
             val incrementalCacheArgs = arrayOf(
                 "-Xenable-incremental-compilation",
-                "-Xic-cache-dir=${icCacheDir.toFile().absolutePath}"
+                "-Xic-cache-dir=${icCacheDir.toFile().normalizedAbsolutePath().toString()}"
             )
 
             // disabled incremental cache parameter
@@ -88,6 +91,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-simple")
     @DisplayName("Smoke test")
     @GradleTest
     fun checkIncrementalCacheIsCreated(gradleVersion: GradleVersion) {
@@ -100,6 +104,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-simple")
     @DisplayName("Custom binary option")
     @GradleTest
     fun customBinaryOption(gradleVersion: GradleVersion) {
@@ -123,6 +128,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-multifile")
     @DisplayName("IC works after compilation error (test 1)")
     @GradleTest
     fun compilationError1(gradleVersion: GradleVersion) {
@@ -156,6 +162,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-multifile")
     @DisplayName("IC works after compilation error (test 2)")
     @GradleTest
     fun compilationError2(gradleVersion: GradleVersion) {
@@ -189,6 +196,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-multifile")
     @DisplayName("KT-86798: stale IC cache from a different compiler version is invalidated")
     @GradleTest
     fun staleCacheInvalidatedOnCompilerFingerprintMismatch(gradleVersion: GradleVersion) {
@@ -226,6 +234,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-multi-project")
     @DisplayName("Check dependencies on project level")
     @GradleTest
     fun inProjectDependencies(gradleVersion: GradleVersion) {

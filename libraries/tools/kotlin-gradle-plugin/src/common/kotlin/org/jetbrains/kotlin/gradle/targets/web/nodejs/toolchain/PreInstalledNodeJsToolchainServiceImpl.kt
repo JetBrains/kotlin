@@ -50,7 +50,7 @@ internal abstract class PreInstalledNodeJsToolchainServiceImpl @Inject internal 
                     "Node.js $installedVersion found by '$command' does not match the requested " +
                             "version $requestedVersion. The requested version cannot be provisioned, because " +
                             "the Node.js toolchain is configured to use a pre-installed Node.js. " +
-                            "Please update the pre-installed Node.js or configure the Kotlin Gradle Plugin to download Node.js by setting kotlin.js.nodejs.toolchain=DOWNLOAD."
+                            "Please update the pre-installed Node.js or configure the Kotlin Gradle Plugin to download Node.js by setting kotlin.js.nodeJsToolchainMode=download."
                 )
             }
             nodeJsRequest.platform.orNull?.let { platform ->
@@ -117,7 +117,7 @@ internal abstract class PreInstalledNodeJsToolchainServiceImpl @Inject internal 
             return registerIfAbsent(
                 project.gradle,
             ) { parameters ->
-                parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainLocalPath.orElse("node"))
+                parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainPreinstalledExecutablePath.orElse("node"))
             }
         }
     }

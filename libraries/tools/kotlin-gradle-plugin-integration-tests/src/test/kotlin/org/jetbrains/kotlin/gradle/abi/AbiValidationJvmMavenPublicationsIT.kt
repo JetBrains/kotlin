@@ -14,11 +14,14 @@ import org.jetbrains.kotlin.gradle.abi.utils.abiValidation
 import org.jetbrains.kotlin.gradle.abi.utils.referenceJvmDumpFile
 import org.jetbrains.kotlin.gradle.dsl.abi.BinariesSource
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import kotlin.test.assertEquals
 
 @JvmGradlePluginTests
 class AbiValidationJvmMavenPublicationsIT : KGPBaseTest() {
+    @TestMetadata("base-kotlin-jvm-library")
     @GradleTest
     fun testNoPublishPluginInJvm(
         gradleVersion: GradleVersion,
@@ -30,10 +33,13 @@ class AbiValidationJvmMavenPublicationsIT : KGPBaseTest() {
             abiValidation {
                 binariesSource.set(BinariesSource.MAVEN_PUBLICATIONS)
             }
-            buildAndFail("updateKotlinAbi")
+            build("updateKotlinAbi") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.AbiValidationNoPublishPlugin)
+            }
         }
     }
 
+    @TestMetadata("base-kotlin-jvm-library")
     @GradleTest
     fun testSame(
         gradleVersion: GradleVersion,
@@ -83,6 +89,7 @@ class AbiValidationJvmMavenPublicationsIT : KGPBaseTest() {
         assertEquals(compilationsDump, dumpFromPublication)
     }
 
+    @TestMetadata("base-kotlin-jvm-library")
     @GradleTest
     fun testClassifierArtifactsAreIgnored(
         gradleVersion: GradleVersion,

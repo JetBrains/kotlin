@@ -216,8 +216,9 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
     JvmArgumentTestDescriptor(
         argumentName = "Xjdk-release",
         argument = X_JDK_RELEASE,
-        argumentValues = JdkRelease.entries.toList(),
-        argumentRawValues = JdkRelease.entries.map { it.stringValue },
+        //TODO(KT-89774): Remove filtering with 2.5.0-Beta2
+        argumentValues = JdkRelease.entries.filterNot { it == JDK_28 }.toList(),
+        argumentRawValues = JdkRelease.entries.filterNot { it == JDK_28 }.map { it.stringValue },
         invalidRawValues = listOf("non-existent-value"),
         runsNullableTest = true,
         valueString = { value -> value?.stringValue },

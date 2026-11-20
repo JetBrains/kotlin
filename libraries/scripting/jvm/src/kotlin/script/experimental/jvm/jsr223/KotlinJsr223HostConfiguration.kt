@@ -22,6 +22,22 @@ val ScriptingHostConfigurationKeys.jsr223 get() = Jsr223HostConfigurationBuilder
 
 val Jsr223HostConfigurationKeys.getScriptContext by PropertiesCollection.key<() -> ScriptContext?>()
 
+/**
+ * Checks whether a class that is public in the bytecode is also public as declared in Kotlin, i.e. it is not, e.g., a Kotlin
+ * `internal` class. Used to choose the type under which a JSR-223 binding value is exposed to snippets (see
+ * [Jsr223CompilationConfigurationKeys.importAllBindings]): a class that is not public can't be referenced from a snippet,
+ * so its nearest public supertype is used instead. The check should return true for non-Kotlin classes, and false if the
+ * visibility can't be determined.
+ *
+ * The default implementation uses [kotlin.reflect.KClass.visibility] if `kotlin-reflect` is available at runtime, and
+ * otherwise conservatively treats every Kotlin class as not public. A host without `kotlin-reflect` can provide a more
+ * precise implementation, e.g. one reading the Kotlin metadata with the compiler's code.
+ */
+val Jsr223HostConfigurationKeys.hasPublicKotlinVisibility by PropertiesCollection.key<(Class<*>) -> Boolean>(
+    { ::hasPublicKotlinVisibilityViaReflection },
+    isTransient = true
+)
+
 
 interface Jsr223CompilationConfigurationKeys
 

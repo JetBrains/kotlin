@@ -37,9 +37,6 @@ class Test3 {
     field = y
     get
 
-  val x: Int
-    get
-
   init {
     <this>.#x = x
   }
@@ -49,6 +46,9 @@ class Test3 {
     /* <init>() */
 
   }
+
+  val x: Int
+    get
 
 }
 

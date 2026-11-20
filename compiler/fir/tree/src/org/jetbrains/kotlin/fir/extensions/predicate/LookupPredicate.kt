@@ -40,7 +40,19 @@ sealed class LookupPredicate : AbstractPredicate<LookupPredicate> {
         }
     }
 
-    sealed class Annotated(final override val annotations: Set<AnnotationFqn>) : LookupPredicate(), AbstractPredicate.Annotated<LookupPredicate> {
+    class MatchingType(
+        override val predicate: LookupPredicate,
+        override val type: DeclarationType
+    ) : LookupPredicate(), AbstractPredicate.MatchingType<LookupPredicate> {
+        override val annotations: Set<AnnotationFqn> = predicate.annotations
+
+        override fun <R, D> accept(visitor: PredicateVisitor<LookupPredicate, R, D>, data: D): R {
+            return visitor.visitMatchingType(this, data)
+        }
+    }
+
+    sealed class Annotated(final override val annotations: Set<AnnotationFqn>) : LookupPredicate(),
+        AbstractPredicate.Annotated<LookupPredicate> {
         init {
             require(annotations.isNotEmpty()) {
                 "Annotations should be not empty"
@@ -52,26 +64,30 @@ sealed class LookupPredicate : AbstractPredicate<LookupPredicate> {
         }
     }
 
-    class AnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations), AbstractPredicate.AnnotatedWith<LookupPredicate> {
+    class AnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations),
+        AbstractPredicate.AnnotatedWith<LookupPredicate> {
         override fun <R, D> accept(visitor: PredicateVisitor<LookupPredicate, R, D>, data: D): R {
             return visitor.visitAnnotatedWith(this, data)
         }
     }
 
-    class AncestorAnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations), AbstractPredicate.AncestorAnnotatedWith<LookupPredicate> {
+    class AncestorAnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations),
+        AbstractPredicate.AncestorAnnotatedWith<LookupPredicate> {
         override fun <R, D> accept(visitor: PredicateVisitor<LookupPredicate, R, D>, data: D): R {
             return visitor.visitAncestorAnnotatedWith(this, data)
         }
     }
 
-    class ParentAnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations), AbstractPredicate.ParentAnnotatedWith<LookupPredicate> {
+    class ParentAnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations),
+        AbstractPredicate.ParentAnnotatedWith<LookupPredicate> {
         override fun <R, D> accept(visitor: PredicateVisitor<LookupPredicate, R, D>, data: D): R {
             return visitor.visitParentAnnotatedWith(this, data)
         }
     }
 
 
-    class HasAnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations), AbstractPredicate.HasAnnotatedWith<LookupPredicate> {
+    class HasAnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations),
+        AbstractPredicate.HasAnnotatedWith<LookupPredicate> {
         override fun <R, D> accept(visitor: PredicateVisitor<LookupPredicate, R, D>, data: D): R {
             return visitor.visitHasAnnotatedWith(this, data)
         }
@@ -99,6 +115,9 @@ sealed class LookupPredicate : AbstractPredicate<LookupPredicate> {
         override fun hasAnnotated(annotations: Collection<AnnotationFqn>): LookupPredicate = HasAnnotatedWith(annotations.toSet())
         override fun annotatedOrUnder(annotations: Collection<AnnotationFqn>): LookupPredicate =
             annotated(annotations) or ancestorAnnotated(annotations)
+
+        // ------------------- targets -------------------
+        override fun LookupPredicate.matching(type: DeclarationType): LookupPredicate = MatchingType(this, type)
     }
 
     companion object {

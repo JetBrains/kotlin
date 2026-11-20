@@ -1,0 +1,3 @@
+expression: 1uL
+expression PSI: KtConstantExpression
+type: ERROR(Missing stdlib class: kotlin/ULong)

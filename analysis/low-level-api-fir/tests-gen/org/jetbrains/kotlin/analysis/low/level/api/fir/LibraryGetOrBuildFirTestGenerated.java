@@ -35,6 +35,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("annotatedEnumEntry.kt")
+  public void testAnnotatedEnumEntry() {
+    run("annotatedEnumEntry.kt");
+  }
+
+  @Test
   @TestMetadata("annotatedProperties.kt")
   public void testAnnotatedProperties() {
     run("annotatedProperties.kt");
@@ -317,6 +323,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("primitiveConsts.kt")
+  public void testPrimitiveConsts() {
+    run("primitiveConsts.kt");
+  }
+
+  @Test
   @TestMetadata("properties.kt")
   public void testProperties() {
     run("properties.kt");
@@ -398,6 +410,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   @TestMetadata("typealiasUnsignedConst.kt")
   public void testTypealiasUnsignedConst() {
     run("typealiasUnsignedConst.kt");
+  }
+
+  @Test
+  @TestMetadata("unsignedAnnotationDefaultsFromOldMetadata.kt")
+  public void testUnsignedAnnotationDefaultsFromOldMetadata() {
+    run("unsignedAnnotationDefaultsFromOldMetadata.kt");
   }
 
   @Test
@@ -970,6 +988,30 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     }
 
     @Test
+    @TestMetadata("inlineValueClass.kt")
+    public void testInlineValueClass() {
+      run("inlineValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineValueClassWithAnnotation.kt")
+    public void testInlineValueClassWithAnnotation() {
+      run("inlineValueClassWithAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineValueClassWithFullValueClasses.kt")
+    public void testInlineValueClassWithFullValueClasses() {
+      run("inlineValueClassWithFullValueClasses.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineValueClassWithJvmInline.kt")
+    public void testInlineValueClassWithJvmInline() {
+      run("inlineValueClassWithJvmInline.kt");
+    }
+
+    @Test
     @TestMetadata("nestedValueClass.kt")
     public void testNestedValueClass() {
       run("nestedValueClass.kt");
@@ -1034,6 +1076,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
       @TestMetadata("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt")
       public void testJvmAbiInlineClassWithTypeParameterUnderlyingType() {
         run("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmAbiInlineValueClassWithFullValueClasses.kt")
+      public void testJvmAbiInlineValueClassWithFullValueClasses() {
+        run("jvmAbiInlineValueClassWithFullValueClasses.kt");
       }
     }
   }

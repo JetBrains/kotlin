@@ -50,7 +50,7 @@ public inline fun CharSequence.elementAtOrNull(index: Int): Char? {
 /**
  * Returns the first character matching the given [predicate], or `null` if no such character was found.
  * 
- * @sample samples.collections.Collections.Elements.find
+ * @sample samples.text.Strings.find
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.find(predicate: (Char) -> Boolean): Char? {
@@ -503,7 +503,7 @@ public inline fun String.filterNot(predicate: (Char) -> Boolean): String {
 /**
  * Appends all characters not matching the given [predicate] to the given [destination].
  * 
- * @sample samples.collections.Collections.Filtering.filterTo
+ * @sample samples.text.Strings.filterNotTo
  */
 @IgnorableReturnValue
 public inline fun <C : Appendable> CharSequence.filterNotTo(destination: C, predicate: (Char) -> Boolean): C {
@@ -514,7 +514,7 @@ public inline fun <C : Appendable> CharSequence.filterNotTo(destination: C, pred
 /**
  * Appends all characters matching the given [predicate] to the given [destination].
  * 
- * @sample samples.collections.Collections.Filtering.filterTo
+ * @sample samples.text.Strings.filterTo
  */
 @IgnorableReturnValue
 public inline fun <C : Appendable> CharSequence.filterTo(destination: C, predicate: (Char) -> Boolean): C {

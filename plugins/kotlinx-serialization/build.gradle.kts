@@ -1,9 +1,7 @@
 import org.gradle.api.publish.internal.PublicationInternal
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.konan.target.HostManager
 import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
 import plugins.configureKotlinPomAttributes
 
@@ -32,14 +30,10 @@ val coreJsIrRuntimeForTests = configurations.create("coreJsIrRuntimeForTests") {
     }
 }
 
-// WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
-val nativeTargetName = HostManager.host.name
-
 val coreNativeRuntimeForTests = configurations.create("coreNativeRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
-        attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
+        hostKonanTargetAttribute()
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
     }
@@ -48,8 +42,7 @@ val coreNativeRuntimeForTests = configurations.create("coreNativeRuntimeForTests
 val jsonNativeRuntimeForTests = configurations.create("jsonNativeRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
-        attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
+        hostKonanTargetAttribute()
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
     }
@@ -74,9 +67,9 @@ dependencies {
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.cli"))
 
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
-    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-compiler-tests")))
 
     testFixturesApi(platform(libs.junit.bom))
@@ -166,10 +159,7 @@ artifacts {
 
 projectTests {
     testTask(
-        javaLauncher = JdkMajorVersion.JDK_1_8,
         maxHeapSize = testMaxHeapSizeLarge,
-        // Use Parallel GC because this test runs on JDK 8.
-        garbageCollector = GarbageCollector.Parallel,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
     ) {
         useJUnitPlatform {

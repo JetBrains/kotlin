@@ -1,0 +1,35 @@
+LibKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package lib
+
+  public var value: kotlin.String /* compiled code */
+      @lib.Retained
+      @kotlin.jvm.Throws(exceptionClasses = [java.io.IOException::class, java.lang.IllegalStateException::class])
+      public final get() { /* compiled code */ }
+      @lib.Retained
+      @kotlin.jvm.Throws(exceptionClasses = [java.io.FileNotFoundException::class])
+      public final set(value: kotlin.String) { /* compiled code */ }
+
+Retained.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package lib
+
+  @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER])
+  public final annotation class Retained public constructor() : kotlin.Annotation {
+  }
+
+SourceOnly.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package lib
+
+  @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER])
+  public final annotation class SourceOnly public constructor() : kotlin.Annotation {
+  }

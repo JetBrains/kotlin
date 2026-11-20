@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83204
 
 // FILE: DataAndNoArgs.java
@@ -43,3 +44,5 @@ fun main() {
     <!NONE_APPLICABLE!>DataAndAllArgs<!>("abc")
     DataAndAllArgs("abc", 3)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, stringLiteral */

@@ -1,0 +1,236 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.scopes.impl
+
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
+import org.jetbrains.kotlin.fir.caches.createCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.scopeForSupertype
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.types.constructStarProjectedType
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitIntTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitStringTypeRef
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
+import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+
+/**
+ * This declared scope wrapper is created for data/value classes and provides Any method stubs, if necessary
+ */
+class FirClassAnySynthesizedMemberScope(
+    private val session: FirSession,
+    private val declaredMemberScope: FirContainingNamesAwareScope,
+    private val klass: FirRegularClass,
+    private val originForFunctions: FirDeclarationOrigin.Synthetic,
+    scopeSession: ScopeSession,
+) : FirContainingNamesAwareScope() {
+    private val lookupTag = klass.symbol.toLookupTag()
+
+    private val baseModuleData = klass.moduleData
+
+    private val dispatchReceiverType = klass.defaultType()
+
+    private val synthesizedCache = session.synthesizedStorage.synthesizedCacheByScope.getValue(lookupTag, null)
+
+    private val superKlassScope = lookupSuperTypes(
+        klass, lookupInterfaces = false, deep = false, useSiteSession = session, substituteTypes = true
+    ).firstOrNull()?.scopeForSupertype(session, scopeSession, klass, memberRequiredPhase = FirResolvePhase.TYPES)
+
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)
+    }
+
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+        declaredMemberScope.processDeclaredConstructors(processor)
+    }
+
+    override fun getCallableNames(): Set<Name> {
+        return declaredMemberScope.getCallableNames()
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return declaredMemberScope.getClassifierNames()
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        declaredMemberScope.processPropertiesByName(name, processor)
+    }
+
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        if (name !in ANY_MEMBER_NAMES) {
+            declaredMemberScope.processFunctionsByName(name, processor)
+            return
+        }
+        var synthesizedFunctionIsNeeded = true
+        declaredMemberScope.processFunctionsByName(name) process@{ fromDeclaredScope ->
+            if (fromDeclaredScope.matchesSomeAnyMember(name)) {
+                // TODO: should we handle fromDeclaredScope.origin == FirDeclarationOrigin.Delegated somehow?
+                // See also KT-58926
+                synthesizedFunctionIsNeeded = false
+            }
+            processor(fromDeclaredScope)
+        }
+        if (!synthesizedFunctionIsNeeded) return
+        superKlassScope?.processFunctionsByName(name) { fromSuperType ->
+            if (synthesizedFunctionIsNeeded) {
+                if (fromSuperType.rawStatus.modality == Modality.FINAL && fromSuperType.matchesSomeAnyMember(name)) {
+                    synthesizedFunctionIsNeeded = false
+                }
+            }
+        }
+        if (!synthesizedFunctionIsNeeded) return
+        processor(synthesizedCache.synthesizedFunction.getValue(name, this))
+    }
+
+    private fun FirNamedFunctionSymbol.matchesSomeAnyMember(name: Name): Boolean {
+        return when (name) {
+            OperatorNameConventions.HASH_CODE -> isHashCode()
+            OperatorNameConventions.TO_STRING -> isToString()
+            else -> {
+                lazyResolveToPhase(FirResolvePhase.TYPES)
+                isEquals(session)
+            }
+        }
+    }
+
+    internal fun generateSyntheticFunctionByName(name: Name): FirNamedFunctionSymbol =
+        when (name) {
+            OperatorNameConventions.EQUALS -> generateEqualsFunction()
+            OperatorNameConventions.HASH_CODE -> generateHashCodeFunction()
+            OperatorNameConventions.TO_STRING -> generateToStringFunction()
+            else -> shouldNotBeCalled()
+        }.symbol
+
+    private fun generateEqualsFunction(): FirNamedFunction =
+        buildNamedFunction {
+            generateSyntheticFunction(
+                OperatorNameConventions.EQUALS,
+                KtFakeSourceElementKind.DataClassGeneratedMembers.EqualsFunction,
+                isOperator = true,
+            )
+
+            returnTypeRef = FirImplicitBooleanTypeRef(source)
+            this.valueParameters.add(
+                buildValueParameter {
+                    val valueParameterSourceElement = klass.source
+                        ?.fakeElement(KtFakeSourceElementKind.DataClassGeneratedMembers.EqualsFunction.Parameter)
+
+                    source = valueParameterSourceElement
+                    this.name = Name.identifier("other")
+                    origin = originForFunctions
+                    moduleData = baseModuleData
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE
+                    this.returnTypeRef = FirImplicitNullableAnyTypeRef(null)
+                    this.symbol = FirValueParameterSymbol()
+                    containingDeclarationSymbol = this@buildNamedFunction.symbol
+                    isCrossinline = false
+                    isNoinline = false
+                    isVararg = false
+                }.apply {
+                    if (session.languageVersionSettings.supportsFeature(LanguageFeature.StrictEquals)) {
+                        equalityBoundType = klass.symbol.constructStarProjectedType()
+                    }
+                }
+            )
+        }
+
+    private fun generateHashCodeFunction(): FirNamedFunction =
+        buildNamedFunction {
+            generateSyntheticFunction(
+                OperatorNameConventions.HASH_CODE,
+                KtFakeSourceElementKind.DataClassGeneratedMembers.HashCodeFunction,
+            )
+            returnTypeRef = FirImplicitIntTypeRef(source)
+        }
+
+    private fun generateToStringFunction(): FirNamedFunction =
+        buildNamedFunction {
+            generateSyntheticFunction(
+                OperatorNameConventions.TO_STRING,
+                KtFakeSourceElementKind.DataClassGeneratedMembers.ToStringFunction,
+            )
+            returnTypeRef = FirImplicitStringTypeRef(source)
+        }
+
+    private fun FirNamedFunctionBuilder.generateSyntheticFunction(
+        name: Name,
+        sourceKind: KtFakeSourceElementKind,
+        isOperator: Boolean = false,
+    ) {
+        this.source = klass.source?.fakeElement(sourceKind)
+        moduleData = baseModuleData
+        origin = originForFunctions
+        this.name = name
+        status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.OPEN, EffectiveVisibility.Public).apply {
+            this.isOperator = isOperator
+
+            // kotlin.Any is compiled in FULL mode, so overrides of Any functions have to be must-use
+            this.returnValueStatus = ReturnValueStatus.MustUse
+        }
+        isLocal = klass.isLocal
+        symbol = FirNamedFunctionSymbol(CallableId(lookupTag.classId, name))
+        dispatchReceiverType = this@FirClassAnySynthesizedMemberScope.dispatchReceiverType
+        resolvePhase = FirResolvePhase.BODY_RESOLVE
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirClassAnySynthesizedMemberScope? {
+        return FirClassAnySynthesizedMemberScope(
+            newSession,
+            declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
+            klass,
+            originForFunctions,
+            newScopeSession
+        )
+    }
+
+    companion object {
+        private val ANY_MEMBER_NAMES = hashSetOf(
+            OperatorNameConventions.HASH_CODE, OperatorNameConventions.EQUALS, OperatorNameConventions.TO_STRING
+        )
+    }
+}
+
+class FirSynthesizedStorage(val session: FirSession) : FirSessionComponent {
+    private val cachesFactory = session.firCachesFactory
+
+    val synthesizedCacheByScope: FirCache<ConeClassLikeLookupTag, SynthesizedCache, Nothing?> =
+        cachesFactory.createCache { _ -> SynthesizedCache(session.firCachesFactory) }
+
+    class SynthesizedCache(cachesFactory: FirCachesFactory) {
+        val synthesizedFunction: FirCache<Name, FirNamedFunctionSymbol, FirClassAnySynthesizedMemberScope> =
+            cachesFactory.createCache { name, scope -> scope.generateSyntheticFunctionByName(name) }
+    }
+}
+
+private val FirSession.synthesizedStorage: FirSynthesizedStorage by FirSession.sessionComponentAccessor()

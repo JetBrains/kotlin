@@ -92,6 +92,14 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val cInterfaceMode by option<CInterfaceGenerationMode>()
 
+    /**
+     * Experimental: build the C export model from the linked IR instead of K1 descriptors.
+     * The default (`false`) keeps the descriptor-based discovery. Only affects `cInterfaceMode=v1`.
+     * See kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/CExport.kt
+     * for details.
+     */
+    val cExportUseIrDiscovery by booleanOption()
+
     val globalDataLazyInit by booleanOption()
 
     val swiftExport by booleanOption()
@@ -128,6 +136,12 @@ object BinaryOptions : BinaryOptionRegistry() {
     val perFileCacheForStdlib by booleanOption()
 
     /**
+     * When `true`, the per-file caches of the libraries that need a full rebuild are
+     * built together in a single spawned compilation instead of one compilation per library.
+     */
+    val batchedCacheBuild by booleanOption()
+
+    /**
      * When `true`, llvm postprocessing will be done in Kotlin compiler;
      * when `false`, new custom llvm C++ passes will be used.
      * This option exists as a workaround, if new passes introduce regressions.
@@ -135,6 +149,9 @@ object BinaryOptions : BinaryOptionRegistry() {
     val runLLVMPassesInCompiler by booleanOption()
 
     val enableReleaseBinaryCache by booleanOption()
+
+    // a replacement for Apple's libtool to workaround KT-89897
+    val useLlvmLibtoolDarwin by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

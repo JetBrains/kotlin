@@ -8,12 +8,12 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.Text
 
-fun DModule.documentationOf(className: String, functionName: String? = null): String =
+internal fun DModule.documentationOf(className: String, functionName: String? = null): String =
     descriptionOf(className, functionName)
         ?.firstMemberOfType<Text>()
         ?.body.orEmpty()
 
-fun DModule.descriptionOf(className: String, functionName: String? = null): Description? {
+internal fun DModule.descriptionOf(className: String, functionName: String? = null): Description? {
     val classlike = packages.single()
         .classlikes.single { it.name == className }
     val target: Documentable =
@@ -22,11 +22,11 @@ fun DModule.descriptionOf(className: String, functionName: String? = null): Desc
         ?.firstChildOfTypeOrNull<Description>()
 }
 
-fun DModule.findPackage(packageName: String? = null) =
+internal fun DModule.findPackage(packageName: String? = null) =
     packageName?.let { packages.firstOrNull { pkg -> pkg.packageName == packageName }
         ?: throw NoSuchElementException("No packageName with name $packageName") } ?: packages.single()
 
-fun DModule.findClasslike(packageName: String? = null, className: String? = null): DClasslike {
+internal fun DModule.findClasslike(packageName: String? = null, className: String? = null): DClasslike {
     val pkg = findPackage(packageName)
     return className?.let {
         pkg.classlikes.firstOrNull { cls -> cls.name == className }
@@ -34,7 +34,7 @@ fun DModule.findClasslike(packageName: String? = null, className: String? = null
     } ?: pkg.classlikes.single()
 }
 
-fun DModule.findFunction(packageName: String? = null, className: String, functionName: String? = null): DFunction {
+internal fun DModule.findFunction(packageName: String? = null, className: String, functionName: String? = null): DFunction {
     val classlike = findClasslike(packageName, className)
     return functionName?.let {
         classlike.functions.firstOrNull { fn -> fn.name == functionName }

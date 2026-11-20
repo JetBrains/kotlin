@@ -94,6 +94,14 @@ val KClass<*>.functions: Collection<KFunction<*>>
 
 /**
  * Returns static functions declared in this class.
+ *
+ * The result does not include static functions declared in supertypes.
+ *
+ * The following functions are considered static:
+ * - functions representing static methods of Java classes.
+ * - static enum functions, such as `valueOf`.
+ * - experimental companion block functions (refer to [KEEP-449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md)
+ *   for more details on the experimental "companion blocks" feature).
  */
 @SinceKotlin("1.1")
 val KClass<*>.staticFunctions: Collection<KFunction<*>>
@@ -138,7 +146,14 @@ val KClass<*>.declaredMemberExtensionFunctions: Collection<KFunction<*>>
 
 /**
  * Returns static properties declared in this class.
- * Only properties representing static fields of Java classes are considered static.
+ *
+ * The result does not include static properties declared in supertypes.
+ *
+ * The following properties are considered static:
+ * - properties representing static fields of Java classes.
+ * - static enum properties, such as `entries`.
+ * - experimental companion block properties (refer to [KEEP-449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md)
+ *   for more details on the experimental "companion blocks" feature).
  */
 @SinceKotlin("1.1")
 val KClass<*>.staticProperties: Collection<KProperty0<*>>

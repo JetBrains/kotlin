@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirJavaSyntheticPropertySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -60,7 +59,7 @@ internal class KaFirSyntheticJavaPropertySymbol(
 
     override val getter: KaPropertyGetterSymbol
         get() = withValidityAssertion {
-            KaFirSyntheticPropertyGetterSymbol(firSymbol.getterSymbol!!, analysisSession)
+            KaFirSyntheticPropertyGetterSymbol(this)
         }
 
     override val javaGetterSymbol: KaNamedFunctionSymbol
@@ -78,7 +77,7 @@ internal class KaFirSyntheticJavaPropertySymbol(
     override val setter: KaPropertySetterSymbol?
         get() = withValidityAssertion {
             firSymbol.setterSymbol?.let {
-                KaFirSyntheticPropertySetterSymbol(it, analysisSession)
+                KaFirSyntheticPropertySetterSymbol(this)
             }
         }
 
@@ -99,6 +98,21 @@ internal class KaFirSyntheticJavaPropertySymbol(
         )
     }
 
-    override fun equals(other: Any?): Boolean = symbolEquals(other)
-    override fun hashCode(): Int = symbolHashCode()
+    /**
+     * Synthetic properties are built anew on each scope lookup, so two symbols of the same property usually have different
+     * [firSymbol]s. The property is defined by its name and its Java accessors, which are stable.
+     *
+     * This is a workaround for KT-91296: once the compiler reuses synthetic properties, [symbolEquals] is enough.
+     */
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is KaFirSyntheticJavaPropertySymbol) return false
+        if (firSymbol == other.firSymbol) return true
+
+        return firSymbol.name == other.firSymbol.name &&
+                firSymbol.getterSymbol?.delegateFunctionSymbol == other.firSymbol.getterSymbol?.delegateFunctionSymbol &&
+                firSymbol.setterSymbol?.delegateFunctionSymbol == other.firSymbol.setterSymbol?.delegateFunctionSymbol
+    }
+
+    override fun hashCode(): Int = firSymbol.getterSymbol?.delegateFunctionSymbol.hashCode()
 }

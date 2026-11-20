@@ -1,0 +1,15 @@
+KtClass:
+  line: 3
+  name: ItemList
+  qualifier: test.pkg.ItemList
+  light: SymbolLightClassForClassOrObject
+    name: ItemList
+    qualifier: test.pkg.ItemList
+    superTypes: [
+      PsiType:AbstractList<T>
+    ]
+    superClass: KtLightClassForDecompiledDeclaration: AbstractList (kotlin.collections.AbstractList)
+    interfaces: []
+    supers: [
+      KtLightClassForDecompiledDeclaration: AbstractList (kotlin.collections.AbstractList)
+    ]

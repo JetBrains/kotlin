@@ -71,7 +71,7 @@ internal fun Project.configureTestCaching() {
             ":repo:codebase-tests",
             ":tools:binary-compatibility-validator",
             ":tools:ide-plugin-dependencies-validator",
-            ":benchmarks",
+            ":benchmarks:frontend:misc",
             ":test-instrumenter"
         )
         val projectPath = project.path

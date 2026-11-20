@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
  * Usually this is needed to access data stored in compiler caches like class layout information.
  */
 internal class ModuleDeserializerProvider(
-        private val libraryBeingCached: PartialCacheInfo?,
+        private val librariesBeingCached: Map<KotlinLibrary, PartialCacheInfo>,
         private val cachedLibraries: CachedLibraries,
         private val linker: KonanIrLinker,
 ) {
@@ -31,12 +31,13 @@ internal class ModuleDeserializerProvider(
     fun getDeserializerOrNull(declaration: IrDeclaration): KonanPartialModuleDeserializer? {
         val packageFragment = declaration.getPackageFragment()
         val klib = packageFragment.module.kotlinLibrary
+        val libraryBeingCached = librariesBeingCached[klib]
         val isFromLibraryBeingCached = klib != null && libraryBeingCached?.klib == klib
         val declarationBeingCached = packageFragment is IrFile && isFromLibraryBeingCached
                 && libraryBeingCached.strategy.contains(packageFragment.path)
         return if (klib != null
                 && !klib.isCInteropLibrary()
-                // Caches for dependencies must be fully compiled; an incomplete cache may only be used for the current library.
+                // Only libraries participating in this compilation may have incomplete caches.
                 && cachedLibraries.isLibraryCached(klib, allowIncomplete = isFromLibraryBeingCached)
                 && !declarationBeingCached
         ) {

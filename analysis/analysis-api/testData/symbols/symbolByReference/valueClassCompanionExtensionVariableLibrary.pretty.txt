@@ -1,0 +1,3 @@
+var ValueClass.static1: kotlin.Int
+  get()
+  set(value: kotlin.Int)

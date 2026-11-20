@@ -1,0 +1,8 @@
+KtNameReferenceExpression(106,107): 'b'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val b: kotlin.String
+    ]

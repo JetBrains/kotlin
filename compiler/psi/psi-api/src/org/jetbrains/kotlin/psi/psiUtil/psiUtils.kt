@@ -12,7 +12,7 @@ import com.intellij.psi.impl.source.tree.LazyParseablePsiElement
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
-import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.KtNodeTypes
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.PLUS
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.addToStdlib.skipNext
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -157,7 +156,9 @@ fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Se
             var next: PsiElement? = this@siblings
             return object : Iterator<PsiElement> {
                 init {
-                    if (!withItself) skipNext()
+                    if (!withItself) {
+                        val _ = next()
+                    }
                 }
 
                 override fun hasNext(): Boolean = next != null
@@ -395,9 +396,10 @@ fun PsiChildRange.trimWhiteSpaces(): PsiChildRange {
 }
 
 /**
- * See [unwrap()][org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder.unwrap]
+ * See unwrap() in FIR builders
  */
-val UNWRAPPABLE_TOKEN_TYPES: Set<IElementType> = setOf(PARENTHESIZED, LABELED_EXPRESSION, ANNOTATED_EXPRESSION)
+@KtImplementationDetail
+val UNWRAPPABLE_TOKEN_TYPES: TokenSet = TokenSet.create(PARENTHESIZED, LABELED_EXPRESSION, ANNOTATED_EXPRESSION)
 
 /**
  * Returns the operand this operation applies to, but only when that operand is wrapped in parentheses, a label, or annotations; returns
@@ -415,6 +417,7 @@ fun PsiElement.getAssignmentLhsIfUnwrappable(): PsiElement? =
         // In `(x)++` or `(x) = ...` the LHS source is the first child
         else -> children.firstOrNull()
     }.takeIf {
+        @OptIn(KtImplementationDetail::class)
         it?.elementType in UNWRAPPABLE_TOKEN_TYPES
     }
 
@@ -718,7 +721,7 @@ fun PsiElement.getTextWithLocation(): String = "'${this.text}' at ${PsiDiagnosti
         "file.replaceFileAnnotationList(annotationList)",
         "org.jetbrains.kotlin.idea.base.psi.replaceFileAnnotationList",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @OptIn(KtIdeApi::class)
 fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList): KtFileAnnotationList {
@@ -733,7 +736,7 @@ operator fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScope
 @Deprecated(
     message = "Use only in 'kotlin' repo until the alternative method from 'com.intellij.psi' package becomes available from the IJ platform",
     replaceWith = ReplaceWith("this.createSmartPointer()", "com.intellij.psi.createSmartPointer"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
     SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)

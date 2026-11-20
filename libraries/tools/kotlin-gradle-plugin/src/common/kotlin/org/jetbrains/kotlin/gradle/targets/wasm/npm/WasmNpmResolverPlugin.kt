@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.npm
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.npm.CommonNpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.web.npm.NpmResolverPluginApplier
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 
@@ -21,9 +23,10 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
  * for WebAssembly (Wasm) projects. It integrates with Gradle to ensure the proper handling
  * of NPM dependencies required for Wasm-based builds and tasks.
  */
+@ObsoleteNpmDependencyModel
 abstract class WasmNpmResolverPlugin internal constructor() : CommonNpmResolverPlugin {
     override fun apply(project: Project) {
-        val wasmNodeJsRootPlugin = WasmNodeJsRootPlugin.apply(project.rootProject)
+        val wasmNodeJsRootPlugin = WasmNodeJsRootPlugin.apply(project.jsToolingProject())
 
         val applier = NpmResolverPluginApplier(
             { wasmNodeJsRootPlugin },
@@ -55,6 +58,7 @@ abstract class WasmNpmResolverPlugin internal constructor() : CommonNpmResolverP
         }
     }
 
+    @ObsoleteNpmDependencyModel
     companion object {
         fun apply(project: Project) {
             project.plugins.apply(WasmNpmResolverPlugin::class.java)

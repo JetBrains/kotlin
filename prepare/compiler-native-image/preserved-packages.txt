@@ -3,6 +3,7 @@ java.*
 # https://github.com/oracle/graal/issues/13990
 kotlin
 kotlin.collections
+kotlin.comparisons
 kotlin.jvm.internal
 kotlin.ranges
 kotlin.text

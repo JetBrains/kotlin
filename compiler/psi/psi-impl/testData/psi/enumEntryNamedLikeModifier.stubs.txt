@@ -1,0 +1,99 @@
+FILE[kind=File[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/E1, fqName=E1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=E1, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=E1.error, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=error, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=E1.value, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=value, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=E1.inline, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=inline, superNames=[]]
+  CLASS[classId=/E2, fqName=E2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=E2, superNames=[]]
+    MODIFIER_LIST[enum]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=E2]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=E2.error, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=error, superNames=[E2]]
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=E2]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                STRING_TEMPLATE
+      ENUM_ENTRY[classId=null, fqName=E2.value, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=value, superNames=[E2]]
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=E2]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                STRING_TEMPLATE
+      ENUM_ENTRY[classId=null, fqName=E2.inline, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=inline, superNames=[E2]]
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=E2]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                STRING_TEMPLATE
+  CLASS[classId=/E3, fqName=E3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=E3, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=E3.error, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=error, superNames=[]]
+        CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=E3.value, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=value, superNames=[]]
+        CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=E3.inline, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=inline, superNames=[]]
+        CLASS_BODY
+  CLASS[classId=/E4, fqName=E4, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=E4, superNames=[]]
+    MODIFIER_LIST[enum]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=E4]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=E4.error, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=error, superNames=[E4]]
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=E4]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                STRING_TEMPLATE
+        CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=E4.value, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=value, superNames=[E4]]
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=E4]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                STRING_TEMPLATE
+        CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=E4.inline, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=inline, superNames=[E4]]
+        INITIALIZER_LIST
+          SUPER_TYPE_CALL_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=E4]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                STRING_TEMPLATE
+        CLASS_BODY

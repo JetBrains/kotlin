@@ -21,10 +21,16 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmBuildMetaInfo
 import org.jetbrains.kotlin.build.JvmSourceRoot
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaJvmCompilationRequest
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaToolchainLoader.GENERATE_COMPILER_REF_INDEX_PROPERTY
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaToolchainLoader.useBuildToolsApi
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.*
@@ -106,14 +112,37 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         require(chunk.representativeTarget == this)
 
         if (chunk.targets.size > 1) {
+            if (useBuildToolsApi) {
+                environment.messageCollector.report(
+                    CompilerMessageSeverity.ERROR,
+                    "Circular dependencies are not supported when compiling through the Build Tools API. " +
+                            "The following modules depend on each other: ${chunk.presentableShortName}."
+                )
+                return true
+            }
             environment.messageCollector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
-                "Circular dependencies are only partially supported. " +
-                        "The following modules depend on each other: ${chunk.presentableShortName}. " +
-                        "Kotlin will compile them, but some strange effect may happen"
+                "Support for circular dependencies will be dropped starting with Kotlin 2.6.0. " +
+                        "The following modules depend on each other: ${chunk.presentableShortName}. "
             )
         }
 
+        return if (useBuildToolsApi) {
+            val btaSession = requireNotNull(environment.btaBuildSession) {
+                "Build Tools API session is not initialized for ${chunk.presentableShortName}"
+            }.getOrCreate()
+            compileModuleChunkWithBuildToolsApi(commonArguments, dirtyFilesHolder, environment, btaSession)
+        } else {
+            compileModuleChunkWithJpsCompilerRunner(commonArguments, dirtyFilesHolder, environment, buildMetricReporter)
+        }
+    }
+
+    private fun compileModuleChunkWithJpsCompilerRunner(
+        commonArguments: CommonCompilerArguments,
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
+        environment: JpsCompilerEnvironment,
+        buildMetricReporter: JpsBuilderMetricReporter?
+    ): Boolean {
         val filesSet = dirtyFilesHolder.allDirtyFiles
 
         val moduleFile = generateChunkModuleDescription(dirtyFilesHolder)
@@ -156,6 +185,64 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         }
 
         return true
+    }
+
+    private fun compileModuleChunkWithBuildToolsApi(
+        commonArguments: CommonCompilerArguments,
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
+        environment: JpsCompilerEnvironment,
+        btaSession: KotlinToolchains.BuildSession,
+    ): Boolean {
+        val outputDirsToFilterOut = when {
+            IncrementalCompilation.isEnabledForJvm() -> emptySet()
+            else -> chunk.targets.mapNotNullTo(mutableSetOf()) { (it as? KotlinJvmModuleBuildTarget)?.outputDir }
+        }
+
+        val sources = collectSourcesToCompile(dirtyFilesHolder)
+        if (!sources.logFiles()) {
+            if (KotlinBuilder.LOG.isDebugEnabled) {
+                KotlinBuilder.LOG.debug("Not compiling, because no files affected: " + chunk.presentableShortName)
+            }
+            return false
+        }
+
+        if (KotlinBuilder.LOG.isDebugEnabled) {
+            val totalRemovedFiles = dirtyFilesHolder.allRemovedFilesFiles.size
+            KotlinBuilder.LOG.debug(
+                "Compiling to JVM through the Build Tools API ${dirtyFilesHolder.allDirtyFiles.size} files"
+                        + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
+                        + " in " + chunk.presentableShortName
+            )
+        }
+
+        val request = JpsBtaJvmCompilationRequest(
+            targetId = targetId,
+            sources = preprocessSources(sources.allFiles),
+            commonSources = preprocessSources(sources.crossCompiledFiles),
+            outputDirectory = outputDir,
+            classpathRoots = findClassPathRoots().filter { it !in outputDirsToFilterOut },
+            javaSourceRoots = findJavaSourceRoots(dirtyFilesHolder.context),
+            friendDirectories = friendOutputDirs,
+            modularJdkRoot = findModularJdkRoot(),
+            compilerReferenceIndexDirectory = compilerReferenceIndexDirectory(),
+        )
+
+        JpsBtaCompilerRunner().runJvmCompilation(
+            request,
+            commonArguments,
+            module.k2JvmCompilerArguments,
+            module.kotlinCompilerSettings,
+            environment,
+            btaSession,
+            dirtyFilesHolder.context,
+        )
+
+        return true
+    }
+
+    private fun compilerReferenceIndexDirectory(): Path? {
+        if (!System.getProperty(GENERATE_COMPILER_REF_INDEX_PROPERTY, "false").toBoolean()) return null
+        return kotlinContext.dataPaths.getTargetDataRootDir(jpsModuleBuildTarget).resolve(CriToolchain.DATA_PATH)
     }
 
     override fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputItems: List<GeneratedFile>) {
@@ -351,7 +438,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
     ) {
         super.updateCaches(dirtyFilesHolder, jpsIncrementalCache, files, changesCollector, environment)
 
-        updateIncrementalCache(files, jpsIncrementalCache as IncrementalJvmCache, changesCollector, null, null)
+        updateIncrementalCache(files, jpsIncrementalCache as IncrementalJvmCache, changesCollector, null)
     }
 
     override val globalLookupCacheId: String

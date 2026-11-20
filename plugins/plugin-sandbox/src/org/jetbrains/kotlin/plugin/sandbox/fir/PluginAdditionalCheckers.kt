@@ -16,12 +16,10 @@ import org.jetbrains.kotlin.plugin.sandbox.fir.checkers.SignedNumberCallChecker
 
 class PluginAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val namedFunctionCheckers: Set<FirNamedFunctionChecker>
-            get() = setOf(DummyNameChecker)
+        override val namedFunctionCheckers: Set<FirNamedFunctionChecker> = setOf(DummyNameChecker)
     }
 
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
-        override val functionCallCheckers: Set<FirFunctionCallChecker>
-            get() = setOf(SignedNumberCallChecker)
+        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(SignedNumberCallChecker)
     }
 }

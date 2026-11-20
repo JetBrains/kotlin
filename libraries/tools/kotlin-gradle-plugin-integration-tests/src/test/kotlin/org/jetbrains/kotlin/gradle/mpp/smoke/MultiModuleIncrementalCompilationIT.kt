@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.mpp.smoke
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
@@ -20,9 +19,6 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Basic multi-module incremental scenarios with KMP - K2")
 @MppGradlePluginTests
 open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
-
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
 
     /**
      * Tests api change across the module + sourceSet boundary
@@ -46,7 +42,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
             ),
             tasksExpectedToExecuteOnEachStep = mainCompileTasks,
             afterEachStep = {
-                assertIncrementalCompilation(
+                assertIncrementalCompilationInBuildReport(
                     listOf(
                         usedInAppCommon,
                         resolvePath("app", "commonMain", "DependsOnLibCommon.kt")
@@ -74,7 +70,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         }
 
         testIndividualTarget("compileKotlinJvm") {
-            assertIncrementalCompilation(
+            assertIncrementalCompilationInBuildReport(
                 listOf(
                     usedInAppPlatform,
                     resolvePath("app", "jvmMain", "DependsOnLibCommon.kt")
@@ -82,7 +78,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
             )
         }
         testIndividualTarget("compileKotlinJs") {
-            assertIncrementalCompilation(
+            assertIncrementalCompilationInBuildReport(
                 listOf(
                     usedInAppPlatform,
                     resolvePath("app", "jsMain", "DependsOnLibCommon.kt")
@@ -117,7 +113,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":lib:compileKotlinJvm"
             ),
             afterEachStep = {
-                assertIncrementalCompilation(
+                assertIncrementalCompilationInBuildReport(
                     listOf(
                         jvmUtil,
                         resolvePath("app", "jvmMain", "DependsOnLibJvm.kt")
@@ -138,7 +134,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":lib:compileKotlinJs"
             ),
             afterEachStep = {
-                assertIncrementalCompilation(
+                assertIncrementalCompilationInBuildReport(
                     listOf(
                         jsUtil,
                         resolvePath("app", "jsMain", "DependsOnLibJs.kt")
@@ -186,7 +182,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":app:compileKotlinNative"
             ),
             afterEachStep = {
-                assertIncrementalCompilation(
+                assertIncrementalCompilationInBuildReport(
                     listOf(
                         utilPath,
                         resolvePath("app", "jsMain", "DependsOnAppCommon.kt"),
@@ -215,7 +211,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         checkIncrementalBuild(
             tasksExpectedToExecute = setOf(":app:compileKotlinJvm")
         ) {
-            assertIncrementalCompilation(listOf(changedJvmSource).relativizeTo(projectPath))
+            assertIncrementalCompilationInBuildReport(listOf(changedJvmSource).relativizeTo(projectPath))
         }
 
         /**
@@ -226,7 +222,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         checkIncrementalBuild(
             tasksExpectedToExecute = setOf(":app:compileKotlinJs")
         ) {
-            assertIncrementalCompilation(listOf(changedJsSource).relativizeTo(projectPath))
+            assertIncrementalCompilationInBuildReport(listOf(changedJsSource).relativizeTo(projectPath))
         }
 
         /**

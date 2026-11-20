@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
-import org.jetbrains.kotlin.testFederation.MustRunAlways
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
@@ -41,9 +44,10 @@ import kotlin.test.assertTrue
 
 @DisplayName("Basic Kotlin/JVM plugin tests")
 @JvmGradlePluginTests
-@MustRunAlways
+@MustRunOnChangesInGradle
 class KotlinGradleIT : KGPBaseTest() {
 
+    @TestMetadata("kotlinJavaProject")
     @DisplayName("Kotlin/Java cross compilation")
     @GradleTest
     fun testCrossCompile(gradleVersion: GradleVersion) {
@@ -67,6 +71,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("Kotlin only project compilation")
     @GradleTest
     fun testKotlinOnlyCompile(gradleVersion: GradleVersion) {
@@ -86,6 +91,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Logs contain memory usage entries on LIFECYCLE log level")
     @GradleTest
     fun testLogLevelForceGC(gradleVersion: GradleVersion) {
@@ -108,7 +114,8 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Plugin is avialble when applied via buildscript classpath")
+    @TestMetadata("multiprojectClassPathTest")
+    @DisplayName("Plugin is available when applied via buildscript classpath")
     @GradleTest
     fun testMultiprojectPluginClasspath(gradleVersion: GradleVersion) {
         project("multiprojectClassPathTest", gradleVersion) {
@@ -121,8 +128,10 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("Incremental logs are available on INFO log level")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testIncrementalCompilationLogLevel(gradleVersion: GradleVersion) {
         project("kotlinProject", gradleVersion) {
             build(
@@ -141,8 +150,10 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("convertBetweenJavaAndKotlin")
     @DisplayName("Conversion between Kotlin and Java")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testConvertJavaToKotlin(gradleVersion: GradleVersion) {
         project("convertBetweenJavaAndKotlin", gradleVersion) {
             val barKt = javaSourcesDir().resolve("foo/Bar.kt")
@@ -169,8 +180,10 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("moveClassToOtherModule")
     @DisplayName("Moving class to another Gradle subproject")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testMoveClassToOtherModule(gradleVersion: GradleVersion) {
         project("moveClassToOtherModule", gradleVersion) {
             build("assemble")
@@ -188,6 +201,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("Adding free compiler arguments")
     @GradleTest
     fun testFreeCompilerArgs(gradleVersion: GradleVersion) {
@@ -210,6 +224,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("KT-52239: Changing Kotlin options via deprecated 'dsl.KotlinJvmOptions' interface")
     @GradleTest
     fun testKotlinOptionsViaDeprecatedKotlinJvmOptionsDsl(gradleVersion: GradleVersion) {
@@ -232,6 +247,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("Downgrading Kotlin plugin version")
     @GradleTest
     fun testDowngradePluginVersion(gradleVersion: GradleVersion) {
@@ -252,13 +268,14 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("Passing api/language version")
     @GradleTest
+    @MustRunOnChangesInCompilerInfrastructure
     fun testLanguageVersionApiVersionExplicit(gradleVersion: GradleVersion) {
         project(
             "kotlinProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             val buildGradleContentCopy = buildGradle.readText()
 
@@ -315,6 +332,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinJavaProject")
     @DisplayName("Mixed project with additional sourceset produce outputs in correct dirs")
     @GradleTest
     fun testSeparateOutputGradle40(gradleVersion: GradleVersion) {
@@ -339,6 +357,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("archivesBaseName is used for module name")
     @GradleTest
     fun testArchiveBaseNameForModuleName(gradleVersion: GradleVersion) {
@@ -360,6 +379,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("javaPackagePrefix")
     @DisplayName("'javaPackagePrefix' change is applied")
     @GradleTest
     fun testJavaPackagePrefix(gradleVersion: GradleVersion) {
@@ -374,6 +394,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Should add generated sources from task dependency")
     @Disabled("Not working as expected")
     @GradleTest
@@ -411,6 +432,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Sources jar include Kotlin files")
     @GradleTest
     fun testSourceJar(gradleVersion: GradleVersion) {
@@ -443,6 +465,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("typeAlias")
     @DisplayName("Handling special characters in Kotlin module name")
     @GradleTest
     fun testModuleNameFiltering(gradleVersion: GradleVersion) {
@@ -469,6 +492,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProjectWithBuildSrc")
     @DisplayName("Plugin from buildSrc dependencies is available")
     @GradleTest
     fun testApplyPluginFromBuildSrc(gradleVersion: GradleVersion) {
@@ -492,6 +516,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinPluginDepsInBuildSrc")
     @DisplayName("KGP dependencies in buildSrc module")
     @GradleTest
     fun testKotlinPluginDependenciesInBuildSrc(gradleVersion: GradleVersion) {
@@ -502,6 +527,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("internalTest")
     @DisplayName("Test sources should be able to access internal methods or properties")
     @GradleTest
     fun testInternalTest(gradleVersion: GradleVersion) {
@@ -512,6 +538,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("internalTest")
     @DisplayName("KT-35341: symlinked build dir")
     @DisabledOnOs(OS.WINDOWS, disabledReason = "Windows requires SeSymbolicLink privilege and we can't grant it")
     @GradleTest
@@ -529,6 +556,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("javaLibraryProject")
     @DisplayName("'java-library' plugin compatibility")
     @GradleTest
     fun testJavaLibraryCompatibility(gradleVersion: GradleVersion) {
@@ -558,6 +586,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Default Kotlin version is not affected by transitive dependencies")
     @GradleTest
     fun testDefaultKotlinVersionIsNotAffectedByTransitiveDependencies(gradleVersion: GradleVersion) {
@@ -575,6 +604,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-29971")
     @DisplayName("KT-29971: concurrent modification exception on task execution")
     @GradleTest
     fun concurrentModificationException(gradleVersion: GradleVersion) {
@@ -585,6 +615,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-model-in-old-plugin")
     @DisplayName("New extensions models are working as expected")
     @GradleTest
     fun testNewModelInOldJvmPlugin(gradleVersion: GradleVersion) {
@@ -623,12 +654,10 @@ class KotlinGradleIT : KGPBaseTest() {
 
                 assertFileExists(moduleDir.resolve("new-model-1.0-sources.jar"))
             }
-
-            // Workaround for Junit 'Failed to delete temp directory' on Windows OS
-            build("clean")
         }
     }
 
+    @TestMetadata("multiprojectWithDependency")
     @DisplayName("User-defined attributes")
     @GradleTest
     fun testUserDefinedAttributesInSinglePlatformProject(gradleVersion: GradleVersion) {
@@ -700,6 +729,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProjectClasspath")
     @DisplayName("Load compiler-embeddable after other plugin artifacts")
     @GradleTest
     fun testLoadCompilerEmbeddableAfterOtherKotlinArtifacts(gradleVersion: GradleVersion) {
@@ -742,6 +772,7 @@ class KotlinGradleIT : KGPBaseTest() {
     }
 
     /** Regression test for KT-45787. **/
+    @TestMetadata("associatedDependencies")
     @DisplayName("KT-45787: no Gradle deprecation on adding associated dependencies")
     @GradleTest
     fun testNoDeprecationOnAssociatedDep(gradleVersion: GradleVersion) {
@@ -753,6 +784,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("legacyConfigurationConsumer")
     @DisplayName("KT-51913: KGP should not add attributes to 'legacy' configurations")
     @GradleTest
     fun noAttributesLegacyConfigurations(gradleVersion: GradleVersion) {
@@ -764,6 +796,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @DisplayName("KT-61273: task output backup works correctly if the first output is absent")
     @GradleTest
     fun taskOutputBackupWorksIfFirstOutputIsAbsent(gradleVersion: GradleVersion) {
@@ -798,6 +831,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("convention-plugin")
     @DisplayName("KT-73090: BTA does not break Gradle convention plugins compilation")
     @GradleTest
     fun testConventionPlugins(gradleVersion: GradleVersion) {

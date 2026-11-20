@@ -5,6 +5,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
+    id("test-data-manager")
     id("test-inputs-check")
 }
 
@@ -86,10 +87,9 @@ dependencies {
 
     testFixturesApi(commonDependency("org.projectlombok:lombok"))
 
-    testFixturesApi(project(":compiler:fir:plugin-utils"))
+    testFixturesApi(project(":compiler:fir:plugin.api"))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
-    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
     testFixturesApi(libs.junit.jupiter.api)
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))

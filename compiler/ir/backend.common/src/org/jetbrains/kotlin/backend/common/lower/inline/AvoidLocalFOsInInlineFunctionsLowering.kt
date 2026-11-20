@@ -12,16 +12,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrRichCallableReference
-import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
-import org.jetbrains.kotlin.ir.expressions.implicitCastTo
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.getAllSubstitutedSupertypes
+import org.jetbrains.kotlin.ir.types.AbstractIrTypeSubstitutor
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -64,12 +61,22 @@ class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : Bod
 
             override fun visitCall(expression: IrCall) {
                 val callee = expression.symbol.owner
-                findOverriddenNonLocalFo(callee)?.let { newSymbol ->
-                    expression.symbol = newSymbol as IrSimpleFunctionSymbol
-                    newSymbol.owner.dispatchReceiverParameter?.let { dispatchParam ->
-                        val superClass = newSymbol.owner.parentAsClass
-                        val newDispatcherType = getAllSubstitutedSupertypes(callee.parentAsClass).first { it.classifier == superClass.symbol }
-                        expression.arguments[dispatchParam] = expression.arguments[dispatchParam]?.implicitCastTo(newDispatcherType)
+                findOverriddenNonLocalFo(callee)?.let { overriddenFunction ->
+                    expression.symbol = overriddenFunction as IrSimpleFunctionSymbol
+                    overriddenFunction.owner.dispatchReceiverParameter?.let { dispatchParam ->
+                        val superClass = overriddenFunction.owner.parentAsClass
+                        // The call now targets a member of `superClass`, so the dispatch receiver (currently typed as the local class)
+                        // has to be cast to the corresponding supertype. The supertype is computed from the actual receiver type
+                        // rather than from the local class declaration, because for a generic local class the declared supertype
+                        // is expressed via the class's own type parameters (e.g. `Base<T of Local>`), and those must not leak
+                        // into the call site. Substituting through the receiver type gives the specialized one (e.g. `Base<Int>`).
+                        // If the receiver type is not a class type, the receiver is left without a cast.
+                        val dispatchReceiver = expression.arguments[dispatchParam]
+                        val receiverType = dispatchReceiver?.type as? IrSimpleType
+                        val newDispatcherType = receiverType
+                            ?.let { AbstractIrTypeSubstitutor.forSuperClass(superClass.symbol, it) }
+                            ?.substitute(superClass.defaultType)
+                        expression.arguments[dispatchParam] = dispatchReceiver?.implicitCastTo(newDispatcherType)
                     }
                 }
 
@@ -92,7 +99,7 @@ class AvoidLocalFOsInInlineFunctionsLowering(val context: LoweringContext) : Bod
 
             private fun findOverriddenNonLocalFo(member: IrOverridableDeclaration<*>): IrSymbol? {
                 var properMember: IrOverridableDeclaration<*> = member
-                while (properMember.isLocal && properMember.isFakeOverride) {
+                while (properMember.isFakeOverride && properMember.isLocal) {
                     properMember = properMember.overriddenSymbols.getOrNull(0)?.owner as? IrOverridableDeclaration<*> ?: break
                 }
                 return if (properMember === member) null else properMember.symbol

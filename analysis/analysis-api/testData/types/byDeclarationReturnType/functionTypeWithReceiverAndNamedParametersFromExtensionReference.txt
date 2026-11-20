@@ -45,8 +45,46 @@ KaFunctionType:
       hasFlexibleNullability: false
   ]
   parameters: [
-    KaBaseFunctionValueParameter [name: a, type: kotlin/Int]
-    KaBaseFunctionValueParameter [name: b, type: kotlin/String]
+    KaFunctionValueParameter:
+      name: a
+      type: KaUsualClassType:
+        abbreviation: null
+        annotations: [
+          kotlin/ParameterName(name = "a")
+            psi: null
+        ]
+        classId: kotlin/Int
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: Int
+            symbol: KaNamedClassSymbol(kotlin/Int)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(kotlin/Int)
+        typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
+    KaFunctionValueParameter:
+      name: b
+      type: KaUsualClassType:
+        abbreviation: null
+        annotations: [
+          kotlin/ParameterName(name = "b")
+            psi: null
+        ]
+        classId: kotlin/String
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: String
+            symbol: KaNamedClassSymbol(kotlin/String)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(kotlin/String)
+        typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
   ]
   qualifiers: [
     KaResolvedClassTypeQualifier:

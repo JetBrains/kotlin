@@ -37,7 +37,9 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform
             /**
              * Mirrors the Java Lombok behavior: "Not generating toString(): A method with that name already exists"
              */
-            reporter.reportOn(source, LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS, context)
+            if (context.session.lombokService.getData(declaration.symbol)?.annotation !== toStringAnnInfo.annotation) {
+                reporter.reportOn(source, LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS, context)
+            }
         } else {
             /**
              * Mirrors javac's reaction to the `toString()` Lombok generates in this case:
@@ -59,6 +61,7 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform
             toStringAnnInfo,
             declaration,
             functionNames,
+            LombokNames.TO_STRING.shortName(),
         )
 
         checkIncludeAndExcludeAnnotations(

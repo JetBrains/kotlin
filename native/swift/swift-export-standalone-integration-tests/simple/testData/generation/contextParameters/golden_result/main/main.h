@@ -7,15 +7,15 @@ _Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift
 
 _Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Context_Swift_String__(void * pointerToClosure, void * ctx0, NSString * _2);
 
-void * Foo_bar__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_main_Context__(void * self, void * arg, void * ctx);
+void * Foo_bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * ctx, void * arg);
 
 void * Foo_baz_get__TypesOfArgumentsC1__main_Context__(void * self, void * ctx);
 
-_Bool Foo_complexContextFunction__TypesOfArgumentsEC3__Swift_String_Swift_Int32_main_ContextA_main_Context_main_ContextB__(void * self, NSString * receiver, int32_t count, void * contextA, void * context, void * contextB);
+_Bool Foo_complexContextFunction__TypesOfArgumentsEC3__main_ContextA_main_Context_main_ContextB_Swift_String_Swift_Int32__(void * self, void * contextA, void * context, void * contextB, NSString * receiver, int32_t count);
 
-int32_t Foo_complexContextProperty_get__TypesOfArgumentsEC2__Swift_String_main_ContextB_main_ContextA__(void * self, NSString * receiver, void * contextB, void * contextA);
+int32_t Foo_complexContextProperty_get__TypesOfArgumentsEC2__main_ContextB_main_ContextA_Swift_String__(void * self, void * contextB, void * contextA, NSString * receiver);
 
-_Bool Foo_complexContextProperty_set__TypesOfArgumentsEC2__Swift_String_Swift_Int32_main_ContextB_main_ContextA__(void * self, NSString * receiver, int32_t value, void * contextB, void * contextA);
+_Bool Foo_complexContextProperty_set__TypesOfArgumentsEC2__main_ContextB_main_ContextA_Swift_String_Swift_Int32__(void * self, void * contextB, void * contextA, NSString * receiver, int32_t value);
 
 _Bool Foo_foo__TypesOfArgumentsC1__main_Context__(void * self, void * ctx);
 
@@ -23,7 +23,7 @@ _Bool Foo_unnamedContextParametersFunction__TypesOfArgumentsC2__main_Context_mai
 
 NSString * Foo_unnamedContextParametersProperty_get__TypesOfArgumentsC2__main_ContextA_main_Context__(void * self, void * ctx, void * _1);
 
-_Bool Foo_unnamedContextParametersProperty_set__TypesOfArgumentsC2__Swift_String_main_ContextA_main_Context__(void * self, NSString * value, void * ctx, void * _2);
+_Bool Foo_unnamedContextParametersProperty_set__TypesOfArgumentsC2__main_ContextA_main_Context_Swift_String__(void * self, void * ctx, void * _1, NSString * value);
 
 void * __root___Bar_init_allocate();
 
@@ -43,21 +43,21 @@ _Bool __root___Context_init_initialize__TypesOfArguments__Swift_UnsafeMutableRaw
 
 void * __root___Foo_get();
 
-void * __root___bar__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_main_Context__(void * arg, void * ctx);
+void * __root___bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * ctx, void * arg);
 
 void * __root___baz_get__TypesOfArgumentsC1__main_Context__(void * ctx);
 
-void * __root___combine__TypesOfArgumentsC1__main_Bar_main_Bar__(void * bar2, void * bar);
+void * __root___combine__TypesOfArgumentsC1__main_Bar_main_Bar__(void * bar, void * bar2);
 
 void * __root___combine__TypesOfArgumentsE__main_Bar_main_Bar__(void * receiver, void * bar);
 
 void * __root___combine__TypesOfArguments__main_Bar_main_Bar__(void * bar, void * bar2);
 
-int32_t __root___complexContextFunction__TypesOfArgumentsEC3__Swift_String_Swift_Bool_main_Context_main_ContextA_main_ContextB__(NSString * receiver, _Bool yes, void * context, void * contextA, void * contextB);
+int32_t __root___complexContextFunction__TypesOfArgumentsEC3__main_Context_main_ContextA_main_ContextB_Swift_String_Swift_Bool__(void * context, void * contextA, void * contextB, NSString * receiver, _Bool yes);
 
-_Bool __root___complexContextProperty_get__TypesOfArgumentsEC2__Swift_String_main_ContextA_main_ContextB__(NSString * receiver, void * contextA, void * contextB);
+_Bool __root___complexContextProperty_get__TypesOfArgumentsEC2__main_ContextA_main_ContextB_Swift_String__(void * contextA, void * contextB, NSString * receiver);
 
-_Bool __root___complexContextProperty_set__TypesOfArgumentsEC2__Swift_String_Swift_Bool_main_ContextA_main_ContextB__(NSString * receiver, _Bool value, void * contextA, void * contextB);
+_Bool __root___complexContextProperty_set__TypesOfArgumentsEC2__main_ContextA_main_ContextB_Swift_String_Swift_Bool__(void * contextA, void * contextB, NSString * receiver, _Bool value);
 
 _Bool __root___contextBlockA__TypesOfArguments__U2828main_ContextA_U20main_ContextBU29_U20Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__(void * block);
 
@@ -73,7 +73,7 @@ _Bool __root___unnamedContextParametersFunction__TypesOfArgumentsC2__main_Contex
 
 int32_t __root___unnamedContextParametersProperty_get__TypesOfArgumentsC2__main_ContextA_main_Context__(void * _0, void * ctx);
 
-_Bool __root___unnamedContextParametersProperty_set__TypesOfArgumentsC2__Swift_Int32_main_ContextA_main_Context__(int32_t value, void * _1, void * ctx);
+_Bool __root___unnamedContextParametersProperty_set__TypesOfArgumentsC2__main_ContextA_main_Context_Swift_Int32__(void * _0, void * ctx, int32_t value);
 
 _Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_ContextB_main_ContextA_Swift_String_Swift_Int32__(void * pointerToBlock, void * ctx0, void * ctx1, NSString * _3, int32_t _4);
 

@@ -10,7 +10,7 @@ import org.jetbrains.dokka.plugability.DokkaPlugin
 
 abstract class AbstractModelTest(val path: String? = null, val pkg: String) : ModelDSL(), AssertDSL {
 
-    fun inlineModelTest(
+    internal fun inlineModelTest(
         query: String,
         platform: String = "jvm",
         prependPackage: Boolean = true,

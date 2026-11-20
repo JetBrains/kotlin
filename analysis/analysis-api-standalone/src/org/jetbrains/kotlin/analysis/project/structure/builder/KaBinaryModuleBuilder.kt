@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
-import java.nio.file.Path
 import org.jetbrains.kotlin.analysis.api.standalone.projectStructure.StandaloneLibraryScopeConstructionMode
+import java.nio.file.Path
 
 @KtModuleBuilderDsl
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KtBinaryModuleBuilder : KtModuleBuilder() {
     private val binaryRoots: MutableList<Path> = mutableListOf()
     private val binaryVirtualFiles: MutableList<VirtualFile> = mutableListOf()

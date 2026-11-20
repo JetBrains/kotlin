@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
@@ -64,8 +64,6 @@ class FirDelegatedPropertyInferenceSession(
         prepareSharedBaseSystem(parentConstraintSystem, components.session.inferenceComponents)
 
     val currentConstraintStorage: ConstraintStorage get() = currentConstraintSystem.currentStorage()
-
-    private val unitType: ConeClassLikeType = components.session.builtinTypes.unitType.coneType
 
     private var wasCompletionRun = false
 
@@ -204,7 +202,7 @@ class FirDelegatedPropertyInferenceSession(
                 parentSystem.asConstraintSystemCompleterContext(),
                 ConstraintSystemCompletionMode.FULL,
                 notCompletedCalls,
-                unitType, resolutionContext,
+                StandardTypes.Unit, resolutionContext,
                 postponedAtomAnalyzer,
                 isUntilFirstLambda = false,
             )

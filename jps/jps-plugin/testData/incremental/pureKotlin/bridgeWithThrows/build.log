@@ -1,0 +1,12 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/BKt$retry$1.class
+  out/production/module/test/BKt.class
+End of files
+Compiling files:
+  src/B.kt
+End of files
+Exit code: OK
+------------------------------------------

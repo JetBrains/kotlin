@@ -119,6 +119,18 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
   }
 
   @Test
+  @TestMetadata("classAndCompanionPropertyClashByFieldName.kt")
+  public void testClassAndCompanionPropertyClashByFieldName() {
+    run("classAndCompanionPropertyClashByFieldName.kt");
+  }
+
+  @Test
+  @TestMetadata("classAndCompanionPropertyClashByVisibility.kt")
+  public void testClassAndCompanionPropertyClashByVisibility() {
+    run("classAndCompanionPropertyClashByVisibility.kt");
+  }
+
+  @Test
   @TestMetadata("classJvmFieldAndCompanionJvmFieldProperty.kt")
   public void testClassJvmFieldAndCompanionJvmFieldProperty() {
     run("classJvmFieldAndCompanionJvmFieldProperty.kt");
@@ -182,6 +194,12 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
   @TestMetadata("dataClassWithValueClass.kt")
   public void testDataClassWithValueClass() {
     run("dataClassWithValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("DefaultImplsWithExtensionMembers.kt")
+  public void testDefaultImplsWithExtensionMembers() {
+    run("DefaultImplsWithExtensionMembers.kt");
   }
 
   @Test
@@ -260,6 +278,12 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
   @TestMetadata("EnumEntry.kt")
   public void testEnumEntry() {
     run("EnumEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("enumEntryAndCompanionDelegatedProperty.kt")
+  public void testEnumEntryAndCompanionDelegatedProperty() {
+    run("enumEntryAndCompanionDelegatedProperty.kt");
   }
 
   @Test
@@ -356,6 +380,12 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
   @TestMetadata("JvmStatic.kt")
   public void testJvmStatic() {
     run("JvmStatic.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmSyntheticFields.kt")
+  public void testJvmSyntheticFields() {
+    run("jvmSyntheticFields.kt");
   }
 
   @Test
@@ -494,6 +524,18 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
   @TestMetadata("valueClassAsContextParameter.kt")
   public void testValueClassAsContextParameter() {
     run("valueClassAsContextParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassDelegatedPropertyInObject.kt")
+  public void testValueClassDelegatedPropertyInObject() {
+    run("valueClassDelegatedPropertyInObject.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassFieldClashWithCompanionObject.kt")
+  public void testValueClassFieldClashWithCompanionObject() {
+    run("valueClassFieldClashWithCompanionObject.kt");
   }
 
   @Test
@@ -662,9 +704,45 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
     }
 
     @Test
+    @TestMetadata("CompanionBlockFieldClash.kt")
+    public void testCompanionBlockFieldClash() {
+      run("CompanionBlockFieldClash.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockFieldClashByFieldName.kt")
+    public void testCompanionBlockFieldClashByFieldName() {
+      run("CompanionBlockFieldClashByFieldName.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockFieldClashByVisibility.kt")
+    public void testCompanionBlockFieldClashByVisibility() {
+      run("CompanionBlockFieldClashByVisibility.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockFieldClashInsideValueClass.kt")
+    public void testCompanionBlockFieldClashInsideValueClass() {
+      run("CompanionBlockFieldClashInsideValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockHidingFunctionWithValueClass.kt")
+    public void testCompanionBlockHidingFunctionWithValueClass() {
+      run("CompanionBlockHidingFunctionWithValueClass.kt");
+    }
+
+    @Test
     @TestMetadata("CompanionBlockInInterface.kt")
     public void testCompanionBlockInInterface() {
       run("CompanionBlockInInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockInInterfaceConstField.kt")
+    public void testCompanionBlockInInterfaceConstField() {
+      run("CompanionBlockInInterfaceConstField.kt");
     }
 
     @Test
@@ -683,6 +761,24 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
     @TestMetadata("CompanionBlockInInterfaceInlineWithDefaultArgumentJvmDefaultNoCompatibility.kt")
     public void testCompanionBlockInInterfaceInlineWithDefaultArgumentJvmDefaultNoCompatibility() {
       run("CompanionBlockInInterfaceInlineWithDefaultArgumentJvmDefaultNoCompatibility.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockInInterfaceJvmField.kt")
+    public void testCompanionBlockInInterfaceJvmField() {
+      run("CompanionBlockInInterfaceJvmField.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockInInterfacePrivateJvmDefaultDisable.kt")
+    public void testCompanionBlockInInterfacePrivateJvmDefaultDisable() {
+      run("CompanionBlockInInterfacePrivateJvmDefaultDisable.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockInInterfaceProperties.kt")
+    public void testCompanionBlockInInterfaceProperties() {
+      run("CompanionBlockInInterfaceProperties.kt");
     }
 
     @Test
@@ -850,6 +946,18 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
     }
 
     @Test
+    @TestMetadata("ExplicitBackingFieldInInterface.kt")
+    public void testExplicitBackingFieldInInterface() {
+      run("ExplicitBackingFieldInInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("ExplicitBackingFieldInInterfaceJvmDefaultDisable.kt")
+    public void testExplicitBackingFieldInInterfaceJvmDefaultDisable() {
+      run("ExplicitBackingFieldInInterfaceJvmDefaultDisable.kt");
+    }
+
+    @Test
     @TestMetadata("ExtendedActualClass.kt")
     public void testExtendedActualClass() {
       run("ExtendedActualClass.kt");
@@ -943,6 +1051,18 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
     @TestMetadata("MultiplatformJvmFacade.kt")
     public void testMultiplatformJvmFacade() {
       run("MultiplatformJvmFacade.kt");
+    }
+
+    @Test
+    @TestMetadata("PrivateExplicitBackingFieldInInterface.kt")
+    public void testPrivateExplicitBackingFieldInInterface() {
+      run("PrivateExplicitBackingFieldInInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("PrivateExplicitBackingFieldInInterfaceJvmDefaultDisable.kt")
+    public void testPrivateExplicitBackingFieldInInterfaceJvmDefaultDisable() {
+      run("PrivateExplicitBackingFieldInInterfaceJvmDefaultDisable.kt");
     }
 
     @Test

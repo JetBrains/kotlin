@@ -27,7 +27,7 @@ FILE: delegateWithArgInference.kt
     public final fun <Q> id(v: R|Q|): R|Q| {
         ^id R|<local>/v|
     }
-    public final val x: R|kotlin/Int|by R|/makeIntDelegate|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+    public final val x: R|kotlin/Int| by R|/makeIntDelegate|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
         lval x: R|kotlin/String| = R|/materialize|<R|kotlin/String|>()
         ^ R|/materialize2|<R|kotlin/Int|>()
     }

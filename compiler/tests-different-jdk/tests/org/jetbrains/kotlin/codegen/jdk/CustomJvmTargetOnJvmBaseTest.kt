@@ -21,33 +21,13 @@ import org.junit.platform.suite.api.Suite
     FirLightTreeBlackBoxCodegenTestGenerated::class,
     FirLightTreeBlackBoxInlineCodegenTestGenerated::class,
 
-    FirPsiBlackBoxCodegenTestGenerated::class,
-    FirPsiBlackBoxInlineCodegenTestGenerated::class,
-
     CoreJrtFsTest::class
 )
 @IncludeClassNamePatterns(".*Test.*Generated")
 @ExcludeTags("<modernJava>")
 annotation class CustomJvmTargetOnJvmBaseTest
 
-// JDK 8
-@CustomJvmTargetOnJvmBaseTest
-class JvmTarget8OnJvm8
-
-// JDK 11
-@CustomJvmTargetOnJvmBaseTest
-class JvmTarget8OnJvm11
-
-@CustomJvmTargetOnJvmBaseTest
-class JvmTarget11OnJvm11
-
-// JDK 15
-@CustomJvmTargetOnJvmBaseTest
-class JvmTarget8OnJvm15
-
-@CustomJvmTargetOnJvmBaseTest
-class JvmTarget15OnJvm15
-
+// JDK 17
 @CustomJvmTargetOnJvmBaseTest
 class JvmTarget8OnJvm17
 

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportImpl
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -36,6 +35,8 @@ import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
@@ -49,6 +50,7 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("Multiplatform IDE dependency resolution")
 class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
@@ -123,6 +125,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeHierarchically")
     @GradleTest
     fun testCommonizedPlatformDependencyResolution(gradleVersion: GradleVersion) {
         with(project("commonizeHierarchically", gradleVersion)) {
@@ -186,6 +189,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinteropImport")
     @GradleTest
     fun testCinterops(gradleVersion: GradleVersion) {
         project(
@@ -307,6 +311,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinteropImport")
     @GradleTest
     fun `test cinterops - are stored in project-wide persistent cache folder`(
         gradleVersion: GradleVersion,
@@ -346,6 +351,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-withFailingCInteropProcess")
     @GradleTest
     fun `test cinterops - with failing cinterop process`(gradleVersion: GradleVersion) {
         project(
@@ -367,6 +373,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-ios")
     @GradleTest
     fun `test cinterops - commonized interop name should include targets unsupported on host`(gradleVersion: GradleVersion) {
         assumeTrue(!HostManager.hostIsMac) { "Host shouldn't support ios target" }
@@ -380,6 +387,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-MetadataDependencyTransformation")
     @GradleTest
     fun `test cinterops - transitive project dependencies`(gradleVersion: GradleVersion) {
         project(
@@ -404,6 +412,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("cinterop-MetadataDependencyTransformation")
     @GradleTest
     fun `test cinterops - transitive project dependencies - disabled cinterop commonization`(gradleVersion: GradleVersion) {
         project(
@@ -427,7 +436,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     fun `test dependency on composite build with commonized cinterops`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         val includedLib = project("composite-build-with-cinterop-commonization/includedLib", gradleVersion, localRepoDir = tempDir)
         project("composite-build-with-cinterop-commonization", gradleVersion, localRepoDir = tempDir) {
-            settingsGradleKts.replaceText("<includedLib_path>", includedLib.projectPath.toUri().toString())
+            settingsGradleKts.replaceText("\"<includedLib_path>\"", pathReference("includedLib_path", includedLib.projectPath))
             // Quick fix for: KT-58815
             build(":lib:copyCommonizeCInteropForIde")
             resolveIdeDependencies { dependencies ->
@@ -439,6 +448,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-60053-dependencyOn-testFixtures")
     @GradleTest
     fun `test dependency on java testFixtures and feature source sets`(gradleVersion: GradleVersion) {
         project(
@@ -470,6 +480,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-61466-lenient-dependency-resolution")
     @GradleTest
     fun `test native project dependencies resolve leniently`(gradleVersion: GradleVersion) {
         project("kt-61466-lenient-dependency-resolution", gradleVersion) {
@@ -506,6 +517,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-61652-CME-when-jupiter-is-applied-to-independet-project")
     @GradleTest
     fun `kt-61652 test no CME when jupiter plugin is applied to independet project`(gradleVersion: GradleVersion) {
         project("kt-61652-CME-when-jupiter-is-applied-to-independet-project", gradleVersion) {
@@ -515,6 +527,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-63226-multiple-capabilities")
     @GradleTest
     fun `test resolve sources for dependency with multiple capabilities`(gradleVersion: GradleVersion) {
         project(
@@ -546,6 +559,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("transitive-sources-dependencies")
     @GradleTest
     fun `test resolve sources for transitive dependencies through dependency without sources variant`(gradleVersion: GradleVersion) {
         project(
@@ -580,6 +594,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     fun `KT-71074 jvmMain depends on kotlin jvm project`(gradleVersion: GradleVersion) {
         project("base-kotlin-multiplatform-library", gradleVersion) {
@@ -611,6 +626,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     fun `KT-74727 intermediate platform-specific source set with project dependency`(gradleVersion: GradleVersion) {
         project("base-kotlin-multiplatform-library", gradleVersion) {
@@ -666,6 +682,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("base-kotlin-multiplatform-library")
     @GradleTest
     fun `KT-75605 dependency to kmp project from test source set`(gradleVersion: GradleVersion) {
         project("base-kotlin-multiplatform-library", gradleVersion) {
@@ -675,7 +692,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                         jvm()
                         linuxX64()
                         linuxArm64()
-                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                         iosX64()
                     }
                 }
@@ -686,7 +703,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     jvm()
                     linuxX64()
                     linuxArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
 
                     sourceSets.commonTest.dependencies {
@@ -792,6 +809,22 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }.resolveIdeDependencies(strictMode = true) {}
     }
 
+    @GradleTest
+    fun `KT-78109 gradleApi dependency is imported as opaque file dependency`(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.sourceSets.getByName("jvmMain").dependencies {
+                    implementation(project.dependencies.gradleApi())
+                }
+            }
+        }.resolveIdeDependencies(strictMode = true) { dependencies ->
+            dependencies["jvmMain"].getOrFail(binaryCoordinates(Regex("<file>:.*gradle-api-.*\\.jar")))
+        }
+    }
+
+    @TestMetadata("base-kotlin-multiplatform-android-library")
     @GradleAndroidTest
     fun `KT-77404 jvm+android commonTest sees stdlib and annotations`(
         gradleVersion: GradleVersion,
@@ -803,8 +836,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             gradleVersion,
             buildJdk = jdkVersion.location,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
         ) {
             buildScriptInjection {
                 applyDefaultAndroidLibraryConfiguration()
@@ -948,8 +980,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             "empty",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
         ) {
             addKgpToBuildScriptCompilationClasspath()
@@ -987,8 +1018,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             "empty",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
         ) {
             addKgpToBuildScriptCompilationClasspath()

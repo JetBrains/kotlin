@@ -14,6 +14,9 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -28,6 +31,9 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.isNodeJsToolchainDisabled
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceIfAbsent
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.requestDefaultNodeJs
 import org.jetbrains.kotlin.gradle.utils.asPathOrNull
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listProperty
@@ -43,6 +49,7 @@ import kotlin.time.toKotlinDuration
 /**
  * Kotlin/JS browser test framework backed by [Playwright][com.microsoft.playwright.Playwright]
  */
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
 internal class KotlinPlaywrightJsTestFramework(
     @Transient override val compilation: KotlinJsIrCompilation,
     override val frameworkTaskInputs: Inputs,
@@ -60,6 +67,7 @@ internal class KotlinPlaywrightJsTestFramework(
         val webkitRunners: ListProperty<WebkitRunnerInput> = objects.listProperty()
 
         @get:InputDirectory
+        @get:NormalizeLineEndings
         val playwrightBrowsersDirectory: DirectoryProperty = objects.directoryProperty()
 
         /**
@@ -99,6 +107,7 @@ internal class KotlinPlaywrightJsTestFramework(
 
         @get:Optional
         @get:InputFile
+        @get:NormalizeLineEndings
         val customBrowserExecutable: RegularFileProperty = objects.fileProperty()
 
         @get:Input
@@ -120,8 +129,6 @@ internal class KotlinPlaywrightJsTestFramework(
 
     override val workingDir: DirectoryProperty = objects.directoryProperty()
 
-    override val executable: Property<String> = objects.property(compilation.nodeJsEnvSpec.executable)
-
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
         compilation.nodeJsRoot().versions.playwrightCore
@@ -129,6 +136,33 @@ internal class KotlinPlaywrightJsTestFramework(
 
     @get:Internal
     internal val npmToolingEnvDir: DirectoryProperty = objects.directoryProperty().convention(compilation.npmToolingDir())
+
+    @get:Input
+    internal val nodeJsRequest: Provider<NodeJsRequest> = compilation.project.requestDefaultNodeJs()
+
+    @get:Internal
+    internal val nodeJsToolchainService = registerNodeJsToolchainServiceIfAbsent(compilation.project)
+
+    @Suppress("DEPRECATION")
+    override val executable: Provider<String> = executableProvider(
+        // `compilation` is not available after loading from the configuration cache, so the legacy executable is resolved here.
+        // `nodeJsEnvSpec` applies NodeJsPlugin, so it must only be accessed when the toolchain is disabled.
+        legacyExecutable = nodeJsToolchainService.flatMap { service ->
+            if (service.isNodeJsToolchainDisabled()) compilation.nodeJsEnvSpec.executable else objects.property<String>()
+        },
+        nodeJsRequest = nodeJsRequest,
+    )
+
+    private fun executableProvider(
+        legacyExecutable: Provider<String>,
+        nodeJsRequest: Provider<NodeJsRequest>,
+    ): Provider<String> = nodeJsToolchainService.map { nodeJsToolchainService ->
+        if (nodeJsToolchainService.isNodeJsToolchainDisabled()) {
+            legacyExecutable.get()
+        } else {
+            nodeJsToolchainService.request(nodeJsRequest.get()).get().executable.get()
+        }
+    }
 
     override fun createTestExecuter(): TestExecuter<*> = PlaywrightTestExecutor()
 

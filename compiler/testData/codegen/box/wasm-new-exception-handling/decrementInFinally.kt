@@ -1,6 +1,5 @@
 // TARGET_BACKEND: WASM
 // USE_NEW_EXCEPTION_HANDLING_PROPOSAL
-// WASM_IGNORE_FOR: vm=WasmEdge
 // TODO: remove the test when KT-66906 will be resolved
 fun box(): String {
     var variable = 0

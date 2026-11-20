@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSingleSymbolByPsiTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.AbstractSingleSymbolByPsiTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -66,6 +66,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCommonSingleSymbolByPsiTestG
   @Test
   public void testAllFilesPresentInSingleSymbolByPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "withTestCompilerPluginEnabled");
+  }
+
+  @Test
+  @TestMetadata("annotationPropertyOfUnsignedType.kt")
+  public void testAnnotationPropertyOfUnsignedType() {
+    run("annotationPropertyOfUnsignedType.kt");
   }
 
   @Test
@@ -240,6 +246,18 @@ public class FirStandaloneNormalAnalysisSourceModuleCommonSingleSymbolByPsiTestG
   @TestMetadata("internalFunctionWithEscapedName.kt")
   public void testInternalFunctionWithEscapedName() {
     run("internalFunctionWithEscapedName.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmRecordInternalProperty.kt")
+  public void testJvmRecordInternalProperty() {
+    run("jvmRecordInternalProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmRecordPropertyOfUnsignedType.kt")
+  public void testJvmRecordPropertyOfUnsignedType() {
+    run("jvmRecordPropertyOfUnsignedType.kt");
   }
 
   @Test
@@ -1244,6 +1262,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCommonSingleSymbolByPsiTestG
     }
 
     @Test
+    @TestMetadata("entryInExpressionCodeFragmentDestructuringDeclaration.kt")
+    public void testEntryInExpressionCodeFragmentDestructuringDeclaration() {
+      run("entryInExpressionCodeFragmentDestructuringDeclaration.kt");
+    }
+
+    @Test
     @TestMetadata("entryUnderscoreInDestructuringDeclaration.kt")
     public void testEntryUnderscoreInDestructuringDeclaration() {
       run("entryUnderscoreInDestructuringDeclaration.kt");
@@ -1822,6 +1846,48 @@ public class FirStandaloneNormalAnalysisSourceModuleCommonSingleSymbolByPsiTestG
     }
 
     @Test
+    @TestMetadata("explicitInlineValueClass.kt")
+    public void testExplicitInlineValueClass() {
+      run("explicitInlineValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassFeatureEnabled.kt")
+    public void testExplicitInlineValueClassFeatureEnabled() {
+      run("explicitInlineValueClassFeatureEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassFeatureEnabledCommon.kt")
+    public void testExplicitInlineValueClassFeatureEnabledCommon() {
+      run("explicitInlineValueClassFeatureEnabledCommon.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassFeatureEnabledJs.kt")
+    public void testExplicitInlineValueClassFeatureEnabledJs() {
+      run("explicitInlineValueClassFeatureEnabledJs.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassMultipleFields.kt")
+    public void testExplicitInlineValueClassMultipleFields() {
+      run("explicitInlineValueClassMultipleFields.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassWithJvmInline.kt")
+    public void testExplicitInlineValueClassWithJvmInline() {
+      run("explicitInlineValueClassWithJvmInline.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassWithJvmInlineCommon.kt")
+    public void testExplicitInlineValueClassWithJvmInlineCommon() {
+      run("explicitInlineValueClassWithJvmInlineCommon.kt");
+    }
+
+    @Test
     @TestMetadata("fullValueClassAbstract.kt")
     public void testFullValueClassAbstract() {
       run("fullValueClassAbstract.kt");
@@ -1933,6 +1999,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCommonSingleSymbolByPsiTestG
     @TestMetadata("inlineClassFeatureEnabledCommon.kt")
     public void testInlineClassFeatureEnabledCommon() {
       run("inlineClassFeatureEnabledCommon.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineClassFeatureEnabledJsWasm.kt")
+    public void testInlineClassFeatureEnabledJsWasm() {
+      run("inlineClassFeatureEnabledJsWasm.kt");
     }
 
     @Test

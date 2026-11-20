@@ -21,6 +21,9 @@ public abstract class SCollection /* test.SCollection*/ implements java.util.Col
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
 
   @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
@@ -31,6 +34,9 @@ public abstract class SCollection /* test.SCollection*/ implements java.util.Col
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public java.util.Iterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> iterator();//  iterator()
 
   @java.lang.Override()
   public void clear();//  clear()
@@ -66,6 +72,9 @@ public abstract class SCollection2 /* test.SCollection2*/ implements java.util.C
 
   @java.lang.Override()
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
@@ -116,6 +125,9 @@ public class SCollection3 /* test.SCollection3*/ implements java.util.Collection
 
   @java.lang.Override()
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)

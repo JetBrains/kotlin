@@ -218,17 +218,7 @@ private object FreeListAllocator {
                 check(allocatedSlot.size > 0u) { "Slot to free clearly does not originate from free-list allocation: allocated slot size is zero" }
                 check(allocatedSlot.size % alignment == 0u) { "Slot to free clearly does not originate from free-list allocation: allocated slot size is not a multiple of alignment" }
 
-                // need to find the slots that this lies in between, in terms of start address
-                // NOTE: we assume (and later assert) the allocatedSlot does not overlap with anything in the free list, that wouldn't make sense, by definition, allocatedSlot is not free
-                val minusInsertionPointMinusOne = list.binarySearch {
-                    // because we assume it can't overlap, we know that size is irrelevant here: we'll get the index of the insertion point from this function, and inserting there will not lead to overlap
-                    (it.ptr.address.toLong() - allocatedSlot.ptr.address.toLong()).toInt()
-                }
-
-                require(minusInsertionPointMinusOne != 0) { "Double-free: slot to free can't already be in the free list; slot to free: $allocatedSlot; " + debugDump() }
-
-                // convert back to actual insertion point
-                val insertionPointIndex = -(minusInsertionPointMinusOne + 1)
+                val insertionPointIndex = findInsertionPoint(allocatedSlot)
 
                 // before we insert, try to merge
                 val leftElement = list.getOrNull(insertionPointIndex - 1)
@@ -269,6 +259,62 @@ private object FreeListAllocator {
                 isAlreadyOperating = false
             }
         }
+
+        /**
+         * Finds the free slots that this allocated slot lies in between, and returns the insertion point, i.e., the index of the right of those two slots. Thus if this index is used to insert the allocated slot, the list will remain sorted.
+         *
+         * This function `require()`s that the [allocatedSlot] does not overlap with anything in the free list (i.e., that it follows the definition of an allocated slot).
+         */
+        private fun findInsertionPoint(allocatedSlot: MemorySlot): Int {
+            // NOTE: we assume (and later assert) the allocatedSlot does not overlap with anything in the free list, that wouldn't make sense, by definition, allocatedSlot is not free
+            val minusInsertionPointMinusOne = list.binarySearch {
+                // because we assume it can't overlap, we know that size is irrelevant here: we'll get the index of the insertion point from this function, and inserting there will not lead to overlap
+                (it.ptr.address.toLong() - allocatedSlot.ptr.address.toLong()).toInt()
+            }
+
+            require(minusInsertionPointMinusOne != 0) { "Double-free or use-after-free: allocated slot can't already be in the free list; allocated slot: $allocatedSlot; " + debugDump() }
+
+            // convert back to actual insertion point
+            val insertionPointIndex = -(minusInsertionPointMinusOne + 1)
+            return insertionPointIndex
+        }
+
+        fun tryGrowInPlace(allocatedSlot: MemorySlot, newSize: UInt): MemorySlot? {
+            assert(!isAlreadyOperating) { "Cannot call tryGrowInPlace from within the allocator" }
+            isAlreadyOperating = true
+            try {
+                assert(newSize % alignment == 0u) { "Attempted to grow an allocation to a size that is not aligned" }
+
+                val additionalSize = newSize - allocatedSlot.size
+
+                val indexOfRight = findInsertionPoint(allocatedSlot)
+                if (indexOfRight == list.size) {
+                    // super-edge case of trying to grow an allocation to a size that extends to the end of the entire address space. Not possible to grow in place.
+                    return null
+                }
+
+                val rightSlot = list[indexOfRight]
+
+                // The sufficient condition to grow in place, is that the right-side slot (which is maximally large, as we merge freed slots together eagerly) is 1. contiguous with the allocatedSlot, and 2. is large enough to accommodate the additional size. If that's not the case, we cannot grow in place.
+                if (!(rightSlot.ptr.address == allocatedSlot.ptr.address + allocatedSlot.size &&
+                            rightSlot.size >= additionalSize)) {
+                    return null
+                }
+
+                // To grow the existing slot, shrink the right slot: shift it by the additional size, and reduce its size by the additional size
+                val newRightSlot = MemorySlot(ptr = Pointer(rightSlot.ptr.address + additionalSize), rightSlot.size - additionalSize)
+                if (newRightSlot.size == 0u) {
+                    list.removeAt(indexOfRight)
+                } else {
+                    list[indexOfRight] = newRightSlot
+                }
+
+                // we return the new version of the allocated slot: it starts at the same point, and has the extended size
+                return allocatedSlot.copy(size = newSize)
+            } finally {
+                isAlreadyOperating = false
+            }
+        }
     }
 
     fun allocate(size: Int): MemorySlot {
@@ -276,15 +322,26 @@ private object FreeListAllocator {
 
         // the free list does not know about zero-size allocations
         if (size == 0)
-            return MemorySlot(Pointer(globalFirstValidAddress), 0u)
+            // even when allocating size 0, we need to grow to ensure the address is <= wasm_memory_size(), otherwise the VM might trap
+            return MemorySlot(Pointer(globalFirstValidAddress), 0u).growRealMemoryIfNeeded()
 
         val result = FreeList.allocate(size.toUInt())
             ?: throw OutOfMemoryError("Out of linear memory. All available address space (2gb) is used.")
 
         assert(result.ptr.address % 8u == 0u) { "Allocation result must be at least 8-byte aligned" }
 
+        return result.growRealMemoryIfNeeded()
+    }
+
+    /**
+     * Grows the actual wasm linear memory to accomodate this memory slot. Returns itself, so that
+     * `return MemorySlot(...).growRealMemoryIfNeeded()` works, which reads nicely.
+     */
+    private fun MemorySlot.growRealMemoryIfNeeded(): MemorySlot {
+        val newAllocation = this
+
         val firstInvalidAddress = wasm_memory_size().toUInt() * WASM_PAGE_SIZE_IN_BYTES.toUInt()
-        val endAddressExclusive = result.ptr.address.toULong() + result.size
+        val endAddressExclusive = newAllocation.ptr.address.toULong() + newAllocation.size
         if (endAddressExclusive >= firstInvalidAddress) {
             val numPagesToGrow =
                 (endAddressExclusive - firstInvalidAddress) / WASM_PAGE_SIZE_IN_BYTES.toUInt() + 2u
@@ -295,8 +352,7 @@ private object FreeListAllocator {
         }
 
         check(endAddressExclusive < wasm_memory_size().toUInt() * WASM_PAGE_SIZE_IN_BYTES.toUInt())
-
-        return result
+        return newAllocation
     }
 
     fun free(allocatedSlot: MemorySlot) {
@@ -307,6 +363,10 @@ private object FreeListAllocator {
         FreeList.free(allocatedSlot)
     }
 
+    fun tryGrowInPlace(allocatedSlot: MemorySlot, newSize: UInt): MemorySlot? {
+        return FreeList.tryGrowInPlace(allocatedSlot, newSize)?.growRealMemoryIfNeeded()
+    }
+
 }
 
 @ExperimentalWasmInterop
@@ -314,8 +374,15 @@ private object FreeListAllocator {
 private class ArenaLikeAllocator : MemoryAllocator() {
     private val allocationsToFree = mutableListOf<MemorySlot>()
 
+    internal fun dumpAllocationsToFree(): String {
+        return allocationsToFree.joinToString("\n") { it.toString() }
+    }
+
     override fun allocate(size: Int): Pointer {
         val allocation = FreeListAllocator.allocate(size)
+
+        if (size == 0) // do not track zero-size allocations, they don't need to be freed
+            return allocation.ptr
 
         // track this allocation so they can all be freed on destroy()
         allocationsToFree.add(allocation)
@@ -323,12 +390,61 @@ private class ArenaLikeAllocator : MemoryAllocator() {
         return allocation.ptr
     }
 
-    // NOTE: we don't expose a free() function directly, to a) make it harder to write use-after-frees/double-frees, and b) not expose MemorySlot / FreeList beyond this file
+    private fun trackedIndexOf(ptr: Pointer): Int {
+        val i = allocationsToFree.indexOfFirst { it.ptr == ptr }
+        require(i != -1) { "Attempted to free/modify an allocation that was not allocated by this allocator" }
+        return i
+    }
 
-    @PublishedApi
-    internal fun destroy() {
+    fun free(ptr: Pointer, originalSize: UInt) {
+        if (originalSize == 0u) // freeing zero-size allocations is a noop, and they aren't tracked
+            return
+
+        val singleAllocation = allocationsToFree[trackedIndexOf(ptr)]
+
+        require(originalSize == singleAllocation.size) { "Attempted to free an allocation with a different size than expected" }
+
+        val allocationExisted = allocationsToFree.remove(singleAllocation)
+        assert(allocationExisted) { "Attempted to free an allocation that was not allocated by this allocator" }
+        FreeListAllocator.free(singleAllocation)
+    }
+
+    fun shrinkInPlace(ptr: Pointer, newSize: UInt) {
+        assert(newSize % alignment == 0u) { "Attempted to shrink an allocation to a size that is not aligned" }
+
+        // NOTE: because we're only subtracting aligned sizes, the result will still be aligned
+
+        val singleAllocationIndex = trackedIndexOf(ptr)
+        val singleAllocation = allocationsToFree[singleAllocationIndex]
+
+
+        val originalSize = singleAllocation.size
+        require(newSize <= originalSize) { "Attempted to shrink an allocation to a larger size" }
+
+        // internally, what needs to be freed is the chunk starting at the point that we don't need anymore, i.e., the allocation start plus the new size. That part is of size (originalSize - newSize)
+        FreeListAllocator.free(MemorySlot(Pointer(singleAllocation.ptr.address + newSize), originalSize - newSize))
+
+        // keep track of the new allocation size
+        allocationsToFree[singleAllocationIndex] = singleAllocation.copy(size = newSize)
+    }
+
+    fun tryGrowInPlace(ptr: Pointer, newSize: UInt): Boolean {
+        val singleAllocationIndex = trackedIndexOf(ptr)
+        val singleAllocation = allocationsToFree[singleAllocationIndex]
+
+        val newSingleAllocation = FreeListAllocator.tryGrowInPlace(singleAllocation, newSize)
+            // if we don't get a new allocation, the grow-in-place request has failed, so we simply stop
+            ?: return false
+
+        allocationsToFree[singleAllocationIndex] = newSingleAllocation
+
+        return true
+    }
+
+    fun destroy() {
         // NOTE: this could be optimized by first finding the indices of what to merge and remove, and then shrinking the list all at once, to minimize the amount of copying that's necessary
         for (allocation in allocationsToFree) {
+            // NOTE: we don't use the class-internal free here, as it only slows us down by editing the list in between, which isn't necessary, as we clear the entire list here
             FreeListAllocator.free(allocation)
         }
         allocationsToFree.clear()
@@ -363,7 +479,7 @@ internal class ScopedMemoryAllocator(
 private const val WASM_PAGE_SIZE_IN_BYTES = 65_536  // 64 KiB
 
 @OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
-private var reallocAllocator: ScopedMemoryAllocator? = null
+private var reallocAllocator: ArenaLikeAllocator? = null
 
 /**
  * WebAssembly Component Model Canonical ABI realloc implementation.
@@ -385,7 +501,7 @@ public fun componentModelRealloc(
     // The first call to realloc creates a new allocator.
     // TODO(KT-89312): we use a separate allocator here, only to be able to `freeAllComponentModelReallocAllocatedMemory`. Once this function is removed, we can simplify the implementation of component model realloc to simply use the FreeListAllocator only.
     if (reallocAllocator == null) {
-        reallocAllocator = createAllocatorInTheNewScope()
+        reallocAllocator = ArenaLikeAllocator()
     }
     val allocator = reallocAllocator!!
 
@@ -397,7 +513,7 @@ public fun componentModelRealloc(
             if (originalPtr == 0 && originalSize == 0) // this is a zero-size allocation request, not a free (freeing 0 and allocating 0 are both no-ops, only need to ensure the correct return value)
                 return allocator.allocate(0).address.toInt()
 
-            FreeListAllocator.free(MemorySlot(Pointer(originalPtr.toUInt()), originalAllocationSize))
+            allocator.free(Pointer(originalPtr.toUInt()), originalAllocationSize)
             return -1
         }
 
@@ -417,43 +533,36 @@ public fun componentModelRealloc(
 
         // case 2: shrinking, i.e., the new size is smaller than the old size: nothing to do except free a portion
         if (newAllocationSize < originalAllocationSize) {
-            // NOTE: because we're only subtracting aligned sizes, the result will still be aligned
-            FreeListAllocator.free(MemorySlot(Pointer(originalPtr.toUInt() + newAllocationSize), originalAllocationSize - newAllocationSize))
+            allocator.shrinkInPlace(Pointer(originalPtr.toUInt()), newAllocationSize)
             return originalPtr
         }
 
         // case 3: growing, i.e., we need to do some actual allocation
-        val newAllocation = allocator.allocate(newSize)
 
-        // case 3a: the original size was 0, we're done
-        if (originalSize == 0)
+        // case 3a: the original size was 0, hand out a new allocation of the new size
+        if (originalSize == 0) {
+            val newAllocation = allocator.allocate(newSize)
             return newAllocation.address.toInt()
+        }
 
-        // case 3b: we can grow the allocation in place
-        if (originalAllocationSize <= newAllocationSize && originalPtr.toUInt() + originalAllocationSize == newAllocation.address) {
-            // in that case, don't need to copy data from the old allocation because we just grew at the same point
-            // BUT: Because we grew, we're actually reusing the original allocation with its original aligned size.
-            //      But at this moment, we just have one big allocation with size originalSizeAligned + newSizeAligned.
-            //      So free the difference.
-            val startOfOverallocatedMemory = originalPtr.toUInt() + newAllocationSize
-            val overallocatedSize = originalAllocationSize // we allocated as if we didn't have the original allocation
-            FreeListAllocator.free(MemorySlot(Pointer(startOfOverallocatedMemory), overallocatedSize))
-            // NOTE: allocating and then freeing again might seem overcomplicated; the obvious alternative would be to allocate twice in a row instead. The reason not to allocate twice is as follows:
-            //       if the allocator ever changes, and stops giving out contiguous memory, this code path (overallocating, then freeing) will simply stop being used, and nothing will break.
-            //       While the allocation does occur contiguously, the free is also contiguous and doesn't perform any complex logic, because all that changes is the start address of the free list block that we're allocating from, the list itself is not modified.
-            //
-            //       If we instead allocated twice, in case we can't grow the original allocation in place, we're implicitly relying on being able to perform the second allocation in place. This isn't always true, and would create further complications in these cases, by having to free the "failed" allocation first. Thus, overallocating plus freeing is safer than allocating incrementally.
-            //       Conversely, this current implementation suffers from sometimes not being able to grow an allocation in place, when the initial overallocatedSize is too large, even though the real needed size would be small enough to fit. However, this only results in an additional copy, instead of a semantics change.
-            //       Another possible option would be to add an ability for the FreeList to check if there's enough contiguous space available at a specific slot to grow it in place.
+        // We know this from the cases before, assert it only to be defensive in case of changes to this function
+        assert(originalAllocationSize <= newAllocationSize) { "Shrinking & non-growing cases should already be handled" }
+
+        // try to grow the allocation in place
+        if (allocator.tryGrowInPlace(Pointer(originalPtr.toUInt()), newAllocationSize)) {
+            // case 3b: we can grow the allocation in place:
+            // - The `try` call above was successful -> the necessary freeing and state management are done.
+            // - There's no copying necessary, as the allocation with the old data is still in place.
 
             return originalPtr
         }
 
-        // case 3c: we now know the allocation grew (and the original allocation size was non-zero), and couldn't grow in place, so we have to copy the old data
+        // case 3c: we now know the allocation grew (and the original allocation size was non-zero), and couldn't grow in place, so we have to perform an actual new allocation, and copy the old data
+        val newAllocation = allocator.allocate(newSize)
         // as this is only for useful bytes, we use the sizes that are given out to the application here, not the allocation sizes
         wasm_memory_copy(newAllocation.address.toInt(), originalPtr, minOf(originalSize, newSize))
         // also free the old allocation (from which we copied), which is now useless
-        FreeListAllocator.free(MemorySlot(Pointer(originalPtr.toUInt()), originalAllocationSize))
+        allocator.free(Pointer(originalPtr.toUInt()), originalAllocationSize)
 
         return newAllocation.address.toInt()
     } catch (e: OutOfMemoryError) {
@@ -481,4 +590,9 @@ public fun freeAllComponentModelReallocAllocatedMemory() {
 @OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 internal fun dumpFreeList(): String {
     return FreeListAllocator.debugDump()
+}
+
+@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
+internal fun dumpReallocAllocatorTrackedAllocations(): String? {
+    return reallocAllocator?.dumpAllocationsToFree()
 }

@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.pathString
 import kotlin.test.assertEquals
@@ -15,7 +18,11 @@ import kotlin.test.assertNotNull
 
 @DisplayName("Problems API tests")
 @OtherGradlePluginTests
+@MustRunOnChangesInGradle
 class ProblemsApiIT : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(warningMode = WarningMode.Fail)
+
+    @TestMetadata("simpleProject")
     @GradleTest
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_9_5],

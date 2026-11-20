@@ -19,7 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.facade.AnalysisResult
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
+import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -34,9 +34,9 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
         ignoreParseErrors: Boolean = false,
         additionalPaths: List<File> = emptyList(),
     ) {
-        val clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, mutableListOf())
+        val clearText = clearTextFromDiagnosticMarkup(expectedText)
         val clearCommonText = commonText?.let {
-            CheckerTestUtil.parseDiagnosedRanges(commonText, mutableListOf())
+            clearTextFromDiagnosticMarkup(commonText)
         }
 
         val errors = analyze(

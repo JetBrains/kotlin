@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.analysis.stubs
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.analysis.internal.utils.IndentedTextBuilder
 import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.name.FqName
@@ -28,6 +29,16 @@ private val IGNORED_ADDITIONAL_PROPERTIES: Map<Class<out StubElement<*>>, Set<St
     // 'KotlinModifierListStubImpl.toString()' already renders the mask symbolically, e.g., 'MODIFIER_LIST[enum]'
     KotlinModifierListStubImpl::class.java to setOf("hasAnyModifier"),
 )
+
+/**
+ * Class files compiled with the default JVM target have this version.
+ * It is rendered as [DEFAULT_CLASS_FILE_MAJOR_VERSION_PLACEHOLDER], so changing the default target does not change the test data.
+ */
+private val DEFAULT_CLASS_FILE_MAJOR_VERSION: Int = JvmTarget.DEFAULT.majorVersion
+
+private const val DEFAULT_CLASS_FILE_MAJOR_VERSION_PLACEHOLDER = "<current_major_version>"
+
+private const val CLASS_FILE_MAJOR_VERSION_PROPERTY = KotlinClassStubImpl::classFileMajorVersion.name
 
 internal fun extractAdditionalStubInfo(stub: KotlinFileStubImpl): String {
     return buildIndentedText(indentation = IndentedTextBuilder.TWO_SPACES) {
@@ -70,7 +81,11 @@ private fun IndentedTextBuilder.extractAdditionInfo(stub: StubElement<*>) {
             }
 
             append(name).append(": ")
-            appendValue(value)
+            if (name == CLASS_FILE_MAJOR_VERSION_PROPERTY && value == DEFAULT_CLASS_FILE_MAJOR_VERSION) {
+                append(DEFAULT_CLASS_FILE_MAJOR_VERSION_PLACEHOLDER)
+            } else {
+                appendValue(value)
+            }
             appendLine()
         }
 
@@ -109,7 +124,7 @@ private fun IndentedTextBuilder.appendValue(value: Any?) {
         is KotlinTypeBean -> appendTypeInfo(value)
         is KotlinValueClassRepresentation -> appendValueClassRepresentation(value)
         is Name -> append(value.asString())
-        is Boolean -> append(value.toString())
+        is Boolean, is Int -> append(value.toString())
         is Enum<*> -> append(value.name)
         is String -> append("\"").append(value).append("\"")
         is FqName -> append(value.asString())
@@ -120,7 +135,13 @@ private fun IndentedTextBuilder.appendValue(value: Any?) {
         }
 
         null -> append("null")
-        is ConstantValue<*>, is KotlinStubOrigin -> append(value.toString())
+        is ConstantValue<*> -> append(value.toString())
+        is KotlinStubOrigin -> append(
+            value.toString().replace(
+                "$CLASS_FILE_MAJOR_VERSION_PROPERTY=$DEFAULT_CLASS_FILE_MAJOR_VERSION)",
+                "$CLASS_FILE_MAJOR_VERSION_PROPERTY=$DEFAULT_CLASS_FILE_MAJOR_VERSION_PLACEHOLDER)",
+            )
+        )
         else -> error("Unsupported type: ${value::class}")
     }
 }

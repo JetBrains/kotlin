@@ -1,0 +1,39 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] positionalDestructuringDeclarationsScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-positionalDestructuringDeclarationsScript.kts>
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-positionalDestructuringDeclarationsScript.kts>, ScriptTopLevelDeclaration=true] class Tuple : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Tuple] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Tuple.first] first: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Tuple.second] second: R|kotlin/Int|): R|Tuple| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|kotlin/String| = R|<local>/first|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Tuple] get(): R|kotlin/String|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|kotlin/Int| = R|<local>/second|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Tuple] get(): R|kotlin/Int|
+
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <ERROR TYPE REF: Unresolved name: x> = <Unresolved name: x>#
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: <ERROR TYPE REF: Unresolved name: component1> = R|<local>/<destruct>|.<Unresolved name: component1>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component1>
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] var b: <ERROR TYPE REF: Unresolved name: component2> = R|<local>/<destruct>|.<Unresolved name: component2>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component2>
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: <ERROR TYPE REF: Unresolved name: component2>): R|kotlin/Unit|
+
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <ERROR TYPE REF: Unresolved name: x> = <Unresolved name: x>#
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val c: <ERROR TYPE REF: Unresolved name: component1> = R|<local>/<destruct>|.<Unresolved name: component1>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component1>
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val d: <ERROR TYPE REF: Unresolved name: component2> = R|<local>/<destruct>|.<Unresolved name: component2>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component2>
+
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <ERROR TYPE REF: Unresolved name: x> = <Unresolved name: x>#
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val <unused var>: <ERROR TYPE REF: Unresolved name: component1> = R|<local>/<destruct>|.<Unresolved name: component1>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component1>
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val e: <ERROR TYPE REF: Unresolved name: component2> = R|<local>/<destruct>|.<Unresolved name: component2>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component2>

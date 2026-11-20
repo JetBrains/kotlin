@@ -1,0 +1,19 @@
+Module: lib
+public final class lib/A : java/lang/Object {
+    public void <init>()
+        throws java/io/IOException, java/lang/IllegalStateException
+      @Llib/Retained;([]) // invisible
+}
+
+public abstract interface lib/Retained : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface lib/SourceOnly : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+Module: main
+public final class main/MainKt : java/lang/Object {
+    public final static lib.A create()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+}

@@ -14,8 +14,8 @@ import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
-import kotlin.reflect.ExperimentalCompanionExtensions
 import kotlin.reflect.*
+import kotlin.reflect.ExperimentalCompanionExtensions
 import kotlin.reflect.jvm.internal.calls.*
 
 internal abstract class KotlinKProperty<out V>(
@@ -56,14 +56,17 @@ internal abstract class KotlinKProperty<out V>(
     }
 
     val typeParameterTable: Lazy<TypeParameterTable> = lazy(PUBLICATION) {
-        val parent = (originalContainer as? KClassImpl<*>)?.typeParameterTable
+        val parent = (originalContainer as? MemberContainer<*>)?.typeParameterTable
         TypeParameterTable.create(kmProperty.typeParameters, parent, this, container.jClass.safeClassLoader)
     }
 
     override val typeParameters: List<KTypeParameter> get() = typeParameterTable.value.ownTypeParameters
 
     override val visibility: KVisibility? get() = kmProperty.visibility.toKVisibility()
-    override val modality: Modality get() = kmProperty.modality
+    override val modality: Modality get() = overriddenStorage.modality ?: kmProperty.modality
+    override val overridden: Collection<ReflectKProperty<*>> by lazy(PUBLICATION) {
+        if (isLocalDelegated) emptyList() else computeOverriddenCallables(this)
+    }
     override val isSuspend: Boolean get() = false
     override val isLateinit: Boolean get() = kmProperty.isLateinit
     override val isConst: Boolean get() = kmProperty.isConst
@@ -85,11 +88,7 @@ internal abstract class KotlinKProperty<out V>(
                 originalContainer.jClass.enclosingClass
             else
                 originalContainer.jClass
-        try {
-            owner.getDeclaredField(fieldSignature.name)
-        } catch (_: NoSuchFieldException) {
-            null
-        }
+        owner.getDeclaredFieldOrNull(fieldSignature.name, isStatic)
     }
 
     private fun isPropertyWithBackingFieldInOuterClass(): Boolean {
@@ -127,21 +126,23 @@ internal abstract class KotlinKProperty<out V>(
                 return kmProperty.annotations.map { it.toAnnotation(container.jClass.safeClassLoader) }
             }
 
-            val container = originalContainer
-            val annotationContainer = if ((container as? KClassImpl<*>)?.classKind == ClassKind.INTERFACE) {
-                container.jClass.classes.firstOrNull { it.simpleName == JvmAbi.DEFAULT_IMPLS_CLASS_NAME }
-                    ?.kotlin as KDeclarationContainerImpl? ?: container
-            } else container
             val syntheticMethod = kmProperty.syntheticMethodForAnnotations ?: return emptyList()
-            val annotations = annotationContainer.findMethodBySignature(syntheticMethod.name, syntheticMethod.descriptor)
-                ?.annotations?.toList()
+            val container = originalContainer
+            val specialAnnotationContainer = container
+                .takeIf { (it as? MemberContainer<*>)?.classKind == ClassKind.INTERFACE }
+                ?.jClass?.classes?.firstOrNull { it.simpleName == JvmAbi.DEFAULT_IMPLS_CLASS_NAME }
+                ?.kotlin as KDeclarationContainerImpl?
+            val annotationMethod =
+                specialAnnotationContainer?.findMethodBySignature(syntheticMethod.name, syntheticMethod.descriptor)
+                    ?: container.findMethodBySignature(syntheticMethod.name, syntheticMethod.descriptor)
+            val annotations = annotationMethod?.annotations?.toList()
                 ?: throw KotlinReflectionInternalError("No synthetic method found: $this")
             return annotations.unwrapKotlinRepeatableAnnotations()
         }
 
     @OptIn(ExperimentalCompanionBlocks::class)
     override val isCompanionBlockMember: Boolean
-        get() = container is KClassImpl<*> && kmProperty.isCompanionBlockMember
+        get() = container is MemberContainer<*> && kmProperty.isCompanionBlockMember
 
     abstract class Accessor<out PropertyType, out ReturnType> :
         KotlinKCallable<ReturnType>(KCallableOverriddenStorage.EMPTY), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
@@ -159,7 +160,8 @@ internal abstract class KotlinKProperty<out V>(
 
         override val typeParameters: List<KTypeParameter> get() = property.typeParameters
 
-        override val modality: Modality get() = accessor?.modality ?: property.modality
+        override val modality: Modality get() = property.overriddenStorage.modality ?: accessor?.modality ?: property.modality
+        override val overridden: Collection<ReflectKCallable<*>> get() = computeOverriddenAccessors()
         override val visibility: KVisibility? get() = accessor?.visibility?.toKVisibility() ?: property.visibility
         override val isInline: Boolean get() = accessor?.isInline == true
         override val isExternal: Boolean get() = accessor?.isExternal == true
@@ -298,7 +300,10 @@ internal fun KotlinKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: B
         isGetter -> kmProperty.getterSignature ?: run {
             // If both getter and field signatures are absent, it's a builtin property, so we need to compute the signature and use
             // the accessor only (which must be getter, as there are no builtin mutable properties so far).
-            if (kmProperty.fieldSignature == null) kmProperty.computeJvmSignature(property.container) else null
+            // The signature is computed for the class where the property is declared, because the property type may refer to type
+            // parameters of that class (e.g. `Map.Entry.key` has type `K`), which are not resolvable in a subclass where the property
+            // is inherited as a fake override.
+            if (kmProperty.fieldSignature == null) kmProperty.computeJvmSignature(property.originalContainer) else null
         }
         else -> kmProperty.setterSignature
     }

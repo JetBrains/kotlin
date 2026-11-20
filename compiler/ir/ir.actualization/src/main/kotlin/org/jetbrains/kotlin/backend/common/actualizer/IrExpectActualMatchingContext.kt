@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.isJavaValueClass
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -130,10 +130,19 @@ internal abstract class IrExpectActualMatchingContext(
         get() = asIr().isCompanion
     override val RegularClassSymbolMarker.isInner: Boolean
         get() = asIr().isInner
-    override val RegularClassSymbolMarker.isInlineOrValue: Boolean
-        get() = asIr().isValue
+    override val RegularClassSymbolMarker.isValue: Boolean
+        get() = asIr().let { it.isValue || it.isJavaValueClass }
+
+    // TODO(KT-90748): `AllowExpectValueClassesWithNoPrimaryConstructor` feature results
+    //  in expect inline value class without `valueClassRepresentation`. IR does not have
+    //  `isInline` property for class (yet?) unlike FIR. Hence, there is no nice way to
+    //  implement this check currently, but it is fine, because FIR check should be enough.
+    override val RegularClassSymbolMarker.isInline: Boolean
+        get() = this@isInline.isValue
     override val RegularClassSymbolMarker.isFun: Boolean
         get() = asIr().isFun
+    override val RegularClassSymbolMarker.isRichError: Boolean
+        get() = false // not supported in IR
 
     override val RegularClassSymbolMarker.containingClass: RegularClassSymbolMarker?
         get() = (asIr().parent as? IrClass)?.symbol

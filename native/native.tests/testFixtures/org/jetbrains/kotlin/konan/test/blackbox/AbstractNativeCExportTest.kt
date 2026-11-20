@@ -43,6 +43,8 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
         testRunSettings.assumeLibraryKindSupported()
     }
 
+    protected open val additionalCompilerArgs: List<String> get() = emptyList()
+
     private val testCompilationFactory = TestCompilationFactory()
 
     protected fun runTest(@TestDataFile testDir: String) {
@@ -142,7 +144,7 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
                 "-opt-in", "kotlin.experimental.ExperimentalNativeApi",
                 "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
                 "-opt-in", "kotlin.native.internal.InternalForKotlinNative",
-            )),
+            ) + additionalCompilerArgs),
             nominalPackageName = PackageName(moduleName),
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).run {
                 copy(
@@ -172,4 +174,14 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
             initialize(null, null)
         }
     }
+}
+
+/**
+ * Same as [AbstractNativeCExportTest], but the C export model is built from the IR instead of K1 descriptors
+ * (`-Xbinary=cExportUseIrDiscovery=true`). The IR mode must be behaviorally identical to the descriptor mode, so
+ * both share the same test data (sources, C driver, and golden output). Only meaningful with `cInterfaceMode=v1`.
+ */
+abstract class AbstractNativeCExportIrTest : AbstractNativeCExportTest() {
+    override val additionalCompilerArgs: List<String>
+        get() = listOf("-Xbinary=cExportUseIrDiscovery=true")
 }

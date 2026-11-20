@@ -10,26 +10,39 @@ import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.normalize
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.cli.common.output.writeAllTo
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.jvm.abi.JvmAbiComponentRegistrar
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 
 class FullValueClassStabilityTests : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         languageVersionSettings = LanguageVersionSettingsImpl(
             languageVersion = languageVersionSettings.languageVersion,
             apiVersion = languageVersionSettings.apiVersion,
+            analysisFlags = mapOf(AnalysisFlags.skipPrereleaseCheck to true),
             specificFeatures = mapOf(LanguageFeature.FullValueClasses to LanguageFeature.State.ENABLED),
         )
     }
+
+    @TempDir
+    lateinit var libraryDirectory: File
 
     // Regression test for KT-89957
     @Test
@@ -123,6 +136,75 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
     // Regression test for KT-89961
     @Test
     fun testRecursiveProperty() = assertStability("value class V(val a: Int, val next: V?)", "Unstable")
+
+    @Test
+    fun testFromOtherFile() {
+        val point = SourceFile("Point.kt", "value class Point(val x: Int, val y: Int)")
+        val irModule = compileToIr(listOf(point, SourceFile("Holder.kt", "class Holder(val point: Point)")))
+        assertStabilityOfHolder(irModule, "Runtime(Point)")
+    }
+
+    // Regression test for KT-89995
+    @Test
+    fun testPrivateConstructorFromAbiJar() {
+        compileLibrary(
+            """
+                value class Point private constructor(val x: Int, private val buffer: java.lang.StringBuilder) {
+                    companion object {
+                        fun of(x: Int) = Point(x, java.lang.StringBuilder())
+                    }
+                }
+            """,
+            withCompose = true,
+            toAbiJar = true,
+        )
+        assertStabilityOfLibraryHolder("Runtime(Point)")
+    }
+
+    @Test
+    fun testFromLibraryCompiledWithCompose() {
+        compileLibrary("value class Point(val x: Int, val y: Int)", withCompose = true, toAbiJar = false)
+        assertStabilityOfLibraryHolder("Runtime(Point)")
+    }
+
+    @Test
+    fun testFromLibraryCompiledWithoutCompose() {
+        compileLibrary("value class Point(val x: Int, val y: Int)", withCompose = false, toAbiJar = false)
+        assertStabilityOfLibraryHolder("Unstable")
+    }
+
+    @OptIn(ExperimentalCompilerApi::class)
+    private fun compileLibrary(@Language("kotlin") source: String, withCompose: Boolean, toAbiJar: Boolean) {
+        val library = SourceFile("Point.kt", "package lib\n\n" + source.trimIndent())
+        val outputFiles = createClassLoader(listOf(library), registerExtensions = { configuration ->
+            registerExtensionsForTest(this, configuration) {
+                if (withCompose) {
+                    with(ComposePluginRegistrar.Companion) {
+                        registerCommonExtensions()
+                    }
+                    IrGenerationExtension.registerExtension(ComposePluginRegistrar.createComposeIrExtension(configuration))
+                }
+                if (toAbiJar) {
+                    with(JvmAbiComponentRegistrar { it.writeAllTo(libraryDirectory) }) {
+                        registerExtensions(configuration)
+                    }
+                }
+            }
+        }).allGeneratedFiles
+        if (!toAbiJar) outputFiles.writeToDir(libraryDirectory)
+    }
+
+    private fun assertStabilityOfLibraryHolder(stability: String) {
+        val irModule = compileToIr(listOf(SourceFile("Holder.kt", "class Holder(val point: lib.Point)")), listOf(libraryDirectory))
+        assertStabilityOfHolder(irModule, stability)
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun assertStabilityOfHolder(irModule: IrModuleFragment, stability: String) {
+        val holder = irModule.files.last().declarations.last() as IrClass
+        val holderStability = StabilityInferencer(isTargetJvm = true, emptySet()).stabilityOf(holder.defaultType, holder.file)
+        assertEquals(stability, holderStability.normalize().toString())
+    }
 
     /**
      * Asserts that the stability of the last type declared in [classDefSrc], normalized as for the code generation, is [stability].

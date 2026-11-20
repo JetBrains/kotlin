@@ -34,7 +34,7 @@ internal class RootCirTreeDeserializer(
         return CirTreeRoot(
             modules = commonModuleInfos.map { moduleInfo ->
                 val metadata = targetProvider.modulesProvider.loadModuleMetadata(moduleInfo.name)
-                moduleDeserializer(metadata, typeResolver)
+                moduleDeserializer(moduleInfo.name, metadata, typeResolver)
             },
             dependencies = dependencies
         )

@@ -18,7 +18,7 @@ FILE: allOpenOnValueClass.kt
         }
 
     }
-    @R|AllOpen|() @R|kotlin/jvm/JvmInline|() public final value class Inline : R|kotlin/Any| {
+    @R|AllOpen|() @R|kotlin/jvm/JvmInline|() public final inline value class Inline : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|Inline| {
             super<R|kotlin/Any|>()
         }

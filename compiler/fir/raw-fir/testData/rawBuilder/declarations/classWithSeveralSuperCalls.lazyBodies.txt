@@ -1,0 +1,27 @@
+FILE: classWithSeveralSuperCalls.kt
+    public open class A : R|kotlin/Any| {
+        public? [ContainingClassKey=A] constructor(x: Int): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public open class B : R|kotlin/Any| {
+        public? [ContainingClassKey=B] constructor(y: Int): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? class WithPrimaryConstructor : A, B {
+        public? [ContainingClassKey=WithPrimaryConstructor] constructor(x: Int): R|WithPrimaryConstructor| {
+            LAZY_super<A>
+            LAZY_super<B>
+        }
+
+    }
+    public final? class WithImplicitConstructor : A, B {
+        public? [ContainingClassKey=WithImplicitConstructor] constructor(): R|WithImplicitConstructor| {
+            LAZY_super<A>
+            LAZY_super<B>
+        }
+
+    }

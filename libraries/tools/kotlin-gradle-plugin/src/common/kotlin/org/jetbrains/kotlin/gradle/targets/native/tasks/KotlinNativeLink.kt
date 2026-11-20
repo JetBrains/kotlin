@@ -19,6 +19,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.compilerRunner.*
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBund
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.UsesKotlinNativeToolParallelismProbe
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -74,6 +76,7 @@ constructor(
     UsesClassLoadersCachingBuildService,
     KotlinToolTask<KotlinCommonCompilerToolOptions>,
     UsesKotlinNativeBundleBuildService,
+    UsesKotlinNativeToolParallelismProbe,
     UsesKotlinToolingDiagnostics,
     UsesBuildFusService {
 
@@ -112,6 +115,7 @@ constructor(
         }, konanTarget)
 
     @get:Classpath
+    @get:NormalizeLineEndings
     override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
@@ -222,6 +226,19 @@ constructor(
     @get:Input
     val linkerOpts: List<String> by lazyConvention { binary.linkerOpts }
 
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputFiles
+    internal val linkerOptsFiles: ConfigurableFileCollection = objectFactory.fileCollection().apply {
+        val projectDirectory = project.layout.projectDirectory
+        // linkerOpts is still an input itself. Register existing options that point to files
+        // lazily so that files created after task initialization are also tracked.
+        val linkerOptPaths = objectFactory.fileCollection()
+        linkerOptPaths.from({
+            linkerOpts.map { projectDirectory.file(it) }
+        })
+        from(linkerOptPaths.filter { it.isFile })
+    }
+
     /**
      * FIXME: KT-85118 This @Input annotation is incorrect and will not be part of KotlinNativeLink fingerprint because it is now used to
      * pass linker options in doFirst
@@ -231,6 +248,7 @@ constructor(
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
+    @get:NormalizeLineEndings
     internal abstract val linkerOptionsProducerFingerprint: ConfigurableFileCollection
 
     @get:Input
@@ -240,6 +258,7 @@ constructor(
     val processTests: Boolean by lazyConvention { binary is TestExecutable }
 
     @get:Classpath
+    @get:NormalizeLineEndings
     val exportLibraries: FileCollection get() = exportLibrariesResolvedConfiguration?.files ?: objectFactory.fileCollection()
 
     private val exportLibrariesResolvedConfiguration = if (binary is AbstractNativeLibrary) {
@@ -277,7 +296,7 @@ constructor(
     )
 
     private val cacheSettings = CacheSettings(
-        project.isKonanIncrementalCompilationEnabled(),
+        project.isKonanIncrementalCompilationEnabled(konanTarget),
         project.getKonanParallelThreads(),
         project.gradle.gradleUserHomeDir,
         project.layout.buildDirectory.get().asFile,
@@ -409,6 +428,7 @@ constructor(
 
     @Suppress("DEPRECATION_ERROR")
     @get:Classpath
+    @get:NormalizeLineEndings
     protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
     @get:Internal
@@ -434,6 +454,7 @@ constructor(
 
     @Optional
     @Classpath
+    @NormalizeLineEndings
     open var compilerPluginClasspath: FileCollection? = null
 
     /**
@@ -513,12 +534,14 @@ constructor(
                 CompilerArgumentMetrics.collectMetrics(arguments, buildArguments.toTypedArray(), logger, it)
             }
 
-            nativeCompilerRunner.runTool(
+            nativeCompilerRunner.runToolWithWorkers(
                 KotlinNativeToolRunner.ToolArguments(
                     shouldRunInProcessMode = !forceDisableRunningInProcess.get(),
                     compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
                     arguments = buildArguments
-                )
+                ),
+                taskPath = path,
+                parallelismProbe = kotlinNativeToolParallelismProbe,
             )
         }
     }

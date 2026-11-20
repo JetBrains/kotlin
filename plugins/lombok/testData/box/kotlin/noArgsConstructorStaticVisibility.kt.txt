@@ -1,0 +1,45 @@
+@NoArgsConstructor(staticName = "of")
+class KotlinClass {
+  var a: Int
+    field = a
+    get
+    set
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun of(): KotlinClass {
+      return KotlinClass()
+    }
+
+  }
+
+  private constructor() {
+    super/*Any*/()
+  }
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  when {
+    isPrivate(p0 = <get-java><JavaClass>(/* <this> = JavaClass::class */).getDeclaredConstructor() /*!! Constructor<@FlexibleNullability JavaClass?> */.getModifiers()).not() -> return "Fail: Java no-args constructor is not private"
+  }
+  of() /*~> Unit */
+  Companion.of() /*~> Unit */
+  when {
+    isPrivate(p0 = <get-java><KotlinClass>(/* <this> = KotlinClass::class */).getDeclaredConstructor() /*!! Constructor<@FlexibleNullability KotlinClass?> */.getModifiers()).not() -> return "Fail: Kotlin no-args constructor is not private"
+  }
+  return "OK"
+}
+

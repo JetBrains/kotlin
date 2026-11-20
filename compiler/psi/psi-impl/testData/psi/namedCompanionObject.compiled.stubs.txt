@@ -3,12 +3,14 @@ FILE[kind=File[packageFqName=test]]
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
   CLASS[classId=test/NamedCompanionObject, fqName=test.NamedCompanionObject, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=NamedCompanionObject, superNames=[]]
+    classFileMajorVersion: <current_major_version>
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NamedCompanionObject]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       OBJECT_DECLARATION[classId=test/NamedCompanionObject.Named, fqName=test.NamedCompanionObject.Named, isObjectLiteral=false, isTopLevel=false, name=Named, superNames=[]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=test.NamedCompanionObject.Named.j, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
@@ -29,12 +31,14 @@ FILE[kind=File[packageFqName=test]]
                 REFERENCE_EXPRESSION[referencedName=Int]
                   isClassRef: true
           CLASS[classId=test/NamedCompanionObject.Named.A, fqName=test.NamedCompanionObject.Named.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
               CLASS[classId=test/NamedCompanionObject.Named.A.B, fqName=test.NamedCompanionObject.Named.A.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=B, superNames=[]]
+                classFileMajorVersion: <current_major_version>
                 MODIFIER_LIST[public final]
                 PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=B]
                   MODIFIER_LIST[public]
@@ -75,30 +79,36 @@ FILE[kind=File[packageFqName=test]]
             REFERENCE_EXPRESSION[referencedName=Unit]
               isClassRef: true
       CLASS[classId=test/NamedCompanionObject.B, fqName=test.NamedCompanionObject.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=B, superNames=[]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=B]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
           OBJECT_DECLARATION[classId=test/NamedCompanionObject.B.NamedInB, fqName=test.NamedCompanionObject.B.NamedInB, isObjectLiteral=false, isTopLevel=false, name=NamedInB, superNames=[]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[public companion]
             CLASS_BODY
               CLASS[classId=test/NamedCompanionObject.B.NamedInB.C, fqName=test.NamedCompanionObject.B.NamedInB.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+                classFileMajorVersion: <current_major_version>
                 MODIFIER_LIST[public final]
                 PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C]
                   MODIFIER_LIST[public]
                   VALUE_PARAMETER_LIST
                 CLASS_BODY
                   OBJECT_DECLARATION[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC, isObjectLiteral=false, isTopLevel=false, name=NamedInC, superNames=[]]
+                    classFileMajorVersion: <current_major_version>
                     MODIFIER_LIST[public companion]
                     CLASS_BODY
                       CLASS[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
+                        classFileMajorVersion: <current_major_version>
                         MODIFIER_LIST[public final]
                         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=D]
                           MODIFIER_LIST[public]
                           VALUE_PARAMETER_LIST
                         CLASS_BODY
                           OBJECT_DECLARATION[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                            classFileMajorVersion: <current_major_version>
                             MODIFIER_LIST[public companion]
                             CLASS_BODY
                               PROPERTY[fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.i, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
@@ -119,6 +129,7 @@ FILE[kind=File[packageFqName=test]]
                                     REFERENCE_EXPRESSION[referencedName=Unit]
                                       isClassRef: true
                               CLASS[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=En, superNames=[Enum]]
+                                classFileMajorVersion: <current_major_version>
                                 MODIFIER_LIST[public final enum]
                                 PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=En]
                                   MODIFIER_LIST[private]
@@ -163,9 +174,11 @@ FILE[kind=File[packageFqName=test]]
                                 CLASS_BODY
                                   ENUM_ENTRY[classId=null, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
                                   OBJECT_DECLARATION[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En.NamedInEn, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.En.NamedInEn, isObjectLiteral=false, isTopLevel=false, name=NamedInEn, superNames=[]]
+                                    classFileMajorVersion: <current_major_version>
                                     MODIFIER_LIST[public companion]
                                     CLASS_BODY
                               CLASS[classId=test/NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.Anno, fqName=test.NamedCompanionObject.B.NamedInB.C.NamedInC.D.Companion.Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Anno, superNames=[Annotation]]
+                                classFileMajorVersion: <current_major_version>
                                 MODIFIER_LIST[public final annotation]
                                 PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Anno]
                                   MODIFIER_LIST[public]

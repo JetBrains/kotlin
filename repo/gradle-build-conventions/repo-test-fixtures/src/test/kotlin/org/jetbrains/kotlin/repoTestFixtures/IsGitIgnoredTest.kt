@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.repoTestFixtures
 
+import org.jetbrains.kotlin.testFederation.RepositoryPath
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Files
@@ -33,16 +34,18 @@ class IsGitIgnoredTest {
 
     @Test
     fun `build directory - is ignored`() {
-        val relativePath = Path("repo/gradle-build-conventions/repo-test-fixtures/build")
+        val absolutePath = findRepositoryRoot(Path("").absolute())!!.resolve("repo/gradle-build-conventions/repo-test-fixtures/build")
+        val relativePath = Path("").absolute().relativize(absolutePath)
         assertTrue(relativePath.isGitIgnored())
-        assertTrue(findRepositoryRoot(Path("").absolute())!!.resolve(relativePath).isGitIgnored())
+        assertTrue(absolutePath.isGitIgnored())
     }
 
     @Test
     fun `dist directory - is ignored`() {
-        val relativePath = Path("dist")
+        val absolutePath = findRepositoryRoot(Path("").absolute())!!.resolve("dist")
+        val relativePath = Path("").absolute().relativize(absolutePath)
         assertTrue(relativePath.isGitIgnored())
-        assertTrue(findRepositoryRoot(Path("").absolute())!!.resolve(relativePath).isGitIgnored())
+        assertTrue(absolutePath.isGitIgnored())
     }
 
     @Test
@@ -61,10 +64,10 @@ class IsGitIgnoredTest {
 
     @Test
     fun `path outside repository is rejected`() {
-        val outsidePath = repositoryRoot.resolveSibling("${repositoryRoot.fileName}-outside")
+        val outsidePath = RepositoryPath(repositoryRoot, Path("../${repositoryRoot.fileName}-outside"))
 
         assertFailsWith<IllegalArgumentException> {
-            outsidePath.isGitIgnored(repositoryRoot)
+            outsidePath.isGitIgnored()
         }
     }
 
@@ -72,13 +75,50 @@ class IsGitIgnoredTest {
     fun `normalized path is matched`() {
         repositoryRoot.resolve(".gitignore").writeText("/ignored\n")
 
-        assertTrue(repositoryRoot.resolve("directory/../ignored").isGitIgnored(repositoryRoot))
+        assertTrue(RepositoryPath(repositoryRoot, Path("directory/../ignored")).isGitIgnored())
+    }
+
+    @Test
+    fun `repository path is resolved from its explicit root`() {
+        repositoryRoot.resolve(".gitignore").writeText("/ignored\n")
+
+        assertTrue(RepositoryPath(repositoryRoot, Path("ignored")).isGitIgnored())
+        assertFalse(RepositoryPath(repositoryRoot, Path("included")).isGitIgnored())
+    }
+
+    @Test
+    fun `relative repository root is normalized`() {
+        repositoryRoot.resolve(".gitignore").writeText("/ignored\n")
+        val relativeRoot = Path("").absolute().relativize(repositoryRoot).resolve("directory/..")
+
+        assertTrue(RepositoryPath(relativeRoot, Path("ignored")).isGitIgnored())
+    }
+
+    @Test
+    fun `gitignore rules outside the explicit root are not used`() {
+        repositoryRoot.resolve(".gitignore").writeText("ignored\n")
+        val nestedRoot = repositoryRoot.resolve("nested").createDirectories()
+
+        assertFalse(RepositoryPath(nestedRoot, Path("ignored")).isGitIgnored())
+        assertFalse(RepositoryPath(nestedRoot, Path("")).isGitIgnored())
+    }
+
+    @Test
+    fun `gitignore rules are scoped to each repository root`() {
+        val firstRoot = repositoryRoot.resolve("first").createDirectories()
+        val secondRoot = repositoryRoot.resolve("second").createDirectories()
+        firstRoot.resolve(".gitignore").writeText("/ignored\n")
+        secondRoot.resolve(".gitignore").writeText("/other\n")
+
+        assertTrue(RepositoryPath(firstRoot, Path("ignored")).isGitIgnored())
+        assertFalse(RepositoryPath(secondRoot, Path("ignored")).isGitIgnored())
+        assertTrue(RepositoryPath(secondRoot, Path("other")).isGitIgnored())
     }
 
     @Test
     fun `git metadata descendants are ignored`() {
-        assertTrue(repositoryRoot.resolve(".git/objects/pack").isGitIgnored(repositoryRoot))
-        assertTrue(repositoryRoot.resolve("nested/.git/config").isGitIgnored(repositoryRoot))
+        assertTrue(RepositoryPath(repositoryRoot, Path(".git/objects/pack")).isGitIgnored())
+        assertTrue(RepositoryPath(repositoryRoot, Path("nested/.git/config")).isGitIgnored())
     }
 
     @Test
@@ -88,8 +128,8 @@ class IsGitIgnoredTest {
             "/ignored.txt\n!/inherited.txt\n"
         )
 
-        assertTrue(repositoryRoot.resolve("nested/ignored.txt").isGitIgnored(repositoryRoot))
-        assertFalse(repositoryRoot.resolve("nested/inherited.txt").isGitIgnored(repositoryRoot))
+        assertTrue(RepositoryPath(repositoryRoot, Path("nested/ignored.txt")).isGitIgnored())
+        assertFalse(RepositoryPath(repositoryRoot, Path("nested/inherited.txt")).isGitIgnored())
     }
 
     @Test
@@ -97,7 +137,7 @@ class IsGitIgnoredTest {
         repositoryRoot.resolve("rules").writeText("ignored.txt\n")
         Files.createSymbolicLink(repositoryRoot.resolve(".gitignore"), Path("rules"))
 
-        assertFalse(repositoryRoot.resolve("ignored.txt").isGitIgnored(repositoryRoot))
+        assertFalse(RepositoryPath(repositoryRoot, Path("ignored.txt")).isGitIgnored())
     }
 
     @Test
@@ -115,7 +155,7 @@ class IsGitIgnoredTest {
         try {
             val results = executor.invokeAll(
                 List(1_000) { index ->
-                    Callable { repositoryRoot.resolve("ignored-$index").isGitIgnored(repositoryRoot) }
+                    Callable { RepositoryPath(repositoryRoot, Path("ignored-$index")).isGitIgnored() }
                 }
             )
 

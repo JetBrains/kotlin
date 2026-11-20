@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaSeverity
-import org.jetbrains.kotlin.analysis.api.impl.base.util.toAnalysisApiSeverity
+import org.jetbrains.kotlin.analysis.api.fir.utils.toAnalysisApiSeverity
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -49,7 +48,6 @@ internal abstract class KaAbstractFirDiagnostic<PSI : PsiElement>(
      *
      * @see org.jetbrains.kotlin.analysis.api.fir.asKaDiagnostic
      */
-    @KaExperimentalApi
     override var isSuppressed: Boolean = false
         get() = withValidityAssertion { field }
         set(value) = withValidityAssertion { field = value }

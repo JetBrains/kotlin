@@ -7,6 +7,7 @@ package org.jetbrains.kotlinx.dataframe.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.declaredProperties
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -75,7 +77,7 @@ fun <T> KotlinTypeFacade.interpret(
             val value: Any = if (lens == Interpreter.Id) {
                 firTypeProjection.toConeTypeProjection()
             } else {
-                val type = firTypeProjection.toConeTypeProjection().type ?: session.builtinTypes.nullableAnyType.coneType
+                val type = firTypeProjection.toConeTypeProjection().type ?: StandardTypes.NullableAny
                 ColumnType(type.approximateIntersections())
             }
             put(key, Interpreter.Success(value))
@@ -251,7 +253,10 @@ private fun KotlinTypeFacade.extractValue(
         (expression.calleeReference as? FirResolvedNamedReference)?.let {
             val symbol = it.resolvedSymbol
             val firPropertySymbol = symbol as? FirLocalPropertySymbol
-            val literalInitializer = firPropertySymbol?.resolvedInitializer
+            // TODO(KT-91732) fix contract violation
+            val literalInitializer = session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
+                firPropertySymbol?.resolvedInitializer
+            }
 
             if (symbol is FirEnumEntrySymbol) {
                 Interpreter.Success(
@@ -379,7 +384,7 @@ private fun KotlinTypeFacade.columnWithPathApproximations(propertyAccess: FirPro
         val column = when (it.classId) {
             Names.DATA_COLUMN_CLASS_ID -> {
                 val type = when (val arg = it.typeArguments.single()) {
-                    is ConeStarProjection -> session.builtinTypes.nullableAnyType.coneType
+                    is ConeStarProjection -> StandardTypes.NullableAny
                     is ConeKotlinTypeProjection -> arg.type
                 }
                 simpleColumnOf(propertyAccess.columnName(), type)

@@ -54,17 +54,6 @@ abstract class KlibArtifactHandler(
     doNotRunIfThereWerePreviousFailures
 )
 
-abstract class NativeBinaryArtifactHandler(
-    testServices: TestServices,
-    failureDisablesNextSteps: Boolean = false,
-    doNotRunIfThereWerePreviousFailures: Boolean = false
-) : BinaryArtifactHandler<BinaryArtifacts.Native>(
-    testServices,
-    ArtifactKinds.Native,
-    failureDisablesNextSteps,
-    doNotRunIfThereWerePreviousFailures
-)
-
 abstract class WasmBinaryArtifactHandler(
     testServices: TestServices,
     failureDisablesNextSteps: Boolean = false,

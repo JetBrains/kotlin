@@ -10,11 +10,13 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import java.net.URI
 
 internal class KotlinDefaultJsTestLocation(
     @get:InputDirectory
+    @get:NormalizeLineEndings
     override val bundleLocation: Provider<Directory>,
     @get:Input
     override val testHtmlFileName: Provider<String>,

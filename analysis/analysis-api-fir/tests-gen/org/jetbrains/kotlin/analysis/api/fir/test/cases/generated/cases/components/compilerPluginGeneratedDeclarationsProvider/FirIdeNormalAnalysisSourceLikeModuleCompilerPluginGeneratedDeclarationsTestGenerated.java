@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerPluginGeneratedDeclarationsProvider.AbstractCompilerPluginGeneratedDeclarationsTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compilerPluginGeneratedDeclarationsProvider.AbstractCompilerPluginGeneratedDeclarationsTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -65,6 +65,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompilerPluginGeneratedDeclarat
   @TestMetadata("topLevelFunction.kt")
   public void testTopLevelFunction() {
     run("topLevelFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelFunction_importAlias.kt")
+  public void testTopLevelFunction_importAlias() {
+    run("topLevelFunction_importAlias.kt");
   }
 
   @Test

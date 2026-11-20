@@ -42,7 +42,7 @@ import java.io.Serializable
 
 internal interface UsesBuildFusService : Task {
     @get:Internal
-    val buildFusService: Property<BuildFusService<out BuildFusService.Parameters>?>
+    val buildFusService: Property<BuildFusService<out BuildFusService.Parameters>>
 }
 
 abstract class BuildFusService<T : BuildFusService.Parameters> :

@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
+import org.jetbrains.kotlin.gradle.utils.isParentOf
+import org.jetbrains.kotlin.gradle.utils.resolveInside
 import java.io.File
 
 /**
@@ -63,7 +64,7 @@ private fun transformMetadataLibrariesForIde(
         resolution.visibleSourceSetNamesExcludingDependsOn.mapNotNull { visibleSourceSetName ->
             val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
             val sourceSetMetadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
-            val metadataLibraryOutputFile = baseOutputDirectory.resolve(sourceSetMetadataBinary.relativeFile)
+            val metadataLibraryOutputFile = baseOutputDirectory.resolveInside(sourceSetMetadataBinary.relativeFile)
             metadataLibraryOutputFile.parentFile.mkdirs()
             if (!metadataLibraryOutputFile.exists()) {
                 sourceSetMetadataBinary.copyTo(metadataLibraryOutputFile)
@@ -95,7 +96,7 @@ private fun transformMetadataLibrariesForBuild(
         resolution.visibleSourceSetNamesExcludingDependsOn.mapNotNull { visibleSourceSetName ->
             val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
             val metadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
-            val metadataLibraryFile = outputDirectory.resolve(metadataBinary.relativeFile)
+            val metadataLibraryFile = outputDirectory.resolveInside(metadataBinary.relativeFile)
             if (materializeFiles) {
                 metadataLibraryFile.parentFile?.mkdirs()
                 metadataBinary.copyTo(metadataLibraryFile)

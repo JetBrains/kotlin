@@ -1,0 +1,11 @@
+KT element: KtTypeReference
+FIR element: FirErrorTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<ERROR TYPE REF: Incomplete code>
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingContextInFunctionTypeWholeType.kt
+    public? final? [ResolvedTo(TYPES)] val p: <ERROR TYPE REF: Incomplete code>
+        public? [ResolvedTo(TYPES)] get(): <ERROR TYPE REF: Incomplete code>

@@ -12,8 +12,12 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.createFile
 import kotlin.io.path.createParentDirectories
@@ -90,7 +94,9 @@ class ExecutionStrategyJvmIT : ExecutionStrategyIT() {
     }
 }
 
+@MustRunOnChangesInBuildToolsApi
 abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("Compilation via Kotlin daemon")
     @GradleTest
     fun testDaemon(gradleVersion: GradleVersion) {
@@ -101,6 +107,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("Compilation via Kotlin daemon with fallback strategy")
     @GradleTest
     fun testDaemonFallbackStrategy(gradleVersion: GradleVersion) {
@@ -112,6 +119,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("Compilation via Kotlin daemon with disabled fallback strategy")
     @GradleTest
     fun testDaemonFallbackStrategyDisabled(gradleVersion: GradleVersion) {
@@ -140,6 +148,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("Compilation via Kotlin daemon with disabled fallback strategy via task property")
     @GradleTest
     fun testDaemonFallbackStrategyDisabledTaskProperty(gradleVersion: GradleVersion) {
@@ -178,6 +187,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("Compilation inside Gradle daemon configured via task property")
     @GradleTest
     fun testInProcessTaskProperty(gradleVersion: GradleVersion) {
@@ -197,6 +207,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("Compilation inside Gradle daemon")
     @GradleTest
     fun testInProcess(gradleVersion: GradleVersion) {
@@ -206,8 +217,10 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         )
     }
 
+    @TestMetadata("kotlinBuiltins")
     @DisplayName("KT-75820: The legacy in-process mode properly reports compilation warnings/errors")
     @GradleTest
+    @MustRunOnChangesInCompilerInfrastructure
     fun testInProcessWithCompilationWarning(gradleVersion: GradleVersion) {
         project(
             projectName = "kotlinBuiltins",
@@ -228,7 +241,18 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             build("build") {
                 val mainKt = subProject("app").kotlinSourcesDir().resolve("main.kt")
                 // ensure warnings are properly parsed
-                assertOutputContains("w: ${mainKt.toRealPath().toUri()}:9:5 'constructor(): A' is deprecated. deprecated for test")
+                if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_8_14)) {
+                    assertOutputContains("w: ${mainKt.toRealPath().toUri()}:9:5 'constructor(): A' is deprecated. deprecated for test")
+                } else {
+                    assertOutputContains(
+                        """
+                        Problem found: Kotlin compiler: DEPRECATION (id: kotlin:compiler:warning:DEPRECATION)
+                          Kotlin compiler warning
+                            'constructor(): A' is deprecated. deprecated for test.
+                            Location: ${mainKt.toRealPath().absolutePathString().normalizePath()}
+                        """.trimIndent().normalizeLineEndings()
+                    )
+                }
             }
         }
     }

@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.psi.KtUnionType
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
-internal class KtUnionTypeImpl : KtElementImplStub<KotlinPlaceHolderStub<KtUnionTypeImpl>>, KtUnionType {
+internal class KtUnionTypeImpl : KtElementImplStub<KotlinPlaceHolderStub<KtUnionType>>, KtUnionType {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinPlaceHolderStub<KtUnionTypeImpl>) : super(stub, KtNodeTypes.UNION_TYPE)
+    constructor(stub: KotlinPlaceHolderStub<KtUnionType>) : super(stub, KtNodeTypes.UNION_TYPE)
 
     override val types: List<KtTypeReference>
         get() = getStubOrPsiChildren(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.EMPTY_ARRAY).asList()

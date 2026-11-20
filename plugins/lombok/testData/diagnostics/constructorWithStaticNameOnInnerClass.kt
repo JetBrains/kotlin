@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-89169
 // A static factory has no enclosing instance to pass to `new Inner(...)`, so nothing is generated for an inner
 // class: neither the factory, nor the constructor that would only exist for it to call. The default constructor
@@ -49,3 +50,5 @@ fun test(outer: Outer, genericOuter: GenericOuter<String>) {
     outer.<!INVISIBLE_REFERENCE!>InnerNoArgs<!>()
     genericOuter.<!INVISIBLE_REFERENCE!>Inner<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, stringLiteral */

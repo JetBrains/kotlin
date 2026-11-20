@@ -39,10 +39,10 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 typedef NS_CLOSED_ENUM(int32_t, ObjCEnumBar) {
-  ObjCEnumBarAlpha NS_SWIFT_NAME(alpha) = 0,
-  ObjCEnumBarTheCopy NS_SWIFT_NAME(theCopy) = 1,
-  ObjCEnumBarBarFoo NS_SWIFT_NAME(barFoo) = 2,
-} NS_SWIFT_NAME(ObjCEnumBar);
+  ObjCEnumBarAlpha __attribute__((swift_name("alpha"))) = 0,
+  ObjCEnumBarTheCopy __attribute__((swift_name("theCopy"))) = 1,
+  ObjCEnumBarBarFoo __attribute__((swift_name("barFoo"))) = 2,
+} __attribute__((swift_name("ObjCEnumBar")));
 
 
 __attribute__((objc_subclassing_restricted))
@@ -59,10 +59,10 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 typedef NS_CLOSED_ENUM(int32_t, ObjCNameBazNSEnum) {
-  ObjCNameBazNSEnumAlpha NS_SWIFT_NAME(alpha) = 0,
-  ObjCNameBazNSEnumTheCopy NS_SWIFT_NAME(theCopy) = 1,
-  ObjCNameBazNSEnumBarFoo NS_SWIFT_NAME(barFoo) = 2,
-} NS_SWIFT_NAME(ObjCNameBazNSEnum);
+  ObjCNameBazNSEnumAlpha __attribute__((swift_name("alpha"))) = 0,
+  ObjCNameBazNSEnumTheCopy __attribute__((swift_name("theCopy"))) = 1,
+  ObjCNameBazNSEnumBarFoo __attribute__((swift_name("barFoo"))) = 2,
+} __attribute__((swift_name("ObjCNameBazNSEnum")));
 
 
 __attribute__((objc_subclassing_restricted))
@@ -79,10 +79,10 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 typedef NS_CLOSED_ENUM(int32_t, ObjCEnumFoo) {
-  ObjCEnumFooAlpha NS_SWIFT_NAME(alpha) = 0,
-  ObjCEnumFooTheCopy NS_SWIFT_NAME(theCopy) = 1,
-  ObjCEnumFooBarFoo NS_SWIFT_NAME(barFoo) = 2,
-} NS_SWIFT_NAME(ObjCEnumFoo);
+  ObjCEnumFooAlpha __attribute__((swift_name("alpha"))) = 0,
+  ObjCEnumFooTheCopy __attribute__((swift_name("theCopy"))) = 1,
+  ObjCEnumFooBarFoo __attribute__((swift_name("barFoo"))) = 2,
+} __attribute__((swift_name("ObjCEnumFoo")));
 
 
 __attribute__((objc_subclassing_restricted))
@@ -99,10 +99,10 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 typedef NS_CLOSED_ENUM(int32_t, ObjCEnumFooBar) {
-  ObjCEnumFooBarAlpha NS_SWIFT_NAME(alpha) = 0,
-  ObjCEnumFooBarTheCopy NS_SWIFT_NAME(theCopy) = 1,
-  ObjCEnumFooBarBarFoo NS_SWIFT_NAME(barFoo) = 2,
-} NS_SWIFT_NAME(SwiftEnumFooBar);
+  ObjCEnumFooBarAlpha __attribute__((swift_name("alpha"))) = 0,
+  ObjCEnumFooBarTheCopy __attribute__((swift_name("theCopy"))) = 1,
+  ObjCEnumFooBarBarFoo __attribute__((swift_name("barFoo"))) = 2,
+} __attribute__((swift_name("SwiftEnumFooBar")));
 
 
 __attribute__((objc_subclassing_restricted))

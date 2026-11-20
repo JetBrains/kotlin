@@ -10,15 +10,15 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
 @DisplayName("Kapt with compiler plugins")
 @OtherGradlePluginTests
+@MustRunOnChangesInGradle
 @MustRunOnChangesInCompilerPlugins
 class KaptCompilerPluginsIT : KaptBaseIT() {
-    override val defaultBuildOptions: BuildOptions =
-        super.defaultBuildOptions.copyEnsuringK2()
 
     @DisplayName("K2 kapt stubs use kotlin.jvm.functions.Function0 instead of compiler plugin function kinds")
     @GradleTest

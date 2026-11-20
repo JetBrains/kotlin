@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.toDescriptorVisibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -36,6 +35,7 @@ value class ClassFlags(val flags: Long) {
     val isExternal: Boolean get() = IrFlags.IS_EXTERNAL_CLASS.get(flags.toInt())
     val isFun: Boolean get() = IrFlags.IS_FUN_INTERFACE.get(flags.toInt())
     val hasEnumEntries: Boolean get() = IrFlags.HAS_ENUM_ENTRIES.get(flags.toInt())
+    val isFullValue: Boolean get() = IrFlags.IS_FULL_VALUE_CLASS.get(flags.toInt())
 
     companion object {
         fun encode(clazz: IrClass, languageVersionSettings: LanguageVersionSettings): Long {
@@ -48,7 +48,20 @@ value class ClassFlags(val flags: Long) {
                 val hasEnumEntries = kind == ProtoBuf.Class.Kind.ENUM_CLASS &&
                         languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
                 val flags = IrFlags.getClassFlags(
-                    hasAnnotation, visibility, modality, kind, isInner, isData, isExternal, isExpect, isValue, isFun, hasEnumEntries
+                    hasAnnotation,
+                    visibility,
+                    modality,
+                    kind,
+                    isInner,
+                    isData,
+                    isExternal,
+                    isExpect,
+                    isValue,
+                    isFun,
+                    hasEnumEntries,
+                    /*isRichError =*/ false,
+                    // TODO: when KT-91360 is implemented, we can set it correctly as `valueClassKind == FULL`
+                    /*isFullValue =*/ false,
                 )
 
                 flags.toLong()

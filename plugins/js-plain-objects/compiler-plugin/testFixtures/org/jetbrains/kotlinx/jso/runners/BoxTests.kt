@@ -14,6 +14,6 @@ abstract class AbstractJsPlainObjectsBoxTest : AbstractJsTest(
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureForKotlinxJsPlainObjects()
+        builder.configureForKotlinxJsPlainObjects(addNoFirCompilationErrorsHandler = true)
     }
 }

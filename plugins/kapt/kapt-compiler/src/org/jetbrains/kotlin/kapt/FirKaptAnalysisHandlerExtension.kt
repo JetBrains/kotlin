@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.registerExtensionStorage
 import org.jetbrains.kotlin.cli.reportOutput
@@ -25,11 +26,11 @@ import org.jetbrains.kotlin.kapt.base.*
 import org.jetbrains.kotlin.kapt.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.base.util.info
+import org.jetbrains.kotlin.kapt.base.util.runMemoryLeakDetection
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt.util.CompilerConfigurationBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
-import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
@@ -61,6 +62,7 @@ open class FirKaptAnalysisHandlerExtension(
             projectBaseDir = projectBaseDir ?: project.basePath?.let(::File)
             val contentRoots = configuration.contentRoots
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
+            compileClasspath.addAll(contentRoots.filterIsInstance<JvmModulePathRoot>().map { it.file })
             javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
             classesOutputDir = classesOutputDir ?: configuration.outputDirectory
         }
@@ -75,7 +77,6 @@ open class FirKaptAnalysisHandlerExtension(
         if (options.mode.generateStubs) {
             val updatedConfiguration = configuration.copy().apply {
                 skipBodies = true
-                parserMode = ParserMode.LightTree
 
                 /*
                  * Later the KAPT pipeline registers extensions once again, so the extensions storage
@@ -145,21 +146,7 @@ open class FirKaptAnalysisHandlerExtension(
 
         logger.info { "Annotation processing took $annotationProcessingTime ms" }
 
-        if (options.detectMemoryLeaks != DetectMemoryLeaksMode.NONE) {
-            MemoryLeakDetector.add(processors.classLoader)
-
-            val isParanoid = options.detectMemoryLeaks == DetectMemoryLeaksMode.PARANOID
-            val [leakDetectionTime, leaks] = measureTimeMillis { MemoryLeakDetector.process(isParanoid) }
-            logger.info { "Leak detection took $leakDetectionTime ms" }
-
-            for (leak in leaks) {
-                logger.warn(buildString {
-                    appendLine("Memory leak detected!")
-                    appendLine("Location: '${leak.className}', static field '${leak.fieldName}'")
-                    append(leak.description)
-                })
-            }
-        }
+        runMemoryLeakDetection(options, processors, logger)
     }
 
     private fun contextForStubGeneration(disposable: Disposable, configuration: CompilerConfiguration): KaptContextForStubGeneration? {
@@ -377,8 +364,19 @@ open class FirKaptAnalysisHandlerExtension(
             return true
         }
 
-        if (KaptFlag.INCREMENTAL_APT in flags && incrementalCache == null) {
-            logger.warn("Incremental annotation processing is enabled, but no incremental cache was provided, this will lead to a full rebuild.")
+        if (KaptFlag.INCREMENTAL_APT in flags) {
+            if (incrementalCache == null) {
+                logger.warn(
+                    "Incremental annotation processing is enabled, but no incremental cache was provided, this will lead to a full rebuild, " +
+                            "which clears the generated sources and classes output directories."
+                )
+            }
+            if (compiledSources.isEmpty()) {
+                logger.warn(
+                    "Incremental annotation processing is enabled, but no compiled sources directories were provided, " +
+                            "this will lead to a full rebuild on every run, which clears the generated sources and classes output directories."
+                )
+            }
         }
 
         if (usedDefaultDetectMemoryLeaks) {

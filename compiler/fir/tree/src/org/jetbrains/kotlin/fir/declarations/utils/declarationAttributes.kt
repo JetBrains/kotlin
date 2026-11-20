@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.declarations.utils
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.name.Name
 
 private object IsFromVarargKey : FirDeclarationDataKey()
 private object IsReferredViaField : FirDeclarationDataKey()
@@ -28,7 +26,6 @@ private object IsFromPrimaryConstructor : FirDeclarationDataKey()
 private object ComponentFunctionSymbolKey : FirDeclarationDataKey()
 private object SourceElementKey : FirDeclarationDataKey()
 private object ModuleNameKey : FirDeclarationDataKey()
-private object DanglingTypeConstraintsKey : FirDeclarationDataKey()
 private object KlibSourceFile : FirDeclarationDataKey()
 private object KlibFileAnnotationsKey : FirDeclarationDataKey()
 private object EvaluatedValue : FirDeclarationDataKey()
@@ -160,15 +157,6 @@ val FirBasedSymbol<FirDeclaration>.klibFileAnnotations: List<FirAnnotation>
 
 var FirVariable.evaluatedInitializer: FirEvaluatorResult? by FirDeclarationDataRegistry.data(EvaluatedValue)
 
-/**
- * Constraint without corresponding type argument
- */
-data class DanglingTypeConstraint(val name: Name, val source: KtSourceElement)
-
-var <T> T.danglingTypeConstraints: List<DanglingTypeConstraint>?
-        where T : FirDeclaration, T : FirTypeParameterRefsOwner
-        by FirDeclarationDataRegistry.data(DanglingTypeConstraintsKey)
-
 // ----------------------------------- Utils -----------------------------------
 
 val FirProperty.hasExplicitBackingField: Boolean
@@ -242,16 +230,6 @@ val FirPropertySymbol.hasAnnotatableBackingField: Boolean
         lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         return fir.hasAnnotatableBackingField
     }
-
-fun FirDeclaration.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstraint> {
-    return when (this) {
-        is FirRegularClass -> danglingTypeConstraints
-        is FirNamedFunction -> danglingTypeConstraints
-        is FirAnonymousFunction -> danglingTypeConstraints
-        is FirProperty -> danglingTypeConstraints
-        else -> null
-    } ?: emptyList()
-}
 
 val FirPropertySymbol.correspondingValueParameterFromPrimaryConstructor: FirValueParameterSymbol?
     get() = fir.correspondingValueParameterFromPrimaryConstructor

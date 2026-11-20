@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCommonBackend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Files
 import java.nio.file.Path
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCommonBackend
 @DisplayName("Tests for KLIB resolver inside the Kotlin compiler")
 class KlibResolverInsideCompilerIT : KGPBaseTest() {
     @DisplayName("KLIBs with duplicated unique_name not discriminated, library + composite build, LV=2.0 (KT-63573)")
@@ -20,7 +24,6 @@ class KlibResolverInsideCompilerIT : KGPBaseTest() {
     fun testKlibsWithDuplicatedUniqueNameNotDiscriminated2(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         buildLibraryAndCompositeProjectForKT63573(
             baseDir = "mpp-klib-resolver-inside-compiler/klibs-with-duplicated-unique_name-library-and-composite-build",
-            languageVersion = EnforcedLanguageVersion.K2,
             tempDir, gradleVersion
         )
     }
@@ -30,7 +33,6 @@ class KlibResolverInsideCompilerIT : KGPBaseTest() {
     fun testKlibsWithDuplicatedUniqueNameNotDiscriminated4(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         buildTwoLibrariesAndAppForKT63573(
             baseDir = "mpp-klib-resolver-inside-compiler/klibs-with-duplicated-unique_name-library-x2-and-app",
-            languageVersion = EnforcedLanguageVersion.K2,
             tempDir, gradleVersion
         )
     }
@@ -41,25 +43,14 @@ class KlibResolverInsideCompilerIT : KGPBaseTest() {
         return localRepo
     }
 
-    private enum class EnforcedLanguageVersion { K1, K2 }
-
     private fun buildProject(
         baseDir: String,
         projectName: String,
         gradleVersion: GradleVersion,
         localRepoDir: Path,
-        languageVersion: EnforcedLanguageVersion? = null,
         buildTask: String = "build",
     ) {
-        val buildOptions = with(defaultBuildOptions) {
-            when (languageVersion) {
-                EnforcedLanguageVersion.K1 -> copyEnsuringK1()
-                EnforcedLanguageVersion.K2 -> copyEnsuringK2()
-                else -> this
-            }
-        }
-
-        project("$baseDir/$projectName", gradleVersion, buildOptions, localRepoDir = localRepoDir) {
+        project("$baseDir/$projectName", gradleVersion, defaultBuildOptions, localRepoDir = localRepoDir) {
             build(buildTask)
         }
     }
@@ -68,24 +59,22 @@ class KlibResolverInsideCompilerIT : KGPBaseTest() {
         baseDir: String,
         projectName: String,
         gradleVersion: GradleVersion,
-        localRepoDir: Path
+        localRepoDir: Path,
     ) = buildProject(baseDir, projectName, gradleVersion, localRepoDir, buildTask = "publish")
 
     private fun buildLibraryAndCompositeProjectForKT63573(
         baseDir: String,
-        languageVersion: EnforcedLanguageVersion,
         tempDir: Path,
         gradleVersion: GradleVersion,
     ) {
         val localRepoDir = createLocalRepo(tempDir)
 
         buildAndPublishProject(baseDir, "external-library", gradleVersion, localRepoDir)
-        buildProject(baseDir, "composite-project", gradleVersion, localRepoDir, languageVersion, ":app:build")
+        buildProject(baseDir, "composite-project", gradleVersion, localRepoDir, ":app:build")
     }
 
     private fun buildTwoLibrariesAndAppForKT63573(
         baseDir: String,
-        languageVersion: EnforcedLanguageVersion,
         tempDir: Path,
         gradleVersion: GradleVersion,
     ) {
@@ -93,6 +82,6 @@ class KlibResolverInsideCompilerIT : KGPBaseTest() {
 
         buildAndPublishProject(baseDir, "external-library1", gradleVersion, localRepoDir)
         buildAndPublishProject(baseDir, "external-library2", gradleVersion, localRepoDir)
-        buildProject(baseDir, "app", gradleVersion, localRepoDir, languageVersion, "build")
+        buildProject(baseDir, "app", gradleVersion, localRepoDir, "build")
     }
 }

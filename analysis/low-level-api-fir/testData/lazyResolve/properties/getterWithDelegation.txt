@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] getterWithDelegation.kt
-    public? final? [ResolvedTo(RAW_FIR)] val one: Intby LAZY_EXPRESSION
+    public? final? [ResolvedTo(RAW_FIR)] val one: Int by LAZY_EXPRESSION
         @Deprecated[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] getterWithDelegation.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public? final? [ResolvedTo(RAW_FIR)] val one: Intby LAZY_EXPRESSION
+    public? final? [ResolvedTo(RAW_FIR)] val one: Int by LAZY_EXPRESSION
         @Deprecated[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val one: Intby LAZY_EXPRESSION
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val one: Int by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(reason)) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public? final? [ResolvedTo(COMPANION_GENERATION)] val one: Intby LAZY_EXPRESSION
+    public? final? [ResolvedTo(COMPANION_GENERATION)] val one: Int by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(reason)) public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public? final? [ResolvedTo(SUPER_TYPES)] val one: Intby LAZY_EXPRESSION
+    public? final? [ResolvedTo(SUPER_TYPES)] val one: Int by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(reason)) public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public? final? [ResolvedTo(TYPES)] val one: R|kotlin/Int|by LAZY_EXPRESSION
+    public? final? [ResolvedTo(TYPES)] val one: R|kotlin/Int| by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[Types](String(reason)) public? [ResolvedTo(TYPES)] get(): R|kotlin/Int| { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(STATUS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
+    public final [ResolvedTo(STATUS)] val one: R|kotlin/Int| by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val one: R|kotlin/Int|by LAZY_EXPRESSION
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val one: R|kotlin/Int| by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int| { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(CONTRACTS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
+    public final [ResolvedTo(CONTRACTS)] val one: R|kotlin/Int| by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val one: R|kotlin/Int|by LAZY_EXPRESSION
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val one: R|kotlin/Int| by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] val one: R|kotlin/Int|by LAZY_EXPRESSION
+    public final [ResolvedTo(CONSTANT_EVALUATION)] val one: R|kotlin/Int| by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val one: R|kotlin/Int| by LAZY_EXPRESSION
         @R|kotlin/Deprecated|[Types](message = String(reason) [evaluated = String(reason)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(BODY_RESOLVE)] val one: R|kotlin/Int|by R|/Prp.Prp|()
+    public final [ResolvedTo(BODY_RESOLVE)] val one: R|kotlin/Int| by R|/Prp.Prp|()
         @R|kotlin/Deprecated|[Types](message = String(reason) [evaluated = String(reason)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ D|/one|.R|/Prp.getValue<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Prp.getValue>#|(Null(null), ::R|/one|)
         }
@@ -173,7 +173,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] getterWithDelegation.kt
-    public final [ResolvedTo(BODY_RESOLVE)] val one: R|kotlin/Int|by R|/Prp.Prp|()
+    public final [ResolvedTo(BODY_RESOLVE)] val one: R|kotlin/Int| by R|/Prp.Prp|()
         @R|kotlin/Deprecated|[Types](message = String(reason) [evaluated = String(reason)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ D|/one|.R|/Prp.getValue<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Prp.getValue>#|(Null(null), ::R|/one|)
         }

@@ -1,11 +1,18 @@
-internal class UndoManager<R>(private val capacity: String = "OK") {
+// LANGUAGE: +CompanionBlocks
+internal class UndoManager<R>(private val o: String = "O", private val k: String = "K") {
     companion object {
-        inline fun <reified T> getValue(value: UndoManager<T>): String {
-            return value.capacity
+        inline fun <reified T> getO(value: UndoManager<T>): String {
+            return value.o
+        }
+    }
+
+    companion {
+        inline fun <reified T> getK(value: UndoManager<T>): String {
+            return value.k
         }
     }
 }
 
 fun box() : String {
-    return UndoManager.getValue(UndoManager<Int>())
+    return UndoManager.getO(UndoManager<Int>()) + UndoManager.getK(UndoManager<Int>())
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,29 +9,19 @@ import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
-import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.swc.GenerateSwcConfig
 import org.jetbrains.kotlin.gradle.targets.js.swc.SwcExec
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import java.util.concurrent.Callable
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
     SubTargetConfigurator<SwcExec, SwcExec> {
     private val project = subTarget.project
     private val propertiesProvider = PropertiesProvider(project)
-
-    private val nodeJsRoot: BaseNodeJsRootExtension = subTarget.target.webTargetVariant(
-        { project.jsToolingProject().kotlinNodeJsRootExtension },
-        { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
-    )
 
     internal val isWasm: Boolean = subTarget.target.webTargetVariant(
         jsVariant = false,
@@ -57,8 +47,8 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
 
         // Add @swc/helpers dependency to minify the result output by swc
         compilation.defaultSourceSet.dependencies {
-            with(nodeJsRoot.versions) {
-                implementation(npm(swcHelpers.name, swcHelpers.version))
+            with(compilation.npmVersions()) {
+                npm(swcHelpers.name, swcHelpers.version)
             }
         }
     }
@@ -125,7 +115,7 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
             task.from.setFrom(
                 swcOrLinkTaskOutputs,
                 binary.linkSyncTaskRegisteredResources,
-                Callable { binary.dtsGenerationTask },
+                binary.typeScriptDeclarations,
             )
         }
     }

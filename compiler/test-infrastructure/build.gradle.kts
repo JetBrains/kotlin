@@ -12,7 +12,6 @@ dependencies {
     testFixturesApi(project(":native:native.config"))
     testFixturesImplementation(project(":core:descriptors"))
     testFixturesImplementation(project(":core:language.targets.jvm"))
-    testFixturesImplementation(project(":compiler:container"))
     testFixturesImplementation(project(":compiler:config.jvm"))
     testFixturesImplementation(project(":js:js.config"))
     testFixturesImplementation(project(":wasm:wasm.config"))

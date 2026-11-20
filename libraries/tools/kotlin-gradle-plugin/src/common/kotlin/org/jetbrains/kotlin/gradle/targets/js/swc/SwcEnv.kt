@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.js.swc
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.AbstractEnv
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import java.io.File
 
 @InternalKotlinGradlePluginApi
+@ObsoleteJsAndWasmToolingProvisioning
 class SwcEnv(
     override val download: Boolean,
     override val downloadBaseUrl: String?,

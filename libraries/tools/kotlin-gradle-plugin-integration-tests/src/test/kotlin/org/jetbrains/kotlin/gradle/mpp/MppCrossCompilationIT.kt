@@ -31,11 +31,15 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.setupCInteropForTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInNative
 class MppCrossCompilationIT : KGPBaseTest() {
 
     @DisplayName("Cross compilation enabled with dependecy, dependency with cinterops")
@@ -52,8 +56,6 @@ class MppCrossCompilationIT : KGPBaseTest() {
                 with(project) {
                     applyMultiplatform {
                         macosArm64()
-                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                        macosX64()
                         mingwX64()
                         linuxX64()
 
@@ -102,7 +104,6 @@ class MppCrossCompilationIT : KGPBaseTest() {
                 assertTasksExecuted(
                     ":cinteropdependency:exportCrossCompilationMetadataForLinuxX64ApiElements",
                     ":cinteropdependency:exportCrossCompilationMetadataForMacosArm64ApiElements",
-                    ":cinteropdependency:exportCrossCompilationMetadataForMacosX64ApiElements",
                     ":cinteropdependency:exportCrossCompilationMetadataForMingwX64ApiElements"
                 )
 
@@ -113,9 +114,7 @@ class MppCrossCompilationIT : KGPBaseTest() {
 
                 assertTasksSkipped(
                     ":cinteropdependency:cinteropMylibMacosArm64",
-                    ":cinteropdependency:cinteropMylibMacosX64",
                     ":compileKotlinMacosArm64",
-                    ":compileKotlinMacosX64",
                 )
             }
 
@@ -124,7 +123,6 @@ class MppCrossCompilationIT : KGPBaseTest() {
                 // macOS targets should be unsupported because they depend on a library with CInterop,
                 // and we are running on Linux/Windows (non-macOS host).
                 assertOutputContains("Property check [macosArm64]: false")
-                assertOutputContains("Property check [macosX64]: false")
 
                 // Linux and MinGW targets are supported in this test environment.
                 assertOutputContains("Property check [linuxX64]: true")
@@ -146,13 +144,10 @@ class MppCrossCompilationIT : KGPBaseTest() {
                 val defFile: (String) -> File = { file("src/nativeInterop/cinterop/$it") }
                 applyMultiplatform {
                     macosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                    macosX64()
                     mingwX64()
                     linuxX64()
 
                     setupCInteropForTarget("mylib", KonanTarget.MACOS_ARM64, defFile("mylib_macos.def"))
-                    setupCInteropForTarget("mylib", KonanTarget.MACOS_X64, defFile("mylib_macos.def"))
                     setupCInteropForTarget("mylib", KonanTarget.LINUX_X64, defFile("mylib_linux.def"))
                     setupCInteropForTarget("mylib", KonanTarget.MINGW_X64, defFile("mylib_windows.def"))
 

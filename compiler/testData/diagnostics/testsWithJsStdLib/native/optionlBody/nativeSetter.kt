@@ -1,8 +1,8 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -DEPRECATION
-@nativeSetter
+<!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeSetter<!>
 fun String.foo(n: Int, v: Any)
-@nativeSetter
+<!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeSetter<!>
 fun String.bar(n: Int, v: Any) {}
 
 

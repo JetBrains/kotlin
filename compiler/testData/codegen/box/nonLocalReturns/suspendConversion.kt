@@ -1,7 +1,8 @@
-// ISSUE: KT-72464
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native:1.9,2.0,2.1,2.2
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: JS,Wasm-JS,Wasm-WASI:1.9,2.0,2.1,2.2
-// KT-72464: Supported in 2.2.20-Beta1
+// ISSUE: KT-72464, KT-91139
+// KT-91139: KLIBs built by compilers up to 2.4.10 without rich callable references, which is the default up to 2.2.21,
+// store the suspend conversion of `f` in `bar` under the legacy SUSPEND_CONVERSION origin name. A consumer which
+// doesn't recognize it loses the non-local return (JS, Wasm) or crashes in the backend (Native).
+// See also compiler/testData/codegen/box/suspendConversion/legacyKlibSuspendConversionOfLambda.kt
 
 // WITH_STDLIB
 // WITH_COROUTINES

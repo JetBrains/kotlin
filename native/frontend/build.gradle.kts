@@ -5,13 +5,11 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":compiler:container"))
-    implementation(project(":compiler:resolution"))
     implementation(project(":core:descriptors"))
-    implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:frontend.java"))
     implementation(project(":core:compiler.common.native"))
     implementation(project(":compiler:ir.objcinterop"))
+    implementation(project(":core:deserialization"))
+    implementation(project(":kotlin-util-klib-metadata"))
     compileOnly(intellijCore())
     api(project(":native:kotlin-native-utils"))
 }

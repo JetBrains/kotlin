@@ -1,0 +1,100 @@
+# mkdir
+output/ap
+output/lib
+output/stubs
+output/classes
+output/sources
+output/incremental-cache
+output/compiled
+
+# copy
+META-INF/gradle/incremental.annotation.processors
+output/ap/META-INF/gradle/incremental.annotation.processors
+
+# kotlinc
+-d output/ap
+Processor.kt
+
+# kotlinc
+-d output/lib
+lib/Lib.kt
+
+# kapt
+-Kapt-mode=stubsAndApt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-incremental-cache=output/incremental-cache
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.IncrementalProcessor
+-Kapt-dump-processor-stats=output/stats-first.txt
+-d output/classes
+-cp output/ap:output/lib
+source/First.kt
+source/Second.kt
+source/Third.kt
+
+# kotlinc
+-cp output/ap:output/lib
+-d output/compiled
+source/First.kt
+source/Second.kt
+source/Third.kt
+
+# javac
+-cp output/compiled:output/ap
+-d output/classes
+output/sources/test/FirstGenerated.java
+output/sources/test/SecondGenerated.java
+output/sources/test/ThirdGenerated.java
+
+# kapt
+-Kapt-mode=apt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-incremental-cache=output/incremental-cache
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.IncrementalProcessor
+-Kapt-compiled-sources-dir=output/compiled
+-Kapt-compiled-sources-dir=output/classes
+-Kapt-classpath-changes=lib/A
+-Kapt-classpath-changes=lib/B
+-Kapt-process-incrementally=true
+-Kapt-dump-processor-stats=output/stats-second.txt
+-d output/classes
+-cp output/ap:output/lib
+source/First.kt
+source/Second.kt
+source/Third.kt
+
+# kapt
+-Kapt-mode=apt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-incremental-cache=output/incremental-cache
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.IncrementalProcessor
+-Kapt-compiled-sources-dir=output/compiled
+-Kapt-compiled-sources-dir=output/classes
+-Kapt-classpath-changes=lib/A,lib/B
+-Kapt-process-incrementally=true
+-Kapt-dump-processor-stats=output/stats-third.txt
+-d output/classes
+-cp output/ap:output/lib
+source/First.kt
+source/Second.kt
+source/Third.kt
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/check
+Check.kt
+
+# java
+-cp output/check:%KOTLIN_STDLIB%
+CheckKt
+
+# after
+OK

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compilerFacility.AbstractCompilerFacilityTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -87,6 +87,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompilerFacilityTestGenerated e
   }
 
   @Test
+  @TestMetadata("companionBlockDelegatedProperty.kt")
+  public void testCompanionBlockDelegatedProperty() {
+    run("companionBlockDelegatedProperty.kt");
+  }
+
+  @Test
   @TestMetadata("defaultImpls.kt")
   public void testDefaultImpls() {
     run("defaultImpls.kt");
@@ -108,6 +114,36 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompilerFacilityTestGenerated e
   @TestMetadata("dependencyBetweenBinaryLibraries.kt")
   public void testDependencyBetweenBinaryLibraries() {
     run("dependencyBetweenBinaryLibraries.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitInlineValueClass.kt")
+  public void testExplicitInlineValueClass() {
+    run("explicitInlineValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitInlineValueClassFromAbiJar.kt")
+  public void testExplicitInlineValueClassFromAbiJar() {
+    run("explicitInlineValueClassFromAbiJar.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitInlineValueClassFromLibrary.kt")
+  public void testExplicitInlineValueClassFromLibrary() {
+    run("explicitInlineValueClassFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassFromAbiJar.kt")
+  public void testFullValueClassFromAbiJar() {
+    run("fullValueClassFromAbiJar.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassFromAbiJarWithoutFeature.kt")
+  public void testFullValueClassFromAbiJarWithoutFeature() {
+    run("fullValueClassFromAbiJarWithoutFeature.kt");
   }
 
   @Test
@@ -571,6 +607,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompilerFacilityTestGenerated e
     @TestMetadata("resultNothingSmartCast.kt")
     public void testResultNothingSmartCast() {
       run("resultNothingSmartCast.kt");
+    }
+
+    @Test
+    @TestMetadata("similarOverloadsFromDifferentLibraries.kt")
+    public void testSimilarOverloadsFromDifferentLibraries() {
+      run("similarOverloadsFromDifferentLibraries.kt");
     }
 
     @Test

@@ -6,7 +6,7 @@ package org.jetbrains.dokka.analysis.test.api.kotlin
 
 import org.jetbrains.dokka.analysis.test.api.TestDataFile
 
-class KotlinTestDataFile(
+internal class KotlinTestDataFile(
     pathFromProjectRoot: String,
     fqPackageName: String,
 ) : TestDataFile(pathFromProjectRoot = pathFromProjectRoot) {

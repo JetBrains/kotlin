@@ -129,7 +129,7 @@ open class IrFileSerializer(
      * and therefore serializes them as two distinct types.
      */
     protected class ProtoTypeArray {
-        private class UniqueType(val protoType: ProtoType) {
+        private class UniqueType(protoType: ProtoType) {
             val byteArray: ByteArray = protoType.toByteArray()
 
             private val memoizedHashCode = byteArray.contentHashCode()
@@ -142,7 +142,6 @@ open class IrFileSerializer(
         // Use `LinkedHashMap` to keep only unique types but preserve the insertion order.
         private val uniqueTypes: MutableMap<UniqueType, /* ordered index */ Int> = linkedMapOf()
 
-        val protoTypes: List<ProtoType> get() = uniqueTypes.keys.map { it.protoType }
         val byteArrays: List<ByteArray> get() = uniqueTypes.keys.map { it.byteArray }
 
         fun addAndGetIndex(protoType: ProtoType) = uniqueTypes.getOrPut(UniqueType(protoType)) { uniqueTypes.size }
@@ -288,7 +287,10 @@ open class IrFileSerializer(
             is IrReturnableBlockSymbol ->
                 BinarySymbolData.SymbolKind.RETURNABLE_BLOCK_SYMBOL
             is IrFieldSymbol ->
-                if (symbol.owner.correspondingPropertySymbol?.owner.let {
+                // An unbound field symbol can only be referenced by an inline function body deserialized from another KLIB. Such a body
+                // can't access a Kotlin backing field, only its accessors, so the field is a Java field, which is a standalone field.
+                // `FIELD_SYMBOL` and `STANDALONE_FIELD_SYMBOL` are deserialized the same way anyway.
+                if (!symbol.isBound || symbol.owner.correspondingPropertySymbol?.owner.let {
                         it == null || it.isDelegated || it.getter == null && it.setter == null
                     })
                     BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL

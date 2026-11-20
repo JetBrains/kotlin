@@ -68,13 +68,18 @@ internal object StaticInitializersOptimization {
                 +"CALL GRAPH"
                 callGraph.directEdges.forEach { [t, u] ->
                     +"    FUN $t"
-                    u.callSites.forEach {
-                        val label = when {
-                            it.isVirtual -> "VIRTUAL"
-                            callGraph.directEdges.containsKey(it.actualCallee) -> "LOCAL"
-                            else -> "EXTERNAL"
+                    u.callSites.forEach { callSite ->
+                        when (callSite) {
+                            is CallGraphNode.CallSite.Virtual ->
+                                +"        CALLS VIRTUAL ${callSite.callee}"
+                            is CallGraphNode.CallSite.Static -> callSite.forEachCallee {
+                                val label = when {
+                                    callGraph.directEdges.containsKey(it) -> "LOCAL"
+                                    else -> "EXTERNAL"
+                                }
+                                +"        CALLS $label $it"
+                            }
                         }
-                        +"        CALLS $label ${it.actualCallee}"
                     }
                     callGraph.reversedEdges[t]!!.forEach { +"        CALLED BY $it" }
                 }
@@ -96,8 +101,18 @@ internal object StaticInitializersOptimization {
                     multiNode.nodes.forEach {
                         +"        $it"
                         callGraph.directEdges[it]!!.callSites
-                                .filter { callGraph.directEdges.containsKey(it.actualCallee) }
-                                .forEach { +"            CALLS ${it.actualCallee}" }
+                                .forEach { callSite ->
+                                    when (callSite) {
+                                        is CallGraphNode.CallSite.Virtual -> {
+                                            if (callGraph.directEdges.containsKey(callSite.callee))
+                                                +"            CALLS ${callSite.callee}"
+                                        }
+                                        is CallGraphNode.CallSite.Static -> callSite.forEachCallee { callee ->
+                                            if (callGraph.directEdges.containsKey(callee))
+                                                +"            CALLS $callee"
+                                        }
+                                    }
+                                }
                         callGraph.reversedEdges[it]!!.forEach { +"            CALLED BY $it" }
                     }
                 }
@@ -108,7 +123,12 @@ internal object StaticInitializersOptimization {
                 addAll(rootSet)
                 callGraph.directEdges.values.forEach {
                     add(it.symbol.irFunction)
-                    it.callSites.forEach { callSite -> add(callSite.actualCallee.irFunction) }
+                    it.callSites.forEach { callSite ->
+                        when (callSite) {
+                            is CallGraphNode.CallSite.Static -> callSite.forEachCallee { callee -> add(callee.irFunction) }
+                            is CallGraphNode.CallSite.Virtual -> add(callSite.callee.irFunction)
+                        }
+                    }
                 }
             }
             val containers = functions
@@ -194,10 +214,19 @@ internal object StaticInitializersOptimization {
                 nodes.forEach { from ->
                     +"IR"
                     +(from.irFunction?.dump() ?: "")
-                    callGraph.directEdges[from]!!.callSites.forEach { to ->
-                        +"CALL"
-                        +"   from $from"
-                        +"   to ${to.actualCallee}"
+                    callGraph.directEdges[from]!!.callSites.forEach { callSite ->
+                        when (callSite) {
+                            is CallGraphNode.CallSite.Virtual -> {
+                                +"VIRTUAL CALL"
+                                +"   from $from"
+                                +"   to ${callSite.callee}"
+                            }
+                            is CallGraphNode.CallSite.Static -> callSite.forEachCallee { to ->
+                                +"CALL"
+                                +"   from $from"
+                                +"   to $to"
+                            }
+                        }
                     }
                 }
             }
@@ -267,7 +296,7 @@ internal object StaticInitializersOptimization {
 
             val producerInvocations = mutableMapOf<IrExpression, IrCall>()
             val jobInvocations = mutableMapOf<IrCall, IrCall>()
-            val virtualCallSites = mutableMapOf<IrCall, MutableList<CallGraphNode.CallSite>>()
+            val virtualCallSites = mutableMapOf<IrCall, CallGraphNode.CallSite>()
             for (callSite in node.callSites) {
                 val call = callSite.call
                 val irCall = call.irCallSite ?: continue
@@ -276,7 +305,9 @@ internal object StaticInitializersOptimization {
                 else if (irCall.origin == STATEMENT_ORIGIN_JOB_INVOCATION)
                     jobInvocations[irCall.arguments[0] as IrCall] = irCall
                 if (call !is DataFlowIR.Node.VirtualCall) continue
-                virtualCallSites.getOrPut(irCall) { mutableListOf() }.add(callSite)
+                // Identity intrinsics can share a DFG node across scopes, so the same IR call may be visited more than once.
+                // These call sites have the same callees; keep one entry per IR call.
+                virtualCallSites[irCall] = callSite
             }
             val returnTargetsInitializedFiles = mutableMapOf<IrReturnTargetSymbol, CustomBitSet>()
             val initializedFilesAtLoopsBreaks = mutableMapOf<IrLoop, CustomBitSet>()
@@ -489,13 +520,11 @@ internal object StaticInitializersOptimization {
                     val argumentsResult = arguments.fold(data) { set, arg -> arg.second.accept(this, set) }
                     // Opaque calls add no initialization guarantees. Their targets are analyzed as roots,
                     // but receiver and argument evaluation must still contribute to the current state.
-                    val devirtualizedCallSite = virtualCallSites[expression] ?: return argumentsResult
-                    if (devirtualizedCallSite.firstOrNull()?.isVirtual != false) return argumentsResult
+                    val callSite = virtualCallSites[expression] as? CallGraphNode.CallSite.Static ?: return argumentsResult
                     var callResult = CustomBitSet()
                     var first = true
-                    for (callSite in devirtualizedCallSite) {
-                        val callee = callSite.actualCallee.irFunction ?: error("No IR for: ${callSite.actualCallee}")
-                        check(!callSite.isVirtual) { "Non-devirtualized call site must be singular for a particular IrCall" }
+                    callSite.forEachCallee { actualCallee ->
+                        val callee = actualCallee.irFunction ?: error("No IR for: $actualCallee")
                         updateResultForFunction(callee, argumentsResult)
                         if (first) {
                             callResult = getResultAfterCall(callee, CustomBitSet())

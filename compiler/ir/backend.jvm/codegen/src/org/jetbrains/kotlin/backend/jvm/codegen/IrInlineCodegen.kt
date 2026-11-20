@@ -17,10 +17,14 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.*
+import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
+import org.jetbrains.kotlin.codegen.optimization.common.intConstantOrError
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getPackageFragment
@@ -28,7 +32,6 @@ import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -247,7 +250,7 @@ class IrInlineCodegen(
                     addInplaceArgumentEndMarkerIfPostponed()
                 }
                 else -> {
-                    onStack.put(info.type, expectedType.kotlinType, codegen.visitor, codegen.typeMapper)
+                    onStack.put(info.type, expectedType.irType, codegen.visitor, codegen.typeMapper)
                     addInplaceArgumentEndMarkerIfPostponed()
                     codegen.visitor.store(codegen.frameMap.enterTemp(info.type), info.type)
                 }
@@ -326,7 +329,7 @@ class IrInlineCodegen(
         val parameters = invocationParamBuilder.buildParameters()
 
         val info = RootInliningContext(
-            state, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
+            state.config, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
             sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings,
             codegen.inlineScopesGenerator, codegen.typeMapper,
         )
@@ -337,6 +340,7 @@ class IrInlineCodegen(
         val callSite = SourcePosition(lastLineNumber, sourceInfo.sourceFileName!!, sourceInfo.pathOrCleanFQN)
         info.inlineScopesGenerator?.apply { currentCallSiteLineNumber = lastLineNumber }
         val inliner = MethodInliner(
+            state,
             node,
             parameters,
             info,
@@ -359,7 +363,7 @@ class IrInlineCodegen(
         //hack to keep linenumber info, otherwise jdi will skip begin of linenumber chain
         adapter.visitInsn(Opcodes.NOP)
 
-        val result = inliner.doInline(adapter, remapper, true, mapOf())
+        val result = inliner.doInline(adapter, remapper, true, mapOf(), codegen.finallyDepth)
         result.reifiedTypeParametersUsages.mergeAll(reificationResult)
 
         val infos = MethodInliner.processReturns(adapter, sourceCompiler.getContextLabels(), null)
@@ -403,13 +407,16 @@ class IrInlineCodegen(
         val extensionPoints = insertPoints.associateBy { it.beforeIns }
         val processor = DefaultProcessor(intoNode, offsetForFinallyLocalVar)
 
-        var curFinallyDepth = 0
+        var curFinallyDepth = codegen.finallyDepth
         var curInstr: AbstractInsnNode? = intoNode.instructions.first
+        var curLineNumber = -1
         while (curInstr != null) {
             processor.processInstruction(curInstr, true)
             if (isFinallyStart(curInstr)) {
                 //TODO depth index calc could be more precise
-                curFinallyDepth = getConstant(curInstr.previous)
+                curFinallyDepth = curInstr.previous.intConstantOrError
+            } else if (curInstr is LineNumberNode) {
+                curLineNumber = curInstr.line
             }
 
             val extension = extensionPoints[curInstr]
@@ -420,6 +427,12 @@ class IrInlineCodegen(
                     nextFreeLocalIndex = max(offsetForFinallyLocalVar + local.node.index + size, nextFreeLocalIndex)
                 }
 
+                // `generateFinallyBlocks` will first emit a store instruction if return type is not Unit.
+                // Remove the last LineNumberNode if its only effect will be on that store instruction.
+                curInstr.findPreviousOrNull { it is LineNumberNode || it.isMeaningful }
+                    ?.takeIf { it is LineNumberNode }
+                    ?.let(intoNode.instructions::remove)
+
                 val start = Label()
                 val finallyNode = createEmptyMethodNode()
                 finallyNode.visitLabel(start)
@@ -427,6 +440,11 @@ class IrInlineCodegen(
                 sourceCompiler.generateFinallyBlocks(
                     finallyNode, curFinallyDepth, extension.returnType, extension.finallyIntervalEnd.label, extension.jumpTarget
                 )
+                if (curLineNumber != -1) {
+                    val label = Label()
+                    finallyNode.visitLabel(label)
+                    finallyNode.visitLineNumber(curLineNumber, label)
+                }
                 mark.dropTo()
                 insertNodeBefore(finallyNode, intoNode, curInstr)
 
@@ -453,13 +471,13 @@ class IrInlineCodegen(
         }
     }
 
-    private fun putCapturedToLocalVal(stackValue: StackValue, capturedParam: CapturedParamDesc, kotlinType: KotlinTypeMarker?) {
+    private fun putCapturedToLocalVal(stackValue: StackValue, capturedParam: CapturedParamDesc, irType: IrType?) {
         val info = invocationParamBuilder.addCapturedParam(capturedParam, capturedParam.fieldName, false)
         val asmType = info.type
-        if (stackValue.isLocalWithNoBoxing(JvmKotlinType(asmType, kotlinType), codegen.typeMapper)) {
+        if (stackValue.isLocalWithNoBoxing(JvmKotlinType(asmType, irType), codegen.typeMapper)) {
             info.remapValue = stackValue
         } else {
-            stackValue.put(asmType, kotlinType, codegen.visitor, codegen.typeMapper)
+            stackValue.put(asmType, irType, codegen.visitor, codegen.typeMapper)
             val index = codegen.frameMap.enterTemp(asmType)
             codegen.visitor.store(index, asmType)
             info.remapValue = StackValue.Local(index, asmType, null)
@@ -471,7 +489,7 @@ class IrInlineCodegen(
         private fun StackValue.isLocalWithNoBoxing(expected: JvmKotlinType, typeMapper: KotlinTypeMapperBase): Boolean =
             this is StackValue.Local &&
                     isPrimitive(expected.type) == isPrimitive(type) &&
-                    !StackValue.requiresInlineClassBoxingOrUnboxing(type, kotlinType, expected.type, expected.kotlinType, typeMapper)
+                    !StackValue.requiresInlineClassBoxingOrUnboxing(type, irType, expected.type, expected.irType, typeMapper)
 
         // Stack spilling before inline function call is required if the inlined bytecode has:
         //   1. try-catch blocks - otherwise the stack spilling before and after them will not be correct;
@@ -518,8 +536,8 @@ class IrExpressionLambdaImpl(
 
     override val capturedVars: List<CapturedParamDesc>
     override val invokeMethod: Method
-    override val invokeMethodParameters: List<KotlinTypeMarker?>
-    override val invokeMethodReturnType: KotlinTypeMarker
+    override val invokeMethodParameters: List<IrType?>
+    override val invokeMethodReturnType: IrType
 
     init {
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
@@ -528,7 +546,9 @@ class IrExpressionLambdaImpl(
         val captureEnd = captureStart + capturedParameters.size
         capturedVars = capturedParameters.mapIndexed { index, parameter ->
             val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunction()
-            capturedParamDesc(parameter.name.asString(), asmMethod.argumentTypes[captureStart + index], isSuspend)
+            val type = asmMethod.argumentTypes[captureStart + index]
+            val isLoadable = with(codegen.classCodegen) { parameter.type.isValhallaLoadable(type.descriptor, owner = null) }
+            capturedParamDesc(parameter.name.asString(), type, isSuspend, isLoadable)
         }
         // The parameter list should include the continuation if this is a suspend lambda. In the IR backend,
         // the lambda is suspend iff the inline function's parameter is marked suspend, so FunctionN.invoke call

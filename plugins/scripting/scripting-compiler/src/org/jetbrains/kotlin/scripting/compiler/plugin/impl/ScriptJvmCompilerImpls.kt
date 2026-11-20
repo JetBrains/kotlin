@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesClasspath
@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name.special
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.getKtFile
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
-import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.topologicalSort
 import kotlin.script.experimental.api.*
@@ -187,41 +186,14 @@ private fun compileImpl(
     val ktFiles = sourceFiles.map { it.getKtFile(definition, project) }
 
     val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
-        AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
+        SyntaxErrorReporter.reportSyntaxErrors(ktFile, compilerConfiguration.diagnosticsCollector).isHasErrors or errorsFound
     }
 
     if (syntaxErrors || CheckCompilationErrors.CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(compilerConfiguration)) {
         return failure(messageCollector)
     }
 
-    registerPackageFragmentProvidersIfNeeded(getScriptConfiguration(sourceFiles.first()), context.environment)
-
     return doCompileWithK2(context, mainKtSource, ktFiles, sourceDependencies, definition, messageCollector, getScriptConfiguration)
-}
-
-internal fun registerPackageFragmentProvidersIfNeeded(
-    scriptCompilationConfiguration: ScriptCompilationConfiguration,
-    environment: KotlinCoreEnvironment
-) {
-    val scriptDependencies = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies] ?: return
-    val scriptDependenciesFromClassLoader = scriptDependencies.filterIsInstance<JvmDependencyFromClassLoader>().takeIf { it.isNotEmpty() }
-        ?: return
-    // TODO: consider implementing deduplication/diff processing
-    val alreadyRegistered =
-        environment.project.extensionArea.getExtensionPoint(PackageFragmentProviderExtension.extensionPointName).extensions.any {
-            (it is PackageFragmentFromClassLoaderProviderExtension) &&
-                    it.scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies] == scriptDependencies
-        }
-    if (!alreadyRegistered) {
-        scriptDependenciesFromClassLoader.forEach { dependency ->
-            PackageFragmentProviderExtension.registerExtension(
-                environment.project,
-                PackageFragmentFromClassLoaderProviderExtension(
-                    dependency.classLoaderGetter, scriptCompilationConfiguration, environment.configuration
-                )
-            )
-        }
-    }
 }
 
 @OptIn(LegacyK2CliPipeline::class, K1SpecificScriptingServiceAccessor::class)

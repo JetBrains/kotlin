@@ -110,7 +110,6 @@ private fun ProblemSpec.defaultSpecConfiguration(
         }
 }
 
-// Create own implementation of ProblemGroup. In gradle 8.13 there will be a static factory method for creating ProblemGroup
 internal fun DiagnosticGroup.toProblemGroup(): ProblemGroup = ProblemGroup.create(
     groupId.toLowerCaseAsciiOnly(),
     displayName,

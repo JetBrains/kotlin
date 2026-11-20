@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.x
 import org.jetbrains.kotlin.test.TestDataAssertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
@@ -38,6 +39,7 @@ data class ConsumerGroup(
 }
 
 @ExtendWith(GradleParameterResolver::class)
+@MustRunOnChangesInGradle
 class MppPublicationCompatibilityIT : KGPBaseTest() {
     companion object {
         private val agpVersions = listOf(
@@ -128,7 +130,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
             val supportedGradleVersions = listOf(
                 TestVersions.Gradle.MIN_SUPPORTED,
                 TestVersions.Gradle.MAX_SUPPORTED,
-            )
+            ).map { it.version }
 
             if (specificGradleVersion != null) {
                 if (specificGradleVersion.version !in supportedGradleVersions) return emptyList()
@@ -227,7 +229,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
             localRepoDir = repoDir,
             buildJdk = jdk17Info.javaHome
         ) {
-            prepareConsumerProject(consumer, producers, repoDir)
+            prepareConsumerProject(consumer, producers)
             val buildOptions = if (consumer.hasAndroid) {
                 val androidVersion = consumer.agpVersionString!!
                 defaultBuildOptions.copy(androidVersion = androidVersion)

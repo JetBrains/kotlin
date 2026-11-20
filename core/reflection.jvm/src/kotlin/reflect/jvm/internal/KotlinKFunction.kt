@@ -54,7 +54,7 @@ internal abstract class KotlinKFunction(
     override val annotations: List<Annotation>
         get() {
             if (!hasAnnotationsInBytecode) return emptyList()
-            if ((container as? KClassImpl<*>)?.isMappedBuiltin == true) {
+            if ((container as? MemberContainer<*>)?.isMappedBuiltin == true) {
                 return metadataAnnotations.map { it.toAnnotation(container.jClass.safeClassLoader) }
             }
             val member = caller.member as? AnnotatedElement ?: return emptyList()
@@ -93,7 +93,7 @@ internal abstract class KotlinKFunction(
             if (isConstructor && !container.isInlineClass()) {
                 if (isAnnotationConstructor)
                     return@lazy AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, CALL_BY_NAME, KOTLIN)
-                val patchingResult = patchJvmDescriptorByExtraBoxing(this, jvmSignature.descriptor)
+                val patchingResult = patchJvmDescriptorByExtraBoxing(this, signature.descriptor)
                 preventUnboxingForIndices.addAll(patchingResult.boxedIndices)
                 container.findDefaultConstructor(patchingResult.newDescriptor) as Member?
             } else run {

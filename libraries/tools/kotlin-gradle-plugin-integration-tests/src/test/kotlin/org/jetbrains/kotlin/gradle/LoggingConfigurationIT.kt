@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceFirst
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -28,6 +29,7 @@ import kotlin.io.path.appendText
 
 @DisplayName("Basic logging configuration - KMP")
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class LoggingConfigurationMppIT : KGPBaseTest() {
 
     @GradleTest
@@ -55,6 +57,7 @@ class LoggingConfigurationMppIT : KGPBaseTest() {
 
 @DisplayName("Basic logging configuration - pure JVM project")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class LoggingConfigurationJvmIT : KGPBaseTest() {
 
     @GradleTest

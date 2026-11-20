@@ -509,7 +509,9 @@ class StabilityInferencer(
                 analysisEntryFile
             )
 
-            type.isFullValueClassType() -> {
+            // A full value class from another file is handled like any class from another file, because we don't want its stability to vary
+            // depending on whether incremental compilation is used.
+            type.isFullValueClassType() && analysisEntryFile != null && type.getClass()?.fileOrNull == analysisEntryFile -> {
                 val valueClassDeclaration = type.getClass()
                     ?: error("Failed to resolve the class definition of full value class type $type")
                 if (valueClassDeclaration.hasStableMarkedDescendant()) {

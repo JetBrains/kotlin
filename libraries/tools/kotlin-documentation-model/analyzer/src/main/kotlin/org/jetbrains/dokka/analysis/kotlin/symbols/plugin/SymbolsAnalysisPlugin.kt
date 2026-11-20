@@ -21,14 +21,12 @@ import org.jetbrains.dokka.analysis.kotlin.symbols.services.KotlinDocumentableSo
 import org.jetbrains.dokka.analysis.kotlin.symbols.services.SymbolExternalDocumentablesProvider
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.DefaultSymbolToDocumentableTranslator
 import org.jetbrains.dokka.generation.CleanUpAction
-import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.plugability.*
-import org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 
 @Suppress("unused")
-public class SymbolsAnalysisPlugin : DokkaPlugin() {
+internal class SymbolsAnalysisPlugin : DokkaPlugin() {
 
     internal val kotlinAnalysis by extensionPoint<KotlinAnalysis>()
 
@@ -66,19 +64,6 @@ public class SymbolsAnalysisPlugin : DokkaPlugin() {
     }
 
     private val javaAnalysisPlugin by lazy { plugin<JavaAnalysisPlugin>() }
-
-    internal val suppressPsiToDocumentableTranslator by extending {
-        CoreExtensions.sourceToDocumentableTranslator providing {
-            SourceToDocumentableTranslator { sourceSet, context ->
-                DModule(
-                    name = context.configuration.moduleName,
-                    packages = emptyList(),
-                    documentation = emptyMap(),
-                    sourceSets = setOf(sourceSet)
-                )
-            }
-        } override javaAnalysisPlugin.psiToDocumentableTranslator applyIf { InternalConfiguration.enableExperimentalSymbolsJavaAnalysis }
-    }
 
     internal val projectProvider by extending {
         javaAnalysisPlugin.projectProvider providing { KotlinAnalysisProjectProvider() }

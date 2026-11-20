@@ -1,0 +1,10 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|A|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingTypeConstraintBoundTypeArgument.kt
+    public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] A, [ResolvedTo(TYPES)] AA : R|kotlin/collections/List<A>|> foo(): R|kotlin/Unit| { LAZY_BLOCK }

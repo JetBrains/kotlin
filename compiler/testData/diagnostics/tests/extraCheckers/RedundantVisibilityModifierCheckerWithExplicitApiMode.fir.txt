@@ -178,6 +178,78 @@ FILE: RedundantVisibilityModifierCheckerWithExplicitApiMode.kt
             }
 
     }
+    public sealed class Sealed : R|kotlin/Any| {
+        protected constructor(y: R|kotlin/Int|): R|Sealed| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val y: R|kotlin/Int| = R|<local>/y|
+            public get(): R|kotlin/Int|
+
+        private constructor(): R|Sealed| {
+            this<R|Sealed|>(Int(42))
+        }
+
+        public constructor(byte: R|kotlin/Byte|): R|Sealed| {
+            this<R|Sealed|>(R|<local>/byte|.R|kotlin/Byte.toInt|())
+        }
+
+        protected constructor(x: R|kotlin/Double|): R|Sealed| {
+            this<R|Sealed|>(R|<local>/x|.R|kotlin/Double.toInt|())
+        }
+
+        protected constructor(z: R|kotlin/Float|): R|Sealed| {
+            this<R|Sealed|>(R|<local>/z|.R|kotlin/Float.toInt|())
+        }
+
+        public final object SealedImpl : R|Sealed| {
+            private constructor(): R|Sealed.SealedImpl| {
+                super<R|Sealed|>()
+            }
+
+        }
+
+    }
+    public final enum class E : R|kotlin/Enum<E>| {
+        private constructor(x: R|kotlin/Double|): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final val x: R|kotlin/Double| = R|<local>/x|
+            public get(): R|kotlin/Double|
+
+        public final static enum entry E1: R|E| = object : R|E| {
+            private constructor(): R|<anonymous>| {
+                super<R|E|>(Int(1))
+            }
+
+        }
+
+        public final static enum entry E2: R|E| = object : R|E| {
+            private constructor(): R|<anonymous>| {
+                super<R|E|>(Double(2.0))
+            }
+
+        }
+
+        private constructor(y: R|kotlin/Int|): R|E| {
+            this<R|E|>(R|<local>/y|.R|kotlin/Int.toDouble|())
+        }
+
+        private constructor(f: R|kotlin/Float|): R|E| {
+            this<R|E|>(R|<local>/f|.R|kotlin/Float.toFloat|())
+        }
+
+        public final static fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E>|
+            public static get(): R|kotlin/enums/EnumEntries<E>|
+
+    }
     private final class Hidden : R|kotlin/Any| {
         public constructor(): R|Hidden| {
             super<R|kotlin/Any|>()

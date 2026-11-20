@@ -10,7 +10,7 @@ dependencies {
     api(project(":compiler:cli"))
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":core:descriptors"))
-    runtimeOnly(project(":core:deserialization"))
+    implementation(project(":compiler:fir:fir-serialization"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:ir.serialization.js"))
     api(project(":compiler:ir.tree"))
@@ -18,6 +18,7 @@ dependencies {
     api(project(":compiler:backend.wasm"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":wasm:wasm.frontend"))
+    implementation(project(":core:compiler.common.wasm"))
     api(project(":wasm:wasm.config"))
 
     wasmCustomFormatters(project(":wasm:wasm.debug.browsers"))

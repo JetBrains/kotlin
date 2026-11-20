@@ -321,6 +321,19 @@ constructor(
         @ExperimentalCompilerArgument
         @Deprecated("The FIR runner is deprecated and will be removed in Kotlin 2.5.0.", level = DeprecationLevel.ERROR)
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", KotlinReleaseVersion(2, 3, 0))
+
+        /**
+         * When this option is enabled and a round of incremental compilation fails with compilation errors, the round is repeated once
+         * with a widened set of dirty source files before the errors are reported.
+         * This recovers from errors caused by unchanged sources that were not recompiled although they depend on the changes,
+         * for example, see KT-89857. At most one such round is performed per build.
+         *
+         * @since 2.5.20
+         */
+        @JvmField
+        @ExperimentalCompilerArgument
+        public val ENABLE_ERROR_RECOVERY_ROUND: Option<Boolean> =
+            Option("ENABLE_ERROR_RECOVERY_ROUND", KotlinReleaseVersion(2, 5, 20))
     }
 }
 

@@ -11,6 +11,7 @@ public final class ResultAsUpperBound /* ResultAsUpperBound*/ {
   public final <T extends kotlin.Result<? extends @org.jetbrains.annotations.NotNull() java.lang.String>> void funInParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() T);// <T extends kotlin.Result<? extends @org.jetbrains.annotations.NotNull() java.lang.String>>  funInParameter(@org.jetbrains.annotations.NotNull() T)
 }
 
+@kotlin.jvm.JvmInline()
 public final class Some /* Some*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;

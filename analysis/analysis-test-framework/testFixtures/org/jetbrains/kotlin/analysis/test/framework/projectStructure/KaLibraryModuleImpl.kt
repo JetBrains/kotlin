@@ -37,4 +37,24 @@ open class KaLibraryModuleImpl(
     override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
 
     override fun toString(): String = libraryName
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is KaLibraryModuleImpl) return false
+
+        return libraryName == other.libraryName &&
+                targetPlatform == other.targetPlatform &&
+                project == other.project &&
+                binaryRoots == other.binaryRoots &&
+                isSdk == other.isSdk
+    }
+
+    override fun hashCode(): Int {
+        var result = libraryName.hashCode()
+        result = 31 * result + targetPlatform.hashCode()
+        result = 31 * result + project.hashCode()
+        result = 31 * result + binaryRoots.hashCode()
+        result = 31 * result + isSdk.hashCode()
+        return result
+    }
 }

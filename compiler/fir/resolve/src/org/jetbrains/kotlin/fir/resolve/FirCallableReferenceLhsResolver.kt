@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.expandedClassLikeType
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
@@ -75,7 +76,7 @@ class FirCallableReferenceLhsResolver(
     private fun FirResolvedQualifier.expandedRegularClassIfAny(): FirRegularClass? {
         var fir = qualifierSymbol?.fir ?: return null
         while (fir is FirTypeAlias) {
-            fir = fir.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
+            fir = fir.expandedClassLikeType?.lookupTag?.toSymbol(session)?.fir ?: return null
         }
         return fir as? FirRegularClass
     }
@@ -96,7 +97,7 @@ class FirCallableReferenceLhsResolver(
         val type =
             // Preserve strange behavior until KT-84336 is fixed
             if (expression is FirResolvedQualifier && expression.qualifierSymbol is FirTypeAliasSymbol && expression.typeArguments.isNotEmpty()) {
-                session.builtinTypes.unitType.coneType
+                StandardTypes.Unit
             } else {
                 expression.resolvedType
             }
@@ -126,6 +127,7 @@ class FirCallableReferenceLhsResolver(
                 context.containingClassDeclarations,
                 context.file,
                 context.topContainerForTypeResolution,
+                lastCompanionBlockOwner = context.lastCompanionBlockOwner,
             )
         )
     }

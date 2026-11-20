@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.web.yarn
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
 /**
  * Represents a common plugin interface for integrating Yarn within a Gradle Project.
@@ -17,4 +18,5 @@ import org.gradle.api.Project
  * By implementing this interface, the plugin can provide support for configuring Yarn environments,
  * installing dependencies, enforcing lockfile management, and handling resolutions for specific package versions.
  */
+@ObsoleteNpmDependencyModel
 interface CommonYarnPlugin : Plugin<Project>

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.DirectiveToConfigurationKeyExtractor
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
@@ -22,11 +23,16 @@ class JKlibEnvironmentConfigurator(testServices: TestServices) : EnvironmentConf
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(JvmEnvironmentConfigurationDirectives)
 
+    override fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {
+        register(JvmEnvironmentConfigurationDirectives.JVM_TARGET, JVMConfigurationKeys.JVM_TARGET)
+        register(JvmEnvironmentConfigurationDirectives.SAM_CONVERSIONS, JVMConfigurationKeys.SAM_CONVERSIONS)
+    }
+
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val registeredDirectives = module.directives
         val extractedJdkKind = JvmEnvironmentConfigurator.extractJdkKind(registeredDirectives)
 
-        // Default programmatically to FULL_JDK_8 instead of MOCK_JDK so JRE classes are always present without stubs
+        // Default programmatically to FULL_JDK_17 instead of MOCK_JDK so JRE classes are always present without stubs
         val jdkKind = if (extractedJdkKind == TestJdkKind.MOCK_JDK || extractedJdkKind == TestJdkKind.MODIFIED_MOCK_JDK) {
             TestJdkKind.FULL_JDK_17
         } else {

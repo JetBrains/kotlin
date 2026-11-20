@@ -8,8 +8,8 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 
-public abstract class DocumentableReplacerTransformer(
-    public val context: DokkaContext
+internal abstract class DocumentableReplacerTransformer(
+    val context: DokkaContext
 ) : PreMergeDocumentableTransformer {
     override fun invoke(modules: List<DModule>): List<DModule> =
         modules.map { module ->

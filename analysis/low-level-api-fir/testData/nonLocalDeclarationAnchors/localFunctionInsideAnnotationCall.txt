@@ -1,4 +1,4 @@
-package one
+/* anchor (KtFile) --> */package one
 
 /* anchor (KtClass) --> */annotation class Anno/* anchor (KtPrimaryConstructor) --> */(/* anchor (KtParameter) --> */val s: String/* <-- */)/* <-- *//* <-- */
 
@@ -6,3 +6,4 @@ package one
 
 }())
 class TopLevelClass/* <-- */
+/* <-- */

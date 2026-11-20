@@ -32,15 +32,6 @@ internal object FileElementFactory {
             RootScriptStructureElement(firFile, firDeclaration, moduleComponents)
         }
 
-        is FirReplSnippet -> {
-            firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE.previous)
-
-            firDeclaration.snippetClass.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE.previous)
-            lazyResolveClassGeneratedMembers(firDeclaration.snippetClass)
-
-            RootReplSnippetStructureElement(firFile, firDeclaration, moduleComponents)
-        }
-
         else -> {
             if (firDeclaration is FirPrimaryConstructor) {
                 firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)

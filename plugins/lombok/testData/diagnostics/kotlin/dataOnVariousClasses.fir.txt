@@ -1,0 +1,111 @@
+FILE: dataOnVariousClasses.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|lombok/Data|() public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val count: R|kotlin/Int| = Int(1)
+                public get(): R|kotlin/Int|
+
+            public final val name: R|kotlin/String| = String(object)
+                public get(): R|kotlin/String|
+
+            public open override fun toString(): R|kotlin/String|
+
+        }
+
+    }
+    @R|lombok/Data|() public final object B : R|kotlin/Any| {
+        private constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = Int(2)
+            public get(): R|kotlin/Int|
+
+        public final val z: R|kotlin/Boolean| = Boolean(true)
+            public get(): R|kotlin/Boolean|
+
+        public open override fun toString(): R|kotlin/String|
+
+    }
+    @R|lombok/Data|() public abstract interface C : R|kotlin/Any| {
+        public abstract val s: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    @R|lombok/Data|() public final enum class E : R|kotlin/Enum<E>| {
+        private constructor(y: R|kotlin/Int| = Int(0)): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final val y: R|kotlin/Int| = R|<local>/y|
+            public get(): R|kotlin/Int|
+
+        @R|lombok/Data|() public final static enum entry FIRST: R|E| = object : R|E| {
+            private constructor(): R|<anonymous>| {
+                super<R|E|>()
+            }
+
+        }
+
+        @R|lombok/Data|() public final static enum entry SECOND: R|E| = object : R|E| {
+            private constructor(): R|<anonymous>| {
+                super<R|E|>(Int(4))
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E>|
+            public static get(): R|kotlin/enums/EnumEntries<E>|
+
+        public open override fun toString(): R|kotlin/String|
+
+    }
+    @R|lombok/Data|() public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(s: R|kotlin/String|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        @R|lombok/Data|() local final class A : R|kotlin/Any| {
+            public constructor(count: R|kotlin/Int|, name: R|kotlin/String|): R|<local>/A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val count: R|kotlin/Int| = R|<local>/count|
+                public get(): R|kotlin/Int|
+
+            public final val name: R|kotlin/String| = R|<local>/name|
+                public get(): R|kotlin/String|
+
+            public open override fun toString(): R|kotlin/String|
+
+            public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+            public open override fun hashCode(): R|kotlin/Int|
+
+        }
+
+        @R|lombok/Data|() local abstract interface C : R|kotlin/Any| {
+            public abstract val s: R|kotlin/String|
+                public get(): R|kotlin/String|
+
+        }
+
+    }

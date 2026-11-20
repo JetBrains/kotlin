@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommo
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFile
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.junit.jupiter.api.Test
@@ -392,6 +394,30 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     }
 
     /**
+     * KT-90252: when [ClasspathEntrySnapshotter.Settings.expandTypeAliases] is enabled only for the current snapshot, the aliases newly
+     * collected for the (otherwise unchanged) facade must still be used, so the change in the expanded class reaches the alias.
+     */
+    @Test
+    fun testImpactComputation_TypeAliasExpansions_EnabledAfterDisabled() {
+        val changes = computeClasspathChanges(
+            File(testDataDir, "KotlinOnly/testImpactComputation_TypeAliasExpansions/src"), tmpDir,
+            expandTypeAliases = true, previousExpandTypeAliases = false,
+        )
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "changedFunction", scope = "com.example.B"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.B"),
+                LookupSymbol(name = "changedFunction", scope = "com.example.AliasOfB"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.AliasOfB"),
+            ),
+            fqNames = setOf(
+                "com.example.B",
+                "com.example.AliasOfB"
+            )
+        ).assertEquals(changes)
+    }
+
+    /**
      * Tests granularity transition with a companion object where only the companion's ABI changes.
      * Without the fix in computeKotlinClassChanges, this triggers IllegalStateException:
      * "The following FqNames can't be derived from DirtyData.dirtyLookupSymbols"
@@ -646,6 +672,85 @@ class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() 
             )
         ).assertEquals(changes)
     }
+
+    @Test
+    fun testPackageInfoChange() {
+        val changes = computeClasspathChanges(File(testDataDir, "JavaOnly/testPackageInfoChange/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                // Changed
+                LookupSymbol(name = "package-info", scope = "com.example"),
+                // Impacted: every class in the package, and (transitively) their subclasses in other packages
+                LookupSymbol(name = "ClassInPackage", scope = "com.example"),
+                LookupSymbol(name = "SubClassOfClassInPackage", scope = "com.other"),
+            ),
+            fqNames = setOf(
+                "com.example.package-info",
+                "com.example.ClassInPackage",
+                "com.other.SubClassOfClassInPackage",
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
+    fun testModuleInfoChange() {
+        val changes = computeClasspathChanges(File(testDataDir, "JavaOnly/testModuleInfoChange/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                // Changed
+                LookupSymbol(name = "module-info", scope = "mid"),
+                // Impacted
+                LookupSymbol(name = "M", scope = "mpkg"),
+                LookupSymbol(name = "module-info", scope = "base"),
+                LookupSymbol(name = "A", scope = "apkg"),
+            ),
+            fqNames = setOf(
+                "mid.module-info",
+                "mpkg.M",
+                "base.module-info",
+                "apkg.A",
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
+    fun testModuleInfoChange_impactsPackageMembers() {
+        val packageFacade = PackageFacadeKotlinClassSnapshot(
+            classId = ClassId.topLevel(FqName("apkg.UtilKt")),
+            classAbiHash = 0,
+            classMemberLevelSnapshot = null,
+            packageMemberNames = setOf("aFunction"),
+            typeAliases = null,
+        )
+
+        fun moduleInfo(classAbiHash: Long) = ModuleInfoClassSnapshot(
+            classId = ModuleInfoClassSnapshot.moduleInfoClassId("dep"),
+            classAbiHash = classAbiHash,
+            packages = setOf(FqName("apkg")),
+            transitiveRequires = emptyList(),
+        )
+
+        val changes = ClasspathChangesComputer.computeChangedAndImpactedSet(
+            currentClassSnapshots = listOf(packageFacade, moduleInfo(classAbiHash = 2)),
+            previousClassSnapshots = listOf(packageFacade, moduleInfo(classAbiHash = 1)),
+            ClasspathSnapshotBuildReporter(DoNothingBuildReporter)
+        ).normalize()
+
+        Changes(
+            lookupSymbols = setOf(
+                // Changed
+                LookupSymbol(name = "module-info", scope = "dep"),
+                // Impacted: a package facade is only looked up by its package members
+                LookupSymbol(name = "UtilKt", scope = "apkg"),
+                LookupSymbol(name = "aFunction", scope = "apkg"),
+            ),
+            fqNames = setOf(
+                "dep.module-info",
+                "apkg.UtilKt",
+                "apkg",
+            )
+        ).assertEquals(changes)
+    }
 }
 
 private fun testMixedClassSnapshotGranularities_snapshotClasspath(
@@ -683,9 +788,11 @@ private fun computeClasspathChanges(
     tmpDir: File,
     granularity: ClassSnapshotGranularity? = null,
     expandTypeAliases: Boolean = false,
+    previousExpandTypeAliases: Boolean = expandTypeAliases,
 ): Changes {
     val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir, granularity, expandTypeAliases)
-    val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir, granularity, expandTypeAliases)
+    val previousSnapshot =
+        snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir, granularity, previousExpandTypeAliases)
     return computeClasspathChanges(currentSnapshot, previousSnapshot)
 }
 

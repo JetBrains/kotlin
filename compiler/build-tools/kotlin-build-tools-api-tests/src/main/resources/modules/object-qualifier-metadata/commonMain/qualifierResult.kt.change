@@ -1,0 +1,1 @@
+fun test(): String = Holder.name // `Holder` is used only as a qualifier

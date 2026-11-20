@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirTargetElement
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.wrapIntoNumericClassConversionIfNeeded
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
     FirPartialBodyResolveTransformer(transformer) {
@@ -64,7 +64,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             var completionNeeded = false
             when {
                 whenExpression.branches.isEmpty() -> {
-                    whenExpression.resultType = session.builtinTypes.unitType.coneType
+                    whenExpression.resultType = StandardTypes.Unit
                 }
                 whenExpression.isOneBranch() && data.forceFullCompletion && data !is ResolutionMode.WithExpectedType -> {
                     whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)
@@ -110,7 +110,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                 whenExpression = completionResult
             }
             dataFlowAnalyzer.exitWhenExpression(whenExpression, data.forceFullCompletion)
-            whenExpression.replaceReturnTypeIfNotExhaustive(session)
+            whenExpression.replaceReturnTypeIfNotExhaustive()
             whenExpression
         }
     }

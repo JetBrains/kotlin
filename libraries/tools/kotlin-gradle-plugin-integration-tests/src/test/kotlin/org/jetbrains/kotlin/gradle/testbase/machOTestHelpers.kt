@@ -32,6 +32,10 @@ internal fun TestProject.machOSectionNames(binary: Path): List<String> =
         it.trim().substringAfter("sectname ", missingDelimiterValue = "").ifEmpty { null }
     }
 
+/** The architectures of a Mach-O binary or a static library, as `lipo` lists them. */
+internal fun TestProject.machOArchitectures(binary: Path): Set<String> =
+    runTool("lipo", "-archs", binary.pathString).first().trim().split(" ").toSet()
+
 internal fun TestProject.runTool(vararg command: String): List<String> {
     val result = runProcess(command.toList(), projectPath.toFile())
     result.assertProcessRunResult { assertTrue(isSuccessful, "'${command.joinToString(" ")}' failed") }

@@ -1,25 +1,159 @@
 /*
- * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseKDocProvider
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsKDocProvider
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.fir.deserialization.kdocText
+import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.kdoc.psi.api.KDocCommentDescriptor
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocCommentDescriptorImpl
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
+@OptIn(KtNonPublicApi::class, KtImplementationDetail::class)
 internal class KaFirKDocProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseKDocProvider<KaFirSession>() {
-    override fun findDeserializedKdocText(symbol: KaDeclarationSymbol): String? {
+) : KaFirSessionComponent(), KaInternalsKDocProvider {
+    override fun findKDoc(declaration: KtDeclaration): KDocCommentDescriptor? =
+        declaration.lookupOwnedKDoc() ?: declaration.lookupKDocInParent()
+
+    override fun findKDoc(symbol: KaDeclarationSymbol): KDocCommentDescriptor? = with(analysisSession) {
+        val ktElement = symbol.psi?.navigationElement as? KtDeclaration
+        ktElement?.let { findKDoc(it) }?.let { return it }
+
+        if (symbol.origin == KaSymbolOrigin.LIBRARY) {
+            findDeserializedKdocText(symbol)
+                ?.let(::constructCommentDescriptor)
+                ?.let { return it }
+        }
+
+        if (symbol is KaPropertyAccessorSymbol) {
+            val containingProperty = symbol.containingDeclaration as? KaPropertySymbol
+            containingProperty?.let { findKDoc(it) }?.let { return it }
+        }
+
+        if (symbol is KaCallableSymbol) {
+            symbol.allOverriddenSymbols.forEach { overrider ->
+                findKDoc(overrider)?.let {
+                    return it
+                }
+            }
+        }
+
+        if (symbol is KaValueParameterSymbol) {
+            val containingSymbol = symbol.containingDeclaration as? KaNamedFunctionSymbol
+            if (containingSymbol != null) {
+                val idx = containingSymbol.valueParameters.indexOf(symbol)
+                containingSymbol.getExpectsForActual().filterIsInstance<KaNamedFunctionSymbol>()
+                    .firstNotNullOfOrNull { expectFunction ->
+                        findKDoc(expectFunction.valueParameters[idx])
+                    }?.let { return it }
+            }
+        }
+
+        symbol.getExpectsForActual().firstNotNullOfOrNull { expectSymbol ->
+            findKDoc(expectSymbol)?.let {
+                return it
+            }
+        }
+
+        return null
+    }
+
+    private fun constructCommentDescriptor(kdocText: String): KDocCommentDescriptor? {
+        val project = analysisSession.useSiteModule.project
+        val kdocElement = KtPsiFactory(project).createComment(kdocText) as? KDoc ?: return null
+        return KDocCommentDescriptorImpl(kdocElement.getDefaultSection(), kdocElement.getAllSections())
+    }
+
+    private fun findDeserializedKdocText(symbol: KaDeclarationSymbol): String? {
         if (symbol.origin != KaSymbolOrigin.LIBRARY) {
             return null
         }
 
         return symbol.firSymbol.fir.kdocText
+    }
+
+    private fun KtElement.lookupOwnedKDoc(): KDocCommentDescriptor? {
+        // KDoc for the primary constructor is located inside its class KDoc
+        val psiDeclaration = when (this) {
+            is KtPrimaryConstructor -> getContainingClassOrObject()
+            else -> this
+        }
+
+        if (psiDeclaration is KtDeclaration) {
+            val kdoc = psiDeclaration.docComment
+            if (kdoc != null) {
+                if (this is KtConstructor<*>) {
+                    // ConstructorDescriptor resolves to the same JetDeclaration
+                    val constructorSection = kdoc.findSectionByTag(KDocKnownTag.CONSTRUCTOR)
+                    if (constructorSection != null) {
+                        // if annotated with @constructor tag and the caret is on constructor definition,
+                        // then show @constructor description as the main content, and additional sections
+                        // that contain @param tags (if any), as the most relatable ones
+                        // practical example: val foo = Fo<caret>o("argument") -- show @constructor and @param content
+                        val paramSections = kdoc.findSectionsContainingTag(KDocKnownTag.PARAM)
+                        return KDocCommentDescriptorImpl(constructorSection, paramSections)
+                    }
+                }
+                return KDocCommentDescriptorImpl(kdoc.getDefaultSection(), kdoc.getAllSections())
+            }
+        }
+        return null
+    }
+
+    /**
+     * Looks for sections that have a deeply nested [tag],
+     * as opposed to [KDoc.findSectionByTag], which only looks among the top level
+     */
+    private fun KDoc.findSectionsContainingTag(tag: KDocKnownTag): List<KDocSection> {
+        return getChildrenOfType<KDocSection>()
+            .filter { it.findTagByName(tag.name.toLowerCaseAsciiOnly()) != null }
+    }
+
+    private fun KtDeclaration.lookupKDocInParent(): KDocCommentDescriptor? {
+        val subjectName = name
+        val containingDeclaration = PsiTreeUtil.findFirstParent(this, true) {
+            (it is KtDeclarationWithBody && it !is KtPrimaryConstructor) || it is KtClassOrObject
+        }
+
+        val containerKDoc = containingDeclaration?.getChildOfType<KDoc>()
+        if (containerKDoc == null || subjectName == null) return null
+
+        val propertySection = containerKDoc.findSectionByTag(KDocKnownTag.PROPERTY, subjectName)
+        val paramTag = containerKDoc.findDescendantOfType<KDocTag> {
+            it.knownTag == KDocKnownTag.PARAM && it.getSubjectName() == subjectName
+        }
+
+        val primaryContent = when (this) {
+            // class Foo(val s: String)
+            is KtParameter if this.isPropertyParameter() -> propertySection ?: paramTag
+            // fun some(f: String) || class Some<T: Base> || Foo(s = "argument")
+            is KtParameter, is KtTypeParameter -> paramTag
+            // if this property is declared separately (outside primary constructor), but it's for some reason
+            // annotated as @property in the class's description, instead of having its own KDoc
+            is KtProperty if containingDeclaration is KtClassOrObject -> propertySection
+            else -> null
+        }
+
+        return primaryContent?.let {
+            // makes little sense to include any other sections, since we found
+            // documentation for a very specific element, like a property/param
+            KDocCommentDescriptorImpl(it, additionalSections = emptyList())
+        }
     }
 }

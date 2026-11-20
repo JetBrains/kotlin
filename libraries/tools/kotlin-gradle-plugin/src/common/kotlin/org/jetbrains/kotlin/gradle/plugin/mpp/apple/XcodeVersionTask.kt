@@ -14,6 +14,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.launch
@@ -42,6 +43,7 @@ internal interface UsesXcodeVersion : Task {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:Optional
     @get:InputFile
+    @get:NormalizeLineEndings
     val _xcodeVersion: RegularFileProperty
 
     @get:Internal
@@ -88,6 +90,7 @@ internal abstract class XcodeVersionTask : DefaultTask() {
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles // @InputFiles instead of @InputFile because it allows non-existing files
+    @get:NormalizeLineEndings
     abstract val xcodeSelectLink: ConfigurableFileCollection
 
     @get:Input

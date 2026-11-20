@@ -1,0 +1,5 @@
+/jsVarProhibited.kt:6:1: error: '@JsModule' annotation is prohibited for 'var' declarations. Use 'val' instead.
+
+/jsVarProhibited.kt:11:1: error: '@JsModule' annotation is prohibited for 'var' declarations. Use 'val' instead.
+
+/jsVarProhibited.kt:14:1: error: '@JsModule' annotation is prohibited for 'var' declarations. Use 'val' instead.

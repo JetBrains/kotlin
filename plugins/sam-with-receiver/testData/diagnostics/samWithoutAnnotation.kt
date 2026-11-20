@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Sam.java
 public interface Sam {
     String run(String a, String b);
@@ -16,3 +17,6 @@ fun test() {
         ""
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, javaType, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral, thisExpression */

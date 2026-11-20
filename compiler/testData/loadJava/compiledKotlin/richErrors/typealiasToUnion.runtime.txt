@@ -1,0 +1,22 @@
+package test
+
+public fun f1(): kotlin.Nothing
+public fun f2(): kotlin.collections.List<kotlin.String>
+public fun f3(): kotlin.collections.List<test.S /* = kotlin.String */>
+public fun f4(): kotlin.Nothing?
+public fun f5(/*0*/ kotlin.collections.List<kotlin.Int>?): kotlin.String
+public fun </*0*/ T> f6(/*0*/ kotlin.collections.List<T>): kotlin.collections.List<T>
+public fun f7(): test.S /* = kotlin.String */
+public fun f8(): test.S /* = kotlin.String */
+
+public final class Bar : kotlin.RichError {
+    /*primary*/ public constructor Bar()
+}
+
+public final class Foo : kotlin.RichError {
+    /*primary*/ public constructor Foo()
+}
+public typealias Errs = kotlin.Nothing
+public typealias Res</*0*/ T> = kotlin.collections.List<T>
+public typealias S = kotlin.String
+public typealias SErrs = test.S /* = kotlin.String */

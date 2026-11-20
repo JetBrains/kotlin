@@ -86,7 +86,7 @@ private fun createWasmBinaryResolvableConfiguration(
         usesPlatformOf(target)
     }
 
-    wasmBinaryConfiguration.extendsFrom(runtimeDependencyConfiguration)
+    runtimeDependencyConfiguration?.let { wasmBinaryConfiguration.extendsFrom(it) }
 }
 
 private fun createWasmBinaryOutputConsumableConfiguration(
@@ -115,7 +115,7 @@ private fun createWasmBinaryOutputConsumableConfiguration(
         )
     }
 
-    wasmBinaryOutputConfiguration.extendsFrom(runtimeDependencyConfiguration)
+    runtimeDependencyConfiguration?.let { wasmBinaryOutputConfiguration.extendsFrom(it) }
 }
 
 private fun configureLinkTask(

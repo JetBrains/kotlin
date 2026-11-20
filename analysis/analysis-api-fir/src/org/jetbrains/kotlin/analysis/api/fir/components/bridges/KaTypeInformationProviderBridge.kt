@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinFunctionTypeFamilies
 import org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily
 import org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -38,22 +38,18 @@ import org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType as isSuspen
  * Routes the legacy [KaTypeInformationProvider] surface through the new public `context(session: KaSession)` type-information endpoints,
  * which in turn reach the [org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeInformationProvider] proxy.
  *
- * [canBeNull] keeps its original behavior here instead of routing through a new endpoint: it retains its deprecated interface
- * default (`= isNullable`).
- *
  * The moved supporting types ([KaFunctionTypeFamily], [KaBuiltinFunctionTypeFamilies]) are subtype shims of the new
  * `types`-package interfaces, so the endpoint results are narrowed back to the legacy surface with `as`.
  */
 internal class KaTypeInformationProviderBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaTypeInformationProvider {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaTypeInformationProvider {
     override val KaType.isDenotable: Boolean
         get() = context(analysisSession) { isDenotableEndpoint }
 
     override val KaType.isFunctionalInterface: Boolean
         get() = context(analysisSession) { isFunctionalInterfaceEndpoint }
 
-    @KaExperimentalApi
     override val KaType.functionTypeFamily: KaFunctionTypeFamily?
         get() = context(analysisSession) { functionTypeFamilyEndpoint as KaFunctionTypeFamily? }
 
@@ -196,7 +192,6 @@ internal class KaTypeInformationProviderBridge(
     override val KaType.defaultInitializer: String?
         get() = context(analysisSession) { defaultInitializerEndpoint }
 
-    @KaExperimentalApi
     override val builtinFunctionTypeFamilies: KaBuiltinFunctionTypeFamilies
         get() = context(analysisSession) { builtinFunctionTypeFamiliesEndpoint as KaBuiltinFunctionTypeFamilies }
 }

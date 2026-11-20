@@ -12,6 +12,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -25,8 +27,10 @@ import kotlin.test.assertEquals
 )
 @DisplayName("SwiftPM import integration tests for explicit Clang module settings")
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInNative
 class SwiftPMImportExplicitClangModulesIT : KGPBaseTest() {
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `discoverClangModulesImplicitly false with explicit importedClangModules exposes only the listed module`(
         version: GradleVersion,
@@ -75,6 +79,7 @@ class SwiftPMImportExplicitClangModulesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `discoverClangModulesImplicitly false with default importedClangModules falls back to products`(
         version: GradleVersion,
@@ -132,6 +137,7 @@ class SwiftPMImportExplicitClangModulesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `clang module without product fail build`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -170,7 +176,7 @@ private fun createMultiModuleObjcSwiftPackage(localPackageDir: Path) {
     localPackageDir.createDirectories()
     localPackageDir.resolve("Package.swift").writeText(
         """
-            // swift-tools-version: 5.9
+            // swift-tools-version: 6.1
             import PackageDescription
 
             let package = Package(

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.converters
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
@@ -17,12 +16,10 @@ import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializ
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.PartialLinkageConfig
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -31,7 +28,6 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -40,7 +36,6 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.pipeline.NativeLoadedIrArtifact
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -53,7 +48,6 @@ import java.io.File
 
 class NativeDeserializerFacade(
     testServices: TestServices,
-    private val partialLinkageLogLevel: PartialLinkageLogLevel = PartialLinkageLogLevel.ERROR, // Use the ERROR log level by default to fail any tests where PL detected any incompatibilities.
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.IrBackend) {
     override fun transform(
         module: TestModule,
@@ -81,20 +75,15 @@ class NativeDeserializerFacade(
             moduleName,
             LockBasedStorageManager.NO_LOCKS,
             builtIns,
-            capabilities = mapOf(
-                KlibModuleOrigin.CAPABILITY to moduleOrigin,
-                @OptIn(K1Deprecation::class)
-                ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
-            ),
+            capabilities = mapOf(KlibModuleOrigin.CAPABILITY to moduleOrigin),
             platform = NativePlatforms.unspecifiedNativePlatform
         )
     }
 
-    @OptIn(K1Deprecation::class)
     private fun createModuleDescriptors(loadedKlibs: LoadedNativeKlibs): List<ModuleDescriptorImpl> {
         val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
 
-        val builtIns = KonanBuiltIns(LockBasedStorageManager.NO_LOCKS)
+        val builtIns = DefaultBuiltIns(loadBuiltInsFromCurrentClassLoader = false)
         val friendModuleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
         val includedLibraryDescriptors = mutableSetOf<ModuleDescriptorImpl>()
         // Build module descriptors.
@@ -141,7 +130,7 @@ class NativeDeserializerFacade(
 
         val mainLibrary = loadedKlibs.included.single()
 
-        val friendsMap = mapOf(mainLibrary.uniqueName to loadedKlibs.friends.map { it.uniqueName })
+        val friendsMap = mapOf(mainLibrary to loadedKlibs.friends)
 
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             configuration.diagnosticsCollector,
@@ -155,10 +144,8 @@ class NativeDeserializerFacade(
             symbolTable = symbolTable,
             friendModules = friendsMap,
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
-            exportedDependencies = emptySet(),
-            partialLinkageConfig = PartialLinkageConfig(partialLinkageLogLevel),
             irDiagnosticReporter = irDiagnosticReporter,
-            libraryBeingCached = null,
+            librariesBeingCached = emptyMap(),
             externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition),
         )
 
@@ -167,8 +154,8 @@ class NativeDeserializerFacade(
         @OptIn(InternalSymbolFinderAPI::class)
         val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
 
-        ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-        irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
+        irLinker.drainDeserializationQueue()
+        irLinker.finalizeIrLinkage(irBuiltIns)
 
         val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
 
@@ -193,10 +180,10 @@ class NativeDeserializerFacade(
     ): IrModuleDependencies = IrModuleDependencies(
         libraries.map { klib: KotlinLibrary ->
             val descriptor: ModuleDescriptor = mapping(klib)
-            if (klib != mainModuleLib)
-                irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
-            else
-                irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
+            val deserializationStrategy =
+                if (klib != mainModuleLib) DeserializationStrategy.EXPLICITLY_EXPORTED else DeserializationStrategy.ALL
+
+            irLinker.createAndRegisterModuleDeserializer(descriptor, klib, deserializationStrategy).moduleFragment
         }
     )
 }

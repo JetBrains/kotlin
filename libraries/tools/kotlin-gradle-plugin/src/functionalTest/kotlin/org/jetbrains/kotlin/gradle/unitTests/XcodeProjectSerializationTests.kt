@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
@@ -15,8 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.Opaque
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCLocalSwiftPackageReference
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxShellScriptBuildPhase
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializeXcodeProject
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.serializeXcodeProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializePbxprojJson
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.serializePbxprojJson
 import org.jetbrains.kotlin.gradle.testing.XcodeProjectSerializationFixtures
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.assertIsInstance
@@ -31,8 +30,8 @@ class XcodeProjectSerializationTests {
     fun `reserializing pbxproj - persists the project structure`() {
         val reserializedJson: JsonElement = Json.decodeFromString<JsonElement>(
             ByteArrayOutputStream().use {
-                deserializeXcodeProject(XcodeProjectSerializationFixtures.sampleXcodeProjectWithEmbedAndSignIntegration.toByteArray())
-                    .serializeXcodeProject(it)
+                deserializePbxprojJson(XcodeProjectSerializationFixtures.sampleXcodeProjectWithEmbedAndSignIntegration.toByteArray())
+                    .serializePbxprojJson(it)
                 it.toString()
             },
         )
@@ -66,7 +65,7 @@ class XcodeProjectSerializationTests {
             }
             """.trimIndent()
 
-        val project = deserializeXcodeProject(inputProject.toByteArray())
+        val project = deserializePbxprojJson(inputProject.toByteArray())
         project.objects["2"] = XCLocalSwiftPackageReference(
             relativePath = "/path/to/package"
         )
@@ -75,7 +74,7 @@ class XcodeProjectSerializationTests {
 
         val reserializedJson: JsonElement = Json.decodeFromString<JsonElement>(
             ByteArrayOutputStream().use {
-                project.serializeXcodeProject(it)
+                project.serializePbxprojJson(it)
                 it.toString()
             },
         )
@@ -130,12 +129,12 @@ class XcodeProjectSerializationTests {
             }
             """.trimIndent()
 
-        val project = deserializeXcodeProject(inputProject.toByteArray())
+        val project = deserializePbxprojJson(inputProject.toByteArray())
         (project.objects["2"] as XCLocalSwiftPackageReference).relativePath = "/path/to/mutated"
 
         val reserializedJson: JsonElement = Json.decodeFromString<JsonElement>(
             ByteArrayOutputStream().use {
-                project.serializeXcodeProject(it)
+                project.serializePbxprojJson(it)
                 it.toString()
             },
         )
@@ -192,12 +191,12 @@ class XcodeProjectSerializationTests {
             }
             """.trimIndent()
 
-        val project = deserializeXcodeProject(inputProject.toByteArray())
+        val project = deserializePbxprojJson(inputProject.toByteArray())
         (project.objects["3"] as PbxNativeTarget).buildPhases?.add("2")
 
         val reserializedJson: JsonElement = Json.decodeFromString<JsonElement>(
             ByteArrayOutputStream().use {
-                project.serializeXcodeProject(it)
+                project.serializePbxprojJson(it)
                 it.toString()
             },
         )
@@ -246,7 +245,7 @@ class XcodeProjectSerializationTests {
             }
             """.trimIndent()
 
-        val project = deserializeXcodeProject(stringShellScript.toByteArray())
+        val project = deserializePbxprojJson(stringShellScript.toByteArray())
         assertEquals("one\ntwo", (project.objects["1"] as PbxShellScriptBuildPhase).shellScript?.stringValue)
     }
 
@@ -267,7 +266,7 @@ class XcodeProjectSerializationTests {
             }
             """.trimIndent()
 
-        val project = deserializeXcodeProject(stringShellScript.toByteArray())
+        val project = deserializePbxprojJson(stringShellScript.toByteArray())
         assertEquals("one\ntwo", (project.objects["1"] as PbxShellScriptBuildPhase).shellScript?.stringValue)
     }
 
@@ -290,14 +289,14 @@ class XcodeProjectSerializationTests {
             }
             """.trimIndent()
 
-        val project = deserializeXcodeProject(inputProject.toByteArray())
+        val project = deserializePbxprojJson(inputProject.toByteArray())
         val config = project.objects["1"] as XCBuildConfiguration
         if (config.buildSettings == null) config.buildSettings = mutableMapOf()
         config.buildSettings?.put("ENABLE_USER_SCRIPT_SANDBOXING", JsonPrimitive("NO"))
 
         val reserializedJson = Json.decodeFromString<JsonElement>(
             ByteArrayOutputStream().use {
-                project.serializeXcodeProject(it)
+                project.serializePbxprojJson(it)
                 it.toString()
             }
         )

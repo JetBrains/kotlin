@@ -118,6 +118,8 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
 
     /**
      * Prepends the specified [element] to this deque.
+     *
+     * @sample samples.collections.Collections.Deques.arrayDequeAddFirst
      */
     public fun addFirst(element: E) {
         registerModification()
@@ -130,6 +132,8 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
 
     /**
      * Appends the specified [element] to this deque.
+     *
+     * @sample samples.collections.Collections.Deques.arrayDequeAddLast
      */
     public fun addLast(element: E) {
         registerModification()

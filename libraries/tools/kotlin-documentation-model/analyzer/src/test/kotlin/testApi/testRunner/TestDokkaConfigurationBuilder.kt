@@ -14,7 +14,7 @@ import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import java.io.File
 
-public fun dokkaConfiguration(block: TestDokkaConfigurationBuilder.() -> Unit): DokkaConfigurationImpl =
+internal fun dokkaConfiguration(block: TestDokkaConfigurationBuilder.() -> Unit): DokkaConfigurationImpl =
     TestDokkaConfigurationBuilder().apply(block).build()
 
 @DslMarker
@@ -22,7 +22,7 @@ public annotation class DokkaConfigurationDsl
 
 // TODO this class heavily relies on `DokkaSourceSetImpl`, should be refactored to `DokkaSourceSet`
 @DokkaConfigurationDsl
-public class TestDokkaConfigurationBuilder {
+internal class TestDokkaConfigurationBuilder {
 
     public var moduleName: String = "root"
         set(value) {
@@ -73,7 +73,7 @@ public class TestDokkaConfigurationBuilder {
 }
 
 @DokkaConfigurationDsl
-public class SourceSetsBuilder(
+internal class SourceSetsBuilder(
     public val moduleName: String
 ) : ArrayList<Lazy<DokkaSourceSetImpl>>() {
     public fun sourceSet(block: DokkaSourceSetBuilder.() -> Unit): Lazy<DokkaConfiguration.DokkaSourceSet> {
@@ -82,7 +82,7 @@ public class SourceSetsBuilder(
 }
 
 @DokkaConfigurationDsl
-public class DokkaSourceSetBuilder(
+internal class DokkaSourceSetBuilder(
     private val moduleName: String,
     public var name: String = "main",
     public var displayName: String = "JVM",
@@ -128,7 +128,7 @@ public class DokkaSourceSetBuilder(
     }
 }
 
-public val defaultSourceSet: DokkaSourceSetImpl = DokkaSourceSetImpl(
+internal val defaultSourceSet: DokkaSourceSetImpl = DokkaSourceSetImpl(
     displayName = "DEFAULT",
     sourceSetID = DokkaSourceSetID("DEFAULT", "DEFAULT"),
     classpath = emptyList(),
@@ -148,14 +148,14 @@ public val defaultSourceSet: DokkaSourceSetImpl = DokkaSourceSetImpl(
     analysisPlatform = Platform.DEFAULT
 )
 
-public fun sourceSet(name: String): DokkaConfiguration.DokkaSourceSet {
+internal fun sourceSet(name: String): DokkaConfiguration.DokkaSourceSet {
     return defaultSourceSet.copy(
         displayName = name,
         sourceSetID = defaultSourceSet.sourceSetID.copy(sourceSetName = name)
     )
 }
 
-public fun dModule(
+internal fun dModule(
     name: String,
     packages: List<DPackage> = emptyList(),
     documentation: SourceSetDependent<DocumentationNode> = emptyMap(),
@@ -171,7 +171,7 @@ public fun dModule(
     extra = extra
 )
 
-public fun dPackage(
+internal fun dPackage(
     dri: DRI,
     functions: List<DFunction> = emptyList(),
     properties: List<DProperty> = emptyList(),
@@ -193,7 +193,7 @@ public fun dPackage(
     extra = extra
 )
 
-public fun documentationNode(vararg texts: String): DocumentationNode {
+internal fun documentationNode(vararg texts: String): DocumentationNode {
     return DocumentationNode(
         texts.toList()
             .map { Description(CustomDocTag(listOf(Text(it)), name = "MARKDOWN_FILE")) })

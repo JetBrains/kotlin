@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KaptBaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.appendText
@@ -19,6 +20,7 @@ import kotlin.io.path.writeText
 @DisplayName("Android with kapt incremental build tests")
 @AndroidGradlePluginTests
 open class KaptAndroidIncrementalIT : KaptBaseIT() {
+    @TestMetadata("kapt/android-dagger")
     @DisplayName("stubs generation is incremental on changes in android variant java sources")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -47,7 +49,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
                 """.trimIndent()
             )
 
-            build(":app:kaptDebugKotlin", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
+            build(":app:kaptDebugKotlin") {
                 assertTasksExecuted(":app:kaptGenerateStubsDebugKotlin")
             }
 
@@ -77,6 +79,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("AndroidDaggerProject")
     @DisplayName("incremental compilation works with dagger")
     @GradleAndroidTest
     open fun testAndroidDaggerIC(
@@ -90,7 +93,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("assembleDebug", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion))
+            build("assembleDebug")
 
             val androidModuleKt = subProject("app").javaSourcesDir().resolve("com/example/dagger/kotlin/AndroidModule.kt")
             androidModuleKt.modify {
@@ -116,6 +119,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("AndroidIncrementalMultiModule")
     @DisplayName("incremental compilation with android and kapt")
     @GradleAndroidTest
     fun testAndroidWithKaptIncremental(
@@ -140,7 +144,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
                 """.trimMargin()
             }
 
-            build(":app:testDebugUnitTest", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion))
+            build(":app:testDebugUnitTest")
 
             appProject.kotlinSourcesDir().resolve("com/example/KotlinActivity.kt").appendText(
                 //language=kt
@@ -157,6 +161,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/android-inter-project-ic")
     @DisplayName("inter-project IC works with kapt")
     @GradleAndroidTest
     fun testInterProjectIC(
@@ -170,7 +175,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("assembleDebug", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
+            build("assembleDebug") {
                 assertKaptSuccessful()
             }
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FULL_JDK
 // FILE: User.java
@@ -84,3 +85,5 @@ fun test_3() {
         .pairs(mapOf(null to null))
         .pairs(null)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, nullableType, stringLiteral */

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.PluginTypeResolver
 import org.jetbrains.kotlin.fir.extensions.typeFromQualifierParts
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
@@ -62,7 +63,7 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
     override fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
-        typeResolver: TypeResolveService
+        typeResolver: PluginTypeResolver,
     ): List<ConeKotlinType> {
         val kSerializerClassId = ClassId(SerializationPackages.packageFqName, SerialEntityNames.KSERIALIZER_NAME)
         val generatedSerializerClassId = ClassId(SerializationPackages.internalPackageFqName, SerialEntityNames.GENERATED_SERIALIZER_CLASS)
@@ -88,7 +89,7 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
     }
 
     // Function helps to resolve class call from annotation argument to `ConeKotlinType`
-    private fun resolveConeTypeFromArgument(getClassCall: FirGetClassCall, typeResolver: TypeResolveService): ConeKotlinType {
+    private fun resolveConeTypeFromArgument(getClassCall: FirGetClassCall, typeResolver: PluginTypeResolver): ConeKotlinType {
         return typeFromQualifierParts(
             isMarkedNullable = false,
             source = getClassCall.source!!,

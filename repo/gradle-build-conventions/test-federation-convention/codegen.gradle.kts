@@ -45,9 +45,15 @@ private object DomainSourcesGenerator {
     fun generate(outputDir: Directory, declaredDomains: RegularFile) {
         val mapper = ObjectMapper(YAMLFactory()).registerKotlinModule()
         val node = mapper.readTree(declaredDomains.asFile)
-        val domains = node.properties().mapNotNull { (key, value) ->
-            if (key.startsWith("$")) null else value.toDomainDTO(key)
-        }
+
+        val ignores = node.properties()
+            .filter { (key, _) -> key == "ignore" }
+            .flatMap { (_, value) -> value.valueStream()?.toList().orEmpty().map { it.asText() } }
+
+        val domains = node.properties()
+            .filter { (key, _) -> key != "ignore" }
+            .filter { (key, _) -> !key.startsWith("$") }
+            .map { (key, value) -> value.toDomainDTO(key) }
 
 
         outputDir.asFile.toPath().resolve("domains.kt").createParentDirectories().writeText(
@@ -72,6 +78,7 @@ private object DomainSourcesGenerator {
                     this += "|    override val include: List<String> = listOf(${domain.includes.joinToString { "\"$it\"" }})"
                     this += "|    override val exclude: List<String> = listOf(${domain.excludes.joinToString { "\"$it\"" }})"
                     this += "|    override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(${domain.mustRunAllTestsOnChangesIn.joinToString { "${it}DomainInfo" }}) }"
+                    this += "|    override val team: String = \"${domain.team}\""
                     this += "|}"
                     this += "|"
                 }
@@ -84,7 +91,9 @@ private object DomainSourcesGenerator {
                 }
                 this += "|    )"
                 this += "|}"
-            }.trimMargin()
+                this += "|"
+                this += "|val ignores = listOf<String>(${ignores.joinToString { "\"$it\"" }})"
+            }.trimMargin().trimEnd() + "\n"
         )
 
         outputDir.asFile.toPath().resolve("testSubsets.kt").createParentDirectories().writeText(
@@ -114,7 +123,7 @@ private object DomainSourcesGenerator {
                     this += "|    TestSubset.ContractTestsFor${domain.name},"
                 }
                 this += "|)"
-            }.trimMargin()
+            }.trimMargin().trimEnd() + "\n"
         )
     }
 
@@ -124,6 +133,7 @@ private object DomainSourcesGenerator {
             includes = get("include")?.valueStream()?.toList().orEmpty().map { it.asText() },
             excludes = get("exclude")?.valueStream()?.toList().orEmpty().map { it.asText() },
             mustRunAllTestsOnChangesIn = get("mustRunAllTestsOnChangesIn")?.valueStream()?.toList().orEmpty().map { it.asText() },
+            team = get("team")?.asText() ?: error("Domain '$key' is missing 'team'"),
         )
     }
 
@@ -132,6 +142,7 @@ private object DomainSourcesGenerator {
         val includes: List<String>,
         val excludes: List<String>,
         val mustRunAllTestsOnChangesIn: List<String>,
+        val team: String,
     )
 
     private operator fun StringBuilder.plusAssign(s: String) {

@@ -34,15 +34,39 @@ FILE: annotatedNonLocalDestructuring.kt
         public final fun copy(a: R|kotlin/Int| = this@R|/X|.R|/X.a|, b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
 
     }
-    @R|Ann|(s = R|/x| [evaluated = String(str)]) public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
-    @R|Ann|(s = <Unresolved name: y># [evaluated = <Unresolved name: y>#]) @<ERROR TYPE REF: Symbol not found for Unresolved>() @R|ClassOnly|() @PROPERTY:R|Ann|(s = R|/x| [evaluated = String(str)]) public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+    @R|Ann|(s = R|/x| [evaluated = String(str)]) private final val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+        private get(): R|X|
+    public final val a: R|kotlin/Int| = R|/<destruct>|.R|/X.component1|()
+        public get(): R|kotlin/Int|
+    public final val b: R|kotlin/Int| = R|/<destruct>|.R|/X.component2|()
+        public get(): R|kotlin/Int|
+    @R|Ann|(s = <Unresolved name: y># [evaluated = <Unresolved name: y>#]) @<ERROR TYPE REF: Symbol not found for Unresolved>() @R|ClassOnly|() @PROPERTY:R|Ann|(s = R|/x| [evaluated = String(str)]) private final val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+        private get(): R|X|
+    public final val c: R|kotlin/Int| = R|/<destruct>|.R|/X.component1|()
+        public get(): R|kotlin/Int|
+    public final val d: R|kotlin/Int| = R|/<destruct>|.R|/X.component2|()
+        public get(): R|kotlin/Int|
     public final class C : R|kotlin/Any| {
         public constructor(): R|C| {
             super<R|kotlin/Any|>()
         }
 
-        @R|Ann|(s = R|/x| [evaluated = String(str)]) public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+        @R|Ann|(s = R|/x| [evaluated = String(str)]) private final val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+            private get(): R|X|
 
-        @R|Ann|(s = <Unresolved name: y># [evaluated = <Unresolved name: y>#]) @<ERROR TYPE REF: Symbol not found for Unresolved>() @R|ClassOnly|() @PROPERTY:R|Ann|(s = R|/x| [evaluated = String(str)]) public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+        public final val a: R|kotlin/Int| = R|/C.<destruct>|.R|/X.component1|()
+            public get(): R|kotlin/Int|
+
+        public final val b: R|kotlin/Int| = R|/C.<destruct>|.R|/X.component2|()
+            public get(): R|kotlin/Int|
+
+        @R|Ann|(s = <Unresolved name: y># [evaluated = <Unresolved name: y>#]) @<ERROR TYPE REF: Symbol not found for Unresolved>() @R|ClassOnly|() @PROPERTY:R|Ann|(s = R|/x| [evaluated = String(str)]) private final val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+            private get(): R|X|
+
+        public final val c: R|kotlin/Int| = R|/C.<destruct>|.R|/X.component1|()
+            public get(): R|kotlin/Int|
+
+        public final val d: R|kotlin/Int| = R|/C.<destruct>|.R|/X.component2|()
+            public get(): R|kotlin/Int|
 
     }

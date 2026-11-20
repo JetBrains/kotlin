@@ -72,7 +72,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     override fun getName(): String = displayName
 
     internal val npmDependenciesCollector: KotlinNpmDependenciesCollector =
-        KotlinNpmDependenciesCollector(project.objects)
+        KotlinNpmDependenciesCollector(project.objects, project.providers)
 
     private val dependencyHandler: KotlinDependencyHandler by lazy {
         project.objects.DefaultKotlinDependencyHandler(this, project, npmDependenciesCollector)

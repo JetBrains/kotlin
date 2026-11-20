@@ -28,7 +28,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
     private val includeLocalVariableInformation: Boolean = false,
 ) : BinaryArtifactHandler<A>(testServices, artifactKind, failureDisablesNextSteps, doNotRunIfThereWerePreviousFailures) {
     abstract val debugMode: DebugMode
-    abstract val jsCodeToGetModuleWithBoxFunction: String
+    abstract val jsBindingsForRunningBox: String
     abstract val htmlCodeToIncludeBinaryArtifact: String
 
     abstract fun saveEntryFile(outputDir: File, content: String)
@@ -266,13 +266,13 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
                 }
             }
             
-            $jsCodeToGetModuleWithBoxFunction;
+            $jsBindingsForRunningBox
             
             enableDebugger();
             setBreakpoint(box);
             try {
                 if (box.length) {
-                  box(jsModule.makeEmptyContinuation());
+                  box(makeEmptyContinuation());
                 } else {
                   box();
                 }
@@ -295,12 +295,12 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
                             <script type="module">
                                 let test = document.getElementById("test")
                                 try {
-                                    const jsModule = $jsCodeToGetModuleWithBoxFunction;
+                                    $jsBindingsForRunningBox
                                     try { 
-                                      if (jsModule.box.length) {
-                                        box(jsModule.makeEmptyContinuation());
+                                      if (box.length) {
+                                        box(makeEmptyContinuation());
                                       } else {
-                                        jsModule.box();
+                                        box();
                                       }
                                     } catch(e) { alert(e) }
                                     

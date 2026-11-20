@@ -12,13 +12,13 @@ fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "plugins/allopen/testData") {
-            testClass<AbstractFirPsiBytecodeListingTestForAllOpen> {
+            testClass<AbstractFirLightTreeBytecodeListingTestForAllOpen> {
                 model("bytecodeListing", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
             testClass<AbstractFirLightTreeDiagnosticTestForAllOpen> {
                 model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
-            testClass<AbstractFirPsiDiagnosticTestForAllOpen> {
+            testClass<AbstractLLDiagnosticTestForAllOpen> {
                 model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }

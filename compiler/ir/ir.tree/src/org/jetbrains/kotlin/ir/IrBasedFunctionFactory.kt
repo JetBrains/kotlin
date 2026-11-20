@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
@@ -23,96 +23,16 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
-import org.jetbrains.kotlin.ir.types.defaultTypeWithoutArguments
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
-import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.types.typeWithParameters
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.addFile
-import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
-import java.io.File
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class IrAbstractFunctionFactory {
-    open fun functionClassDescriptor(arity: Int): FunctionClassDescriptor? = null
-    open fun kFunctionClassDescriptor(arity: Int): FunctionClassDescriptor? = null
-    open fun suspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor? = null
-    open fun kSuspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor? = null
-
-    open fun functionClassSignature(arity: Int): IdSignature? = null
-    open fun kFunctionClassSignature(arity: Int): IdSignature? = null
-    open fun suspendFunctionClassSignature(arity: Int): IdSignature? = null
-    open fun kSuspendFunctionClassSignature(arity: Int): IdSignature? = null
-
-    abstract fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
-    abstract fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
-    abstract fun suspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
-    abstract fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass
-
-    private fun SymbolTable.declare(
-        descriptor: FunctionClassDescriptor?,
-        signature: IdSignature?,
-        callback: (IrClassSymbol) -> IrClass,
-    ): IrClass = when {
-        descriptor != null -> {
-            descriptorExtension.declareClass(descriptor) { symbol ->
-                callback(symbol)
-            }
-        }
-        signature != null -> {
-            declareClass(signature, { IrClassSymbolImpl(descriptor = null, signature) }) { symbol ->
-                callback(symbol)
-            }
-        }
-        else -> error("No descriptor or signature was provided")
-    }
-
-    fun functionN(n: Int) = functionN(n) { callback ->
-        val descriptor = functionClassDescriptor(n)
-        val signature = functionClassSignature(n)
-        declare(descriptor, signature, callback)
-    }
-
-    fun kFunctionN(n: Int): IrClass = kFunctionN(n) { callback ->
-        val descriptor = kFunctionClassDescriptor(n)
-        val signature = kFunctionClassSignature(n)
-        declare(descriptor, signature, callback)
-    }
-
-    fun suspendFunctionN(n: Int): IrClass = suspendFunctionN(n) { callback ->
-        val descriptor = suspendFunctionClassDescriptor(n)
-        val signature = suspendFunctionClassSignature(n)
-        declare(descriptor, signature, callback)
-    }
-
-    fun kSuspendFunctionN(n: Int): IrClass = kSuspendFunctionN(n) { callback ->
-        val descriptor = kSuspendFunctionClassDescriptor(n)
-        val signature = kSuspendFunctionClassSignature(n)
-        declare(descriptor, signature, callback)
-    }
-
-    companion object {
-        val classOrigin = IrDeclarationOriginImpl("FUNCTION_INTERFACE_CLASS")
-        val memberOrigin = IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
-        internal const val offset = SYNTHETIC_OFFSET
-
-        internal fun functionClassName(isK: Boolean, isSuspend: Boolean, arity: Int): String =
-            "${if (isK) "K" else ""}${if (isSuspend) "Suspend" else ""}Function$arity"
-    }
-}
 
 private var IrFile.isSyntheticForFunctionInterfaceFile: Boolean? by irAttribute(copyByDefault = true)
 
@@ -124,13 +44,19 @@ class IrBasedFunctionFactory(
     private val symbolTable: SymbolTable,
     private val signatureComputer: (IrDeclaration) -> IdSignature,
     private val onCreateNewClass: (IrClass, IdSignature) -> Unit,
-) : IrAbstractFunctionFactory() {
+) {
     companion object {
+        val classOrigin = IrDeclarationOriginImpl("FUNCTION_INTERFACE_CLASS")
+        val memberOrigin = IrDeclarationOrigin.FUNCTION_INTERFACE_MEMBER
+        internal const val offset = SYNTHETIC_OFFSET
         private const val FUNCTION_TYPE_INTERFACE_DIR = "function-type-interface"
         private const val FUNCTION_TYPE_INTERFACE_FILE = "[K][Suspend]Functions"
 
         val IrPackageFragment.isFunctionInterfaceFile: Boolean
             get() = this is IrFile && this.isSyntheticForFunctionInterfaceFile == true
+
+        internal fun functionClassName(isK: Boolean, isSuspend: Boolean, arity: Int): String =
+            "${if (isK) "K" else ""}${if (isSuspend) "Suspend" else ""}Function$arity"
     }
 
     public var typeSystem: IrTypeSystemContext? = null
@@ -171,19 +97,61 @@ class IrBasedFunctionFactory(
 
     private val irFactory: IrFactory get() = symbolTable.irFactory
 
-    override fun functionClassSignature(arity: Int): IdSignature {
+    private fun buildFunctionN(
+        n: Int,
+        cache: MutableMap<Int, IrClass>,
+        signatureFactory: (Int) -> IdSignature,
+        classFactory: (IrClassSymbol) -> IrClass
+    ): IrClass {
+        return cache.getOrPut(n) {
+            val signature = signatureFactory(n)
+            symbolTable.declareClass(
+                signature,
+                symbolFactory = { IrClassSymbolImpl(signature = signature) },
+                classFactory = { symbol -> classFactory(symbol) }
+            )
+        }
+    }
+
+    fun functionN(n: Int): IrClass {
+        return buildFunctionN(n, functionNMap, ::functionClassSignature) { symbol ->
+            createFunctionClass(symbol, isK = false, isSuspend = false, n, listOf(functionClass), kotlinPackageFragment)
+        }
+    }
+
+    fun kFunctionN(n: Int): IrClass {
+        val functionNClass = functionN(n).symbol
+        return buildFunctionN(n, kFunctionNMap, ::kFunctionClassSignature) { symbol ->
+            createFunctionClass(symbol, isK = true, isSuspend = false, n, listOf(kFunctionClass, functionNClass), kotlinReflectPackageFragment)
+        }
+    }
+
+    fun suspendFunctionN(n: Int): IrClass {
+        return buildFunctionN(n, suspendFunctionNMap, ::suspendFunctionClassSignature) { symbol ->
+            createFunctionClass(symbol, isK = false, isSuspend = true, n, listOf(functionClass), kotlinCoroutinesPackageFragment)
+        }
+    }
+
+    fun kSuspendFunctionN(n: Int): IrClass {
+        val functionNClass = suspendFunctionN(n).symbol
+        return buildFunctionN(n, kSuspendFunctionNMap, ::kSuspendFunctionClassSignature) { symbol ->
+            createFunctionClass(symbol, isK = true, isSuspend = true, n, listOf(kFunctionClass, functionNClass), kotlinReflectPackageFragment)
+        }
+    }
+
+    private fun functionClassSignature(arity: Int): IdSignature {
         return StandardClassIds.FunctionN(arity).toSignature()
     }
 
-    override fun suspendFunctionClassSignature(arity: Int): IdSignature {
+    private fun suspendFunctionClassSignature(arity: Int): IdSignature {
         return StandardClassIds.SuspendFunctionN(arity).toSignature()
     }
 
-    override fun kFunctionClassSignature(arity: Int): IdSignature {
+    private fun kFunctionClassSignature(arity: Int): IdSignature {
         return StandardClassIds.KFunctionN(arity).toSignature()
     }
 
-    override fun kSuspendFunctionClassSignature(arity: Int): IdSignature {
+    private fun kSuspendFunctionClassSignature(arity: Int): IdSignature {
         return StandardClassIds.KSuspendFunctionN(arity).toSignature()
     }
 
@@ -195,40 +163,6 @@ class IrBasedFunctionFactory(
             mask = 0L,
             description = null
         )
-    }
-
-    override fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
-        return functionNMap.getOrPut(arity) {
-            symbolTable.declarator { symbol ->
-                createFunctionClass(symbol, isK = false, isSuspend = false, arity, listOf(functionClass), kotlinPackageFragment)
-            }
-        }
-    }
-
-    override fun suspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
-        return suspendFunctionNMap.getOrPut(arity) {
-            symbolTable.declarator { symbol ->
-                createFunctionClass(symbol, isK = false, isSuspend = true, arity, listOf(functionClass), kotlinCoroutinesPackageFragment)
-            }
-        }
-    }
-
-    override fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
-        val functionNClass = functionN(arity).symbol
-        return kFunctionNMap.getOrPut(arity) {
-            symbolTable.declarator { symbol ->
-                createFunctionClass(symbol, isK = true, isSuspend = false, arity, listOf(kFunctionClass, functionNClass), kotlinReflectPackageFragment)
-            }
-        }
-    }
-
-    override fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
-        val functionNClass = suspendFunctionN(arity).symbol
-        return kSuspendFunctionNMap.getOrPut(arity) {
-            symbolTable.declarator { symbol ->
-                createFunctionClass(symbol, isK = true, isSuspend = true, arity, listOf(kFunctionClass, functionNClass), kotlinReflectPackageFragment)
-            }
-        }
     }
 
     private fun IrTypeParametersContainer.createTypeParameters(n: Int): IrTypeParameter {
@@ -390,8 +324,6 @@ class IrBasedFunctionFactory(
 
     private inner class FunctionTypeFakeOverrideBuilderStrategy: FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
         override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {}
-
-        override fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean = false
 
         override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
             val signature = signatureComputer(function)

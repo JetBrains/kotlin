@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.operations.BuildOperationListener
 import org.gradle.internal.operations.BuildOperationListenerManager
 import org.gradle.internal.operations.DefaultBuildOperationListenerManager
@@ -28,8 +29,9 @@ import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.BuildOperationRecordImpl
 import org.jetbrains.kotlin.gradle.util.readJsonReport
-import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.ObjectInputStream
 import java.nio.file.Files
@@ -37,13 +39,10 @@ import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.io.path.*
 import kotlin.streams.asSequence
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
-import kotlin.test.fail
+import kotlin.test.*
 
 @DisplayName("Build reports")
+@MustRunOnChangesInGradle
 class BuildReportsIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
@@ -53,6 +52,7 @@ class BuildReportsIT : KGPBaseTest() {
     private val GradleProject.reportFile: Path
         get() = projectPath.getSingleFileInDir("build/reports/kotlin-build")
 
+    @TestMetadata("simpleProject")
     @DisplayName("Build report is created")
     @GradleTest
     @JvmGradlePluginTests
@@ -68,6 +68,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Build report output property accepts only certain values")
     @GradleTest
     @JvmGradlePluginTests
@@ -79,6 +80,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Build metrics produces valid report")
     @GradleTest
     @JvmGradlePluginTests
@@ -86,6 +88,7 @@ class BuildReportsIT : KGPBaseTest() {
         testBuildReport("simpleProject", "assemble", gradleVersion)
     }
 
+    @TestMetadata("mppJvmWithJava")
     @DisplayName("Build metrics produces valid report for mpp-jvm")
     @GradleTest
     @JvmGradlePluginTests
@@ -93,6 +96,7 @@ class BuildReportsIT : KGPBaseTest() {
         testBuildReport("mppJvmWithJava", "assemble", gradleVersion)
     }
 
+    @TestMetadata("kotlin-js-package-module-name")
     @DisplayName("Build metrics produces valid report for mpp-js")
     @GradleTest
     @JvmGradlePluginTests
@@ -115,7 +119,6 @@ class BuildReportsIT : KGPBaseTest() {
             "kotlin-js-plugin-project",
             "compileKotlinJs",
             gradleVersion,
-            languageVersion = KotlinVersion.DEFAULT.version,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             disableIsolatedProjects = true,
         )
@@ -130,7 +133,6 @@ class BuildReportsIT : KGPBaseTest() {
             "kotlin-js-plugin-project",
             "compileKotlinJs",
             gradleVersion,
-            languageVersion = KotlinVersion.DEFAULT.version,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             disableIsolatedProjects = true,
             freeCompilerArgs = listOf(
@@ -174,7 +176,6 @@ class BuildReportsIT : KGPBaseTest() {
         project: String,
         task: String,
         gradleVersion: GradleVersion,
-        languageVersion: String = KotlinVersion.DEFAULT.version, // FIXME(KT-69597): Previously hardcoded to language version 2.0.
         disableIsolatedProjects: Boolean = false,
         freeCompilerArgs: List<String> = listOf(),
         expectedReportLines: List<String> = listOf(),
@@ -191,7 +192,6 @@ class BuildReportsIT : KGPBaseTest() {
         ) else defaultBuildOptions
 
         project(project, gradleVersion, buildOptions = buildOptions.copy(buildReport = listOf(buildReportOutput))) {
-
             val buildArguments = if (buildReportOutput == BuildReportType.JSON)
                 arrayOf(task, "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}")
             else arrayOf(task)
@@ -202,22 +202,6 @@ class BuildReportsIT : KGPBaseTest() {
             }
             //Should contain build metrics for all compile kotlin tasks
             reportValidation(KotlinVersion.DEFAULT.version)
-        }
-
-        project(
-            project,
-            gradleVersion,
-            buildOptions = buildOptions.copy(languageVersion = languageVersion, buildReport = listOf(buildReportOutput))
-        ) {
-            val buildArguments = if (buildReportOutput == BuildReportType.JSON)
-                arrayOf(task, "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}")
-            else arrayOf(task)
-            addCompilerArgs(freeCompilerArgs)
-            build(*buildArguments) {
-                assertBuildReportPathIsPrinted()
-            }
-            //Should contain build metrics for all compile kotlin tasks
-            reportValidation(languageVersion)
         }
     }
 
@@ -389,7 +373,7 @@ class BuildReportsIT : KGPBaseTest() {
         fun validateSnapshotSizeMetric() {
             // traverse only the `build` directory files, because Gradle also contains a file with the name `last-build.bin`
             val actualSnapshotSize = Files.walk(projectPath.resolve("build")).use { files ->
-                val knownSnapshotFiles = setOf("last-build.bin", "build-history.bin", "abi-snapshot.bin")
+                val knownSnapshotFiles = setOf("last-build.bin", "build-history.bin")
                 files.asSequence().filter { Files.isRegularFile(it) && it.name in knownSnapshotFiles }.map { Files.size(it) }.sum()
             }
             // the first found line of the report should contain a sum of the metric per all the tasks
@@ -404,6 +388,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Compiler build metrics report is produced")
     @GradleTest
     @JvmGradlePluginTests
@@ -425,6 +410,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("with no kotlin task executed")
     @GradleTest
     @JvmGradlePluginTests
@@ -441,6 +427,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("validation")
     @GradleTest
     @JvmGradlePluginTests
@@ -455,6 +442,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("single build report output")
     @GradleTest
     @JvmGradlePluginTests
@@ -471,6 +459,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("deprecated properties")
     @GradleTest
     @JvmGradlePluginTests
@@ -487,6 +476,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("smoke")
     @GradleTest
     @JvmGradlePluginTests
@@ -498,7 +488,7 @@ class BuildReportsIT : KGPBaseTest() {
             val metricsFile = projectPath.resolve("metrics.bin").toFile()
             build(
                 "compileKotlin",
-                "-Pkotlin.build.report.single_file=${metricsFile.absolutePath}"
+                "-Pkotlin.build.report.single_file=${metricsFile.normalizedAbsolutePath().toString()}"
             )
 
             assertTrue { metricsFile.exists() }
@@ -509,6 +499,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @Suppress("DEPRECATION")
     @DisplayName("BuildMetricsService unsubscribes from BuildOperationListenerManager on close")
     @GradleTest
@@ -572,6 +563,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("custom value limit")
     @GradleTest
     @JvmGradlePluginTests
@@ -591,6 +583,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("build scan listener lazy initialisation")
     @GradleTest
     @JvmGradlePluginTests
@@ -609,6 +602,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("build scan with project isolation")
     @GradleTest
     @JvmGradlePluginTests
@@ -616,7 +610,6 @@ class BuildReportsIT : KGPBaseTest() {
         project(
             "simpleProject", gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
                 isolatedProjects = IsolatedProjectsMode.ENABLED,
                 buildReport = listOf(BuildReportType.FILE, BuildReportType.JSON)
             )
@@ -632,6 +625,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Error file is created")
     @GradleTest
     @JvmGradlePluginTests
@@ -641,6 +635,7 @@ class BuildReportsIT : KGPBaseTest() {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail),
         ) {
 
             val lookupsTab = projectPath.resolve("build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/lookups.tab")
@@ -652,8 +647,9 @@ class BuildReportsIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                     tasks.named("compileKotlin") {
+                        def lookupsTab = file("${lookupsTab.relativeTo(projectPath).invariantSeparatorsPathString}")
                         doLast {
-                            new File("${lookupsTab.toUri().path}").write("Invalid contents")
+                            lookupsTab.write("Invalid contents")
                         }
                     }
                 """.trimIndent()
@@ -687,6 +683,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Error file should not contain compilation exceptions")
     @GradleTest
     @JvmGradlePluginTests
@@ -700,18 +697,17 @@ class BuildReportsIT : KGPBaseTest() {
             validateFusDirectory(
                 "compileKotlin",
                 buildAction = BuildActions.build,
-                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
             )
             val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
             kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
             validateFusDirectory(
                 "compileKotlin",
                 buildAction = BuildActions.buildAndFail,
-                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
             )
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("Error file is not written into .gradle/kotlin/errors")
     @GradleTest
@@ -721,6 +717,7 @@ class BuildReportsIT : KGPBaseTest() {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail),
         ) {
             val kotlinErrorPath = projectPersistentCache.resolve("errors")
             val gradleErrorPath = projectPath.resolve(".gradle/kotlin/errors")
@@ -736,8 +733,9 @@ class BuildReportsIT : KGPBaseTest() {
                 //language=groovy
                 """
                 |tasks.named("compileKotlin") {
+                |    def lookupsTab = file("${lookupsTab.relativeTo(projectPath).invariantSeparatorsPathString}")
                 |    doLast {
-                |       new File("${lookupsTab.toUri().path}").write("Invalid contents")
+                |       lookupsTab.write("Invalid contents")
                 |   }
                 |}
                 """.trimMargin()
@@ -762,6 +760,7 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
 
+    @TestMetadata("simpleProject")
     @DisplayName("build scan metrics validation")
     @JvmGradlePluginTests
     @GradleTest
@@ -778,6 +777,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("build reports work with init script")
     @JvmGradlePluginTests
     @GradleTest
@@ -828,6 +828,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("json report default directory")
     @JvmGradlePluginTests
     @GradleTest
@@ -864,6 +865,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("json report")
     @JvmGradlePluginTests
     @GradleTest
@@ -940,13 +942,13 @@ class BuildReportsIT : KGPBaseTest() {
         return configurationRecords
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("build report should not be overridden")
     @JvmGradlePluginTests
     @GradleTest
     fun testMultipleRuns(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
                 buildReport = listOf(BuildReportType.FILE)
             )
         ) {
@@ -962,6 +964,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("build scan with project isolation")
     @JvmGradlePluginTests
     @GradleTestVersions(
@@ -983,6 +986,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("for build scan with develocity plugin")
     @JvmGradlePluginTests
     @GradleTest
@@ -1030,6 +1034,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-simple")
     @DisplayName("Verify metrics for for 2nd phase native in-process compilation")
     @NativeGradlePluginTests
     @GradleTest
@@ -1059,6 +1064,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-simple")
     @DisplayName("Verify that the metric for native in-process compilation")
     @NativeGradlePluginTests
     @GradleTest
@@ -1092,6 +1098,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-simple")
     @DisplayName("Verify that the metric for native in-process compilation with IR Inliner on 1st phase")
     @NativeGradlePluginTests
     @GradleTest
@@ -1134,6 +1141,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Build metrics on incremental compilation after some change – daemon")
     @GradleTest
     @JvmGradlePluginTests
@@ -1142,6 +1150,7 @@ class BuildReportsIT : KGPBaseTest() {
         doTestMetricsAfterIncrementalChange(gradleVersion, KotlinCompilerExecutionStrategy.DAEMON)
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Build metrics on incremental compilation after some change – in-process")
     @GradleTest
     @JvmGradlePluginTests
@@ -1164,7 +1173,7 @@ class BuildReportsIT : KGPBaseTest() {
                 validateBuildReportFile(
                     baseBuildFileExpectedContents(KotlinVersion.DEFAULT.version), listOf(
                         "Compile iteration:",
-                        "${helloWorldSource.relativeTo(projectPath)} <- was modified since last time",
+                        "${helloWorldSource.relativeTo(projectPath)} <- Modified or added since the last build",
                         "Source changes: Known(modified=[$helloWorldSourcePath], removed=[], forDependencies=false)",
                         "Deleting $helloWorldBinaryPath on clearing cache for $helloWorldSourcePath",
                         "Moving $helloWorldBinaryPath to the stash as",

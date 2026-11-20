@@ -10,7 +10,7 @@ import org.jetbrains.dokka.analysis.test.api.configuration.TestDokkaSourceSet
 /**
  * Declares a capability that an `.md` file can be created in the scope of the implementation.
  */
-interface MdFileCreator {
+internal interface MdFileCreator {
 
     /**
      * Creates an `.md` (Markdown) file.

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationF
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration.AbstractIncorporationConfiguration
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator.TypeVariableFixationReadinessQuality as Q
@@ -353,14 +353,39 @@ class VariableReadinessCalculator(
     ): Boolean {
         val approximatedType = when {
             toSuper -> typeApproximator.approximateToSuperType(
-                type, TypeApproximatorConfiguration.IncorporationConfiguration,
+                type, StubTypesAwareIncorporationConfiguration,
                 c.approximatorCaches,
             )
             else -> typeApproximator.approximateToSubType(
-                type, TypeApproximatorConfiguration.IncorporationConfiguration,
+                type, StubTypesAwareIncorporationConfiguration,
                 c.approximatorCaches,
             )
         } ?: type
-        return approximatedType.contains { it.typeConstructor() === stubConstructor }
+        return approximatedType.containsUnprojectedStub(stubConstructor)
+    }
+
+    // Mirrors the legacy `containsConstrainingTypeWithoutProjection` filter of the second incorporation kind:
+    // a derived constraint like `T <: SomeSelfType<out S>` was dropped there, so only a non-projected
+    // occurrence of the neighbor (`T <: SomeSelfType<S>`) counts as a complex dependency (see KT-91112).
+    // TODO: Reconsider ignoring projected occurrences of the neighbor (KT-91227)
+    context(c: Context)
+    private fun KotlinTypeMarker.containsUnprojectedStub(stubConstructor: TypeConstructorMarker): Boolean {
+        if (this is FlexibleTypeMarker) {
+            return lowerBound().containsUnprojectedStub(stubConstructor) ||
+                    !c.isTriviallyFlexible(this) && upperBound().containsUnprojectedStub(stubConstructor)
+        }
+
+        for (index in 0 until argumentsCount()) {
+            val argument = getArgument(index)
+            val argumentType = argument.getType() ?: continue
+            if (argument.getVariance() == TypeVariance.INV && argumentType.typeConstructor() === stubConstructor) return true
+            if (argumentType.containsUnprojectedStub(stubConstructor)) return true
+        }
+
+        return false
+    }
+
+    private object StubTypesAwareIncorporationConfiguration : AbstractIncorporationConfiguration() {
+        override val stubTypesEqualToAnything: Boolean get() = false
     }
 }

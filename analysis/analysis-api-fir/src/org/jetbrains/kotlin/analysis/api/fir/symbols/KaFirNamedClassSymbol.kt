@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.*
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -93,8 +90,9 @@ internal class KaFirNamedClassSymbol private constructor(
     override val isInline: Boolean
         get() = withValidityAssertion {
             when {
-                backingPsi == null || backingPsi.hasModifier(KtTokens.VALUE_KEYWORD) -> firSymbol.isInlineClass
+                backingPsi == null -> firSymbol.isInlineClass
                 backingPsi.hasModifier(KtTokens.INLINE_KEYWORD) -> true
+                backingPsi.hasModifier(KtTokens.VALUE_KEYWORD) -> firSymbol.isInlineClass
                 else -> false
             }
         }
@@ -104,7 +102,7 @@ internal class KaFirNamedClassSymbol private constructor(
             if (backingPsi != null) {
                 backingPsi.hasModifier(KtTokens.VALUE_KEYWORD) || backingPsi.hasModifier(KtTokens.INLINE_KEYWORD)
             } else {
-                firSymbol.isInlineOrValue
+                firSymbol.isValue
             }
         }
 

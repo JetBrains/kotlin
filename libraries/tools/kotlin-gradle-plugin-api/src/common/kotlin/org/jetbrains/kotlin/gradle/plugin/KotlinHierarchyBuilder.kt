@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_AS_ERROR_MESSAGE
 
 /**
  * Provides a DSL to define the structure of [KotlinSourceSets][KotlinSourceSet] inside the [KotlinSourceSetTree].
@@ -292,6 +293,7 @@ interface KotlinHierarchyBuilder {
      *
      * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
      */
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     fun withWatchosX64()
 
     /**
@@ -320,6 +322,7 @@ interface KotlinHierarchyBuilder {
      *
      * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
      */
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     fun withTvosX64()
 
     /**
@@ -348,6 +351,7 @@ interface KotlinHierarchyBuilder {
      *
      * For more information, see [Native targets overview](https://kotlinlang.org/docs/native-target-support.html).
      */
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     fun withMacosX64()
 
     /**

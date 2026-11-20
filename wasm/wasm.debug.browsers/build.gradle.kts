@@ -58,7 +58,7 @@ val npmBuild = tasks.register("npmBuild", NpxTask::class) {
 
     command.set("rollup")
     workingDir.set(projectDir)
-    args.set(listOf("-c", rollupConfigMjsFile.name))
+    args.set(listOf("-c", rollupConfigMjsFile.name, "--silent"))
     environment.set(mapOf("NODE_OPTIONS" to "--disable-warning=ExperimentalWarning"))
 
     outputs.file("build/out/custom-formatters.js")
@@ -76,6 +76,7 @@ tasks {
         }
 
         args.add("--ignore-scripts")
+        args.add("--silent")
     }
 
     clean {

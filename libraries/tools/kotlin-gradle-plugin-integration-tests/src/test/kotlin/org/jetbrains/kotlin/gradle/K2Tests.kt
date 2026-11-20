@@ -5,36 +5,21 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.kotlin.dsl.kotlin
-import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Disabled
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
-import kotlin.test.Ignore
 import kotlin.test.assertEquals
-
-// FIXME(KT-69597): Previously hardcoded to language version 2.0.
-@Disabled("Used for local testing only")
-@MppGradlePluginTests
-@DisplayName("K2: Hierarchical multiplatform")
-class K2HierarchicalMppIT : HierarchicalMppIT()
-
-// FIXME(KT-69597): Previously hardcoded to language version 2.0.
-@Disabled("Used for local testing only")
-class K2CommonizerIT : CommonizerIT()
-
-// FIXME(KT-69597): Previously hardcoded to language version 2.0.
-@Ignore
-class K2CommonizerHierarchicalIT : CommonizerHierarchicalIT()
 
 @MppGradlePluginTests
 @DisplayName("K2: custom tests")
-class CustomK2Tests : KGPBaseTest() {
-    override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copyEnsuringK2()
-
+@MustRunOnChangesInGradle
+@MustRunOnChangesInFrontend
+class CustomTests : KGPBaseTest() {
+    @TestMetadata("k2-serialization-plugin-in-common-sourceset")
     @GradleTest
     @DisplayName("Serialization plugin in common source set. KT-56911")
     fun testHmppDependenciesInJsTests(gradleVersion: GradleVersion) {
@@ -51,6 +36,7 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-mpp-without-js")
     @GradleTest
     @DisplayName("HMPP compilation without JS target. KT-57376, KT-57377, KT-57635, KT-57654")
     fun testHmppCompilationWithoutJsTarget(gradleVersion: GradleVersion) {
@@ -62,6 +48,7 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-native-intermediate-metadata")
     @GradleTest
     @DisplayName("Native metadata of intermediate with reference to internal in common. KT-58219")
     fun nativeMetadataOfIntermediateWithReferenceToInternalInCommon(gradleVersion: GradleVersion) {
@@ -73,6 +60,7 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-native-intermediate-multiple-targets")
     @GradleTest
     @DisplayName("Native metadata of intermediate with multiple targets. KT-61461")
     fun nativeMetadataOfIntermediateWithMultipleTargets(gradleVersion: GradleVersion) {
@@ -84,6 +72,7 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-581450-mpp-native-shared-crash")
     @GradleTest
     @DisplayName("Compiling shared native source with FirFakeOverrideGenerator referencing a common entity. KT-58145")
     fun kt581450MppNativeSharedCrash(gradleVersion: GradleVersion) {
@@ -100,6 +89,7 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-58444-native-shared-constant-intrinsic")
     @GradleTest
     @DisplayName("Compiling shared native source with intrinsic initializer from common source set in Native-shared source set. KT-58444")
     fun kt58444NativeSharedConstantIntrinsic(gradleVersion: GradleVersion) {
@@ -116,6 +106,7 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-java-dep-unresolved-annotation-argument")
     @GradleTest
     @DisplayName("Java binary dependency class contains unresolved annotation argument. KT-60181")
     fun kt60181JavaDependencyAnnotatedWithUnresolved(gradleVersion: GradleVersion) {
@@ -132,6 +123,7 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-mpp-opt-in-in-platform")
     @GradleTest
     @DisplayName("All source sets have opt-in for annotation defined in platform source set. KT-60755")
     fun kt60755OptInDefinedInPlatform(gradleVersion: GradleVersion) {
@@ -149,6 +141,7 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-serialization-plugin-in-common-sourceset")
     @GradleTest
     @DisplayName("Common metadata compilation. KT-60943")
     fun kt60943CommonMetadataCompilation(gradleVersion: GradleVersion) {
@@ -165,6 +158,7 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-kt-61540-expect-actual-discrimination")
     @GradleTest
     @DisplayName("Common metadata compilation (expect actual discrimination). KT-61540")
     fun kt60438MetadataExpectActualDiscrimination(gradleVersion: GradleVersion) {
@@ -179,6 +173,7 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-no-overload-resolution-ambiguity-between-expect-and-non-expect-in-native")
     @GradleTest
     @DisplayName("No overload resolution ambiguity between expect and non-expect in native")
     fun kt61778NoOverloadResolutionAmbiguityBetweenExpectAndNonExpectInNative(gradleVersion: GradleVersion) {
@@ -199,6 +194,7 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-native-metadata-compilation-with-constant-expressions")
     @GradleTest
     @DisplayName("Native metadata compilation with constant expressions (KT-63835)")
     fun nativeMetadataCompilationWithConstantExpressions(gradleVersion: GradleVersion) {
@@ -209,6 +205,7 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-common-native-against-other-klib")
     @GradleTest
     @DisplayName("Native metadata compilation against other klib (KT-65840)")
     fun nativeMetadataCompilationWithAgainstOtherKlib(gradleVersion: GradleVersion) {
@@ -217,8 +214,7 @@ class CustomK2Tests : KGPBaseTest() {
                 kotlinMultiplatform.apply {
                     applyDefaultHierarchyTemplate()
                     linuxX64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                    macosX64()
+                    macosArm64()
 
                     compilerOptions.freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
                 }
@@ -233,9 +229,11 @@ class CustomK2Tests : KGPBaseTest() {
 @NativeGradlePluginTests
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("K2: custom MacOS tests")
-class CustomK2MacOSTests : KGPBaseTest() {
-    override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copyEnsuringK2()
+@MustRunOnChangesInGradle
+@MustRunOnChangesInFrontend
+class CustomMacOSTests : KGPBaseTest() {
 
+    @TestMetadata("k2-universal-metadata-compilation-with-constant-expressions")
     @GradleTest
     @DisplayName("Universal metadata compilation with constant expressions (KT-63835)")
     fun universalMetadataCompilationWithConstantExpressions(gradleVersion: GradleVersion) {

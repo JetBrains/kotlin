@@ -4,10 +4,28 @@ public final class A /* test.A*/ {
 
 public abstract class ATMap /* test.ATMap*/<T>  implements java.util.Map<@org.jetbrains.annotations.NotNull() test.A, T>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
+  public T compute(@org.jetbrains.annotations.NotNull() test.A, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>);//  compute(@org.jetbrains.annotations.NotNull() test.A, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>)
+
+  @java.lang.Override()
+  public T computeIfAbsent(@org.jetbrains.annotations.NotNull() test.A, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() test.A, ? extends T>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() test.A, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() test.A, ? extends T>)
+
+  @java.lang.Override()
+  public T computeIfPresent(@org.jetbrains.annotations.NotNull() test.A, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() test.A, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>)
+
+  @java.lang.Override()
+  public T merge(@org.jetbrains.annotations.NotNull() test.A, T, java.util.function.BiFunction<? super T, ? super T, ? extends T>);//  merge(@org.jetbrains.annotations.NotNull() test.A, T, java.util.function.BiFunction<? super T, ? super T, ? extends T>)
+
+  @java.lang.Override()
   public T put(@org.jetbrains.annotations.NotNull() test.A, T);//  put(@org.jetbrains.annotations.NotNull() test.A, T)
 
   @java.lang.Override()
+  public T putIfAbsent(@org.jetbrains.annotations.NotNull() test.A, T);//  putIfAbsent(@org.jetbrains.annotations.NotNull() test.A, T)
+
+  @java.lang.Override()
   public T remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public T replace(@org.jetbrains.annotations.NotNull() test.A, T);//  replace(@org.jetbrains.annotations.NotNull() test.A, T)
 
   @java.lang.Override()
   public abstract T get(@org.jetbrains.annotations.NotNull() test.A);//  get(@org.jetbrains.annotations.NotNull() test.A)
@@ -26,6 +44,12 @@ public abstract class ATMap /* test.ATMap*/<T>  implements java.util.Map<@org.je
 
   @java.lang.Override()
   public abstract java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, T>> getEntries();//  getEntries()
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
+  @java.lang.Override()
+  public boolean replace(@org.jetbrains.annotations.NotNull() test.A, T, T);//  replace(@org.jetbrains.annotations.NotNull() test.A, T, T)
 
   @java.lang.Override()
   public final T get(java.lang.Object);//  get(java.lang.Object)
@@ -50,6 +74,9 @@ public abstract class ATMap /* test.ATMap*/<T>  implements java.util.Map<@org.je
 
   @java.lang.Override()
   public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends T>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends T>)
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>);//  replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>)
 
   public  ATMap();//  .ctor()
 }
@@ -76,10 +103,28 @@ public abstract class ATMap2 /* test.ATMap2*/<T>  implements java.util.Map<@org.
   public final T get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
+  public T compute(@org.jetbrains.annotations.NotNull() test.A, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>);//  compute(@org.jetbrains.annotations.NotNull() test.A, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>)
+
+  @java.lang.Override()
+  public T computeIfAbsent(@org.jetbrains.annotations.NotNull() test.A, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() test.A, ? extends T>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() test.A, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() test.A, ? extends T>)
+
+  @java.lang.Override()
+  public T computeIfPresent(@org.jetbrains.annotations.NotNull() test.A, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() test.A, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>)
+
+  @java.lang.Override()
+  public T merge(@org.jetbrains.annotations.NotNull() test.A, T, java.util.function.BiFunction<? super T, ? super T, ? extends T>);//  merge(@org.jetbrains.annotations.NotNull() test.A, T, java.util.function.BiFunction<? super T, ? super T, ? extends T>)
+
+  @java.lang.Override()
   public T put(@org.jetbrains.annotations.NotNull() test.A, T);//  put(@org.jetbrains.annotations.NotNull() test.A, T)
 
   @java.lang.Override()
+  public T putIfAbsent(@org.jetbrains.annotations.NotNull() test.A, T);//  putIfAbsent(@org.jetbrains.annotations.NotNull() test.A, T)
+
+  @java.lang.Override()
   public T remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public T replace(@org.jetbrains.annotations.NotNull() test.A, T);//  replace(@org.jetbrains.annotations.NotNull() test.A, T)
 
   @java.lang.Override()
   public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  containsKey(@org.jetbrains.annotations.NotNull() test.A)
@@ -89,6 +134,12 @@ public abstract class ATMap2 /* test.ATMap2*/<T>  implements java.util.Map<@org.
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
+  @java.lang.Override()
+  public boolean replace(@org.jetbrains.annotations.NotNull() test.A, T, T);//  replace(@org.jetbrains.annotations.NotNull() test.A, T, T)
 
   @java.lang.Override()
   public final boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.Object);//  containsKey(java.lang.Object)
@@ -113,6 +164,9 @@ public abstract class ATMap2 /* test.ATMap2*/<T>  implements java.util.Map<@org.
 
   @java.lang.Override()
   public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends T>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends T>)
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>);//  replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>)
 
   public  ATMap2();//  .ctor()
 }
@@ -139,13 +193,31 @@ public class ATMap3 /* test.ATMap3*/<T>  implements java.util.Map<@org.jetbrains
   public final T get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
-  public T getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.Object, T);//  getOrDefault(java.lang.Object, T)
+  public T compute(@org.jetbrains.annotations.NotNull() test.A, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>);//  compute(@org.jetbrains.annotations.NotNull() test.A, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>)
+
+  @java.lang.Override()
+  public T computeIfAbsent(@org.jetbrains.annotations.NotNull() test.A, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() test.A, ? extends T>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() test.A, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() test.A, ? extends T>)
+
+  @java.lang.Override()
+  public T computeIfPresent(@org.jetbrains.annotations.NotNull() test.A, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() test.A, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>)
+
+  @java.lang.Override()
+  public T getOrDefault(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A, T);//  getOrDefault(@org.jetbrains.annotations.NotNull() test.A, T)
+
+  @java.lang.Override()
+  public T merge(@org.jetbrains.annotations.NotNull() test.A, T, java.util.function.BiFunction<? super T, ? super T, ? extends T>);//  merge(@org.jetbrains.annotations.NotNull() test.A, T, java.util.function.BiFunction<? super T, ? super T, ? extends T>)
 
   @java.lang.Override()
   public T put(@org.jetbrains.annotations.NotNull() test.A, T);//  put(@org.jetbrains.annotations.NotNull() test.A, T)
 
   @java.lang.Override()
+  public T putIfAbsent(@org.jetbrains.annotations.NotNull() test.A, T);//  putIfAbsent(@org.jetbrains.annotations.NotNull() test.A, T)
+
+  @java.lang.Override()
   public T remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public T replace(@org.jetbrains.annotations.NotNull() test.A, T);//  replace(@org.jetbrains.annotations.NotNull() test.A, T)
 
   @java.lang.Override()
   public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  containsKey(@org.jetbrains.annotations.NotNull() test.A)
@@ -155,6 +227,15 @@ public class ATMap3 /* test.ATMap3*/<T>  implements java.util.Map<@org.jetbrains
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
+  @java.lang.Override()
+  public boolean replace(@org.jetbrains.annotations.NotNull() test.A, T, T);//  replace(@org.jetbrains.annotations.NotNull() test.A, T, T)
+
+  @java.lang.Override()
+  public final T getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.Object, T);//  getOrDefault(java.lang.Object, T)
 
   @java.lang.Override()
   public final boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.Object);//  containsKey(java.lang.Object)
@@ -179,6 +260,9 @@ public class ATMap3 /* test.ATMap3*/<T>  implements java.util.Map<@org.jetbrains
 
   @java.lang.Override()
   public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends T>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends T>)
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>);//  replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() test.A, ? super T, ? extends T>)
 
   public  ATMap3();//  .ctor()
 }

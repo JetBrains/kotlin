@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime.pluginSandboxAnnotationsJvmForTests
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime.pluginSandboxJarForTests
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
+import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.io.File
 
 abstract class AbstractIncrementalJvmWithPluginCompilerRunnerTest : AbstractIncrementalJvmCompilerRunnerTest() {
@@ -20,4 +21,8 @@ abstract class AbstractIncrementalJvmWithPluginCompilerRunnerTest : AbstractIncr
             classpath += "${File.pathSeparator}$annotationsJar"
             pluginClasspaths = arrayOf(pluginJar)
         }
+}
+
+abstract class AbstractIncrementalJvmWithPluginRelocatableCachesCompilerRunnerTest : AbstractIncrementalJvmWithPluginCompilerRunnerTest() {
+    override val fileLocations: FileLocations get() = FileLocations(workingDir, workingDir)
 }

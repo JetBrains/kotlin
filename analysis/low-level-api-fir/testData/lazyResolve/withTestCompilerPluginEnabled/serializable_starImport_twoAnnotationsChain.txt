@@ -276,7 +276,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(SUPER_TYPES)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -306,7 +306,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(SUPER_TYPES)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -336,7 +336,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(SUPER_TYPES)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -366,7 +366,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(SUPER_TYPES)] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }

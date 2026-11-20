@@ -43,6 +43,9 @@ class FirRegularTowerDataContexts private constructor(
     val currentContext: FirTowerDataContext?
         get() = modeMap[activeMode]
 
+    val companionBlockContext: FirTowerDataContext?
+        get() = modeMap[COMPANION_BLOCK]
+
     fun replaceCurrentlyActiveContext(newContext: FirTowerDataContext): FirRegularTowerDataContexts {
         val modeMap = EnumMap<FirTowerDataMode, FirTowerDataContext>(FirTowerDataMode::class.java)
         modeMap.putAll(this.modeMap)
@@ -67,7 +70,7 @@ class FirRegularTowerDataContexts private constructor(
     }
 
     fun forCompanionBlock(): FirRegularTowerDataContexts {
-        return modeMap[FirTowerDataMode.COMPANION_BLOCK]?.let { FirRegularTowerDataContexts(regular = it) } ?: this
+        return companionBlockContext?.let { FirRegularTowerDataContexts(regular = it) } ?: this
     }
 
     companion object {

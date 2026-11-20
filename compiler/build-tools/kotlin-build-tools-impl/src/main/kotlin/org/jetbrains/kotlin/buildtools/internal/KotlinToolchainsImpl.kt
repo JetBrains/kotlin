@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.konan.NativePlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationToolchainImpl
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.buildtools.internal.classloading.LruClassLoadersCach
 import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.konan.NativePlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -27,7 +29,7 @@ import java.util.concurrent.*
 private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
 private const val PROPERTY_CLASSLOADERS_CACHE_SIZE = "kotlin.buildtools.classloaders.cache.size"
 
-internal class KotlinToolchainsImpl() : KotlinToolchains {
+internal class KotlinToolchainsImpl : KotlinToolchains {
     val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
     val classloadersCache = LruClassLoadersCache(
         System.getProperty(PROPERTY_CLASSLOADERS_CACHE_SIZE)?.toIntOrNull() ?: DEFAULT_CLASSLOADERS_CACHE_SIZE,
@@ -42,6 +44,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
                 JsPlatformToolchain::class.java -> JsPlatformToolchainImpl(getCompilerVersion())
                 WasmPlatformToolchain::class.java -> WasmPlatformToolchainImpl(getCompilerVersion())
                 KotlinMetadataPlatformToolchain::class.java -> KotlinMetadataPlatformToolchainImpl(getCompilerVersion())
+                NativePlatformToolchain::class.java -> NativePlatformToolchainImpl(getCompilerVersion())
                 CriToolchain::class.java -> CriToolchainImpl()
                 AbiValidationToolchain::class.java -> AbiValidationToolchainImpl()
                 else -> error("Unsupported platform toolchain type: $type.")
@@ -71,6 +74,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         override val projectId: ProjectId,
         val classloadersCache: LruClassLoadersCache,
     ) : KotlinToolchains.BuildSession {
+        private val closeableGuard = CloseableGuard(this)
         private val sessionIsAliveFlagFile = lazy { createSessionIsAliveFlagFile() }
         private val executorDelegate = lazy {
             Executors.newCachedThreadPool()
@@ -90,6 +94,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         }
 
         override fun <R> executeOperation(operation: BuildOperation<R>): R {
+            closeableGuard.requireNotClosed()
             return executeOperation(operation, logger = null)
         }
 
@@ -98,10 +103,11 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             executionPolicy: ExecutionPolicy,
             logger: KotlinLogger?,
         ): R {
+            closeableGuard.requireNotClosed()
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
             val operationBody: Callable<R> = {
                 val classloadersCacheWithLogger =
-                    classloadersCache.takeIf { operation[BuildOperationImpl.ENABLE_CLASSLOADER_CACHE] }?.withLogger(logger)
+                    classloadersCache.takeIf { operation.enableClassloaderCache }?.withLogger(logger)
                 operation.execute(
                     projectId,
                     executionPolicy,
@@ -134,16 +140,18 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         }
 
         override fun close() {
-            if (applicationEnvironmentPin.isInitialized()) {
-                applicationEnvironmentPin.value.close()
+            closeableGuard.close {
+                if (applicationEnvironmentPin.isInitialized()) {
+                    applicationEnvironmentPin.value.close()
+                }
+                if (executorDelegate.isInitialized()) {
+                    executor.shutdown()
+                }
+                if (sessionIsAliveFlagFile.isInitialized()) {
+                    sessionIsAliveFlagFile.value.delete()
+                }
+                daemonConnectionRegistry.close()
             }
-            if (executorDelegate.isInitialized()) {
-                executor.shutdown()
-            }
-            if (sessionIsAliveFlagFile.isInitialized()) {
-                sessionIsAliveFlagFile.value.delete()
-            }
-            daemonConnectionRegistry.close()
         }
     }
 

@@ -7,7 +7,7 @@ package org.jetbrains.dokka.model.doc
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.WithChildren
 
-public sealed class DocTag : WithChildren<DocTag> {
+internal sealed class DocTag : WithChildren<DocTag> {
     public abstract val params: Map<String, String>
 
     public companion object {
@@ -15,363 +15,362 @@ public sealed class DocTag : WithChildren<DocTag> {
     }
 }
 
-public data class A(
+internal data class A(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Big(
+internal data class Big(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class B(
+internal data class B(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class BlockQuote(
+internal data class BlockQuote(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public object Br : DocTag() {
+internal object Br : DocTag() {
     override val children: List<DocTag> = emptyList()
     override val params: Map<String, String> = emptyMap()
 }
 
-public data class Cite(
+internal data class Cite(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public sealed class Code : DocTag()
+internal sealed class Code : DocTag()
 
-public data class CodeInline(
+internal data class CodeInline(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : Code()
 
-public data class CodeBlock(
+internal data class CodeBlock(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : Code()
 
-public data class CustomDocTag(
+internal data class CustomDocTag(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap(),
     val name: String
 ) : DocTag()
 
-public data class Dd(
+internal data class Dd(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Dfn(
+internal data class Dfn(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Dir(
+internal data class Dir(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Div(
+internal data class Div(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Dl(
+internal data class Dl(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class DocumentationLink(
+internal data class DocumentationLink(
     val dri: DRI,
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Dt(
+internal data class Dt(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Em(
+internal data class Em(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Font(
+internal data class Font(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Footer(
+internal data class Footer(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Frame(
+internal data class Frame(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class FrameSet(
+internal data class FrameSet(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class H1(
+internal data class H1(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class H2(
+internal data class H2(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class H3(
+internal data class H3(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class H4(
+internal data class H4(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class H5(
+internal data class H5(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class H6(
+internal data class H6(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Head(
+internal data class Head(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Header(
+internal data class Header(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public object HorizontalRule : DocTag() {
+internal object HorizontalRule : DocTag() {
     override val children: List<DocTag> = emptyList()
     override val params: Map<String, String> = emptyMap()
 }
 
-public data class Html(
+internal data class Html(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class I(
+internal data class I(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class IFrame(
+internal data class IFrame(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Img(
+internal data class Img(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Index(
+internal data class Index(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Input(
+internal data class Input(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Li(
+internal data class Li(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Link(
+internal data class Link(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Listing(
+internal data class Listing(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Main(
+internal data class Main(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Mark(
+internal data class Mark(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Menu(
+internal data class Menu(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Meta(
+internal data class Meta(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Nav(
+internal data class Nav(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class NoFrames(
+internal data class NoFrames(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class NoScript(
+internal data class NoScript(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Ol(
+internal data class Ol(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class P(
+internal data class P(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Pre(
+internal data class Pre(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Script(
+internal data class Script(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Section(
+internal data class Section(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Small(
+internal data class Small(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Span(
+internal data class Span(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Strikethrough(
+internal data class Strikethrough(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Strong(
+internal data class Strong(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Sub(
+internal data class Sub(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Sup(
+internal data class Sup(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Table(
+internal data class Table(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Text(
+internal data class Text(
     val body: String = "",
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class TBody(
+internal data class TBody(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Td(
+internal data class Td(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class TFoot(
+internal data class TFoot(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Th(
+internal data class Th(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class THead(
+internal data class THead(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Title(
+internal data class Title(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Tr(
+internal data class Tr(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Tt(
+internal data class Tt(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class U(
+internal data class U(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Ul(
+internal data class Ul(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Var(
+internal data class Var(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
 
-public data class Caption(
+internal data class Caption(
     override val children: List<DocTag> = emptyList(),
     override val params: Map<String, String> = emptyMap()
 ) : DocTag()
-

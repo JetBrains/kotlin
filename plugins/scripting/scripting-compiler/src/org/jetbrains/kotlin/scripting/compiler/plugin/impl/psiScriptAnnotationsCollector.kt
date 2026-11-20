@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -66,11 +68,9 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.api.dependencies
-import kotlin.script.experimental.api.hostConfiguration
 import kotlin.script.experimental.api.refineConfigurationOnAnnotations
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
-import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.util.classpathFromClass
 
@@ -99,18 +99,18 @@ class PsiScriptAnnotationsCollector(
         // the annotation resolution session obtains the script's configuration through the provider in the host configuration
         val baseHostConfiguration =
             hostConfiguration.withCompilationConfigurationProvider(SingleScriptCompilationConfigurationProvider(compilationConfiguration))
-        val scriptHostConfiguration =
-            compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration].withDefaultsFrom(baseHostConfiguration)
+        val scriptHostConfiguration = effectiveHostConfiguration(baseHostConfiguration, compilationConfiguration)
         val classpath = classpathFor(getRegularClasspath(scriptFile), compilationConfiguration, scriptHostConfiguration)
+        val getAnnotationSession: AnnotationResolutionSessionProvider = { _, _ ->
+            createAnnotationResolutionSession(scriptFile.project, classpath, scriptHostConfiguration)
+        }
         return collectAndResolveScriptAnnotationsViaFir(
             KtFileScriptSource(scriptFile),
             compilationConfiguration,
             baseHostConfiguration,
-            getSessionForAnnotationResolution = { _, _ ->
-                createAnnotationResolutionSession(scriptFile.project, classpath, scriptHostConfiguration)
-            },
+            getAnnotationSession,
             convertToFir = SourceCode::convertToFirViaPsi,
-            tolerateInvalidAnnotations = true,
+            reportInvalidAnnotations = true,
         )
     }
 }
@@ -148,6 +148,7 @@ private fun createAnnotationResolutionSession(
 ): FirSession {
     val configuration = CompilerConfiguration.create().apply {
         put(JVMConfigurationKeys.NO_JDK, true)
+        parserMode = ParserMode.Psi // The annotations are resolved from the PSI of the script (`KtFileScriptSource`), KT-91411
         scriptingHostConfiguration = hostConfiguration
     }
     val fileManager = VirtualFileManager.getInstance()
@@ -167,7 +168,7 @@ private fun createAnnotationResolutionSession(
         roots.map { it.file },
         JvmDependenciesIndexImpl(roots),
     ) { scope ->
-        JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply { addRoots(roots, configuration) }
+        JvmPackagePartProvider(configuration.languageVersionSettings) { it in scope }.apply { addRoots(roots, configuration) }
     }
     val sessionFactoryContext = FirJvmSessionFactory.Context(
         configuration = configuration,
@@ -217,7 +218,7 @@ private class AnnotationResolutionProjectEnvironment(
     override fun getJavaModuleResolver(): JavaModuleResolver = NoJavaModulesResolver
 
     override fun getKotlinClassFinder(classpath: JvmClasspath): KotlinClassFinder =
-        CliVirtualFileFinder(index, scope, enableSearchInCtSym = false, perfManager = null)
+        CliVirtualFileFinder(index, { it in scope }, enableSearchInCtSym = false, perfManager = null)
 
     override fun getPackagePartProvider(classpath: JvmClasspath): PackagePartProvider =
         getPackagePartProviderFn(scope)

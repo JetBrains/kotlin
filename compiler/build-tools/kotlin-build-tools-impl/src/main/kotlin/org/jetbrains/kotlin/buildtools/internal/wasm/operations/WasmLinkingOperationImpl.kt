@@ -6,48 +6,49 @@
 package org.jetbrains.kotlin.buildtools.internal.wasm.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.WasmArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
-internal class WasmLinkingOperationImpl private constructor(
-    override val options: Options = Options(WasmLinkingOperation::class),
-    override val klib: Path,
-    override val destination: Path,
-    compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments),
+internal class WasmLinkingOperationImpl : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>,
     WasmLinkingOperation, WasmLinkingOperation.Builder,
     DeepCopyable<WasmLinkingOperationImpl> {
+    override val options: Options
+    override val klib: Path
+    override val destination: Path
+    override val compilerArguments: WasmArgumentsImpl
+
     constructor(
         klib: Path,
         destination: Path,
-        compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-    ) : this(
-        options = Options(WasmLinkingOperation::class),
-        klib = klib,
-        destination = destination,
-        compilerArguments = compilerArguments,
-    ) {
+        compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl()
+    ) : super() {
+        this.options = Options(WasmLinkingOperation::class)
+        this.klib = klib
+        this.destination = destination
+        this.compilerArguments = compilerArguments
         initializeOptions(this::class, options)
+    }
+
+    private constructor(other: WasmLinkingOperationImpl) : super(other) {
+        this.options = other.options.deepCopy()
+        this.klib = other.klib
+        this.destination = other.destination
+        this.compilerArguments = other.compilerArguments.deepCopy()
     }
 
     override fun toBuilder(): WasmLinkingOperation.Builder = deepCopy()
 
-    override fun deepCopy(): WasmLinkingOperationImpl {
-        return WasmLinkingOperationImpl(
-            options.deepCopy(),
-            klib,
-            destination,
-            compilerArguments.deepCopy(),
-        )
-    }
+    override fun deepCopy(): WasmLinkingOperationImpl = WasmLinkingOperationImpl(this)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: WasmLinkingOperation.Option<V>): V = options[key]
@@ -102,7 +103,8 @@ internal class WasmLinkingOperationImpl private constructor(
 
     override fun compileIncrementallyInProcess(
         arguments: KotlinWasmCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext
     ): CompilationResult {
         error("Linking doesn't support incremental compilation")

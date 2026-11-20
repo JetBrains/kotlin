@@ -64,15 +64,21 @@ public class SourceLikeNonLocalDeclarationAnchorTestGenerated extends AbstractSo
   }
 
   @Test
-  @TestMetadata("destructuringDeclarations.kt")
-  public void testDestructuringDeclarations() {
-    run("destructuringDeclarations.kt");
+  @TestMetadata("danglingModifierLists.kt")
+  public void testDanglingModifierLists() {
+    run("danglingModifierLists.kt");
   }
 
   @Test
-  @TestMetadata("destructuringDeclarationsRepl.repl.kts")
-  public void testDestructuringDeclarationsRepl_repl() {
-    run("destructuringDeclarationsRepl.repl.kts");
+  @TestMetadata("danglingModifierListsScript.kts")
+  public void testDanglingModifierListsScript() {
+    run("danglingModifierListsScript.kts");
+  }
+
+  @Test
+  @TestMetadata("destructuringDeclarations.kt")
+  public void testDestructuringDeclarations() {
+    run("destructuringDeclarations.kt");
   }
 
   @Test
@@ -139,12 +145,6 @@ public class SourceLikeNonLocalDeclarationAnchorTestGenerated extends AbstractSo
   @TestMetadata("localFunctionInsideSuperEntryCall.kt")
   public void testLocalFunctionInsideSuperEntryCall() {
     run("localFunctionInsideSuperEntryCall.kt");
-  }
-
-  @Test
-  @TestMetadata("replSnippet.repl.kts")
-  public void testReplSnippet_repl() {
-    run("replSnippet.repl.kts");
   }
 
   @Test

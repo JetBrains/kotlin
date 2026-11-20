@@ -31,7 +31,7 @@ class SampleRewriterTest {
      * _Note:_ it would be nice to rewrite it to `for(i in it) { println(i) }`
      * - ignore import directive `samples.*` and  `samples.Sample`
      */
-    class SomeSampleRewriterPlugin : DokkaPlugin() {
+    internal class SomeSampleRewriterPlugin : DokkaPlugin() {
         @Suppress("UNUSED_PARAMETER")
         class DefaultSampleRewriter(ctx: DokkaContext) : SampleRewriter {
             private val importsToIgnore = arrayOf("samples.*", "samples.Sample")
@@ -422,7 +422,7 @@ class SampleRewriterTest {
         }
     }
 
-    class ConstructorSampleRewriterPlugin : DokkaPlugin() {
+    internal class ConstructorSampleRewriterPlugin : DokkaPlugin() {
         @Suppress("UNUSED_PARAMETER")
         class ConstructorSampleRewriter(ctx: DokkaContext) : SampleRewriter {
 
@@ -499,7 +499,7 @@ class SampleRewriterTest {
 
 
 
-    class ExceptionSampleRewriterPlugin : DokkaPlugin() {
+    internal class ExceptionSampleRewriterPlugin : DokkaPlugin() {
         @Suppress("UNUSED_PARAMETER")
         class ConstructorSampleRewriter(ctx: DokkaContext) : SampleRewriter {
 

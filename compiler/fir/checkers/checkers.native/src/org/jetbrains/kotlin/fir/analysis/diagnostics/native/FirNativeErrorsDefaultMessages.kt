@@ -100,7 +100,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INVALID_OBJC_NAME, "'@ObjCName' must have a 'name' and/or 'swiftName'.")
         map.put(EMPTY_OBJC_NAME, "Empty '@ObjCName' names aren't supported.")
         map.put(INVALID_OBJC_NAME_CHARS, "''@ObjCName'' contains illegal characters ''{0}''.", TO_STRING)
-        map.put(INVALID_OBJC_NAME_FIRST_CHAR, "''@ObjCName'' contains illegal first characters ''{0}''.", TO_STRING)
+        map.put(INVALID_OBJC_NAME_FIRST_CHAR, "''@ObjCName'' contains illegal first character ''{0}''.", TO_STRING)
         map.put(
             INCOMPATIBLE_OBJC_NAME_OVERRIDE,
             "Member ''{0}'' inherits inconsistent ''@ObjCName'' from:{1}",
@@ -110,7 +110,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INAPPLICABLE_EXACT_OBJC_NAME, "Exact '@ObjCName' is only applicable to classes, objects, and interfaces.")
         map.put(MISSING_EXACT_OBJC_NAME, "Exact '@ObjCName' is required to have an ObjC name.")
         map.put(NON_LITERAL_OBJC_NAME_ARG, "'@ObjCName' accepts only literal 'String' and 'Boolean' values.")
-        map.put(SUBTYPE_OF_HIDDEN_FROM_OBJC, "Only '@HiddenFromObjC' declaration can be a subtype of '@HiddenFromObjC' declaration.")
+        map.put(SUBTYPE_OF_HIDDEN_FROM_OBJC, "Only a '@HiddenFromObjC' declaration can be a subtype of a '@HiddenFromObjC' declaration.")
 
 
         map.put(
@@ -136,7 +136,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE, "Only 0, 1 or 2 parameters are supported here.")
         map.put(PROPERTY_MUST_BE_VAR, "''@{0}'' property must be var.", TO_STRING)
-        map.put(MUST_NOT_HAVE_EXTENSION_RECEIVER, "''{0}'' cannot have extension receiver.", TO_STRING)
+        map.put(MUST_NOT_HAVE_EXTENSION_RECEIVER, "''{0}'' cannot have an extension receiver.", TO_STRING)
         map.put(
             MUST_BE_OBJC_OBJECT_TYPE,
             "Unexpected {0}: ''{1}''\nOnly Objective-C object types are supported here.",
@@ -156,12 +156,12 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR,
-            "Constructor with ''@{0}'' doesn''t override any super class constructor.\nIt must completely match by parameter names and types.",
+            "Constructor with ''@{0}'' doesn''t override any superclass constructor.\nIt must completely match by parameter names and types.",
             TO_STRING
         )
         map.put(
             CONSTRUCTOR_MATCHES_SEVERAL_SUPER_CONSTRUCTORS,
-            "Constructor with ''@{0}'' matches more than one of super constructors.",
+            "Constructor with ''@{0}'' matches more than one superclass constructor.",
             TO_STRING
         )
         map.put(
@@ -191,7 +191,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED,
-            "Overriding variadic Objective-C methods are not supported: {0}",
+            "Overriding variadic Objective-C methods is not supported: {0}",
             SYMBOL,
         )
         map.put(
@@ -210,11 +210,11 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             VARIADIC_OBJC_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF,
-            "When calling variadic Objective-C methods spread operator is supported only for *arrayOf(...).",
+            "When calling variadic Objective-C methods, the spread operator is supported only for *arrayOf(...).",
         )
         map.put(
             VARIADIC_C_SPREAD_IS_SUPPORTED_ONLY_FOR_ARRAYOF,
-            "When calling variadic C functions spread operator is supported only for *arrayOf(...).",
+            "When calling variadic C functions, the spread operator is supported only for *arrayOf(...).",
         )
     }
 }

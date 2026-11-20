@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
 import java.io.File
 import java.io.IOException
+import java.net.InetAddress
 import java.net.ServerSocket
 import javax.inject.Inject
 
@@ -63,13 +64,18 @@ internal abstract class KotlinWasmDevServerTaskImpl
         }
     }
 
-    private fun findFreePort(startPort: Int = 8080): Int {
+    private fun findFreePort(startPort: Int = DEFAULT_PORT): Int {
         var port = startPort
         val numberOfAttempts = minOf(MAX_PORT_NUMBER - startPort, MAX_NUMBER_ATTEMPTS)
+        val bindAddr = InetAddress.getByName(host.get())
 
         while (port < startPort + numberOfAttempts) {
             try {
-                ServerSocket(port).use { return port }
+                ServerSocket(
+                    port,
+                    0,
+                    bindAddr
+                ).use { return port }
             } catch (_: IOException) {
                 port++
             }
@@ -81,5 +87,6 @@ internal abstract class KotlinWasmDevServerTaskImpl
     internal companion object {
         private const val MAX_NUMBER_ATTEMPTS = 1_000
         private const val MAX_PORT_NUMBER = 65_535
+        internal const val DEFAULT_PORT = 8080
     }
 }

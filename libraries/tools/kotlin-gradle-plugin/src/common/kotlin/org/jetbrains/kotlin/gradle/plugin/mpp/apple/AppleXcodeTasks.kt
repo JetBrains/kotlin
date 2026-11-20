@@ -12,9 +12,9 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -34,11 +34,13 @@ import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.xcproj.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportConfigurationCompat
 import org.jetbrains.kotlin.gradle.utils.reportXcodeError
@@ -131,6 +133,7 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework, env
 private fun Project.registerSymbolicLinkTask(
     frameworkCopyTaskName: String,
     builtProductsDir: Provider<File>,
+    indexBuiltProductsDirs: List<File>,
 ): TaskProvider<SymbolicLinkToFrameworkTask> {
     return locateOrRegisterTask<SymbolicLinkToFrameworkTask>(
         lowerCamelCaseName(
@@ -138,8 +141,11 @@ private fun Project.registerSymbolicLinkTask(
             frameworkCopyTaskName
         )
     ) {
-        it.enabled = kotlinPropertiesProvider.appleCreateSymbolicLinkToFrameworkInBuiltProductsDir
+        it.enabled = kotlinPropertiesProvider.createSymbolicLinkToFrameworkInBuiltProductsDir
         it.builtProductsDirectory.set(builtProductsDir)
+        it.indexBuiltProductsDirectories.set(
+            if (kotlinPropertiesProvider.createSymbolicLinkToFrameworkForXcodeIndexing) indexBuiltProductsDirs else emptyList()
+        )
     }
 }
 
@@ -184,7 +190,7 @@ private fun fireEnvException(frameworkTaskName: String, envBuildType: NativeBuil
     } else {
         throw IllegalStateException(
             "Please run the $frameworkTaskName task from Xcode " +
-                    "('SDK_NAME', 'CONFIGURATION', 'TARGET_BUILD_DIR', 'ARCHS' and 'FRAMEWORKS_FOLDER_PATH' not provided)" +
+                    "('PLATFORM_NAME', 'CONFIGURATION', 'TARGET_BUILD_DIR', 'ARCHS' and 'FRAMEWORKS_FOLDER_PATH' not provided)" +
                     "\n$environment"
         )
     }
@@ -306,7 +312,8 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
 
     val symbolicLinkTask = registerSymbolicLinkTask(
         frameworkCopyTaskName = assembleTask.taskProvider.name,
-        builtProductsDir = builtProductsDir
+        builtProductsDir = builtProductsDir,
+        indexBuiltProductsDirs = environment.indexBuiltProductsDirs,
     )
     symbolicLinkTask.dependsOn(createBuildSystemDirectory)
     symbolicLinkTask.configure { task ->
@@ -446,9 +453,12 @@ internal fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
     rootProjectDir: File,
     integrationName: String,
 ) {
-    val xcodeProject = deserializeXcodeProject(xcodeProjectThatCalledEmbedAndSign.resolve("project.pbxproj"), execOperations)
-    val linkageProducts = linkageProductsReferencedInPBXObjects(xcodeProject)
-    val hasSyntheticImportProjectReference = linkageProducts.isNotEmpty()
+    val projectFile = xcodeProjectThatCalledEmbedAndSign.xcodeProjectFile()
+    val hasSyntheticImportProjectReference = if (projectFile.isXcproj()) {
+        deserializeXcprojProject(projectFile).hasLinkagePackageReference()
+    } else {
+        linkageProductsReferencedInPBXObjects(deserializePbxprojJson(projectFile, execOperations)).isNotEmpty()
+    }
     if (!hasSyntheticImportProjectReference) {
         val taskCall = if (gradleProjectPath == ":") {
             ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
@@ -573,7 +583,7 @@ private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(
     ) { task ->
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Check that the synthetic linkage project is correctly integrated into the Xcode project"
-        val execOps = project.serviceOf<ExecOperations>()
+        val execOps = project.getExecOperations()
         val gradleProjectPath = project.path
         val rootProjectDir = rootProject.projectDir
         val collector = project.kotlinToolingDiagnosticsCollectorProvider
@@ -670,10 +680,12 @@ internal abstract class FrameworkCopy : DefaultTask() {
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputDirectory
+    @get:NormalizeLineEndings
     abstract val sourceFramework: DirectoryProperty
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:Optional
     @get:IgnoreEmptyDirectories
     abstract val sourceDsym: DirectoryProperty

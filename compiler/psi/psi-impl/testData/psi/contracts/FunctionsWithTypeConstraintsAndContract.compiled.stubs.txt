@@ -5,7 +5,7 @@ MainKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUNCTION[fqName=someFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=someFunctionWithTypeConstraints]
-      origin: Facade(className=MainKt, jvmClassName=null)
+      origin: Facade(className=MainKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=T]
@@ -40,7 +40,7 @@ MainKt.class:
           REFERENCE_EXPRESSION[referencedName=String]
             isClassRef: true
     FUNCTION[fqName=anotherFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=anotherFunctionWithTypeConstraints]
-      origin: Facade(className=MainKt, jvmClassName=null)
+      origin: Facade(className=MainKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=D]
@@ -89,6 +89,7 @@ MyClass.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyClass, fqName=MyClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=MyClass, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public open]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyClass]
         MODIFIER_LIST[public]
@@ -101,6 +102,7 @@ MyOtherClass.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyOtherClass, fqName=MyOtherClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=MyOtherClass, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public open]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyOtherClass]
         MODIFIER_LIST[public]
@@ -113,6 +115,7 @@ SomeType.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/SomeType, fqName=SomeType, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=SomeType, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public]
       CLASS_BODY
 
@@ -122,5 +125,6 @@ SuperType.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/SuperType, fqName=SuperType, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=SuperType, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public]
       CLASS_BODY

@@ -560,6 +560,7 @@ class FirRenderer(
 
         private fun renderTypeParameter(typeParameter: FirTypeParameter, forOuterTypeRef: Boolean = false) {
             annotationRenderer?.render(typeParameter)
+            annotationRenderer?.renderAnnotations(typeParameter.constraintAnnotations)
             modifierRenderer?.renderModifiers(typeParameter)
             renderPhaseAndAttributes(typeParameter)
             typeParameter.variance.renderVariance()
@@ -980,7 +981,7 @@ class FirRenderer(
                 l@{
                     if (it is ConeFlexibleType) return@l null
                     val classId = it.classId ?: return@l null
-                    FunctionTypeKindExtractor.Default.getFunctionalClassKind(classId.packageFqName, classId.shortClassName.asString())
+                    FunctionTypeKindExtractor.Default.getFunctionalClassKindWithArity(classId.packageFqName, classId.shortClassName.asString())
                 }
             )
         }

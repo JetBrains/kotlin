@@ -25,7 +25,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] simpleClass.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeClass] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Double|): R|kotlin/Unit|
 
     }
-    public final inline [ResolvedTo(BODY_RESOLVE)] class InlineClass : R|kotlin/Any| {
+    public final inline value [ResolvedTo(BODY_RESOLVE)] class InlineClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InlineClass] constructor(): R|InlineClass| {
             super<R|kotlin/Any|>()
         }

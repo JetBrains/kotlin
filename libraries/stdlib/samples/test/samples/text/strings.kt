@@ -154,12 +154,42 @@ class Strings {
     }
 
     @Sample
+    fun filterTo() {
+        val text = "a1b2c3"
+        val destination = StringBuilder()
+
+        text.filterTo(destination) { it.isDigit() }
+
+        assertPrints(destination, "123")
+    }
+
+    @Sample
     fun filterNot() {
         val text = "a1b2c3d4e5"
 
         val textWithoutDigits = text.filterNot { it.isDigit() }
 
         assertPrints(textWithoutDigits, "abcde")
+    }
+
+    @Sample
+    fun filterNotTo() {
+        val text = "a1b2c3"
+        val destination = StringBuilder()
+
+        text.filterNotTo(destination) { it.isDigit() }
+
+        assertPrints(destination, "abc")
+    }
+
+    @Sample
+    fun find() {
+        val text = "a1b2c3d4e5"
+
+        assertPrints(text.find { it.isLetter() }, "a")
+        assertPrints(text.find { it.isDigit() }, "1")
+        assertPrints(text.find { it.isUpperCase() }, "null")
+        assertPrints("".find { it.isLowerCase() }, "null")
     }
 
     @Sample
@@ -1031,6 +1061,15 @@ class Strings {
         assertPrints("Ko" + "dee", "Kodee")
         // 2 is not a string, but plus concatenates its string representation with the "Kotlin " string
         assertPrints("Kotlin " + 2, "Kotlin 2")
+        // list is converted to a String first and then concatenated with the "Numbers: " string
+        assertPrints("Numbers: " + listOf(1, 2, 3), "Numbers: [1, 2, 3]")
+    }
+
+    @Sample
+    fun nullableStringPlus() {
+        // null is not a string, but plus concatenates its string representation with the "Hello" string
+        assertPrints(null + "Hello", "nullHello")
+        assertPrints(null + null, "nullnull")
         // list is converted to a String first and then concatenated with the "Numbers: " string
         assertPrints("Numbers: " + listOf(1, 2, 3), "Numbers: [1, 2, 3]")
     }

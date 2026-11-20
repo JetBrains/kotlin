@@ -16,9 +16,8 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.org.objectweb.asm.*
 
 class SamWrapperTransformationInfo(
     override val oldClassName: String,
@@ -48,26 +47,64 @@ class SamWrapperTransformationInfo(
 
     override fun canRemoveAfterTransformation() = false
 
-    override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean, continuationClassName: String?) =
-        SamWrapperTransformer(this, inliningContext)
+    override fun createTransformer(
+        state: GenerationState, inliningContext: InliningContext, sameModule: Boolean, continuationClassName: String?,
+    ): ObjectTransformer<*> = SamWrapperTransformer(state, this, inliningContext)
 }
 
-class SamWrapperTransformer(transformationInfo: SamWrapperTransformationInfo, private val inliningContext: InliningContext) :
-    ObjectTransformer<SamWrapperTransformationInfo>(transformationInfo, inliningContext.state) {
-
+class SamWrapperTransformer(
+    state: GenerationState, transformationInfo: SamWrapperTransformationInfo, private val inliningContext: InliningContext,
+) : ObjectTransformer<SamWrapperTransformationInfo>(transformationInfo, state) {
     override fun doTransform(parentRemapper: FieldRemapper): InlineResult {
         val classReader = createClassReader()
         val classBuilder = createRemappingClassBuilderViaFactory(inliningContext)
 
         classReader.accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
+            private var originalVersion = 0
+            private val loadableDescriptors = LinkedHashSet<String>()
+
+            private fun addIfRecompiledKotlinValueClass(type: Type) {
+                if (type.isRecompiledKotlinValueClass()) loadableDescriptors.add(type.descriptor)
+            }
+
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
+                originalVersion = version
                 classBuilder.defineClass(
-                    maxOf(version, state.config.classFileVersion), access, name, signature, superName, interfaces,
+                    regeneratedClassVersion(version, state.config.classFileVersion), access, name, signature, superName, interfaces,
                 )
             }
 
+            override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
+                super.visitInnerClass(name, outerName, innerName, regeneratedInnerClassAccess(access, originalVersion, state.config.classFileVersion))
+            }
+
+            override fun visitAttribute(attribute: Attribute) {
+                if (attribute is LoadableDescriptorsAttribute) loadableDescriptors.addAll(attribute.descriptors)
+                else super.visitAttribute(attribute)
+            }
+
+            override fun visitField(access: Int, name: String, descriptor: String, signature: String?, value: Any?): FieldVisitor? {
+                addIfRecompiledKotlinValueClass(Type.getType(descriptor))
+                return super.visitField(access, name, descriptor, signature, value)
+            }
+
+            override fun visitMethod(
+                access: Int, name: String, descriptor: String, signature: String?, exceptions: Array<out String>?,
+            ): MethodVisitor? {
+                Type.getArgumentTypes(descriptor).forEach(::addIfRecompiledKotlinValueClass)
+                addIfRecompiledKotlinValueClass(Type.getReturnType(descriptor))
+                return super.visitMethod(access, name, descriptor, signature, exceptions)
+            }
+
+            override fun visitEnd() {
+                if (loadableDescriptors.isNotEmpty()) {
+                    super.visitAttribute(LoadableDescriptorsAttribute(loadableDescriptors.toList()))
+                }
+                super.visitEnd()
+            }
+
         }, LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES, ClassReader.SKIP_FRAMES)
-        classBuilder.done(inliningContext.state.config.generateSmapCopyToAnnotation)
+        classBuilder.done(inliningContext.config.generateSmapCopyToAnnotation)
 
         return transformationResult
     }

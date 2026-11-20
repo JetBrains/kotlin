@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_AS_ERROR_MESSAGE
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.closure
@@ -201,6 +202,7 @@ private class KotlinHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_ARM64
     }
 
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     override fun withWatchosX64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_X64
     }
@@ -217,6 +219,7 @@ private class KotlinHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.TVOS_ARM64
     }
 
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     override fun withTvosX64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.TVOS_X64
     }
@@ -233,6 +236,7 @@ private class KotlinHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.MINGW_X64
     }
 
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
     override fun withMacosX64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.MACOS_X64
     }

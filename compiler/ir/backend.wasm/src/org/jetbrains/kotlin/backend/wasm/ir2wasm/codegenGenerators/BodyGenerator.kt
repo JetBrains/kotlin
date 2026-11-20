@@ -1383,8 +1383,7 @@ class BodyGenerator(
             // Used as a placeholder to be stored in WasmContinuationBox.wasmContinuation.
             // Substituted by the actual wasm continuation, when the coroutine suspends.
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.nullContrefIntrinsic -> {
-                val boundContType = Synthetics.GcTypes.boundContType
-                body.buildInstr(WasmOp.REF_NULL, location, boundContType)
+                body.buildRefNull(WasmHeapType.Simple.NoCont, location)
             }
 
             /**
@@ -1430,27 +1429,6 @@ class BodyGenerator(
 
             wasmSymbols.getWasmAbiVersion -> {
                 body.buildConstI32(WASM_ABI_VERSION, location)
-            }
-
-            wasmSymbols.wasmArrayNewData0 -> {
-                val arrayGcType = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
-                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
-            }
-
-            wasmSymbols.wasmArrayNewData -> {
-                val arrayGcType = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
-                val dataIdx = (call.arguments[2] as? IrConst)?.value as? Int
-                    ?: error("An argument for dataIdx should be a compile time const with type Int")
-                body.buildDrop(location)
-                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(dataIdx))
-            }
-
-            wasmSymbols.wasmArrayNewData0CharArray -> {
-                val wasmArrayNewData0CharArray = wasmSymbols.wasmArrayNewData0CharArray!!
-                val arrayGcType = typeCodegenContext.referenceGcType(
-                    wasmArrayNewData0CharArray.owner.returnType.getRuntimeClass(irBuiltIns).symbol,
-                )
-                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
             }
 
             wasmSymbols.callAssociatedObjectGetter -> {

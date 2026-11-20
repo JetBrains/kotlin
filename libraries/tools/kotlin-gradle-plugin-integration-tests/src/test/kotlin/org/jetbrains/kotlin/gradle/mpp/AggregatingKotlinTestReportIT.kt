@@ -9,11 +9,15 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.capitalize
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
 @DisplayName("Tests for aggregating kotlin test reports")
+@MustRunOnChangesInGradle
 class AggregatingKotlinTestReportIT : KGPBaseTest() {
+    @TestMetadata("new-mpp-lib-with-tests")
     @DisplayName("KT-54506: `allTests` is not false positively up-to-date after failure")
     @GradleTest
     fun testFailedTestsAreNotUpToDate(gradleVersion: GradleVersion) {
@@ -101,6 +105,7 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-lib-with-tests")
     @DisplayName("Test tasks are up-to-date when called after `allTests`")
     @GradleTest
     fun testSuccessfulTestTasksAreUpToDate(gradleVersion: GradleVersion) {

@@ -117,29 +117,29 @@ internal fun ProtoBuf.Annotation.Argument.Value.toFirExpression(session: FirSess
     return when (this.type) {
         BYTE -> {
             val kind = if (isUnsigned) ConstantValueKind.UnsignedByte else ConstantValueKind.Byte
-            const(kind, this.intValue.toByte(), session.builtinTypes.byteType)
+            const(kind, this.intValue.toByte())
         }
 
         SHORT -> {
             val kind = if (isUnsigned) ConstantValueKind.UnsignedShort else ConstantValueKind.Short
-            const(kind, this.intValue.toShort(), session.builtinTypes.shortType)
+            const(kind, this.intValue.toShort())
         }
 
         INT -> {
             val kind = if (isUnsigned) ConstantValueKind.UnsignedInt else ConstantValueKind.Int
-            const(kind, this.intValue.toInt(), session.builtinTypes.intType)
+            const(kind, this.intValue.toInt())
         }
 
         LONG -> {
             val kind = if (isUnsigned) ConstantValueKind.UnsignedLong else ConstantValueKind.Long
-            const(kind, this.intValue, session.builtinTypes.longType)
+            const(kind, this.intValue)
         }
 
-        CHAR -> const(ConstantValueKind.Char, this.intValue.toInt().toChar(), session.builtinTypes.charType)
-        FLOAT -> const(ConstantValueKind.Float, this.floatValue, session.builtinTypes.floatType)
-        DOUBLE -> const(ConstantValueKind.Double, this.doubleValue, session.builtinTypes.doubleType)
-        BOOLEAN -> const(ConstantValueKind.Boolean, (this.intValue != 0L), session.builtinTypes.booleanType)
-        STRING -> const(ConstantValueKind.String, nameResolver.getString(this.stringValue), session.builtinTypes.stringType)
+        CHAR -> const(ConstantValueKind.Char, this.intValue.toInt().toChar())
+        FLOAT -> const(ConstantValueKind.Float, this.floatValue)
+        DOUBLE -> const(ConstantValueKind.Double, this.doubleValue)
+        BOOLEAN -> const(ConstantValueKind.Boolean, (this.intValue != 0L))
+        STRING -> const(ConstantValueKind.String, nameResolver.getString(this.stringValue))
         ANNOTATION -> deserializeAnnotation(session, this.annotation, nameResolver)
         CLASS -> buildGetClassCall {
             val classId = nameResolver.getClassId(this@toFirExpression.classId)
@@ -172,7 +172,6 @@ internal fun ProtoBuf.Annotation.Argument.Value.toFirExpression(session: FirSess
     }
 }
 
-private fun const(kind: ConstantValueKind, value: Any?, typeRef: FirResolvedTypeRef): FirLiteralExpression {
-    return buildLiteralExpression(null, kind, value, setType = true).apply { this.replaceConeTypeOrNull(typeRef.coneType) }
+private fun const(kind: ConstantValueKind, value: Any?): FirLiteralExpression =
+    buildLiteralExpression(null, kind, value, setType = true)
 
-}

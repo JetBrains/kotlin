@@ -244,7 +244,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 }
 
 public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension : org/gradle/api/plugins/ExtensionAware, org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension, org/jetbrains/kotlin/gradle/plugin/HasProject, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
-	public field coreLibrariesVersion Ljava/lang/String;
 	public fun <init> (Lorg/gradle/api/Project;)V
 	public fun abiValidation ()V
 	public fun abiValidation (Lorg/gradle/api/Action;)V
@@ -252,6 +251,7 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension : o
 	public fun explicitApiWarning ()V
 	public fun getAbiValidation ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;
 	public fun getCompilerVersion ()Lorg/gradle/api/provider/Property;
+	public fun getCoreKotlinLibrariesVersion ()Lorg/gradle/api/provider/Property;
 	public fun getCoreLibrariesVersion ()Ljava/lang/String;
 	public fun getExplicitApi ()Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;

@@ -57,6 +57,23 @@ class ArraysTest {
         assertEquals(-1, arr2.lastIndex)
     }
 
+    @Test fun primitiveArraysOperatorOf() {
+        assertContentEquals(byteArrayOf(1), ByteArray.of(1))
+        assertContentEquals(shortArrayOf(), ShortArray.of())
+        assertContentEquals(intArrayOf(1, 2), IntArray.of(1, 2))
+        assertContentEquals(longArrayOf(42), LongArray.of(42))
+        assertContentEquals(floatArrayOf(1f, 2f, 3f), FloatArray.of(1f, 2f, 3f))
+        assertContentEquals(doubleArrayOf(1.0, 2.0), DoubleArray.of(1.0, 2.0))
+        assertContentEquals(charArrayOf(), CharArray.of())
+        assertContentEquals(booleanArrayOf(true, false, true), BooleanArray.of(true, false, true))
+    }
+
+    @Test fun arrayOperatorOf() {
+        assertContentEquals(arrayOf("a", "b", "c"), Array.of("a", "b", "c"))
+        assertContentEquals(arrayOf<Any?>(null, 42), Array.of<Any?>(null, 42))
+        assertContentEquals(arrayOf(1), Array.of(1))
+    }
+
     @Test fun arrayLastIndex() {
         val arr1 = intArrayOf(0, 1, 2, 3, 4)
         assertEquals(4, arr1.lastIndex)

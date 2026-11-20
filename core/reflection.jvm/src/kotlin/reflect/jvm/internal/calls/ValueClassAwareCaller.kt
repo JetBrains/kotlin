@@ -162,7 +162,7 @@ private fun Caller<*>.checkParametersSize(expectedArgsSize: Int, callable: Refle
 private fun makeKotlinParameterTypes(callable: ReflectKCallable<*>): List<KType> {
     val result = mutableListOf<KType>()
     val container = callable.container
-    if (!callable.isConstructor && container is KClassImpl<*> && container.isJvmInlineValue) {
+    if (!callable.isConstructor && !callable.isStatic && container is KClassImpl<*> && container.isJvmInlineValue) {
         result.add(container.createDefaultType())
     }
     val isInnerClassConstructor = callable.isConstructor && (container as? KClass<*>)?.isInner == true

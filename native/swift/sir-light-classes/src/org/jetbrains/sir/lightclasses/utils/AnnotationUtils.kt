@@ -5,7 +5,15 @@
 
 package org.jetbrains.sir.lightclasses.utils
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReturnValueStatus
+import org.jetbrains.kotlin.analysis.api.symbols.returnValueStatus
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
+import org.jetbrains.kotlin.analysis.api.types.classId
+import org.jetbrains.kotlin.analysis.api.types.isMarkedNullable
 import org.jetbrains.kotlin.sir.SirAttribute
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
@@ -16,6 +24,18 @@ internal inline val <reified S : KaDeclarationSymbol> SirFromKtSymbol<S>.transla
     get() = buildList {
         translateAvailabilityAttribute?.let(::add)
         addAll(translatedOptInAttributes)
+    }
+
+@OptIn(KaExperimentalApi::class)
+internal val SirFromKtSymbol<KaFunctionSymbol>.translatedDiscardableResultAttribute: SirAttribute.DiscardableResult?
+    get() = withSessions {
+        val symbol = ktSymbol as? KaNamedFunctionSymbol ?: return@withSessions null
+        val returnType = symbol.returnType
+        when {
+            returnType.classId == KaStandardTypeClassIds.UNIT && !returnType.isMarkedNullable -> null
+            symbol.returnValueStatus == KaReturnValueStatus.ExplicitlyIgnorable -> SirAttribute.DiscardableResult
+            else -> null
+        }
     }
 
 internal inline val <reified S : KaDeclarationSymbol> SirFromKtSymbol<S>.translatedOptInAttributes: List<SirAttribute>

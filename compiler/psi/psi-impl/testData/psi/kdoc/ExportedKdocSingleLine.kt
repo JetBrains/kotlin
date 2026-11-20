@@ -35,4 +35,5 @@ fun bar(number: Int) {}
 
 /** Top-level property documentation. */
 val topLevelProp: Int
+    /** Top-level property getter documentation. */
     get() = 0

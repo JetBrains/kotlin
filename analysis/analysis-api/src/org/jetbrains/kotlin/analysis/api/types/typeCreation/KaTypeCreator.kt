@@ -31,8 +31,8 @@ public interface KaTypeCreator : KaLifetimeOwner {
      * If there are no classes available by [classId], returns [KaClassErrorType].
      *
      * A generic class type can be built by providing type arguments using the [init] block.
-     * The caller should provide the correct number of type arguments for the class.
-     * If the number of provided type arguments is lower, missing types arguments are
+     * The caller is supposed to provide the correct number of type arguments for the class.
+     * If the number of provided type arguments is lower, missing type arguments are
      * filled with [star projections][KaStarTypeProjection].
      * If there are more type arguments than required, extra arguments are ignored.
      *
@@ -54,6 +54,9 @@ public interface KaTypeCreator : KaLifetimeOwner {
      *
      * A generic class type can be built by providing type arguments using the [init] block.
      * The caller is supposed to provide the correct number of type arguments for the class.
+     * If the number of provided type arguments is lower, missing type arguments are
+     * filled with [star projections][KaStarTypeProjection].
+     * If there are more type arguments than required, extra arguments are ignored.
      *
      * For Kotlin built-in types, consider using the overload that accepts a [ClassId] instead:
      * `classType(StandardClassIds.String)`.
@@ -108,13 +111,11 @@ public interface KaTypeCreator : KaLifetimeOwner {
     /**
      * Builds a [KaCapturedType] with the given [projection].
      *
-     * Note that if [projection] is [KaTypeArgumentWithVariance],
-     * its [KaTypeArgumentWithVariance.variance] must not be [Variance.INVARIANT].
      * Captured types are only intended to capture non-invariant projections.
-     * Otherwise, an exception is thrown.
+     * If [projection] is [KaTypeArgumentWithVariance] with [Variance.INVARIANT] variance, `null` is returned.
      */
     @KaExperimentalApi
-    public fun capturedType(projection: KaTypeProjection, init: KaCapturedTypeBuilder.() -> Unit = {}): KaCapturedType
+    public fun capturedType(projection: KaTypeProjection, init: KaCapturedTypeBuilder.() -> Unit = {}): KaCapturedType?
 
     /**
      * Builds a [KaDefinitelyNotNullType] wrapping the given [type].

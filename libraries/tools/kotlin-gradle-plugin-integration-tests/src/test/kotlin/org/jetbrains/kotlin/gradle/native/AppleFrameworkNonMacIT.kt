@@ -9,14 +9,18 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
 @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS])
 @DisplayName("K/N tests for Apple Framework on non Mac Os")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class AppleFrameworkNonMacIT : KGPBaseTest() {
 
+    @TestMetadata("native-cocoapods-tests")
     @DisplayName("podImport task execution without fail")
     @GradleTest
     fun checkSuccessPodImport(gradleVersion: GradleVersion) {
@@ -34,6 +38,7 @@ class AppleFrameworkNonMacIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("appleXCFramework")
     @DisplayName("XCFramework and FatFramework tasks are SKIPPED")
     @GradleTest
     fun checkXCFrameworkAndFatFrameworkTasksAreSkipped(gradleVersion: GradleVersion) {

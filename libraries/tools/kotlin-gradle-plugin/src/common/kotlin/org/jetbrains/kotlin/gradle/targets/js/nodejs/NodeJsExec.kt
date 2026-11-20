@@ -13,24 +13,29 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
-import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
+import org.jetbrains.kotlin.gradle.targets.js.ir.npmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.legacyNodeJsExecutable
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.requestDefaultNodeJs
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.resolveNodeJsExecutable
+import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import javax.inject.Inject
 
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
 @DisableCachingByDefault
 abstract class NodeJsExec
 @Inject
@@ -38,13 +43,20 @@ constructor(
     @Internal
     @Transient
     final override val compilation: KotlinJsIrCompilation,
-) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependenciesTask {
+) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependenciesTask, UsesNodeJsToolchainService {
 
     @get:Internal
     internal abstract val versions: Property<NpmVersions>
 
     @Internal
     val npmProject = compilation.npmProject
+
+    @get:Input
+    @get:Optional
+    internal val nodeExecutable: Provider<String> = nodeJsToolchainService.legacyNodeJsExecutable(project.objects, compilation)
+
+    @get:Input
+    internal val nodeJsRequest: Provider<NodeJsRequest> = project.requestDefaultNodeJs()
 
     init {
         this.onlyIf {
@@ -78,7 +90,16 @@ constructor(
                 emptySet()
             }
 
+    internal fun resolveExecutableIfNotCustomized() {
+        // A custom executable set by the user takes precedence over the toolchain
+        if (executable.isNullOrBlank()) {
+            executable = nodeJsToolchainService.get().resolveNodeJsExecutable(nodeExecutable, nodeJsRequest)
+        }
+    }
+
     override fun exec() {
+        resolveExecutableIfNotCustomized()
+
         val newArgs = mutableListOf<String>()
         newArgs.addAll(nodeArgs)
         if (inputFileProperty.isPresent) {
@@ -114,7 +135,9 @@ constructor(
             val target = compilation.target
             val project = target.project
 
-            val nodeJsRoot = compilation.nodeJsRoot()
+            val npmVersions = compilation.npmVersions()
+
+            @Suppress("DEPRECATION")
             val nodeJsEnvSpec = compilation.nodeJsEnvSpec
 
             val npmProject = compilation.npmProject
@@ -124,9 +147,8 @@ constructor(
                 name,
                 listOf(compilation)
             ) {
-                it.versions.value(nodeJsRoot.versions)
+                it.versions.value(npmVersions)
                     .disallowChanges()
-                it.executable = nodeJsEnvSpec.executable.get()
                 if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
                     it.workingDir(npmProject.dir)
                     it.dependsOnNpmTooling(compilation)

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.isCache
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
@@ -2459,10 +2460,15 @@ internal class CodeGeneratorVisitor(
             function: IrSimpleFunction, args: List<LLVMValueRef>,
             resultLifetime: Lifetime, superClass: IrClass? = null, resultSlot: LLVMValueRef? = null): LLVMValueRef {
         //context.log{"evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}"}
-        if (superClass == null && function.isOverridable)
-            return callVirtual(function, args, resultLifetime, resultSlot)
-        else
-            return callDirect(function, args, resultLifetime, resultSlot)
+        val throughCacheEntryPoint = context(context.config) { function.needsCacheEntryPointForFinalFakeOverride }
+        return when {
+            superClass == null && function.isOverridable ->
+                callVirtual(function, args, resultLifetime, resultSlot)
+            superClass == null && throughCacheEntryPoint && function.target.isOverridable ->
+                // A cached caller must not bind to the inherited implementation: the class may override it later (KT-91377).
+                callVirtual(function.target, args, resultLifetime, resultSlot)
+            else -> callDirect(function, args, resultLifetime, resultSlot)
+        }
     }
 
     //-------------------------------------------------------------------------//
@@ -2782,8 +2788,13 @@ internal class CodeGeneratorVisitor(
 
             val ctorName = when {
                 // TODO: Try to not use moduleId.
-                library == null -> (if (context.config.produce.isCache) generationState.outputFiles.cacheFileName else context.config.moduleId).moduleConstructorName
-                library == context.config.libraryToCache?.klib
+                library == null -> when {
+                    !context.config.produce.isCache -> context.config.moduleId.moduleConstructorName
+                    context.config.producePerFileCache && generationState.cacheInfo != null ->
+                        fileCtorName(generationState.cacheInfo.klib.uniqueName, generationState.outputFiles.cacheFileName)
+                    else -> generationState.outputFiles.cacheFileName.moduleConstructorName
+                }
+                library == generationState.cacheInfo?.klib
                         && context.config.producePerFileCache ->
                     fileCtorName(library.uniqueName, generationState.outputFiles.perFileCacheFileName)
                 else -> library.moduleConstructorName

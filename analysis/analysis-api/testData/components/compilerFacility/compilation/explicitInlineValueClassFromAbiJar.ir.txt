@@ -1,0 +1,15 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:main.kt
+    FUN name:doubled visibility:public modality:FINAL returnType:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:wrapper index:0 type:lib.Wrapper
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun doubled (wrapper: lib.Wrapper): kotlin.Int declared in <root>'
+          CALL 'public final fun <get-doubled> (): kotlin.Int declared in lib.Wrapper' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: GET_VAR 'wrapper: lib.Wrapper declared in <root>.doubled' type=lib.Wrapper origin=null
+    FUN name:test visibility:public modality:FINAL returnType:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in <root>'
+          CALL 'public final fun doubled (wrapper: lib.Wrapper): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            ARG wrapper: CALL 'public final fun of (x: kotlin.Int): lib.Wrapper declared in lib.Wrapper.Companion' type=lib.Wrapper origin=null
+              ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=lib.Wrapper.Companion
+              ARG x: CONST Int type=kotlin.Int value=1

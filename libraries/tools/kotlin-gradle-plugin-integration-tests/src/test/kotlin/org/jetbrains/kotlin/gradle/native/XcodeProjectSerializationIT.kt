@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.*
 import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
 import org.jetbrains.kotlin.gradle.testing.XcodeProjectSerializationFixtures
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import java.io.ByteArrayOutputStream
 import kotlin.test.assertEquals
 
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class XcodeProjectSerializationIT : KGPBaseTest() {
 
     @GradleTest
@@ -36,8 +38,8 @@ class XcodeProjectSerializationIT : KGPBaseTest() {
             val sampleXcodeProjectJson = XcodeProjectSerializationFixtures.sampleXcodeProjectWithEmbedAndSignIntegration
             val reserializedProjectString = buildScriptReturn {
                 ByteArrayOutputStream().use {
-                    deserializeXcodeProject(sampleXcodeProjectJson.toByteArray())
-                        .serializeXcodeProject(it)
+                    deserializePbxprojJson(sampleXcodeProjectJson.toByteArray())
+                        .serializePbxprojJson(it)
                     it.toString()
                 }
             }.buildAndReturn()

@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
 import org.jetbrains.kotlin.backend.common.KlibSignatureIndexConstants.KLIB_SIGNATURE_INDEX_FILE_NAME
 import org.jetbrains.kotlin.backend.common.KlibSignatureIndexConstants.KLIB_INDICES_DIR_NAME
+import org.jetbrains.kotlin.backend.common.serialization.CommonSignatureDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.CommonSignatureSerializer
+import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.IrStringSerializer
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
@@ -27,7 +29,6 @@ import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.KlibWriterSpec
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.nio.file.Path
-import kotlin.collections.joinToString
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.outputStream
@@ -196,8 +197,14 @@ private class KlibSignatureIndexComponentImpl(
             }
 
             val stringArray = multiReader.deserializeStringArray()
-            val exportedSignatures = multiReader.deserializeSignatures(rowIndex = 1, stringArray)
-            val importedSignatures = multiReader.deserializeSignatures(rowIndex = 2, stringArray)
+            val signatureDeserializer = CommonSignatureDeserializer(
+                irInterner = IrInterningService(),
+                deserializeString = stringArray::get,
+                deserializeDebugInfo = { null }, // There is no debug info for signatures in the signature index.
+            )
+
+            val exportedSignatures = multiReader.deserializeSignatures(rowIndex = 1, signatureDeserializer)
+            val importedSignatures = multiReader.deserializeSignatures(rowIndex = 2, signatureDeserializer)
 
             return exportedSignatures to importedSignatures
         }
@@ -210,25 +217,14 @@ private class KlibSignatureIndexComponentImpl(
 
         private fun IrMultiArrayReader.deserializeSignatures(
             rowIndex: Int,
-            stringArray: Array<out String>,
+            signatureDescriptors: CommonSignatureDeserializer,
         ): Set<IdSignature> {
             val size = columnCount(rowIndex)
             val result = newHashSetWithExpectedSize<IdSignature>(size)
 
             for (index in 0 until size) {
                 val proto = ProtoCommonIdSignature.parseFrom(tableItemBytes(rowIndex = rowIndex, columnIndex = index))
-
-                result += IdSignature.CommonSignature(
-                    packageFqName = proto.packageFqNameList.joinToString(separator = ".", transform = stringArray::get),
-                    declarationFqName = proto.declarationFqNameList.joinToString(separator = ".", transform = stringArray::get),
-                    id = when {
-                        proto.hasMemberUniqId() -> proto.memberUniqId
-                        proto.hasMemberUniqIdPre240() -> proto.memberUniqIdPre240
-                        else -> null
-                    },
-                    mask = proto.flags,
-                    description = null,
-                )
+                result += signatureDescriptors.deserializeSignature(proto)
             }
 
             return result

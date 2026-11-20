@@ -12,6 +12,8 @@ value object ValueObject : SealedValueClass() {
 
     val property: Int get() = 42
 
+    const val constant: Int = 43
+
     fun function(): String = "function"
     fun functionWithSelfParameter(v: ValueObject): ValueObject = v
 }

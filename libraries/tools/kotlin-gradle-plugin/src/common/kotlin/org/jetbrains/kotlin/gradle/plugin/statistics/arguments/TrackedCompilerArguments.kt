@@ -40,7 +40,6 @@ internal object TrackedCompilerArguments {
             booleanMetric(BooleanMetrics.CLI_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS, CommonCompilerArguments::allowContractsOnMoreFunctions)
             booleanMetric(BooleanMetrics.CLI_ALLOW_HOLDSIN_CONTRACT, CommonCompilerArguments::allowHoldsinContract)
             booleanMetric(BooleanMetrics.CLI_ALLOW_KOTLIN_PACKAGE, CommonCompilerArguments::allowKotlinPackage)
-            booleanMetric(BooleanMetrics.CLI_ALLOW_PRE_17_RUNTIME_JDK, CommonCompilerArguments::allowPre17RuntimeJdk)
             booleanMetric(BooleanMetrics.CLI_ALLOW_REIFIED_TYPE_IN_CATCH, CommonCompilerArguments::allowReifiedTypeInCatch)
             booleanMetric(BooleanMetrics.CLI_ALLOW_RETURNS_RESULT_OF, CommonCompilerArguments::allowReturnsResultOf)
             booleanMetric(BooleanMetrics.CLI_ANNOTATION_TARGET_ALL_ENABLED, CommonCompilerArguments::annotationTargetAll)
@@ -83,7 +82,6 @@ internal object TrackedCompilerArguments {
             booleanMetric(BooleanMetrics.CLI_STDLIB_COMPILATION_ENABLED, CommonCompilerArguments::stdlibCompilation)
             booleanMetric(BooleanMetrics.CLI_VERSION_WARNINGS_SUPPRESSED, CommonCompilerArguments::suppressVersionWarnings)
             booleanMetric(BooleanMetrics.CLI_FIR_IC_ENABLED, CommonCompilerArguments::useFirIC)
-            booleanMetric(BooleanMetrics.CLI_FIR_LIGHT_TREE_PARSER_ENABLED, CommonCompilerArguments::useFirLT)
             booleanMetric(BooleanMetrics.CLI_WHEN_GUARDS_ENABLED, CommonCompilerArguments::whenGuards)
             booleanMetric(BooleanMetrics.CLI_SCRIPT_EVALUATION_ENABLED, CommonCompilerArguments::script)
 

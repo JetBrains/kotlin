@@ -8,8 +8,8 @@ import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.analysis.java.JavadocTag
 
 @InternalDokkaApi
-public interface DocumentationContent {
-    public val tag: JavadocTag
+internal interface DocumentationContent {
+    val tag: JavadocTag
 
-    public fun resolveSiblings(): List<DocumentationContent>
+    fun resolveSiblings(): List<DocumentationContent>
 }

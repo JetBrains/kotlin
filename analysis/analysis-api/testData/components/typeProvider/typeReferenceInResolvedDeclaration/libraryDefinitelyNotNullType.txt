@@ -1,0 +1,14 @@
+Compiled: true
+Decompiled text loaded by type computation: false
+
+public fun <T> foo(p: T & kotlin.Any, q: kotlin.collections.List<T & kotlin.Any>): T & kotlin.Any { /* compiled code */ }
+//                    ^T & Any
+//                    ^T(use)
+//                        ^Any(use)
+//                                       ^List<T & Any>(use)
+//                                                               ^T & Any
+//                                                               ^T(use)
+//                                                                   ^Any(use)
+//                                                                                 ^T & Any
+//                                                                                 ^T(use)
+//                                                                                     ^Any(use)

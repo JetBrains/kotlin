@@ -42,28 +42,28 @@ package sample
 package sample
 
 // Functions
-<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>actual fun foo()<!> = 42
+<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED("mark the actual declaration with '@JsExport' as well")!>actual fun foo()<!> = 42
 
 @kotlin.js.JsExport actual fun bar() = 42
 
-<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>actual external fun baz(): Int<!>
+<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED("mark the actual declaration with '@JsExport' as well")!>actual external fun baz(): Int<!>
 
 // Classes
-actual class <!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>Foo<!>
+actual class <!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED("mark the actual declaration with '@JsExport' as well")!>Foo<!>
 
 @kotlin.js.JsExport actual class Bar {
     suspend fun foo() = 42
 }
 
 @kotlin.js.JsExport actual class Nested {
-    @kotlin.js.JsExport.Ignore actual interface <!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>A<!>
+    @kotlin.js.JsExport.Ignore actual interface <!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED("remove the '@JsExport.Ignore' annotation")!>A<!>
 }
 
 @kotlin.js.JsExport class ExportedOne { fun test() {} }
 class NotExportedOne { fun test() {} }
 @kotlin.js.JsExport interface ExportedInterface { fun test() }
 
-<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>actual typealias Test1 = NotExportedOne<!>
+<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED("mark the actual declaration with '@JsExport' as well")!>actual typealias Test1 = NotExportedOne<!>
 actual typealias Test2 = ExportedOne
 actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND!>Test3<!> = ExportedInterface
 

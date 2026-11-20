@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.fus.internal
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildServiceParameters
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
 import org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService
@@ -46,47 +44,14 @@ private fun registerIfAbsent(
         val ciProperty = detectedCiProperty()
         log.debug("Fus metrics won't be collected for CI build. (CI build detected via environment variable $ciProperty)")
         project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}
-    } else if (GradleVersion.current().baseVersion < GradleVersion.version("8.1")) {
-        val fusService = project.gradle.sharedServices.registerIfAbsent(serviceName, BuildCloseFusStatisticsBuildService::class.java) {
-            it.parameters.fusStatisticsRootDirPath.value(customPath).disallowChanges()
-            it.parameters.configurationMetrics.empty()
-            it.parameters.buildId.value(uidService.map { it.buildId }).disallowChanges()
-        }
-        project.registerTaskCreatingFusService(fusService)
-        fusService
     } else {
         val fusService = project.gradle.sharedServices.registerIfAbsent(serviceName, BuildFlowFusStatisticsBuildService::class.java) {
             it.parameters.fusStatisticsRootDirPath.value(customPath).disallowChanges()
             it.parameters.buildId.value(uidService.map { it.buildId }).disallowChanges()
         }
         FusBuildFinishFlowManager.getInstance(project).subscribeForBuildFinish(fusService)
-        // Gradle < 8.1: ensure GradleBuildFusStatisticsService is created at the same time as BuildFinishBuildService to ensure the same buildId is used
+        // Ensure GradleBuildFusStatisticsService is created at the same time as BuildFinishBuildService to ensure the same buildId is used
         objectFactory.newInstance(BuildEventsListenerRegistryHolder::class.java).listenerRegistry.onTaskCompletion(fusService)
         fusService
-    }
-}
-
-private fun Project.registerTaskCreatingFusService(
-    fusService: Provider<BuildCloseFusStatisticsBuildService>,
-) {
-    //This task is necessary to delay FUS service creation onto execution time on Gradle<8.1 where BuildFlowFinishAction could not be used.
-    //Service needs to be created, so Gradle will close it at the end of the build to write fus metrics.
-    //Service could not be created on configuration time because then all service parameters will be finalized
-    // and newly added metrics will be not accounted for.
-    val writeFusTask = tasks.register("kotlinFus", DefaultTask::class.java) { task ->
-        task.doNotTrackState("Task is stateless")
-
-        task.usesService(fusService)
-        task.doLast {
-            // Triggering FUS service creation, so when only configuration metrics are added - they are still written
-            fusService.get()
-        }
-    }
-
-    val startTaskName = project.gradle.startParameter.taskNames.first()
-    project.tasks.configureEach { t ->
-        if (t.name == startTaskName) {
-            t.finalizedBy(writeFusTask)
-        }
     }
 }

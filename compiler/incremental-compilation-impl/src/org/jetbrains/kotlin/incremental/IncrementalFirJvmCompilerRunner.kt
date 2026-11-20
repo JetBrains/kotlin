@@ -40,7 +40,7 @@ open class IncrementalFirJvmCompilerRunner(
     classpathChanges: ClasspathChanges,
     kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
-    generateCompilerRefIndex: Boolean = false,
+    compilerRefIndexDirectory: File? = null,
     val compilationCanceledStatus: CompilationCanceledStatus? = null,
     override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
 ) : IncrementalJvmCompilerRunner(
@@ -50,7 +50,7 @@ open class IncrementalFirJvmCompilerRunner(
     classpathChanges,
     kotlinSourceFilesExtensions,
     icFeatures,
-    generateCompilerRefIndex,
+    compilerRefIndexDirectory,
     compilationCanceledStatus = compilationCanceledStatus
 ) {
     private val configurationPhase = JvmConfigurationPipelinePhase
@@ -105,11 +105,10 @@ open class IncrementalFirJvmCompilerRunner(
                 // and generally not used in the new pipeline
                 val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
                 val kotlinContentRoots = sourcesToCompile.map {
-                    val kotlinSourceFilePath = it.path
                     KotlinSourceRoot(
-                        path = kotlinSourceFilePath,
-                        isCommon = hmppCliModuleStructure?.isFromCommonModule(kotlinSourceFilePath) ?: false,
-                        hmppModuleName = hmppCliModuleStructure?.getModuleNameForSource(kotlinSourceFilePath)
+                        path = it.path,
+                        isCommon = hmppCliModuleStructure?.isFromCommonModule(it) ?: false,
+                        hmppModuleName = hmppCliModuleStructure?.getModuleNameForSource(it)
                     )
                 }
                 put(CLIConfigurationKeys.CONTENT_ROOTS, baseContentRootsWithoutKotlin + kotlinContentRoots)

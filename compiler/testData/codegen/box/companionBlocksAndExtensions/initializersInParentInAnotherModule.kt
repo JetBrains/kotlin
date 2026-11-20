@@ -1,6 +1,4 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// IGNORE_IR_DESERIALIZATION_TEST: JS_IR, NATIVE
-// ^^^ KT-86953 K2: Fake overrides are generated for inherited companion-block static members
 
 // MODULE: lib
 // FILE: lib.kt

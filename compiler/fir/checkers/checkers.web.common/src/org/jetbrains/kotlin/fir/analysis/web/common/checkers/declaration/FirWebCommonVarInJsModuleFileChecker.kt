@@ -37,8 +37,7 @@ abstract class FirWebCommonVarInJsModuleFileChecker : FirPropertyChecker(MppChec
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         if (!declaration.isVar || !context.isTopLevel) return
-        // A non-external declaration is already covered by NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE
-        // on JS and by JS_MODULE_PROHIBITED_ON_NON_EXTERNAL on Wasm.
+        // A non-external declaration is already covered by NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE.
         if (!declaration.symbol.isNativeObject(context.session)) return
         if (!isNonWritableModuleImport(declaration)) return
 

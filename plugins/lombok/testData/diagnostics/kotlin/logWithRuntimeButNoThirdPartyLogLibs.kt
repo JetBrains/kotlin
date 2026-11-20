@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FULL_JDK
 
@@ -20,3 +21,5 @@ class Slf4jExample {
 
 @<!MISSING_DEPENDENCY_CLASS("org.slf4j.Logger")!>Slf4j<!>
 class Slf4jExampleWithoutLogUsage
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, stringLiteral */

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
-import org.jetbrains.kotlin.resolve.source.getAssignmentLhsIfUnwrappable
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -548,6 +547,9 @@ object LightTreePositioningStrategies {
 
     val INLINE_OR_VALUE_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(INLINE_KEYWORD, VALUE_KEYWORD)
+
+    val VALUE_MODIFIER: LightTreePositioningStrategy =
+        ModifierSetBasedLightTreePositioningStrategy(VALUE_KEYWORD)
 
     val INNER_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(INNER_KEYWORD)
@@ -1480,6 +1482,25 @@ object LightTreePositioningStrategies {
         }
     }
 
+    /**
+     * Marks the brackets of a destructuring declaration together with its entries, e.g., `(a, b)` in `val (a, b) = pair`.
+     */
+    val DESTRUCTURING_DECLARATION_ENTRIES: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val opening = tree.findChildByType(node, DESTRUCTURING_OPENING_BRACKETS)
+                ?: return super.mark(node, startOffset, endOffset, tree)
+            val closing = tree.findChildByType(node, DESTRUCTURING_CLOSING_BRACKETS)
+                ?: tree.findLastChildByType(node, KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY)
+                ?: opening
+            return markRange(opening, closing, startOffset, endOffset, tree, node)
+        }
+    }
+
     val DEPRECATION: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -1513,6 +1534,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.safeAccess(node: Light
 
 private val DOT_OR_SAFE_ACCESSES = TokenSet.orSet(ALL_SAFE_ACCESSES, TokenSet.create(DOT))
 
+private val DESTRUCTURING_OPENING_BRACKETS = TokenSet.create(LPAR, LBRACKET)
+private val DESTRUCTURING_CLOSING_BRACKETS = TokenSet.create(RPAR, RBRACKET)
+
 private fun FlyweightCapableTreeStructure<LighterASTNode>.dotOrSafeAccess(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, DOT_OR_SAFE_ACCESSES)
 
@@ -1536,9 +1560,6 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.fieldKeyword(node: Lig
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.byKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, BY_KEYWORD)
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
-    findChildByType(node, IDENTIFIER)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.operationReference(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.OPERATION_REFERENCE)
@@ -1601,9 +1622,6 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.rightParenthesis(node:
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.objectKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, OBJECT_KEYWORD)
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.valOrVarKeyword(node: LighterASTNode): LighterASTNode? =
-    findChildByType(node, VAL_VAR)
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.visibilityModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, VISIBILITY_MODIFIERS) }
@@ -1744,24 +1762,6 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.lastChildExpression(node: Ligh
     return childrenRef.get()?.lastOrNull { it?.isExpression() == true }
 }
 
-fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: IElementType): LighterASTNode? {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    getChildren(node, childrenRef)
-    return childrenRef.get()?.firstOrNull { it?.tokenType == type }
-}
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.findChildrenByType(node: LighterASTNode, type: IElementType): List<LighterASTNode> {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    getChildren(node, childrenRef)
-    return childrenRef.get()?.filter { it?.tokenType == type }?.filterNotNull().orEmpty()
-}
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.findLastChildByType(node: LighterASTNode, type: IElementType): LighterASTNode? {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    getChildren(node, childrenRef)
-    return childrenRef.get()?.lastOrNull { it?.tokenType == type }
-}
-
 fun FlyweightCapableTreeStructure<LighterASTNode>.findDescendantByType(
     node: LighterASTNode,
     type: IElementType,
@@ -1866,12 +1866,6 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.traverseDescendants(
     traverse(node)
 }
 
-fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: TokenSet): LighterASTNode? {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    getChildren(node, childrenRef)
-    return childrenRef.get()?.firstOrNull { it?.tokenType in type }
-}
-
 private fun FlyweightCapableTreeStructure<LighterASTNode>.findParentOfType(
     node: LighterASTNode,
     type: IElementType,
@@ -1885,9 +1879,6 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.findParentOfType(
     }
     return null
 }
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.getAncestors(node: LighterASTNode): Sequence<LighterASTNode> =
-    generateSequence(getParent(node)) { getParent(it) }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.firstChild(node: LighterASTNode): LighterASTNode? {
     val childrenRef = Ref<Array<LighterASTNode>>()

@@ -173,6 +173,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
   }
 
   @Test
+  @TestMetadata("classFileVersion.kt")
+  public void testClassFileVersion() {
+    run("classFileVersion.kt");
+  }
+
+  @Test
   @TestMetadata("classMembers.kt")
   public void testClassMembers() {
     run("classMembers.kt");
@@ -512,6 +518,18 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
   @TestMetadata("enumEntryContent.kt")
   public void testEnumEntryContent() {
     run("enumEntryContent.kt");
+  }
+
+  @Test
+  @TestMetadata("enumEntryNamedLikeModifier.kt")
+  public void testEnumEntryNamedLikeModifier() {
+    run("enumEntryNamedLikeModifier.kt");
+  }
+
+  @Test
+  @TestMetadata("enumEntryNamedLikeModifierWithModifiers.kt")
+  public void testEnumEntryNamedLikeModifierWithModifiers() {
+    run("enumEntryNamedLikeModifierWithModifiers.kt");
   }
 
   @Test
@@ -1211,6 +1229,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
   }
 
   @Test
+  @TestMetadata("stubbedDeclarationsInBodies.kt")
+  public void testStubbedDeclarationsInBodies() {
+    run("stubbedDeclarationsInBodies.kt");
+  }
+
+  @Test
   @TestMetadata("suggestGuardSyntax.kt")
   public void testSuggestGuardSyntax() {
     run("suggestGuardSyntax.kt");
@@ -1554,6 +1578,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("constructorWithThrowsFromLibrary.kt")
+    public void testConstructorWithThrowsFromLibrary() {
+      run("constructorWithThrowsFromLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("differentDefaultValues.kt")
     public void testDifferentDefaultValues() {
       run("differentDefaultValues.kt");
@@ -1593,6 +1623,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     @TestMetadata("oldAnnotationsRecovery.kt")
     public void testOldAnnotationsRecovery() {
       run("oldAnnotationsRecovery.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyAccessorsWithThrowsFromLibrary.kt")
+    public void testPropertyAccessorsWithThrowsFromLibrary() {
+      run("propertyAccessorsWithThrowsFromLibrary.kt");
     }
 
     @Test
@@ -2291,6 +2327,18 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
       }
 
       @Test
+      @TestMetadata("unsignedDefaults.kt")
+      public void testUnsignedDefaults() {
+        run("unsignedDefaults.kt");
+      }
+
+      @Test
+      @TestMetadata("unsignedDefaultsFromOldMetadata.kt")
+      public void testUnsignedDefaultsFromOldMetadata() {
+        run("unsignedDefaultsFromOldMetadata.kt");
+      }
+
+      @Test
       @TestMetadata("unsignedLiterals.kt")
       public void testUnsignedLiterals() {
         run("unsignedLiterals.kt");
@@ -2398,6 +2446,18 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("danglingContextInFunctionType.kt")
+    public void testDanglingContextInFunctionType() {
+      run("danglingContextInFunctionType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotated.kt")
+    public void testDanglingContextInFunctionTypeAnnotated() {
+      run("danglingContextInFunctionTypeAnnotated.kt");
+    }
+
+    @Test
     @TestMetadata("danglingContextParameter.kt")
     public void testDanglingContextParameter() {
       run("danglingContextParameter.kt");
@@ -2487,6 +2547,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     @TestMetadata("annotatedContract.kt")
     public void testAnnotatedContract() {
       run("annotatedContract.kt");
+    }
+
+    @Test
+    @TestMetadata("contractFirstStatementForms.kt")
+    public void testContractFirstStatementForms() {
+      run("contractFirstStatementForms.kt");
     }
 
     @Test
@@ -2996,6 +3062,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("scriptDestructuringEntries.kts")
+    public void testScriptDestructuringEntries() {
+      run("scriptDestructuringEntries.kts");
+    }
+
+    @Test
     @TestMetadata("shortNameBasedDestructuringWithRenaming.kt")
     public void testShortNameBasedDestructuringWithRenaming() {
       run("shortNameBasedDestructuringWithRenaming.kt");
@@ -3430,6 +3502,30 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("expectFullValueClassWithNoConstructor.kt")
+    public void testExpectFullValueClassWithNoConstructor() {
+      run("expectFullValueClassWithNoConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("expectInlineClassWithNoConstructor.kt")
+    public void testExpectInlineClassWithNoConstructor() {
+      run("expectInlineClassWithNoConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("expectJvmInlineValueClassWithNoConstructor.kt")
+    public void testExpectJvmInlineValueClassWithNoConstructor() {
+      run("expectJvmInlineValueClassWithNoConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineClassOldSyntax.kt")
+    public void testInlineClassOldSyntax() {
+      run("inlineClassOldSyntax.kt");
+    }
+
+    @Test
     @TestMetadata("inlineClassPrivateProperty.kt")
     public void testInlineClassPrivateProperty() {
       run("inlineClassPrivateProperty.kt");
@@ -3459,6 +3555,30 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
       run("inlineClassWithTypeParameter.kt");
     }
 
+    @Test
+    @TestMetadata("inlineValueClass.kt")
+    public void testInlineValueClass() {
+      run("inlineValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineValueClassWithAnnotation.kt")
+    public void testInlineValueClassWithAnnotation() {
+      run("inlineValueClassWithAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineValueClassWithFullValueClasses.kt")
+    public void testInlineValueClassWithFullValueClasses() {
+      run("inlineValueClassWithFullValueClasses.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineValueClassWithJvmInline.kt")
+    public void testInlineValueClassWithJvmInline() {
+      run("inlineValueClassWithJvmInline.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/psi/psi-impl/testData/psi/inlineClasses/jvmAbi")
     @TestDataPath("$PROJECT_ROOT")
@@ -3470,6 +3590,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
       @Test
       public void testAllFilesPresentInJvmAbi() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/inlineClasses/jvmAbi"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("jvmAbiInlineClassOldSyntax.kt")
+      public void testJvmAbiInlineClassOldSyntax() {
+        run("jvmAbiInlineClassOldSyntax.kt");
       }
 
       @Test
@@ -3494,6 +3620,18 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
       @TestMetadata("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt")
       public void testJvmAbiInlineClassWithTypeParameterUnderlyingType() {
         run("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmAbiInlineValueClass.kt")
+      public void testJvmAbiInlineValueClass() {
+        run("jvmAbiInlineValueClass.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmAbiInlineValueClassWithFullValueClasses.kt")
+      public void testJvmAbiInlineValueClassWithFullValueClasses() {
+        run("jvmAbiInlineValueClassWithFullValueClasses.kt");
       }
     }
   }
@@ -4138,6 +4276,24 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("localClassFollowedByCallNamedLikeModifier.kt")
+    public void testLocalClassFollowedByCallNamedLikeModifier() {
+      run("localClassFollowedByCallNamedLikeModifier.kt");
+    }
+
+    @Test
+    @TestMetadata("localClassFollowedByCallNamedLikeModifierScript.kts")
+    public void testLocalClassFollowedByCallNamedLikeModifierScript() {
+      run("localClassFollowedByCallNamedLikeModifierScript.kts");
+    }
+
+    @Test
+    @TestMetadata("localClassFollowedByCallNamedLikeModifierWithErrors.kt")
+    public void testLocalClassFollowedByCallNamedLikeModifierWithErrors() {
+      run("localClassFollowedByCallNamedLikeModifierWithErrors.kt");
+    }
+
+    @Test
     @TestMetadata("nestedClassAmbiguity.kt")
     public void testNestedClassAmbiguity() {
       run("nestedClassAmbiguity.kt");
@@ -4420,6 +4576,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("FunctionExpressionBody.kt")
+    public void testFunctionExpressionBody() {
+      run("FunctionExpressionBody.kt");
+    }
+
+    @Test
     @TestMetadata("IfKeywordRBrace.kt")
     public void testIfKeywordRBrace() {
       run("IfKeywordRBrace.kt");
@@ -4633,6 +4795,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     @TestMetadata("PackageRecovery.kt")
     public void testPackageRecovery() {
       run("PackageRecovery.kt");
+    }
+
+    @Test
+    @TestMetadata("PropertyAccessorExpressionBody.kt")
+    public void testPropertyAccessorExpressionBody() {
+      run("PropertyAccessorExpressionBody.kt");
     }
 
     @Test
@@ -5021,26 +5189,6 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
   }
 
   @Nested
-  @TestMetadata("compiler/psi/psi-impl/testData/psi/repl")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Repl {
-    private void run(String fileName) {
-      runTest("compiler/psi/psi-impl/testData/psi/repl/" + fileName);
-    }
-
-    @Test
-    public void testAllFilesPresentInRepl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/repl"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("replSnippet.repl.kts")
-    public void testReplSnippet_repl() {
-      run("replSnippet.repl.kts");
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/psi/psi-impl/testData/psi/richErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class RichErrors {
@@ -5082,6 +5230,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     public void testUnionTypeSmoke() {
       run("unionTypeSmoke.kt");
     }
+
+    @Test
+    @TestMetadata("unionTypeWithAnnotations.kt")
+    public void testUnionTypeWithAnnotations() {
+      run("unionTypeWithAnnotations.kt");
+    }
   }
 
   @Nested
@@ -5095,6 +5249,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     @Test
     public void testAllFilesPresentInScript() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/script"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionsScript.kts")
+    public void testAnonymousFunctionsScript() {
+      run("anonymousFunctionsScript.kts");
     }
 
     @Test

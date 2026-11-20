@@ -29,15 +29,22 @@ Expression Stability: STABLE_VALUE
 
 FILE: [ResolvedTo(IMPORTS)] errorProperty.kt
     public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] constructor(): R|Foo| {
+        public [ResolvedTo(STATUS)] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/transformation|<R|MyPair|>(<L> = [ResolvedTo(BODY_RESOLVE)] transformation@fun <anonymous>(): R|MyPair| <inline=NoInline>  {
+        private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|MyPair| = R|/transformation|<R|MyPair|>(<L> = [ResolvedTo(BODY_RESOLVE)] transformation@fun <anonymous>(): R|MyPair| <inline=NoInline>  {
             [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|kotlin/Int| = Int(1)
             ^ R|/MyPair.MyPair|(R|<local>/localProperty|, String(str))
         }
         )
+            private [ResolvedTo(BODY_RESOLVE)] get(): R|MyPair|
+
+        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): <implicit>
+
+        public final [ResolvedTo(STATUS)] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): <implicit>
 
     }
     public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T> transformation([ResolvedTo(STATUS)] body: R|() -> T|): R|T| { LAZY_BLOCK }

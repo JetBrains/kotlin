@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.cli.common.fir
 
-import org.jetbrains.kotlin.KtInMemoryTextSourceFile
-import org.jetbrains.kotlin.KtIoFileSourceFile
-import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtPsiSourceFile
-import org.jetbrains.kotlin.KtVirtualFileSourceFile
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import java.io.Closeable
@@ -107,7 +103,7 @@ object FirDiagnosticsCompilerResultsReporter {
                                 MessageUtil.psiFileToMessageLocation(
                                     file,
                                     file.name,
-                                    DiagnosticUtils.getLineAndColumnRange(file, diagnostic.textRanges)
+                                    PsiDiagnosticUtils.getLineAndColumnRange(file, diagnostic.textRanges)
                                 )
                             }
                             else -> {

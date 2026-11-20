@@ -1,23 +1,6 @@
 FILE fqName:events fileName:/kt38765.kt
   CLASS CLASS name:internal modality:OPEN visibility:public [external] superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:events.internal
-    PROPERTY name:property visibility:public modality:FINAL [external,var]
-      FIELD PROPERTY_BACKING_FIELD name:property type:kotlin.Int visibility:private [external]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-property> visibility:public modality:FINAL returnType:kotlin.Int [external]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:events.internal
-        correspondingProperty: PROPERTY name:property visibility:public modality:FINAL [external,var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-property> (): kotlin.Int declared in events.internal'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:property type:kotlin.Int visibility:private [external]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: events.internal declared in events.internal.<get-property>' type=events.internal origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-property> visibility:public modality:FINAL returnType:kotlin.Unit [external]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:events.internal
-        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
-        correspondingProperty: PROPERTY name:property visibility:public modality:FINAL [external,var]
-        BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:property type:kotlin.Int visibility:private [external]' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<this>: events.internal declared in events.internal.<set-property>' type=events.internal origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in events.internal.<set-property>' type=kotlin.Int origin=null
     CLASS CLASS name:EventEmitterP modality:OPEN visibility:public [external] superTypes:[events.internal]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:events.internal.EventEmitterP
       CONSTRUCTOR visibility:public returnType:events.internal.EventEmitterP [external,primary]
@@ -206,6 +189,23 @@ FILE fqName:events fileName:/kt38765.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
     FUN name:function visibility:public modality:FINAL returnType:kotlin.String [external]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:events.internal
+    PROPERTY name:property visibility:public modality:FINAL [external,var]
+      FIELD PROPERTY_BACKING_FIELD name:property type:kotlin.Int visibility:private [external]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-property> visibility:public modality:FINAL returnType:kotlin.Int [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:events.internal
+        correspondingProperty: PROPERTY name:property visibility:public modality:FINAL [external,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-property> (): kotlin.Int declared in events.internal'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:property type:kotlin.Int visibility:private [external]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: events.internal declared in events.internal.<get-property>' type=events.internal origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-property> visibility:public modality:FINAL returnType:kotlin.Unit [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:events.internal
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:property visibility:public modality:FINAL [external,var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:property type:kotlin.Int visibility:private [external]' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: events.internal declared in events.internal.<set-property>' type=events.internal origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in events.internal.<set-property>' type=kotlin.Int origin=null
   CLASS INTERFACE name:A modality:ABSTRACT visibility:public [external] superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:events.A
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion,external] superTypes:[kotlin.Any]

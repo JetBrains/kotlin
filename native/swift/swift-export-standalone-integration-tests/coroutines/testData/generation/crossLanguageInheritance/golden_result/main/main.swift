@@ -38,7 +38,7 @@ open class AsyncAbstractBase: KotlinRuntime.KotlinBase {
     }
     open func abstractGreet() async throws -> Swift.String {
         if Self.self == main.AsyncAbstractBase.self {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncAbstractBase_abstractGreet(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
@@ -47,11 +47,11 @@ open class AsyncAbstractBase: KotlinRuntime.KotlinBase {
     }
     open func concreteGreet() async throws -> Swift.String {
         if Self.self == main.AsyncAbstractBase.self {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncAbstractBase_concreteGreet(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncAbstractBase_concreteGreet_direct(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
@@ -76,11 +76,11 @@ open class AsyncBase: KotlinRuntime.KotlinBase {
     }
     open func count() async throws -> Swift.Int32 {
         if Self.self == main.AsyncBase.self {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncBase_count(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncBase_count_direct(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
@@ -89,17 +89,17 @@ open class AsyncBase: KotlinRuntime.KotlinBase {
         name: Swift.String
     ) async throws -> Swift.String {
         if Self.self == main.AsyncBase.self {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncBase_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncBase_greet__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), name, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
     }
     public final func notOpen() async throws -> Swift.String {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncBase_notOpen(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -134,22 +134,22 @@ open class AsyncGreeterBase: KotlinRuntime.KotlinBase, main.AsyncGreeter, main._
         name: Swift.String
     ) async throws -> Swift.String {
         if Self.self == main.AsyncGreeterBase.self {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncGreeterBase_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncGreeterBase_greet__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), name, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
     }
     open func salutation() async throws -> Swift.String {
         if Self.self == main.AsyncGreeterBase.self {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncGreeterBase_salutation(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncGreeterBase_salutation_direct(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
@@ -173,7 +173,7 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     public final func overloaded() async throws -> Swift.String {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncOverloaded_overloaded(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -181,11 +181,11 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
         arg1: Swift.String
     ) async throws -> Swift.String {
         if Self.self == main.AsyncOverloaded.self {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncOverloaded_overloaded__TypesOfArguments__Swift_String__(self.__externalRCRef(), arg1, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncOverloaded_overloaded__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), arg1, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
@@ -195,11 +195,11 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
         arg2: Swift.Int32
     ) async throws -> Swift.String {
         if Self.self == main.AsyncOverloaded.self {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncOverloaded_overloaded__TypesOfArguments__Swift_String_Swift_Int32__(self.__externalRCRef(), arg1, arg2, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncOverloaded_overloaded__TypesOfArguments__Swift_String_Swift_Int32___direct(self.__externalRCRef(), arg1, arg2, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
@@ -208,11 +208,11 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
         arg: Swift.Int32
     ) async throws -> Swift.String {
         if Self.self == main.AsyncOverloaded.self {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncOverloaded_same__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncOverloaded_same__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), arg, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
@@ -221,11 +221,11 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
         arg: Swift.String
     ) async throws -> Swift.String {
         if Self.self == main.AsyncOverloaded.self {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncOverloaded_same__TypesOfArguments__Swift_String__(self.__externalRCRef(), arg, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncOverloaded_same__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), arg, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
@@ -234,19 +234,19 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
 @_documentation(visibility: internal)
 extension main.AsyncDefaulter where Self : main.__AsyncDefaulter {
     public func describe() async throws -> Swift.String {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncDefaulter_describe(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func tag() async throws -> Swift.String {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncDefaulter_tag(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
 }
 extension main.AsyncDefaulter {
     public func describe() async throws -> Swift.String {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncDefaulter_describe_direct(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -256,12 +256,12 @@ extension main.AsyncGreeter where Self : main.__AsyncGreeter {
     public func greet(
         name: Swift.String
     ) async throws -> Swift.String {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncGreeter_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func salutation() async throws -> Swift.String {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncGreeter_salutation(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }

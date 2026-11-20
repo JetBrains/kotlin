@@ -1,0 +1,12 @@
+/declarationQualifier.kt:16:1: error: '@JsModule' annotation is prohibited for 'var' declarations. Use 'val' instead.
+/fileQualifier.kt:32:1: error: '@JsModule' cannot be applied to a declaration in a file marked with '@JsQualifier'.
+
+/fileQualifier.kt:35:1: error: '@JsModule' cannot be applied to a declaration in a file marked with '@JsQualifier'.
+
+/fileQualifier.kt:38:1: error: '@JsModule' annotation is prohibited for 'var' declarations. Use 'val' instead.
+
+/fileQualifier.kt:38:1: error: '@JsModule' cannot be applied to a declaration in a file marked with '@JsQualifier'.
+
+/fileQualifier.kt:41:1: error: '@JsModule' cannot be applied to a declaration in a file marked with '@JsQualifier'.
+
+/fileQualifier.kt:44:1: error: '@JsModule' cannot be applied to a declaration in a file marked with '@JsQualifier'.

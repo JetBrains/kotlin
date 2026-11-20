@@ -8,48 +8,36 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsCodeConstantArgumentChecker
-import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsQualifierChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirWebReflectionAPICallChecker
 
 object JsExpressionCheckers : ExpressionCheckers() {
-    override val annotationCallCheckers: Set<FirAnnotationCallChecker>
-        get() = setOf(
-            FirJsQualifierChecker,
-        )
+    override val basicExpressionCheckers: Set<FirBasicExpressionChecker> = setOf(
+        FirJsDefinedExternallyCallChecker,
+        FirJsNativeRttiChecker,
+        FirWebReflectionAPICallChecker(isWasm = false),
+    )
 
-    override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
-        get() = setOf(
-            FirJsDefinedExternallyCallChecker,
-            FirJsNativeRttiChecker,
-            FirWebReflectionAPICallChecker(isWasm = false),
-        )
+    override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
+        FirJsCodeConstantArgumentChecker,
+        FirJsReifiedExternalChecker,
+        FirJsReifiedJsNoRuntimeChecker,
+    )
 
-    override val functionCallCheckers: Set<FirFunctionCallChecker>
-        get() = setOf(
-            FirJsCodeConstantArgumentChecker,
-            FirJsReifiedExternalChecker,
-            FirJsReifiedJsNoRuntimeChecker,
-        )
+    override val callCheckers: Set<FirCallChecker> = setOf(
+        FirJsExternalArgumentCallChecker
+    )
 
-    override val callCheckers: Set<FirCallChecker>
-        get() = setOf(
-            FirJsExternalArgumentCallChecker
-        )
+    override val getClassCallCheckers: Set<FirGetClassCallChecker> = setOf(
+        FirJsModuleGetClassCallChecker,
+        FirJsNoRuntimeClassReferenceChecker,
+    )
 
-    override val getClassCallCheckers: Set<FirGetClassCallChecker>
-        get() = setOf(
-            FirJsModuleGetClassCallChecker,
-            FirJsNoRuntimeClassReferenceChecker,
-        )
+    override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> = setOf(
+        FirJsModuleQualifiedAccessChecker,
+        FirJsDynamicCallChecker
+    )
 
-    override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>
-        get() = setOf(
-            FirJsModuleQualifiedAccessChecker,
-            FirJsDynamicCallChecker
-        )
-
-    override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker>
-        get() = setOf(
-            FirJsNoRuntimeTypeOperatorChecker,
-        )
+    override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> = setOf(
+        FirJsNoRuntimeTypeOperatorChecker,
+    )
 }

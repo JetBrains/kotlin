@@ -21,10 +21,20 @@ func testAccessClassFromLibraryWithShortName() throws {
      try assertEquals(actual: dataFromEnum, expected: "Enum entry B")
 }
 
+// KT-90589: `description` is overridden in Kotlin, `isEqual` and `isKind` are inherited from NSObject.
+func testKotlinSubclassOfNSObjectFromLibrary() throws {
+    let object = LibraryKt.createKotlinSubclassOfNSObject()
+
+    try assertEquals(actual: object.description, expected: "KotlinSubclassOfNSObject")
+    try assertTrue(object.isEqual(object))
+    try assertTrue(object.isKind(of: NSObject.self))
+}
+
 class LibraryTests : SimpleTestProvider {
     override init() {
         super.init()
 
         test("testAccessClassFromLibraryWithShortName", testAccessClassFromLibraryWithShortName)
+        test("testKotlinSubclassOfNSObjectFromLibrary", testKotlinSubclassOfNSObjectFromLibrary)
     }
 }

@@ -15,6 +15,14 @@ object KlibBasedKDocDeserializer : FirKDocDeserializer {
         return proto.getExtensionOrNull(KlibMetadataProtoBuf.propertyKdoc)
     }
 
+    override fun loadPropertyGetterKDoc(proto: ProtoBuf.Property): String? {
+        return proto.getExtensionOrNull(KlibMetadataProtoBuf.propertyGetterKdoc)
+    }
+
+    override fun loadPropertySetterKDoc(proto: ProtoBuf.Property): String? {
+        return proto.getExtensionOrNull(KlibMetadataProtoBuf.propertySetterKdoc)
+    }
+
     override fun loadFunctionKDoc(proto: ProtoBuf.Function): String? {
         return proto.getExtensionOrNull(KlibMetadataProtoBuf.functionKdoc)
     }
@@ -25,5 +33,13 @@ object KlibBasedKDocDeserializer : FirKDocDeserializer {
 
     override fun loadClassKDoc(proto: ProtoBuf.Class): String? {
         return proto.getExtensionOrNull(KlibMetadataProtoBuf.classKdoc)
+    }
+
+    override fun loadTypeAliasKDoc(proto: ProtoBuf.TypeAlias): String? {
+        return proto.getExtensionOrNull(KlibMetadataProtoBuf.typeAliasKdoc)
+    }
+
+    override fun loadEnumEntryKDoc(proto: ProtoBuf.EnumEntry): String? {
+        return proto.getExtensionOrNull(KlibMetadataProtoBuf.enumEntryKdoc)
     }
 }

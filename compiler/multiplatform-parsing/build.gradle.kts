@@ -28,6 +28,7 @@ kotlin {
         val commonMain = getByName("commonMain") {
             dependencies {
                 api(kotlinStdlib())
+                implementation(project(":core:language.syntax"))
                 implementation(libs.org.jetbrains.syntax.api)
                 implementation(libs.org.jetbrains.annotations)
             }
@@ -45,6 +46,7 @@ kotlin {
                 implementation(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils")))
                 implementation(project(":compiler:cli"))
                 implementation(project(":compiler:psi:parser"))
+                implementation(project(":kotlin-tooling-core"))
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
                 runtimeOnly(libs.junit.platform.launcher)
@@ -63,7 +65,6 @@ tasks.withType<Test> {
     val testDataDirs = listOf(
         project(":compiler").isolated.projectDirectory.dir("testData"),
         project(":compiler:tests-spec").isolated.projectDirectory.dir("testData"),
-        project(":compiler:fir:analysis-tests").isolated.projectDirectory.dir("testData"),
         project(":analysis:analysis-api").isolated.projectDirectory.dir("testData"),
         project(":compiler:psi:psi-impl").isolated.projectDirectory.dir("testData"),
     ).joinToString(File.pathSeparator)
@@ -103,6 +104,7 @@ for (lexerName in listOf("KDoc", "Kotlin")) {
         generatorMainClass = "jflex.Main",
         argsProvider = { generationRoot ->
             listOf(
+                "--quiet",
                 lexerFile.asFile.absolutePath,
                 "-skel",
                 skeletonFile.asFile.absolutePath,

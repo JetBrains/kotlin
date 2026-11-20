@@ -2,6 +2,8 @@
 // ^^^ Only JVM allows `main` functions in the same package but in different files.
 
 // WITH_STDLIB
+// IGNORE_BACKEND: JKLIB
+// ^ Several `main` functions in the same package clash in KLIB signatures.
 
 // FILE: a.kt
 fun main() {

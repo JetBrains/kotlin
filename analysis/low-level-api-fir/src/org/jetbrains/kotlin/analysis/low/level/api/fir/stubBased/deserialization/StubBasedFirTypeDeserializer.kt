@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -251,24 +252,14 @@ internal class StubBasedFirTypeDeserializer(
         if (constructor !is ConeClassLikeLookupTag) return null
 
         val typeElement = typeReference.typeElement?.unwrapNullability()
-        val arguments = when (typeElement) {
-            is KtUserType -> buildList {
-                // The type for Outer<T>.Inner<S> needs to have type args <S, T>
-                var current: KtUserType? = typeElement
-                while (current != null) {
-                    current.typeArguments.forEach { add(typeArgument(it)) }
-                    current = current.qualifier
-                }
-            }.toTypedArray()
-            is KtFunctionType -> buildList {
-                typeElement.contextReceiversTypeReferences.mapTo(this) { type(it).toTypeProjection(Variance.INVARIANT) }
-                typeElement.receiver?.let { add(type(it.typeReference).toTypeProjection(Variance.INVARIANT)) }
-                typeElement.parameters.mapTo(this) { type(it.typeReference!!).toTypeProjection(Variance.INVARIANT) }
-                add(type(typeElement.returnTypeReference!!).toTypeProjection(Variance.INVARIANT))
-            }.toTypedArray()
-            else -> errorWithAttachment("not supported ${typeElement?.let { it::class }}") {
-                withPsiEntry("typeElement", typeElement)
+        val arguments = typeElement?.mapTypeArguments { argumentTypeReference, projectionKind ->
+            if (projectionKind == KtProjectionKind.STAR) {
+                ConeStarProjection
+            } else {
+                typeArgument(type(argumentTypeReference!!), projectionKind)
             }
+        }?.toTypedArray() ?: errorWithAttachment("not supported ${typeElement?.let { it::class }}") {
+            withPsiEntry("typeElement", typeElement)
         }
 
         return ConeClassLikeTypeImpl(
@@ -352,16 +343,6 @@ internal class StubBasedFirTypeDeserializer(
         return ClassId(internalComposePackageFqName, name)
     }
 
-
-    private fun typeArgument(projection: KtTypeProjection): ConeTypeProjection {
-        if (projection.projectionKind == KtProjectionKind.STAR) {
-            return ConeStarProjection
-        }
-
-        val type = type(projection.typeReference!!)
-        return typeArgument(type, projection.projectionKind)
-    }
-
     private fun typeArgument(
         type: ConeKotlinType,
         projectionKind: KtProjectionKind
@@ -415,4 +396,80 @@ internal fun KtUserType.classId(): ClassId {
         FqName.fromSegments(classFragments),
         isLocal = false
     )
+}
+
+/**
+ * Maps type arguments of [this] type element in the order of the arguments of the [ConeClassLikeType] which
+ * [StubBasedFirTypeDeserializer] builds for it, or returns `null` if the element has no type arguments of its own (e.g., `T & Any`).
+ *
+ * [transform] receives the type reference of an argument (`null` for a star projection) and its projection kind.
+ */
+private inline fun <R> KtTypeElement.mapTypeArguments(
+    transform: (typeReference: KtTypeReference?, projectionKind: KtProjectionKind) -> R,
+): List<R>? = when (this) {
+    is KtUserType -> buildList {
+        // The type for Outer<T>.Inner<S> needs to have type args <S, T>
+        var current: KtUserType? = this@mapTypeArguments
+        while (current != null) {
+            current.typeArguments.forEach { add(transform(it.typeReference, it.projectionKind)) }
+            current = current.qualifier
+        }
+    }
+
+    is KtFunctionType -> buildList {
+        contextReceiversTypeReferences.forEach { add(transform(it, KtProjectionKind.NONE)) }
+        receiver?.let { add(transform(it.typeReference, KtProjectionKind.NONE)) }
+        parameters.forEach { add(transform(it.typeReference, KtProjectionKind.NONE)) }
+        add(transform(returnTypeReference, KtProjectionKind.NONE))
+    }
+
+    else -> null
+}
+
+/**
+ * Returns the part of [this] type which corresponds to [nestedTypeReference], a type reference nested in [typeReference],
+ * or `null` if there is no such part.
+ *
+ * [this] type has to be deserialized from [typeReference] by [StubBasedFirTypeDeserializer], as the type arguments are matched
+ * with the PSI by [mapTypeArguments].
+ */
+internal fun ConeKotlinType.findNestedType(typeReference: KtTypeReference, nestedTypeReference: KtTypeReference): ConeKotlinType? {
+    if (typeReference === nestedTypeReference) return this
+
+    val path = nestedTypeReference.parentsWithSelf
+        .takeWhile { it !== typeReference }
+        .filterIsInstance<KtTypeReference>()
+        .toSet()
+
+    return findNestedType(typeReference, nestedTypeReference, path)
+}
+
+private fun ConeKotlinType.findNestedType(
+    typeReference: KtTypeReference,
+    nestedTypeReference: KtTypeReference,
+    path: Set<KtTypeReference>,
+): ConeKotlinType? {
+    if (typeReference === nestedTypeReference) return this
+
+    // The PSI of a flexible type represents its lower bound
+    val type = lowerBoundIfFlexible()
+    val typeElement = typeReference.typeElement?.unwrapNullability() ?: return null
+
+    // `T & Any` is deserialized as a definitely non-nullable type, which has no part for `Any`
+    if (typeElement is KtIntersectionType) {
+        val leftTypeReference = typeElement.getLeftTypeRef()?.takeIf { it in path } ?: return null
+        val originalType = (type as? ConeDefinitelyNotNullType)?.original ?: type
+        return originalType.findNestedType(leftTypeReference, nestedTypeReference, path)
+    }
+
+    val argumentTypeReferences = typeElement.mapTypeArguments { argumentTypeReference, _ -> argumentTypeReference } ?: return null
+
+    val typeArguments = (type as? ConeClassLikeType)?.typeArguments ?: return null
+    if (typeArguments.size != argumentTypeReferences.size) return null
+
+    val index = argumentTypeReferences.indexOfFirst { it != null && it in path }
+    if (index == -1) return null
+
+    val argumentType = typeArguments[index].type ?: return null
+    return argumentType.findNestedType(argumentTypeReferences[index]!!, nestedTypeReference, path)
 }

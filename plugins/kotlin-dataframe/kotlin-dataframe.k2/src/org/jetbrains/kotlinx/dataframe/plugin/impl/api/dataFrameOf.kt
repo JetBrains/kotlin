@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
@@ -7,6 +8,8 @@ import org.jetbrains.kotlin.fir.plugin.createConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlinx.dataframe.impl.api.withValuesImpl
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
+import org.jetbrains.kotlinx.dataframe.plugin.findSchemaArgument
+import org.jetbrains.kotlinx.dataframe.plugin.getSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
@@ -46,7 +49,7 @@ class DataFrameBuilderRandomInt : AbstractSchemaModificationInterpreter() {
     val Arguments.nrow by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.intType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Int)
 }
 
 class DataFrameBuilderRandomIntRange : AbstractSchemaModificationInterpreter() {
@@ -55,7 +58,7 @@ class DataFrameBuilderRandomIntRange : AbstractSchemaModificationInterpreter() {
     val Arguments.range by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.intType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Int)
 }
 
 class DataFrameBuilderRandomDouble : AbstractSchemaModificationInterpreter() {
@@ -63,7 +66,7 @@ class DataFrameBuilderRandomDouble : AbstractSchemaModificationInterpreter() {
     val Arguments.nrow by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.doubleType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Double)
 }
 
 class DataFrameBuilderRandomDoubleRange : AbstractSchemaModificationInterpreter() {
@@ -72,7 +75,7 @@ class DataFrameBuilderRandomDoubleRange : AbstractSchemaModificationInterpreter(
     val Arguments.range by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.doubleType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Double)
 }
 
 class DataFrameBuilderRandomFloat : AbstractSchemaModificationInterpreter() {
@@ -80,7 +83,7 @@ class DataFrameBuilderRandomFloat : AbstractSchemaModificationInterpreter() {
     val Arguments.nrow by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.floatType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Float)
 }
 
 class DataFrameBuilderRandomLong : AbstractSchemaModificationInterpreter() {
@@ -88,7 +91,7 @@ class DataFrameBuilderRandomLong : AbstractSchemaModificationInterpreter() {
     val Arguments.nrow by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.longType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Long)
 }
 
 class DataFrameBuilderRandomLongRange : AbstractSchemaModificationInterpreter() {
@@ -97,7 +100,7 @@ class DataFrameBuilderRandomLongRange : AbstractSchemaModificationInterpreter() 
     val Arguments.range by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.longType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Long)
 }
 
 class DataFrameBuilderRandomBoolean : AbstractSchemaModificationInterpreter() {
@@ -105,7 +108,7 @@ class DataFrameBuilderRandomBoolean : AbstractSchemaModificationInterpreter() {
     val Arguments.nrow by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.booleanType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Boolean)
 }
 
 class DataFrameBuilderNulls : AbstractSchemaModificationInterpreter() {
@@ -194,13 +197,33 @@ class DataFrameOfPairs : SchemaConstructor()
 
 class ColumnOfPairs : SchemaConstructor()
 
+/**
+ * Handles `columnOf(vararg frames: DataFrame<T>): FrameColumn<T>`.
+ * Same as at runtime, the schema of the resulting [org.jetbrains.kotlinx.dataframe.columns.FrameColumn]
+ * is the intersection of the schemas of all given frames.
+ */
+class ColumnOfFrames : AbstractSchemaModificationInterpreter() {
+    val Arguments.frames: FirVarargArgumentsExpression by arg(lens = Interpreter.Id)
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val schemas = frames.arguments.map {
+            it.resolvedType.findSchemaArgument(isTest)?.getSchema() ?: return PluginDataFrameSchema.EMPTY
+        }
+        if (schemas.isEmpty()) return PluginDataFrameSchema.EMPTY
+        val columns = schemas
+            .map { it.columns() }
+            .reduce { acc, columns -> intersectFrameColumnSchemas(acc, columns) }
+        return PluginDataFrameSchema(columns)
+    }
+}
+
 class DataFrameGenerator : AbstractSchemaModificationInterpreter() {
     val Arguments.size by ignore()
     val Arguments.body by dsl()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val dsl = CreateDataFrameDslImplApproximation()
-        body(dsl, mapOf("typeArg0" to Interpreter.Success(session.builtinTypes.intType.coneType)))
+        body(dsl, mapOf("typeArg0" to Interpreter.Success(StandardTypes.Int)))
         return dsl.toPluginDataFrameSchema()
     }
 }

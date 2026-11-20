@@ -14,24 +14,6 @@ FILE fqName:<root> fileName:/destructuringDeclaration.kts
           receiver: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration origin=null
           value: CALL 'public final fun component2 (): kotlin.Int declared in <root>.DestructuringDeclaration.A' type=kotlin.Int origin=COMPONENT_N(index=2)
             ARG <this>: GET_VAR 'val tmp_0: <root>.DestructuringDeclaration.A declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration.A origin=null
-    PROPERTY SCRIPT_K2 name:abc visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:abc type:kotlin.Int visibility:private [final]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-abc> visibility:public modality:FINAL returnType:kotlin.Int
-        VALUE_PARAMETER SCRIPT_THIS_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.DestructuringDeclaration
-        correspondingProperty: PROPERTY SCRIPT_K2 name:abc visibility:public modality:FINAL [val]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-abc> (): kotlin.Int declared in <root>.DestructuringDeclaration'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:abc type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration.<get-abc>' type=<root>.DestructuringDeclaration origin=null
-    PROPERTY SCRIPT_K2 name:def visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:def type:kotlin.Int visibility:private [final]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-def> visibility:public modality:FINAL returnType:kotlin.Int
-        VALUE_PARAMETER SCRIPT_THIS_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.DestructuringDeclaration
-        correspondingProperty: PROPERTY SCRIPT_K2 name:def visibility:public modality:FINAL [val]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-def> (): kotlin.Int declared in <root>.DestructuringDeclaration'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:def type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration.<get-def>' type=<root>.DestructuringDeclaration origin=null
     PROPERTY SCRIPT_K2 name:rv visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:rv type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -92,3 +74,21 @@ FILE fqName:<root> fileName:/destructuringDeclaration.kts
           ARG scriptClass: CALL 'public final fun <get-java> ($receiver: kotlin.reflect.KClass<*>): java.lang.Class declared in kotlin.jvm' type=java.lang.Class origin=GET_PROPERTY
             ARG $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public [expect] superTypes:[kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
           ARG args: GET_VAR 'args: kotlin.Array<kotlin.String> declared in <root>.DestructuringDeclaration.main' type=kotlin.Array<kotlin.String> origin=null
+    PROPERTY SCRIPT_K2 name:abc visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:abc type:kotlin.Int visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-abc> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER SCRIPT_THIS_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.DestructuringDeclaration
+        correspondingProperty: PROPERTY SCRIPT_K2 name:abc visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-abc> (): kotlin.Int declared in <root>.DestructuringDeclaration'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:abc type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration.<get-abc>' type=<root>.DestructuringDeclaration origin=null
+    PROPERTY SCRIPT_K2 name:def visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:def type:kotlin.Int visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-def> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER SCRIPT_THIS_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.DestructuringDeclaration
+        correspondingProperty: PROPERTY SCRIPT_K2 name:def visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-def> (): kotlin.Int declared in <root>.DestructuringDeclaration'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:def type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration.<get-def>' type=<root>.DestructuringDeclaration origin=null

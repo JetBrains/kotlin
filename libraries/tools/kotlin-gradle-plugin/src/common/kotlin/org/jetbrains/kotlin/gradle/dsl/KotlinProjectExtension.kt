@@ -106,7 +106,10 @@ abstract class KotlinProjectExtension @Inject constructor(
     HasProject,
     ExtensionAware {
 
-    override lateinit var coreLibrariesVersion: String
+    @Deprecated("Use KotlinBaseExtension.coreKotlinLibrariesVersion instead", replaceWith = ReplaceWith("coreKotlinLibrariesVersion"))
+    override var coreLibrariesVersion: String
+        get() = coreKotlinLibrariesVersion.get()
+        set(value) = coreKotlinLibrariesVersion.set(value)
 
     final override val extras: MutableExtras = mutableExtrasOf()
 
@@ -180,6 +183,9 @@ abstract class KotlinProjectExtension @Inject constructor(
     @ExperimentalBuildToolsApi
     override val compilerVersion: Property<String> =
         project.objects.propertyWithConvention(project.getKotlinPluginVersion()).chainedFinalizeValueOnRead()
+
+    override val coreKotlinLibrariesVersion: Property<String> =
+        project.objects.propertyWithConvention(compilerVersion).chainedFinalizeValueOnRead()
 
     internal val abiValidationInternal: AbiValidationExtensionImpl = project.AbiValidationExtensionImpl()
 
@@ -290,7 +296,30 @@ abstract class KotlinAndroidProjectExtension @Inject constructor(
     @Deprecated("Use source sets provided by Android Gradle Plugin instead.", level = DeprecationLevel.ERROR)
     // Workaround for https://github.com/gradle/gradle/issues/37652.
     fun sourceSets(configure: NamedDomainObjectContainer<KotlinSourceSet>.() -> Unit) {
+        // Report the diagnostic inside this block directly: isCalledOutsideKotlinOrAndroidPlugins inside
+        // sourceSets's getter will return false, since it's accessed from this method, and the diagnostic
+        // won't be reported.
+        if (isCalledOutsideKotlinOrAndroidPlugins) {
+            project.reportDiagnosticOncePerProject(
+                KotlinToolingDiagnostics.SourceSetsAccessInAndroidExtension(Throwable())
+            )
+        }
         configure(sourceSets)
+    }
+
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Use source sets provided by Android Gradle Plugin instead.", level = DeprecationLevel.ERROR)
+    // Workaround for https://github.com/gradle/gradle/issues/37652.
+    fun sourceSets(configure: Action<NamedDomainObjectContainer<KotlinSourceSet>>) {
+        // Report the diagnostic inside this block directly: isCalledOutsideKotlinOrAndroidPlugins inside
+        // sourceSets's getter will return false, since it's accessed from this method, and the diagnostic
+        // won't be reported.
+        if (isCalledOutsideKotlinOrAndroidPlugins) {
+            project.reportDiagnosticOncePerProject(
+                KotlinToolingDiagnostics.SourceSetsAccessInAndroidExtension(Throwable())
+            )
+        }
+        configure.execute(sourceSets)
     }
 }
 

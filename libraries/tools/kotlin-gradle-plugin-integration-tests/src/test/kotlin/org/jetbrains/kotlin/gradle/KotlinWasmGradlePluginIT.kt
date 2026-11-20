@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -43,14 +44,18 @@ import kotlin.test.assertTrue
 
 class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with browser")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTargetWithBrowser(gradleVersion: GradleVersion) {
         jsTargetWithBrowser(gradleVersion, 1)
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with binaryen per-module closed world")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTargetWithBinaryenPerModuleClosedWorld(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
@@ -114,7 +119,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
             projectPath.resolve("src/wasmJsMain/kotlin/foo.kt").modify {
                 it.replace(
                     "println(foo())",
-                    """println("Hello from Wasi")"""
+                    """println("Hello from Wasm")"""
                 )
             }
 
@@ -134,6 +139,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     @DisplayName("Check js target per-module closed world dev only")
     @TestMetadata(value = "new-mpp-wasm-js")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTargetClosedWorldDevOnly(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
@@ -208,8 +214,10 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with per-module closed world incremental build with rerun tasks")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTargetPerModuleClosedWorldWithRerunTasks(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
@@ -260,8 +268,10 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check wasm target compiles when switch compilation mode with IC enabled")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTargetIncrementalMonolithToPerModuleClosedWorld(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
@@ -308,16 +318,20 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with binaryen with custom per-file argument")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTargetWithBinaryenCustomPerFileArgument(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             jsTargetWithBinaryenCustomPerFileArgumentAction()
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with binaryen with custom per-file argument per-module closed world")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTargetWithBinaryenCustomPerFileArgumentPerModuleClosedWorld(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildScriptInjection {
@@ -358,7 +372,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                         file.asFile to listOf(
                             "--symbolmap=" + rootDir
                                 .resolve("mappings")
-                                .resolve(file.asFile.nameWithoutExtension + ".txt").absolutePath
+                                .resolve(file.asFile.nameWithoutExtension + ".txt").normalizedAbsolutePath().toString()
                         )
                     }
                 }
@@ -385,8 +399,10 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with binaryen with custom argument")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTargetWithBinaryenArguments(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
@@ -400,7 +416,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
 
                     val mappings = rootDir.resolve("mappings")
 
-                    it.binaryenArguments.add("--symbolmap=" + mappings.absolutePath)
+                    it.binaryenArguments.add("--symbolmap=" + mappings.normalizedAbsolutePath().toString())
                 }
             }
 
@@ -413,8 +429,10 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("wasm-js-per-module-closed-world")
     @DisplayName("Check that wasm-js optimizer is executed if a dependent .wasm file is changed")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun dependencyChangeTriggersOptimizerWasmJsPerModuleClosedWorld(gradleVersion: GradleVersion) {
         project("wasm-js-per-module-closed-world", gradleVersion) {
             build(":app:wasmJsD8ProductionRun") {
@@ -447,7 +465,9 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("wasm-js-per-module-closed-world")
     @GradleTest
+    @WasmJsGradlePluginTests
     @DisplayName("Changing lib triggers transitive recompilation through mid to app in per-module closed-world mode")
     fun libChangeTriggersTransitiveRecompileWasmJsPerModuleClosedWorld(gradleVersion: GradleVersion) {
         project("wasm-js-per-module-closed-world", gradleVersion) {
@@ -509,7 +529,9 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("wasm-js-per-module-closed-world")
     @GradleTest
+    @WasmJsGradlePluginTests
     @DisplayName("Diamond dependency: lib.wasm appears exactly once despite two dependency paths")
     fun diamondDependencyWasmJsPerModuleClosedWorld(gradleVersion: GradleVersion) {
         project("wasm-js-per-module-closed-world", gradleVersion) {
@@ -555,7 +577,9 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("wasm-js-per-module-closed-world")
     @GradleTest
+    @WasmJsGradlePluginTests
     @DisplayName("Third-party lib of a dependent module produces a separate .wasm in per-module closed world")
     fun thirdPartyDependencyWasmJsPerModuleClosedWorld(gradleVersion: GradleVersion) {
         project("wasm-js-per-module-closed-world", gradleVersion) {
@@ -592,8 +616,10 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("wasm-browser-several-modules")
     @DisplayName("Change in a dependency should invalidate up-to-date check")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testMultiModuleWasmDist(gradleVersion: GradleVersion) {
         testMultiModuleWasmDistDoTest(gradleVersion, "foo")
     }
@@ -605,14 +631,21 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
             wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_OPEN_WORLD)
         )
 
+    override val compilationModeWarningIds: Set<String>
+        get() = setOf(KotlinToolingDiagnostics.ExperimentalFeatureWarning.id)
+
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with browser")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTargetWithBrowser(gradleVersion: GradleVersion) {
         jsTargetWithBrowser(gradleVersion, 2)
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check that js target all wasm files' size less in production")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTargetWasmFilesSize(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
@@ -634,8 +667,6 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                     .forEach { developmentSize[it.name] = it.fileSize() }
             }
 
-            build("clean")
-
             build("wasmJsProductionExecutableCompileSync") {
                 projectPath.resolve("build/wasm/packages/redefined-wasm-module-name/kotlin").listDirectoryEntries()
                     .filter { it.extension == "wasm" }
@@ -648,76 +679,27 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @TestMetadata("wasm-browser-several-modules")
     @DisplayName("Change in a dependency should invalidate up-to-date check")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testMultiModuleWasmDist(gradleVersion: GradleVersion) {
         testMultiModuleWasmDistDoTest(gradleVersion, "bar")
     }
 }
 
-@MppGradlePluginTests
 abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
-    @DisplayName("Check wasi target")
-    @GradleTest
-    fun wasiTarget(gradleVersion: GradleVersion) {
-        project("new-mpp-wasm-wasi-test", gradleVersion) {
-            wasmWasiTest("Node", "NodeJs")
-        }
-    }
+    protected open val compilationModeWarningIds: Set<String> = emptySet()
 
-    @DisplayName("Check wasi target with wasmtime")
-    @GradleTest
-    fun wasiWasmtimeTarget(gradleVersion: GradleVersion) {
-        project("wasm-wasmtime-test", gradleVersion) {
-            wasmWasiTest("Wasmtime")
-        }
-    }
-
-    private fun TestProject.wasmWasiTest(engine: String, engineSetup: String = engine) {
-        build(":wasmWasiTest") {
-            assertTasksExecuted(":kotlinWasm${engineSetup}Setup")
-            assertTasksExecuted(":compileKotlinWasmWasi")
-            assertTasksExecuted(":wasmWasi${engine}Test")
-        }
-
-        build(":wasmWasiTest") {
-            assertTasksUpToDate(":kotlinWasm${engineSetup}Setup", ":compileKotlinWasmWasi", ":wasmWasi${engine}Test")
-        }
-
-        projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
-            it.replace(
-                "fun test2() = assertEquals(foo(), 2)",
-                """
-                    |fun test2() = assertEquals(foo(), 2)
-                    |
-                    |@Test
-                    |fun test3() = assertEquals(foo(), 3)
-                    |""".trimMargin()
-            )
-        }
-
-        buildAndFail(":wasmWasiTest") {
-            assertTasksUpToDate(":compileKotlinWasmWasi")
-            assertTasksFailed(":wasmWasi${engine}Test")
-        }
-
-        build(":wasmWasi${engine}ProductionRun") {
-            assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
-            assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
-
-            assertTasksAreNotInTaskGraph(":kotlinWasmToolingSetup")
-
-            assertNoBuildWarnings()
-        }
-    }
-
+    @TestMetadata("new-mpp-wasm-test")
     @DisplayName("Check js target")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTarget(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-test", gradleVersion) {
             buildGradleKts.modify {
@@ -750,18 +732,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Check wasi target run")
-    @GradleTest
-    fun wasiRun(gradleVersion: GradleVersion) {
-        project("new-mpp-wasm-wasi-test", gradleVersion) {
-            build(":wasmWasiNodeDevelopmentRun") {
-                assertOutputContains("Hello from Wasi")
-            }
-        }
-    }
-
+    @TestMetadata("new-mpp-wasm-wasi-js-test")
     @DisplayName("Check wasi and js target")
     @GradleTest
+    @WasmGradlePluginTests
     fun wasiAndJsTarget(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-js-test", gradleVersion) {
 
@@ -775,31 +749,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Check wasi target with binaryen")
-    @GradleTest
-    fun wasiTargetWithBinaryen(gradleVersion: GradleVersion) {
-        project("new-mpp-wasm-wasi-test", gradleVersion) {
-            buildGradleKts.modify {
-                it.replace("wasmWasi {", "wasmWasi {\nbinaries.executable()")
-            }
-
-            build("assemble") {
-                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
-                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
-
-                val original =
-                    projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/kotlin/new-mpp-wasm-wasi-test.wasm")
-                val optimized =
-                    projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/new-mpp-wasm-wasi-test.wasm")
-                assertTrue {
-                    Files.size(original) > Files.size(optimized)
-                }
-            }
-        }
-    }
-
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with binaryen")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTargetWithBinaryen(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
@@ -814,7 +767,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertNoBuildWarnings(
                     setOf(
                         "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'"
-                    )
+                    ) + compilationModeWarningIds
                 )
 
                 val original =
@@ -835,7 +788,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
             projectPath.resolve("src/wasmJsMain/kotlin/foo.kt").modify {
                 it.replace(
                     "println(foo())",
-                    """println("Hello from Wasi")"""
+                    """println("Hello from Wasm")"""
                 )
             }
 
@@ -847,8 +800,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target without sourcemap does not have warning")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun jsTargetWithoutSourceMap(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
@@ -875,7 +830,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertNoBuildWarnings(
                     setOf(
                         "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'"
-                    )
+                    ) + compilationModeWarningIds
                 )
             }
         }
@@ -956,8 +911,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-wasi-js-with-wasi-only-dependency")
     @DisplayName("Check mix project with wasi only dependency works correctly")
     @GradleTest
+    @WasmGradlePluginTests
     fun jsAndWasiTargetsWithDependencyOnWasiOnlyProject(gradleVersion: GradleVersion) {
         project("wasm-wasi-js-with-wasi-only-dependency", gradleVersion) {
 
@@ -969,29 +926,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Wasi library")
-    @GradleTest
-    fun wasiLibrary(gradleVersion: GradleVersion) {
-        project("wasm-wasi-library", gradleVersion) {
-
-            build(":build") {
-                assertTasksExecuted(":compileProductionLibraryKotlinWasmWasi")
-                assertTasksExecuted(":compileKotlinWasmWasi")
-                assertTasksExecuted(":wasmWasiNodeTest")
-                assertTasksExecuted(":wasmWasiNodeProductionLibraryDistribution")
-
-                val dist = "build/dist/wasmWasi/productionLibrary"
-                assertFileExists(projectPath.resolve("$dist/foo.txt"))
-                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library.wasm"))
-                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library.wasm.map"))
-                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library.mjs"))
-            }
-        }
-    }
-
-
+    @TestMetadata("kt-63230")
     @DisplayName("Browser print works with null type")
     @GradleTest
+    @WasmJsGradlePluginTests
     @OsCondition(
         supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
         enabledOnCI = []
@@ -1000,7 +938,9 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         project("kt-63230", gradleVersion) {
             build("check", "-Pkotlin.tests.individualTaskReports=true") {
                 assertTestResults(
-                    projectPath.resolve("TEST-wasm.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-wasm.xml" else "Gradle93-TEST-wasm.xml"
+                    ),
                     "wasmJsBrowserTest",
                     stripBrowserVersionInfoFromTestCaseNames = true,
                 )
@@ -1008,8 +948,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-wasm-js-browser-nodejs")
     @DisplayName("Wasm JS variant does not contain file:// in webpack and works in Node.JS")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun wasmJsImportMetaUrlLibrary(gradleVersion: GradleVersion) {
         project("mpp-wasm-js-browser-nodejs", gradleVersion) {
 
@@ -1027,8 +969,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-wasm-js-browser-nodejs")
     @DisplayName("Wasm sync task copies main compilation resources to test NPM package")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun wasmSyncTaskCopiesMainResourcesToTest(gradleVersion: GradleVersion) {
         project("mpp-wasm-js-browser-nodejs", gradleVersion) {
             build(":wasmJsNodeTest") {
@@ -1042,8 +986,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-wasm-js-browser-nodejs")
     @DisplayName("Test compilation package.json generation depends on main package.json generation")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testPackageJsonDependsOnMainPackageJson(gradleVersion: GradleVersion) {
         project("mpp-wasm-js-browser-nodejs", gradleVersion) {
             build(":wasmRootPackageJson") {
@@ -1055,8 +1001,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-wasm-published-library")
     @DisplayName("Extracting NPM dependencies from transitive dependency")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testExtractingNpmDependenciesFromTransitive(gradleVersion: GradleVersion) {
         project("mpp-wasm-published-library", gradleVersion) {
             val settingsGradleText = settingsGradleKts.readText()
@@ -1104,8 +1052,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-browser-simple-project")
     @DisplayName("Browser case works correctly with custom formatters")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testWasmCustomFormattersUsage(gradleVersion: GradleVersion) {
         project("wasm-browser-simple-project", gradleVersion) {
             buildGradleKts.append(
@@ -1125,8 +1075,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-browser-simple-project")
     @DisplayName("Changed output module name")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testChangedOutputModuleName(gradleVersion: GradleVersion) {
         project("wasm-browser-simple-project", gradleVersion) {
             val moduleName = "hello"
@@ -1148,8 +1100,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-test-webpack-config")
     @DisplayName("webpack configuration is valid")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testWebpackConfig(gradleVersion: GradleVersion) {
         project("kotlin-js-test-webpack-config", gradleVersion) {
             build("wasmJsBrowserDevelopmentWebpack")
@@ -1168,8 +1122,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     // It may break some properties with Task source
     // but we need to work in Android Studio,
     // so it is better to be sure that we work in this strange situation
+    @TestMetadata("wasm-browser-simple-project")
     @DisplayName("Touch properties to not break Android studio")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testTouchingWebpackPropertyToNotBreakAndroidStudio(gradleVersion: GradleVersion) {
         project("wasm-browser-simple-project", gradleVersion) {
             buildGradleKts.appendText(
@@ -1186,8 +1142,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-browser-several-modules")
     @DisplayName("Different binaryen versions per project")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testDifferentBinaryenVersions(gradleVersion: GradleVersion) {
         project("wasm-browser-several-modules", gradleVersion) {
             val binaryenVersionForFoo = "128"
@@ -1218,8 +1176,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target test without kotlin-test")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun nodejsTestWithoutKotlinTest(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
@@ -1252,8 +1212,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target webpack config changes reflected in webpack task properties")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun webpackConfigChangesReflectedInWebpackTask(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
@@ -1321,8 +1283,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-composite-build")
     @DisplayName("wasm js composite build works")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testWasmJsCompositeBuild(gradleVersion: GradleVersion) {
         project(
             "wasm-composite-build",
@@ -1352,7 +1316,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                                     println("ALL IMPORTED: ")
                                     it.listFiles()
                                         ?.forEach {
-                                            println(it.absolutePath)
+                                            println(it.normalizedAbsolutePath().toString())
                                         }
                                     it.resolve(".visited-gradle").let {
                                         println("visited-gradle content")
@@ -1392,8 +1356,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-project-repos")
     @DisplayName("when project has FAIL_ON_PROJECT_REPOS, expect Kotlin/Wasm tools are downloaded correctly")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testFailOnProjectReposUsingCustomRepo(gradleVersion: GradleVersion) {
         val dependencyManagement = DependencyManagement.DefaultDependencyManagement()
 
@@ -1469,9 +1435,11 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-project-repos")
     @OptIn(ExperimentalWasmDsl::class)
     @DisplayName("when project has FAIL_ON_PROJECT_REPOS without downloading tools, expect KGP does not download tools")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testFailOnProjectReposNoDownload(gradleVersion: GradleVersion) {
         val dependencyManagement = DependencyManagement.DefaultDependencyManagement()
 
@@ -1510,6 +1478,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Webpack.config.d content should be in the end of webpack.config.js")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testWebpackConfigDInTheEnd(gradleVersion: GradleVersion) {
         val testProject = project("empty", gradleVersion) {
             plugins {
@@ -1559,6 +1528,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Check css support API")
     @GradleTest
+    @WasmJsGradlePluginTests
     @TestMetadata("kotlin-wasm-js-css-browser-project")
     fun testWebpackCssSupport(gradleVersion: GradleVersion) {
         project("kotlin-wasm-js-css-browser-project", gradleVersion) {
@@ -1567,8 +1537,10 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-js-dynamic-webpack-config-d")
     @DisplayName("webpack-config-d directory created during the build is not ignored")
     @GradleTest
+    @WasmJsGradlePluginTests
     fun testDynamicWebpackConfigD(gradleVersion: GradleVersion) {
         project("wasm-js-dynamic-webpack-config-d", gradleVersion) {
             build("build") {
@@ -1632,5 +1604,119 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                 )
             }
         }
+    }
+
+    @DisplayName("d8 test with space in a test name")
+    @GradleTest
+    @WasmJsGradlePluginTests
+    fun testD8TestWithSpaceInTestName(gradleVersion: GradleVersion) {
+        val testProject = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmJs {
+                        d8()
+                    }
+                }
+
+                kotlinMultiplatform.sourceSets.getByName("wasmJsTest").dependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test")
+                }
+            }
+        }
+
+        testProject.projectPath.resolve("src/wasmJsTest/kotlin/test.kt")
+            .also {
+                it.parent.createDirectories()
+            }
+            .writeText(
+                """
+                package org
+                
+                import kotlin.test.Test
+                import kotlin.test.assertEquals
+                import kotlin.test.assertTrue
+                
+                class TestClient {
+                    @Test
+                    fun test() {
+                        assertTrue(false)
+                    }
+                    
+                    @Test
+                    fun `test 1`() {
+                        assertEquals(1, 2)
+                    }
+                }
+                """.trimIndent()
+            )
+
+        testProject.buildAndFail(":wasmJsD8Test", "--tests", "org.TestClient.test 1") {
+            assertTasksFailed(":wasmJsD8Test")
+        }
+        testProject.assertExecutedTestCases(
+            ":wasmJsD8Test",
+            "org.TestClient#test 1",
+        )
+    }
+
+    @DisplayName("Node test with space in a test name")
+    @GradleTest
+    @WasmJsGradlePluginTests
+    fun testNodeTestWithSpaceInTestName(gradleVersion: GradleVersion) {
+        val testProject = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmJs {
+                        nodejs()
+                    }
+                }
+
+                kotlinMultiplatform.sourceSets.getByName("wasmJsTest").dependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test")
+                }
+            }
+        }
+
+        testProject.projectPath.resolve("src/wasmJsTest/kotlin/test.kt")
+            .also {
+                it.parent.createDirectories()
+            }
+            .writeText(
+                """
+                package org
+                
+                import kotlin.test.Test
+                import kotlin.test.assertEquals
+                import kotlin.test.assertTrue
+                
+                class TestClient {
+                    @Test
+                    fun test() {
+                        assertTrue(false)
+                    }
+                
+                    @Test
+                    fun `test 1`() {
+                        assertEquals(1, 2)
+                    }
+                }
+                """.trimIndent()
+            )
+
+        testProject.buildAndFail(":wasmJsNodeTest", "--tests", "org.TestClient.test 1") {
+            assertTasksFailed(":wasmJsNodeTest")
+        }
+        testProject.assertExecutedTestCases(
+            ":wasmJsNodeTest",
+            "org.TestClient#test 1",
+        )
     }
 }

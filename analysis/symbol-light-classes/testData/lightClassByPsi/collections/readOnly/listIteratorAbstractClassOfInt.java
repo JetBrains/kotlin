@@ -1,5 +1,11 @@
 public abstract class SListIterator /* test.SListIterator*/ implements java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer next();//  next()
+
+  @java.lang.Override()
+  public boolean hasNext();//  hasNext()
+
+  @java.lang.Override()
   public void add(int);//  add(int)
 
   @java.lang.Override()

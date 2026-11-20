@@ -12,11 +12,13 @@ import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib interproject consumption")
+@MustRunOnChangesInGradle
 class UklibInterprojectConsumptionIT : KGPBaseTest() {
 
     @GradleTest
@@ -24,7 +26,7 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
     fun `interproject uklib consumption - dependency with symmetric targets - resolves uklibs`(gradleVersion: GradleVersion) {
         val targets: KotlinMultiplatformExtension.() -> Unit = {
             iosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             iosX64()
             jvm()
             js()
@@ -239,7 +241,7 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
     fun `interproject ide resolution - dependency with symmetric targets`(gradleVersion: GradleVersion) {
         val targets: KotlinMultiplatformExtension.() -> Unit = {
             iosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             iosX64()
             jvm()
             js()
@@ -325,7 +327,7 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
     fun `interproject ide resolution - dependency with symmetric targets - with commonization`(gradleVersion: GradleVersion) {
         val targets: KotlinMultiplatformExtension.() -> Unit = {
             iosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             iosX64()
             sourceSets.commonMain.get().compileSource("class Common")
         }

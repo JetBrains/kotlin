@@ -270,7 +270,6 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
 
             val incrementalMetricNames = setOf(
                 "Run compilation",
-                "Run compilation -> Calculate initial dirty sources set",
                 "Run compilation -> Sources compilation round",
                 "Run compilation -> Generate compiler reference index",
                 "Run compilation -> Store build info",
@@ -306,7 +305,6 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
                 "Number of times classpath snapshot is shrunk and saved after compilation -> Size of shrunk classpath snapshot",
                 "Number of times classpath snapshot is shrunk and saved after compilation",
                 "Calculate output size",
-                "Run compilation -> Calculate initial dirty sources set",
                 "Run compilation -> Generate compiler reference index",
                 "Run compilation -> Shrink and save current classpath snapshot after compilation -> Save shrunk current classpath snapshot",
                 "Run compilation -> Shrink and save current classpath snapshot after compilation",
@@ -319,7 +317,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             )
 
             val incrementalRecompilationMetricNames = incrementalBaseMetricNames + setOf(
-                "Classpath snapshot not found (Rebuild reason)",
+                "Unknown inputs changes (Rebuild reason)",
                 "Run compilation -> Clear outputs on rebuild",
                 "Run compilation -> Shrink and save current classpath snapshot after compilation -> Shrink current classpath snapshot non-incrementally -> Load current classpath snapshot -> Remove duplicate classes",
                 "Run compilation -> Shrink and save current classpath snapshot after compilation -> Shrink current classpath snapshot non-incrementally -> Load current classpath snapshot",
@@ -327,6 +325,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             )
 
             val incrementalCompilationMetricNames = incrementalBaseMetricNames + setOf(
+                "Run compilation -> Calculate initial dirty sources set",
                 "Number of times classpath changes are computed",
                 "Run compilation -> Calculate initial dirty sources set -> Analyze Android layouts",
                 "Run compilation -> Calculate initial dirty sources set -> Analyze Java file changes",
@@ -378,11 +377,12 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             )
 
             val incrementalRecompilationMetricNames = incrementalMetricNames + setOf(
-                "Build history file not found (Rebuild reason)",
+                "Unknown inputs changes (Rebuild reason)",
                 "Run compilation -> Clear outputs on rebuild",
             )
 
             val crossModuleIncrementalMetricNames = incrementalMetricNames + setOf(
+                "Run compilation -> Calculate initial dirty sources set",
                 "Run compilation -> Calculate initial dirty sources set -> Analyze dependency changes -> Find history files",
                 "Run compilation -> Calculate initial dirty sources set -> Analyze dependency changes -> Analyze history files",
             )

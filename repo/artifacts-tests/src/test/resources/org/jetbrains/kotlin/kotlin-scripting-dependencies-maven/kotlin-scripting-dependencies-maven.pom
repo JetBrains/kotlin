@@ -32,6 +32,11 @@
         <artifactId>commons-lang3</artifactId>
         <version>3.18.0</version>
       </dependency>
+      <dependency>
+        <groupId>org.ow2.asm</groupId>
+        <artifactId>asm</artifactId>
+        <version>9.11.1</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>

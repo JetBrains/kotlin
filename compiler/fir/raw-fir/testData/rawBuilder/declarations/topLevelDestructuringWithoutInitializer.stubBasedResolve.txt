@@ -1,2 +1,5 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] topLevelDestructuringWithoutInitializer.kt
-    public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
+    private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)
+        private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Initializer required for destructuring declaration>
+    public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val e: <ERROR TYPE REF: Unresolved name: component1> = R|/<destruct>|.<Unresolved name: component1>#()
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component1>

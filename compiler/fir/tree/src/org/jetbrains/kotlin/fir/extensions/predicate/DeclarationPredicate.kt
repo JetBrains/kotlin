@@ -43,6 +43,18 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
         }
     }
 
+    class MatchingType(
+        override val predicate: DeclarationPredicate,
+        override val type: DeclarationType
+    ) : DeclarationPredicate(), AbstractPredicate.MatchingType<DeclarationPredicate> {
+        override val annotations: Set<AnnotationFqn> = predicate.annotations
+        override val metaAnnotations: Set<AnnotationFqn> = predicate.metaAnnotations
+
+        override fun <R, D> accept(visitor: PredicateVisitor<DeclarationPredicate, R, D>, data: D): R {
+            return visitor.visitMatchingType(this, data)
+        }
+    }
+
     // ------------------------------------ Annotated ------------------------------------
 
     sealed class Annotated(final override val annotations: Set<AnnotationFqn>) : DeclarationPredicate(),
@@ -61,7 +73,8 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
         }
     }
 
-    class AnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations), AbstractPredicate.AnnotatedWith<DeclarationPredicate> {
+    class AnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations),
+        AbstractPredicate.AnnotatedWith<DeclarationPredicate> {
         override fun <R, D> accept(visitor: PredicateVisitor<DeclarationPredicate, R, D>, data: D): R {
             return visitor.visitAnnotatedWith(this, data)
         }
@@ -141,6 +154,9 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
 
         fun metaAnnotated(metaAnnotations: Collection<AnnotationFqn>, includeItself: Boolean): DeclarationPredicate =
             MetaAnnotatedWith(metaAnnotations.toSet(), includeItself)
+
+        // ------------------- targets -------------------
+        override fun DeclarationPredicate.matching(type: DeclarationType): DeclarationPredicate = MatchingType(this, type)
     }
 
     companion object {

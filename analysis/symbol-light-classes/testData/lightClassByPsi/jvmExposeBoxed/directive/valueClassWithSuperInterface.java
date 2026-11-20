@@ -6,6 +6,7 @@ public abstract interface Interface /* pack.Interface*/ {
   public default void regularFunction();//  regularFunction()
 
   public static final class DefaultImpls /* pack.Interface.DefaultImpls*/ {
+    @java.lang.Deprecated()
     public static void regularFunction(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() pack.Interface);//  regularFunction(@org.jetbrains.annotations.NotNull() pack.Interface)
   }
 }

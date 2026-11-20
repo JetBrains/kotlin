@@ -22,7 +22,7 @@ public interface KtNodeTypes {
     @NotNull IElementType FUN       = KtStubBasedElementTypes.FUNCTION;
     @NotNull IElementType PROPERTY  = KtStubBasedElementTypes.PROPERTY;
     @NotNull IElementType DESTRUCTURING_DECLARATION = KtStubBasedElementTypes.DESTRUCTURING_DECLARATION;
-    @NotNull IElementType DESTRUCTURING_DECLARATION_ENTRY = new KtNodeType("DESTRUCTURING_DECLARATION_ENTRY", KtDestructuringDeclarationEntry::new);
+    @NotNull IElementType DESTRUCTURING_DECLARATION_ENTRY = KtStubBasedElementTypes.DESTRUCTURING_DECLARATION_ENTRY;
 
     @NotNull IElementType OBJECT_DECLARATION = KtStubBasedElementTypes.OBJECT_DECLARATION;
     @NotNull IElementType TYPEALIAS = KtStubBasedElementTypes.TYPEALIAS;

@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_FRIEND_DEPENDENCIES
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_REFINES_ARG_NAME
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_SOURCES_ARG_NAME
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
@@ -80,13 +78,15 @@ fun CompilerConfiguration.setupCommonArguments(
 
     setupLanguageVersionSettings(arguments)
 
+    reportCliArgumentNonFatalDiagnostics(arguments)
+
     checkArgumentsLifecycle(arguments)
 
     // It should be called after the language version is initialized because the reporting depends on the current language version
     checkRedundantArguments(arguments)
 
     put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
-    put(CommonConfigurationKeys.PARSER_MODE, @Suppress("DEPRECATION") if (arguments.useFirLT) ParserMode.LightTree else ParserMode.Psi)
+    put(CommonConfigurationKeys.PARSER_MODE, ParserMode.LightTree)
 
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
 
@@ -97,21 +97,18 @@ fun CompilerConfiguration.setupCommonArguments(
 
     put(CommonConfigurationKeys.DONT_SORT_SOURCE_FILES, arguments.dontSortSourceFiles)
 
-    handleMinimumRuntimeJdkOptOut(arguments)
+    handleMinimumRuntimeJdkOptOut()
 }
 
-private fun CompilerConfiguration.handleMinimumRuntimeJdkOptOut(arguments: CommonCompilerArguments) {
-    val optOutOption = CommonCompilerArguments::allowPre17RuntimeJdk.cliArgument
-    val stopsWorkingIn = "2.5.20-Beta1"
+private fun CompilerConfiguration.handleMinimumRuntimeJdkOptOut() {
     val requiredRuntimeJdk = 17
-
     val currentJdkVersion = getRuntimeJdkVersion()
 
-    if (currentJdkVersion < requiredRuntimeJdk && !arguments.allowPre17RuntimeJdk) {
+    if (currentJdkVersion < requiredRuntimeJdk) {
         report(
-            COMPILER_ARGUMENTS_WARNING,
+            COMPILER_ARGUMENTS_ERROR,
             "Running Kotlin compiler using JDK $currentJdkVersion will not be supported in future versions of Kotlin. " +
-                    "Consider upgrading to at least JDK $requiredRuntimeJdk or supplying '$optOutOption' (which will only work until Kotlin $stopsWorkingIn). " +
+                    "Consider upgrading to at least JDK $requiredRuntimeJdk. " +
                     "See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
         )
     }
@@ -139,10 +136,6 @@ fun CompilerConfiguration.setupMetadataVersion(
 
 fun CommonCompilerArgumentsConfigurator.Reporter.Companion.fromConfiguration(configuration: CompilerConfiguration): CommonCompilerArgumentsConfigurator.Reporter {
     return object : CommonCompilerArgumentsConfigurator.Reporter {
-        override fun reportWarning(message: String) {
-            configuration.report(COMPILER_ARGUMENTS_WARNING, message)
-        }
-
         override fun reportError(message: String) {
             configuration.report(COMPILER_ARGUMENTS_ERROR, message)
         }
@@ -261,63 +254,6 @@ fun computeKotlinPaths(configuration: CompilerConfiguration, arguments: CommonCo
     }
 }
 
-fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
-    for ([key, values] in arguments.explicitArguments) {
-        if (values.size <= 1 || values.distinct().size == 1) continue
-
-        val argName = key.argument.value
-        val valuesString = values.joinToString("', '")
-        val message = "Argument '$argName' is passed multiple times: '$valuesString'. The last value will be used."
-        report(CompilerMessageSeverity.STRONG_WARNING, message)
-    }
-
-    val errors = arguments.errors ?: return
-    for (flag in errors.unknownExtraFlags) {
-        report(CompilerMessageSeverity.STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
-    }
-    for (argument in errors.extraArgumentsPassedInObsoleteForm) {
-        report(
-            CompilerMessageSeverity.STRONG_WARNING,
-            "Advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: $argument=..."
-        )
-    }
-    for ([deprecatedName, newName] in errors.deprecatedArguments) {
-        report(CompilerMessageSeverity.STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
-    }
-    for (argfileError in errors.argfileErrors) {
-        report(CompilerMessageSeverity.STRONG_WARNING, argfileError)
-    }
-
-    reportUnsafeInternalArgumentsIfAny(arguments)
-
-    for ([severity, internalArgumentsProblem] in errors.internalArgumentsParsingProblems) {
-        report(severity, internalArgumentsProblem)
-    }
-}
-
-private fun MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: CommonToolArguments) {
-    val unsafeArguments = arguments.internalArguments.filterNot {
-        // -XXLanguage which turns on BUG_FIX considered safe
-        it.languageFeature.actuallyEnabledInProgressiveMode && it.state == LanguageFeature.State.ENABLED
-    }
-
-    if (unsafeArguments.isNotEmpty()) {
-        val unsafeArgumentsString = unsafeArguments.joinToString(prefix = "\n", postfix = "\n\n", separator = "\n") {
-            it.stringRepresentation
-        }
-
-        report(
-            CompilerMessageSeverity.STRONG_WARNING,
-            "ATTENTION!\n" +
-                    "This build uses unsafe internal compiler arguments:\n" +
-                    unsafeArgumentsString +
-                    "This mode is not recommended for production use,\n" +
-                    "as no stability/compatibility guarantees are given on\n" +
-                    "compiler or generated code. Use it at your own risk!\n"
-        )
-    }
-}
-
 private object FragmentArgs {
     val FRAGMENTS_ARG_NAME = CommonCompilerArguments::fragments.cliArgument
     val FRAGMENT_REFINES_ARG_NAME = CommonCompilerArguments::fragmentRefines.cliArgument
@@ -352,7 +288,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     }
 
 
-    val sourcesByFragmentName: Map<String, Set<String>> = rawFragments.associateWith { mutableSetOf<String>() }.apply {
+    val sourcesByFragmentName: Map<String, Set<File>> = rawFragments.associateWith { mutableSetOf<File>() }.apply {
         rawFragmentSources.forEach { rawFragmentSourceArg ->
             val split = rawFragmentSourceArg.split(":", limit = 2)
             if (split.size < 2) {
@@ -371,7 +307,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
                             "but fragment `$fragmentName` of source file $fragmentSource is not specified in $FRAGMENTS_ARG_NAME"
                 )
                 return@forEach
-            }.add(fragmentSource)
+            }.add(File(fragmentSource))
         }
     }
 
@@ -405,7 +341,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     for (source in arguments.freeArgs) {
         if (source.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION)) continue
-        if (modules.none { source in it.sources }) {
+        if (modules.none { File(source) in it.sources }) {
             reportError("Source '$source' does not belong to any module")
             wasError = true
         }

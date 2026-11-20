@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticCheckerKind
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsDiagnosticProvider
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
@@ -22,27 +21,15 @@ import org.jetbrains.kotlin.psi.KtFile
  * place (in the `components` package) and reach the proxy through this bridge, so the bridge must forward directly to the proxy to avoid
  * recursing back into the endpoints.
  */
-@Suppress("OVERRIDE_DEPRECATION")
+@Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
 internal class KaDiagnosticProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaDiagnosticProvider {
+) : KaFirSessionComponent(), KaDiagnosticProvider {
     private val proxy: KaInternalsDiagnosticProvider
         get() = analysisSession.diagnosticProvider
 
-    override fun KtElement.directDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> =
-        query(isRecursive = false, filter).toList()
-
     override fun KtFile.collectDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> =
-        query(isRecursive = true, filter).toList()
-
-    override fun KtFile.diagnostics(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> =
-        query(isRecursive = true, filter)
-
-    override fun KtFile.diagnosticsIgnoringSuppression(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> =
-        query(isRecursive = true, filter).ignoreSuppressed(false)
-
-    private fun KtElement.query(isRecursive: Boolean, filter: KaDiagnosticCheckerFilter): KaDiagnostics =
-        proxy.diagnostics(this).withCheckers(filter.asCheckerKinds()).directOnly(direct = !isRecursive)
+        proxy.diagnostics(this).withCheckers(filter.asCheckerKinds()).toList()
 
     private fun KaDiagnosticCheckerFilter.asCheckerKinds(): Set<KaDiagnosticCheckerKind> = when (this) {
         KaDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS -> setOf(KaDiagnosticCheckerKind.COMMON)

@@ -9,14 +9,18 @@ import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCoreLibs
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
 @DisplayName("Stdlib 1.8+ version alignment")
+@MustRunOnChangesInCoreLibs
 class StdlibAlignmentIT : KGPBaseTest() {
 
     val constrainedAlignmentVersion = "1.8.0"
 
+    @TestMetadata("AndroidSimpleApp")
     @AndroidGradlePluginTests
     @DisplayName("stdlib-jdk7, stdlib-jdk8 versions aligned with stdlib:1.8+")
     @GradleAndroidTest
@@ -29,8 +33,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
             "AndroidSimpleApp",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
         ) {
             // Adding dependency that pulls transitively older versions
@@ -48,6 +51,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidSimpleApp")
     @AndroidGradlePluginTests
     @DisplayName("alignment is possible to disable")
     @GradleAndroidTest
@@ -89,6 +93,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sourceSetsKotlinDsl")
     @JvmGradlePluginTests
     @DisplayName("alignment is working when stdlib-jdk7:1.8+ is added as dependency")
     @GradleTest
@@ -116,6 +121,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("sourceSetsKotlinDsl")
     @JvmGradlePluginTests
     @DisplayName("alignment in Kotlin DSL")
     @GradleTest
@@ -148,6 +154,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("KT-54653: alignment should not work for unrelated configuration")
     @GradleTest
@@ -181,6 +188,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("KT-54653: alignment works for complex resolvable configurations hierarchy")
     @GradleTest
@@ -229,6 +237,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("jpmsProject")
     @JvmGradlePluginTests
     @DisplayName("KT-54703: JPMS projects with dependency on kotlin.stdlib.jdk8 work as expected")
     @JdkVersions(versions = [JavaVersion.VERSION_17])

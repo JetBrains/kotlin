@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.util.setupCInteropForTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
@@ -33,6 +34,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppCrossCompilationPublicationIT : KGPBaseTest() {
 
     @DisplayName("Cross compilation enabled, no cinterops, publish library to mavenLocal")

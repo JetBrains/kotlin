@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.BuildOperation.Companion.ENABLE_CLASSLOADER_CACHE
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
@@ -29,6 +30,7 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
 
             val module = module("sandbox-plugin", moduleCompilationConfigAction = { operation: BaseCompilationOperation.Builder ->
                 operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
+                operation[ENABLE_CLASSLOADER_CACHE] = true
             })
 
             module.compile {
@@ -48,6 +50,7 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
 
             val module = module("sandbox-plugin", compilationConfigAction = { operation: BaseCompilationOperation.Builder ->
                 operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
+                operation[ENABLE_CLASSLOADER_CACHE] = true
             })
 
             // cache was already filled when module was being created for the scenario, so we need to clear it
@@ -68,7 +71,9 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
     private fun KotlinToolchains.clearClassloadersCache() {
         val cache = javaClass.declaredFields.single { it.name == "classloadersCache" }.apply { isAccessible = true }
             .get(this)
-        cache?.javaClass?.methods?.find { it.name == "close" }?.invoke(cache)
+        val cachePrivate = cache.javaClass.declaredFields.single { it.name == "cache"}.apply { isAccessible = true }.get(cache)
+        val cacheInterface = cachePrivate?.javaClass?.interfaces?.single { it.name == "org.jetbrains.kotlin.com.google.common.cache.Cache" }
+        cacheInterface?.methods?.find { it.name == "invalidateAll" && it.parameterCount == 0 }?.invoke(cachePrivate)
     }
 
     @DefaultStrategyAndPlatformAgnosticCompilationTest
@@ -79,7 +84,7 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
 
             val module = module("sandbox-plugin", moduleCompilationConfigAction = { operation: BaseCompilationOperation.Builder ->
                 operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
-                operation[BuildOperation.ENABLE_CLASSLOADER_CACHE] = false
+                operation[ENABLE_CLASSLOADER_CACHE] = false
             })
 
             module.compile {

@@ -79,9 +79,9 @@ class CodeConformanceTest {
             "jps/jps-plugin/src",
         )
 
-        targetDirs.map {
+        targetDirs.flatMap {
             FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, File(it))
-        }.flatten().forEach { sourceFile ->
+        }.forEach { sourceFile ->
             val matcher = canonicalPattern.matcher(sourceFile.readText())
             if (matcher.find()) {
                 fail("KT-69613 canonicalPath and canonicalFile apis should not be used: ${matcher.group()}\nin file: $sourceFile")
@@ -103,9 +103,9 @@ class CodeConformanceTest {
             "compiler/build-tools/kotlin-build-tools-cri-impl/src",
         )
 
-        targetDirs.map {
+        targetDirs.flatMap {
             FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, File(it))
-        }.flatten().forEach { sourceFile ->
+        }.forEach { sourceFile ->
             val matcher = absolutePathStringPattern.matcher(sourceFile.readText())
             if (matcher.find()) {
                 fail("KT-83715 absolutePathString should not be used as it loses information about FileSystem: ${matcher.group()}\nin file: $sourceFile")
@@ -343,6 +343,37 @@ class CodeConformanceTest {
         }
     }
 
+    /**
+     * Build logic must not fail on hosts unsupported by Kotlin/Native, e.g. linux-aarch64 (KT-86717).
+     * `HostManager.host` and `HostManager.hostName` throw there.
+     */
+    @Test
+    fun testNoThrowingHostManagerCallsInBuildLogic() {
+        val root = nonSourcesMatcher.root
+        val throwingCall = Regex("""HostManager\.(host|hostName)\b""")
+        val excluded = FileMatcher(
+            root,
+            listOf(
+                // Kotlin/Native build logic, which needs a supported host anyway
+                "kotlin-native",
+                "repo/gradle-build-conventions/project-tests-convention/src/main/kotlin/nativeTest.kt",
+                // Test projects, not part of this build
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources",
+            )
+        )
+
+        val files = nonSourcesMatcher.excludeWalkTopDown(Pattern.compile(".+\\.(gradle\\.kts|kt)"))
+            .filter { it.name.endsWith(".gradle.kts") || it.relativeTo(root).invariantSeparatorsPath.startsWith("repo/") }
+            .filter { !excluded.matchWithContains(it) && throwingCall.containsMatchIn(it.readText()) }
+            .map { it.relativeTo(root).invariantSeparatorsPath }
+            .sorted()
+            .toList()
+
+        if (files.isNotEmpty()) {
+            fail("Use HostManager.hostOrNull or hostKonanTargetAttribute() instead of HostManager.host and HostManager.hostName in:\n" + files.joinToString("\n"))
+        }
+    }
+
     private fun loadKnownThirdPartyCodeList(): List<String> {
         File("license/README.md").useLines { lineSequence ->
             return lineSequence
@@ -363,7 +394,7 @@ class CodeConformanceTest {
      */
     @Test
     fun testNoHardcodedPathSeparatorInSSOT() {
-        val pattern = Pattern.compile("""(?<![\\$])\$\{File\.pathSeparator\}""")
+        val pattern = Pattern.compile("""(?<![\\$])\$\{File\.pathSeparator}""")
         val targetDirs = listOf(
             "compiler/arguments/src/org/jetbrains/kotlin/arguments/dsl/types"
         )
@@ -385,7 +416,7 @@ class CodeConformanceTest {
 
                 fail(
                     "[KT-84449] Platform-specific File.pathSeparator must be escaped for runtime evaluation. " +
-                            "Use \\${'$'}{File.pathSeparator} or raw string literals.\nin file: $sourceFile"
+                            $$"Use \\${File.pathSeparator} or raw string literals.\nin file: $$sourceFile"
                 )
             }
         }

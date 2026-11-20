@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
+import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptionsHelper
@@ -13,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
 import org.jetbrains.kotlin.gradle.utils.jvmModuleName
+import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import org.jetbrains.kotlin.gradle.utils.moduleName
 
 internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinCompilationImplFactory.PostConfigure {
@@ -53,7 +56,29 @@ internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinC
                 )
             )
         )
+
+        val compilerLanguageLevel = project.compilerVersionLanguageLevel()
+        jvmCompilerOptions.languageVersion.convention(
+            targetCompilerOptions.languageVersion.orElse(compilerLanguageLevel)
+        )
+        jvmCompilerOptions.apiVersion.convention(
+            targetCompilerOptions.apiVersion.orElse(
+                compilerLanguageLevel.zip(jvmCompilerOptions.languageVersion, ::defaultApiLevel)
+            )
+        )
     }
+
+    /** API does not exceed LV, same default in toLanguageVersionSettings next to [org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator]. */
+    private fun defaultApiLevel(compilerLevel: KotlinVersion, languageLevel: KotlinVersion): KotlinVersion =
+        minOf(compilerLevel, languageLevel)
+
+    /** Empty on KGP's or unknown level, then compiler uses its LATEST_STABLE, see [org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator]. */
+    private fun Project.compilerVersionLanguageLevel(): Provider<KotlinVersion> =
+        kotlinExtension.compilerVersion.mapOrNull(providers) { compilerVersion ->
+            KotlinVersion.entries
+                .firstOrNull { compilerVersion.startsWith("${it.version}.") }
+                ?.takeIf { it != KotlinVersion.DEFAULT }
+        }
 
     private fun DecoratedKotlinCompilation<*>.useTargetJsCompilerOptionsAsConvention(
         jsCompilerOptions: KotlinJsCompilerOptions

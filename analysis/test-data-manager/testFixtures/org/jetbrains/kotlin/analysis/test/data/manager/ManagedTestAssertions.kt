@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.analysis.test.data.manager
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.handleMissingFile
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.isGoldenTest
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.normalizeContent
-import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions.updatedTestDataPaths
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
-import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.io.path.*
 
 /**
@@ -27,34 +26,39 @@ import kotlin.io.path.*
 object ManagedTestAssertions {
 
     /**
-     * Thread-safe set of test data paths (absolute path strings) that were updated during the current run.
-     * Used by incremental mode to determine which variant tests to run.
+     * The file modifications made while [recordFileActions] is on, in order, before [drainFileActions] collapses them.
      */
-    private val updatedTestDataPaths: MutableSet<String> = ConcurrentHashMap.newKeySet()
+    private val recordedFileActions = ConcurrentLinkedQueue<RecordedFileAction>()
+
+    private class RecordedFileAction(val testDataPath: Path, val file: Path, val existedBefore: Boolean, val existsAfter: Boolean)
 
     /**
-     * Auto-updates the [updatedTestDataPaths] set if [trackUpdatedPaths] is true.
+     * Runs the modification of [file] in [block], recording it if [recordFileActions] is on.
      *
      * This function must wrap all modification actions
      */
     context(context: TestDataContext)
-    private inline fun update(block: () -> Unit) {
-        if (trackUpdatedPaths) {
-            updatedTestDataPaths.add(context.testDataPath.toString())
-        }
-
+    private inline fun modify(file: Path, block: () -> Unit) {
+        val existedBefore = file.exists()
         block()
+        if (recordFileActions) {
+            recordedFileActions.add(RecordedFileAction(context.testDataPath, file, existedBefore, file.exists()))
+        }
     }
 
     /**
      * Whether the current environment allows file modifications (create, update, delete).
+     *
+     * UPDATE always modifies. CHECK is read-only on TeamCity and when requested explicitly (`checkTestData`);
+     * only plain local test runs, where the mode is not set, keep creating and deleting files in CHECK.
      *
      * This is an environment-level gate. Individual handlers may impose additional conditions
      * (e.g., [handleMissingFile] also requires [isGoldenTest] in CHECK mode).
      */
     context(context: TestDataContext)
     private val isModificationAllowed: Boolean
-        get() = context.mode == TestDataManagerMode.UPDATE || !TestDataManagerMode.isUnderTeamCity
+        get() = context.mode == TestDataManagerMode.UPDATE ||
+                !(TestDataManagerMode.isUnderTeamCity || TestDataManagerMode.isExplicitCheck)
 
 
     /** Whether this is a golden (base) test with no variant chain. */
@@ -63,18 +67,22 @@ object ManagedTestAssertions {
         get() = context.variantChain.isEmpty()
 
     /**
-     * When true, file writes in UPDATE mode will record the test data path in [updatedTestDataPaths].
+     * When true, every file creation, update and deletion is recorded for [drainFileActions].
+     * Set by the test data manager runner: plain test runs don't collect them.
      */
     @Volatile
-    internal var trackUpdatedPaths: Boolean = false
+    internal var recordFileActions: Boolean = false
 
     /**
-     * Returns the set of updated test data paths collected so far and clears the internal set.
+     * Returns the files changed since the previous call, one [FileAction] per file with its net effect:
+     * an update followed by a deletion is a deletion, a creation followed by a deletion is nothing.
      */
-    internal fun drainUpdatedTestDataPaths(): Set<String> {
-        val snapshot = updatedTestDataPaths.toSet()
-        updatedTestDataPaths.clear()
-        return snapshot
+    internal fun drainFileActions(): List<FileAction> {
+        val recorded = generateSequence { recordedFileActions.poll() }.toList()
+        return recorded.groupBy { it.file }.mapNotNull { [file, actions] ->
+            val kind = FileAction.Kind.of(actions.first().existedBefore, actions.last().existsAfter) ?: return@mapNotNull null
+            FileAction(actions.first().testDataPath, file, kind)
+        }
     }
 
     /**
@@ -86,15 +94,17 @@ object ManagedTestAssertions {
      *
      * ## Behavior Matrix
      *
-     * | Scenario                 | UPDATE        | CHECK (local)   | CHECK (TeamCity) |
-     * |--------------------------|---------------|-----------------|------------------|
-     * | actual=null, file missing | Pass         | Pass            | Pass             |
-     * | actual=null, file exists  | Delete       | Delete + throw  | Throw            |
-     * | File missing (golden)    | Create        | Create + throw  | Throw            |
-     * | File missing (secondary) | Create        | Throw           | Throw            |
-     * | Content matches          | Pass          | Pass            | Pass             |
-     * | Write-target redundant   | Delete        | Delete + throw  | Throw            |
-     * | Content mismatch         | Update        | Throw           | Throw            |
+     * | Scenario                  | UPDATE | CHECK (local test run) | CHECK (`checkTestData`, TeamCity) |
+     * |---------------------------|--------|------------------------|-----------------------------------|
+     * | actual=null, file missing | Pass   | Pass                   | Pass                              |
+     * | actual=null, file exists  | Delete | Delete + throw         | Throw                             |
+     * | File missing (golden)     | Create | Create + throw         | Throw                             |
+     * | File missing (secondary)  | Create | Throw                  | Throw                             |
+     * | Content matches           | Pass   | Pass                   | Pass                              |
+     * | Write-target redundant    | Delete | Delete + throw         | Throw                             |
+     * | Content mismatch          | Update | Throw                  | Throw                             |
+     *
+     * "Local test run" is a test started without the mode set (plain `test` task, IDE gutter): CHECK is its fallback.
      *
      * @param testDataPath path to the test input file (used to derive expected file paths)
      * @param actual actual content to compare, or `null` if the file should not exist
@@ -136,7 +146,7 @@ object ManagedTestAssertions {
         val normalizedExpected = normalizeContent(expectedContent)
 
         if (normalizedActual != normalizedExpected) {
-            handleMismatch(normalizedActual, expectedContent)
+            handleMismatch(normalizedActual, expectedFile, expectedContent)
         }
 
         checkAndHandleRedundantFile()
@@ -169,7 +179,7 @@ object ManagedTestAssertions {
         val nextContent = normalizeContent(nextExistingFile.readText())
 
         if (writeTargetContent == nextContent) {
-            if (isModificationAllowed) update {
+            if (isModificationAllowed) modify(writeTargetFile) {
                 writeTargetFile.deleteIfExists()
             }
 
@@ -184,11 +194,12 @@ object ManagedTestAssertions {
     }
 
     context(context: TestDataContext)
-    private fun handleMismatch(normalizedActual: String, expectedContent: String) {
+    private fun handleMismatch(normalizedActual: String, expectedFile: Path, expectedContent: String) {
         val contentToWrite = preserveEofNewline(normalizedActual, expectedContent)
         when (context.mode) {
             TestDataManagerMode.UPDATE -> writeFile(contentToWrite)
             TestDataManagerMode.CHECK -> throw createMismatchAssertion(
+                expectedFile = expectedFile,
                 expectedContent = expectedContent,
                 normalizedActual = contentToWrite,
             )
@@ -200,7 +211,7 @@ object ManagedTestAssertions {
         val writeTargetFile = context.writeTargetFile
         if (!writeTargetFile.exists()) return
 
-        if (isModificationAllowed) update {
+        if (isModificationAllowed) modify(writeTargetFile) {
             writeTargetFile.deleteIfExists()
         }
 
@@ -220,14 +231,16 @@ object ManagedTestAssertions {
             append(writeTargetFile)
         }
 
-        return AssertionFailedError(message)
+        return TestDataAssertionError(message, TestDataAssertionError.Kind.UNEXPECTED_FILE, writeTargetFile, comparedFile = null)
     }
 
     context(context: TestDataContext)
-    private fun writeFile(content: String): Unit = update {
+    private fun writeFile(content: String) {
         val path = context.writeTargetFile
-        path.createParentDirectories()
-        path.writeText(content)
+        modify(path) {
+            path.createParentDirectories()
+            path.writeText(content)
+        }
     }
 
     context(context: TestDataContext)
@@ -244,8 +257,11 @@ object ManagedTestAssertions {
                     "Run golden test first to generate base file, or run 'updateTestData' to auto-generate."
         }
 
-        return AssertionFailedError(
+        return TestDataAssertionError(
             message,
+            TestDataAssertionError.Kind.MISSING_FILE,
+            writeTargetFile,
+            comparedFile = null,
             FileInfo(writeTargetFile.absolutePathString(), byteArrayOf()),
             normalizedActual,
         )
@@ -263,17 +279,26 @@ object ManagedTestAssertions {
             "Delete the prefixed file."
         }
 
-        return AssertionFailedError(prefix + postfix)
+        return TestDataAssertionError(
+            prefix + postfix,
+            TestDataAssertionError.Kind.REDUNDANT_FILE,
+            writeTargetFile,
+            comparedFile = nextExistingFile,
+        )
     }
 
     context(context: TestDataContext)
     private fun createMismatchAssertion(
+        expectedFile: Path,
         expectedContent: String,
         normalizedActual: String,
     ): AssertionFailedError {
         val writeTargetFile = context.writeTargetFile
-        return AssertionFailedError(
+        return TestDataAssertionError(
             "Actual data differs from file content: ${writeTargetFile.name}",
+            TestDataAssertionError.Kind.MISMATCH,
+            writeTargetFile,
+            comparedFile = expectedFile,
             FileInfo(
                 writeTargetFile.absolutePathString(),
                 expectedContent.toByteArray(StandardCharsets.UTF_8),

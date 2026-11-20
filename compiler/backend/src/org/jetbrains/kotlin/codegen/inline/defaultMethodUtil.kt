@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.asSequence
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.isNeedClassReificationMarker
+import org.jetbrains.kotlin.codegen.optimization.common.intConstantOrError
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -72,7 +73,7 @@ fun expandMaskConditionsAndUpdateVariableNodes(
         ) {
             val jumpInstruction = it.next?.next?.next as JumpInsnNode
             val maskIndex = it.`var` - maskStartIndex
-            val maskConstant = getConstant(it.next)
+            val maskConstant = it.next.intConstantOrError
             val indexInMaskableParameters = maskConstant.countTrailingZeroBits() + maskIndex * 32
             Condition(
                 masks[maskIndex],

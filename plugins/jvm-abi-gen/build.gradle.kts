@@ -32,8 +32,6 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:backend.jvm"))
-    compileOnly(project(":compiler:frontend"))
-    compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":core:descriptors"))
     compileOnly(project(":compiler:backend.common.jvm"))
@@ -70,10 +68,7 @@ javadocJar()
 
 projectTests {
     testTask(
-        javaLauncher = JdkMajorVersion.JDK_1_8,
         maxHeapSize = testMaxHeapSizeLarge,
-        // Use Parallel GC because this test runs on JDK 8.
-        garbageCollector = GarbageCollector.Parallel,
     ) {
         addClasspathProperty("kotlin.jvm.abi.jar.path") {
             from(tasks.jar.map { it.archiveFile.get() })

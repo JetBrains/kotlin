@@ -1,2 +1,2 @@
-warning: flag is not supported by this version of the compiler: -Xnot-a-real-flag
+info: flag is not supported by this version of the compiler: '-Xnot-a-real-flag'.
 OK

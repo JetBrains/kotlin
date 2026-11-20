@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.utils.getFile
 
 /**
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
  */
 @Suppress("DEPRECATION_ERROR")
 @ExperimentalWasmDsl
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class D8EnvSpec internal constructor() : EnvSpec<D8Env>() {
 
     // Latest version number could be found here https://storage.googleapis.com/chromium-v8/official/canary/v8-linux64-rel-latest.json
@@ -89,6 +91,7 @@ abstract class D8EnvSpec internal constructor() : EnvSpec<D8Env>() {
                 )
             )
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String
             get() = extensionName(

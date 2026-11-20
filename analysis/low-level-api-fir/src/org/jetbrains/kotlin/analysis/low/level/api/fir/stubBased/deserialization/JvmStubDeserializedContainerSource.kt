@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
 import org.jetbrains.kotlin.descriptors.SourceFile
+import org.jetbrains.kotlin.load.kotlin.JvmClassFileBacked
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
@@ -14,7 +15,10 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreRelease
 
 //required for LLDependenciesSymbolProvider#jvmClassName, to resolve ambiguities
 //todo check if moving builtins to stubs would solve the issue
-internal class JvmStubDeserializedContainerSource(classId: ClassId) : DeserializedContainerSourceWithJvmClassName {
+internal class JvmStubDeserializedContainerSource(
+    classId: ClassId,
+    override val classFileMajorVersion: Int?,
+) : DeserializedContainerSourceWithJvmClassName, JvmClassFileBacked {
     override val className = JvmClassName.byClassId(classId)
 
     override val incompatibility: IncompatibleVersionErrorData<*>?

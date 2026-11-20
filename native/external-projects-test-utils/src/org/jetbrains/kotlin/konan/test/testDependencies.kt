@@ -64,6 +64,9 @@ val testInternalLibrary: Library
 val testExtensionsLibrary: Library
     get() = getLibrary("testExtensionsLibrary")
 
+val testKDocLibrary: Library
+    get() = getLibrary("testKDocLibrary")
+
 val testLibraryKotlinxSerializationJson: Library
     get() = getLibrary("serialization-json")
 

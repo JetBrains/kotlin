@@ -59,6 +59,16 @@ public interface JsCompilerArguments : CommonJsAndWasmArguments {
 
   public companion object {
     /**
+     * Enable exporting of Kotlin interfaces to implement them from JavaScript/TypeScript.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT", KotlinReleaseVersion(2, 3, 20))
+
+    /**
      * Export KDoc entries as JSDoc into the TypeScript declaration files.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

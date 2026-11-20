@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -34,6 +36,7 @@ import kotlin.test.assertTrue
 @OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 @DisplayName("Tests for general K/N builds")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class GeneralNativeIT : KGPBaseTest() {
 
     private val nativeHostTargetName = MPPNativeTargets.current
@@ -80,6 +83,7 @@ class GeneralNativeIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInNative
     @DisplayName("Can produce native libraries")
     @GradleTest
     @TestMetadata("native-binaries/libraries")
@@ -265,6 +269,7 @@ class GeneralNativeIT : KGPBaseTest() {
         )
     }
 
+    @MustRunOnChangesInNative
     @DisplayName("Checks generating lldbinit file")
     @GradleTest
     @TestMetadata("native-binaries/frameworks")
@@ -424,12 +429,15 @@ class GeneralNativeIT : KGPBaseTest() {
                 }
             }
 
-            build("clean")
-
             buildGradle.appendText(
                 """kotlin.targets["host"].compilations["main"].kotlinOptions.verbose = true"""
             )
+            // verbose only affects logging, so it is not a task input
             build(":compileKotlinHost") {
+                assertTasksUpToDate(":compileKotlinHost")
+            }
+
+            build(":compileKotlinHost", "--rerun") {
                 extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinHost") {
                     assertCommandLineArgumentsContain("-verbose")
                 }
@@ -781,6 +789,7 @@ class GeneralNativeIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInNative
     @DisplayName("Checks builds with cinterop tool")
     @GradleTest
     @TestMetadata("native-cinterop")
@@ -887,6 +896,7 @@ class GeneralNativeIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInNative
     @DisplayName("Checks native arguments with the spaces in it")
     @TestMetadata("new-mpp-lib-and-app/sample-lib")
     @GradleTest
@@ -925,7 +935,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks binary options dsl")
     @GradleTest
-    @TestMetadata("native-binaries")
+    @TestMetadata("native-binaries/executables")
     fun testBinaryOptionsDSL(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/executables", gradleVersion) {
             buildGradleKts.appendText(
@@ -945,7 +955,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks binary options property")
     @GradleTest
-    @TestMetadata("native-binaries")
+    @TestMetadata("native-binaries/executables")
     fun testBinaryOptionsProperty(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/executables", gradleVersion) {
             build(
@@ -961,7 +971,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks binary options priority")
     @GradleTest
-    @TestMetadata("native-binaries")
+    @TestMetadata("native-binaries/executables")
     fun testBinaryOptionsPriority(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/executables", gradleVersion) {
             buildGradleKts.appendText(
@@ -1054,7 +1064,7 @@ class GeneralNativeIT : KGPBaseTest() {
     // KT-52303
     @DisplayName("Checks that changing build dir applied to binaries")
     @GradleTest
-    @TestMetadata("native-binaries")
+    @TestMetadata("native-binaries/executables")
     fun testBuildDirChangeAppliedToBinaries(gradleVersion: GradleVersion) {
         nativeProject("native-binaries/executables", gradleVersion) {
             buildGradleKts.appendText(
@@ -1110,7 +1120,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Test compiler arguments for K/Native Tasks")
     @GradleTest
-    @TestMetadata("native-binaries")
+    @TestMetadata("native-libraries")
     fun testCompilerArgumentsLogLevel(gradleVersion: GradleVersion) {
         nativeProject("native-libraries", gradleVersion) {
             val updatedBuildOptions = buildOptions.copy(
@@ -1134,7 +1144,6 @@ class GeneralNativeIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-72705: native compile task should not use project's version as an input property")
-    @TestMetadata("emptyKts")
     @OsCondition(enabledOnCI = [OS.MAC])
     @GradleTest
     fun testKotlinNativeCompileTaskDontUseProjectVersionAsAnInput(gradleVersion: GradleVersion) {

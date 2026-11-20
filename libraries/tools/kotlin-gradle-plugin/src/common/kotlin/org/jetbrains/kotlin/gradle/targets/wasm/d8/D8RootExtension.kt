@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.d8
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 
 @Suppress("DEPRECATION_ERROR")
 @Deprecated(
@@ -18,10 +19,12 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
     level = DeprecationLevel.ERROR
 )
 @OptIn(ExperimentalWasmDsl::class)
+@ObsoleteJsAndWasmToolingProvisioning
 open class D8RootExtension(
     project: Project,
     d8EnvSpec: D8EnvSpec,
 ) : org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension(project, d8EnvSpec) {
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object {
         val EXTENSION_NAME: String
             get() = org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension.EXTENSION_NAME

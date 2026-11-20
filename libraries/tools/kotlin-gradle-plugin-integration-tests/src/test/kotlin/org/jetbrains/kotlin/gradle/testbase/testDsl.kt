@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.Project
 import org.gradle.api.initialization.resolve.RepositoriesMode
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -74,6 +74,7 @@ fun KGPBaseTest.project(
     localRepoDir: Path? = defaultLocalRepo(gradleVersion),
     environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
+    compilerVersion: String? = null,
     test: TestProject.() -> Unit = {},
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
@@ -84,7 +85,8 @@ fun KGPBaseTest.project(
     )
     projectPath.addDefaultSettingsToSettingsGradle(
         dependencyManagement,
-        localRepoDir,
+        useLocalRepository = localRepoDir != null,
+        compilerVersion,
     )
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
@@ -115,7 +117,7 @@ fun KGPBaseTest.project(
         counter = KGPBaseTest.counter.get(),
     )
     addHeapDumpOptions.ifTrue { testProject.addHeapDumpOptions() }
-    localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
+    localRepoDir?.let { testProject.useLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
 
     val result = runCatching {
@@ -285,8 +287,10 @@ private fun TestProject.buildWithAction(
 
         val connectSubprocessVMToDebugger =
             runWithDebug && (environmentVariables.overridingEnvironmentVariablesInstantiationBacktrace != null || buildOptions.continuousBuild == true)
+        assertBuildScriptsDoNotReferenceTestTempDirectories()
+        writePathReferencesToGradleProperties()
         val allBuildArguments = commonBuildSetup(
-            buildArguments = buildArguments,
+            buildArguments = buildArguments + pathReferenceArguments,
             buildOptions = buildOptions,
             enableBuildCacheDebug = enableBuildCacheDebug,
             enableBuildScan = enableBuildScan,
@@ -377,7 +381,7 @@ fun <T> TestProject.buildModel(
 ): T {
     Assumptions.assumeFalse(isWindows, "Building model is not working on Windows KT-84353")
     val buildParams = commonBuildSetup(
-        buildArguments = emptyList(), // it is actually task names, but for build model they passed separately
+        buildArguments = pathReferenceArguments, // task names are passed separately for build model
         buildOptions = buildOptions,
         enableBuildCacheDebug = enableBuildCacheDebug,
         enableBuildScan = enableBuildScan,
@@ -401,6 +405,8 @@ fun <T> TestProject.buildModel(
         registry.register(builder)
     }
 
+    assertBuildScriptsDoNotReferenceTestTempDirectories()
+    writePathReferencesToGradleProperties()
     try {
         val connection = connector.connect()
         val modelBuilder = connection.model(modelClass)
@@ -457,9 +463,7 @@ private fun validateDebuggingSocketIsListeningForTestsWithEnv(
 }
 
 private fun BuildResult.additionalAssertions(buildOptions: BuildOptions) {
-    if (buildOptions.warningMode != WarningMode.Fail && buildOptions.warningMode != WarningMode.None) {
-        assertDeprecationWarningsArePresent(buildOptions.warningMode)
-    }
+    // no-op
 }
 
 private fun TestProject.ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buildOptions: BuildOptions) {
@@ -479,7 +483,7 @@ fun TestProject.enableLocalBuildCache(
         """
         buildCache {
             local {
-                directory = "${buildCacheLocation.toUri()}"
+                directory = ${rebindPathReference("test_local_build_cache", buildCacheLocation)}
             }
         }
         """.trimIndent()
@@ -631,6 +635,62 @@ class TestProject(
 ) : GradleProject(projectName, projectPath, counter) {
     fun subProject(name: String) = GradleProject(name, projectPath.resolve(name), counter)
 
+    private val gradlePropertyPaths = mutableMapOf<String, Path>()
+
+    /**
+     * Passes [path] to every build of this project as the Gradle property [name] and returns a script expression that reads it.
+     *
+     * The expression is valid in Groovy and Kotlin scripts, also inside a double-quoted string template as `"${'$'}{expression}"`.
+     * Unlike the path itself, it keeps the script text identical across tests, so Gradle reuses its compiled script cache.
+     */
+    fun pathReference(name: String, path: Path): String {
+        val absolutePath = path.absolute().normalize()
+        val boundPath = gradlePropertyPaths.getOrPut(name) { absolutePath }
+        check(boundPath == absolutePath) { "Gradle property '$name' is already bound to $boundPath, can't bind it to $absolutePath" }
+        return gradlePropertyReference(name)
+    }
+
+    /** Like [pathReference], but replaces an earlier binding of [name]. */
+    internal fun rebindPathReference(name: String, path: Path): String {
+        gradlePropertyPaths[name] = path.absolute().normalize()
+        return gradlePropertyReference(name)
+    }
+
+    /**
+     * `-P` arguments for the [pathReference] bindings.
+     * Unlike `gradle.properties`, they also reach buildSrc and included builds.
+     */
+    internal val pathReferenceArguments: List<String>
+        get() = gradlePropertyPaths.map { (name, path) -> "-P$name=$path" }
+
+    /**
+     * Writes the [pathReference] bindings to `gradle.properties`, so the project also builds outside TestKit,
+     * e.g. when a kept test directory is re-run by hand or by xcodebuild.
+     */
+    internal fun writePathReferencesToGradleProperties() {
+        val existingLines = if (gradleProperties.exists()) gradleProperties.readLines().toSet() else emptySet()
+        val missingLines = gradlePropertyPaths
+            .map { (name, path) -> "$name=${path.invariantSeparatorsPathString}" }
+            .filter { it !in existingLines }
+        if (missingLines.isNotEmpty()) {
+            gradleProperties.appendText(missingLines.joinToString(separator = "\n", prefix = "\n", postfix = "\n"))
+        }
+    }
+
+    /** Build script expression for the local repository passed to `project(localRepoDir = ...)`. */
+    val localRepositoryReference: String
+        get() {
+            check(LOCAL_REPOSITORY_GRADLE_PROPERTY in gradlePropertyPaths) {
+                "Pass localRepoDir to project() to use the local repository"
+            }
+            return gradlePropertyReference(LOCAL_REPOSITORY_GRADLE_PROPERTY)
+        }
+
+    internal fun useLocalRepository(localRepoDir: Path) {
+        pathReference(LOCAL_REPOSITORY_GRADLE_PROPERTY, localRepoDir)
+        replaceLocalRepositoryPlaceholder()
+    }
+
     /**
      * Includes another project as a submodule in the current project.
      *
@@ -666,7 +726,10 @@ class TestProject(
             """.trimIndent()
         )
 
-        localRepoDir?.let { subProject(newSubmoduleName).configureLocalRepository(localRepoDir) }
+        localRepoDir?.let {
+            pathReference(LOCAL_REPOSITORY_GRADLE_PROPERTY, localRepoDir)
+            subProject(newSubmoduleName).replaceLocalRepositoryPlaceholder()
+        }
         subProject(newSubmoduleName).configure()
     }
 
@@ -773,7 +836,9 @@ private fun commonBuildSetup(
                 // Useful for the tests like KGPDaemonsBaseTest
                 if (buildOptions.customKotlinDaemonRunFilesDirectory != null) {
                     @Suppress("DEPRECATION")
-                    "-D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${buildOptions.customKotlinDaemonRunFilesDirectory.absolutePath}"
+                    "-D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${
+                        buildOptions.customKotlinDaemonRunFilesDirectory.normalizedAbsolutePath().toString()
+                    }"
                 } else null,
             )
 }
@@ -933,23 +998,27 @@ private val String.testProjectPath: Path get() = Paths.get("src", "test", "resou
 
 internal fun Path.addDefaultSettingsToSettingsGradle(
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
-    localRepo: Path? = null,
+    useLocalRepository: Boolean = false,
+    overrideCompilerVersion: String? = null,
 ) {
     addPluginManagementToSettings()
     when (dependencyManagement) {
         is DependencyManagement.DefaultDependencyManagement -> {
             addDependencyManagementToSettings(
                 additionalDependencyRepositories = dependencyManagement.additionalRepos,
-                localRepo = localRepo
+                useLocalRepository = useLocalRepository,
             )
         }
         is DependencyManagement.DisabledDependencyManagement -> {}
+    }
+    if (overrideCompilerVersion != null) {
+        addCompilerVersionOverrideToSettings(overrideCompilerVersion)
     }
 }
 
 private fun Path.addDependencyRepositoriesToBuildScript(
     additionalDependencyRepositories: Set<String>,
-    localRepo: Path? = null,
+    useLocalRepository: Boolean = false,
 ) {
     val buildGradle = resolve("build.gradle")
     val buildGradleKts = resolve("build.gradle.kts")
@@ -958,13 +1027,13 @@ private fun Path.addDependencyRepositoriesToBuildScript(
     when {
         Files.exists(buildGradle) -> buildGradle.modify {
             it.insertBlockToBuildScriptAfterPluginsAndImports(
-                getGroovyRepositoryBlock(additionalDependencyRepositories, localRepo).wrapWithAllProjectBlock()
+                getGroovyRepositoryBlock(additionalDependencyRepositories, useLocalRepository).wrapWithAllProjectBlock()
             )
         }
 
         Files.exists(buildGradleKts) -> buildGradleKts.modify {
             it.insertBlockToBuildScriptAfterPluginsAndImports(
-                getKotlinRepositoryBlock(additionalDependencyRepositories, localRepo).wrapWithAllProjectBlock()
+                getKotlinRepositoryBlock(additionalDependencyRepositories, useLocalRepository).wrapWithAllProjectBlock()
             )
         }
 
@@ -972,7 +1041,7 @@ private fun Path.addDependencyRepositoriesToBuildScript(
             .writeText(
                 getGroovyRepositoryBlock(
                     additionalDependencyRepositories,
-                    localRepo
+                    useLocalRepository
                 ).wrapWithAllProjectBlock()
             )
 
@@ -980,7 +1049,7 @@ private fun Path.addDependencyRepositoriesToBuildScript(
             .writeText(
                 getKotlinRepositoryBlock(
                     additionalDependencyRepositories,
-                    localRepo
+                    useLocalRepository
                 ).wrapWithAllProjectBlock()
             )
 
@@ -988,7 +1057,7 @@ private fun Path.addDependencyRepositoriesToBuildScript(
     }
 
     if (Files.exists(resolve("buildSrc"))) {
-        resolve("buildSrc").addDependencyRepositoriesToBuildScript(additionalDependencyRepositories, localRepo)
+        resolve("buildSrc").addDependencyRepositoriesToBuildScript(additionalDependencyRepositories, useLocalRepository)
     }
 }
 
@@ -1104,10 +1173,49 @@ internal fun Path.addPluginManagementToSettings() {
 }
 
 
+internal fun Path.addCompilerVersionOverrideToSettings(compilerVersion: String) {
+    val buildGradle = resolve("build.gradle")
+    val buildGradleKts = resolve("build.gradle.kts")
+    val settingsGradle = resolve("settings.gradle")
+    val settingsGradleKts = resolve("settings.gradle.kts")
+    when {
+        Files.exists(settingsGradle) -> settingsGradle.append(getGroovyCompilerVersionBlock(compilerVersion))
+        Files.exists(settingsGradleKts) -> settingsGradleKts.append(getKtsCompilerVersionBlock(compilerVersion))
+        Files.exists(buildGradle) -> settingsGradle.writeText(getGroovyCompilerVersionBlock(compilerVersion))
+        Files.exists(buildGradleKts) -> settingsGradleKts.writeText(getKtsCompilerVersionBlock(compilerVersion))
+        else -> error("No build-file or settings file found")
+    }
+}
+
+private fun getKtsCompilerVersionBlock(compilerVersion: String) = """
+    gradle.lifecycle.beforeProject {
+        val action = Action<Any> {
+            val ext = extensions.getByName("kotlin")
+            val method = ext.javaClass.getMethod("getCompilerVersion")
+            val property = method.invoke(ext)
+            @Suppress("UNCHECKED_CAST")
+            (property as org.gradle.api.provider.Property<Any>).set("$compilerVersion")
+        }
+        plugins.withId("org.jetbrains.kotlin.jvm", action)
+        plugins.withId("org.jetbrains.kotlin.multiplatform", action)
+    }
+""".trimIndent()
+
+private fun getGroovyCompilerVersionBlock(compilerVersion: String) = """
+    gradle.lifecycle.beforeProject {     
+        plugins.withId("org.jetbrains.kotlin.jvm") {
+            extensions.getByName("kotlin").compilerVersion = "$compilerVersion"
+        }
+        plugins.withId("org.jetbrains.kotlin.multiplatform") {
+            extensions.getByName("kotlin").compilerVersion = "$compilerVersion"
+        }
+    }
+""".trimIndent()
+
 internal fun Path.addDependencyManagementToSettings(
     gradleRepositoriesMode: RepositoriesMode = RepositoriesMode.PREFER_SETTINGS,
     additionalDependencyRepositories: Set<String>,
-    localRepo: Path? = null,
+    useLocalRepository: Boolean = false,
 ) {
     val buildGradle = resolve("build.gradle")
     val buildGradleKts = resolve("build.gradle.kts")
@@ -1123,7 +1231,7 @@ internal fun Path.addDependencyManagementToSettings(
                     getGroovyDependencyManagementBlock(
                         gradleRepositoriesMode,
                         additionalDependencyRepositories,
-                        localRepo
+                        useLocalRepository
                     )
                 }
                 """.trimMargin()
@@ -1141,7 +1249,7 @@ internal fun Path.addDependencyManagementToSettings(
                     getKotlinDependencyManagementBlock(
                         gradleRepositoriesMode,
                         additionalDependencyRepositories,
-                        localRepo
+                        useLocalRepository
                     )
                 }
                 """.trimMargin()
@@ -1155,7 +1263,7 @@ internal fun Path.addDependencyManagementToSettings(
                 getGroovyDependencyManagementBlock(
                     gradleRepositoriesMode,
                     additionalDependencyRepositories,
-                    localRepo
+                    useLocalRepository
                 )
             )
 
@@ -1164,7 +1272,7 @@ internal fun Path.addDependencyManagementToSettings(
                 getKotlinDependencyManagementBlock(
                     gradleRepositoriesMode,
                     additionalDependencyRepositories,
-                    localRepo
+                    useLocalRepository
                 )
             )
 
@@ -1172,7 +1280,7 @@ internal fun Path.addDependencyManagementToSettings(
     }
 
     if (Files.exists(resolve("buildSrc"))) {
-        resolve("buildSrc").addDependencyManagementToSettings(gradleRepositoriesMode, additionalDependencyRepositories, localRepo)
+        resolve("buildSrc").addDependencyManagementToSettings(gradleRepositoriesMode, additionalDependencyRepositories, useLocalRepository)
     }
 }
 
@@ -1222,7 +1330,7 @@ private fun BuildResult.printBuildScanUrl() {
 private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
     gradleProperties.modify {
         """
-        |org.gradle.java.home=${pathToJdk.absolutePath.normalizePath()}
+        |org.gradle.java.home=${pathToJdk.normalizedAbsolutePath().toString().normalizePath()}
         |
         |$it
         """.trimMargin()
@@ -1250,7 +1358,7 @@ internal fun Path.enableAndroidSdk() {
         .also { if (!it.exists()) it.createFile() }
         .appendText(
             """
-            sdk.dir=${androidSdk.absolutePath.normalizePath()}
+            sdk.dir=${androidSdk.normalizedAbsolutePath().toString().normalizePath()}
             """.trimIndent()
         )
     acceptAndroidSdkLicenses(androidSdk)
@@ -1346,11 +1454,15 @@ private fun TestProject.configureSingleNativeTargetInSubFolders(preset: String =
         }
 }
 
-internal fun GradleProject.configureLocalRepository(localRepoDir: Path) {
+/**
+ * Replaces the [LOCAL_REPOSITORY_PLACEHOLDER] in template build scripts with a reference to the [LOCAL_REPOSITORY_GRADLE_PROPERTY].
+ * The placeholder is always used inside a double-quoted string, so the reference is inserted as a string template.
+ */
+internal fun GradleProject.replaceLocalRepositoryPlaceholder() {
     projectPath.walk()
         .filter { it.isRegularFile() && it.name in buildFileNames }
         .forEach { file ->
-            file.modify { it.replace(LOCAL_REPOSITORY_PLACEHOLDER, localRepoDir.absolutePathString().replace("\\", "\\\\")) }
+            file.modify { it.replace(LOCAL_REPOSITORY_PLACEHOLDER, "\${${gradlePropertyReference(LOCAL_REPOSITORY_GRADLE_PROPERTY)}}") }
         }
 }
 

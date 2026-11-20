@@ -17,13 +17,13 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(project(":native:kotlin-native-utils"))
     testFixturesApi(project(":native:executors"))
     testFixturesApi(project(":native:binary-options"))
 
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
-    testFixturesImplementation(project(":compiler:container"))
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
     testFixturesImplementation(project(":compiler:fir:fir-native"))
     testFixturesImplementation(project(":core:compiler.common.native"))
@@ -108,7 +108,7 @@ projectTests {
         )
     ) {
         options {
-            // See [org.jetbrains.kotlin.konan.test.KlibCrossCompilationIdentityTest.FULL_CROSS_DIST_ENABLED_PROPERTY]
+            // See [org.jetbrains.kotlin.konan.test.klib.AbstractFirKlibCrossCompilationIdentityTestBase.FULL_CROSS_DIST_ENABLED_PROPERTY]
             // See also kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/nativeFullCrossDist.kt
             systemProperty(
                 "kotlin.native.internal.fullCrossDistEnabled",

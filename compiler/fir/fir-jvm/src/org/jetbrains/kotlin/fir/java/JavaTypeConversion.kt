@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
@@ -87,7 +88,7 @@ private fun JavaType?.toConeKotlinType(
     additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeKotlinType =
     toConeTypeProjection(session, javaTypeParameterStack, Variance.INVARIANT, mode, source, additionalAnnotations).type
-        ?: ConeFlexibleType(session.builtinTypes.anyType.coneType, session.builtinTypes.nullableAnyType.coneType, isTrivial = true)
+        ?: ConeFlexibleType(StandardTypes.Any, StandardTypes.NullableAny, isTrivial = true)
 
 private fun JavaType?.toConeTypeProjection(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,

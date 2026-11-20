@@ -1,17 +1,17 @@
 import Test = JS_TESTS.foo.Test;
 import TestChild = JS_TESTS.foo.TestChild;
 import sum = JS_TESTS.foo.sum;
-import varargInt = JS_TESTS.foo.varargInt
-import varargNullableInt = JS_TESTS.foo.varargNullableInt
-import varargWithOtherParameters= JS_TESTS.foo.varargWithOtherParameters
-import varargWithComplexType = JS_TESTS.foo.varargWithComplexType
-import sumNullable = JS_TESTS.foo.sumNullable
-import defaultParameters = JS_TESTS.foo.defaultParameters
-import generic1 = JS_TESTS.foo.generic1
-import generic2 = JS_TESTS.foo.generic2
-import generic3 = JS_TESTS.foo.generic3
-import genericWithConstraint = JS_TESTS.foo.genericWithConstraint
-import acceptTest = JS_TESTS.foo.acceptTest
+import varargInt = JS_TESTS.foo.varargInt;
+import varargNullableInt = JS_TESTS.foo.varargNullableInt;
+import varargWithOtherParameters = JS_TESTS.foo.varargWithOtherParameters;
+import varargWithComplexType = JS_TESTS.foo.varargWithComplexType;
+import sumNullable = JS_TESTS.foo.sumNullable;
+import defaultParameters = JS_TESTS.foo.defaultParameters;
+import generic1 = JS_TESTS.foo.generic1;
+import generic2 = JS_TESTS.foo.generic2;
+import generic3 = JS_TESTS.foo.generic3;
+import genericWithConstraint = JS_TESTS.foo.genericWithConstraint;
+import acceptTest = JS_TESTS.foo.acceptTest;
 import generateOneMoreChildOfTest = JS_TESTS.foo.generateOneMoreChildOfTest;
 import ExportedChild = JS_TESTS.foo.ExportedChild;
 import acceptExportedChild = JS_TESTS.foo.acceptExportedChild;
@@ -22,10 +22,16 @@ import suspendFunWithContext = JS_TESTS.foo.suspendFunWithContext;
 import WithSuspendExtensionFunAndContext = JS_TESTS.foo.WithSuspendExtensionFunAndContext;
 import acceptHolderOfSum = JS_TESTS.foo.acceptHolderOfSum;
 import acceptHolderOfParentSuspendFun1 = JS_TESTS.foo.acceptHolderOfParentSuspendFun1;
+import KotlinImplWithSuspend = JS_TESTS.foo.KotlinImplWithSuspend;
+import KotlinImplWithSuspendAndDefaultArg = JS_TESTS.foo.KotlinImplWithSuspendAndDefaultArg;
+import AbstractWithSuspend = JS_TESTS.foo.AbstractWithSuspend;
+import AbstractWithSuspendAndDefaultArgument = JS_TESTS.foo.AbstractWithSuspendAndDefaultArgument;
+import acceptAbstractWithSuspend = JS_TESTS.foo.acceptAbstractWithSuspend;
+import acceptAbstractWithSuspendAndDefaultArgument = JS_TESTS.foo.acceptAbstractWithSuspendAndDefaultArgument;
 
 function assert(condition: boolean) {
     if (!condition) {
-        throw "Assertion failed";
+        throw new Error("Assertion failed");
     }
 }
 
@@ -139,6 +145,32 @@ async function box(): Promise<string> {
     assert(await typeScriptChild.parentSuspendFun1() === "TypeScriptSuspendFun1");
     assert(await typeScriptChild.parentSuspendFun1("Test") === "TestTypeScriptSuspendFun1");
     assert(await typeScriptChild.childSuspendFun() === "TypeScriptChild");
+
+    assert(await new KotlinImplWithSuspend().value() === "KotlinImplWithSuspend");
+    assert(await acceptAbstractWithSuspend(new KotlinImplWithSuspend()) === "KotlinImplWithSuspend");
+    assert(await new KotlinImplWithSuspendAndDefaultArg().value("") === "KotlinImplWithSuspendAndDefaultArg");
+    assert(await new KotlinImplWithSuspendAndDefaultArg().value() === "KotlinImplWithSuspendAndDefaultArg!");
+    assert(await acceptAbstractWithSuspendAndDefaultArgument(new KotlinImplWithSuspendAndDefaultArg(), "") === "KotlinImplWithSuspendAndDefaultArg");
+    assert(await acceptAbstractWithSuspendAndDefaultArgument(new KotlinImplWithSuspendAndDefaultArg(), null) === "KotlinImplWithSuspendAndDefaultArg!");
+
+    class TypeScriptImplWithSuspend extends AbstractWithSuspend {
+        override async value(): Promise<string> {
+            return Promise.resolve("TypeScriptImplWithSuspend");
+        }
+    }
+
+    assert(await new TypeScriptImplWithSuspend().value() === "TypeScriptImplWithSuspend");
+    assert(await acceptAbstractWithSuspend(new TypeScriptImplWithSuspend()) === "TypeScriptImplWithSuspend");
+
+    class TypeScriptImplWithSuspendAndDefaultArg extends AbstractWithSuspendAndDefaultArgument {
+        override async value(suffix: string = "?"): Promise<string> {
+            return Promise.resolve("TypeScriptImplWithSuspendAndDefaultArg" + suffix);
+        }
+    }
+    assert(await new TypeScriptImplWithSuspendAndDefaultArg().value("") === "TypeScriptImplWithSuspendAndDefaultArg");
+    assert(await new TypeScriptImplWithSuspendAndDefaultArg().value() === "TypeScriptImplWithSuspendAndDefaultArg?");
+    assert(await acceptAbstractWithSuspendAndDefaultArgument(new TypeScriptImplWithSuspendAndDefaultArg(), "") === "TypeScriptImplWithSuspendAndDefaultArg");
+    assert(await acceptAbstractWithSuspendAndDefaultArgument(new TypeScriptImplWithSuspendAndDefaultArg(), null) === "TypeScriptImplWithSuspendAndDefaultArg?");
 
     return "OK";
 }

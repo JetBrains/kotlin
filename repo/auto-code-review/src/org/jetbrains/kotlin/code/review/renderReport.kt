@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.code.review
 
 interface RenderingContext {
     fun codeLink(path: ProjectFilePath, line: Int): String
-    fun markdownLink(path: ProjectFilePath, title: String): String
+    fun markdownLink(path: ProjectFilePath, heading: String, linkText: String = heading): String
 
     /**
      * Returns a Markdown link to [title] in the report, or `null` if unsupported.
@@ -23,40 +23,61 @@ interface RenderingContext {
 }
 
 val GitDiff.Origin.GitHub.compareMarkdownLink: String
-    get() = "[${base.rev}...${to.sha1}](https://github.com/${repository}/compare/${base.rev}...${to.rev})"
+    get() = "[${base.shortRev}...${to.shortSha1}](https://github.com/${repository}/compare/${base.rev}...${to.sha1})"
 
 private const val WARNING_EMOJI = "⚠\uFE0F"
+private const val INFO_EMOJI = "\u2139\uFE0F"
 
 context(renderingContext: RenderingContext)
 fun render(review: ReviewResult): String = buildString {
     appendOrigin(review)
+    appendSummary(review)
     appendFailures(review)
     appendReview(review)
-    appendMeta(review)
+    appendFooter(review)
 }
+
+private val readme = ProjectFilePath("repo/auto-code-review/README.md")
 
 context(renderingContext: RenderingContext)
 fun StringBuilder.appendOrigin(review: ReviewResult) {
-    val readme = ProjectFilePath("repo/auto-code-review/README.md")
-    appendLine(
-        """
-            ${renderingContext.markdownLink(readme, "Auto Code Review")} for
-            ${renderingContext.describeDiff(review.diffOrigin)}
-            
-        """.trimIndent()
-    )
+    val readmeLink = renderingContext.markdownLink(readme, "Auto Code Review")
+    val diffDescription = renderingContext.describeDiff(review.diffOrigin)
+    appendLine("🤖$readmeLink for $diffDescription.")
+    appendLine()
+}
+
+fun StringBuilder.appendSummary(review: ReviewResult) {
+    val violations = review.ruleResults.sumOf { it.comments.size }
+
+    val summary = when {
+        review.ruleResults.isEmpty() -> "${INFO_EMOJI}Found no rules applicable to the changed files."
+        violations == 0 -> {
+            val prefix = if (review.ruleResults.any { it.failures.isNotEmpty() }) {
+                INFO_EMOJI
+            } else {
+                "✅"
+            }
+            "${prefix}Found no violations of the checked rules."
+        }
+        else -> "Found $violations violations of the checked rules."
+    }
+    appendLine(summary)
+    appendLine()
 }
 
 context(renderingContext: RenderingContext)
 private fun StringBuilder.appendFailures(review: ReviewResult) {
-    val failures = review.failingAgentResults
-    val failure = failures.firstOrNull() ?: return
+    val failedResults = review.ruleResults.filter { it.failures.isNotEmpty() }
+    val firstFailedResult = failedResults.firstOrNull() ?: return
+    val failedRuns = failedResults.sumOf { it.failures.size }
+    val failure = firstFailedResult.failures.first()
     appendLine(
         """
-            # $WARNING_EMOJI ${failures.size} failures happened
+            # $WARNING_EMOJI $failedRuns failures happened
             First failure:
             
-            Rule: ${renderingContext.ruleLink(failure.rule)}
+            Rule: ${renderingContext.ruleLink(firstFailedResult.rule)}
             
         """.trimIndent()
     )
@@ -88,15 +109,11 @@ private fun StringBuilder.appendCodeBlock(language: String, text: String) {
 
 context(renderingContext: RenderingContext)
 private fun StringBuilder.appendReview(review: ReviewResult) {
-    if (review.successfulAgentResults.all { it.reviewResult.comments.isEmpty() }) {
-        appendLine("# No rule violations found")
-    }
-
-    for (result in review.successfulAgentResults) {
-        if (result.reviewResult.comments.isEmpty()) continue
+    for (result in review.ruleResults) {
+        if (result.comments.isEmpty()) continue
         appendLine("# ${renderingContext.ruleLink(result.rule)}")
         appendLine()
-        result.reviewResult.comments.forEach {
+        result.comments.forEach {
             val link = renderingContext.codeLink(it.relativeFilePath, it.line)
             appendLine("## $link")
             appendLine(it.message)
@@ -111,45 +128,34 @@ private fun StringBuilder.appendCollapsed(summary: String, appendContent: String
     appendContent()
     appendLine()
     appendLine("</details>")
+    appendLine()
 }
 
 context(renderingContext: RenderingContext)
-private fun StringBuilder.appendMeta(review: ReviewResult) = appendCollapsed("Meta") {
+private fun StringBuilder.appendMeta(review: ReviewResult) {
+    val agentInfo = review.agentInfo
     appendLine(
         """
-            # Meta
+            Agent: ${agentInfo.name}, model: `${agentInfo.model}`, effort: `${agentInfo.effort}`.
+            
             | Rule | Comments # | Cost, $ |
             | --- | --- | --- |
         """.trimIndent()
     )
 
-    val costs = review.agentResults.map { it.costUSD }
-    val totalComments = review.successfulAgentResults.sumOf { it.reviewResult.comments.size }
+    val costs = review.ruleResults.map { it.costUSD }
+    val totalComments = review.ruleResults.sumOf { it.comments.size }
 
     appendLine(
         "| **Total** | %s%d | %s%.2f |".format(
-            if (review.failingAgentResults.isNotEmpty()) WARNING_EMOJI else "",
+            if (review.ruleResults.any { it.failures.isNotEmpty() }) WARNING_EMOJI else "",
             totalComments,
             if (costs.any { it == null }) WARNING_EMOJI else "",
             costs.sumOf { it ?: 0.0 }
         )
     )
-    review.agentResults.sortedByDescending { it.costUSD }.forEach { result ->
-        val rule = result.rule
-        val link = renderingContext.ruleLink(rule)
-
-        val comments: String = when (result) {
-            is AgentResult.Failure -> WARNING_EMOJI
-            is AgentResult.Success -> {
-                val count = result.reviewResult.comments.size
-                val countString = count.toString()
-                if (count == 0) {
-                    countString
-                } else {
-                    renderingContext.localLink(countString, rule.name) ?: countString
-                }
-            }
-        }
+    review.ruleResults.sortedByDescending { it.costUSD }.forEach { result ->
+        val link = renderingContext.ruleLink(result.rule)
 
         val cost = if (result.costUSD != null) {
             "%.2f".format(result.costUSD)
@@ -157,8 +163,40 @@ private fun StringBuilder.appendMeta(review: ReviewResult) = appendCollapsed("Me
             WARNING_EMOJI
         }
 
-        appendLine("| $link | $comments | $cost |")
+        appendLine("| $link | ${commentsCell(result)} | $cost |")
     }
+}
+
+context(renderingContext: RenderingContext)
+private fun commentsCell(result: RuleReviewResult): String {
+    val count = result.comments.size
+    if (count == 0) {
+        return if (result.failures.isEmpty()) "0" else WARNING_EMOJI
+    }
+
+    val countString = count.toString()
+    val linkedCount = renderingContext.localLink(countString, result.rule.name) ?: countString
+    return if (result.failures.isEmpty()) linkedCount else "$linkedCount $WARNING_EMOJI"
+}
+
+context(renderingContext: RenderingContext)
+private fun StringBuilder.appendFooter(review: ReviewResult) {
+    if (review.ruleResults.all { it.comments.isEmpty() && it.failures.isEmpty() }) {
+        // This is generated right after the summary. No separate section needed.
+    } else {
+        appendLine("# Review details")
+        appendLine()
+    }
+
+    if (review.ruleResults.isNotEmpty()) {
+        appendCollapsed("🔍Checked ${review.ruleResults.size} rules") {
+            appendMeta(review)
+        }
+    }
+
+    val ruleFilesLink = renderingContext.markdownLink(readme, "Rule files", linkText = "Add or update rules!")
+    appendLine("💡Miss something? $ruleFilesLink")
+    appendLine()
 }
 
 fun slugifyMarkdownTitle(title: String): String =

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.isTypeParameter
+import org.jetbrains.kotlin.light.classes.symbol.classes.unboxedUnlessNullable
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightValueParameterWithCustomType
 
 /**
@@ -70,12 +71,9 @@ internal class SymbolLightMethodForMappedKotlinCollectionMethod(
         javaMethod.parameterList.parameters.map { parameter ->
             val typeFromJava = parameter.type
             val substitutedType = substituteType(typeFromJava)
-            if (typeFromJava.isTypeParameter()) substitutedType.unboxedOrSelf() else substitutedType
+            if (typeFromJava.isTypeParameter()) substitutedType.unboxedUnlessNullable() else substitutedType
         }
     }
-
-    private fun PsiType.unboxedOrSelf(): PsiType =
-        PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
 
     private fun substituteType(psiType: PsiType): PsiType =
         substitutor.substitute(psiType) ?: psiType

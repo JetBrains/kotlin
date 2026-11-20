@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.grouping
 
+import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.BEGIN
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.END
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.FAILED
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.PASSED
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.ParsedBatchResult.Analysis.FailureKind
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.SEP
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.STARTED
+import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.TestCall
 import org.jetbrains.kotlin.test.report.TestReportChecks
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class GroupedTestsResultProtocolTest {
     @Test
@@ -409,6 +412,20 @@ class GroupedTestsResultProtocolTest {
         assertEquals(setOf("wellFormed"), result.outcomes.keys)
     }
 
+    @Test
+    fun `given test calls when generating the driver then each call is reported under its id`() {
+        val source = generateDriverSource(TestCall(id = "_box_.testFoo", call = "check(_box_.testFoo.box())"))
+
+        assertTrue("""__kgtiReport("_box_.testFoo") { check(_box_.testFoo.box()) }""" in source, source)
+    }
+
+    @Test
+    fun `given test ids breaking the driver source or the result lines when generating the driver then each one is rejected`() {
+        for (id in listOf("", "a\"b", "a" + '$' + "b", "a${SEP}b", "a\\b", "a b", "a\nb")) {
+            assertThrows<TestInfrastructureException>("id: '$id'") { generateDriverSource(TestCall(id = id, call = "f()")) }
+        }
+    }
+
     private companion object {
         val RUN_ALL_DECLARATION = Regex("""private fun (__\w+)\(\) \{""")
 
@@ -416,6 +433,12 @@ class GroupedTestsResultProtocolTest {
             proxyClassNames = listOf("ProxyLauncher_a", "ProxyLauncher_b"),
             generateExportedEntryPointSource = { runAllFunctionName -> "fun entryPoint() { $runAllFunctionName() }" },
         )
+
+        fun generateDriverSource(vararg testCalls: TestCall): String =
+            GroupedTestsResultProtocol.generateResultCollectingRunnerSource(
+                testCalls = testCalls.toList(),
+                generateExportedEntryPointSource = { runAllFunctionName -> "fun entryPoint() { $runAllFunctionName() }" },
+            )
 
         val PROTOCOL_HOSTILE_VALUES: List<String> = listOf(
             "Test failed with: FAIL. Expected <OK>, actual <FAIL>.",

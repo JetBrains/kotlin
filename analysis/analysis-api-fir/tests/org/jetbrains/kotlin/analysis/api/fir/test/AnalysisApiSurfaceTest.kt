@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.fir.test
 
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPrimaryConstructorSymbolPointer
@@ -136,6 +138,42 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
 
             // It has to be analyzable
             assertTrue(constructorPsi.canBeAnalysed())
+        }
+    }
+
+    @Test
+    fun substitutedNestedAnnotation(testServices: TestServices) {
+        val allFiles = testServices.ktTestModuleStructure.allSourceFiles
+        val commonFile = allFiles.single { it.name == "myFacade.kt" } as KtFile
+        val jvmFile = allFiles.single { it.name == "main.kt" } as KtFile
+
+        val project = commonFile.project
+        val facadeClass = JavaPsiFacade.getInstance(project).findClass(
+            "mypack.MyFacadeKt",
+            GlobalSearchScope.projectScope(project),
+        )
+
+        assertNotNull(facadeClass, "'mypack.MyFacadeKt' light class is not found")
+
+        val psiAnnotation = facadeClass.methods.single().annotations.single { it.qualifiedName == "kotlin.Deprecated" }
+        val nestedPsiAnnotation = assertIs<PsiAnnotation>(psiAnnotation.findDeclaredAttributeValue("replaceWith"))
+        assertEquals("kotlin.ReplaceWith", nestedPsiAnnotation.qualifiedName)
+        assertEquals(listOf("expression", "imports"), nestedPsiAnnotation.parameterList.attributes.map { it.name })
+
+        analyze(jvmFile) {
+            val function = commonFile.declarations.single() as KtNamedFunction
+            val annotation = function.symbol.annotations.single()
+            val replaceWith = annotation.arguments.single { it.name.asString() == "replaceWith" }.expression
+            val nestedAnnotation = assertIs<KaAnnotationValue.NestedAnnotationValue>(replaceWith).annotation
+            val constructorSymbol = nestedAnnotation.constructorSymbol ?: error("The constructor symbol is absent")
+
+            // It has to point to the JVM Stdlib. JVM session cannot depend on classes from klib
+            assertEquals("Library kotlin-stdlib", constructorSymbol.containingModule.moduleDescription)
+            val constructorPsi = constructorSymbol.realPsi ?: error("The real psi is not found")
+
+            // It has to be analyzable
+            assertTrue(constructorPsi.canBeAnalysed())
+            assertEquals(listOf("expression", "imports"), constructorSymbol.valueParameters.map { it.name.asString() })
         }
     }
 }

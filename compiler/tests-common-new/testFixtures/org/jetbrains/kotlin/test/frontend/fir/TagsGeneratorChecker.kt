@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
@@ -83,20 +83,11 @@ class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(test
             val testDataFileContent = testDataFile.readText()
             if (testDataFileContent.contains(TAG_PREFIX)) return
 
-            if (isTeamCityBuild) {
-                testServices.assertions.fail {
-                    """GENERATED_FIR_TAGS are missing for file ${testDataFile.name}.
-                        |Please rerun the test locally to generate tags.""".trimMargin()
-                }
-            }
-
-            val wrappedTagComment = formatTagsAsMultilineComment()
-
-            testDataFile.writer().use {
-                it.append(testDataFileContent.trim())
-                it.append("\n\n")
-                it.appendLine(wrappedTagComment)
-            }
+            testServices.assertions.assertEqualsToFile(testDataFile, buildString {
+                append(testDataFileContent.trim())
+                append("\n\n")
+                appendLine(formatTagsAsMultilineComment())
+            })
         }
     }
 
@@ -302,7 +293,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
         tags += FirTags.PROPERTY
 
         if (property.delegateFieldSymbol != null) tags += FirTags.PROPERTY_DELEGATE
-        if (property.source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) tags += FirTags.DESTRUCTURING_DECLARATION
+        if (property.source?.syntaxId == KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION) tags += FirTags.DESTRUCTURING_DECLARATION
         if (property.receiverParameter != null) tags += FirTags.PROPERTY_WITH_EXTENSION_RECEIVER
         if (property.getter?.symbol?.isDefault == false && property.getter?.source?.kind !is KtFakeSourceElementKind.DelegatedPropertyAccessor)
             tags += FirTags.GETTER
@@ -380,7 +371,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
     override fun visitWhileLoop(whileLoop: FirWhileLoop) {
         visitElement(whileLoop)
 
-        tags += if (whileLoop.source?.elementType == KtNodeTypes.FOR) FirTags.FOR_LOOP
+        tags += if (whileLoop.source?.syntaxId == KotlinSyntaxNodeTypeIds.FOR) FirTags.FOR_LOOP
         else FirTags.WHILE_LOOP
     }
 
@@ -475,7 +466,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression) {
         visitElement(whenExpression)
-        tags += if (whenExpression.source?.elementType == KtNodeTypes.IF) FirTags.IF_EXPRESSION
+        tags += if (whenExpression.source?.syntaxId == KotlinSyntaxNodeTypeIds.IF) FirTags.IF_EXPRESSION
         else FirTags.WHEN_EXPRESSION
         if (whenExpression.subjectVariable != null) tags += FirTags.WHEN_WITH_SUBJECT
     }
@@ -618,11 +609,9 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
 
     fun isDeclarationOriginJava(origin: FirDeclarationOrigin?, source: KtSourceElement?): Boolean {
         return when (origin) {
-            is FirDeclarationOrigin.Java.Source -> true
-            is FirDeclarationOrigin.Java.Library -> true
-            is FirDeclarationOrigin.Java.Plugin -> true
+            is FirDeclarationOrigin.Java -> true
             is FirDeclarationOrigin.Synthetic.JavaProperty -> true
-            FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> when (source?.kind) {
+            is FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> when (source?.kind) {
                 is KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
                 else -> true
             }

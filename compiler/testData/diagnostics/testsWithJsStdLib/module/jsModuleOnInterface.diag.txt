@@ -1,0 +1,7 @@
+/jsModuleOnInterface.kt:6:1: error: '@JsModule' cannot be applied to an external interface, since it has no runtime value to import.
+
+/jsModuleOnInterface.kt:11:1: error: '@JsNonModule' cannot be applied to an external interface, since it has no runtime value to import.
+
+/jsModuleOnInterface.kt:23:1: error: '@JsModule' annotation is prohibited for non-external declarations.
+
+/jsModuleOnInterface.kt:28:5: error: '@JsModule' cannot be applied to a member. Apply it to the top-level declaration or to the file instead.

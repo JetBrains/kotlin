@@ -31,7 +31,7 @@ public class FirScriptCodegenTestGenerated extends AbstractFirScriptCodegenTest 
 
   @Test
   public void testAllFilesPresentInScripting() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/codegen/scripting"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV|disabled)(\\.repl)?\\.kts?$"), true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/codegen/scripting"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|ll|latestLV|disabled)(\\.repl)?\\.kts?$"), true);
   }
 
   @Test
@@ -272,7 +272,7 @@ public class FirScriptCodegenTestGenerated extends AbstractFirScriptCodegenTest 
 
     @Test
     public void testAllFilesPresentInScriptInstanceCapturing() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/codegen/scripting/scriptInstanceCapturing"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV|disabled)(\\.repl)?\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/codegen/scripting/scriptInstanceCapturing"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|ll|latestLV|disabled)(\\.repl)?\\.kts?$"), true);
     }
 
     @Test

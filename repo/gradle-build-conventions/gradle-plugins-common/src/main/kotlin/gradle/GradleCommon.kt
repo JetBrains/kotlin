@@ -229,8 +229,6 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
         // Common outputs will also produce '${project.name}.kotlin_module' file, so we need to avoid
         // files clash
         compilerOptions.moduleName.set("${this@createGradleCommonSourceSet.name}_${commonSourceSet.name}")
-        // Workaround for https://youtrack.jetbrains.com/issue/KT-80750
-        compilerOptions.freeCompilerArgs.add("-Xjspecify-annotations=ignore")
         configureGradleCompatibility()
     }
 
@@ -600,6 +598,11 @@ private fun Project.createGradlePluginVariant(
         variantSourceSet.compileOnlyConfigurationName("org.gradle.experimental:gradle-public-api:${variant.gradleApiVersion}") {
             capabilities {
                 requireCapability("org.gradle.experimental:gradle-public-api-internal")
+            }
+            if (variant <= GradlePluginVariant.GRADLE_96) {
+                // gradle-public-api 9.6 pins org.jetbrains:annotations with `strictly`, conflicting with our own version.
+                // Gradle 9.7+ no longer depends on it, so remove this once KGP requires 9.7+.
+                exclude(group = "org.jetbrains", module = "annotations")
             }
         }
 

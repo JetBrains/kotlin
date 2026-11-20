@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-71893
 
 // FILE: User.java
@@ -65,3 +66,6 @@ fun test() {
     val foo = Foo()
     foo.<!UNRESOLVED_REFERENCE!>arrayBuilder<!>().chars(arrayOf('a', 'b', 'c')).build()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, localProperty, propertyDeclaration,
+stringLiteral */

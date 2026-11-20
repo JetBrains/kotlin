@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,6 +35,9 @@ class JsNameLinkingNamer(
             JsName(makeValidES5Identifier(name), true)
         }
     }
+
+    private fun JsExpression.importIntoVariableWithName(name: JsName): JsVars =
+        JsVars(context.varVariant(isMutable = false), JsVars.JsVar(name, this))
 
     val importedModules = mutableListOf<JsImportedModule>()
     val imports = mutableMapOf<IrDeclaration, JsStatement>()
@@ -123,7 +126,7 @@ class JsNameLinkingNamer(
                 else -> JsCompositeBlock(
                     listOf(
                         importStatement,
-                        jsElementAccess(declarationStableName, qualifiedReference).putIntoVariableWitName(
+                        jsElementAccess(declarationStableName, qualifiedReference).importIntoVariableWithName(
                             declarationStableName.toJsName()
                         )
                     )
@@ -136,7 +139,7 @@ class JsNameLinkingNamer(
             val qualifiedReference =
                 if (jsQualifier == null) moduleName.makeRef() else (listOf(moduleName) + jsQualifier).makeRef()
             imports[this] =
-                jsElementAccess(declarationStableName, qualifiedReference).putIntoVariableWitName(declarationStableName.toJsName())
+                jsElementAccess(declarationStableName, qualifiedReference).importIntoVariableWithName(declarationStableName.toJsName())
         }
 
         return getName()
@@ -146,7 +149,7 @@ class JsNameLinkingNamer(
         val name = getJsNameOrKotlinName().identifier
 
         if (jsQualifier != null) {
-            imports[this] = jsElementAccess(name, jsQualifier.makeRef()).putIntoVariableWitName(name.toJsName())
+            imports[this] = jsElementAccess(name, jsQualifier.makeRef()).importIntoVariableWithName(name.toJsName())
             return getName()
         }
 

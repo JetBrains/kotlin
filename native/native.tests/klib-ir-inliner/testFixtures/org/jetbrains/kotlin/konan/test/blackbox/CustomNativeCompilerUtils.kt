@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompiler
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerArtifacts
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerArtifacts.Companion.propertyNotFound
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerArtifacts.Companion.readProperty
+import org.jetbrains.kotlin.test.klib.getTransitivesAndFriendsWithoutReflectionPackageNameHelper
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.kotlin.test.testInfraError
@@ -84,11 +86,19 @@ val currentCustomNativeCompilerSettings: CustomNativeCompilerSettings by lazy {
 
 /**
  * Note: To be used only in [CustomNativeCompilerFirstStageFacade] and [NativeCompilerSecondStageFacade].
+ *
+ * The second stage never gets the KLIB of the `ReflectionPackageNameHelperModuleTransformer` helper module: it only lets a first-stage
+ * compiler older than 2.5 resolve `kotlin.internal.ReflectionPackageName`, which the current stdlib linked on the second stage already has
+ * (see [getTransitivesAndFriendsWithoutReflectionPackageNameHelper]).
  */
 fun TestModule.collectDependencies(
     testServices: TestServices,
+    compilationStage: CompilationStage,
 ): Pair<Set<String>, Set<String>> {
-    val [transitiveLibraries: List<File>, friendLibraries: List<File>] = getTransitivesAndFriends(module = this, testServices)
+    val [transitiveLibraries: List<File>, friendLibraries: List<File>] = when (compilationStage) {
+        CompilationStage.FIRST -> getTransitivesAndFriends(module = this, testServices)
+        CompilationStage.SECOND -> getTransitivesAndFriendsWithoutReflectionPackageNameHelper(testServices)
+    }
 
     val regularDependencies: Set<String> = buildSet {
         // After OSIP-740, add stdlib here as runtime dependency

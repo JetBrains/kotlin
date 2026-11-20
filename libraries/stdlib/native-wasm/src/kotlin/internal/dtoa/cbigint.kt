@@ -173,7 +173,7 @@ private fun simpleMultiplyHighPrecision(arg1: ULongUnsafeArray, length: Int, arg
     return highU32FromVar(product)
 }
 
-private value class ULongArrayView(val array: ULongUnsafeArray)
+private inline value class ULongArrayView(val array: ULongUnsafeArray)
 
 private operator fun ULongArrayView.get(idx32: Int): UInt =
     if (idx32 % 2 == 0) lowU32FromPtr(array, idx32 / 2) else highU32FromPtr(array, idx32 / 2)

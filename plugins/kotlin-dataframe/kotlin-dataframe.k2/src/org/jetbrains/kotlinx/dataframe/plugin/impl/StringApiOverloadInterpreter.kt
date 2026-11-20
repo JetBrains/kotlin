@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlinx.dataframe.api.pathOf
 import org.jetbrains.kotlinx.dataframe.impl.columns.ColumnsList
 import org.jetbrains.kotlinx.dataframe.plugin.StringApiOverloadData
@@ -46,7 +47,7 @@ class StringApiOverloadInterpreter(
             .map { name ->
                 kotlinTypeFacade.stringApiColumnResolver(
                     pathOf(name),
-                    kotlinTypeFacade.session.builtinTypes.nullableAnyType.coneType
+                    StandardTypes.NullableAny
                 )
             }
         val adaptedSelector: ColumnsResolver = object : ColumnsResolver, ColumnsList<Any?> {

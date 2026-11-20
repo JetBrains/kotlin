@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.utils.getFile
 
 /**
  * Spec for Wasmtime - this target is available only for Wasm
  */
 @ExperimentalWasmDsl
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class WasmtimeEnvSpec internal constructor() : EnvSpec<WasmtimeEnv>() {
 
     final override val env: Provider<WasmtimeEnv> = produceEnv()
@@ -66,6 +68,7 @@ abstract class WasmtimeEnvSpec internal constructor() : EnvSpec<WasmtimeEnv>() {
                 )
             )
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val EXTENSION_NAME: String
             get() = extensionName(

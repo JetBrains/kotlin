@@ -68,18 +68,19 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                 (!allowImplementingInterfaces && isInterface && !isExternal && !isJsNoRuntime()) ||
                 (isInterface && modality == Modality.SEALED)
 
-    fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
-        val namespaceFqName = file.packageFqName
-        val exports = file.declarations.memoryOptimizedFlatMap { declaration ->
-            declaration.takeIf { it.couldBeConvertedToExplicitExport() != true }?.let(::exportDeclaration).orEmpty()
-        }
 
-        return when {
-            exports.isEmpty() -> emptyList()
-            isEsModules || namespaceFqName.isRoot -> exports
-            else -> listOf(ExportedNamespace(namespaceFqName.toString(), exports))
-        }
+    fun wrapInNamespaces(packageFqName: FqName, exports: List<ExportedDeclaration>): List<ExportedDeclaration> = when {
+        exports.isEmpty() -> emptyList()
+        isEsModules || packageFqName.isRoot -> exports
+        else -> listOf(ExportedNamespace(packageFqName.toString(), exports))
     }
+
+    fun generateExports(file: IrPackageFragment): Map<IrDeclaration, List<ExportedDeclaration>> =
+        file.declarations.mapNotNull { declaration ->
+            declaration.takeIf { it.couldBeConvertedToExplicitExport() != true }
+                ?.let { exportDeclaration(it).takeIf(List<*>::isNotEmpty) }   // drop "not exported"
+                ?.let { declaration to it }
+        }.toMap()
 
     private fun exportDeclaration(declaration: IrDeclaration): List<ExportedDeclaration> {
         val candidate = getExportCandidate(declaration) ?: return emptyList()
@@ -156,7 +157,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                         .memoryOptimizedMap {
                             exportParameter(
                                 it,
-                                it.hasDefaultValue || realOverrideTarget?.parameters?.get(it.indexInParameters)?.hasDefaultValue == true,
+                                it.hasDefaultValue,
                                 functionTypeParameterScope,
                                 inlineClassesShouldBeUnboxed
                             )
@@ -221,7 +222,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
     }
 
     private val IrValueParameter.hasDefaultValue: Boolean
-        get() = origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
+        get() = hasDefaultValue { it.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER }
 
     private fun exportProperty(
         property: IrProperty,

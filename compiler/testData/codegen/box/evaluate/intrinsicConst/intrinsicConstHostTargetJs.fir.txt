@@ -1,0 +1,55 @@
+FILE: intrinsicConstHostTargetJs.kt
+    public final const [EvaluatedValue=String(1.0)] val doubleText: R|kotlin/String| = Double(1.0).R|kotlin/Double.toString|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(1.0)] val floatText: R|kotlin/String| = Float(1.0).R|kotlin/Float.toString|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(-0.0)] val negativeZeroText: R|kotlin/String| = Double(0.0).R|kotlin/Double.unaryMinus|().R|kotlin/Double.toString|()
+        public get(): R|kotlin/String|
+    private final fun runtimeDouble(value: R|kotlin/Double|): R|kotlin/String| {
+        ^runtimeDouble R|<local>/value|.R|kotlin/Double.toString|()
+    }
+    private final fun runtimeFloat(value: R|kotlin/Float|): R|kotlin/String| {
+        ^runtimeFloat R|<local>/value|.R|kotlin/Float.toString|()
+    }
+    private final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/doubleText|.R|/id|<R|kotlin/String|>(), String(1.0)) ->  {
+                ^box String(Fail folded double)
+            }
+        }
+
+        when () {
+            !=(R|/runtimeDouble|(Double(1.0)), String(1)) ->  {
+                ^box String(Fail runtime double)
+            }
+        }
+
+        when () {
+            !=(R|/floatText|.R|/id|<R|kotlin/String|>(), String(1.0)) ->  {
+                ^box String(Fail folded float)
+            }
+        }
+
+        when () {
+            !=(R|/runtimeFloat|(Float(1.0)), String(1)) ->  {
+                ^box String(Fail runtime float)
+            }
+        }
+
+        when () {
+            !=(R|/negativeZeroText|.R|/id|<R|kotlin/String|>(), String(-0.0)) ->  {
+                ^box String(Fail folded negative zero)
+            }
+        }
+
+        when () {
+            !=(R|/runtimeDouble|(Double(0.0).R|kotlin/Double.unaryMinus|()), String(0)) ->  {
+                ^box String(Fail runtime negative zero)
+            }
+        }
+
+        ^box String(OK)
+    }

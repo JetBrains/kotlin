@@ -51,7 +51,7 @@ FILE: file2.kt
         lval z: R|f1/B?| = Null(null)
         ==(R|<local>/z|, Q|f1|.R|f1/B.B|())
         R|<local>/z|.R|f1/div|(Q|f1|.R|f1/B.B|())
-        lval t: R|kotlin/Unit|by Q|f1|.R|f1/B.B|()
+        lval t: R|kotlin/Unit| by Q|f1|.R|f1/B.B|()
             local get(): R|kotlin/Unit| {
                 ^ D|<local>/t|.R|f1/set<Inapplicable(CONVENTION_ERROR): f1/set>#|(Null(null), ::R|<local>/t|)
             }

@@ -1,0 +1,49 @@
+FILE: localClassesInGenericClass.kt
+    public final? class Owner<T> : R|kotlin/Any| {
+        public? [ContainingClassKey=Owner] constructor<T>(x: Int): R|Owner<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? [ContainingClassKey=Owner] constructor<T>(t: T, y: Int): R|Owner<T>| {
+            this<R|Owner<T>|>(y#.plus#(IntegerLiteral(1)))
+            local final? class LocalInConstructor<Outer(T)> : R|kotlin/Any| {
+                public? [ContainingClassKey=LocalInConstructor] constructor([CorrespondingProperty=<local>/t] t: T): R|<local>/LocalInConstructor<T>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? [IsFromPrimaryConstructor=true] val t: T = R|<local>/t|
+                    public? [ContainingClassKey=LocalInConstructor] get(): T
+
+            }
+
+            LocalInConstructor#(t#)
+        }
+
+        init {
+            local final? class LocalInInitializer<Outer(T)> : R|kotlin/Any| {
+                public? [ContainingClassKey=LocalInInitializer] constructor([CorrespondingProperty=<local>/t] t: T): R|<local>/LocalInInitializer<T>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? [IsFromPrimaryConstructor=true] val t: T = R|<local>/t|
+                    public? [ContainingClassKey=LocalInInitializer] get(): T
+
+            }
+
+        }
+
+        public? final? fun foo(t: T): R|kotlin/Unit| {
+            local final? class LocalInFunction<Outer(T)> : R|kotlin/Any| {
+                public? [ContainingClassKey=LocalInFunction] constructor([CorrespondingProperty=<local>/t] t: T): R|<local>/LocalInFunction<T>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? [IsFromPrimaryConstructor=true] val t: T = R|<local>/t|
+                    public? [ContainingClassKey=LocalInFunction] get(): T
+
+            }
+
+            LocalInFunction#(t#)
+        }
+
+    }

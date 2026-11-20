@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.jklib.config.jklibOutputDestination
 import org.jetbrains.kotlin.cli.jklib.config.klibPaths
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.friendPaths
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -36,6 +37,11 @@ class JKlibSourceRootConfigurator(testServices: TestServices) : EnvironmentConfi
         val klibs = module.regularDependencies.map { File(tempDir, "${it.dependencyModule.name}.klib") }
         if (klibs.isNotEmpty()) {
             configuration.klibPaths += klibs.map { it.absolutePath }
+        }
+        val friendKlibs = module.friendDependencies.map { File(tempDir, "${it.dependencyModule.name}.klib").absolutePath }
+        if (friendKlibs.isNotEmpty()) {
+            configuration.klibPaths += friendKlibs
+            configuration.friendPaths = friendKlibs
         }
     }
 }

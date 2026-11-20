@@ -4,6 +4,7 @@ AnnoA.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/AnnoA, fqName=test.AnnoA, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=AnnoA, superNames=[Annotation]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoA]
         MODIFIER_LIST[public]
@@ -25,6 +26,7 @@ AnnoB.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/AnnoB, fqName=test.AnnoB, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=AnnoB, superNames=[Annotation]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoB]
         MODIFIER_LIST[public]
@@ -46,6 +48,7 @@ AnnotatedParameterInEnumConstructor.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/AnnotatedParameterInEnumConstructor, fqName=test.AnnotatedParameterInEnumConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=AnnotatedParameterInEnumConstructor, superNames=[Enum]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final enum]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnotatedParameterInEnumConstructor]
         MODIFIER_LIST[private]

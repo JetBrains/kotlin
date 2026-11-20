@@ -214,15 +214,6 @@ FILE fqName:<root> fileName:/module_a_classWithAllPropertiesConstructor.kt
           RETURN type=kotlin.Nothing from='public final fun <get-propertiesCount> (): kotlin.Int declared in <root>.Container'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:propertiesCount type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Container<T of <root>.Container> declared in <root>.Container.<get-propertiesCount>' type=<root>.Container<T of <root>.Container> origin=null
-    PROPERTY name:outerTypeProp visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:outerTypeProp type:T of <root>.Container visibility:private [final]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-outerTypeProp> visibility:public modality:FINAL returnType:T of <root>.Container
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Container<T of <root>.Container>
-        correspondingProperty: PROPERTY name:outerTypeProp visibility:public modality:FINAL [val]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-outerTypeProp> (): T of <root>.Container declared in <root>.Container'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:outerTypeProp type:T of <root>.Container visibility:private [final]' type=T of <root>.Container origin=null
-              receiver: GET_VAR '<this>: <root>.Container<T of <root>.Container> declared in <root>.Container.<get-outerTypeProp>' type=<root>.Container<T of <root>.Container> origin=null
     CONSTRUCTOR visibility:public returnType:<root>.Container<T of <root>.Container> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
@@ -277,6 +268,15 @@ FILE fqName:<root> fileName:/module_a_classWithAllPropertiesConstructor.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-genericExtensionProp> <T> ($receiver: T of <root>.Container.<get-genericExtensionProp>): T of <root>.Container.<get-genericExtensionProp> declared in <root>.Container'
             GET_VAR '$receiver: T of <root>.Container.<get-genericExtensionProp> declared in <root>.Container.<get-genericExtensionProp>' type=T of <root>.Container.<get-genericExtensionProp> origin=null
+    PROPERTY name:outerTypeProp visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:outerTypeProp type:T of <root>.Container visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-outerTypeProp> visibility:public modality:FINAL returnType:T of <root>.Container
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Container<T of <root>.Container>
+        correspondingProperty: PROPERTY name:outerTypeProp visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-outerTypeProp> (): T of <root>.Container declared in <root>.Container'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:outerTypeProp type:T of <root>.Container visibility:private [final]' type=T of <root>.Container origin=null
+              receiver: GET_VAR '<this>: <root>.Container<T of <root>.Container> declared in <root>.Container.<get-outerTypeProp>' type=<root>.Container<T of <root>.Container> origin=null
 Module: b
 FILE fqName:<root> fileName:/Derived.kt
   CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]

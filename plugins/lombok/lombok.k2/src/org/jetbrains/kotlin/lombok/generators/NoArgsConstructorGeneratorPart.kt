@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.NoArgsConstructor
 
@@ -15,7 +15,7 @@ class NoArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructorG
         return lombokService.getNoArgsConstructor(classSymbol)
     }
 
-    override fun getFieldsForParameters(classSymbol: FirClassSymbol<*>): List<FirJavaField> {
+    override fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable> {
         return emptyList()
     }
 }

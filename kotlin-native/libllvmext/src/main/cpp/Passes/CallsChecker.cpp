@@ -255,6 +255,8 @@ static constexpr StringRef GoodFunctionNames[] = {
     "llvm.objectsize.*",
     "llvm.pow.*",
     "llvm.rint.*",
+    "llvm.roundeven.*",
+    "llvm.trunc.*",
     "llvm.sin.*",
     "llvm.sinh.*",
     "llvm.cosh.*",

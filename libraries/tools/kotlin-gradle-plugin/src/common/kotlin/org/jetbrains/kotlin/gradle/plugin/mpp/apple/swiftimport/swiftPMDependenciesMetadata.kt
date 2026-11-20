@@ -46,7 +46,7 @@ private fun deserializeSwiftPMMetadataFromArtifactView(swiftPMDependenciesMetada
                 }
                 .associate { resolvedArtifact ->
                     val (swiftPMPackageIdentifier, isModular) = when (val componentId = resolvedArtifact.id.componentIdentifier) {
-                        is ProjectComponentIdentifier -> componentId.projectPath to false
+                        is ProjectComponentIdentifier -> componentId.buildTreePath to false
                         is ModuleComponentIdentifier -> "${componentId.group}_${componentId.module}_${componentId.version}" to true
                         else -> error("Unexpected componentId: $componentId")
                     }

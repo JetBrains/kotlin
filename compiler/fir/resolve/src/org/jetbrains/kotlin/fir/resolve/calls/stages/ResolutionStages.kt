@@ -116,9 +116,8 @@ object CheckExtensionReceiver : ResolutionStage() {
 
         if (receiverClassSymbol != expectedReceiverType.toClassSymbol()) {
             sink.reportDiagnostic(
-                InapplicableWrongReceiver(
-                    expectedReceiverType,
-                    receiverClassSymbol.toLookupTag().constructClassType()
+                InapplicableCompanionExtensionReceiver(
+                    receiverClassSymbol.classId
                 )
             )
         }
@@ -196,7 +195,8 @@ object CheckDispatchReceiver : ResolutionStage() {
         val dispatchReceiverExpression = candidate.dispatchReceiver?.expression
         val dispatchReceiverValueType = dispatchReceiverExpression?.resolvedType ?: return
 
-        val isReceiverNullable = !AbstractNullabilityChecker.isSubtypeOfAny(context.session.typeContext, dispatchReceiverValueType)
+        val isReceiverUnsafe = !AbstractNullabilityChecker.isSubtypeOfAny(context.session.typeContext, dispatchReceiverValueType)
+                || dispatchReceiverValueType.isUnsafeUnion()
 
         val isCandidateFromUnstableSmartcast =
             (candidate.originScope as? FirUnstableSmartcastTypeScope)?.isSymbolFromUnstableSmartcast(candidate.symbol) == true
@@ -208,7 +208,7 @@ object CheckDispatchReceiver : ResolutionStage() {
 
         if (smartcastedReceiver != null &&
             !smartcastedReceiver.isStable &&
-            (isCandidateFromUnstableSmartcast || (isReceiverNullable && !smartcastedReceiver.smartcastType.coneType.canBeNull()))
+            (isCandidateFromUnstableSmartcast || (isReceiverUnsafe && !smartcastedReceiver.smartcastType.coneType.isUnsafeAsDispatchReceiver()))
         ) {
             val dispatchReceiverType = (candidate.symbol as? FirCallableSymbol<*>)?.dispatchReceiverType?.let {
                 context.session.typeApproximator.approximateToSuperType(
@@ -229,7 +229,7 @@ object CheckDispatchReceiver : ResolutionStage() {
                     isImplicitInvokeReceiver = candidate.callInfo.isImplicitInvoke,
                 )
             )
-        } else if (isReceiverNullable || dispatchReceiverValueType is ConeUnionType) {
+        } else if (isReceiverUnsafe) {
             val actualType = if (dispatchReceiverExpression is FirCheckedSafeCallSubject) {
                 dispatchReceiverExpression.originalReceiverRef.value.resolvedType
             } else {
@@ -237,7 +237,7 @@ object CheckDispatchReceiver : ResolutionStage() {
             }
             sink.yieldDiagnostic(InapplicableUnsafeReceiver(actualType))
         } else if (isCandidateFromUnstableSmartcast) {
-            sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = dispatchReceiverValueType))
+            sink.yieldDiagnostic(InapplicableWrongReceiver())
         }
     }
 }
@@ -1233,7 +1233,7 @@ internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() 
 
         // We use Function<Nothing> as our representative type for "some function type".
         val lambdaType = StandardClassIds.Function
-            .constructClassLikeType(arrayOf(context.session.builtinTypes.nothingType.coneType))
+            .constructClassLikeType(arrayOf(StandardTypes.Nothing))
 
         // We don't add the constraint to the system in the end, we only check for contradictions and roll back the transaction.
         // This ensures we don't get any issues if a different function type constraint is added later, e.g., during completion.

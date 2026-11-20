@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.konan.target.isCache
 import org.jetbrains.kotlin.util.prefixBaseNameIfNot
 import org.jetbrains.kotlin.util.suffixIfNot
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -80,6 +81,8 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
     val trivialGettersFile = tempCacheDirectory?.cacheIrPart()?.resolve(CachedLibraries.TRIVIAL_GETTERS_FILE_NAME)
 
     val objCAdaptersFile = tempCacheDirectory?.cacheIrPart()?.resolve(CachedLibraries.OBJC_ADAPTERS_FILE_NAME)
+
+    val partialLinkageIssuesFile = tempCacheDirectory?.cacheIrPart()?.resolve(CachedLibraries.PARTIAL_LINKAGE_ISSUES_FILE_NAME)
 
     private fun String.fullOutputName() = prefixBaseNameIfNeeded(prefix).suffixIfNeeded(suffix)
 

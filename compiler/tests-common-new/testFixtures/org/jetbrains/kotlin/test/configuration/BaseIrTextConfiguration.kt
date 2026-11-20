@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.test.backend.handlers.IrTreeVerifierHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CHECK_ASM_LIKE_INSTRUCTIONS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
@@ -77,7 +76,6 @@ fun TestConfigurationBuilder.additionalK2ConfigurationForIrTextTest(parser: FirP
 
     forTestsMatching("compiler/testData/ir/irText/headerMode/*") {
         defaultDirectives {
-            +CHECK_ASM_LIKE_INSTRUCTIONS
             DISABLE_WITH_PARSER with FirParser.Psi
             +FIR_DUMP
         }

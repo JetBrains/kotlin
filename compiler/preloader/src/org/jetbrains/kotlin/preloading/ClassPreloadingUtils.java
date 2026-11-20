@@ -26,6 +26,8 @@ import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+// TODO KT-91777 remove this code when legacy JPS runner is removed
+//  (which is 2.6.0, now used to build IJ itself)
 @SuppressWarnings("unchecked")
 public class ClassPreloadingUtils {
     /**

@@ -50,7 +50,7 @@ object SyntaxErrorReporter {
         }
     }
 
-    internal fun reportSyntaxErrors(
+    fun reportSyntaxErrors(
         file: PsiElement,
         createAndReportSyntaxError: (PsiErrorElement, message: String) -> Unit,
     ): SyntaxErrorReport {

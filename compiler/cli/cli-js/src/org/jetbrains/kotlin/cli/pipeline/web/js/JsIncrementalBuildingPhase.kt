@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.ic.tryAcquireAndRelease
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilerResult
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.artifactConfigurations
+import org.jetbrains.kotlin.js.config.useEs6ConstLet
 import java.io.File
 
 object JsIncrementalBuildingPhase : PipelinePhase<WebIncrementalCachePipelineArtifact<JsModuleArtifact>, JsBackendPipelineArtifact>(
@@ -53,6 +54,7 @@ object JsIncrementalBuildingPhase : PipelinePhase<WebIncrementalCachePipelineArt
             artifactConfiguration,
             sourceMapsInfo = SourceMapsInfo.from(configuration),
             caches = icCaches,
+            useEs6ConstLet = configuration.useEs6ConstLet,
         )
         val buildResult = jsExecutableProducer.buildExecutable(outJsProgram = false)
         (val outputs = compilationOut, val rebuiltModules = buildModules) = buildResult

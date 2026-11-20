@@ -4,6 +4,13 @@ FILE: classLevelDestructuringWithAnnotation.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Destructuring(LAZY_EXPRESSION) public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        @Destructuring(LAZY_EXPRESSION) private final [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private get(): <implicit>
+
+        @LeftAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public get(): <implicit>
+
+        @RightAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public get(): <implicit>
 
     }

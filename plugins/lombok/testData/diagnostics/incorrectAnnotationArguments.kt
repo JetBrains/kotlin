@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73027, KT-73029
 
 // FILE: Klass.java
@@ -20,3 +21,5 @@ fun test() {
     val klassBuilder: Klass.KlassBuilder = Klass.<!UNRESOLVED_REFERENCE!>build<!>()
     val klass2Builder: Klass2.Klass2Builder = Klass2.<!UNRESOLVED_REFERENCE!>myBuild<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration */

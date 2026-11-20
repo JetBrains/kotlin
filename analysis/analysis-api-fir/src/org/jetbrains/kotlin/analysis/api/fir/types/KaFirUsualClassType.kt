@@ -52,17 +52,6 @@ internal class KaFirUsualClassType(
             KaFirAnnotationListForType.create(coneType, builder)
         }
 
-    @Deprecated(
-        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
-        replaceWith = ReplaceWith("this.isMarkedNullable"),
-        level = DeprecationLevel.HIDDEN,
-    )
-    @Suppress("DEPRECATION_ERROR")
-    override val nullability: KaTypeNullability
-        get() = withValidityAssertion {
-            if (coneType.isMarkedNullable) KaTypeNullability.NULLABLE else KaTypeNullability.NON_NULLABLE
-        }
-
     override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion {
             builder.buildAbbreviatedType(coneType)

@@ -1,0 +1,126 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.analysis.checkers.declaration
+
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.isEnumEntry
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.resolvedSymbolOrCompanionSymbol
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FunctionCallExitNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ResolvedQualifierNode
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.resolvedControlFlowGraphReference
+import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
+
+object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
+        val enumClass = when (declaration.classKind) {
+            ClassKind.ENUM_CLASS -> (declaration as FirRegularClass).symbol
+            ClassKind.ENUM_ENTRY -> context.containingDeclarations.lastIsInstanceOrNull()
+            else -> null
+        } ?: return
+        val companionOfEnum = enumClass.resolvedCompanionObjectSymbol ?: return
+        val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
+        analyzeGraph(graph, companionOfEnum, enumClass)
+        if (declaration.classKind.isEnumEntry) {
+            val constructor = declaration.primaryConstructorIfAny(context.session)
+            val constructorGraph = constructor?.resolvedControlFlowGraphReference?.controlFlowGraph
+            if (constructorGraph != null) {
+                analyzeGraph(constructorGraph, companionOfEnum, enumClass)
+            }
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun analyzeGraph(
+        graph: ControlFlowGraph,
+        companionSymbol: FirRegularClassSymbol,
+        enumClass: FirRegularClassSymbol,
+    ) {
+        val reportedAccess = mutableSetOf<FirExpression>()
+
+        for (node in graph.nodes) {
+            if (node is CFGNodeWithSubgraphs) {
+                for (subGraph in node.subGraphs) {
+                    when (subGraph.kind) {
+                        ControlFlowGraph.Kind.AnonymousFunctionCalledInPlace,
+                        ControlFlowGraph.Kind.PropertyInitializer,
+                        ControlFlowGraph.Kind.ClassInitializer
+                            -> analyzeGraph(subGraph, companionSymbol, enumClass)
+                        ControlFlowGraph.Kind.Class -> {
+                            if (subGraph.declaration is FirAnonymousObject) {
+                                analyzeGraph(subGraph, companionSymbol, enumClass)
+                            }
+                        }
+                        else -> {}
+                    }
+                }
+            }
+
+            val access = when (node) {
+                is QualifiedAccessNode -> node.fir.findCompanionAccess(companionSymbol)
+                is FunctionCallExitNode -> node.firAsFunctionCallOrNull?.findCompanionAccess(companionSymbol)
+                is ResolvedQualifierNode -> node.fir.takeIf { it.accessedObjectSymbol == companionSymbol }
+                else -> null
+            }
+
+            if (access != null && reportedAccess.add(access)) {
+                reporter.reportOn(
+                    access.source ?: node.fir.source,
+                    FirErrors.UNINITIALIZED_ENUM_COMPANION,
+                    enumClass
+                )
+            }
+        }
+    }
+
+    context(context: CheckerContext)
+    private fun FirQualifiedAccessExpression.findCompanionAccess(companionSymbol: FirRegularClassSymbol): FirExpression? =
+        allReceiverExpressions.firstOrNull {
+            it.unwrapSmartcastExpression().getClassSymbol(this) == companionSymbol
+        }
+
+
+    context(context: CheckerContext)
+    private fun FirExpression.getClassSymbol(qualifiedAccess: FirQualifiedAccessExpression): FirRegularClassSymbol? {
+        return when (this) {
+            is FirResolvedQualifier ->
+                if (LanguageFeature.FixedUninitializedEnumCompanionCheck.isEnabled()) {
+                    this.resolvedSymbolOrCompanionSymbol()?.fullyExpandedClass()
+                } else {
+                    // Before companion blocks (KT-84484), unqualified accesses to static members didn't have a dispatch receiver.
+                    // The only static members in Kotlin classes were enum entries, `values()`, `valueOf()` and `entries`.
+                    // We emulate this behavior here, otherwise we start reporting false-positive UNINITIALIZED_ENUM_COMPANION on
+                    // newer compilers when LV is <= 2.3 (where FixedUninitializedEnumCompanionCheck (KT-84860) isn't enabled).
+                    if (qualifiedAccess.toResolvedCallableSymbol()?.isStatic == true &&
+                        source?.kind is KtFakeSourceElementKind.ImplicitReceiver
+                    ) {
+                        null
+                    } else {
+                        // Keep old buggy logic
+                        this.qualifierSymbol?.fullyExpandedClass()?.let { it.resolvedCompanionObjectSymbol ?: it }
+                    }
+                }
+            else -> (this.toReference(context.session) as? FirThisReference)?.boundSymbol
+        } as? FirRegularClassSymbol
+    }
+}

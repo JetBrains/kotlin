@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // FULL_JDK
 
@@ -27,3 +28,5 @@ class DerivedCallSuperFalse(val ownProp: String) : Base(10)
 
 lombok.equalsAndHashCode.callSuper=warn
 lombok.equalsAndHashCode.doNotUseGetters=true
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

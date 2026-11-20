@@ -42,7 +42,7 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
     KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
-        target.extensions.create("kapt", KaptExtension::class.java)
+        target.extensions.create("kapt", KaptExtension::class.java).applyPropertyConventions(target)
     }
 
     companion object {
@@ -469,7 +469,15 @@ internal fun buildKaptSubpluginOptions(
         pluginOptions += SubpluginOption("isolateProcessorsFromBuildClasspath", "true")
     }
 
+    if (kaptExtension.headerMode.get()) {
+        pluginOptions += SubpluginOption("headerMode", "true")
+    }
+
     return pluginOptions
+}
+
+internal fun KaptExtension.applyPropertyConventions(project: Project): KaptExtension = apply {
+    headerMode.convention(KaptProperties.isHeaderMode(project))
 }
 
 internal val KaptStubGenerationScheme.optionValue: String

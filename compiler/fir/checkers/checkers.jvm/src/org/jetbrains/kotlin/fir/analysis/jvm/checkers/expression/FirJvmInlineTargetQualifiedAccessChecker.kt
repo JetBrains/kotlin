@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.load.kotlin.JvmClassFileBacked
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 
@@ -34,7 +35,6 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         val callableSymbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
-        if (callableSymbol.origin.fromSource) return
 
         val isInline = when (callableSymbol) {
             is FirFunctionSymbol<*> -> callableSymbol.isInline
@@ -57,19 +57,16 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
     ) {
         val currentJvmTarget = context.session.jvmTargetProvider?.jvmTarget ?: return
 
-        val containingClass = callableSymbol.containingClassLookupTag()
-        val binaryClass = if (containingClass != null) {
-            val containingClassSymbol = containingClass.toRegularClassSymbol() ?: return
-
-            @OptIn(SymbolInternals::class)
-            val sourceElement = containingClassSymbol.fir.sourceElement as? KotlinJvmBinarySourceElement ?: return
-            sourceElement.binaryClass
+        // The inline body belongs to the original declaration, not to a fake override in a subclass.
+        val declarationSymbol = callableSymbol.unwrapFakeOverrides()
+        val inlinedVersion = if (declarationSymbol.origin.fromSource) {
+            // A source dependency module analyzed by the IDE is compiled with its own JVM target.
+            // In one compilation, all source modules share the JVM target.
+            declarationSymbol.moduleData.session.jvmTargetProvider?.jvmTarget?.majorVersion
         } else {
-            val containerSource = callableSymbol.containerSource as? JvmPackagePartSource ?: return
-            containerSource.knownJvmBinaryClass
-        }
+            declarationSymbol.classFileMajorVersion()
+        } ?: return
 
-        val inlinedVersion = (binaryClass as? FileBasedKotlinClass)?.classVersion ?: return
         val currentVersion = currentJvmTarget.majorVersion
 
         if (currentVersion < inlinedVersion) {
@@ -80,5 +77,27 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
                 JvmTarget.getDescription(currentVersion)
             )
         }
+    }
+
+    context(context: CheckerContext)
+    private fun FirCallableSymbol<*>.classFileMajorVersion(): Int? {
+        val containingClass = containingClassLookupTag()
+        // Stub-based library declarations in the Analysis API have no binary class, so their sources provide the version themselves
+        val binaryEntity = if (containingClass != null) {
+            val containingClassSymbol = containingClass.toRegularClassSymbol() ?: return null
+
+            @OptIn(SymbolInternals::class)
+            when (val sourceElement = containingClassSymbol.fir.sourceElement) {
+                is KotlinJvmBinarySourceElement -> sourceElement.binaryClass
+                else -> sourceElement
+            }
+        } else {
+            when (val containerSource = containerSource) {
+                is JvmPackagePartSource -> containerSource.knownJvmBinaryClass
+                else -> containerSource
+            }
+        }
+
+        return (binaryEntity as? JvmClassFileBacked)?.classFileMajorVersion
     }
 }

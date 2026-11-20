@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  */
 abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     protected val context: Context,
+    protected val accessorNameSuffix: String? = null,
 ) {
     private data class AccessorKey(val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
@@ -372,17 +373,26 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     )
 
     private fun IrSimpleFunction.accessorName(superQualifier: IrClassSymbol?, scopeInfo: ScopeInfo): Name =
-        AccessorNameBuilder().apply { buildFunctionName(this@accessorName, superQualifier, scopeInfo) }.build()
+        AccessorNameBuilder().apply {
+            buildFunctionName(this@accessorName, superQualifier, scopeInfo)
+            accessorNameSuffix?.let(::contribute)
+        }.build()
 
     protected abstract fun AccessorNameBuilder.buildFieldGetterName(field: IrField, superQualifierSymbol: IrClassSymbol?)
     protected abstract fun AccessorNameBuilder.buildFieldSetterName(field: IrField, superQualifierSymbol: IrClassSymbol?)
 
 
     private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?): Name =
-        AccessorNameBuilder().apply { buildFieldGetterName(this@accessorNameForGetter, superQualifierSymbol) }.build()
+        AccessorNameBuilder().apply {
+            buildFieldGetterName(this@accessorNameForGetter, superQualifierSymbol)
+            accessorNameSuffix?.let(::contribute)
+        }.build()
 
     private fun IrField.accessorNameForSetter(superQualifierSymbol: IrClassSymbol?): Name =
-        AccessorNameBuilder().apply { buildFieldSetterName(this@accessorNameForSetter, superQualifierSymbol) }.build()
+        AccessorNameBuilder().apply {
+            buildFieldSetterName(this@accessorNameForSetter, superQualifierSymbol)
+            accessorNameSuffix?.let(::contribute)
+        }.build()
 
     /**
      * Produces a call to the synthetic accessor [accessorSymbol] to replace the call expression [oldExpression].

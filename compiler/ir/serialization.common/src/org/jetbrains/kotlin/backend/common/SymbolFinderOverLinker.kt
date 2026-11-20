@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.SymbolFinder
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -20,22 +20,22 @@ import org.jetbrains.kotlin.name.ClassId
 class SymbolFinderOverLinker(private val linker: KotlinIrLinker) : SymbolFinder() {
     override fun findClass(classId: ClassId): IrClassSymbol? {
         val signature = classId.toIdSignature()
-        return linker.getSymbolAndPutIntoQueue(signature, kind = IrDeserializer.TopLevelSymbolKind.CLASS_SYMBOL) as? IrClassSymbol
+        return linker.getSymbolAndPutIntoQueue(signature, kind = BinarySymbolData.SymbolKind.CLASS_SYMBOL) as? IrClassSymbol
     }
 
     override fun findFunctions(callableId: CallableId): Iterable<IrSimpleFunctionSymbol> {
         check(callableId.classId == null) { "Function $callableId must be a top level one" }
-        val signatures = linker.getAllMatchingSignatures(callableId, IrDeserializer.TopLevelSymbolKind.FUNCTION_SYMBOL)
+        val signatures = linker.getAllMatchingSignatures(callableId, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL)
         return signatures.mapNotNull {
-            linker.getSymbolAndPutIntoQueue(it, kind = IrDeserializer.TopLevelSymbolKind.FUNCTION_SYMBOL) as? IrSimpleFunctionSymbol
+            linker.getSymbolAndPutIntoQueue(it, kind = BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as? IrSimpleFunctionSymbol
         }
     }
 
     override fun findProperties(callableId: CallableId): Iterable<IrPropertySymbol> {
         check(callableId.classId == null) { "Property $callableId must be a top level one" }
-        val signatures = linker.getAllMatchingSignatures(callableId, IrDeserializer.TopLevelSymbolKind.PROPERTY_SYMBOL)
+        val signatures = linker.getAllMatchingSignatures(callableId, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL)
         return signatures.mapNotNull {
-            linker.getSymbolAndPutIntoQueue(it, kind = IrDeserializer.TopLevelSymbolKind.PROPERTY_SYMBOL) as? IrPropertySymbol
+            linker.getSymbolAndPutIntoQueue(it, kind = BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as? IrPropertySymbol
         }
     }
 }

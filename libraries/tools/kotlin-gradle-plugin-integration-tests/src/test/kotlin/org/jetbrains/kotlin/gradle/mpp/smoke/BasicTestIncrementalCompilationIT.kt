@@ -5,22 +5,24 @@
 
 package org.jetbrains.kotlin.gradle.mpp.smoke
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Basic incremental scenarios with tests in KMP - K2")
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInBuildToolsApi
 open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
-            logLevel = LogLevel.DEBUG,
             nativeOptions = super.defaultBuildOptions.nativeOptions.copy(incremental = false),
         )
 
@@ -73,7 +75,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
         ) {
             assertNativeTestIsUpToDateAfterChanginUnusedCode()
 
-            assertIncrementalCompilation(listOf(changedInLibCommon).relativizeTo(projectPath))
+            assertIncrementalCompilationInBuildReport(listOf(changedInLibCommon).relativizeTo(projectPath))
         }
 
         /**
@@ -94,7 +96,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
         ) {
             assertNativeTestIsUpToDateAfterChanginUnusedCode()
 
-            assertIncrementalCompilation(listOf(changedInAppCommon).relativizeTo(projectPath))
+            assertIncrementalCompilationInBuildReport(listOf(changedInAppCommon).relativizeTo(projectPath))
         }
 
         /**
@@ -108,7 +110,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":app:jvmTest",
             ),
         ) {
-            assertIncrementalCompilation(listOf(touchedAppJvm).relativizeTo(projectPath))
+            assertIncrementalCompilationInBuildReport(listOf(touchedAppJvm).relativizeTo(projectPath))
         }
 
         /**
@@ -122,7 +124,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":app:jsTest",
             ),
         ) {
-            assertIncrementalCompilation(listOf(changedInAppJs).relativizeTo(projectPath))
+            assertIncrementalCompilationInBuildReport(listOf(changedInAppJs).relativizeTo(projectPath))
         }
 
         /**

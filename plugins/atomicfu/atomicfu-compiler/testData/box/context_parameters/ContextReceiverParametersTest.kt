@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JS_IR
 // LANGUAGE: +ContextParameters
 // TARGET_BACKEND: JVM, JS_IR
 // todo: temporarily disabled for K/N, see KT-76793

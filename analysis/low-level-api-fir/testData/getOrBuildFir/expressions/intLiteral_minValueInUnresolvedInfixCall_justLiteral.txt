@@ -1,0 +1,12 @@
+KT element: KtConstantExpression
+FIR element: FirLiteralExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+IntegerLiteral(2147483648)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] intLiteral_minValueInUnresolvedInfixCall_justLiteral.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        IntegerLiteral(-2147483648).<Unresolved name: unknownInfix>#(Int(2))
+    }

@@ -18,8 +18,6 @@ enum class BuildAttributeKind(val readableName: String) : Serializable {
 
 enum class BuildAttribute(val kind: BuildAttributeKind, val readableString: String) : Serializable {
     NO_BUILD_HISTORY(BuildAttributeKind.REBUILD_REASON, "Build history file not found"),
-    NO_ABI_SNAPSHOT(BuildAttributeKind.REBUILD_REASON, "ABI snapshot not found"),
-    NO_LAST_BUILD_INFO(BuildAttributeKind.REBUILD_REASON, "Last build info not found"),
     INVALID_LAST_BUILD_INFO(BuildAttributeKind.REBUILD_REASON, "Last build info corrupted"),
     CLASSPATH_SNAPSHOT_NOT_FOUND(BuildAttributeKind.REBUILD_REASON, "Classpath snapshot not found"),
     IC_FAILED_TO_GET_CHANGED_FILES(BuildAttributeKind.REBUILD_REASON, "Failed to get changed files"),
@@ -41,6 +39,8 @@ enum class BuildAttribute(val kind: BuildAttributeKind, val readableString: Stri
     UNSAFE_INCREMENTAL_CHANGE_KT_62686(BuildAttributeKind.REBUILD_REASON, "Incremental compilation might be incorrect (KT-62686)"),
     COMPILER_ARGS_CHANGED(BuildAttributeKind.REBUILD_REASON, "Compiler arguments changed"),
     INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED(BuildAttributeKind.REBUILD_REASON, "Incremental compilation configuration changed"),
+    MODULE_INFO_CHANGED(BuildAttributeKind.REBUILD_REASON, "module-info.java changed"),
+    PACKAGE_INFO_CHANGED(BuildAttributeKind.REBUILD_REASON, "a package-info.java changed"),
     ;
 
     companion object {

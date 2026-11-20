@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
-import kotlin.math.min
 
 internal fun createLlvmDeclarations(generationState: NativeGenerationState, irModule: IrModuleFragment): LlvmDeclarations {
     val generator = DeclarationsGeneratorVisitor(generationState)
@@ -57,7 +56,12 @@ internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDe
 
 }
 
-internal class ObjectBodyType(val llvmBodyType: LLVMTypeRef, objectFieldIndices: List<Int>) {
+internal class ObjectBodyType(
+        val llvmBodyType: LLVMTypeRef,
+        val fieldsIndices: Map<IrFieldSymbol, Int>,
+        objectFieldIndices: List<Int>,
+        val alignment: Int,
+) {
     val sortedIndicesOfObjectFields = objectFieldIndices.sorted()
 }
 
@@ -67,8 +71,6 @@ internal class ClassLlvmDeclarations(
         val writableTypeInfoGlobal: WritableTypeInfoPointer?,
         val typeInfo: ConstPointer,
         val objCDeclarations: KotlinObjCClassLlvmDeclarations?,
-        val alignment: Int,
-        val fieldIndices: Map<IrFieldSymbol, Int>
 )
 
 internal class KotlinObjCClassLlvmDeclarations(
@@ -82,13 +84,8 @@ internal class StaticFieldLlvmDeclarations(val storageAddressAccess: AddressAcce
 
 internal class UniqueLlvmDeclarations(val pointer: ConstPointer)
 
-internal data class ClassBodyAndAlignmentInfo(
-        val body: LLVMTypeRef,
-        val alignment: Int,
-        val fieldsIndices: Map<IrFieldSymbol, Int>
-)
-
-private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): ClassBodyAndAlignmentInfo {
+internal fun ContextUtils.createClassBody(name: String, declaration: IrClass): ObjectBodyType {
+    val fields = context.getLayoutBuilder(declaration).getFields(llvm)
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(llvm.module), name)!!
     val packed = context.config.packFields ||
         fields.any { LLVMABIAlignmentOfType(runtime.targetData, it.type.toLLVMType(llvm)) != it.alignment }
@@ -128,7 +125,24 @@ private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutB
         +"  Resulting type is ${classType.toTypeString()}"
     }
 
-    return ClassBodyAndAlignmentInfo(classType, alignment, indices)
+    val objectFieldIndices = fields.mapNotNull {
+        if (it.type.binaryTypeIsReference()) {
+            indices.getValue(it.irFieldSymbol)
+        } else {
+            null
+        }
+    }
+
+    require(alignment == runtime.objectAlignment) {
+        "Over-aligned objects are not supported yet: expected alignment for ${declaration.fqNameWhenAvailable} is ${alignment}"
+    }
+
+    return ObjectBodyType(
+            classType,
+            indices,
+            objectFieldIndices,
+            alignment
+    )
 }
 
 private class DeclarationsGeneratorVisitor(override val generationState: NativeGenerationState)
@@ -193,82 +207,21 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         super.visitClass(declaration)
     }
 
-    private fun packFields(declaration: IrClass): List<ClassLayoutBuilder.FieldInfo> {
-        val fields = context.getLayoutBuilder(declaration).getFields(llvm)
-        // The NoReorderFields annotation is internal, and only occurs on final classes with no inherited fields.
-        if (declaration.hasAnnotation(KonanFqNames.noReorderFields)) {
-            return fields
-        }
-
-        // offsetN indicates at what offset, if any, an N-byte appropriately aligned block can be packed.
-        // If no such block exists that does not overlap with a better aligned free block, offsetN will be -1.
-        var offset1 = -1L
-        var offset2 = -1L
-        var offset4 = -1L
-        var offset8 = 0L // == size of allocated fields rounded up to multiple of 8 bytes
-
-        // Allocates a block of the given size. Sizes smaller than 8 bytes will be rounded up to a power of 2 and
-        // aligned according to that size. Other sizes will be rounded up to a multiple of 8 and will be 8 byte aligned.
-        fun nextOffset(size: Long): Long = when (size) {
-            /* Algorithm:
-            N -> {
-                if we have a saved block of size N, return it and forget about it
-                else split a block of size 2N in two, return the first, and save the second for later.
-             */
-            1L -> {
-                if (offset1 != -1L) offset1.also { offset1 = -1 }
-                else nextOffset(2).also { offset1 = it + 1 }
-            }
-            2L -> {
-                if (offset2 != -1L) offset2.also { offset2 = -1 }
-                else nextOffset(4).also { offset2 = it + 2 }
-            }
-            4L -> {
-                if (offset4 != -1L) offset4.also { offset4 = -1 }
-                else nextOffset(8).also { offset4 = it + 4 }
-            }
-            /* Base case:
-            else -> the size is big enough that it needs one or more 8-byte blocks by itself.
-             */
-            else -> offset8.also { offset8 += alignTo(size, 8) }
-        }
-
-        class IndexedField(val offset: Long, val field: ClassLayoutBuilder.FieldInfo)
-
-        val packedFields = mutableListOf<IndexedField>()
-        for (field in fields) {
-            val size = LLVMStoreSizeOfType(llvm.runtime.targetData, field.type.toLLVMType(llvm))
-            check(size == 1L || size == 2L || size == 4L || size % 8 == 0L)
-            check(min(size, 8L) % field.alignment == 0L)
-            val offset = nextOffset(size)
-            packedFields.add(IndexedField(offset, field))
-        }
-        packedFields.sortBy { it.offset }
-        return packedFields.map { it.field }
-    }
-
     private fun createClassDeclarations(declaration: IrClass): ClassLlvmDeclarations {
         val internalName = qualifyInternalName(declaration)
 
-        val fields =
-            if (context.config.packFields)
-                packFields(declaration)
-            else
-                context.getLayoutBuilder(declaration).getFields(llvm)
-        (val bodyType = body, val alignment, val fieldIndices = fieldsIndices) = createClassBody("kclassbody:$internalName", fields)
-
-        val objectFieldIndices = fields.mapNotNull {
-            if (it.type.binaryTypeIsReference()) {
-                fieldIndices.getValue(it.irFieldSymbol)
-            } else {
-                null
+        val classBodyTypeName = if (declaration.isExported) {
+            declaration.computeClassBodyTypeName()
+        } else {
+            if (!context.config.producePerFileCache)
+                "${KonanBinaryInterface.MANGLE_CLASS_BODY_PREFIX}:$internalName"
+            else {
+                val containerName = (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
+                declaration.computePrivateClassBodyTypeName(containerName)
             }
         }
 
-        require(alignment == runtime.objectAlignment) {
-            "Over-aligned objects are not supported yet: expected alignment for ${declaration.fqNameWhenAvailable} is $alignment"
-        }
-
+        val body = createClassBody(classBodyTypeName, declaration)
 
         val typeInfoPtr: ConstPointer
         val typeInfoGlobal: StaticData.Global
@@ -321,7 +274,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         }
 
         if (declaration.isUnit() || declaration.isKotlinArray())
-            createUniqueDeclarations(declaration, typeInfoPtr, bodyType)
+            createUniqueDeclarations(declaration, typeInfoPtr, body.llvmBodyType)
 
         val objCDeclarations = if (declaration.isKotlinObjCClass()) {
             createKotlinObjCClassDeclarations(declaration)
@@ -332,13 +285,11 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val writableTypeInfoGlobal = generateWritableTypeInfoForClass(declaration)
 
         return ClassLlvmDeclarations(
-                ObjectBodyType(bodyType, objectFieldIndices),
+                body,
                 typeInfoGlobal,
                 writableTypeInfoGlobal,
                 typeInfoPtr,
                 objCDeclarations,
-                alignment,
-                fieldIndices
         )
     }
 
@@ -395,7 +346,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             if (!containingClass.requiresRtti()) return
             val classDeclarations = (containingClass.metadata as? KonanMetadata.Class)?.llvm
                     ?: error(containingClass.render())
-            val index = classDeclarations.fieldIndices[declaration.symbol]!!
+            val index = classDeclarations.bodyType.fieldsIndices[declaration.symbol]!!
             val bodyType = classDeclarations.bodyType.llvmBodyType
             declaration.metadata = KonanMetadata.InstanceField(
                     declaration,

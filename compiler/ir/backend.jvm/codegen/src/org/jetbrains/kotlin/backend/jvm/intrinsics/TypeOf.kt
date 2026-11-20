@@ -18,7 +18,7 @@ object TypeOf : IntrinsicMethod() {
         val type = expression.typeArguments[0]!!
         val support = IrInlineIntrinsicsSupport(codegen.classCodegen, expression, codegen.irFunction.fileParent)
         typeMapper.typeSystem.generateTypeOf(mv, type, support, codegen.frameMap.currentSize)
-        codegen.propagateChildReifiedTypeParametersUsages(codegen.typeMapper.typeSystem.extractUsedReifiedParameters(type))
+        codegen.propagateChildReifiedTypeParametersUsages(extractUsedReifiedParameters(type))
         expression.onStack
     }
 }

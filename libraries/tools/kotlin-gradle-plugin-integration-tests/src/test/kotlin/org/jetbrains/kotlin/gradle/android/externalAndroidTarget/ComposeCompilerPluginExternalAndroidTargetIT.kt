@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.util.GradleVersion
@@ -164,8 +163,7 @@ class ComposeCompilerPluginExternalAndroidTargetIT : KGPBaseTest() {
         taskPaths.forEach { taskPath ->
             assertCompilerArgument(
                 taskPath,
-                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${testProject.composeReportsPath.toRealPath()}",
-                logLevel = LogLevel.INFO
+                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=${testProject.composeReportsPath.toRealPath()}"
             )
         }
     }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.wasm.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncremental
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_BUILD_DIR
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
@@ -42,28 +44,35 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
 
-internal class WasmKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(WasmKlibCompilationOperation::class),
-    override val sources: List<Path>,
-    override val destination: Path,
-    compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-    private val compilerVersion: String,
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments),
+internal class WasmKlibCompilationOperationImpl : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>,
     WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder,
     DeepCopyable<WasmKlibCompilationOperationImpl> {
+    override val options: Options
+    override val sources: List<Path>
+    override val destination: Path
+    override val compilerArguments: WasmArgumentsImpl
+    private val compilerVersion: String
+
     constructor(
         sources: List<Path>,
         destination: Path,
         compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
         compilerVersion: String,
-    ) : this(
-        options = Options(WasmKlibCompilationOperation::class),
-        sources = sources,
-        destination = destination,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
+    ) : super() {
+        this.options = Options(WasmKlibCompilationOperation::class)
+        this.sources = sources
+        this.destination = destination
+        this.compilerArguments = compilerArguments
+        this.compilerVersion = compilerVersion
         initializeOptions(this::class, options)
+    }
+
+    private constructor(other: WasmKlibCompilationOperationImpl) : super(other) {
+        this.options = other.options.deepCopy()
+        this.sources = other.sources
+        this.destination = other.destination
+        this.compilerArguments = other.compilerArguments.deepCopy()
+        this.compilerVersion = other.compilerVersion
     }
 
     override fun historyBasedIcConfigurationBuilder(
@@ -77,15 +86,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
 
     override fun toBuilder(): WasmKlibCompilationOperation.Builder = deepCopy()
 
-    override fun deepCopy(): WasmKlibCompilationOperationImpl {
-        return WasmKlibCompilationOperationImpl(
-            options.deepCopy(),
-            sources,
-            destination,
-            compilerArguments.deepCopy(),
-            compilerVersion
-        )
-    }
+    override fun deepCopy(): WasmKlibCompilationOperationImpl = WasmKlibCompilationOperationImpl(this)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: WasmKlibCompilationOperation.Option<V>): V = options[key]
@@ -149,7 +150,6 @@ internal class WasmKlibCompilationOperationImpl private constructor(
                     buildDir = aggregatedIcConfiguration[MODULE_BUILD_DIR]?.toFile(),
                     icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures(),
                     useJvmFirRunner = false,
-                    generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
                     configurationInputs = makeConfigurationInputs(aggregatedIcConfiguration),
                 )
             }
@@ -208,8 +208,9 @@ internal class WasmKlibCompilationOperationImpl private constructor(
 
     override fun compileIncrementallyInProcess(
         arguments: KotlinWasmCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
-        executionContext: ExecutionContext
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val icConfiguration = get(INCREMENTAL_COMPILATION)
         requireNotNull(icConfiguration) { "Missing INCREMENTAL_COMPILATION option." }
@@ -235,7 +236,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
         metricsReporter.startMeasureGc()
         val buildReporter = BuildReporter(
             icReporter = BuildToolsApiBuildICReporter(
-                kotlinLogger = loggerAdapter.kotlinLogger,
+                kotlinLogger = logger,
                 rootProjectDir = projectDir,
                 buildMetricsReporter = metricsReporter,
             ), buildMetricsReporter = metricsReporter
@@ -259,7 +260,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
         )
 
         arguments.incrementalCompilation = true
-        logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
+        logCompilerArguments(logger, arguments, compilerArgumentsLogLevel)
 
         val fileLocations = if (projectDir != null && buildDir != null) {
             FileLocations(projectDir, buildDir)
@@ -267,7 +268,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
         val compilationResult = incrementalCompiler.compile(
             kotlinSources,
             arguments,
-            loggerAdapter,
+            messageCollector,
             icConfiguration.sourcesChanges.asChangedFiles,
             fileLocations,
             makeConfigurationInputs(icConfiguration)
@@ -283,11 +284,11 @@ internal class WasmKlibCompilationOperationImpl private constructor(
     private fun WasmHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return IncrementalCompilationFeatures(
             usePreciseJavaTracking = false,
-            withAbiSnapshot = false,
             preciseCompilationResultsBackup = this[BACKUP_CLASSES],
             keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
             enableUnsafeIncrementalCompilationForMultiplatform = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
             enableMonotonousIncrementalCompileSetExpansion = this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
+            enableErrorRecoveryRound = false,
         )
     }
 
@@ -303,7 +304,6 @@ private fun List<IncrementalModule>.toIncrementalModuleInfo(rootProjectBuildDir:
             it.name,
             it.buildDir.toFile(),
             (it.buildHistoryDir ?: it.buildDir).resolve(IncrementalCompilerRunner.BUILD_HISTORY_FILE_NAME).toFile(),
-            null
         )
     }
     return IncrementalModuleInfo(
@@ -314,7 +314,6 @@ private fun List<IncrementalModule>.toIncrementalModuleInfo(rootProjectBuildDir:
         },
         emptyMap(),
         map.mapKeys { it.key.output.toFile() }.toMap(),
-        emptyMap()
     )
 }
 

@@ -30,7 +30,7 @@ class AppleFrameworkWithCocoapodsIT : KGPBaseTest() {
         multiProjectWithCocoapodsDependency(gradleVersion) {
             val environmentVariables = mapOf(
                 "CONFIGURATION" to "debug",
-                "SDK_NAME" to "iphonesimulator",
+                "PLATFORM_NAME" to "iphonesimulator",
                 "ARCHS" to "arm64",
                 "TARGET_BUILD_DIR" to "no use",
                 "FRAMEWORKS_FOLDER_PATH" to "no use",
@@ -61,7 +61,7 @@ class AppleFrameworkWithCocoapodsIT : KGPBaseTest() {
 
                 val environmentVariables = mapOf(
                     "CONFIGURATION" to "debug",
-                    "SDK_NAME" to "iphonesimulator",
+                    "PLATFORM_NAME" to "iphonesimulator",
                     "ARCHS" to "arm64",
                     "TARGET_BUILD_DIR" to "no use",
                     "FRAMEWORKS_FOLDER_PATH" to "no use",
@@ -96,7 +96,7 @@ class AppleFrameworkWithCocoapodsIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     listOf(
-                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                         iosX64(),
                         iosArm64(),
                         iosSimulatorArm64()

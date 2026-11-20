@@ -18,18 +18,6 @@ class Mixed {
     get
 
   open class MixedBuilder {
-    private var a: Int
-      private get
-      private set
-
-    private var b: String
-      private get
-      private set
-
-    private var c: Long
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -57,6 +45,18 @@ class Mixed {
       <this>.#c = c
       return <this>
     }
+
+    private var a: Int
+      private get
+      private set
+
+    private var b: String
+      private get
+      private set
+
+    private var c: Long
+      private get
+      private set
 
   }
 
@@ -98,14 +98,6 @@ class RoundTrip {
     get
 
   open class RoundTripBuilder {
-    private var kept: Int
-      private get
-      private set
-
-    private var mirrored: Int
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -127,6 +119,14 @@ class RoundTrip {
       <this>.#mirrored = mirrored
       return <this>
     }
+
+    private var kept: Int
+      private get
+      private set
+
+    private var mirrored: Int
+      private get
+      private set
 
   }
 
@@ -166,14 +166,6 @@ class SingularWithoutVal {
     get
 
   open class SingularWithoutValBuilder {
-    private var id: Int
-      private get
-      private set
-
-    private var tags: MutableList<String>?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -230,6 +222,14 @@ class SingularWithoutVal {
       return <this>
     }
 
+    private var id: Int
+      private get
+      private set
+
+    private var tags: MutableList<String>?
+      private get
+      private set
+
   }
 
   companion object Companion {
@@ -270,3 +270,4 @@ fun box(): String {
   assertEquals<Int>(expected = 5, actual = rebuilt.<get-mirrored>())
   return "OK"
 }
+

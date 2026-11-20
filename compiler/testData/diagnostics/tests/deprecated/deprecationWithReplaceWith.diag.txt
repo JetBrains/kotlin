@@ -1,0 +1,27 @@
+/module_m2_deprecationWithReplaceWith.kt:43:22: warning: 'class Old : Any' is deprecated. Use 'New' instead. Replace with 'New'.
+
+/module_m2_deprecationWithReplaceWith.kt:48:5: warning: 'fun withExpression(): Unit' is deprecated. Use 'bar' instead. Replace with 'bar()'.
+
+/module_m2_deprecationWithReplaceWith.kt:49:5: warning: 'fun withSingleImport(): Unit' is deprecated. Use 'bar' instead. Replace with 'Bar()' and import 'pkg.Bar'.
+
+/module_m2_deprecationWithReplaceWith.kt:50:5: warning: 'fun withMultipleImports(): Unit' is deprecated. Use 'bar' instead. Replace with 'Bar(Baz())' and import 'pkg.Bar', 'pkg.Baz'.
+
+/module_m2_deprecationWithReplaceWith.kt:51:5: warning: 'fun withArrayOfImports(): Unit' is deprecated. Use 'bar' instead. Replace with 'Bar()' and import 'pkg.Bar'.
+
+/module_m2_deprecationWithReplaceWith.kt:52:5: warning: 'fun withSpreadImports(): Unit' is deprecated. Use 'bar' instead. Replace with 'Bar()' and import 'pkg.Bar'.
+
+/module_m2_deprecationWithReplaceWith.kt:53:5: warning: 'fun withConstExpression(): Unit' is deprecated. Use 'bar' instead. Replace with 'bar()'.
+
+/module_m2_deprecationWithReplaceWith.kt:54:5: warning: 'fun withEmptyMessage(): Unit' is deprecated. Replace with 'bar()'.
+
+/module_m2_deprecationWithReplaceWith.kt:55:5: warning: 'fun withEmptyExpression(): Unit' is deprecated. Use 'bar' instead. Replace with ''.
+
+/module_m2_deprecationWithReplaceWith.kt:56:5: error: 'fun withError(): Unit' is deprecated. Use 'bar' instead. Replace with 'bar()'.
+
+/module_m2_deprecationWithReplaceWith.kt:57:5: warning: 'val oldProp: Int' is deprecated. Use 'newProp' instead. Replace with 'newProp'.
+
+/module_m2_deprecationWithReplaceWith.kt:58:12: warning: 'class Old : Any' is deprecated. Use 'New' instead. Replace with 'New'.
+
+/module_m2_deprecationWithReplaceWith.kt:59:12: warning: 'typealias OldAlias = Old' uses 'typealias OldAlias = Old', which is deprecated. Use 'New' instead.
+
+/module_m2_deprecationWithReplaceWith.kt:62:8: error: 'fun String.toUpperCase(): String' is deprecated. Use uppercase() instead. Replace with 'uppercase(Locale.getDefault())' and import 'java.util.Locale'.

@@ -12,7 +12,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOption
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
@@ -33,7 +32,7 @@ data class BuildOptions(
     val logLevel: LogLevel = DEFAULT_LOG_LEVEL,
     val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
     val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
-    val warningMode: WarningMode = WarningMode.Fail,
+    val warningMode: WarningMode = WarningMode.All,
     val ignoreWarningModeSeverityOverride: Boolean? = null, // Do not change ToolingDiagnostic severity when warningMode is defined as Fail
     val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.ENABLED,
     val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.ENABLED,
@@ -68,6 +67,7 @@ data class BuildOptions(
     val enableJsUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
     val enableWasmUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
     val enableMonotonousIncrementalCompileSetExpansion: Boolean? = null,
+    val enableErrorRecoveryRound: Boolean = true,
     val useDaemonFallbackStrategy: Boolean = false,
     val useParsableDiagnosticsFormatting: Boolean = true,
     val showDiagnosticsStacktrace: Boolean? = false, // false by default to not clutter the testdata + stacktraces change often
@@ -143,15 +143,6 @@ data class BuildOptions(
             ENABLED -> true
         }
     }
-
-    val isK2ByDefault
-        get() = KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0
-
-    fun copyEnsuringK1(): BuildOptions =
-        copy(languageVersion = if (isK2ByDefault) "1.9" else null)
-
-    fun copyEnsuringK2(): BuildOptions =
-        copy(languageVersion = if (isK2ByDefault) null else "2.0")
 
     val safeAndroidVersion: String
         get() = androidVersion ?: error("AGP version is expected to be set")
@@ -332,6 +323,8 @@ data class BuildOptions(
             arguments.add("-Pkotlin.internal.incremental.enableMonotonousCompileSetExpansion=$enableMonotonousIncrementalCompileSetExpansion")
         }
 
+        arguments.add("-Pkotlin.jvm.enableErrorRecoveryRound=$enableErrorRecoveryRound")
+
         if (jvmClasspathMetadata != null) {
             arguments.add("-Pkotlin.internal.jvm.enableKmpClasspathMetadataForIncrementalCompilation=$jvmClasspathMetadata")
         }
@@ -459,8 +452,12 @@ fun BuildOptions.suppressDeprecationWarningsOn(
     this
 }
 
+fun BuildOptions.suppressDeprecationWarnings(
+    @Suppress("UNUSED_PARAMETER") reason: String, // just to require specifying a reason for suppressing
+) = copy(warningMode = WarningMode.Summary)
+
 fun BuildOptions.suppressDeprecationWarningsSinceGradleVersion(
-    gradleVersion: String,
+    gradleVersion: TestVersions.Gradle,
     currentGradleVersion: GradleVersion,
     reason: String,
 ) = suppressDeprecationWarningsOn(reason) {
@@ -495,55 +492,9 @@ fun BuildOptions.suppressingGradlePluginErrors(vararg diagnosticIds: String) =
 // KT-75899: Support Gradle Project Isolation in KGP JS & Wasm
 fun BuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899() = disableIsolatedProjects()
 
-fun BuildOptions.suppressWarningForOldKotlinVersion(
-    currentGradleVersion: GradleVersion,
-) = suppressDeprecationWarningsSinceGradleVersion(
-    gradleVersion = TestVersions.Gradle.G_8_14,
-    currentGradleVersion = currentGradleVersion,
-    reason =
-        """
-        Old Kotlin versions produces deprecation warnings with latest Gradle release.
-        """.trimIndent()
-)
-
-// Lint tasks produces deprecation warning since Gradle 8.14: https://issuetracker.google.com/issues/408334529
-// On a non-first run if WarningMode was not changed, the Lint task does not produce a deprecation warning!
-// Fixed in AGP 8.12-alpha06
-fun BuildOptions.suppressAgpWarningSinceGradle814(
-    currentGradleVersion: GradleVersion,
-    currentAgpVersion: TestVersions.AgpCompatibilityMatrix,
-    warningMode: WarningMode = WarningMode.Summary,
-): BuildOptions {
-    return when {
-        warningMode == WarningMode.Summary &&
-                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_812 -> suppressDeprecationWarningsSinceGradleVersion(
-            gradleVersion = TestVersions.Gradle.G_8_14,
-            currentGradleVersion = currentGradleVersion,
-            reason = "AGP produces deprecation warning on resolve: https://issuetracker.google.com/issues/408334529"
-        )
-        currentGradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) &&
-                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_812 -> copy(warningMode = warningMode)
-        else -> this
-    }
-}
-
-// https://issuetracker.google.com/issues/399393875, was fixed in AGP 8.11.0
-fun BuildOptions.suppressAgpWarningIsProperty(
-    currentGradleVersion: GradleVersion,
-): BuildOptions {
-    val currentAgpVersion = androidVersion?.let { TestVersions.AgpCompatibilityMatrix.fromVersion(it) }
-    return if (currentAgpVersion != null && currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_811) {
-        suppressDeprecationWarningsSinceGradleVersion(
-            gradleVersion = TestVersions.Gradle.G_8_14,
-            currentGradleVersion = currentGradleVersion,
-            reason = "APG produces deprecation warning for is-property: https://issuetracker.google.com/issues/399393875"
-        )
-    } else this
-}
-
 fun BuildOptions.suppressDeprecatedJdkWarningWithGradle814(
     currentGradleVersion: GradleVersion,
-    jdk: JdkVersions.ProvidedJdk
+    jdk: JdkVersions.ProvidedJdk,
 ): BuildOptions = if (currentGradleVersion == GradleVersion.version(TestVersions.Gradle.G_8_14) &&
     jdk.version < JavaVersion.VERSION_17
 ) {

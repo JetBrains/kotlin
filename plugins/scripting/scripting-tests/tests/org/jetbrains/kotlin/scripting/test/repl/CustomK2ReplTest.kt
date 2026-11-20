@@ -7,12 +7,20 @@ package org.jetbrains.kotlin.scripting.test.repl
 
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.scripting.test.CapturedHostProperties
 import org.jetbrains.kotlin.scripting.test.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.jetbrains.kotlin.scripting.test.TestTemplateHostConfiguration
+import org.jetbrains.kotlin.scripting.test.captureHostConfigurationOnRefinement
+import org.jetbrains.kotlin.scripting.test.overriddenHostProperty
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.convertToFirViaLightTree
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
 import org.jetbrains.kotlin.scripting.compiler.test.ReplReceiver1
+import org.jetbrains.kotlin.scripting.test.definitions.testScriptDefinitionClasspath
 import org.junit.jupiter.api.Assumptions.abort
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -23,6 +31,8 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.CompoundDependenciesResolver
 import kotlin.script.experimental.dependencies.DependsOn
 import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.*
@@ -30,6 +40,7 @@ import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlin.test.fail
 
 val dependenciesResolver = CompoundDependenciesResolver(MavenDependenciesResolver())
@@ -38,6 +49,57 @@ class CustomK2ReplTest {
 
     private val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
             System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+
+    @Test
+    fun testExplicitHostConfigurationWinsDuringRefinement() {
+        if (!isK2) return
+        val captured = CapturedHostProperties()
+        val compilationConfiguration = baseCompilationConfiguration.with {
+            hostConfiguration(TestTemplateHostConfiguration())
+            captureHostConfigurationOnRefinement(captured)
+        }
+        val source = "42".toScriptSource("host-configuration.repl.kts")
+        val explicitHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+            repl {
+                firReplHistoryProvider(FirReplHistoryProviderImpl())
+                isReplSnippetSource { _, _ -> true }
+            }
+            overriddenHostProperty("explicit")
+        }
+
+        withMessageCollectorAndDisposable { messageCollector, disposable ->
+            val compiler = K2ReplCompiler(
+                K2ReplCompiler.createCompilationState(messageCollector, disposable, compilationConfiguration, explicitHostConfiguration)
+            )
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend { compiler.compile(source) }
+        }.valueOrThrow()
+
+        assertEquals("explicit", captured.overriddenHostProperty)
+        assertEquals("template-only", captured.templateOnlyHostProperty)
+    }
+
+    @Test
+    fun testSnippetJvmTargetFromRefinementReachesSession() {
+        if (System.getProperty("java.specification.version").substringAfter("1.").toInt() < 16) {
+            abort<Nothing>("Records need java.lang.Record from the JDK the tests run on")
+        }
+        evalAndCheckSnippetsResultVals(
+            sequenceOf(
+                "@JvmRecord data class R(val x: Int)\nR(1).x",
+                "R(2).x",
+            ),
+            sequenceOf(1, 2),
+            baseCompilationConfiguration.with {
+                refineConfiguration {
+                    beforeCompiling { ctx ->
+                        if (!ctx.script.text.contains("@JvmRecord")) ctx.compilationConfiguration.asSuccess()
+                        else ctx.compilationConfiguration.with { compilerOptions.append("-jvm-target", "17") }.asSuccess()
+                    }
+                }
+            }
+        )
+    }
 
     @Test
     fun testSimple() {
@@ -678,7 +740,117 @@ class CustomK2ReplTest {
             }
         }.valueOrThrow()
     }
+
+    /**
+     * The definition's own configuration dependencies are needed to load its annotation classes; an unrelated
+     * dependencies list of the explicit host configuration should not replace them.
+     */
+    @Test
+    fun testDefinitionConfigurationDependenciesAreNotReplacedByExplicitHost() {
+        if (!isK2) return
+        val explicitHostConfiguration = replHostConfiguration(defaultJvmScriptingHostConfiguration) {
+            configurationDependencies(JvmDependency(ForTestCompileRuntime.runtimeJarForTests()))
+        }
+        compileSnippet(
+            configurationRefinedOnDefinitionAnnotation(testScriptDefinitionClasspath),
+            explicitHostConfiguration,
+            SNIPPET_WITH_DEFINITION_ANNOTATION,
+        ).valueOrThrow()
+    }
+
+    /**
+     * The hosts derived from the same base share its stateful [JvmGetScriptingClass], which should not be used for the definitions
+     * with different configuration dependencies.
+     */
+    @Test
+    fun testDefinitionsWithDifferentConfigurationDependenciesInHostsWithSharedBase() {
+        if (!isK2) return
+        val sharedBaseHostConfiguration = defaultJvmScriptingHostConfiguration
+        compileSnippet(
+            configurationRefinedOnDefinitionAnnotation(testScriptDefinitionClasspath),
+            replHostConfiguration(sharedBaseHostConfiguration),
+            SNIPPET_WITH_DEFINITION_ANNOTATION,
+        ).valueOrThrow()
+        compileSnippet(
+            configurationRefinedOnDefinitionAnnotation(testScriptDefinitionClasspath + ForTestCompileRuntime.runtimeJarForTests()),
+            replHostConfiguration(sharedBaseHostConfiguration),
+            SNIPPET_WITH_DEFINITION_ANNOTATION,
+        ).valueOrThrow()
+    }
+
+    /**
+     * The configuration of a snippet compiled by another REPL carries its host configuration; a new REPL created with it
+     * should not see the declarations of the previous REPL session.
+     */
+    @Test
+    fun testNewReplDoesNotInheritHistoryOfPreviousRepl() {
+        if (!isK2) return
+        val previousSnippet = compileSnippet(
+            baseCompilationConfiguration, replHostConfiguration(defaultJvmScriptingHostConfiguration), "val previousReplValue = 42"
+        ).valueOrThrow().get()
+
+        val hostConfigurationWithoutHistory = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+            repl {
+                isReplSnippetSource { _, _ -> true }
+            }
+        }
+        val res = compileSnippet(previousSnippet.compilationConfiguration, hostConfigurationWithoutHistory, "previousReplValue")
+        if (res !is ResultWithDiagnostics.Failure) {
+            fail("The declaration of the previous REPL session should not be visible in the new one")
+        }
+        assertTrue(res.reports.any { it.message.contains("previousReplValue") }, "Unexpected failure: ${res.reports}")
+    }
 }
+
+private const val DEFINITION_ANNOTATION = "org.jetbrains.kotlin.scripting.test.definition.AddTestImport"
+
+private const val SNIPPET_WITH_DEFINITION_ANNOTATION = "@file:$DEFINITION_ANNOTATION(\"unused\")\nAtomicInteger(42).get()"
+
+/**
+ * The annotation class is available only in the [configurationDependencies], as with the definitions loaded from a separate classpath.
+ */
+private fun configurationRefinedOnDefinitionAnnotation(configurationDependencies: List<File>): ScriptCompilationConfiguration =
+    baseCompilationConfiguration.with {
+        updateClasspath(testScriptDefinitionClasspath)
+        hostConfiguration(
+            ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+                configurationDependencies(JvmDependency(configurationDependencies))
+                jvm {
+                    baseClassLoader(CustomK2ReplTest::class.java.classLoader)
+                }
+            }
+        )
+        refineConfiguration {
+            onAnnotations(KotlinType(DEFINITION_ANNOTATION)) {
+                it.compilationConfiguration.with { defaultImports("java.util.concurrent.atomic.AtomicInteger") }.asSuccess()
+            }
+        }
+    }
+
+private fun replHostConfiguration(
+    baseHostConfiguration: ScriptingHostConfiguration,
+    body: ScriptingHostConfiguration.Builder.() -> Unit = {},
+): ScriptingHostConfiguration =
+    ScriptingHostConfiguration(baseHostConfiguration) {
+        repl {
+            firReplHistoryProvider(FirReplHistoryProviderImpl())
+            isReplSnippetSource { _, _ -> true }
+        }
+        body()
+    }
+
+private fun compileSnippet(
+    compilationConfiguration: ScriptCompilationConfiguration,
+    hostConfiguration: ScriptingHostConfiguration,
+    snippet: String,
+): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> =
+    withMessageCollectorAndDisposable { messageCollector, disposable ->
+        val compiler = K2ReplCompiler(
+            K2ReplCompiler.createCompilationState(messageCollector, disposable, compilationConfiguration, hostConfiguration)
+        )
+        @Suppress("DEPRECATION_ERROR")
+        internalScriptingRunSuspend { compiler.compile(snippet.toScriptSource("snippet.repl.kts")) }
+    }
 
 private val baseCompilationConfiguration: ScriptCompilationConfiguration =
     ScriptCompilationConfiguration {

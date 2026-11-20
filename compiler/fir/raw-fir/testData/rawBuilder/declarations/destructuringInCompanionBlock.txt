@@ -1,0 +1,51 @@
+FILE: destructuringInCompanionBlock.kt
+    public final? annotation class Anno : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Anno] constructor(): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final? data class X : R|kotlin/Any| {
+        public? [ContainingClassKey=X] constructor([CorrespondingProperty=/X.a] a: Int, [CorrespondingProperty=/X.b] b: Int): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [ComponentFunctionSymbolKey=/X.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ContainingClassKey=X] get(): Int
+
+        public? final? [ComponentFunctionSymbolKey=/X.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ContainingClassKey=X] get(): Int
+
+        public? final operator fun component1(): Int
+
+        public? final operator fun component2(): Int
+
+        public? final fun copy(a: Int = this@R|/X|.R|/X.a|, b: Int = this@R|/X|.R|/X.b|): R|X|
+
+    }
+    public final? [FirCompanionBlockDataKey=[valid=1 nested=0]] class A : R|kotlin/Any| {
+        public? [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final static [ContainingClassKey=A, DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = X#(IntegerLiteral(1), IntegerLiteral(2))
+            private static [ContainingClassKey=A] get(): <implicit>
+
+        public final static [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = R|/A.<destruct>|.component1#()
+            public static [ContainingClassKey=A] get(): <implicit>
+
+        @Anno() public final static [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = R|/A.<destruct>|.component2#()
+            public static [ContainingClassKey=A] get(): <implicit>
+
+        private final static [ContainingClassKey=A, DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = X#(IntegerLiteral(1), IntegerLiteral(2))
+            private static [ContainingClassKey=A] get(): <implicit>
+
+        public final static [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] var c: <implicit> = R|/A.<destruct>|.component1#()
+            public static [ContainingClassKey=A] get(): <implicit>
+            public static [ContainingClassKey=A] set(value: <implicit>): R|kotlin/Unit|
+
+        public final static [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] var d: Int = R|/A.<destruct>|.component2#()
+            public static [ContainingClassKey=A] get(): Int
+            public static [ContainingClassKey=A] set(value: Int): R|kotlin/Unit|
+
+    }

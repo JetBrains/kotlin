@@ -34,8 +34,7 @@ open internal class AtomicJointSet(children: List<AbstractSet>, fSet: FSet) : No
         forEachChildIndexed { _, child ->
             val shift = child.matches(startIndex, testString, matchResult)
             if (shift >= 0) {
-                // AtomicFset always returns true, but saves the index to run this next.match() from;
-                return next.matches((fSet as AtomicFSet).index, testString, matchResult)
+                return next.matches(shift, testString, matchResult)
             }
         }
 

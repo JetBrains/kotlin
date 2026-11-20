@@ -77,6 +77,25 @@ public fun Child_contains__TypesOfArguments__Swift_Int32____reverse(self: Child,
     return _result
 }
 
+@ImportedBridge("Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift")
+internal external fun Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Child::class, "functionTypeFunc")
+public fun Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse(self: Child, arg: Function1<Child, Parent>): Function1<Child, Parent> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __arg = kotlin.native.internal.ref.createRetainedExternalRCRef(arg)
+    val _result = Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift(__self, __arg)
+    return run {
+        val closurePtr = _result;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Child ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(closureBox.objcPtr(), _arg0)
+            kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Parent
+        }
+    }
+}
+
 @ImportedBridge("Child_genericReturnTypeFunc__reverse_swift")
 internal external fun Child_genericReturnTypeFunc__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -363,6 +382,25 @@ public fun Parent_finalOverrideHopFunc__reverse(self: Parent): Unit {
     return run<Unit> { _result }
 }
 
+@ImportedBridge("Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift")
+internal external fun Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Parent::class, "functionTypeFunc")
+public fun Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse(self: Parent, arg: Function1<Child, Parent>): Function1<Child, Parent> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __arg = kotlin.native.internal.ref.createRetainedExternalRCRef(arg)
+    val _result = Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift(__self, __arg)
+    return run {
+        val closurePtr = _result;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Child ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(closureBox.objcPtr(), _arg0)
+            kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Parent
+        }
+    }
+}
+
 @ImportedBridge("Parent_genericReturnTypeFunc__reverse_swift")
 internal external fun Parent_genericReturnTypeFunc__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -463,6 +501,25 @@ public fun Parent_primitiveTypeVar_get__reverse(self: Parent): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = Parent_primitiveTypeVar_get__reverse_swift(__self)
     return _result
+}
+
+@ImportedBridge("Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift")
+internal external fun Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Parent::class, "subtypeFunctionTypeFunc")
+public fun Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse(self: Parent, arg: Function1<Child, Parent>): Function1<Child, Parent> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __arg = kotlin.native.internal.ref.createRetainedExternalRCRef(arg)
+    val _result = Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent____reverse_swift(__self, __arg)
+    return run {
+        val closurePtr = _result;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Child ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(closureBox.objcPtr(), _arg0)
+            kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Parent
+        }
+    }
 }
 
 @ImportedBridge("Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child____reverse_swift")
@@ -566,6 +623,9 @@ public fun Parent_varToVar_set__TypesOfArguments__Swift_Int32____reverse(self: P
     return run<Unit> { _result }
 }
 
+@ImportedBridge("overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__")
+internal external fun overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
 @ExportedBridge("AbstractBase_abstractFun1")
 public fun AbstractBase_abstractFun1(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as AbstractBase
@@ -635,6 +695,38 @@ public fun Child_finalOverrideFunc(self: kotlin.native.internal.NativePtr): Bool
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
     __self.finalOverrideFunc()
     return true
+}
+
+@ExportedBridge("Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent__")
+public fun Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val __arg = run {
+        val closurePtr = arg;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Child ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(closureBox.objcPtr(), _arg0)
+            kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Parent
+        }
+    }
+    val _result = __self.functionTypeFunc(__arg)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent___direct", nonVirtualTargetMethod = "functionTypeFunc")
+public fun Child_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent___direct(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val __arg = run {
+        val closurePtr = arg;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Child ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(closureBox.objcPtr(), _arg0)
+            kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Parent
+        }
+    }
+    val _result = __self.functionTypeFunc(__arg)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Child_genericReturnTypeFunc")
@@ -1072,6 +1164,38 @@ public fun Parent_finalOverrideHopFunc_direct(self: kotlin.native.internal.Nativ
     return true
 }
 
+@ExportedBridge("Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent__")
+public fun Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val __arg = run {
+        val closurePtr = arg;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Child ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(closureBox.objcPtr(), _arg0)
+            kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Parent
+        }
+    }
+    val _result = __self.functionTypeFunc(__arg)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent___direct", nonVirtualTargetMethod = "functionTypeFunc")
+public fun Parent_functionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent___direct(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val __arg = run {
+        val closurePtr = arg;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Child ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(closureBox.objcPtr(), _arg0)
+            kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Parent
+        }
+    }
+    val _result = __self.functionTypeFunc(__arg)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("Parent_genericReturnTypeFunc")
 public fun Parent_genericReturnTypeFunc(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
@@ -1216,6 +1340,38 @@ public fun Parent_primitiveTypeVar_get_direct(self: kotlin.native.internal.Nativ
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
     val _result = __self.primitiveTypeVar
     return _result
+}
+
+@ExportedBridge("Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent__")
+public fun Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val __arg = run {
+        val closurePtr = arg;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Child ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(closureBox.objcPtr(), _arg0)
+            kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Parent
+        }
+    }
+    val _result = __self.subtypeFunctionTypeFunc(__arg)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent___direct", nonVirtualTargetMethod = "subtypeFunctionTypeFunc")
+public fun Parent_subtypeFunctionTypeFunc__TypesOfArguments__U28overrides_ChildU29202D_U20overrides_Parent___direct(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val __arg = run {
+        val closurePtr = arg;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Child ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = overrides_internal_functional_type_callee_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(closureBox.objcPtr(), _arg0)
+            kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Parent
+        }
+    }
+    val _result = __self.subtypeFunctionTypeFunc(__arg)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child__")
@@ -1534,4 +1690,12 @@ public fun __root___SameInitDerived_init_initialize__TypesOfArguments__Swift_Uns
     val __a = a
     kotlin.native.internal.initInstance(____kt, SameInitDerived(__a))
     return true
+}
+
+@ExportedBridge("overrides_internal_functional_type_caller_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__")
+public fun overrides_internal_functional_type_caller_overridesU2EParent__TypesOfArguments__Swift_UnsafeMutableRawPointer_overrides_Child__(pointerToBlock: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
+    val ___1 = kotlin.native.internal.ref.dereferenceExternalRCRef(_1) as Child
+    val _result = (__pointerToBlock as Function1<Child, Parent>).invoke(___1)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

@@ -64,6 +64,9 @@ internal class LLCombinedKotlinSymbolProvider private constructor(
     private val packageProvider: KotlinPackageProvider,
     private val packageProviderForKotlinPackages: KotlinPackageProvider?,
 ) : LLSelectingCombinedSymbolProvider<LLKotlinSymbolProvider>(session, project, providers) {
+    // Possible optimization: if all `providers` have native `mayHave*` checks, the composite symbol names provider invokes the native check
+    // of each individual declaration provider, which may result in N index accesses. A native check of the merged `declarationProvider`
+    // might need only a single index access instead. Whether this is faster depends on the platform, so it should be evaluated empirically.
     override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeCachedSymbolNamesProvider.fromSymbolProviders(session, providers)
 
     private val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> {

@@ -55,14 +55,12 @@ class JpsIcConfigurationTest : BaseJpsTest() {
         val enumWhen = RecordingEnumWhenTracker()
         val import = RecordingImportTracker()
         val const = RecordingInlineConstTracker()
-        val expectActual = RecordingExpectActualTracker()
 
         builder[JvmJpsManagedIncrementalCompilationConfiguration.LOOKUP_TRACKER] = lookup
         builder[JvmJpsManagedIncrementalCompilationConfiguration.FILE_MAPPING_TRACKER] = mapping
         builder[JvmJpsManagedIncrementalCompilationConfiguration.ENUM_WHEN_TRACKER] = enumWhen
         builder[JvmJpsManagedIncrementalCompilationConfiguration.IMPORT_TRACKER] = import
         builder[JvmJpsManagedIncrementalCompilationConfiguration.INLINE_CONST_TRACKER] = const
-        builder[JvmJpsManagedIncrementalCompilationConfiguration.EXPECT_ACTUAL_TRACKER] = expectActual
 
         // readable back from the builder ...
         assertSame(lookup, builder[JvmJpsManagedIncrementalCompilationConfiguration.LOOKUP_TRACKER])
@@ -70,7 +68,6 @@ class JpsIcConfigurationTest : BaseJpsTest() {
         assertSame(enumWhen, builder[JvmJpsManagedIncrementalCompilationConfiguration.ENUM_WHEN_TRACKER])
         assertSame(import, builder[JvmJpsManagedIncrementalCompilationConfiguration.IMPORT_TRACKER])
         assertSame(const, builder[JvmJpsManagedIncrementalCompilationConfiguration.INLINE_CONST_TRACKER])
-        assertSame(expectActual, builder[JvmJpsManagedIncrementalCompilationConfiguration.EXPECT_ACTUAL_TRACKER])
 
         // ... and from the built, immutable configuration
         val built = builder.build()
@@ -79,7 +76,6 @@ class JpsIcConfigurationTest : BaseJpsTest() {
         assertSame(enumWhen, built[JvmJpsManagedIncrementalCompilationConfiguration.ENUM_WHEN_TRACKER])
         assertSame(import, built[JvmJpsManagedIncrementalCompilationConfiguration.IMPORT_TRACKER])
         assertSame(const, built[JvmJpsManagedIncrementalCompilationConfiguration.INLINE_CONST_TRACKER])
-        assertSame(expectActual, built[JvmJpsManagedIncrementalCompilationConfiguration.EXPECT_ACTUAL_TRACKER])
 
         // defaults are null before anything is set
         val fresh = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(""))
@@ -89,7 +85,6 @@ class JpsIcConfigurationTest : BaseJpsTest() {
         assertNull(fresh[JvmJpsManagedIncrementalCompilationConfiguration.ENUM_WHEN_TRACKER])
         assertNull(fresh[JvmJpsManagedIncrementalCompilationConfiguration.IMPORT_TRACKER])
         assertNull(fresh[JvmJpsManagedIncrementalCompilationConfiguration.INLINE_CONST_TRACKER])
-        assertNull(fresh[JvmJpsManagedIncrementalCompilationConfiguration.EXPECT_ACTUAL_TRACKER])
     }
 
     @DisplayName("A JPS-managed compilation succeeds and produces runnable output")

@@ -18,6 +18,15 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.org.objectweb.asm.Type
 
-class CapturedParamDesc(containingLambdaType: Type, val fieldName: String, val type: Type, val isSuspend: Boolean = false) {
+/**
+ * @property isLoadable whether [type] is listed in the `LoadableDescriptors` attribute of a class storing this parameter in a field.
+ */
+class CapturedParamDesc(
+    containingLambdaType: Type,
+    val fieldName: String,
+    val type: Type,
+    val isSuspend: Boolean = false,
+    val isLoadable: Boolean = false,
+) {
     val containingLambdaName: String = containingLambdaType.internalName
 }

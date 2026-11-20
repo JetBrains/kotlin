@@ -11,18 +11,19 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.DefaultNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainService
+import javax.inject.Inject
 import kotlin.reflect.KClass
 
 @ExperimentalNodeJsToolchainDsl
 @InternalKotlinGradlePluginApi
-class NodeJsToolchainManagementDslImpl(
+abstract class NodeJsToolchainManagementDslImpl @Inject internal constructor(
     private val gradle: Gradle,
 ) : NodeJsToolchainManagementDsl {
 
     private var configured = false
 
     override fun toolchainService(configure: DefaultNodeJsToolchainService.Parameters.() -> Unit) {
-        toolchainService(DefaultNodeJsToolchainServiceImpl::class) {
+        toolchainService(DefaultNodeJsToolchainService::class) {
             offline.set(gradle.startParameter.isOffline)
             configure()
         }

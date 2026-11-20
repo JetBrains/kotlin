@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.ir.isInlineClass
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -106,7 +105,7 @@ internal class BuiltinOperatorLowering(val context: NativeLoweringContext) : Fil
 
             if (expression.symbol == irBuiltins.eqeqSymbol) {
                 lhs.type.getInlinedClassNative()?.let {
-                    if (it == rhs.type.getInlinedClassNative() && inlinedClassHasDefaultEquals(it)) {
+                    if (it == rhs.type.getInlinedClassNative() && hasDefaultEqualsDownToRepresentation(lhs.type)) {
                         return genInlineClassEquals(expression.symbol, rhs, lhs)
                     }
                 }
@@ -116,8 +115,16 @@ internal class BuiltinOperatorLowering(val context: NativeLoweringContext) : Fil
         }
     }
 
+    private fun hasDefaultEqualsDownToRepresentation(type: IrType): Boolean {
+        type.unwrapToPrimitiveOrReference(
+                eachInlinedClass = { inlinedClass, _ -> if (!inlinedClassHasDefaultEquals(inlinedClass)) return false },
+                ifPrimitive = { _, _ -> return true },
+                ifReference = { return true }
+        )
+    }
+
     private fun inlinedClassHasDefaultEquals(irClass: IrClass): Boolean {
-        if (!irClass.isInlineClass) {
+        if (!irClass.isValue) {
             // Implicitly-inlined class, e.g. primitive one.
             return true
         }
@@ -125,7 +132,8 @@ internal class BuiltinOperatorLowering(val context: NativeLoweringContext) : Fil
         val equals = irClass.simpleFunctions()
                 .single { it.name.asString() == "equals" && it.parameters.size == 2 && it.overrides(anyEquals) }
 
-        return equals.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER
+        return equals.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER ||
+                equals.origin == IrDeclarationOrigin.GENERATED_FULL_VALUE_CLASS_MEMBER
     }
 
     fun IrBuilderWithScope.genInlineClassEquals(

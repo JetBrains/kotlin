@@ -5,12 +5,9 @@
 
 package kotlin.reflect.jvm.internal.types
 
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import kotlin.reflect.*
 import kotlin.reflect.full.createTypeImpl
-import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.isFlexible
-import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.withNullability as withNullabilityFromTypeSystem
+import kotlin.reflect.jvm.internal.computeArrayClassifier
 
 internal class KTypeSubstitutor(
     private val substitution: Map<KTypeParameter, KTypeProjection>,
@@ -34,8 +31,8 @@ internal class KTypeSubstitutor(
         // Small optimization
         if (substitution.isEmpty()) return KTypeProjection(variance, type)
 
-        val lowerBound = (type as? AbstractKType)?.lowerBoundIfFlexible()
-        val upperBound = (type as? AbstractKType)?.upperBoundIfFlexible()
+        val lowerBound = (type as AbstractKType).lowerBoundIfFlexible()
+        val upperBound = type.upperBoundIfFlexible()
         if (lowerBound != null && upperBound != null) {
             val substitutedLower = substituteWithoutErasureRecursively(lowerBound, variance).lowerBoundIfFlexible()
             val substitutedUpper = substituteWithoutErasureRecursively(upperBound, variance).upperBoundIfFlexible()
@@ -44,7 +41,12 @@ internal class KTypeSubstitutor(
             return when {
                 substitutedUpperType != null && substitutedLowerType != null -> KTypeProjection(
                     substitutedLower.variance,
-                    createPlatformKType(substitutedLowerType, substitutedUpperType, isRawType = type.isRawType)
+                    createPlatformKType(
+                        substitutedLowerType, substitutedUpperType, type.isRawType,
+                        computeJavaType = if (type.isRawType)
+                            (substitutedLowerType.classifier as? KClass<*>)?.let { lazyOf(it.java) }
+                        else null,
+                    )
                 )
                 else -> KTypeProjection.STAR
             }
@@ -52,12 +54,13 @@ internal class KTypeSubstitutor(
 
         val classifier = type.classifier ?: return KTypeProjection(variance, type)
         substitution[classifier]?.let { substitutingProjection ->
-            val substitutingType = substitutingProjection.type
+            val substitutingType = substitutingProjection.type as AbstractKType?
             val substitutingVariance = substitutingProjection.variance
             return when {
                 substitutingType != null && substitutingVariance != null -> KTypeProjection(
                     substitutingVariance.intersectWith(variance),
-                    substitutingType.withWorseNullabilityOfBoth(type),
+                    // TODO (KT-77700): also keep annotations of 'other'
+                    substitutingType.combineNullability(type),
                 )
                 else -> substitutingProjection
             }
@@ -66,8 +69,8 @@ internal class KTypeSubstitutor(
             variance,
             when {
                 type.arguments.isEmpty() -> type
-                else -> classifier.createTypeImpl(
-                    type.arguments.map { argumentProjection ->
+                else -> {
+                    val arguments = type.arguments.map { argumentProjection ->
                         val argumentVariance = argumentProjection.variance
                         val argumentType = argumentProjection.type
                         when {
@@ -75,14 +78,27 @@ internal class KTypeSubstitutor(
                                 substituteWithoutErasureRecursively(argumentType, argumentVariance)
                             else -> KTypeProjection.STAR
                         }
-                    },
-                    type.isMarkedNullable,
-                    type.annotations,
-                    (type as? AbstractKType)?.mutableCollectionClass,
-                )
+                    }
+                    type.replaceTypeArguments(arguments)
+                }
             }
         )
         return result
+    }
+
+    private fun AbstractKType.replaceTypeArguments(newArguments: List<KTypeProjection>): AbstractKType = when (this) {
+        is SimpleKType -> SimpleKType(
+            classifier,
+            newArguments,
+            isMarkedNullable,
+            lazyAnnotations,
+            abbreviation?.let { substituteWithoutErasureRecursively(it, KVariance.INVARIANT).type },
+            isDefinitelyNotNullType,
+            isNothingType,
+            isSuspendFunctionType,
+            mutableCollectionClass,
+        )
+        else -> classifier!!.createTypeImpl(newArguments, isMarkedNullable, annotations, mutableCollectionClass)
     }
 
     // This method is needed for the K1-based implementation because we're not substituting types inside descriptors.
@@ -135,18 +151,15 @@ internal class KTypeSubstitutor(
             else -> KTypeSubstitutor(substitution, eraseToUpperBoundsAfterSubstitution)
         }
 
-    // TODO (KT-77700): also keep annotations of 'other'
-    private fun KType.withWorseNullabilityOfBoth(other: KType): KType {
-        check(other is KotlinTypeMarker && !other.isFlexible()) { "'$other' must be non flexible" }
-        if (isNullabilityFlexible() && !other.isMarkedNullable) return this
-        val thiz = this as RigidTypeMarker
-        return when (val withNullability = withNullabilityFromTypeSystem(other.isMarkedNullable || isMarkedNullable)) {
-            is AbstractKType -> withNullability.makeDefinitelyNotNullAsSpecified(
-                (other as? AbstractKType)?.isDefinitelyNotNullType == true ||
-                        ((thiz as? AbstractKType)?.isDefinitelyNotNullType == true && !other.isMarkedNullable)
-            )
-            else -> withNullability as KType
+    private fun AbstractKType.combineNullability(other: AbstractKType): KType {
+        check(other.lowerBoundIfFlexible() == null) { "'$other' must be non flexible" }
+        if (isNullabilityFlexible() && !other.isMarkedNullable) {
+            // Substituting DNN type `T & Any` by `T -> X!` should result in DNN type `X & Any`.
+            // Also, substituting `T & Any` by `T -> String!` should result in non-null type `String`.
+            return if (other.isDefinitelyNotNullType) makeDefinitelyNotNullAsSpecified(true) else this
         }
+        return makeNullableAsSpecified(other.isMarkedNullable || isMarkedNullable)
+            .makeDefinitelyNotNullAsSpecified(other.isDefinitelyNotNullType || (isDefinitelyNotNullType && !other.isMarkedNullable))
     }
 
     private fun KTypeProjection.lowerBoundIfFlexible(): KTypeProjection =
@@ -174,19 +187,24 @@ internal class KTypeSubstitutor(
                     if (isSuspendFunctionType) drop(1) else this
                 }
             else emptyList()
-            check(typeParameters.size == arguments.size) {
-                "Params vs args count mismatch (${typeParameters.size} != ${arguments.size}) for class '$klass' with args: ${arguments.joinToString()}"
+            val argumentsForSubstitution =
+                if (klass == KFunction::class && arguments.size > typeParameters.size) {
+                    // `KFunctionN` and `KSuspendFunctionN` are mapped to `KFunction`, whose only type parameter is the return type.
+                    arguments.takeLast(typeParameters.size)
+                } else arguments
+            check(typeParameters.size == argumentsForSubstitution.size) {
+                "Params vs args count mismatch (${typeParameters.size} != ${argumentsForSubstitution.size}) for class '$klass' with args: ${arguments.joinToString()}"
             }
             return when {
                 typeParameters.isEmpty() -> EMPTY.copy(isRaw)
-                else -> KTypeSubstitutor(typeParameters.zip(arguments).toMap(), eraseToUpperBoundsAfterSubstitution = isRaw)
+                else -> KTypeSubstitutor(typeParameters.zip(argumentsForSubstitution).toMap(), eraseToUpperBoundsAfterSubstitution = isRaw)
             }
         }
     }
 }
 
-private fun KType.isNullabilityFlexible(): Boolean =
-    this is AbstractKType && lowerBoundIfFlexible()?.isMarkedNullable != upperBoundIfFlexible()?.isMarkedNullable
+private fun AbstractKType.isNullabilityFlexible(): Boolean =
+    lowerBoundIfFlexible()?.isMarkedNullable != upperBoundIfFlexible()?.isMarkedNullable
 
 /**
  * Erase all type arguments to the first upper bound of their respective type parameter and convert all parametrized types to raw types
@@ -202,6 +220,10 @@ private fun KType.eraseToUpperBoundsAndMakeItRawRecursively(
     with(type as AbstractKType) {
         val arguments = arguments
         if (arguments.isEmpty()) return type
+        val klass = type.classifier
+        if (klass is KClass<*> && klass.java.isArray) {
+            return eraseArrayElementTypeRecursively(klass, seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections)
+        }
         val parameters = with(ReflectTypeSystemContext) {
             val classifier = type.typeConstructor()
             List(classifier.parametersCount()) { classifier.getParameter(it) as KTypeParameter }
@@ -228,10 +250,52 @@ private fun KType.eraseToUpperBoundsAndMakeItRawRecursively(
 
         val classifier =
             classifier ?: error("Error inside type '$seedTypeOfTheRecursionForDebug'. The current type '$type' is not denotable")
-        val lower = classifier.createTypeImpl(arguments = newLowerBoundArguments, nullable = isMarkedNullable)
-        val upper = classifier.createTypeImpl(arguments = List(parameters.size) { KTypeProjection.STAR }, nullable = true)
-        return createPlatformKType(lower, upper, isRawType = !replaceArgumentsWithStarProjections)
+        val lower = classifier.createTypeImpl(
+            arguments = newLowerBoundArguments, nullable = isMarkedNullable,
+            mutableCollectionClass = (lowerBoundIfFlexible() ?: this).mutableCollectionClass,
+        )
+        val upper = classifier.createTypeImpl(
+            arguments = List(parameters.size) { KTypeProjection.STAR },
+            nullable = upperBoundIfFlexible()?.isMarkedNullable ?: isMarkedNullable,
+            mutableCollectionClass = (upperBoundIfFlexible() ?: this).mutableCollectionClass,
+        )
+        val isRawType = !replaceArgumentsWithStarProjections
+        return createPlatformKType(
+            lower, upper, isRawType,
+            computeJavaType = if (isRawType) (classifier as? KClass<*>)?.let { lazyOf(it.java) } else null,
+        )
     }
+}
+
+/**
+ * Arrays are never converted to raw types, as there's no "raw array" in Java. But its element type is erased recursively.
+ *
+ * The respective places in the compiler:
+ * - K1: RawSubstitution.eraseInflexibleBasedOnClassDescriptor
+ * - K2: ConeRawScopeSubstitutor.substituteType
+ */
+private fun AbstractKType.eraseArrayElementTypeRecursively(
+    arrayClass: KClass<*>, seedTypeOfTheRecursionForDebug: KType, replaceArgumentsWithStarProjections: Boolean,
+): KType {
+    val lowerBound = lowerBoundIfFlexible()
+    val upperBound = upperBoundIfFlexible()
+    if (lowerBound != null && upperBound != null) {
+        return createPlatformKType(
+            lowerBound.eraseToUpperBoundsAndMakeItRawRecursively(seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections),
+            upperBound.eraseToUpperBoundsAndMakeItRawRecursively(seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections),
+            isRawType = false,
+        )
+    }
+
+    val argument = arguments.single()
+    val newArgument = if (argument == KTypeProjection.STAR) argument else KTypeProjection(
+        argument.variance,
+        argument.type!!.eraseToUpperBoundsAndMakeItRawRecursively(seedTypeOfTheRecursionForDebug, replaceArgumentsWithStarProjections),
+    )
+    val newArguments = listOf(newArgument)
+    return arrayClass.createTypeImpl(
+        newArguments, isMarkedNullable, computeJavaType = lazyOf(computeArrayClassifier(newArguments).java),
+    )
 }
 
 /**

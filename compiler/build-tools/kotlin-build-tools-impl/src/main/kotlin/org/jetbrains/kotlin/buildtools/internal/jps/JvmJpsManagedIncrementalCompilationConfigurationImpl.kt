@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollector
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.ENUM_WHEN_TRACKER
-import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.EXPECT_ACTUAL_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.FILE_MAPPING_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.IMPORT_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.INLINE_CONST_TRACKER
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.buildtools.internal.jps.incremental.IncrementalCompi
 import org.jetbrains.kotlin.buildtools.internal.jps.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.LOOKUP_TRACKER as BASE_LOOKUP_TRACKER
 
 /**
  * Marks a client-managed incremental compilation configuration, so that it can be recognized without mentioning any
@@ -68,7 +68,8 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.getClientManage
 @OptIn(DelicateBuildToolsApi::class, InternalBuildToolsApi::class)
 context(operation: JvmCompilationOperationImpl)
 internal fun JvmClientManagedIncrementalCompilationConfiguration.createCompilerServicesFacadeBase(
-    loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+    logger: KotlinLogger,
+    messageCollector: MessageCollectorWithDiagnosticId,
     compilationCanceledStatus: CompilationCanceledStatus,
 ): CompilerServicesFacadeBase {
     check(this is JvmJpsManagedIncrementalCompilationConfigurationImpl) {
@@ -76,8 +77,8 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.createCompilerS
     }
 
     val lookupTracker = this[LOOKUP_TRACKER]?.let { tracker ->
-        if (operation[BASE_LOOKUP_TRACKER] != null) {
-            loggerAdapter.kotlinLogger.warn(
+        if (operation.lookupTracker != null) {
+            logger.warn(
                 "A lookup tracker is set both as BaseCompilationOperation.LOOKUP_TRACKER and as " +
                         "JvmJpsManagedIncrementalCompilationConfiguration.LOOKUP_TRACKER. " +
                         "The latter takes precedence."
@@ -85,13 +86,12 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.createCompilerS
         }
 
         LookupTrackerAdapter(tracker)
-    } ?: operation[BASE_LOOKUP_TRACKER]?.let(::LookupTrackerAdapter)
+    } ?: operation.lookupTracker?.let(::LookupTrackerAdapter)
 
     return JpsManagedCompilerServicesWithResultsFacade(
-        loggerAdapter,
+        messageCollector,
         incrementalCompilationComponents = IncrementalCompilationComponentsAdapter(incrementalCompilationComponents),
         lookupTracker = lookupTracker,
-        expectActualTracker = this[EXPECT_ACTUAL_TRACKER]?.let(::ExpectActualTrackerAdapter),
         inlineConstTracker = this[INLINE_CONST_TRACKER]?.let(::InlineConstTrackerAdapter),
         enumWhenTracker = this[ENUM_WHEN_TRACKER]?.let(::EnumWhenTrackerAdapter),
         importTracker = this[IMPORT_TRACKER]?.let(::ImportTrackerAdapter),
@@ -112,25 +112,36 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
         IncrementalCompilationComponentsAdapter(this.incrementalCompilationComponents),
     )
 
-    this[LOOKUP_TRACKER]?.let { tracker ->
-        if (operation[BASE_LOOKUP_TRACKER] != null) {
+    val lookupTracker = this[LOOKUP_TRACKER]?.let { tracker ->
+        if (operation.lookupTracker != null) {
             logger.warn(
                 "A lookup tracker is set both as BaseCompilationOperation.LOOKUP_TRACKER and as " +
                         "JvmJpsManagedIncrementalCompilationConfiguration.LOOKUP_TRACKER. The latter takes precedence."
             )
         }
 
-        serviceBuilder.register(LookupTracker::class.java, LookupTrackerAdapter(tracker))
+        LookupTrackerAdapter(tracker)
+    }
+    val fileMappingTracker = this[FILE_MAPPING_TRACKER]?.let(::FileMappingTrackerAdapter)
+    val compilerReferenceIndexCollector = createCompilerReferenceIndexCollector(
+        lookupTracker ?: operation.lookupTracker?.let(::LookupTrackerAdapter),
+        fileMappingTracker,
+    )
+
+    (compilerReferenceIndexCollector?.lookupTracker ?: lookupTracker)?.let { tracker ->
+        serviceBuilder.register(LookupTracker::class.java, tracker)
+    }
+    (compilerReferenceIndexCollector?.fileMappingTracker ?: fileMappingTracker)?.let { tracker ->
+        serviceBuilder.register(ICFileMappingTracker::class.java, tracker)
+    }
+    // Lets [org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl] write the index after a successful
+    // compilation; the compiler never reads it
+    compilerReferenceIndexCollector?.let { collector ->
+        serviceBuilder.register(CompilerReferenceIndexCollector::class.java, collector)
     }
 
     this[IMPORT_TRACKER]?.let { tracker ->
         serviceBuilder.register(ImportTracker::class.java, ImportTrackerAdapter(tracker))
-    }
-    this[FILE_MAPPING_TRACKER]?.let { tracker ->
-        serviceBuilder.register(ICFileMappingTracker::class.java, FileMappingTrackerAdapter(tracker))
-    }
-    this[EXPECT_ACTUAL_TRACKER]?.let { tracker ->
-        serviceBuilder.register(ExpectActualTracker::class.java, ExpectActualTrackerAdapter(tracker))
     }
     this[ENUM_WHEN_TRACKER]?.let { tracker ->
         serviceBuilder.register(EnumWhenTracker::class.java, EnumWhenTrackerAdapter(tracker))
@@ -138,6 +149,19 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
     this[INLINE_CONST_TRACKER]?.let { tracker ->
         serviceBuilder.register(InlineConstTracker::class.java, InlineConstTrackerAdapter(tracker))
     }
+}
+
+context(operation: JvmCompilationOperationImpl)
+private fun createCompilerReferenceIndexCollector(
+    lookupTracker: LookupTracker?,
+    fileMappingTracker: ICFileMappingTracker?,
+): CompilerReferenceIndexCollector? {
+    val directory = operation.compilerRefIndexConfiguration?.outputDirectory ?: return null
+    return CompilerReferenceIndexCollector(
+        directory,
+        lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
+        fileMappingTrackerDelegate = fileMappingTracker ?: ICFileMappingTracker.DoNothing,
+    )
 }
 
 @DelicateBuildToolsApi
@@ -181,8 +205,6 @@ internal class JvmJpsManagedIncrementalCompilationConfigurationImpl private cons
         val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", null)
 
         val FILE_MAPPING_TRACKER: Option<CompilerFileMappingTracker?> = Option("FILE_MAPPING_TRACKER", null)
-
-        val EXPECT_ACTUAL_TRACKER: Option<CompilerExpectActualTracker?> = Option("EXPECT_ACTUAL_TRACKER", null)
 
         val ENUM_WHEN_TRACKER: Option<CompilerEnumWhenTracker?> = Option("ENUM_WHEN_TRACKER", null)
 

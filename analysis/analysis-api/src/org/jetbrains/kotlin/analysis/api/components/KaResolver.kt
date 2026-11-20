@@ -944,7 +944,7 @@ public interface KaResolver : KaSessionComponent {
      * }
      * ```
      *
-     * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
+     * Returns the corresponding [KaFunctionCall] if resolution succeeds; otherwise, it returns `null`
      * (e.g., when unresolved or ambiguous).
      *
      * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on array access operations.
@@ -978,7 +978,7 @@ public interface KaResolver : KaSessionComponent {
      * fun use() {}
      * ```
      *
-     * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
+     * Returns the corresponding [KaFunctionCall] if resolution succeeds; otherwise, it returns `null`
      * (e.g., when unresolved or ambiguous).
      *
      * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on collection literal expressions
@@ -1030,7 +1030,7 @@ public interface KaResolver : KaSessionComponent {
      * }
      * ```
      *
-     * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
+     * Returns the corresponding [KaFunctionCall] if resolution succeeds; otherwise, it returns `null`
      * (e.g., when unresolved or ambiguous).
      *
      * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on `in`/`!in`
@@ -1249,7 +1249,7 @@ public interface KaResolver : KaSessionComponent {
     @Deprecated(
         message = "Use `KtSimpleNameExpression` instead",
         replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     public fun KtReference.isImplicitReferenceToCompanion(): Boolean
 
@@ -1371,18 +1371,17 @@ public fun KtReference.resolveToSymbol(): KaSymbol? {
  *
  * **Note**: [KtReference] is not a part of the Analysis API anymore, so use the underlying [KtSimpleNameExpression] instead.
  *
- * @see KtSimpleNameExpression.isImplicitReferenceToCompanion
+ * @see KaResolver.isImplicitReferenceToCompanion
  */
 @Deprecated(
     message = "Use `KtSimpleNameExpression` instead",
     replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 context(session: KaSession)
 public fun KtReference.isImplicitReferenceToCompanion(): Boolean {
-    @Suppress("DEPRECATION_ERROR")
     return with(session) {
-        isImplicitReferenceToCompanion()
+        (element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true
     }
 }
 
@@ -1407,7 +1406,7 @@ public fun KtReference.isImplicitReferenceToCompanion(): Boolean {
         "this.isImplicitReferenceToCompanion",
         "org.jetbrains.kotlin.analysis.api.expressions.isImplicitReferenceToCompanion",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)

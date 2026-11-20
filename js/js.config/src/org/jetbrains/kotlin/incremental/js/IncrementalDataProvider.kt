@@ -15,3 +15,7 @@ interface IncrementalDataProvider {
     val serializedIrFiles: Map<File, IrTranslationResultValue>
     val serializedIrInlineFiles: Map<File, IrTranslationResultValue>
 }
+
+interface KmpIncrementalDataProvider : IncrementalDataProvider {
+    fun commonMetadata(fragmentName: String): Map<File, ByteArray>
+}

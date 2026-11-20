@@ -111,7 +111,10 @@ open class AbstractIsolatedFullPipelineModularizedTest(private val config: Modul
             args.allowKotlinPackage = true
         }
         args.reportPerf = true
-        args.jdkHome = moduleData.jdkHome?.absolutePath ?: originalArguments?.jdkHome?.fixPath(config.rootPathPrefix)?.absolutePath
+        args.jdkHome = moduleData.jdkHome?.absolutePath
+            ?: originalArguments?.jdkHome?.fixPath(config.rootPathPrefix)?.absolutePath
+                    // if there's moduleData.modularJdkRoot, the compiler would pick it up later itself
+                    ?: config.fallbackJdkHome?.takeIf { moduleData.modularJdkRoot == null }?.absolutePath
         args.renderInternalDiagnosticNames = true
         args.debugLevelCompilerChecks = config.enableSlowAssertions
 

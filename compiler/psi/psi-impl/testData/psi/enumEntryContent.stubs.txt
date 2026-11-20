@@ -6,13 +6,19 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       ENUM_ENTRY[classId=null, fqName=MyEnumClass.ENTRY, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=ENTRY, superNames=[]]
         CLASS_BODY
-          CLASS[classId=null, fqName=MyEnumClass.ENTRY.NestedClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=NestedClass, superNames=[]]
+          CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=NestedClass, superNames=[]]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NestedClass]
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=parameter]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=Int]
             CLASS_BODY
-              CLASS[classId=null, fqName=MyEnumClass.ENTRY.NestedClass.NestedNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=NestedNested, superNames=[]]
+              CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=NestedNested, superNames=[]]
                 CLASS_BODY
-          OBJECT_DECLARATION[classId=null, fqName=MyEnumClass.ENTRY.NestedObject, isObjectLiteral=false, isTopLevel=false, name=NestedObject, superNames=[]]
+          OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=false, isTopLevel=false, name=NestedObject, superNames=[]]
             CLASS_BODY
-              OBJECT_DECLARATION[classId=null, fqName=MyEnumClass.ENTRY.NestedObject.NestedNested, isObjectLiteral=false, isTopLevel=false, name=NestedNested, superNames=[]]
+              OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=false, isTopLevel=false, name=NestedNested, superNames=[]]
                 CLASS_BODY
           CLASS_INITIALIZER
             FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=initFunction]
@@ -27,9 +33,9 @@ FILE[kind=File[packageFqName=<root>]]
                   VALUE_PARAMETER_LIST
                 PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=literalVariable]
                   INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=25]
-          FUNCTION[fqName=MyEnumClass.ENTRY.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             VALUE_PARAMETER_LIST
-          PROPERTY[fqName=MyEnumClass.ENTRY.baz, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=baz]
+          PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=baz]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]

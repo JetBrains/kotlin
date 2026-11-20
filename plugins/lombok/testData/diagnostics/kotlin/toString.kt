@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 <!ANNOTATION_HAS_NO_EFFECT!>@file:ToString<!>
 
 import lombok.ToString
@@ -129,3 +130,8 @@ class WithUnsupportedArguments
 
 @ToString
 class IncompleteProperty(val<!SYNTAX!><!> )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, anonymousObjectExpression, classDeclaration,
+collectionLiteral, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, ifExpression,
+integerLiteral, interfaceDeclaration, override, primaryConstructor, propertyDeclaration, stringLiteral, superExpression,
+typeAliasDeclaration */

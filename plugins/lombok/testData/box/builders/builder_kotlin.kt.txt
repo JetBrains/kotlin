@@ -5,10 +5,6 @@ class AccessLevelPrivate {
     get
 
   private open class AccessLevelPrivateBuilder {
-    private var x: Int
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -24,6 +20,10 @@ class AccessLevelPrivate {
       <this>.#x = x
       return <this>
     }
+
+    private var x: Int
+      private get
+      private set
 
   }
 
@@ -72,18 +72,6 @@ class User {
     get
 
   open class UserBuilder {
-    private var name: String
-      private get
-      private set
-
-    private var age: Int
-      private get
-      private set
-
-    private var info: String?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -111,6 +99,18 @@ class User {
       <this>.#name = name
       return <this>
     }
+
+    private var age: Int
+      private get
+      private set
+
+    private var info: String?
+      private get
+      private set
+
+    private var name: String
+      private get
+      private set
 
   }
 

@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -76,7 +76,7 @@ private class ImplementedAnnotationsInfo(
 )
 
 private fun FirRegularClass.classModifiers(): Set<ClassModifier> = buildSet {
-    if (isInlineOrValue) add(ClassModifier.VALUE)
+    if (isValue) add(ClassModifier.VALUE)
     if (isInner) add(ClassModifier.INNER)
     // Only where these are modifiers the source actually carries. An interface and an annotation class are
     // abstract by their very kind, and the kind - not a modifier - is what has to be spoken about there, which
@@ -87,11 +87,6 @@ private fun FirRegularClass.classModifiers(): Set<ClassModifier> = buildSet {
         if (isSealed) add(ClassModifier.SEALED)
     }
 }
-
-fun FirRegularClass.uninstantiableClassModifier(): ClassModifier? =
-    classModifiers().firstOrNull { it in UNINSTANTIABLE_CLASS_MODIFIERS }
-
-private val UNINSTANTIABLE_CLASS_MODIFIERS = setOf(ClassModifier.INNER, ClassModifier.ABSTRACT, ClassModifier.SEALED)
 
 /**
  * Whether an annotation written on an element of [this] shape lands on one of [targets].
@@ -183,7 +178,8 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
             DO_NOT_USE_GETTERS, // Irrelevant in Kotlin
             CACHE_STRATEGY, // Not yet supported
             ON_PARAM, // Not yet supported
-        )
+        ),
+        unsupportedClassModifiers = EnumSet.of(ClassModifier.INNER, ClassModifier.VALUE),
     )
     this[LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
@@ -199,6 +195,14 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
         allowedTargetsMap = setOf(
             KotlinTarget.MEMBER_PROPERTY,
         )
+    )
+    this[LombokNames.DATA_ID] = ImplementedAnnotationsInfo(
+        allowedTargetsMap = setOf(
+            KotlinTarget.CLASS_ONLY,
+            KotlinTarget.OBJECT,
+            KotlinTarget.LOCAL_CLASS,
+        ),
+        unsupportedClassModifiers = EnumSet.of(ClassModifier.INNER),
     )
     this[LombokNames.BUILDER_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
@@ -415,13 +419,18 @@ fun checkCallSuper(
     annotationInfo: ConeLombokAnnotations.ConeLombokAnnotation,
     declaration: FirRegularClass,
     functionNames: Set<Name>,
+    appliedAnnotationName: Name,
 ) {
     if (callSuperMode == CallSuperMode.Warn && declaration.symbol.hasNonTrivialSuperclass(context.session)) {
+        val annotationName = annotationInfo.annotation.resolvedType.lookupTagIfAny?.name!!.takeIf {
+            it != LombokNames.DATA.shortName()
+        } ?: appliedAnnotationName
+
         reporter.reportOn(
             annotationInfo.annotation.source,
             LombokFirDiagnostics.CALL_SUPER_NOT_CALLED,
             functionNames.joinToString("/"),
-            annotationInfo.annotation.resolvedType.lookupTagIfAny?.name!!,
+            annotationName,
             context,
         )
     }

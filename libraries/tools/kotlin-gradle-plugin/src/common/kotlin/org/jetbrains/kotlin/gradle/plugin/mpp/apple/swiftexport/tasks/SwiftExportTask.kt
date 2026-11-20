@@ -16,10 +16,8 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
-import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
@@ -41,7 +39,12 @@ import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.konan.target.Distribution
 import javax.inject.Inject
 
-@DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
+/**
+ * Translates the klibs into Swift and Kotlin bridge sources. The output has no absolute paths, so it can be cached.
+ * A cache hit skips the task action and with it the dependency resolution diagnostics, like compiler warnings of a
+ * cached compile task: the same inputs gave the same diagnostics to the build that stored the entry.
+ */
+@CacheableTask
 internal abstract class SwiftExportTask @Inject constructor(
     private val workerExecutor: WorkerExecutor,
     private val fileSystem: FileSystemOperations,
@@ -56,7 +59,9 @@ internal abstract class SwiftExportTask @Inject constructor(
         @get:Optional
         abstract val flattenPackage: Property<String>
 
+        /** The klib to translate. Wired from the compile task, so the dependency on it comes with the file. */
         @get:InputFiles
+        @get:NormalizeLineEndings
         @get:PathSensitive(PathSensitivity.RELATIVE)
         abstract val artifact: RegularFileProperty
     }
@@ -69,6 +74,7 @@ internal abstract class SwiftExportTask @Inject constructor(
     abstract val cinteropModuleName: Property<String>
 
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val cinteropModuleArtifact: RegularFileProperty
@@ -77,6 +83,7 @@ internal abstract class SwiftExportTask @Inject constructor(
     abstract val kotlinNativeProvider: Property<KotlinNativeProvider>
 
     @get:Classpath
+    @get:NormalizeLineEndings
     abstract val swiftExportClasspath: ConfigurableFileCollection
 
     @get:Nested
@@ -96,6 +103,7 @@ internal abstract class SwiftExportTask @Inject constructor(
      * Up-to-date tracking of [exportConfiguration]'s backing configuration.
      */
     @get:Classpath
+    @get:NormalizeLineEndings
     abstract val exportConfigurationFiles: ConfigurableFileCollection
 
     /**
@@ -113,7 +121,21 @@ internal abstract class SwiftExportTask @Inject constructor(
      * Up-to-date tracking of [apiConfiguration]'s backing configuration.
      */
     @get:Classpath
+    @get:NormalizeLineEndings
     abstract val apiConfigurationFiles: ConfigurableFileCollection
+
+    /**
+     * Up-to-date tracking projection of [apiConfiguration]'s *direct* dependencies.
+     *
+     * Resolving [apiConfiguration]'s artifacts doesn't change when a transitive `api` dependency becomes direct - the
+     * resolved closure of files stays the same - but which modules are promoted to fully exported ones does. This
+     * property tracks the identities (project path or external `group:name`) of [apiConfiguration]'s direct dependencies,
+     * derived lazily from its resolution result (dependency-graph resolution only, not artifact resolution), as a stable,
+     * sorted list of strings - so the task re-runs whenever that set changes.
+     */
+    @get:Input
+    @get:Optional
+    abstract val apiDirectDependencyIdentities: ListProperty<String>
 
     /**
      * Mirrors [exportConfiguration] but contains Swift Export metadata of dependencies inside [exportConfiguration].
@@ -129,6 +151,7 @@ internal abstract class SwiftExportTask @Inject constructor(
      * Up-to-date tracking of [metadataConfiguration]'s backing configuration.
      */
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val metadataConfigurationFiles: ConfigurableFileCollection
 
@@ -146,6 +169,7 @@ internal abstract class SwiftExportTask @Inject constructor(
      * the subproject metadata producers run before this task executes, so their JSON exists when [run] reads it.
      */
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val sharedMetadataFiles: List<FileCollection>
         get() = sharedMetadata.orNull?.let { listOf(it.files) } ?: emptyList()
@@ -173,7 +197,7 @@ internal abstract class SwiftExportTask @Inject constructor(
             .sorted()
 
     /**
-     * The consumer-side module option overrides declared via the `export { swift { xcodeIntegration { configure(…) } } }` DSL,
+     * The consumer-side module option overrides declared via `configure(…)` of the [integrationDsl] block,
      * keyed by the dependency they apply to (external `group:name` coordinates or a project path).
      *
      * Held as `@Internal` because [SwiftExportDependencySelector] and [SwiftExportDeclaredModuleOptions] wrap plain
@@ -182,6 +206,12 @@ internal abstract class SwiftExportTask @Inject constructor(
      */
     @get:Internal
     abstract val dependencyOptionsOverrides: MapProperty<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>
+
+    /**
+     * The DSL block of the integration this run belongs to, such as `xcodeIntegration`. Only diagnostics use it.
+     */
+    @get:Internal
+    abstract val integrationDsl: Property<String>
 
     /**
      * Up-to-date tracking projection of [dependencyOptionsOverrides]. It exposes the plain, output-affecting values of
@@ -201,19 +231,18 @@ internal abstract class SwiftExportTask @Inject constructor(
             .sorted()
 
     /**
-     * Tracks the output files of the main compilation as task inputs.
+     * The JVM arguments of the worker process. Tracked through [trackedWorkerJvmArgs]: the heap size and the other
+     * `-X` flags don't change what the translation produces, a `-D` property read by the tool might.
      */
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val mainCompilationOutputFiles: ConfigurableFileCollection
-
     @get:Internal
-    abstract val ignoreExperimentalDiagnostic: Property<Boolean>
-
-    @get:Input
     internal val customJvmArgs: ListProperty<String> = objectFactory
         .listProperty<String>()
         .chainedFinalizeValueOnRead()
+
+    /** The entries of [customJvmArgs] that aren't `-X` flags. */
+    @get:Input
+    internal val trackedWorkerJvmArgs: List<String>
+        get() = customJvmArgs.get().filterNot { it.startsWith("-X") }
 
     /**
      * [customJvmArgs] with `-Xmx1g` appended unless they already set `-Xmx`.
@@ -227,10 +256,6 @@ internal abstract class SwiftExportTask @Inject constructor(
 
     @TaskAction
     fun run() {
-        if (!ignoreExperimentalDiagnostic.get()) {
-            warnAboutExperimentalSwiftExportFeature()
-        }
-
         cleanup()
 
         // Run Swift Export with process isolation to avoid leakage for AA/IntelliJ classes. See KT-73438
@@ -294,6 +319,7 @@ internal abstract class SwiftExportTask @Inject constructor(
         exportedModules = exportedModules.get(),
         dependencyOptionsOverrides = dependencyOptionsOverrides.get(),
         rootModuleName = mainModuleInput.moduleName.get(),
+        integrationDsl = integrationDsl.get(),
         reportDiagnostic = reportDiagnostic,
     )
 
@@ -306,15 +332,5 @@ internal abstract class SwiftExportTask @Inject constructor(
     private companion object {
         // Gradle gives worker processes 512 MB by default, which is too little for larger modules.
         const val DEFAULT_MAX_HEAP_SIZE = "-Xmx1g"
-    }
-
-    private fun warnAboutExperimentalSwiftExportFeature() {
-        reportDiagnostic(
-            KotlinToolingDiagnostics.ExperimentalFeatureWarning(
-                "Swift Export",
-                "https://kotl.in/1cr522",
-                "To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN}=true' to your gradle.properties"
-            )
-        )
     }
 }

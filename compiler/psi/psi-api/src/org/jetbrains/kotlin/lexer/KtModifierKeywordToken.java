@@ -28,7 +28,7 @@ public final class KtModifierKeywordToken extends KtKeywordToken {
      */
     @kotlin.Deprecated(
             message = "Use 'keywordModifier(value, tokenId)' instead",
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public static KtModifierKeywordToken keywordModifier(String value) {
@@ -44,7 +44,7 @@ public final class KtModifierKeywordToken extends KtKeywordToken {
      */
     @kotlin.Deprecated(
             message = "Use 'softKeywordModifier(value, tokenId)' instead",
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public static KtModifierKeywordToken softKeywordModifier(String value) {

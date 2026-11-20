@@ -1,0 +1,5 @@
+module dep.intermediate {
+    requires kotlin.stdlib;
+    requires dep.base;
+    exports ipkg;
+}

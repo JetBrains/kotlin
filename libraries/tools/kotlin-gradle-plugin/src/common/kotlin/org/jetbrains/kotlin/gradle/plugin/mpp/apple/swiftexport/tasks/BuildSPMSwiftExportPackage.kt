@@ -12,10 +12,10 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportFingerprintedCoordinationService
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.gradle.utils.runCommand
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportConstants
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
@@ -34,7 +35,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     private val objectFactory: ObjectFactory,
 ) : DefaultTask() {
     init {
-        onlyIf { HostManager.hostIsMac }
+        onlyIf(SwiftExportConstants.MACOS_HOST_REQUIRED) { HostManager.hostIsMac }
     }
 
     @get:Input
@@ -54,10 +55,11 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
         providerFactory.environmentVariable("DEPLOYMENT_TARGET_SETTING_NAME")
     )
 
-    @get:Internal
-    val deploymentTarget: Provider<String> = deploymentTargetSettingName.flatMap {
-        providerFactory.environmentVariable(it)
-    }
+    // An input of its own: the objects xcodebuild produces depend on the value, not only on the setting name
+    @get:Input
+    val deploymentTarget: Property<String> = objectFactory.property<String>().convention(
+        deploymentTargetSettingName.flatMap { providerFactory.environmentVariable(it) }
+    )
 
     @get:Optional
     @get:Input
@@ -69,6 +71,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     abstract val packageRoot: DirectoryProperty
 
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     protected val packageRootTrackedFiles: FileTree
         get() = packageRoot.packageFilesWithoutSwiftPMState()
@@ -80,6 +83,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     val swiftPMImportHasDependencies: Property<Boolean> = objectFactory.property<Boolean>().convention(false)
 
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val swiftPMImportFingerprint: RegularFileProperty
@@ -88,6 +92,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     abstract val swiftPMImportCoordinationService: Property<SwiftImportFingerprintedCoordinationService>
 
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     protected val swiftPMImportPackageTrackedFiles: FileCollection
@@ -106,7 +111,8 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     @get:Internal
     abstract val swiftPMImportCheckout: DirectoryProperty
 
-    @get:OutputDirectory
+    // xcodebuild scratch space: consumers only read packageBuildDir, so Gradle shouldn't snapshot it.
+    @get:LocalState
     abstract val packageDerivedData: DirectoryProperty
 
     @get:OutputDirectory

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -16,9 +18,11 @@ import kotlin.test.assertNotEquals
 
 @DisplayName("FUS statistic")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class FusPluginIT : KGPBaseTest() {
     private val reportRelativePath = "reports"
 
+    @TestMetadata("simpleProject")
     @DisplayName("smoke test for fus-statistics-gradle-plugin")
     @GradleTest
     fun smokeTestForFusStatisticsPlugin(gradleVersion: GradleVersion) {
@@ -47,6 +51,7 @@ class FusPluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("with configuration cache and project isolation")
     @GradleTest
     fun withConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {
@@ -132,6 +137,7 @@ class FusPluginIT : KGPBaseTest() {
         return buildIds!![0] //all checks were made on the assertion above
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("test override metrics for fus-statistics-gradle-plugin")
     @GradleTest
     fun testMetricsOverrideForFusStatisticsPlugin(gradleVersion: GradleVersion) {
@@ -164,6 +170,7 @@ class FusPluginIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("multiClassloaderProject")
     @DisplayName("test configuration metrics with different classloaders")
     @GradleTest
     fun testConfigurationMetricsOnly(gradleVersion: GradleVersion) {

@@ -1,0 +1,25 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+internal value class UndoManager<R : Any?>
+    private val o: String
+        /* TARGET declaration */ private fun <get-o>(): String
+    private val k: String
+        /* TARGET declaration */ private fun <get-k>(): String
+    public companion object Companion
+        public inline fun <reified T : Any?> getO(value: UndoManager<T>): String
+            /* ACCESSOR use-site */ access$<get-o><T>($this = value)
+    public inline companion fun <reified T : Any?> getK(value: UndoManager<T>): String
+        /* ACCESSOR use-site */ access$<get-k><T>($this = value)
+    /* ACCESSOR declaration */ internal companion fun <R : Any?> access$<get-o>($this: UndoManager<R>): String
+        /* TARGET use-site */ $this.<get-o>()
+    /* ACCESSOR declaration */ internal companion fun <R : Any?> access$<get-k>($this: UndoManager<R>): String
+        /* TARGET use-site */ $this.<get-k>()
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-o><Int>($this = value)
+    /* ACCESSOR use-site */ access$<get-k><Int>($this = value)

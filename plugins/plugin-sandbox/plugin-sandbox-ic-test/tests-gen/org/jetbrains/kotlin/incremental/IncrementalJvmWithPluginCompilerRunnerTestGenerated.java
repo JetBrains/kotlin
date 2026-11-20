@@ -58,6 +58,24 @@ public class IncrementalJvmWithPluginCompilerRunnerTestGenerated extends Abstrac
   }
 
   @Test
+  @TestMetadata("changePredicateDeclarationKind")
+  public void testChangePredicateDeclarationKind() {
+    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/changePredicateDeclarationKind/");
+  }
+
+  @Test
+  @TestMetadata("filterPredicateByDeclarationKind")
+  public void testFilterPredicateByDeclarationKind() {
+    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/filterPredicateByDeclarationKind/");
+  }
+
+  @Test
+  @TestMetadata("filterTopLevelFunctionsByPredicate")
+  public void testFilterTopLevelFunctionsByPredicate() {
+    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/filterTopLevelFunctionsByPredicate/");
+  }
+
+  @Test
   @TestMetadata("generateNewTopLevelFunction")
   public void testGenerateNewTopLevelFunction() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/generateNewTopLevelFunction/");
@@ -91,5 +109,11 @@ public class IncrementalJvmWithPluginCompilerRunnerTestGenerated extends Abstrac
   @TestMetadata("removeMethodFromGeneratedClass")
   public void testRemoveMethodFromGeneratedClass() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/removeMethodFromGeneratedClass/");
+  }
+
+  @Test
+  @TestMetadata("restoreGeneratedTopLevelFunction")
+  public void testRestoreGeneratedTopLevelFunction() {
+    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/restoreGeneratedTopLevelFunction/");
   }
 }

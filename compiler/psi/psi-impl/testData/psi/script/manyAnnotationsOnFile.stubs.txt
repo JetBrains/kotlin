@@ -22,4 +22,4 @@ FILE[kind=Script[packageFqName=bar]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=bar]
   IMPORT_LIST
-  SCRIPT[fqName=bar.ManyAnnotationsOnFile, fqName=bar.ManyAnnotationsOnFile, isReplSnippet=false, name=ManyAnnotationsOnFile]
+  SCRIPT[fqName=bar.ManyAnnotationsOnFile, fqName=bar.ManyAnnotationsOnFile, name=ManyAnnotationsOnFile]

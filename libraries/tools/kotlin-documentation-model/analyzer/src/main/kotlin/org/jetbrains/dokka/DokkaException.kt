@@ -4,4 +4,4 @@
 
 package org.jetbrains.dokka
 
-public open class DokkaException(message: String) : RuntimeException(message)
+internal open class DokkaException(message: String) : RuntimeException(message)

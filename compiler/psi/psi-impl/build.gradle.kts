@@ -8,23 +8,19 @@ plugins {
 }
 
 dependencies {
-    api(project(":core:compiler.common"))
-    api(project(":compiler:util"))
-    api(project(":compiler:frontend.common"))
+    api(project(":compiler:psi:psi-api"))
+    implementation(project(":compiler:psi:parser"))
 
     compileOnly(intellijCore())
-    compileOnly(libs.guava)
-    compileOnly(libs.intellij.fastutil)
-
-    implementation(project(":compiler:psi:psi-api"))
-    implementation(project(":compiler:psi:parser"))
+    compileOnly(libs.org.jetbrains.annotations)
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
-    testFixturesApi(libs.junit.jupiter.api)
+    testFixturesImplementation(project(":compiler:psi:parser"))
 
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 

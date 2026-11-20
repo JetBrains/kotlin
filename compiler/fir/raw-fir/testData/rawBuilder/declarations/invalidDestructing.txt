@@ -4,6 +4,13 @@ FILE: invalidDestructing.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).to#(IntegerLiteral(2))
+        private final [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = IntegerLiteral(1).to#(IntegerLiteral(2))
+            private get(): <implicit>
+
+        public final [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = R|/A.<destruct>|.component1#()
+            public get(): <implicit>
+
+        public final [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = R|/A.<destruct>|.component2#()
+            public get(): <implicit>
 
     }

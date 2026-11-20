@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.GivenFunctionsMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.compact
 import java.io.Serializable
@@ -69,7 +69,7 @@ import java.lang.Deprecated as JavaLangDeprecated
 
 internal class KClassImpl<T : Any>(
     override val jClass: Class<T>,
-) : KDeclarationContainerImpl(), KClass<T>, KTypeParameterOwnerImpl, TypeConstructorMarker, KotlinGenericDeclaration {
+) : MemberContainer<T>(), KotlinGenericDeclaration {
     inner class Data : KDeclarationContainerImpl.Data() {
         val kmClass: KmClass? by lazy(PUBLICATION) {
             if (loadMetadataDirectly) {
@@ -94,11 +94,14 @@ internal class KClassImpl<T : Any>(
                 if (jClass == Cloneable::class.java) {
                     return@lazy createCloneableKmClass()
                 }
-                if (descriptor is ClassDescriptorImpl) {
-                    return@lazy createEmptyKmClass()
-                }
-                (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
-                    descriptor.classProto.toKmClass(descriptor.c.nameResolver)
+                when (descriptor) {
+                    is EnumEntrySyntheticClassDescriptor -> {
+                        val metadata = jClass.getAnnotation(Metadata::class.java) ?: return@lazy createEmptyKmClass()
+                        (KotlinClassMetadata.readLenient(metadata) as? KotlinClassMetadata.Class)?.kmClass ?: createEmptyKmClass()
+                    }
+                    is ClassDescriptorImpl -> createEmptyKmClass()
+                    is DeserializedClassDescriptor -> descriptor.classProto.toKmClass(descriptor.c.nameResolver)
+                    else -> null
                 }
             }
         }
@@ -485,13 +488,13 @@ internal class KClassImpl<T : Any>(
 
     val descriptor: ClassDescriptor get() = data.value.descriptor
 
-    internal val kmClass: KmClass? get() = data.value.kmClass
+    override val kmClass: KmClass? get() = data.value.kmClass
 
     override val annotations: List<Annotation> get() = data.value.annotations
 
-    internal val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
+    override val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
-    internal val classKind: ClassKind
+    override val classKind: ClassKind
         get() = kmClass?.kind ?: when {
             jClass.isAnnotation -> ClassKind.ANNOTATION_CLASS
             jClass.isInterface -> ClassKind.INTERFACE
@@ -506,7 +509,15 @@ internal class KClassImpl<T : Any>(
 
     override val members: Collection<KCallable<*>> get() = data.value.allMembers
 
-    internal fun getFakeOverrideMembersByName(name: String): MembersJavaSignatureMap = data.value.getFakeOverrideMembersByName(name)
+    override val declaredMemberNames: Set<String> get() = data.value.declaredMemberNames
+
+    override val additionalFunctions: Collection<ReflectKCallable<*>> get() = data.value.additionalFunctions
+
+    override fun getDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> = data.value.getDeclaredMembersByName(name)
+
+    override fun getMembersByName(name: String): Collection<ReflectKCallable<*>> = data.value.getMembersByName(name)
+
+    override fun getFakeOverrideMembersByName(name: String): MembersJavaSignatureMap = data.value.getFakeOverrideMembersByName(name)
 
     val isComplicatedBuiltinSubclass: Boolean get() = data.value.isComplicatedBuiltinSubclass
 
@@ -564,7 +575,7 @@ internal class KClassImpl<T : Any>(
 
     override val typeParameters: List<KTypeParameter> get() = data.value.typeParameters
 
-    internal val typeParameterTable: TypeParameterTable get() = data.value.typeParameterTable
+    override val typeParameterTable: TypeParameterTable get() = data.value.typeParameterTable
 
     override val supertypes: List<KType> get() = data.value.supertypes
 

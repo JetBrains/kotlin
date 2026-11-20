@@ -551,7 +551,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) : 
                             ctx.addPrevious(JsExpressionStatement(accept(initializer)).apply { synthetic = true })
                         }
                     } else {
-                        ctx.addPrevious(JsVars(JsVars.Variant.Var, *subList.toTypedArray()).apply { synthetic = true })
+                        ctx.addPrevious(JsVars(x.variant, *subList.toTypedArray()).apply { synthetic = true })
                     }
                 }
                 ctx.removeMe()

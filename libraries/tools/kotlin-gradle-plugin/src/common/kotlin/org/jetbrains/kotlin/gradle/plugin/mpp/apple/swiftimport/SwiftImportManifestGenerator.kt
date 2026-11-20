@@ -31,7 +31,7 @@ internal object SwiftImportManifestGenerator {
         targetDependencies: List<String>,
         binaryTargets: List<String> = emptyList(),
     ): String = buildStringBlock(defaultIndent = "  ") {
-        line("// swift-tools-version: 5.9")
+        line("// swift-tools-version: 6.1")
         line("import PackageDescription")
         block("let package = Package(", ")") {
             commaSeparatedEntries {

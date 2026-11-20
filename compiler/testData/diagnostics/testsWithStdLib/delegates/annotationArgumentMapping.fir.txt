@@ -53,7 +53,7 @@ FILE: annotationArgumentMapping.kt
     }
     public final fun createArgumentMapping(valueParameters: R|kotlin/collections/List<ValueParameter>?|, arguments: R|kotlin/collections/List<Argument>|): R|FirAnnotationArgumentMapping| {
         ^createArgumentMapping R|/buildAnnotationArgumentMapping|(<L> = build@fun R|FirAnnotationArgumentMappingBuilder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline, kind=EXACTLY_ONCE>  {
-            lval parameterByName: R|kotlin/collections/Map<kotlin/String, ValueParameter>?|by R|kotlin/lazy|<R|kotlin/collections/Map<kotlin/String, ValueParameter>?|>(<L> = lazy@fun <anonymous>(): R|kotlin/collections/Map<kotlin/String, ValueParameter>?| <inline=NoInline>  {
+            lval parameterByName: R|kotlin/collections/Map<kotlin/String, ValueParameter>?| by R|kotlin/lazy|<R|kotlin/collections/Map<kotlin/String, ValueParameter>?|>(<L> = lazy@fun <anonymous>(): R|kotlin/collections/Map<kotlin/String, ValueParameter>?| <inline=NoInline>  {
                 lval valueParameters: R|kotlin/collections/List<ValueParameter>| = R|<local>/valueParameters| ?: ^@lazy Null(null)
                 ^ R|<local>/valueParameters|.R|kotlin/collections/associateBy|<R|ValueParameter|, R|kotlin/String|>(<L> = associateBy@fun <anonymous>(it: R|ValueParameter|): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
                     ^ R|<local>/it|.R|/ValueParameter.name|

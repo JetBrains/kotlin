@@ -246,6 +246,9 @@ val AbstractInsnNode.intConstant: Int?
             else -> null
         }
 
+val AbstractInsnNode.intConstantOrError: Int
+    get() = intConstant ?: error("expected int constant, got $insnText")
+
 fun insnListOf(vararg insns: AbstractInsnNode) = InsnList().apply { insns.forEach { add(it) } }
 
 fun AbstractInsnNode.isStoreOperation(): Boolean = opcode in ISTORE..ASTORE

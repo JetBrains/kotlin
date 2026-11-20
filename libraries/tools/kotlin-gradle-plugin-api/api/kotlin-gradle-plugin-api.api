@@ -141,6 +141,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptExtensionCon
 	public abstract fun getCorrectErrorTypes ()Z
 	public abstract fun getDetectMemoryLeaks ()Ljava/lang/String;
 	public abstract fun getDumpDefaultParameterValues ()Z
+	public abstract fun getHeaderMode ()Lorg/gradle/api/provider/Property;
 	public abstract fun getIncludeCompileClasspath ()Ljava/lang/Boolean;
 	public abstract fun getJavacOptions ()Ljava/util/Map;
 	public abstract fun getKeepJavacAnnotationProcessors ()Z
@@ -539,6 +540,12 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeComp
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeSettingsDsl {
+	public abstract fun getCommonizeCInteropMaxWorkers ()Lorg/gradle/api/provider/Property;
+	public abstract fun getCompileMaxWorkers ()Lorg/gradle/api/provider/Property;
+	public abstract fun getLinkMaxWorkers ()Lorg/gradle/api/provider/Property;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinPublishingDsl {
 	public abstract fun getPublishing ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPublishing;
 	public abstract fun publishing (Lkotlin/jvm/functions/Function1;)V
@@ -555,6 +562,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelEx
 	public abstract fun abiValidation (Lorg/gradle/api/Action;)V
 	public abstract fun getAbiValidation ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;
 	public abstract fun getCompilerVersion ()Lorg/gradle/api/provider/Property;
+	public abstract fun getCoreKotlinLibrariesVersion ()Lorg/gradle/api/provider/Property;
 	public abstract synthetic fun getKotlinDaemonJvmArgs ()Ljava/util/List;
 	public abstract fun invokeWhenCreated (Lorg/gradle/api/NamedDomainObjectContainer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 	public abstract fun jvmToolchain (I)V
@@ -608,6 +616,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode : java
 	public static final field Check Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
 	public static final field Disabled Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
 	public static final field Full Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
 }
@@ -827,6 +836,139 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/nodejs
 public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/nodejs/PreInstalledNodeJsToolchainService$Parameters : org/jetbrains/kotlin/gradle/dsl/toolchain/nodejs/NodeJsToolchainService$Parameters {
 	public fun <init> ()V
 	public abstract fun getNodeJsExecutable ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/DefaultWasiAdapterToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainService {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/DefaultWasiAdapterToolchainService$Parameters : org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainService$Parameters {
+	public fun <init> ()V
+	public abstract fun getDownloadBaseUrl ()Lorg/gradle/api/provider/Property;
+	public abstract fun getInstallationDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getOffline ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/DisabledWasiAdapterToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/PreInstalledWasiAdapterToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainService {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/PreInstalledWasiAdapterToolchainService$Parameters : org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainService$Parameters {
+	public fun <init> ()V
+	public abstract fun getAdapterFile ()Lorg/gradle/api/file/RegularFileProperty;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapter {
+	public abstract fun getAdapterFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getFlavor ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterFlavor : java/lang/Enum {
+	public static final field COMMAND Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterFlavor;
+	public static final field PROXY Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterFlavor;
+	public static final field REACTOR Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterFlavor;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterFlavor;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterFlavor;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterRequest {
+	public abstract fun getFlavor ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+	public final fun version (Ljava/lang/String;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainManagementDsl {
+	public abstract fun disable ()V
+	public abstract fun toolchainService (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainManagementDsl$DefaultImpls {
+	public static fun disable (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainManagementDsl;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainService : org/gradle/api/services/BuildService {
+	public abstract fun requestAdapter (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterRequest;)Lorg/gradle/api/provider/Provider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterToolchainService$Parameters : org/gradle/api/services/BuildServiceParameters {
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterVersion : java/io/Serializable {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getVersion ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/DefaultWasmToolsToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/DefaultWasmToolsToolchainService$Parameters : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService$Parameters {
+	public fun <init> ()V
+	public abstract fun getDownloadBaseUrl ()Lorg/gradle/api/provider/Property;
+	public abstract fun getInstallationDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getOffline ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/DisabledWasmToolsToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/PreInstalledWasmToolsToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/PreInstalledWasmToolsToolchainService$Parameters : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService$Parameters {
+	public fun <init> ()V
+	public abstract fun getWasmToolsExecutable ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform : java/io/Serializable {
+	public abstract fun getArch ()Ljava/lang/String;
+	public abstract fun getOs ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsExecutable {
+	public abstract fun getExecutable ()Lorg/gradle/api/provider/Property;
+	public abstract fun getPlatform ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsRequest {
+	public abstract fun getPlatform ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+	public final fun version (Ljava/lang/String;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainManagementDsl {
+	public abstract fun disable ()V
+	public abstract fun toolchainService (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainManagementDsl$DefaultImpls {
+	public static fun disable (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainManagementDsl;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService : org/gradle/api/services/BuildService {
+	public abstract fun request (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsRequest;)Lorg/gradle/api/provider/Provider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService$Parameters : org/gradle/api/services/BuildServiceParameters {
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainServiceKt {
+	public static final fun WasmToolsBuildPlatform (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform;
+	public static final fun WasmToolsVersion (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion : java/io/Serializable {
+	public abstract fun getVersion ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/CInteropSettings : org/gradle/api/Named {
@@ -1736,6 +1878,14 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/abi/KotlinLega
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/nodejs/UsesNodeJsToolchainService : org/gradle/api/Task {
 	public abstract fun getNodeJsToolchainService ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/wasiadapter/UsesWasiAdapterToolchainService : org/gradle/api/Task {
+	public abstract fun getWasiAdapterToolchainService ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/wasmtools/UsesWasmToolsToolchainService : org/gradle/api/Task {
+	public abstract fun getWasmToolsToolchainService ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract interface class org/jetbrains/kotlin/project/model/LanguageSettings {

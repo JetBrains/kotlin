@@ -1,0 +1,13 @@
+STEP 0:
+    modifications:
+        U : holder.kt -> holder.kt
+        U : user.kt -> user.kt
+    added cache: holder.kt, user.kt
+
+// Only user.kt is dirty, so holder.kt is deserialized on demand while the cache for user.kt is being rebuilt.
+// The private property of anonymous object type in holder.kt forces its initializer to be deserialized anyway (KT-40216),
+// so the fake overrides of the anonymous class have to be linked for a file that is not part of the module fragment.
+STEP 1:
+    modifications:
+        U : user.1.kt -> user.kt
+    modified cache: user.kt

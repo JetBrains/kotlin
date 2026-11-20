@@ -48,11 +48,12 @@ internal object HeapTypeTags {
     const val FUNC = 3u
     const val NO_EXTERN = 4u
     const val NONE = 5u
-    const val NO_FUNC = 5u
     const val STRUCT = 6u
     const val HEAP_GC_TYPE = 7u
     const val HEAP_VT_TYPE = 8u
     const val HEAP_FUNC_TYPE = 9u
+    const val NO_FUNC = 10u
+    const val NO_CONT = 11u
 }
 
 internal object InstructionTags {

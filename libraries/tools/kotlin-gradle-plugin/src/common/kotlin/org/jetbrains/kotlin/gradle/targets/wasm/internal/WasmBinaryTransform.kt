@@ -15,6 +15,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyOf
 import org.jetbrains.kotlin.compilerRunner.*
@@ -63,6 +64,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
         abstract val currentJvmJdkToolsJar: Property<File>
 
         @get:Classpath
+        @get:NormalizeLineEndings
         abstract val defaultCompilerClasspath: ConfigurableFileCollection
 
         @get:Input
@@ -87,6 +89,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
         internal abstract val enhancedFreeCompilerArgs: ListProperty<String>
 
         @get:Classpath
+        @get:NormalizeLineEndings
         internal abstract val classpath: ConfigurableFileCollection
 
         @get:Internal
@@ -136,6 +139,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
     abstract val execOps: ExecOperations
 
     @get:InputArtifact
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.NAME_ONLY)
     abstract val inputArtifact: Provider<FileSystemLocation>
 
@@ -291,7 +295,6 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
  * A no-op version of [WasmBinaryTransform] that can be used when transformation is not needed
  * or when the input is already in the expected format.
  */
-@CacheableTransform
 internal abstract class NoOpWasmBinaryTransform : TransformAction<TransformParameters.None> {
 
     override fun transform(p0: TransformOutputs) {

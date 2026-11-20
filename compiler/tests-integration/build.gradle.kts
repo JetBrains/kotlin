@@ -26,10 +26,11 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:mp-parsing2fir")))
-    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     testFixturesApi(project(":kotlin-scripting-compiler"))
@@ -47,20 +48,6 @@ dependencies {
 
     antLauncherJar(commonDependency("org.apache.ant", "ant"))
     antLauncherJar(toolsJar())
-}
-
-/**
- * The `:abi-comparator` dependency is a fat-jar which contains some metadata-related classes. Together with `tests-common-new` it appeared
- * on runtime classpath of `:compiler:tests-integration` and conflicted with the same classes from `protobufLite`,
- * required for `kotlinx-metadata-klib` dependency.
- *
- * But it's not possible to just remove the `:abi-comparator` dependency from the `:tests-common-new` because of KT-86586.
- * So it's removed from the test runtime classpath here manually.
- */
-configurations {
-    testRuntimeClasspath {
-        exclude(module = "abi-comparator")
-    }
 }
 
 optInToExperimentalCompilerApi()
@@ -118,7 +105,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData/compileKotlinAgainstCustomBinaries")
     testData(project(":compiler").isolated, "testData/ir/klibLayout/multiFiles.kt")
     testData(project(":compiler").isolated, "testData/kotlinClassFinder/nestedClass.kt")
-    testData(project(":compiler").isolated, "testData/loadJavaPackageAnnotations")
 
     withJvmStdlibAndReflect()
     withTestJar()

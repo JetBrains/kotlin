@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticCheckerKind
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsDiagnosticProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -20,13 +18,13 @@ import org.jetbrains.kotlin.psi.KtElement
 
 internal class KaFirDiagnosticProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsDiagnosticProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsDiagnosticProvider {
     override fun diagnostics(element: KtElement): KaDiagnostics = element.withPsiValidityAssertion {
         KaFirDiagnostics(
             element = element,
             directOnly = false,
             checkerKinds = DEFAULT_CHECKER_KINDS,
-            ignoreSuppressed = true,
+            includingSuppressed = false,
         )
     }
 
@@ -37,7 +35,7 @@ internal class KaFirDiagnosticProvider(
         private val element: KtElement,
         private val directOnly: Boolean,
         private val checkerKinds: Set<KaDiagnosticCheckerKind>,
-        private val ignoreSuppressed: Boolean,
+        private val includingSuppressed: Boolean,
     ) : KaDiagnostics {
         override val token: KaLifetimeToken get() = analysisSession.token
 
@@ -48,20 +46,20 @@ internal class KaFirDiagnosticProvider(
                 element = element,
                 directOnly = directOnly,
                 checkerKinds = kinds.toSet(),
-                ignoreSuppressed = ignoreSuppressed,
+                includingSuppressed = includingSuppressed,
             )
         }
 
         override fun withCheckers(vararg kinds: KaDiagnosticCheckerKind): KaDiagnostics = withCheckers(kinds.toSet())
 
-        override fun ignoreSuppressed(ignore: Boolean): KaDiagnostics = withValidityAssertion {
-            if (ignoreSuppressed == ignore) return this
+        override fun includingSuppressed(include: Boolean): KaDiagnostics = withValidityAssertion {
+            if (includingSuppressed == include) return this
 
             KaFirDiagnostics(
                 element = element,
                 directOnly = directOnly,
                 checkerKinds = checkerKinds,
-                ignoreSuppressed = ignore,
+                includingSuppressed = include,
             )
         }
 
@@ -72,7 +70,7 @@ internal class KaFirDiagnosticProvider(
                 element = element,
                 directOnly = direct,
                 checkerKinds = checkerKinds,
-                ignoreSuppressed = ignoreSuppressed,
+                includingSuppressed = includingSuppressed,
             )
         }
 
@@ -89,7 +87,7 @@ internal class KaFirDiagnosticProvider(
             val filter = checkerKinds.asLLFilter()
 
             element.diagnostics(resolutionFacade = resolutionFacade, filter = filter, isRecursive = !directOnly)
-                .filter { !ignoreSuppressed || !it.isSuppressed }
+                .filter { includingSuppressed || !it.isSuppressed }
                 .map { it.asKaDiagnostic() }
         }
 

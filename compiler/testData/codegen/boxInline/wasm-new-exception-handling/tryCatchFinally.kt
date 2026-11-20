@@ -4,7 +4,6 @@
 // TODO: remove the test when KT-66906 will be resolved
 // WITH_STDLIB
 // KJS_WITH_FULL_RUNTIME
-// WASM_IGNORE_FOR: vm=WasmEdge
 
 // FILE: 1.kt
 

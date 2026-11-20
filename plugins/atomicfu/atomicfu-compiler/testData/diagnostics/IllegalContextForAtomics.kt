@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 import kotlinx.atomicfu.*
@@ -56,7 +57,7 @@ fun typeMismatch() {
     val b: Any = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>atomic(0)<!>
     val arr: Any? = <!ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY!>AtomicLongArray(2)<!>
 
-    val d: Any by atomic("r")
+    <!LOCAL_PROPERTIES_DELEGATED_TO_ATOMICS_ARE_FORBIDDEN!>val<!> d: Any by atomic("r")
 }
 
 fun propertyInsideLocalClass() {
@@ -64,3 +65,6 @@ fun propertyInsideLocalClass() {
         private val a = atomic(0)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, lambdaLiteral, localClass,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, propertyDelegate, stringLiteral */

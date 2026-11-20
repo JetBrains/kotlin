@@ -57,7 +57,6 @@ Two kinds — both must be regenerated after relevant changes:
 # Regenerate generated sources (compiler argument classes and API version file; after changing compiler arguments in :compiler:arguments)
 ./gradlew :compiler:build-tools:kotlin-build-tools-api:generateBtaSources
 ./gradlew :compiler:build-tools:kotlin-build-tools-impl:generateBtaSources
-./gradlew :compiler:build-tools:kotlin-build-tools-compat:generateBtaSources
 
 # Regenerate API binary compatibility dump (after any public API change)
 ./gradlew :compiler:build-tools:kotlin-build-tools-api:apiDump

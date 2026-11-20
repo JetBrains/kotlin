@@ -264,6 +264,42 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("annotationOnWhereSubjectClass.kt")
+    public void testAnnotationOnWhereSubjectClass() {
+      run("annotationOnWhereSubjectClass.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnWhereSubjectFunction.kt")
+    public void testAnnotationOnWhereSubjectFunction() {
+      run("annotationOnWhereSubjectFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnWhereSubjectFunctionArgument.kt")
+    public void testAnnotationOnWhereSubjectFunctionArgument() {
+      run("annotationOnWhereSubjectFunctionArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnWhereSubjectFunctionCallee.kt")
+    public void testAnnotationOnWhereSubjectFunctionCallee() {
+      run("annotationOnWhereSubjectFunctionCallee.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnWhereSubjectFunctionTypeReference.kt")
+    public void testAnnotationOnWhereSubjectFunctionTypeReference() {
+      run("annotationOnWhereSubjectFunctionTypeReference.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnWhereSubjectProperty.kt")
+    public void testAnnotationOnWhereSubjectProperty() {
+      run("annotationOnWhereSubjectProperty.kt");
+    }
+
+    @Test
     @TestMetadata("annotationReferenceOnEnumEntry.kt")
     public void testAnnotationReferenceOnEnumEntry() {
       run("annotationReferenceOnEnumEntry.kt");
@@ -1042,6 +1078,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("unaryMinusIntLiteral_minValue.kt")
+    public void testUnaryMinusIntLiteral_minValue() {
+      run("unaryMinusIntLiteral_minValue.kt");
+    }
+
+    @Test
     @TestMetadata("unaryMinusIntLiteral_rhs.kt")
     public void testUnaryMinusIntLiteral_rhs() {
       run("unaryMinusIntLiteral_rhs.kt");
@@ -1200,6 +1242,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("stdlibArrayOperator.kt")
+    public void testStdlibArrayOperator() {
+      run("stdlibArrayOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("stdlibDoubleArrayOperator.kt")
+    public void testStdlibDoubleArrayOperator() {
+      run("stdlibDoubleArrayOperator.kt");
+    }
+
+    @Test
     @TestMetadata("stdlibSequenceOperator.kt")
     public void testStdlibSequenceOperator() {
       run("stdlibSequenceOperator.kt");
@@ -1215,6 +1269,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("stdlibSetWithoutStdlib.kt")
     public void testStdlibSetWithoutStdlib() {
       run("stdlibSetWithoutStdlib.kt");
+    }
+
+    @Test
+    @TestMetadata("stdlibULongArrayOperator.kt")
+    public void testStdlibULongArrayOperator() {
+      run("stdlibULongArrayOperator.kt");
     }
   }
 
@@ -1247,6 +1307,30 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("contextParametersInTypes.kt")
     public void testContextParametersInTypes() {
       run("contextParametersInTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedSuperTypeEntry.kt")
+    public void testDelegatedSuperTypeEntry() {
+      run("delegatedSuperTypeEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedSuperTypeEntryInLocalClass.kt")
+    public void testDelegatedSuperTypeEntryInLocalClass() {
+      run("delegatedSuperTypeEntryInLocalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedSuperTypeExpression.kt")
+    public void testDelegatedSuperTypeExpression() {
+      run("delegatedSuperTypeExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedSuperTypeExpressionInLocalClass.kt")
+    public void testDelegatedSuperTypeExpressionInLocalClass() {
+      run("delegatedSuperTypeExpressionInLocalClass.kt");
     }
 
     @Test
@@ -1420,6 +1504,24 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     public void testFullValueClassDestructuring() {
       run("fullValueClassDestructuring.kt");
     }
+
+    @Test
+    @TestMetadata("modifierListInDestructuringDeclaration.kt")
+    public void testModifierListInDestructuringDeclaration() {
+      run("modifierListInDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("modifierListInMemberDestructuringDeclaration.kt")
+    public void testModifierListInMemberDestructuringDeclaration() {
+      run("modifierListInMemberDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("modifierListInTopLevelDestructuringDeclaration.kt")
+    public void testModifierListInTopLevelDestructuringDeclaration() {
+      run("modifierListInTopLevelDestructuringDeclaration.kt");
+    }
   }
 
   @Nested
@@ -1571,6 +1673,24 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("intLiteral.kt")
     public void testIntLiteral() {
       run("intLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("intLiteral_minValueInUnresolvedInfixCall_justLiteral.kt")
+    public void testIntLiteral_minValueInUnresolvedInfixCall_justLiteral() {
+      run("intLiteral_minValueInUnresolvedInfixCall_justLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("intLiteral_minValue_justLiteral.kt")
+    public void testIntLiteral_minValue_justLiteral() {
+      run("intLiteral_minValue_justLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("intLiteral_minusMinusOne_justOne.kt")
+    public void testIntLiteral_minusMinusOne_justOne() {
+      run("intLiteral_minusMinusOne_justOne.kt");
     }
 
     @Test
@@ -2054,6 +2174,312 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("danglingContextInFunctionType.kt")
+    public void testDanglingContextInFunctionType() {
+      run("danglingContextInFunctionType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotatedContextType.kt")
+    public void testDanglingContextInFunctionTypeAnnotatedContextType() {
+      run("danglingContextInFunctionTypeAnnotatedContextType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotatedEntryType.kt")
+    public void testDanglingContextInFunctionTypeAnnotatedEntryType() {
+      run("danglingContextInFunctionTypeAnnotatedEntryType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotatedTypeElement.kt")
+    public void testDanglingContextInFunctionTypeAnnotatedTypeElement() {
+      run("danglingContextInFunctionTypeAnnotatedTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotatedWholeType.kt")
+    public void testDanglingContextInFunctionTypeAnnotatedWholeType() {
+      run("danglingContextInFunctionTypeAnnotatedWholeType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotation.kt")
+    public void testDanglingContextInFunctionTypeAnnotation() {
+      run("danglingContextInFunctionTypeAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeAnnotationType.kt")
+    public void testDanglingContextInFunctionTypeAnnotationType() {
+      run("danglingContextInFunctionTypeAnnotationType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeFunctionTypeParameter.kt")
+    public void testDanglingContextInFunctionTypeFunctionTypeParameter() {
+      run("danglingContextInFunctionTypeFunctionTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeLambdaParameter.kt")
+    public void testDanglingContextInFunctionTypeLambdaParameter() {
+      run("danglingContextInFunctionTypeLambdaParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeLocal.kt")
+    public void testDanglingContextInFunctionTypeLocal() {
+      run("danglingContextInFunctionTypeLocal.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNamed.kt")
+    public void testDanglingContextInFunctionTypeNamed() {
+      run("danglingContextInFunctionTypeNamed.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullable.kt")
+    public void testDanglingContextInFunctionTypeNullable() {
+      run("danglingContextInFunctionTypeNullable.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableAnnotatedEntryType.kt")
+    public void testDanglingContextInFunctionTypeNullableAnnotatedEntryType() {
+      run("danglingContextInFunctionTypeNullableAnnotatedEntryType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableAnnotation.kt")
+    public void testDanglingContextInFunctionTypeNullableAnnotation() {
+      run("danglingContextInFunctionTypeNullableAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableLambdaParameter.kt")
+    public void testDanglingContextInFunctionTypeNullableLambdaParameter() {
+      run("danglingContextInFunctionTypeNullableLambdaParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableNullableTypeElement.kt")
+    public void testDanglingContextInFunctionTypeNullableNullableTypeElement() {
+      run("danglingContextInFunctionTypeNullableNullableTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableReceiverType.kt")
+    public void testDanglingContextInFunctionTypeNullableReceiverType() {
+      run("danglingContextInFunctionTypeNullableReceiverType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableTypeElement.kt")
+    public void testDanglingContextInFunctionTypeNullableTypeElement() {
+      run("danglingContextInFunctionTypeNullableTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableVararg.kt")
+    public void testDanglingContextInFunctionTypeNullableVararg() {
+      run("danglingContextInFunctionTypeNullableVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeNullableWholeType.kt")
+    public void testDanglingContextInFunctionTypeNullableWholeType() {
+      run("danglingContextInFunctionTypeNullableWholeType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeOuterAnnotation.kt")
+    public void testDanglingContextInFunctionTypeOuterAnnotation() {
+      run("danglingContextInFunctionTypeOuterAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeTypeArgument.kt")
+    public void testDanglingContextInFunctionTypeTypeArgument() {
+      run("danglingContextInFunctionTypeTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeVararg.kt")
+    public void testDanglingContextInFunctionTypeVararg() {
+      run("danglingContextInFunctionTypeVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeVarargAnnotated.kt")
+    public void testDanglingContextInFunctionTypeVarargAnnotated() {
+      run("danglingContextInFunctionTypeVarargAnnotated.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeVarargTypeElement.kt")
+    public void testDanglingContextInFunctionTypeVarargTypeElement() {
+      run("danglingContextInFunctionTypeVarargTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeVarargWholeType.kt")
+    public void testDanglingContextInFunctionTypeVarargWholeType() {
+      run("danglingContextInFunctionTypeVarargWholeType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWholeType.kt")
+    public void testDanglingContextInFunctionTypeWholeType() {
+      run("danglingContextInFunctionTypeWholeType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithIncompleteArrow.kt")
+    public void testDanglingContextInFunctionTypeWithIncompleteArrow() {
+      run("danglingContextInFunctionTypeWithIncompleteArrow.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithIncompleteType.kt")
+    public void testDanglingContextInFunctionTypeWithIncompleteType() {
+      run("danglingContextInFunctionTypeWithIncompleteType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithParentheses.kt")
+    public void testDanglingContextInFunctionTypeWithParentheses() {
+      run("danglingContextInFunctionTypeWithParentheses.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithReceiver.kt")
+    public void testDanglingContextInFunctionTypeWithReceiver() {
+      run("danglingContextInFunctionTypeWithReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithReceiverType.kt")
+    public void testDanglingContextInFunctionTypeWithReceiverType() {
+      run("danglingContextInFunctionTypeWithReceiverType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithType.kt")
+    public void testDanglingContextInFunctionTypeWithType() {
+      run("danglingContextInFunctionTypeWithType.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingContextInFunctionTypeWithTypeElement.kt")
+    public void testDanglingContextInFunctionTypeWithTypeElement() {
+      run("danglingContextInFunctionTypeWithTypeElement.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBound.kt")
+    public void testDanglingTypeConstraintBound() {
+      run("danglingTypeConstraintBound.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundInAnonymousFunction.kt")
+    public void testDanglingTypeConstraintBoundInAnonymousFunction() {
+      run("danglingTypeConstraintBoundInAnonymousFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundInClass.kt")
+    public void testDanglingTypeConstraintBoundInClass() {
+      run("danglingTypeConstraintBoundInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundInLocalFunction.kt")
+    public void testDanglingTypeConstraintBoundInLocalFunction() {
+      run("danglingTypeConstraintBoundInLocalFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundInProperty.kt")
+    public void testDanglingTypeConstraintBoundInProperty() {
+      run("danglingTypeConstraintBoundInProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundTypeArgument.kt")
+    public void testDanglingTypeConstraintBoundTypeArgument() {
+      run("danglingTypeConstraintBoundTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundUnresolved.kt")
+    public void testDanglingTypeConstraintBoundUnresolved() {
+      run("danglingTypeConstraintBoundUnresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintBoundWithoutTypeParameters.kt")
+    public void testDanglingTypeConstraintBoundWithoutTypeParameters() {
+      run("danglingTypeConstraintBoundWithoutTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubject.kt")
+    public void testDanglingTypeConstraintSubject() {
+      run("danglingTypeConstraintSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotation.kt")
+    public void testDanglingTypeConstraintSubjectAnnotation() {
+      run("danglingTypeConstraintSubjectAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotationArgument.kt")
+    public void testDanglingTypeConstraintSubjectAnnotationArgument() {
+      run("danglingTypeConstraintSubjectAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotationCallee.kt")
+    public void testDanglingTypeConstraintSubjectAnnotationCallee() {
+      run("danglingTypeConstraintSubjectAnnotationCallee.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotationInClass.kt")
+    public void testDanglingTypeConstraintSubjectAnnotationInClass() {
+      run("danglingTypeConstraintSubjectAnnotationInClass.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotationInProperty.kt")
+    public void testDanglingTypeConstraintSubjectAnnotationInProperty() {
+      run("danglingTypeConstraintSubjectAnnotationInProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotationTypeReference.kt")
+    public void testDanglingTypeConstraintSubjectAnnotationTypeReference() {
+      run("danglingTypeConstraintSubjectAnnotationTypeReference.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintSubjectAnnotationWithoutTypeParameters.kt")
+    public void testDanglingTypeConstraintSubjectAnnotationWithoutTypeParameters() {
+      run("danglingTypeConstraintSubjectAnnotationWithoutTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingTypeConstraintUsage.kt")
+    public void testDanglingTypeConstraintUsage() {
+      run("danglingTypeConstraintUsage.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedProperty.kt")
     public void testDelegatedProperty() {
       run("delegatedProperty.kt");
@@ -2078,6 +2504,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("destructuringReceiver.kt")
+    public void testDestructuringReceiver() {
+      run("destructuringReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("destructuringTopLevel.kt")
     public void testDestructuringTopLevel() {
       run("destructuringTopLevel.kt");
@@ -2087,6 +2519,24 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("destructuringTopLevel2.kt")
     public void testDestructuringTopLevel2() {
       run("destructuringTopLevel2.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringTopLevelReceiver.kt")
+    public void testDestructuringTopLevelReceiver() {
+      run("destructuringTopLevelReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringTopLevelTypeAnnotation.kt")
+    public void testDestructuringTopLevelTypeAnnotation() {
+      run("destructuringTopLevelTypeAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringTypeAnnotation.kt")
+    public void testDestructuringTypeAnnotation() {
+      run("destructuringTypeAnnotation.kt");
     }
 
     @Test
@@ -2317,20 +2767,6 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
   }
 
   @Nested
-  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/repl")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Repl {
-    private void run(String fileName) {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/repl/" + fileName);
-    }
-
-    @Test
-    public void testAllFilesPresentInRepl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/repl"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-    }
-  }
-
-  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/types")
   @TestDataPath("$PROJECT_ROOT")
   public class Types {
@@ -2377,6 +2813,36 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("definitelyNotNullType.kt")
     public void testDefinitelyNotNullType() {
       run("definitelyNotNullType.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedSuperTypeInLocalClass.kt")
+    public void testDelegatedSuperTypeInLocalClass() {
+      run("delegatedSuperTypeInLocalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedTypeParameterSuperType.kt")
+    public void testDelegatedTypeParameterSuperType() {
+      run("delegatedTypeParameterSuperType.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedTypeParameterSuperTypeBodyResolved.kt")
+    public void testDelegatedTypeParameterSuperTypeBodyResolved() {
+      run("delegatedTypeParameterSuperTypeBodyResolved.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedTypeParameterSuperTypeInAnonymousObject.kt")
+    public void testDelegatedTypeParameterSuperTypeInAnonymousObject() {
+      run("delegatedTypeParameterSuperTypeInAnonymousObject.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedTypeParameterSuperTypeInLocalClass.kt")
+    public void testDelegatedTypeParameterSuperTypeInLocalClass() {
+      run("delegatedTypeParameterSuperTypeInLocalClass.kt");
     }
 
     @Test

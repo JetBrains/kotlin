@@ -26,6 +26,13 @@ interface KaInternalsLightClassBridge {
     fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String, ignoreInlineClassMangling: Boolean): String?
 
     /**
+     * Whether the accessors of this property are named after the property itself, without the `get`/`set` prefix, as for the
+     * properties of annotation classes and [JvmRecord] classes.
+     */
+    context(_: KaSession)
+    val KaPropertySymbol.hasPrefixlessAccessorNames: Boolean
+
+    /**
      * [PsiClass] for [classSymbol] in the context of [KaSession.useSiteModule].
      * For the proper LC construction, use the endpoints from Analysis API surface.
      *

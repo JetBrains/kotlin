@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.io.ByteArrayOutputStream
@@ -59,6 +60,7 @@ import kotlin.test.assertTrue
  * A download is only verified against the published checksums when it comes from the official Node.js
  * distribution, so the verification is intentionally out of the scope of these tests.
  */
+@MustRunOnChangesInGradle
 abstract class DefaultNodeJsToolchainServiceImplWithKtorIT : KGPBaseTest() {
     @DisplayName("Each requested Node.js distribution is downloaded only once")
     @GradleTest
@@ -402,15 +404,15 @@ abstract class DefaultNodeJsToolchainServiceImplWithKtorIT : KGPBaseTest() {
 }
 
 /**
- * Selects and configures the default Node.js toolchain service with the `kotlin.js.nodejs.toolchain*` Gradle properties.
+ * Selects and configures the default Node.js toolchain service with the `kotlin.js.nodeJsToolchain*` Gradle properties.
  */
 @DisplayName("Node.js toolchain provisioning configured with Gradle properties")
 @JsGradlePluginTests
 class DefaultNodeJsToolchainServiceImplWithKtorGradlePropertiesIT : DefaultNodeJsToolchainServiceImplWithKtorIT() {
     companion object {
-        private const val REQUEST_DEFAULT_NODE_JS_TOOLCHAIN = "-Pkotlin.js.nodejs.toolchain=DOWNLOAD"
-        private const val REQUEST_NODE_JS_INSTALLATION_DIR = "-Pkotlin.js.nodejs.toolchain.default.install.path"
-        private const val REQUEST_NODE_JS_DOWNLOAD_URL = "-Pkotlin.js.nodejs.toolchain.default.download.url"
+        private const val REQUEST_DEFAULT_NODE_JS_TOOLCHAIN = "-Pkotlin.js.nodeJsToolchainMode=download"
+        private const val REQUEST_NODE_JS_INSTALLATION_DIR = "-Pkotlin.js.nodeJsToolchainInstallationDir"
+        private const val REQUEST_NODE_JS_DOWNLOAD_URL = "-Pkotlin.js.nodeJsToolchainDownloadUrl"
     }
 
     override fun BuildOptions.withToolchainConfiguration(installationsPath: Path, distributionsBaseUrl: String): BuildOptions = copy(
@@ -461,7 +463,7 @@ private const val PROVISION_TASK_NAME = "provisionNodeJs"
  */
 private fun provisionTaskName(requestIndex: Int, version: String): String = "$PROVISION_TASK_NAME-$requestIndex-$version"
 
-private const val NODE_JS_VERSION = "24.16.0"
+private const val NODE_JS_VERSION = "24.22.1"
 
 
 /** A version older than the minimal one the Kotlin Gradle Plugin supports. */
@@ -491,7 +493,7 @@ private val hostPlatform: BuildPlatform = BuildPlatform(
 
 /**
  * The naming of the official distributions, spelled out independently of the production code,
- * for example `node-v24.16.0-linux-x64`.
+ * for example `node-v24.22.1-linux-x64`.
  */
 private fun BuildPlatform.distributionName(version: String): String = "node-v$version-$os-$arch"
 

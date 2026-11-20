@@ -26,8 +26,13 @@ fun main(args: Array<String>) {
     val generatedTestRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(generatedTestRoot, "compiler/fir/raw-fir/testData") {
+            // REPL snippets are not supported by the Analysis API
+            fun TestGroup.TestClass.rawBuilderInit() {
+                model("rawBuilder", pattern = KT_OR_KTS, excludedPattern = TestGeneratorUtil.REPL_KTS)
+            }
+
             testClass<AbstractLLSourceLikeLazyBodiesCalculatorTest> {
-                model("rawBuilder", pattern = KT_OR_KTS)
+                rawBuilderInit()
             }
 
             testClass<AbstractFirOutOfContentRootLazyBodiesCalculatorTest> {
@@ -35,15 +40,15 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractLLSourceAnnotationArgumentsCalculatorTest> {
-                model("rawBuilder", pattern = KT_OR_KTS)
+                rawBuilderInit()
             }
 
             testClass<AbstractLLSourceLikeStubBasedResolutionTest> {
-                model("rawBuilder", pattern = KT_OR_KTS)
+                rawBuilderInit()
             }
 
             testClass<AbstractLLSourceLikeRawFirBuilderLazyBodiesTest> {
-                model("rawBuilder", pattern = KT_OR_KTS)
+                rawBuilderInit()
             }
         }
 
@@ -67,28 +72,6 @@ fun main(args: Array<String>) {
                     annotations = listOf(provider<MustRunOnChangesInCompilerPlugins>())
                 ) {
                     scriptDiagnosticsInit()
-                }
-            }
-
-            run {
-                fun TestGroup.TestClass.replDiagnosticsInit() {
-                    model(
-                        "diagnostics/repl",
-                        pattern = TestGeneratorUtil.KTS,
-                        excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
-                    )
-                }
-
-                testClass<AbstractLLReplDiagnosticsTest>(
-                    annotations = listOf(provider<MustRunOnChangesInCompilerPlugins>())
-                ) {
-                    replDiagnosticsInit()
-                }
-
-                testClass<AbstractLLReversedReplDiagnosticsTest>(
-                    annotations = listOf(provider<MustRunOnChangesInCompilerPlugins>())
-                ) {
-                    replDiagnosticsInit()
                 }
             }
 
@@ -204,7 +187,12 @@ fun main(args: Array<String>) {
                     "diagnostics/tests",
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                     pattern = KT_OR_KTS.canFreezeIDE,
-                    excludeDirs = listOf("jvm", "headerMode")
+                    excludeDirs = listOf("headerMode", "jvm/duplicateJvmSignature", "jvm/exposedPrivate")
+                )
+                model(
+                    "diagnostics/tests/jvm/duplicateJvmSignature/javaInterop",
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                    pattern = KT_OR_KTS.canFreezeIDE,
                 )
                 model(
                     "diagnostics/testsWithStdLib",
@@ -213,7 +201,7 @@ fun main(args: Array<String>) {
                     pattern = KT_OR_KTS.canFreezeIDE,
                 )
                 model(
-                    "diagnostics/testsWithAnyBackend/tailrec",
+                    "diagnostics/testsWithAnyBackend",
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                     pattern = KT_OR_KTS.canFreezeIDE,
                 )

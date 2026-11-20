@@ -13,10 +13,9 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
-import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
-import org.jetbrains.kotlin.analysis.api.impl.base.util.callableIdForName
+import org.jetbrains.kotlin.analysis.api.fir.utils.callableId
+import org.jetbrains.kotlin.analysis.api.fir.utils.callableIdForName
+import org.jetbrains.kotlin.analysis.api.fir.utils.inferReturnTypeByPsi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -55,7 +54,13 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
         get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = withValidityAssertion { createReturnType() }
+
+    /**
+     * The type of the property inferred from its PSI without resolution, if possible.
+     */
+    val returnTypeByPsi: KaType?
+        get() = withValidityAssertion { backingPsi?.inferReturnTypeByPsi(analysisSession = analysisSession) }
 
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { createContextReceivers() }
@@ -562,20 +567,24 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
 }
 
 /**
- * Represent a property symbol which is generated from [org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry]
- * on top-level of [org.jetbrains.kotlin.psi.KtScript]
+ * Represent a property symbol which is generated from a non-local [org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry]:
+ * on top-level of [org.jetbrains.kotlin.psi.KtScript], or on top-level of a file or in a class, where such declarations are not allowed
  */
 private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : KaFirKotlinPropertySymbol<KtDestructuringDeclarationEntry> {
     constructor(declaration: KtDestructuringDeclarationEntry, session: KaFirSession) : super(
         backingPsi = declaration,
         lazyFirSymbol = lazyFirSymbol(declaration, session),
         analysisSession = session,
-    ) {
-        require(declaration.containingKtFile.isScript())
-    }
+    )
 
     override val location: KaSymbolLocation
-        get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
+        get() = withValidityAssertion {
+            if (backingPsi?.containingClassOrObject != null || firSymbol.dispatchReceiverType != null) {
+                KaSymbolLocation.CLASS
+            } else {
+                KaSymbolLocation.TOP_LEVEL
+            }
+        }
 
     override val name: Name
         get() = withValidityAssertion { backingPsi?.entryName ?: firSymbol.name }

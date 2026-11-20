@@ -9,7 +9,7 @@ import org.jetbrains.dokka.analysis.test.api.util.filePathToPackageName
 /**
  * Declares a capability that a `.kt` file can be created in the scope of the implementation.
  */
-interface KtFileCreator {
+internal interface KtFileCreator {
 
     /**
      * Creates a `.kt` file.

@@ -8,13 +8,18 @@ package org.jetbrains.kotlin.buildtools.tests.arguments
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.COMPILER_ARGUMENTS_LOG_LEVEL
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.COMPILER_MESSAGE_RENDERER
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.COMPILER_REF_INDEX
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.GENERATE_COMPILER_REF_INDEX
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.LOOKUP_TRACKER
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import org.jetbrains.kotlin.buildtools.api.js.JsDtsCompilationStrategy
+import org.jetbrains.kotlin.buildtools.api.js.JsDtsGranularity
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.jsKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
@@ -86,8 +91,13 @@ class AvailableSinceTest : BaseCompilationTest() {
                     trySet(COMPILER_ARGUMENTS_LOG_LEVEL.availableSinceVersion) {
                         this[COMPILER_ARGUMENTS_LOG_LEVEL] = JvmCompilationOperation.CompilerArgumentsLogLevel.DEBUG
                     }
+                    @Suppress("DEPRECATION")
                     trySet(GENERATE_COMPILER_REF_INDEX.availableSinceVersion) {
+                        @Suppress("DEPRECATION")
                         this[GENERATE_COMPILER_REF_INDEX] = false
+                    }
+                    trySet(COMPILER_REF_INDEX.availableSinceVersion) {
+                        this[COMPILER_REF_INDEX] = null
                     }
                     trySet(COMPILER_MESSAGE_RENDERER.availableSinceVersion) {
                         this[COMPILER_MESSAGE_RENDERER] = object : CompilerMessageRenderer {
@@ -219,6 +229,11 @@ class AvailableSinceTest : BaseCompilationTest() {
                             @OptIn(ExperimentalCompilerArgument::class)
                             this[JvmSnapshotBasedIncrementalCompilationConfiguration.USE_FIR_RUNNER] = false
                         }
+                        @OptIn(ExperimentalCompilerArgument::class)
+                        trySet(JvmSnapshotBasedIncrementalCompilationConfiguration.ENABLE_ERROR_RECOVERY_ROUND.availableSinceVersion) {
+                            @OptIn(ExperimentalCompilerArgument::class)
+                            this[JvmSnapshotBasedIncrementalCompilationConfiguration.ENABLE_ERROR_RECOVERY_ROUND] = true
+                        }
                     }
             }
         }
@@ -344,6 +359,53 @@ class AvailableSinceTest : BaseCompilationTest() {
                             this[WasmHistoryBasedIncrementalCompilationConfiguration.HISTORY_FILE_DIR] = null
                         }
                     }
+            }
+        }
+    }
+
+    @Test
+    fun testJsDtsGenerationOperation() {
+        val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
+        assumeTrue(toolchains.hasJsDtsOptionVersionChecking())
+
+        versions.forEach { version ->
+            overrideVersionMethod.invoke(null, version)
+            with(KotlinToolingVersion(version)) {
+                toolchains.js.jsDtsGenerationOperationBuilder(emptyList(), Path("")).apply {
+                    trySet(JsDtsGenerationOperation.MODULE_KIND.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.MODULE_KIND] = JsModuleKind.ES
+                    }
+                    trySet(JsDtsGenerationOperation.GRANULARITY.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.GRANULARITY] = JsDtsGranularity.PER_FILE
+                    }
+                    trySet(JsDtsGenerationOperation.TS_COMPILATION_STRATEGY.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.TS_COMPILATION_STRATEGY] = JsDtsCompilationStrategy.EACH_FILE
+                    }
+                    trySet(JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.COMPILE_LONG_AS_BIG_INT] = true
+                    }
+                    trySet(JsDtsGenerationOperation.IMPLEMENT_INTERFACES.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.IMPLEMENT_INTERFACES] = true
+                    }
+                    trySet(JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.EXPORT_SUSPEND_LAMBDAS] = true
+                    }
+                    trySet(JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.COMPILE_SUSPEND_AS_JS_GENERATOR] = true
+                    }
+                    trySet(JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] = true
+                    }
+                    trySet(JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.USE_UNKNOWN_INSTEAD_ANY] = true
+                    }
+                    trySet(JsDtsGenerationOperation.OUTPUT_NAME.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.OUTPUT_NAME] = "ir-output-name"
+                    }
+                    trySet(JsDtsGenerationOperation.MAIN_MODULE_NAME.availableSinceVersion) {
+                        this[JsDtsGenerationOperation.MAIN_MODULE_NAME] = "ir-module-name"
+                    }
+                }
             }
         }
     }
@@ -542,6 +604,9 @@ class AvailableSinceTest : BaseCompilationTest() {
         "org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration",
         "org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation",
         "org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration",
+        $$"org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration$AptPhase",
+        $$"org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration$StubsPhase",
+        "org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration",
     )
 
     /**
@@ -574,6 +639,9 @@ class AvailableSinceTest : BaseCompilationTest() {
         KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, "snapshot")
 
     private fun KotlinToolchains.hasWasmOptionVersionChecking(): Boolean =
+        KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 5, 0, "snapshot")
+
+    private fun KotlinToolchains.hasJsDtsOptionVersionChecking(): Boolean =
         KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 5, 0, "snapshot")
 
     context(currentVersion: KotlinToolingVersion)

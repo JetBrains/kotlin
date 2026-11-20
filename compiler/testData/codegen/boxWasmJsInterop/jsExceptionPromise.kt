@@ -2,6 +2,8 @@
 // WITH_COROUTINES
 // TARGET_BACKEND: WASM
 // ^^ For JS_IR and JS_IR_ES6, the test doesn't work since we don't expect that non Error could came to the catch block
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
+// ^^ Kotlin/Wasm test infra doesn't support `suspend box()`, but using `suspend box()` is essential here, see KT-91288
 
 import kotlin.coroutines.*
 import helpers.*
@@ -37,10 +39,6 @@ suspend fun awaitJs(p: JsAny?): JsAny? =
 private val TEST_JS_STRING = "Test".toJsString()
 private val JS_42 = 42.toJsNumber()
 
-fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(EmptyContinuation)
-}
-
 suspend fun reject_string_caught_as_JsException(): Boolean {
     try {
         awaitJs(promiseRejectString())
@@ -72,12 +70,9 @@ suspend fun reject_typeerror_preserves_message_and_type(): Boolean {
     }
 }
 
-fun box(): String {
-    var result = "OK"
-    builder {
-        if (!reject_string_caught_as_JsException()) result = "reject string failed"
-        else if (!reject_number_caught_as_JsException()) result = "reject number failed"
-        else if (!reject_typeerror_preserves_message_and_type()) result = "reject TypeError failed"
-    }
-    return result
+suspend fun box(): String {
+    if (!reject_string_caught_as_JsException()) return "reject string failed"
+    else if (!reject_number_caught_as_JsException()) return "reject number failed"
+    else if (!reject_typeerror_preserves_message_and_type()) return "reject TypeError failed"
+    return "OK"
 }

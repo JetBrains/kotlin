@@ -13,55 +13,53 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:SIZE type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.<get-SIZE>' type=<root>.ArrayLoopTest origin=null
     PROPERTY ATOMICFU_GENERATED_PROPERTY name:intArr visibility:private modality:FINAL [val]
-      FIELD ATOMICFU_GENERATED_FIELD name:intArr type:kotlin.concurrent.AtomicIntArray visibility:private [final]
+      FIELD ATOMICFU_GENERATED_FIELD name:intArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final]
         EXPRESSION_BODY
-          CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlin.concurrent.AtomicIntArray' type=kotlin.concurrent.AtomicIntArray origin=null
-            ARG size: CONST Int type=kotlin.Int value=10
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-intArr> visibility:private modality:FINAL returnType:kotlin.concurrent.AtomicIntArray
+          CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicIntegerArray' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG length: CONST Int type=kotlin.Int value=10
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-intArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
         VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:intArr visibility:private modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest'
-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:intArr type:kotlin.concurrent.AtomicIntArray visibility:private [final] declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+          RETURN type=kotlin.Nothing from='private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:intArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final] declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
               receiver: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.<get-intArr>' type=<root>.ArrayLoopTest origin=null
     PROPERTY ATOMICFU_GENERATED_PROPERTY name:longArr visibility:private modality:FINAL [val]
-      FIELD ATOMICFU_GENERATED_FIELD name:longArr type:kotlin.concurrent.AtomicLongArray visibility:private [final]
+      FIELD ATOMICFU_GENERATED_FIELD name:longArr type:java.util.concurrent.atomic.AtomicLongArray visibility:private [final]
         EXPRESSION_BODY
-          CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlin.concurrent.AtomicLongArray' type=kotlin.concurrent.AtomicLongArray origin=null
-            ARG size: CONST Int type=kotlin.Int value=10
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-longArr> visibility:private modality:FINAL returnType:kotlin.concurrent.AtomicLongArray
+          CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicLongArray' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+            ARG length: CONST Int type=kotlin.Int value=10
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-longArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicLongArray
         VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:longArr visibility:private modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest'
-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:longArr type:kotlin.concurrent.AtomicLongArray visibility:private [final] declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+          RETURN type=kotlin.Nothing from='private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:longArr type:java.util.concurrent.atomic.AtomicLongArray visibility:private [final] declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
               receiver: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.<get-longArr>' type=<root>.ArrayLoopTest origin=null
     PROPERTY ATOMICFU_GENERATED_PROPERTY name:boolArr visibility:private modality:FINAL [val]
-      FIELD ATOMICFU_GENERATED_FIELD name:boolArr type:kotlin.concurrent.AtomicIntArray visibility:private [final]
+      FIELD ATOMICFU_GENERATED_FIELD name:boolArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final]
         EXPRESSION_BODY
-          CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlin.concurrent.AtomicIntArray' type=kotlin.concurrent.AtomicIntArray origin=null
-            ARG size: CONST Int type=kotlin.Int value=10
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-boolArr> visibility:private modality:FINAL returnType:kotlin.concurrent.AtomicIntArray
+          CONSTRUCTOR_CALL 'public constructor <init> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicIntegerArray' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+            ARG length: CONST Int type=kotlin.Int value=10
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-boolArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
         VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:boolArr visibility:private modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest'
-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:boolArr type:kotlin.concurrent.AtomicIntArray visibility:private [final] declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+          RETURN type=kotlin.Nothing from='private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:boolArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final] declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
               receiver: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.<get-boolArr>' type=<root>.ArrayLoopTest origin=null
     PROPERTY ATOMICFU_GENERATED_PROPERTY name:refArr visibility:private modality:FINAL [val]
-      FIELD ATOMICFU_GENERATED_FIELD name:refArr type:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> visibility:private [final]
+      FIELD ATOMICFU_GENERATED_FIELD name:refArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final]
         EXPRESSION_BODY
-          CONSTRUCTOR_CALL 'internal constructor <init> (array: kotlin.Array<T of kotlin.concurrent.AtomicArray>) declared in kotlin.concurrent.AtomicArray' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
-            TYPE_ARG (of class) T: kotlin.Any?
-            ARG array: CALL 'public final fun arrayOfNulls <T> (size: kotlin.Int): kotlin.Array<T of kotlin.arrayOfNulls?> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOfNulls?> origin=null
-              TYPE_ARG T: kotlin.Any?
-              ARG size: CONST Int type=kotlin.Int value=10
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-refArr> visibility:private modality:FINAL returnType:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray>
+          CONSTRUCTOR_CALL 'public constructor <init> <T> (length: kotlin.Int) declared in java.util.concurrent.atomic.AtomicReferenceArray' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+            TYPE_ARG T: <none>
+            ARG length: CONST Int type=kotlin.Int value=10
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-refArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceArray
         VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:refArr visibility:private modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest'
-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:refArr type:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> visibility:private [final] declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+          RETURN type=kotlin.Nothing from='private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:refArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final] declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
               receiver: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.<get-refArr>' type=<root>.ArrayLoopTest origin=null
     CLASS CLASS name:Box modality:FINAL visibility:public superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ArrayLoopTest.Box
@@ -100,33 +98,35 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ArrayLoopTest modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$ATOMIC_ARRAY$Any visibility:private modality:FINAL returnType:kotlin.Any? [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicArray<kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
       BLOCK_BODY
         WHILE label=null origin=null
           condition: CONST Boolean type=kotlin.Boolean value=true
           body: BLOCK type=kotlin.Unit origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:T of kotlin.concurrent.AtomicArray [val]
-              CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
-                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
+              CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
-                ARG p1: GET_VAR 'val tmp_0: T of kotlin.concurrent.AtomicArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=T of kotlin.concurrent.AtomicArray origin=null
+                ARG p1: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: T of kotlin.concurrent.AtomicArray, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Boolean declared in kotlin.concurrent.AtomicArray' type=kotlin.Boolean origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
-                  ARG expectedValue: GET_VAR 'val tmp_0: T of kotlin.concurrent.AtomicArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=T of kotlin.concurrent.AtomicArray origin=null
-                  ARG newValue: GET_VAR 'val tmp_1: R of kotlin.Function1 declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=R of kotlin.Function1 origin=null
-                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.ArrayLoopTest'
-                  GET_VAR 'val tmp_0: T of kotlin.concurrent.AtomicArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=T of kotlin.concurrent.AtomicArray origin=null
+                if: CALL 'public final fun compareAndSet <T> (i: kotlin.Int, expect: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Boolean origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+                  ARG expect: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
+                  ARG update: GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.ArrayLoopTest'
+                  GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
     FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicIntArray
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Boolean, kotlin.Boolean>
       BLOCK_BODY
@@ -135,38 +135,38 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           body: BLOCK type=kotlin.Unit origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Boolean [val]
               CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.concurrent.AtomicIntArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
+                ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
                 ARG arg1: CONST Int type=kotlin.Int value=1
-            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Boolean [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Boolean origin=null
                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean> declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=null
                 ARG p1: GET_VAR 'val tmp_2: kotlin.Boolean declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: kotlin.Int, newValue: kotlin.Int): kotlin.Boolean declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Boolean origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.concurrent.AtomicIntArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
-                  ARG expectedValue: WHEN type=kotlin.Int origin=null
+                if: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
+                  ARG expect: WHEN type=kotlin.Int origin=null
                     BRANCH
                       if: GET_VAR 'val tmp_2: kotlin.Boolean declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
                       then: CONST Int type=kotlin.Int value=1
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: CONST Int type=kotlin.Int value=0
-                  ARG newValue: WHEN type=kotlin.Int origin=null
+                  ARG update: WHEN type=kotlin.Int origin=null
                     BRANCH
-                      if: GET_VAR 'val tmp_3: R of kotlin.Function1 declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=R of kotlin.Function1 origin=null
+                      if: GET_VAR 'val tmp_3: kotlin.Boolean declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
                       then: CONST Int type=kotlin.Int value=1
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: CONST Int type=kotlin.Int value=0
-                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.ArrayLoopTest'
+                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.ArrayLoopTest'
                   GET_VAR 'val tmp_2: kotlin.Boolean declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
     FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicIntArray
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Int, kotlin.Int>
       BLOCK_BODY
@@ -174,25 +174,25 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           condition: CONST Boolean type=kotlin.Boolean value=true
           body: BLOCK type=kotlin.Unit origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
-              CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
-                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+              CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Int origin=null
                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
                 ARG p1: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: kotlin.Int, newValue: kotlin.Int): kotlin.Boolean declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Boolean origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
-                  ARG expectedValue: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
-                  ARG newValue: GET_VAR 'val tmp_5: R of kotlin.Function1 declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=R of kotlin.Function1 origin=null
-                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.ArrayLoopTest'
+                if: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+                  ARG expect: GET_VAR 'val tmp_4: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+                  ARG update: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.ArrayLoopTest'
                   GET_VAR 'val tmp_4: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
     FUN ATOMICFU_GENERATED_FUNCTION name:getAndUpdate$atomicfu$ATOMIC_ARRAY$Long visibility:private modality:FINAL returnType:kotlin.Long [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicLongArray
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicLongArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Long, kotlin.Long>
       BLOCK_BODY
@@ -200,117 +200,120 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           condition: CONST Boolean type=kotlin.Boolean value=true
           body: BLOCK type=kotlin.Unit origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.Long [val]
-              CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.concurrent.AtomicLongArray origin=null
-                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+              CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:kotlin.Long [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Long origin=null
                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long> declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=null
                 ARG p1: GET_VAR 'val tmp_6: kotlin.Long declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: kotlin.Long, newValue: kotlin.Long): kotlin.Boolean declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Boolean origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.concurrent.AtomicLongArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
-                  ARG expectedValue: GET_VAR 'val tmp_6: kotlin.Long declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
-                  ARG newValue: GET_VAR 'val tmp_7: R of kotlin.Function1 declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=R of kotlin.Function1 origin=null
-                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: kotlin.concurrent.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.ArrayLoopTest'
+                if: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Long, update: kotlin.Long): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
+                  ARG expect: GET_VAR 'val tmp_6: kotlin.Long declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
+                  ARG update: GET_VAR 'val tmp_7: kotlin.Long declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.ArrayLoopTest'
                   GET_VAR 'val tmp_6: kotlin.Long declared in <root>.ArrayLoopTest.getAndUpdate$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_ARRAY$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicArray<kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Unit>
       BLOCK_BODY
         WHILE label=null origin=null
           condition: CONST Boolean type=kotlin.Boolean value=true
-          body: BLOCK type=R of kotlin.Function1 origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:T of kotlin.concurrent.AtomicArray [val]
-              CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
-                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+          body: BLOCK type=kotlin.Unit origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:kotlin.Any? [val]
+              CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Any' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=null
-              ARG p1: GET_VAR 'val tmp_8: T of kotlin.concurrent.AtomicArray declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Any' type=T of kotlin.concurrent.AtomicArray origin=null
+              ARG p1: GET_VAR 'val tmp_8: kotlin.Any? declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_ARRAY$Boolean visibility:private modality:FINAL returnType:kotlin.Unit [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicIntArray
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Boolean, kotlin.Unit>
       BLOCK_BODY
         WHILE label=null origin=null
           condition: CONST Boolean type=kotlin.Boolean value=true
-          body: BLOCK type=R of kotlin.Function1 origin=null
+          body: BLOCK type=kotlin.Unit origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:kotlin.Boolean [val]
               CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.concurrent.AtomicIntArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
+                ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Boolean' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
                 ARG arg1: CONST Int type=kotlin.Int value=1
-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Unit> declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Function1<kotlin.Boolean, kotlin.Unit> origin=null
               ARG p1: GET_VAR 'val tmp_9: kotlin.Boolean declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicIntArray
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
       BLOCK_BODY
         WHILE label=null origin=null
           condition: CONST Boolean type=kotlin.Boolean value=true
-          body: BLOCK type=R of kotlin.Function1 origin=null
+          body: BLOCK type=kotlin.Unit origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlin.Int [val]
-              CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
-                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+              CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Int' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
               ARG p1: GET_VAR 'val tmp_10: kotlin.Int declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_ARRAY$Long visibility:private modality:FINAL returnType:kotlin.Unit [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicLongArray
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicLongArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Long, kotlin.Unit>
       BLOCK_BODY
         WHILE label=null origin=null
           condition: CONST Boolean type=kotlin.Boolean value=true
-          body: BLOCK type=R of kotlin.Function1 origin=null
+          body: BLOCK type=kotlin.Unit origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_11 type:kotlin.Long [val]
-              CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.concurrent.AtomicLongArray origin=null
-                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+              CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Long' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
+            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Unit> declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Function1<kotlin.Long, kotlin.Unit> origin=null
               ARG p1: GET_VAR 'val tmp_11: kotlin.Long declared in <root>.ArrayLoopTest.loop$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
     FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$ATOMIC_ARRAY$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicArray<kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
       BLOCK_BODY
         WHILE label=null origin=null
           condition: CONST Boolean type=kotlin.Boolean value=true
           body: BLOCK type=kotlin.Unit origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_12 type:T of kotlin.concurrent.AtomicArray [val]
-              CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
-                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_13 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_12 type:kotlin.Any? [val]
+              CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_13 type:kotlin.Any? [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
-                ARG p1: GET_VAR 'val tmp_12: T of kotlin.concurrent.AtomicArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=T of kotlin.concurrent.AtomicArray origin=null
+                ARG p1: GET_VAR 'val tmp_12: kotlin.Any? declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: T of kotlin.concurrent.AtomicArray, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Boolean declared in kotlin.concurrent.AtomicArray' type=kotlin.Boolean origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
-                  ARG expectedValue: GET_VAR 'val tmp_12: T of kotlin.concurrent.AtomicArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=T of kotlin.concurrent.AtomicArray origin=null
-                  ARG newValue: GET_VAR 'val tmp_13: R of kotlin.Function1 declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=R of kotlin.Function1 origin=null
-                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.ArrayLoopTest'
+                if: CALL 'public final fun compareAndSet <T> (i: kotlin.Int, expect: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Boolean origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+                  ARG expect: GET_VAR 'val tmp_12: kotlin.Any? declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
+                  ARG update: GET_VAR 'val tmp_13: kotlin.Any? declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.ArrayLoopTest'
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$ATOMIC_ARRAY$Boolean visibility:private modality:FINAL returnType:kotlin.Unit [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicIntArray
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Boolean, kotlin.Boolean>
       BLOCK_BODY
@@ -319,38 +322,38 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           body: BLOCK type=kotlin.Unit origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_14 type:kotlin.Boolean [val]
               CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.concurrent.AtomicIntArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
+                ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
                 ARG arg1: CONST Int type=kotlin.Int value=1
-            VAR IR_TEMPORARY_VARIABLE name:tmp_15 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_15 type:kotlin.Boolean [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Boolean origin=null
                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean> declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=null
                 ARG p1: GET_VAR 'val tmp_14: kotlin.Boolean declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: kotlin.Int, newValue: kotlin.Int): kotlin.Boolean declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Boolean origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.concurrent.AtomicIntArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
-                  ARG expectedValue: WHEN type=kotlin.Int origin=null
+                if: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
+                  ARG expect: WHEN type=kotlin.Int origin=null
                     BRANCH
                       if: GET_VAR 'val tmp_14: kotlin.Boolean declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
                       then: CONST Int type=kotlin.Int value=1
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: CONST Int type=kotlin.Int value=0
-                  ARG newValue: WHEN type=kotlin.Int origin=null
+                  ARG update: WHEN type=kotlin.Int origin=null
                     BRANCH
-                      if: GET_VAR 'val tmp_15: R of kotlin.Function1 declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=R of kotlin.Function1 origin=null
+                      if: GET_VAR 'val tmp_15: kotlin.Boolean declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
                       then: CONST Int type=kotlin.Int value=1
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: CONST Int type=kotlin.Int value=0
-                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Unit declared in <root>.ArrayLoopTest'
+                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Unit declared in <root>.ArrayLoopTest'
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicIntArray
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Int, kotlin.Int>
       BLOCK_BODY
@@ -358,25 +361,25 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           condition: CONST Boolean type=kotlin.Boolean value=true
           body: BLOCK type=kotlin.Unit origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_16 type:kotlin.Int [val]
-              CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
-                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_17 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+              CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_17 type:kotlin.Int [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Int origin=null
                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
                 ARG p1: GET_VAR 'val tmp_16: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: kotlin.Int, newValue: kotlin.Int): kotlin.Boolean declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Boolean origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
-                  ARG expectedValue: GET_VAR 'val tmp_16: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
-                  ARG newValue: GET_VAR 'val tmp_17: R of kotlin.Function1 declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=R of kotlin.Function1 origin=null
-                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>.ArrayLoopTest'
+                if: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+                  ARG expect: GET_VAR 'val tmp_16: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+                  ARG update: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>.ArrayLoopTest'
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$ATOMIC_ARRAY$Long visibility:private modality:FINAL returnType:kotlin.Unit [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicLongArray
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicLongArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Long, kotlin.Long>
       BLOCK_BODY
@@ -384,51 +387,53 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           condition: CONST Boolean type=kotlin.Boolean value=true
           body: BLOCK type=kotlin.Unit origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_18 type:kotlin.Long [val]
-              CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.concurrent.AtomicLongArray origin=null
-                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_19 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+              CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_19 type:kotlin.Long [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Long origin=null
                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long> declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=null
                 ARG p1: GET_VAR 'val tmp_18: kotlin.Long declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: kotlin.Long, newValue: kotlin.Long): kotlin.Boolean declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Boolean origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.concurrent.AtomicLongArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
-                  ARG expectedValue: GET_VAR 'val tmp_18: kotlin.Long declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
-                  ARG newValue: GET_VAR 'val tmp_19: R of kotlin.Function1 declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=R of kotlin.Function1 origin=null
-                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: kotlin.concurrent.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Unit declared in <root>.ArrayLoopTest'
+                if: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Long, update: kotlin.Long): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
+                  ARG expect: GET_VAR 'val tmp_18: kotlin.Long declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
+                  ARG update: GET_VAR 'val tmp_19: kotlin.Long declared in <root>.ArrayLoopTest.update$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Unit declared in <root>.ArrayLoopTest'
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$ATOMIC_ARRAY$Any visibility:private modality:FINAL returnType:kotlin.Any? [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicArray<kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicReferenceArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Any?, kotlin.Any?>
       BLOCK_BODY
         WHILE label=null origin=null
           condition: CONST Boolean type=kotlin.Boolean value=true
           body: BLOCK type=kotlin.Unit origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_20 type:T of kotlin.concurrent.AtomicArray [val]
-              CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
-                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_21 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_20 type:kotlin.Any? [val]
+              CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                TYPE_ARG T: <none>
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_21 type:kotlin.Any? [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
-                ARG p1: GET_VAR 'val tmp_20: T of kotlin.concurrent.AtomicArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=T of kotlin.concurrent.AtomicArray origin=null
+                ARG p1: GET_VAR 'val tmp_20: kotlin.Any? declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: T of kotlin.concurrent.AtomicArray, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Boolean declared in kotlin.concurrent.AtomicArray' type=kotlin.Boolean origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
-                  ARG expectedValue: GET_VAR 'val tmp_20: T of kotlin.concurrent.AtomicArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=T of kotlin.concurrent.AtomicArray origin=null
-                  ARG newValue: GET_VAR 'val tmp_21: R of kotlin.Function1 declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=R of kotlin.Function1 origin=null
-                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.ArrayLoopTest'
-                  GET_VAR 'val tmp_21: R of kotlin.Function1 declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=R of kotlin.Function1 origin=null
+                if: CALL 'public final fun compareAndSet <T> (i: kotlin.Int, expect: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Boolean origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+                  ARG expect: GET_VAR 'val tmp_20: kotlin.Any? declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
+                  ARG update: GET_VAR 'val tmp_21: kotlin.Any? declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.ArrayLoopTest'
+                  GET_VAR 'val tmp_21: kotlin.Any? declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
     FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicIntArray
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Boolean, kotlin.Boolean>
       BLOCK_BODY
@@ -437,38 +442,38 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           body: BLOCK type=kotlin.Unit origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_22 type:kotlin.Boolean [val]
               CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.concurrent.AtomicIntArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
+                ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
                 ARG arg1: CONST Int type=kotlin.Int value=1
-            VAR IR_TEMPORARY_VARIABLE name:tmp_23 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_23 type:kotlin.Boolean [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Boolean origin=null
                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean> declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=null
                 ARG p1: GET_VAR 'val tmp_22: kotlin.Boolean declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: kotlin.Int, newValue: kotlin.Int): kotlin.Boolean declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Boolean origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.concurrent.AtomicIntArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
-                  ARG expectedValue: WHEN type=kotlin.Int origin=null
+                if: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
+                  ARG expect: WHEN type=kotlin.Int origin=null
                     BRANCH
                       if: GET_VAR 'val tmp_22: kotlin.Boolean declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
                       then: CONST Int type=kotlin.Int value=1
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: CONST Int type=kotlin.Int value=0
-                  ARG newValue: WHEN type=kotlin.Int origin=null
+                  ARG update: WHEN type=kotlin.Int origin=null
                     BRANCH
-                      if: GET_VAR 'val tmp_23: R of kotlin.Function1 declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=R of kotlin.Function1 origin=null
+                      if: GET_VAR 'val tmp_23: kotlin.Boolean declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
                       then: CONST Int type=kotlin.Int value=1
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: CONST Int type=kotlin.Int value=0
-                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.ArrayLoopTest'
-                  GET_VAR 'val tmp_23: R of kotlin.Function1 declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=R of kotlin.Function1 origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.ArrayLoopTest'
+                  GET_VAR 'val tmp_23: kotlin.Boolean declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
     FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicIntArray
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicIntegerArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Int, kotlin.Int>
       BLOCK_BODY
@@ -476,25 +481,25 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           condition: CONST Boolean type=kotlin.Boolean value=true
           body: BLOCK type=kotlin.Unit origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_24 type:kotlin.Int [val]
-              CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
-                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_25 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+              CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_25 type:kotlin.Int [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Int origin=null
                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int> declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=null
                 ARG p1: GET_VAR 'val tmp_24: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: kotlin.Int, newValue: kotlin.Int): kotlin.Boolean declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Boolean origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
-                  ARG expectedValue: GET_VAR 'val tmp_24: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
-                  ARG newValue: GET_VAR 'val tmp_25: R of kotlin.Function1 declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=R of kotlin.Function1 origin=null
-                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.ArrayLoopTest'
-                  GET_VAR 'val tmp_25: R of kotlin.Function1 declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=R of kotlin.Function1 origin=null
+                if: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+                  ARG expect: GET_VAR 'val tmp_24: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+                  ARG update: GET_VAR 'val tmp_25: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.ArrayLoopTest'
+                  GET_VAR 'val tmp_25: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
     FUN ATOMICFU_GENERATED_FUNCTION name:updateAndGet$atomicfu$ATOMIC_ARRAY$Long visibility:private modality:FINAL returnType:kotlin.Long [inline]
       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
-      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicLongArray
+      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:java.util.concurrent.atomic.AtomicLongArray
       VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:action$atomicfu index:3 type:kotlin.Function1<kotlin.Long, kotlin.Long>
       BLOCK_BODY
@@ -502,22 +507,22 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           condition: CONST Boolean type=kotlin.Boolean value=true
           body: BLOCK type=kotlin.Unit origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_26 type:kotlin.Long [val]
-              CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
-                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.concurrent.AtomicLongArray origin=null
-                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
-            VAR IR_TEMPORARY_VARIABLE name:tmp_27 type:R of kotlin.Function1 [val]
-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
+              CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+                ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+                ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_27 type:kotlin.Long [val]
+              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Long origin=null
                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long> declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=null
                 ARG p1: GET_VAR 'val tmp_26: kotlin.Long declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH
-                if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: kotlin.Long, newValue: kotlin.Long): kotlin.Boolean declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Boolean origin=null
-                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.concurrent.AtomicLongArray origin=null
-                  ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
-                  ARG expectedValue: GET_VAR 'val tmp_26: kotlin.Long declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
-                  ARG newValue: GET_VAR 'val tmp_27: R of kotlin.Function1 declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=R of kotlin.Function1 origin=null
-                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: kotlin.concurrent.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.ArrayLoopTest'
-                  GET_VAR 'val tmp_27: R of kotlin.Function1 declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=R of kotlin.Function1 origin=null
+                if: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Long, update: kotlin.Long): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Boolean origin=null
+                  ARG <this>: GET_VAR 'handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=java.util.concurrent.atomic.AtomicLongArray origin=null
+                  ARG i: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
+                  ARG expect: GET_VAR 'val tmp_26: kotlin.Long declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
+                  ARG update: GET_VAR 'val tmp_27: kotlin.Long declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
+                then: RETURN type=kotlin.Nothing from='private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.ArrayLoopTest'
+                  GET_VAR 'val tmp_27: kotlin.Long declared in <root>.ArrayLoopTest.updateAndGet$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -566,10 +571,10 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
     FUN name:atomicBooleanArrLoopTest visibility:public modality:FINAL returnType:kotlin.Boolean
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
       BLOCK_BODY
-        CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=0
+          ARG i: CONST Int type=kotlin.Int value=0
           ARG newValue: WHEN type=kotlin.Int origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=false
@@ -577,9 +582,9 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Int type=kotlin.Int value=0
-        CALL 'private final fun loop$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
+        CALL 'private final fun loop$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrLoopTest' type=<root>.ArrayLoopTest origin=null
-          ARG handler$atomicfu: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
           ARG index$atomicfu: CONST Int type=kotlin.Int value=0
           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Unit> origin=LAMBDA
@@ -592,18 +597,18 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
                       BRANCH
                         if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
                           ARG <this>: GET_VAR 'value: kotlin.Boolean declared in <root>.ArrayLoopTest.atomicBooleanArrLoopTest.<anonymous>' type=kotlin.Boolean origin=null
-                        then: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: kotlin.Int, newValue: kotlin.Int): kotlin.Boolean declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Boolean origin=null
-                          ARG <this>: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+                        then: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Boolean origin=null
+                          ARG <this>: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                          ARG index: CONST Int type=kotlin.Int value=0
-                          ARG expectedValue: WHEN type=kotlin.Int origin=null
+                          ARG i: CONST Int type=kotlin.Int value=0
+                          ARG expect: WHEN type=kotlin.Int origin=null
                             BRANCH
                               if: GET_VAR 'value: kotlin.Boolean declared in <root>.ArrayLoopTest.atomicBooleanArrLoopTest.<anonymous>' type=kotlin.Boolean origin=null
                               then: CONST Int type=kotlin.Int value=1
                             BRANCH
                               if: CONST Boolean type=kotlin.Boolean value=true
                               then: CONST Int type=kotlin.Int value=0
-                          ARG newValue: WHEN type=kotlin.Int origin=null
+                          ARG update: WHEN type=kotlin.Int origin=null
                             BRANCH
                               if: CONST Boolean type=kotlin.Boolean value=true
                               then: CONST Int type=kotlin.Int value=1
@@ -619,18 +624,18 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
                         ARG expected: CONST Boolean type=kotlin.Boolean value=true
                         ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
                           CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                            ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                              ARG <this>: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+                            ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                              ARG <this>: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                                 ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                              ARG index: CONST Int type=kotlin.Int value=0
+                              ARG i: CONST Int type=kotlin.Int value=0
                             ARG arg1: CONST Int type=kotlin.Int value=1
                       RETURN type=kotlin.Nothing from='public final fun atomicBooleanArrLoopTest (): kotlin.Boolean declared in <root>.ArrayLoopTest'
                         TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
                           CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                            ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                              ARG <this>: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+                            ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                              ARG <this>: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                                 ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                              ARG index: CONST Int type=kotlin.Int value=0
+                              ARG i: CONST Int type=kotlin.Int value=0
                             ARG arg1: CONST Int type=kotlin.Int value=1
     FUN name:atomicBooleanArrUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
@@ -638,9 +643,9 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
         CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
           ARG actual: CALL 'public final fun atomicBooleanArrLoopTest (): kotlin.Boolean declared in <root>.ArrayLoopTest' type=kotlin.Boolean origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-        CALL 'private final fun update$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
+        CALL 'private final fun update$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-          ARG handler$atomicfu: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
           ARG index$atomicfu: CONST Int type=kotlin.Int value=5
           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=LAMBDA
@@ -654,23 +659,23 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           ARG expected: CONST Boolean type=kotlin.Boolean value=true
           ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
             CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                ARG <this>: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+              ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                   ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                ARG index: CONST Int type=kotlin.Int value=5
+                ARG i: CONST Int type=kotlin.Int value=5
               ARG arg1: CONST Int type=kotlin.Int value=1
         CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
           ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
             CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                ARG <this>: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+              ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                   ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                ARG index: CONST Int type=kotlin.Int value=5
+                ARG i: CONST Int type=kotlin.Int value=5
               ARG arg1: CONST Int type=kotlin.Int value=1
         CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
-          ARG actual: CALL 'private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.ArrayLoopTest' type=kotlin.Boolean origin=null
+          ARG actual: CALL 'private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.ArrayLoopTest' type=kotlin.Boolean origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-            ARG handler$atomicfu: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
               ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
             ARG index$atomicfu: CONST Int type=kotlin.Int value=5
             ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=LAMBDA
@@ -682,15 +687,15 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
         CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
           ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
             CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                ARG <this>: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+              ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                   ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                ARG index: CONST Int type=kotlin.Int value=5
+                ARG i: CONST Int type=kotlin.Int value=5
               ARG arg1: CONST Int type=kotlin.Int value=1
-        CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=5
+          ARG i: CONST Int type=kotlin.Int value=5
           ARG newValue: WHEN type=kotlin.Int origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=false
@@ -699,9 +704,9 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Int type=kotlin.Int value=0
         CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
-          ARG actual: CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.ArrayLoopTest' type=kotlin.Boolean origin=null
+          ARG actual: CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.ArrayLoopTest' type=kotlin.Boolean origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-            ARG handler$atomicfu: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
               ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
             ARG index$atomicfu: CONST Int type=kotlin.Int value=5
             ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=LAMBDA
@@ -713,15 +718,15 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
         CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
           ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
             CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                ARG <this>: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+              ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                   ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                ARG index: CONST Int type=kotlin.Int value=5
+                ARG i: CONST Int type=kotlin.Int value=5
               ARG arg1: CONST Int type=kotlin.Int value=1
         CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
-          ARG actual: CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.ArrayLoopTest' type=kotlin.Boolean origin=null
+          ARG actual: CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Boolean>): kotlin.Boolean declared in <root>.ArrayLoopTest' type=kotlin.Boolean origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-            ARG handler$atomicfu: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
               ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
             ARG index$atomicfu: CONST Int type=kotlin.Int value=5
             ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Boolean, kotlin.Boolean> origin=LAMBDA
@@ -735,22 +740,22 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
         CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
           ARG actual: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
             CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                ARG <this>: CALL 'private final fun <get-boolArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+              ARG arg0: CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                ARG <this>: CALL 'private final fun <get-boolArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                   ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicBooleanArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                ARG index: CONST Int type=kotlin.Int value=5
+                ARG i: CONST Int type=kotlin.Int value=5
               ARG arg1: CONST Int type=kotlin.Int value=1
     FUN name:atomicIntArrLoopTest visibility:public modality:FINAL returnType:kotlin.Int
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
       BLOCK_BODY
-        CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=0
+          ARG i: CONST Int type=kotlin.Int value=0
           ARG newValue: CONST Int type=kotlin.Int value=0
-        CALL 'private final fun loop$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
+        CALL 'private final fun loop$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrLoopTest' type=<root>.ArrayLoopTest origin=null
-          ARG handler$atomicfu: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
           ARG index$atomicfu: CONST Int type=kotlin.Int value=0
           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
@@ -759,12 +764,12 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
               BLOCK_BODY
                 WHEN type=kotlin.Unit origin=IF
                   BRANCH
-                    if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: kotlin.Int, newValue: kotlin.Int): kotlin.Boolean declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Boolean origin=null
-                      ARG <this>: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+                    if: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Boolean origin=null
+                      ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                         ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                      ARG index: CONST Int type=kotlin.Int value=0
-                      ARG expectedValue: GET_VAR 'value: kotlin.Int declared in <root>.ArrayLoopTest.atomicIntArrLoopTest.<anonymous>' type=kotlin.Int origin=null
-                      ARG newValue: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                      ARG i: CONST Int type=kotlin.Int value=0
+                      ARG expect: GET_VAR 'value: kotlin.Int declared in <root>.ArrayLoopTest.atomicIntArrLoopTest.<anonymous>' type=kotlin.Int origin=null
+                      ARG update: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
                         ARG <this>: GET_VAR 'value: kotlin.Int declared in <root>.ArrayLoopTest.atomicIntArrLoopTest.<anonymous>' type=kotlin.Int origin=null
                         ARG other: CONST Int type=kotlin.Int value=10
                     then: BLOCK type=kotlin.Unit origin=null
@@ -774,16 +779,16 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
                           ARG <this>: GET_VAR 'value: kotlin.Int declared in <root>.ArrayLoopTest.atomicIntArrLoopTest.<anonymous>' type=kotlin.Int origin=null
                           ARG other: CONST Int type=kotlin.Int value=10
                         ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-                          CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                            ARG <this>: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+                          CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                            ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                               ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                            ARG index: CONST Int type=kotlin.Int value=0
+                            ARG i: CONST Int type=kotlin.Int value=0
                       RETURN type=kotlin.Nothing from='public final fun atomicIntArrLoopTest (): kotlin.Int declared in <root>.ArrayLoopTest'
                         TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-                          CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-                            ARG <this>: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+                          CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+                            ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                               ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                            ARG index: CONST Int type=kotlin.Int value=0
+                            ARG i: CONST Int type=kotlin.Int value=0
     FUN name:atomicIntArrUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
       BLOCK_BODY
@@ -792,14 +797,14 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           ARG expected: CONST Int type=kotlin.Int value=10
           ARG actual: CALL 'public final fun atomicIntArrLoopTest (): kotlin.Int declared in <root>.ArrayLoopTest' type=kotlin.Int origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-        CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=5
+          ARG i: CONST Int type=kotlin.Int value=5
           ARG newValue: CONST Int type=kotlin.Int value=10
-        CALL 'private final fun update$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
+        CALL 'private final fun update$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-          ARG handler$atomicfu: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
           ARG index$atomicfu: CONST Int type=kotlin.Int value=5
           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
@@ -824,19 +829,19 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           TYPE_ARG T: kotlin.Int
           ARG expected: CONST Int type=kotlin.Int value=2147483647
           ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-              ARG <this>: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                 ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-              ARG index: CONST Int type=kotlin.Int value=5
-        CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=5
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=6
+          ARG i: CONST Int type=kotlin.Int value=6
           ARG newValue: CONST Int type=kotlin.Int value=10
         VAR name:res1 type:kotlin.Int [val]
-          CALL 'private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.ArrayLoopTest' type=kotlin.Int origin=null
+          CALL 'private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.ArrayLoopTest' type=kotlin.Int origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-            ARG handler$atomicfu: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
               ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
             ARG index$atomicfu: CONST Int type=kotlin.Int value=6
             ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
@@ -857,17 +862,17 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           TYPE_ARG T: kotlin.Int
           ARG expected: CONST Int type=kotlin.Int value=2147483647
           ARG actual: GET_VAR 'val res1: kotlin.Int declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=kotlin.Int origin=null
-        CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=7
+          ARG i: CONST Int type=kotlin.Int value=7
           ARG newValue: CONST Int type=kotlin.Int value=50
         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
           TYPE_ARG T: kotlin.Int
           ARG expected: CONST Int type=kotlin.Int value=50
-          ARG actual: CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.ArrayLoopTest' type=kotlin.Int origin=null
+          ARG actual: CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: java.util.concurrent.atomic.AtomicIntegerArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in <root>.ArrayLoopTest' type=kotlin.Int origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-            ARG handler$atomicfu: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
               ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
             ARG index$atomicfu: CONST Int type=kotlin.Int value=7
             ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
@@ -892,21 +897,21 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           TYPE_ARG T: kotlin.Int
           ARG expected: CONST Int type=kotlin.Int value=2147483647
           ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
-              ARG <this>: CALL 'private final fun <get-intArr> (): kotlin.concurrent.AtomicIntArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicIntArray origin=null
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Int declared in java.util.concurrent.atomic.AtomicIntegerArray' type=kotlin.Int origin=null
+              ARG <this>: CALL 'private final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
                 ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicIntArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-              ARG index: CONST Int type=kotlin.Int value=7
+              ARG i: CONST Int type=kotlin.Int value=7
     FUN name:atomicLongArrLoopTest visibility:public modality:FINAL returnType:kotlin.Long
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
       BLOCK_BODY
-        CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=0
+          ARG i: CONST Int type=kotlin.Int value=0
           ARG newValue: CONST Long type=kotlin.Long value=0
-        CALL 'private final fun loop$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: kotlin.concurrent.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Unit>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
+        CALL 'private final fun loop$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Unit>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrLoopTest' type=<root>.ArrayLoopTest origin=null
-          ARG handler$atomicfu: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
           ARG index$atomicfu: CONST Int type=kotlin.Int value=0
           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Long, kotlin.Unit> origin=LAMBDA
@@ -915,12 +920,12 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
               BLOCK_BODY
                 WHEN type=kotlin.Unit origin=IF
                   BRANCH
-                    if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: kotlin.Long, newValue: kotlin.Long): kotlin.Boolean declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Boolean origin=null
-                      ARG <this>: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+                    if: CALL 'public final fun compareAndSet (i: kotlin.Int, expect: kotlin.Long, update: kotlin.Long): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Boolean origin=null
+                      ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
                         ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                      ARG index: CONST Int type=kotlin.Int value=0
-                      ARG expectedValue: GET_VAR 'value: kotlin.Long declared in <root>.ArrayLoopTest.atomicLongArrLoopTest.<anonymous>' type=kotlin.Long origin=null
-                      ARG newValue: CALL 'public final fun plus (other: kotlin.Int): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=PLUS
+                      ARG i: CONST Int type=kotlin.Int value=0
+                      ARG expect: GET_VAR 'value: kotlin.Long declared in <root>.ArrayLoopTest.atomicLongArrLoopTest.<anonymous>' type=kotlin.Long origin=null
+                      ARG update: CALL 'public final fun plus (other: kotlin.Int): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=PLUS
                         ARG <this>: GET_VAR 'value: kotlin.Long declared in <root>.ArrayLoopTest.atomicLongArrLoopTest.<anonymous>' type=kotlin.Long origin=null
                         ARG other: CONST Int type=kotlin.Int value=10
                     then: BLOCK type=kotlin.Unit origin=null
@@ -930,16 +935,16 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
                           ARG <this>: GET_VAR 'value: kotlin.Long declared in <root>.ArrayLoopTest.atomicLongArrLoopTest.<anonymous>' type=kotlin.Long origin=null
                           ARG other: CONST Int type=kotlin.Int value=10
                         ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
-                          CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
-                            ARG <this>: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+                          CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+                            ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
                               ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                            ARG index: CONST Int type=kotlin.Int value=0
+                            ARG i: CONST Int type=kotlin.Int value=0
                       RETURN type=kotlin.Nothing from='public final fun atomicLongArrLoopTest (): kotlin.Long declared in <root>.ArrayLoopTest'
                         TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
-                          CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
-                            ARG <this>: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+                          CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+                            ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
                               ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                            ARG index: CONST Int type=kotlin.Int value=0
+                            ARG i: CONST Int type=kotlin.Int value=0
     FUN name:atomicLongArrUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
       BLOCK_BODY
@@ -948,14 +953,14 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           ARG expected: CONST Long type=kotlin.Long value=10
           ARG actual: CALL 'public final fun atomicLongArrLoopTest (): kotlin.Long declared in <root>.ArrayLoopTest' type=kotlin.Long origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-        CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=5
+          ARG i: CONST Int type=kotlin.Int value=5
           ARG newValue: CONST Long type=kotlin.Long value=0
-        CALL 'private final fun update$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: kotlin.concurrent.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
+        CALL 'private final fun update$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-          ARG handler$atomicfu: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
           ARG index$atomicfu: CONST Int type=kotlin.Int value=5
           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=LAMBDA
@@ -980,19 +985,19 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           TYPE_ARG T: kotlin.Long
           ARG expected: CONST Long type=kotlin.Long value=9223372036854775807
           ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
-            CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
-              ARG <this>: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
                 ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-              ARG index: CONST Int type=kotlin.Int value=5
-        CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+              ARG i: CONST Int type=kotlin.Int value=5
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=6
+          ARG i: CONST Int type=kotlin.Int value=6
           ARG newValue: CONST Long type=kotlin.Long value=10
         VAR name:res2 type:kotlin.Long [val]
-          CALL 'private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: kotlin.concurrent.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.ArrayLoopTest' type=kotlin.Long origin=null
+          CALL 'private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.ArrayLoopTest' type=kotlin.Long origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-            ARG handler$atomicfu: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
               ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
             ARG index$atomicfu: CONST Int type=kotlin.Int value=6
             ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=LAMBDA
@@ -1013,17 +1018,17 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           TYPE_ARG T: kotlin.Long
           ARG expected: CONST Long type=kotlin.Long value=9223372036854775807
           ARG actual: GET_VAR 'val res2: kotlin.Long declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=kotlin.Long origin=null
-        CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+        CALL 'public final fun set (i: kotlin.Int, newValue: kotlin.Long): kotlin.Unit declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=7
+          ARG i: CONST Int type=kotlin.Int value=7
           ARG newValue: CONST Long type=kotlin.Long value=50
         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
           TYPE_ARG T: kotlin.Long
           ARG expected: CONST Long type=kotlin.Long value=50
-          ARG actual: CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: kotlin.concurrent.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.ArrayLoopTest' type=kotlin.Long origin=null
+          ARG actual: CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: java.util.concurrent.atomic.AtomicLongArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Long>): kotlin.Long declared in <root>.ArrayLoopTest' type=kotlin.Long origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-            ARG handler$atomicfu: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+            ARG handler$atomicfu: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
               ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
             ARG index$atomicfu: CONST Int type=kotlin.Int value=7
             ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Long, kotlin.Long> origin=LAMBDA
@@ -1048,22 +1053,23 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           TYPE_ARG T: kotlin.Long
           ARG expected: CONST Long type=kotlin.Long value=9223372036854775807
           ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
-            CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
-              ARG <this>: CALL 'private final fun <get-longArr> (): kotlin.concurrent.AtomicLongArray declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicLongArray origin=null
+            CALL 'public final fun get (i: kotlin.Int): kotlin.Long declared in java.util.concurrent.atomic.AtomicLongArray' type=kotlin.Long origin=null
+              ARG <this>: CALL 'private final fun <get-longArr> (): java.util.concurrent.atomic.AtomicLongArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicLongArray origin=null
                 ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicLongArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-              ARG index: CONST Int type=kotlin.Int value=7
+              ARG i: CONST Int type=kotlin.Int value=7
     FUN name:atomicRefArrLoopTest visibility:public modality:FINAL returnType:<root>.ArrayLoopTest.Box?
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
       BLOCK_BODY
-        CALL 'public final fun set (index: kotlin.Int, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Unit declared in kotlin.concurrent.AtomicArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+        CALL 'public final fun set <T> (i: kotlin.Int, newValue: T of java.util.concurrent.atomic.AtomicReferenceArray.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=0
+          ARG i: CONST Int type=kotlin.Int value=0
           ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (n: kotlin.Int) declared in <root>.ArrayLoopTest.Box' type=<root>.ArrayLoopTest.Box origin=null
             ARG n: CONST Int type=kotlin.Int value=888
-        CALL 'private final fun loop$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
+        CALL 'private final fun loop$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrLoopTest' type=<root>.ArrayLoopTest origin=null
-          ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
           ARG index$atomicfu: CONST Int type=kotlin.Int value=0
           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.ArrayLoopTest.Box?, kotlin.Unit> origin=LAMBDA
@@ -1072,12 +1078,13 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
               BLOCK_BODY
                 WHEN type=kotlin.Unit origin=IF
                   BRANCH
-                    if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: T of kotlin.concurrent.AtomicArray, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Boolean declared in kotlin.concurrent.AtomicArray' type=kotlin.Boolean origin=null
-                      ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+                    if: CALL 'public final fun compareAndSet <T> (i: kotlin.Int, expect: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet, update: T of java.util.concurrent.atomic.AtomicReferenceArray.compareAndSet): kotlin.Boolean declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Boolean origin=null
+                      TYPE_ARG T: <none>
+                      ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
                         ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                      ARG index: CONST Int type=kotlin.Int value=0
-                      ARG expectedValue: GET_VAR 'value: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.atomicRefArrLoopTest.<anonymous>' type=<root>.ArrayLoopTest.Box? origin=null
-                      ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (n: kotlin.Int) declared in <root>.ArrayLoopTest.Box' type=<root>.ArrayLoopTest.Box origin=null
+                      ARG i: CONST Int type=kotlin.Int value=0
+                      ARG expect: GET_VAR 'value: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.atomicRefArrLoopTest.<anonymous>' type=<root>.ArrayLoopTest.Box? origin=null
+                      ARG update: CONSTRUCTOR_CALL 'public constructor <init> (n: kotlin.Int) declared in <root>.ArrayLoopTest.Box' type=<root>.ArrayLoopTest.Box origin=null
                         ARG n: CONST Int type=kotlin.Int value=777
                     then: BLOCK type=kotlin.Unit origin=null
                       CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
@@ -1087,16 +1094,18 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
                           ARG <this>: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.ArrayLoopTest.Box origin=EXCLEXCL
                             TYPE_ARG T0: <root>.ArrayLoopTest.Box
                             ARG arg0: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
-                              CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
-                                ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+                              CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                                TYPE_ARG T: <none>
+                                ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
                                   ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                                ARG index: CONST Int type=kotlin.Int value=0
+                                ARG i: CONST Int type=kotlin.Int value=0
                       RETURN type=kotlin.Nothing from='public final fun atomicRefArrLoopTest (): <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest'
                         TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
-                          CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
-                            ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+                          CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                            TYPE_ARG T: <none>
+                            ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
                               ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrLoopTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                            ARG index: CONST Int type=kotlin.Int value=0
+                            ARG i: CONST Int type=kotlin.Int value=0
     FUN name:atomicRefArrUpdateTest visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
       BLOCK_BODY
@@ -1118,15 +1127,16 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
                 then: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.ArrayLoopTest.Box' type=kotlin.Int origin=GET_PROPERTY
                   ARG <this>: TYPE_OP type=<root>.ArrayLoopTest.Box origin=IMPLICIT_CAST typeOperand=<root>.ArrayLoopTest.Box
                     GET_VAR 'val tmp_29: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest.Box? origin=null
-        CALL 'public final fun set (index: kotlin.Int, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Unit declared in kotlin.concurrent.AtomicArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+        CALL 'public final fun set <T> (i: kotlin.Int, newValue: T of java.util.concurrent.atomic.AtomicReferenceArray.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=0
+          ARG i: CONST Int type=kotlin.Int value=0
           ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (n: kotlin.Int) declared in <root>.ArrayLoopTest.Box' type=<root>.ArrayLoopTest.Box origin=null
             ARG n: CONST Int type=kotlin.Int value=5
-        CALL 'private final fun update$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
+        CALL 'private final fun update$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.ArrayLoopTest' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-          ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+          ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
           ARG index$atomicfu: CONST Int type=kotlin.Int value=0
           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.ArrayLoopTest.Box?, <root>.ArrayLoopTest.Box?> origin=LAMBDA
@@ -1167,15 +1177,17 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
             ARG <this>: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.ArrayLoopTest.Box origin=EXCLEXCL
               TYPE_ARG T0: <root>.ArrayLoopTest.Box
               ARG arg0: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
-                CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
-                  ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+                CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
                     ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                  ARG index: CONST Int type=kotlin.Int value=0
+                  ARG i: CONST Int type=kotlin.Int value=0
           ARG actual: CONST Int type=kotlin.Int value=50
-        CALL 'public final fun set (index: kotlin.Int, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Unit declared in kotlin.concurrent.AtomicArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+        CALL 'public final fun set <T> (i: kotlin.Int, newValue: T of java.util.concurrent.atomic.AtomicReferenceArray.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=0
+          ARG i: CONST Int type=kotlin.Int value=0
           ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (n: kotlin.Int) declared in <root>.ArrayLoopTest.Box' type=<root>.ArrayLoopTest.Box origin=null
             ARG n: CONST Int type=kotlin.Int value=5
         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
@@ -1183,9 +1195,9 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           ARG expected: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.ArrayLoopTest.Box' type=kotlin.Int origin=GET_PROPERTY
             ARG <this>: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.ArrayLoopTest.Box origin=EXCLEXCL
               TYPE_ARG T0: <root>.ArrayLoopTest.Box
-              ARG arg0: CALL 'private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.ArrayLoopTest' type=kotlin.Any? origin=null
+              ARG arg0: CALL 'private final fun updateAndGet$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.ArrayLoopTest' type=kotlin.Any? origin=null
                 ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-                ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+                ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
                   ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
                 ARG index$atomicfu: CONST Int type=kotlin.Int value=0
                 ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.ArrayLoopTest.Box?, <root>.ArrayLoopTest.Box?> origin=LAMBDA
@@ -1197,10 +1209,11 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
                           ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
                           ARG cur: GET_VAR 'cur: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest.<anonymous>' type=<root>.ArrayLoopTest.Box? origin=null
           ARG actual: CONST Int type=kotlin.Int value=50
-        CALL 'public final fun set (index: kotlin.Int, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Unit declared in kotlin.concurrent.AtomicArray' type=kotlin.Unit origin=null
-          ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+        CALL 'public final fun set <T> (i: kotlin.Int, newValue: T of java.util.concurrent.atomic.AtomicReferenceArray.set): kotlin.Unit declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Unit origin=null
+          TYPE_ARG T: <none>
+          ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-          ARG index: CONST Int type=kotlin.Int value=0
+          ARG i: CONST Int type=kotlin.Int value=0
           ARG newValue: CONSTRUCTOR_CALL 'public constructor <init> (n: kotlin.Int) declared in <root>.ArrayLoopTest.Box' type=<root>.ArrayLoopTest.Box origin=null
             ARG n: CONST Int type=kotlin.Int value=5
         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
@@ -1208,9 +1221,9 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
           ARG expected: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.ArrayLoopTest.Box' type=kotlin.Int origin=GET_PROPERTY
             ARG <this>: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.ArrayLoopTest.Box origin=EXCLEXCL
               TYPE_ARG T0: <root>.ArrayLoopTest.Box
-              ARG arg0: CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.ArrayLoopTest' type=kotlin.Any? origin=null
+              ARG arg0: CALL 'private final fun getAndUpdate$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: java.util.concurrent.atomic.AtomicReferenceArray, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.ArrayLoopTest' type=kotlin.Any? origin=null
                 ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=null
-                ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+                ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
                   ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
                 ARG index$atomicfu: CONST Int type=kotlin.Int value=0
                 ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.ArrayLoopTest.Box?, <root>.ArrayLoopTest.Box?> origin=LAMBDA
@@ -1228,10 +1241,11 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
             ARG <this>: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.ArrayLoopTest.Box origin=EXCLEXCL
               TYPE_ARG T0: <root>.ArrayLoopTest.Box
               ARG arg0: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
-                CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
-                  ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
+                CALL 'public final fun get <T> (i: kotlin.Int): T of java.util.concurrent.atomic.AtomicReferenceArray.get declared in java.util.concurrent.atomic.AtomicReferenceArray' type=kotlin.Any? origin=null
+                  TYPE_ARG T: <none>
+                  ARG <this>: CALL 'private final fun <get-refArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.ArrayLoopTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
                     ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
-                  ARG index: CONST Int type=kotlin.Int value=0
+                  ARG i: CONST Int type=kotlin.Int value=0
           ARG actual: CONST Int type=kotlin.Int value=50
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY

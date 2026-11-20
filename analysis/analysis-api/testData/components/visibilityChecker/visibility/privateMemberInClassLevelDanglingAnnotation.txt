@@ -1,0 +1,4 @@
+Declaration: private fun target(): kotlin.Int
+At usage site: println
+Is visible: true
+Receiver expression: null

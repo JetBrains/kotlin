@@ -61,12 +61,12 @@ dependencies {
 
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-api-standalone"))
+    implementation(project(":analysis:light-classes-base"))
     runtimeOnly(project(":analysis:analysis-api-platform-interface"))
     runtimeOnly(project(":analysis:analysis-api-fir"))
     runtimeOnly(project(":analysis:low-level-api-fir"))
     runtimeOnly(project(":analysis:symbol-light-classes"))
     runtimeOnly(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
-    runtimeOnly(project(":analysis:analysis-api-impl-base"))
 
     implementation(project(":compiler:cli-base"))
     implementation(project(":core:language.targets.jvm"))
@@ -92,67 +92,7 @@ projectTests {
     // declared explicitly or `test-inputs-check` flags them as undeclared inputs.
     testData(project.isolated, "src/test/resources")
 
-    testing {
-        suites {
-            named<JvmTestSuite>("test").configure {
-
-                // JUnit tags for Java analysis (PSI vs symbols) are defined with annotations in test classes.
-                val onlyJavaPsiTags = listOf("onlyJavaPsi")
-                val onlyJavaSymbolsTags = listOf("onlyJavaSymbols")
-
-                // Create a new target for _only_ running test compatible with symbols-analysis (K2).
-                val testSymbolsTarget = targets.register("testSymbols") {
-
-                    testTask(
-                        taskName = testTask.name,
-                        javaLauncher = JdkMajorVersion.JDK_1_8,
-                        maxHeapSize = testMaxHeapSizeLarge,
-                        skipInLocalBuild = false,
-                    ) {
-                        val excludedTags = onlyJavaSymbolsTags
-                        description = "Runs tests using symbols-analysis (K2) (excluding tags: $excludedTags)"
-                        useJUnitPlatform {
-                            excludeTags.addAll(excludedTags)
-                        }
-                    }
-                }
-
-
-                // Create a new target for running tests with enabled experimental symbols java analysis.
-                val testJavaSymbolsTarget = targets.register("testJavaSymbols") {
-                    testTask(
-                        taskName = testTask.name,
-                        javaLauncher = JdkMajorVersion.JDK_1_8,
-                        maxHeapSize = testMaxHeapSizeLarge,
-                        skipInLocalBuild = false,
-                    ) {
-                        val excludedTags = onlyJavaPsiTags
-                        description = "Runs tests using symbols-analysis (K2) for java (excluding tags: $excludedTags)"
-                        useJUnitPlatform {
-                            excludeTags.addAll(excludedTags)
-                        }
-                        // Enable experimental symbols java analysis
-                        systemProperty("org.jetbrains.dokka.analysis.enableExperimentalSymbolsJavaAnalysis", "true")
-                    }
-                }
-
-                // Run all test targets when running :test;
-                // don't run the task itself, as it's just an aggregate for the test targets.
-                targets.named("test") {
-                    projectTests {
-                        testTask(
-                            taskName = testTask.name,
-                            javaLauncher = JdkMajorVersion.JDK_1_8,
-                            skipInLocalBuild = false,
-                        ) {
-                            onlyIf { false }
-                            dependsOn(testSymbolsTarget.map { it.testTask })
-                            dependsOn(testJavaSymbolsTarget.map { it.testTask })
-                        }
-                    }
-                }
-            }
-        }
-    }
+    // Single test task running tests with symbols java analysis (K2).
+    testTask()
 }
 //endregion

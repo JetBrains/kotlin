@@ -1,13 +1,4 @@
-FILE: RichError.kt
-    package kotlin
-
-    public abstract class RichError : R|kotlin/Any| {
-        public constructor(): R|kotlin/RichError| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-FILE: test.kt
+FILE: richErrorSupertypes.kt
     public final error class E1 : R|kotlin/RichError| {
         public constructor(): R|E1| {
             super<R|kotlin/RichError|>()

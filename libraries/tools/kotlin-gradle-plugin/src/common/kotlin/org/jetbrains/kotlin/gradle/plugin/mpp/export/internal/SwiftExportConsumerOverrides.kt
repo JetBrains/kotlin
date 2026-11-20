@@ -16,21 +16,21 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createH
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createTransitiveSwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.defaultSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleName
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import java.io.File
 
-private const val XCODE_INTEGRATION_CONFIGURE_DSL = "export { swift { xcodeIntegration { configure() } } }"
 private const val EXPORTED_MODULE_ITSELF = "the module being exported"
 
 /**
- * Applies the overrides from `xcodeIntegration { configure(dependency) { } }` to the collected modules, then
+ * Applies the overrides from `configure(dependency) { }` of an integration to the collected modules, then
  * reports overrides that matched nothing and module names shared by more than one module.
  *
  * Works on the collector's output, so the legacy `swiftExport { }` flow never runs through here.
  *
  * @param rootModuleName the Swift module name of the module being exported, for collision detection
+ * @param integrationDsl the DSL block of the integration the overrides come from, so diagnostics point at it
  */
 internal fun applySwiftExportConsumerOverrides(
     modules: List<SwiftExportedModule>,
@@ -39,11 +39,12 @@ internal fun applySwiftExportConsumerOverrides(
     exportConfiguration: LazyResolvedConfigurationWithArtifacts,
     apiConfiguration: LazyResolvedConfigurationWithArtifacts?,
     rootModuleName: String,
+    integrationDsl: String,
     reportDiagnostic: (ToolingDiagnostic) -> Unit,
 ): List<SwiftExportedModule> {
     if (overrides.isEmpty() && metadataByComponent.isEmpty()) return modules
 
-    // Declared option layers, highest precedence first. KT-87987 adds the producer source here.
+    // Declared option layers, highest precedence first.
     val sources = listOf(
         ConsumerOverridesOptionsSource(overrides),
         MetadataOptionsSource(metadataByComponent),
@@ -52,7 +53,13 @@ internal fun applySwiftExportConsumerOverrides(
     val componentByArtifact = componentByArtifact(exportConfiguration, apiConfiguration)
     val exported = modules.map { module ->
         val component = componentByArtifact[module.artifact] ?: return@map module to null
-        val declaredName = sources.declaredModuleName(component)?.also { validateSwiftExportModuleName(it, reportDiagnostic) }
+        val declaredName = sources.declaredModuleName(component)?.also {
+            validateSwiftExportModuleIdentifier(
+                it,
+                component.displayName,
+                reportDiagnostic = reportDiagnostic,
+            )
+        }
         val visibility = sources.declaredVisibility(component)
         val mode = when (visibility) {
             SwiftExportVisibility.EXPOSED -> SwiftExportedModuleMode.FULL
@@ -89,7 +96,7 @@ internal fun applySwiftExportConsumerOverrides(
         reportDiagnostic(
             KotlinToolingDiagnostics.SwiftExportModuleResolutionError(
                 unmatched.map { it.displayName },
-                XCODE_INTEGRATION_CONFIGURE_DSL,
+                "export { swift { $integrationDsl { configure() } } }",
             )
         )
     }
@@ -103,7 +110,7 @@ internal fun applySwiftExportConsumerOverrides(
         .filter { it.size > 1 }
         .associate { group -> group.map { (name, _) -> name }.distinct().joinToString("/") to group.map { (_, owner) -> owner } }
     if (duplicates.isNotEmpty()) {
-        reportDiagnostic(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(duplicates))
+        reportDiagnostic(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(duplicates, integrationDsl))
     }
 
     return exported.map { (module, _) -> module }

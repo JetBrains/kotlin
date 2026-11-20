@@ -23,7 +23,7 @@ internal typealias NpmDependencyDeprecated = NpmDependency
 @Suppress("DEPRECATION")
 internal typealias NpmDependencyScopeDeprecated = NpmDependency.Scope
 
-@Deprecated("Use KotlinNpmDependency instead")
+@Deprecated("Declare npm dependencies with npm, npmDev, npmOptional, or npmPeer, without passing them to the implementation(...) or api(...) calls")
 @Suppress("DEPRECATION") // the deprecated Scope is a part of this deprecated class
 data class NpmDependency(
     val objectFactory: ObjectFactory,
@@ -33,7 +33,7 @@ data class NpmDependency(
 ) : FileCollectionDependency,
     SelfResolvingDependencyInternal {
 
-    @Deprecated("Use KotlinNpmDependency.Scope instead")
+    @Deprecated("Select the scope by declaring the dependency with npm, npmDev, npmOptional, or npmPeer")
     enum class Scope {
         NORMAL,
         DEV,

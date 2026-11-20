@@ -1,0 +1,22 @@
+KT element: KtTypeReference
+FIR element: FirErrorTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<ERROR TYPE REF: Type parameter T cannot be a supertype>
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] delegatedTypeParameterSuperTypeInAnonymousObject.kt
+    public final? [ResolvedTo(RAW_FIR)] interface MyInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|MyInterface|> foo([ResolvedTo(BODY_RESOLVE)] i: R|T|): R|kotlin/Unit| {
+        object : <ERROR TYPE REF: Type parameter T cannot be a supertype> {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous><T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|T| = R|<local>/i|
+
+        }
+
+    }

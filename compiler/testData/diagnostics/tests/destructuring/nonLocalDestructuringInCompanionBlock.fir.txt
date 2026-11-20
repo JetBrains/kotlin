@@ -1,0 +1,41 @@
+FILE: nonLocalDestructuringInCompanionBlock.kt
+    public final data class X : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|, b: R|kotlin/String|): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+
+        public final val b: R|kotlin/String| = R|<local>/b|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final operator fun component2(): R|kotlin/String|
+
+        public final fun copy(a: R|kotlin/Int| = this@R|/X|.R|/X.a|, b: R|kotlin/String| = this@R|/X|.R|/X.b|): R|X|
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final static val <destruct>: R|X| = R|/X.X|(Int(1), String())
+            private static get(): R|X|
+
+        public final static val a: R|kotlin/Int| = R|/A.<destruct>*s|.R|/X.component1|()
+            public static get(): R|kotlin/Int|
+
+        public final static val b: R|kotlin/String| = R|/A.<destruct>*s|.R|/X.component2|()
+            public static get(): R|kotlin/String|
+
+        public final fun use(): R|kotlin/Int| {
+            ^use Q|A|.R|/A.b*s|.R|kotlin/String.length|
+        }
+
+    }
+    public final fun use(): R|kotlin/Int| {
+        ^use Q|A|.R|/A.b*s|.R|kotlin/String.length|
+    }

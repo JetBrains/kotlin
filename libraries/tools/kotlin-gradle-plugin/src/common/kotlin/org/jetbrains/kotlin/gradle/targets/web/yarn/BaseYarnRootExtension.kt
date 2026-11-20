@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.*
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.internal.KgpBuildConstants
 import java.io.File
@@ -33,6 +34,7 @@ import java.io.File
 /**
  * Common configuration for Yarn in a Kotlin/JS or Kotlin/WasmJS project.
  */
+@ObsoleteNpmDependencyModel
 abstract class BaseYarnRootExtension internal constructor(
     val project: Project,
     val nodeJsRoot: BaseNodeJsRootExtension,

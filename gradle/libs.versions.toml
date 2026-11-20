@@ -1,5 +1,5 @@
 [versions]
-kotlin-release = "2.4.20"
+kotlin-release = "2.5.0-Beta2"
 dexMemberList = "4.1.1"
 dokka = "2.3.0-Beta"
 gradle-custom-user-data = "2.4.0"
@@ -20,47 +20,50 @@ kotlinx-schema = "0.5.0"
 # Check the version in this file: https://github.com/JetBrains/intellij-community/blob/cc37866d3827c51712f9856f5e580d405784d1ef/.idea/libraries/kotlinx_coroutines_core.xml
 # Should be synchronized with 'intellij-kotlinx-coroutines'
 kotlinx-coroutines = "1.8.0"
+kotlinx-html = "0.12.0"
 shadow = "9.3.2"
 spdx = "0.11.0"
 proguard = "7.4.2"
 ktor = "3.3.1"
 kotlinx-bcv = "0.17.0"
-kotlinx-benchmark = "0.4.16"
+kotlinx-benchmark = "0.5.0"
 gson = "2.11.0"
 icu4j = "78.3"
 jetbrains-ideaExt = "1.4.1"
-jackson = "2.21.1"
+jackson = "2.22.4"
 jgit = "7.3.0.202506031305-r"
-jsoup = "1.17.2"
+jsoup = "1.23.2"
 jetbrains-markdown = "0.7.3"
 junit4 = "4.13.2"
 junit5 = "5.14.4"
 junit-platform = "1.14.4"
-okhttp = "4.12.0"
 opentest4j = "1.3.0" # should be consistent with the version brought by junit-platform
 android-gradle-plugin = "8.13.2"
 android-gradle-plugin-latest = "9.3.0"
 android-tools = "31.13.2"
 gradle-node-plugin = "7.0.2"
 lincheck = "2.28.1"
+archunit = "1.5.1"
 xerces = "2.12.2"
 caffeine = "2.9.3" # We cannot use the latest version of Caffeine (`3.x`) because it doesn't support Java 8.
 compose-stable = "1.7.0-alpha08" # Used for Compose compiler plugin tests
 androidx-collections = "1.5.0" # Used for Compose compiler plugin tests
-ant = "1.10.14"
+# Used for Compose compiler plugin Kotlin/Native tests. Older versions are compiled against an outdated stdlib ABI.
+kotlinx-coroutines-compose-native-tests = "1.11.0"
+ant = "1.10.18"
 # It is recommended to skip at least one major release, e.g., use 2.0.21 when the default bootstrap version is 2.2.
 # This ensures additional verification that Gradle-related code does not get dependencies of higher LV
 kotlin-for-gradle-plugins-compilation = "2.4.20"
 intellij-asm = "9.6.1"
 intellij-kotlinx-coroutines = "1.10.2-intellij-1" # Should be synchronized with 'kotlinx-coroutines'
 diff-utils = "4.12"
-opentelemetry-api = "1.41.0"
+opentelemetry-api = "1.67.0"
 auto-value-annotations = "1.11.0" # Used in opentelemetry-api
 fastutil = "8.5.14-jb1"
 rwmutex-idea = "0.0.10"
 # Wasm specific
 wasmedge = "0.16.3"
-wasmtime = "49.0.1"
+wasmtime = "50.0.0"
 jscTahoe = "312950"
 jscLinux = "312950"
 jscWindows = "312950"
@@ -73,13 +76,12 @@ protobufComposeTest = "4.35.1"
 woodstox-core = "7.1.0"
 http-client = "4.5.14"
 json = "20231013"
-dataframe = "1.0.0-Beta4"
 commons-beanutils = "1.11.0"
 commons-compress = "1.27.1"
 commons-io = "2.18.0"
 commons-lang = "3.18.0"
 commons-text = "1.10.0"
-dataframe-dev = "1.0.0-dev-10669"
+dataframe-dev = "1.0.0-dev-11962"
 org-jetbrains-syntax-api = "0.3.376"
 org-jetbrains-annotations = "26.0.2"
 schema-kenerator = "2.6.0"
@@ -91,17 +93,18 @@ log4j-over-slf4j = "1.7.36" # Use this version instead of the latest one to prev
 commons-logging = "1.3.5" # Use this version instead of the latest one to prevent dependency pollution (1.3.5 is already included by some library). Feel free to update if necessary.
 flogger = "0.9"
 jboss-logging = "3.4.3.Final"
-log4j2 = "2.26.0"
+log4j2 = "2.26.1"
 maven-xml-impl = "4.0.0-beta-5"
 yarn = "1.22.22"
 # This is also the version of bouncycastle that is used by KGP
-bouncycastle = "1.84"
+bouncycastle = "1.86"
 kotlin-before-bta-v2 = "2.2.21"
 jacoco = "0.8.14"
 bytebuddy = "1.18.9"
 playwright = "1.61.0"
 fileLeakDetector = "1.21"
 jmh = "0.7.3"
+dependency-analysis = "3.19.2"
 
 analysis-api-kotlin = "2.3.21"
 
@@ -131,14 +134,12 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
 kotlinx-schema-generator-json = { module = "org.jetbrains.kotlinx:kotlinx-schema-generator-json", version.ref = "kotlinx-schema" }
 kotlinx-benchmark-runtime = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlinx-benchmark" }
+kotlinx-html-jvm = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version.ref = "kotlinx-html" }
 shadow-gradlePlugin = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
 proguard-gradlePlugin = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard" }
 node-gradlePlugin = { module = "com.github.node-gradle:gradle-node-plugin", version.ref = "gradle-node-plugin" }
 woodstox-core = { module = "com.fasterxml.woodstox:woodstox-core", version.ref = "woodstox-core" }
-dataframeCore = { module = "org.jetbrains.kotlinx:dataframe-core", version.ref = "dataframe" }
-dataframeCsv = { module = "org.jetbrains.kotlinx:dataframe-csv", version.ref = "dataframe" }
-dataframeJson = { module = "org.jetbrains.kotlinx:dataframe-json", version.ref = "dataframe" }
 dataframe-compiler-plugin-core = { module = "org.jetbrains.kotlinx.dataframe:dataframe-compiler-plugin-core", version.ref = "dataframe-dev" }
 dataframe-core-dev = { module = "org.jetbrains.kotlinx:dataframe-core", version.ref = "dataframe-dev" }
 dataframe-csv-dev = { module = "org.jetbrains.kotlinx:dataframe-csv", version.ref = "dataframe-dev" }
@@ -176,6 +177,7 @@ junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher
 junit-platform-suite = { module = "org.junit.platform:junit-platform-suite", version.ref = "junit-platform" }
 opentest4j = { module = "org.opentest4j:opentest4j", version.ref = "opentest4j" }
 lincheck = { module = "org.jetbrains.kotlinx:lincheck", version.ref = "lincheck" }
+archunit = { module = "com.tngtech.archunit:archunit", version.ref = "archunit" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf" }
 protobuf-java-compose-test = { module = "com.google.protobuf:protobuf-java", version.ref = "protobufComposeTest" }
@@ -201,7 +203,6 @@ xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
 ant = { module = "org.apache.ant:ant", version.ref = "ant" }
 intellij-asm = { module = "org.jetbrains.intellij.deps:asm-all", version.ref = "intellij-asm" }
 diff-utils = { module = "io.github.java-diff-utils:java-diff-utils", version.ref = "diff-utils" }
-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 opentelemetry-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "opentelemetry-api" }
 bytebuddy = { module = "net.bytebuddy:byte-buddy", version.ref = "bytebuddy" }
 auto-value-annotations = { module = "com.google.auto.value:auto-value-annotations", version.ref = "auto-value-annotations" }
@@ -210,6 +211,7 @@ javaDiffUtils = { module = "io.github.java-diff-utils:java-diff-utils", version.
 kotlinx-bcv = { module = "org.jetbrains.kotlinx:binary-compatibility-validator", version.ref = "kotlinx-bcv" }
 
 androidx-collections = { module = "androidx.collection:collection", version.ref = "androidx-collections" }
+kotlinx-coroutines-core-compose-native-tests = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-compose-native-tests" }
 oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
 
 org-jetbrains-syntax-api = { module = "org.jetbrains:syntax-api", version.ref = "org-jetbrains-syntax-api" }
@@ -235,11 +237,14 @@ flogger-system-backend = { module = "com.google.flogger:flogger-system-backend",
 jboss-logging = { module = "org.jboss.logging:jboss-logging", version.ref = "jboss-logging" }
 log4j2-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j2" }
 log4j2-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j2" }
+log4j2-slf4j-impl = { module = "org.apache.logging.log4j:log4j-slf4j-impl", version.ref = "log4j2" }
 maven-xml-impl = { module = "org.apache.maven:maven-xml-impl", version.ref = "maven-xml-impl" }
 
 bouncycastle-bcpg-jdk18on = { module = "org.bouncycastle:bcpg-jdk18on", version.ref = "bouncycastle" }
 bouncycastle-bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
 bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+
+dependencyAnalysis-gradlePlugin = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dependency-analysis" }
 
 gradlePlugin-gradle-node = { module = "com.github.node-gradle.node:com.github.node-gradle.node.gradle.plugin", version.ref = "gradle-node-plugin" }
 
@@ -261,3 +266,4 @@ kotlinx-bcv = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", ver
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
 gradle-crypto-checksum = { id = "org.gradle.crypto.checksum", version.ref = "gradle-crypto-checksum" }
 jmh = { id = "me.champeau.jmh", version.ref = "jmh" }
+dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency-analysis" }

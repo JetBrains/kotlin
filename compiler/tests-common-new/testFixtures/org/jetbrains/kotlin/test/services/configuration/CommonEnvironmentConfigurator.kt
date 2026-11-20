@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
+import org.jetbrains.kotlin.fir.session.FirAbstractSessionFactory
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isMultiplatformWeb
 import org.jetbrains.kotlin.test.FirParser
@@ -25,13 +26,11 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
-import org.jetbrains.kotlin.test.model.DependencyRelation.DependsOnDependency
-import org.jetbrains.kotlin.test.model.DependencyRelation.FriendDependency
-import org.jetbrains.kotlin.test.model.DependencyRelation.RegularDependency
+import org.jetbrains.kotlin.test.frontend.fir.firSessionComponentRegistrar
+import org.jetbrains.kotlin.test.model.DependencyRelation.*
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 
 class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
@@ -65,7 +64,18 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             configuration.dumpInferenceLogs = true
         }
 
+        when (module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)) {
+            FirParser.Psi -> configuration.parserMode = ParserMode.Psi
+            FirParser.LightTree -> configuration.parserMode = ParserMode.LightTree
+            FirParser.KmpTree -> configuration.parserMode = ParserMode.KmpTree
+            null -> {}
+        }
+
         setupK2CliConfiguration(module, configuration)
+
+        configuration.put(FirAbstractSessionFactory.TEST_ONLY_SESSION_COMPONENT_CALLBACK) {
+            testServices.firSessionComponentRegistrar?.registerAdditionalComponent(it)
+        }
     }
 
     private fun setupK2CliConfiguration(
@@ -73,16 +83,17 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         configuration: CompilerConfiguration,
     ) {
         if (!testServices.cliBasedFacadesEnabled) return
+
         if (
             module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
             module.isLeafModuleInMppGraph(testServices)
         ) {
             val hmppModules = module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)
-                .associateWith {
+                .associateWith { testModule ->
                     HmppCliModule(
-                        name = it.name,
-                        sources = it.kotlinFiles
-                            .map { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it).canonicalPath }
+                        name = testModule.name,
+                        sources = testModule.kotlinFiles
+                            .map { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
                             .toSet()
                     )
                 }
@@ -147,13 +158,6 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
 
         if (FirDiagnosticsDirectives.WITH_EXPERIMENTAL_CHECKERS in module.directives) {
             configuration.useFirExperimentalCheckers = true
-        }
-        // TODO: KT-89415
-        when (module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)) {
-            FirParser.Psi -> configuration.parserMode = ParserMode.Psi
-            FirParser.LightTree -> configuration.parserMode = ParserMode.LightTree
-            FirParser.KmpTree -> configuration.parserMode = ParserMode.KmpTree
-            null -> {}
         }
         configuration.allowNoSourceFiles = true
         configuration.allowAnyScriptsInSourceRoots = true

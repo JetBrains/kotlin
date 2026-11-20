@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -77,7 +78,7 @@ private fun buildNonErrorClass(
         val classSymbol = FirRegularClassSymbol(StandardClassIds.NonError)
         symbol = classSymbol
         superTypeRefs += buildResolvedTypeRef {
-            coneType = session.builtinTypes.anyType.coneType
+            coneType = StandardTypes.Any
         }
 
         this.scopeProvider = scopeProvider

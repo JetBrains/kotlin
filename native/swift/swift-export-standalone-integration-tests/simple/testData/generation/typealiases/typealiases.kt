@@ -51,14 +51,10 @@ typealias objectWithClassInheritance = OBJECT_WITH_CLASS_INHERITANCE
 // FILE: interfaces.kt
 
 interface OUTSIDE_PROTO {
-    // FIXME: KT-70541: typealiases can not properly detect unsupported nested classes
-    // So we have to exclude these tests for now:
-//    abstract class INSIDE_PROTO
+    abstract class INSIDE_PROTO
 }
 
 typealias outerInterface = OUTSIDE_PROTO
-// FIXME: See the comment above on OUTSIDE_PROTO.INSIDE_PROTO
-/*
 typealias innerInterface = OUTSIDE_PROTO.INSIDE_PROTO
 
 class INHERITANCE_COUPLE : OUTSIDE_PROTO.INSIDE_PROTO(), OUTSIDE_PROTO
@@ -66,7 +62,6 @@ typealias inheritanceCouple = INHERITANCE_COUPLE
 
 class INHERITANCE_SINGLE_PROTO : OUTSIDE_PROTO.INSIDE_PROTO()
 typealias inhertanceSingleProto = INHERITANCE_SINGLE_PROTO
-*/
 object OBJECT_WITH_INTERFACE_INHERITANCE: OUTSIDE_PROTO
 typealias objectWithInterfaceInheritance = OBJECT_WITH_INTERFACE_INHERITANCE
 

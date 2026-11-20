@@ -13,6 +13,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertEquals
@@ -20,6 +21,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalSerializationApi::class, ExperimentalWasmDsl::class)
 @MppGradlePluginTests
 @DisplayName("Smoke test Gradle publication metadata")
+@MustRunOnChangesInGradle
 @OsCondition(enabledOnCI = [OS.LINUX]) // FIXME: KT-76778
 class KmpGradlePublicationMetadataIT : KGPBaseTest() {
 
@@ -145,7 +147,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
                     publishLibraryVariants("debug", "release")
                 }
             }
-        }.publish(deriveBuildOptions = { buildOptions.suppressAgpWarningIsProperty(gradleVersion) })
+        }.publish()
         assertEquals(
             GradleMetadata(
                 variants = rootVariantsSharedByAllPublications
@@ -183,7 +185,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
             configuration()
             project.applyMultiplatform {
                 iosArm64()
-                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                 iosX64()
                 linuxArm64()
                 linuxX64()

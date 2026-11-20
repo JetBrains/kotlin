@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -47,7 +47,7 @@ class ReificationArgument(
 class ReifiedTypeInliner(
     private val parametersMapping: TypeParameterMappings?,
     private val intrinsicsSupport: IntrinsicsSupport,
-    private val typeSystem: TypeSystemCommonBackendContext,
+    private val typeSystem: IrTypeSystemContext,
     private val irBuiltIns: IrBuiltIns,
 ) {
     enum class OperationKind {
@@ -61,7 +61,7 @@ class ReifiedTypeInliner(
 
         fun putClassInstance(v: InstructionAdapter, type: IrType)
 
-        fun generateTypeParameterContainer(v: InstructionAdapter, typeParameter: TypeParameterMarker)
+        fun generateTypeParameterContainer(v: InstructionAdapter, typeParameter: IrTypeParameter)
 
         fun isMutableCollectionType(type: IrType): Boolean
 
@@ -119,17 +119,11 @@ class ReifiedTypeInliner(
         }
 
         fun putReifiedOperationMarkerIfNeeded(
-            typeParameter: TypeParameterMarker,
-            isNullable: Boolean,
-            operationKind: OperationKind,
-            v: InstructionAdapter,
-            typeSystem: TypeSystemCommonBackendContext
+            typeParameter: IrTypeParameter, isNullable: Boolean, operationKind: OperationKind, v: InstructionAdapter,
         ) {
-            with(typeSystem) {
-                if (typeParameter.isReified()) {
-                    val argument = ReificationArgument(typeParameter.getName().asString(), isNullable, 0)
-                    putReifiedOperationMarker(operationKind, argument, v)
-                }
+            if (typeParameter.isReified) {
+                val argument = ReificationArgument(typeParameter.name.asString(), isNullable, 0)
+                putReifiedOperationMarker(operationKind, argument, v)
             }
         }
     }
@@ -432,12 +426,12 @@ val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind?
         }
 
 class TypeParameterMappings(
-    typeSystem: TypeSystemCommonBackendContext,
+    typeSystem: IrTypeSystemContext,
     typeArguments: Map<out TypeParameterMarker, IrType>,
     allReified: Boolean,
     mapType: (IrType, BothSignatureWriter) -> Type
 ) {
-    private val mappingsByName = hashMapOf<String, TypeParameterMapping<IrType>>()
+    private val mappingsByName = hashMapOf<String, TypeParameterMapping>()
 
     init {
         with(typeSystem) {
@@ -446,23 +440,23 @@ class TypeParameterMappings(
                 val sw = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
                 mappingsByName[name] = TypeParameterMapping(
                     type, mapType(type, sw), sw.toString(), allReified || parameter.isReified(),
-                    typeSystem.extractReificationArgument(type)?.second,
-                    typeSystem.extractUsedReifiedParameters(type)
+                    extractReificationArgument(type)?.second,
+                    extractUsedReifiedParameters(type),
                 )
             }
         }
     }
 
-    operator fun get(name: String): TypeParameterMapping<IrType>? = mappingsByName[name]
+    operator fun get(name: String): TypeParameterMapping? = mappingsByName[name]
 
     fun hasReifiedParameters() = mappingsByName.values.any { it.isReified }
 
-    internal inline fun forEach(block: (String, TypeParameterMapping<IrType>) -> Unit) =
+    internal inline fun forEach(block: (String, TypeParameterMapping) -> Unit) =
         mappingsByName.entries.forEach { [name, mapping] -> block(name, mapping) }
 }
 
-class TypeParameterMapping<KT : KotlinTypeMarker>(
-    val type: KT,
+class TypeParameterMapping(
+    val type: IrType,
     val asmType: Type,
     val signature: String,
     val isReified: Boolean,

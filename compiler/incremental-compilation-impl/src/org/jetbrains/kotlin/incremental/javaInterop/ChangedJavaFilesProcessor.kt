@@ -19,13 +19,12 @@ import java.io.File
 
 internal class ChangedJavaFilesProcessor(
     private val reporter: ICReporter,
-    private val psiFileFactory: (File) -> PsiFile?
 ) {
 
     val allChangedSymbols: Collection<LookupSymbol>
         field = HashSet<LookupSymbol>()
 
-    fun process(filesDiff: ChangedFiles.DeterminableFiles.Known): ChangesEither {
+    inline fun process(filesDiff: ChangedFiles.DeterminableFiles.Known, psiFileFactory: (File) -> PsiFile?): ChangesEither {
         val modifiedJava = filesDiff.modified.filter(File::isJavaFile)
         val removedJava = filesDiff.removed.filter(File::isJavaFile)
 

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXPOSED_NOT_EXPORTED_SUPER_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -87,7 +88,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         val hasJsName = declaration.hasAnnotation(JsStandardClassIds.Annotations.JsName, context.session)
 
         fun reportWrongExportedDeclaration(kind: String) {
-            reporter.reportOn(declaration.source, FirJsErrors.WRONG_EXPORTED_DECLARATION, kind)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXPORTED_DECLARATION, kind)
         }
 
         if (LanguageFeature.AllowExpectDeclarationsInJsExport.isDisabled() && declaration.isExpect) {
@@ -130,6 +131,14 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                 val allCheckedParameters = declaration.contextParameters + declaration.valueParameters
                 for (parameter in allCheckedParameters) {
                     checkValueParameter(parameter, isInSyntheticCopyMethod = isDataClassCopy)
+                }
+
+                declaration.receiverParameter?.takeUnless { declaration.isCompanionExtension }?.let { receiverParameter ->
+                    val receiverType = receiverParameter.typeRef.coneType
+                    if (!receiverType.isExportable()) {
+                        val source = receiverParameter.typeRef.source ?: declaration.source
+                        reporter.reportOn(source, FirJsErrors.NON_EXPORTABLE_TYPE, "receiver", receiverType)
+                    }
                 }
 
                 val returnType = declaration.returnTypeRef.coneType
@@ -187,7 +196,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     ClassKind.ANNOTATION_CLASS if LanguageFeature.JsAllowExportingAnnotationClasses.isDisabled() -> "annotation class"
                     ClassKind.CLASS -> when {
                         LanguageFeature.AllowInterfaceNestedClassesInJsExport.isDisabled() && context.isInsideInterface -> "nested class inside exported interface"
-                        LanguageFeature.JsAllowExportingValueClasses.isDisabled() && declaration.isInlineOrValue -> "value class"
+                        LanguageFeature.JsAllowExportingValueClasses.isDisabled() && declaration.isValue -> "value class"
                         else -> null
                     }
 

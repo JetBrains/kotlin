@@ -4,7 +4,6 @@ public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/j
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration : org/jetbrains/kotlin/buildtools/api/jvm/JvmIncrementalCompilationConfiguration {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Companion;
 	public static final field ENUM_WHEN_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;
-	public static final field EXPECT_ACTUAL_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;
 	public static final field FILE_MAPPING_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;
 	public static final field IMPORT_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;
 	public static final field INLINE_CONST_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;
@@ -28,24 +27,12 @@ public final class org/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncr
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerIncrementalCache {
-	public abstract fun close ()V
-	public abstract fun getClassFilePath (Ljava/lang/String;)Ljava/lang/String;
-	public abstract fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public abstract fun getModuleMappingData ()[B
-	public abstract fun getObsoleteMultifileClasses ()Ljava/util/Collection;
 	public abstract fun getObsoletePackageParts ()Ljava/util/Collection;
-	public abstract fun getPackagePartData (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerPackagePartData;
-	public abstract fun getStableMultifileFacadeParts (Ljava/lang/String;)Ljava/util/Collection;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerIncrementalCompilationComponents {
 	public abstract fun getIncrementalCache (Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerTargetId;)Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerIncrementalCache;
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerPackagePartData {
-	public fun <init> ([B[Ljava/lang/String;)V
-	public final fun getData ()[B
-	public final fun getStrings ()[Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerTargetId {
@@ -59,11 +46,6 @@ public final class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/Compi
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/trackers/CompilerEnumWhenTracker {
 	public abstract fun report (Ljava/nio/file/Path;Ljava/lang/String;)V
-}
-
-public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/trackers/CompilerExpectActualTracker {
-	public abstract fun report (Ljava/nio/file/Path;Ljava/nio/file/Path;)V
-	public abstract fun reportExpectOfLenientStub (Ljava/nio/file/Path;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/trackers/CompilerFileMappingTracker {

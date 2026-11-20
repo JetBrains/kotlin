@@ -1,0 +1,7 @@
+Diagnostics from file:
+  for PSI element of type KtDotQualifiedExpression at (29,5-15)
+    OPT_IN_USAGE      text ranges: [(148,151)]
+      PSI: KtDotQualifiedExpression at (29,5-15)
+  for PSI element of type KtDotQualifiedExpression at (30,5-15)
+    OPT_IN_USAGE_ERROR      text ranges: [(174,177)]
+      PSI: KtDotQualifiedExpression at (30,5-15)

@@ -14,59 +14,59 @@ import org.jetbrains.dokka.plugability.*
 import org.jetbrains.dokka.transformers.documentation.*
 
 @Suppress("unused")
-public class DokkaBase : DokkaPlugin() {
+internal class DokkaBase : DokkaPlugin() {
 
-    public val preMergeDocumentableTransformer: ExtensionPoint<PreMergeDocumentableTransformer> by extensionPoint()
+    val preMergeDocumentableTransformer: ExtensionPoint<PreMergeDocumentableTransformer> by extensionPoint()
 
-    public val singleGeneration: Extension<Generation, *, *> by extending {
+    val singleGeneration: Extension<Generation, *, *> by extending {
         CoreExtensions.generation providing ::SingleModuleGeneration
     }
 
-    public val documentableMerger: Extension<DocumentableMerger, *, *> by extending {
+    val documentableMerger: Extension<DocumentableMerger, *, *> by extending {
         CoreExtensions.documentableMerger providing ::DefaultDocumentableMerger
     }
 
-    public val deprecatedDocumentableFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+    val deprecatedDocumentableFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::DeprecatedDocumentableFilterTransformer
     }
 
-    public val suppressedDocumentableFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+    val suppressedDocumentableFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::SuppressedByConfigurationDocumentableFilterTransformer
     }
 
-    public val suppressedByAnnotationsFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+    val suppressedByAnnotationsFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::SuppressedByAnnotationsDocumentableFilterTransformer order {
             after(suppressedDocumentableFilter)
         }
     }
 
-    public val suppressedBySuppressTagDocumentableFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+    val suppressedBySuppressTagDocumentableFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::SuppressTagDocumentableFilter
     }
 
-    public val jvmMappedMethodsFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+    val jvmMappedMethodsFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::JvmMappedMethodsDocumentableFilterTransformer order {
             before(kotlinArrayDocumentableReplacer)
         }
     }
 
-    public val documentableVisibilityFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+    val documentableVisibilityFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::DocumentableVisibilityFilterTransformer
     }
 
-    public val obviousFunctionsVisbilityFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+    val obviousFunctionsVisbilityFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::ObviousFunctionsDocumentableFilterTransformer
     }
 
-    public val inheritedEntriesVisbilityFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+    val inheritedEntriesVisbilityFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::InheritedEntriesDocumentableFilterTransformer
     }
 
-    public val kotlinArrayDocumentableReplacer: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+    val kotlinArrayDocumentableReplacer: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::KotlinArrayDocumentableReplacerTransformer
     }
 
-    public val emptyPackagesFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+    val emptyPackagesFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::EmptyPackagesFilterTransformer order {
             after(
                 deprecatedDocumentableFilter,
@@ -80,23 +80,23 @@ public class DokkaBase : DokkaPlugin() {
         }
     }
 
-    public val emptyModulesFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+    val emptyModulesFilter: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer with EmptyModulesFilterTransformer() order {
             after(emptyPackagesFilter)
         }
     }
 
-    public val modulesAndPackagesDocumentation: Extension<PreMergeDocumentableTransformer, *, *> by extending {
+    val modulesAndPackagesDocumentation: Extension<PreMergeDocumentableTransformer, *, *> by extending {
         preMergeDocumentableTransformer providing ::ModuleAndPackageDocumentationTransformer order {
             after(emptyModulesFilter)
         }
     }
 
-    public val actualTypealiasAdder: Extension<DocumentableTransformer, *, *> by extending {
+    val actualTypealiasAdder: Extension<DocumentableTransformer, *, *> by extending {
         CoreExtensions.documentableTransformer with ActualTypealiasAdder()
     }
 
-    public val sinceKotlinTransformer: Extension<DocumentableTransformer, *, *> by extending {
+    val sinceKotlinTransformer: Extension<DocumentableTransformer, *, *> by extending {
         CoreExtensions.documentableTransformer providing ::SinceKotlinTransformer applyIf {
             DokkaBaseInternalConfiguration.sinceKotlinRenderingEnabled
         } order {
@@ -104,15 +104,15 @@ public class DokkaBase : DokkaPlugin() {
         }
     }
 
-    public val inheritorsExtractor: Extension<DocumentableTransformer, *, *> by extending {
+    val inheritorsExtractor: Extension<DocumentableTransformer, *, *> by extending {
         CoreExtensions.documentableTransformer with InheritorsExtractorTransformer()
     }
 
-    public val undocumentedCodeReporter: Extension<DocumentableTransformer, *, *> by extending {
+    val undocumentedCodeReporter: Extension<DocumentableTransformer, *, *> by extending {
         CoreExtensions.documentableTransformer with ReportUndocumentedTransformer()
     }
 
-    public val extensionsExtractor: Extension<DocumentableTransformer, *, *> by extending {
+    val extensionsExtractor: Extension<DocumentableTransformer, *, *> by extending {
         CoreExtensions.documentableTransformer with ExtensionExtractorTransformer()
     }
 

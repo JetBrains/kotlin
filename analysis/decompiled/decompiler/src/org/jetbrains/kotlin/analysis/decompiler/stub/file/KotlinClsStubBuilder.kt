@@ -14,10 +14,7 @@ import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleMetadataVersionDecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.stub.*
-import org.jetbrains.kotlin.constant.AnnotationValue
-import org.jetbrains.kotlin.constant.ArrayValue
-import org.jetbrains.kotlin.constant.ConstantValue
-import org.jetbrains.kotlin.constant.KClassValue
+import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.*
@@ -26,13 +23,11 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.ClassIdBasedLocality
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.psi.stubs.impl.createConstantValue
+import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -101,12 +96,22 @@ object KotlinClsStubBuilder : ClsStubBuilder() {
                     return null
                 }
 
-                val context = components.createContext(nameResolver, packageFqName, TypeTable(classProto.typeTable))
+                val context = components.createContext(
+                    nameResolver,
+                    packageFqName,
+                    TypeTable(classProto.typeTable),
+                    packagePartClassFileMajorVersion = null,
+                )
                 createTopLevelClassStub(classId, classProto, KotlinJvmBinarySourceElement(kotlinClass), context, header.isScript)
             }
             KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                 val [nameResolver, packageProto] = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
-                val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
+                val context = components.createContext(
+                    nameResolver,
+                    packageFqName,
+                    TypeTable(packageProto.typeTable),
+                    packagePartClassFileMajorVersion = kotlinClass.classFileMajorVersion,
+                )
                 val facadeFqName = packageFqName.child(classId.shortClassName)
                 createFileFacadeStub(
                     packageFqName = packageFqName,
@@ -164,7 +169,23 @@ private class JvmClsAnnotationLoader(
         return storage(binaryClass).container
     }
 
+    // @kotlin.jvm.Throws may be synthesized from bytecode Exceptions attribute
+    override fun maySynthesizeExtraCallableAnnotations(kind: AnnotatedCallableKind): Boolean =
+        kind != PROPERTY
+
+    /**
+     * The JVM backend adds `@kotlin.jvm.JvmInline` to inline classes, which their `HAS_ANNOTATIONS` flag doesn't account for, so the
+     * bytecode of a value class is read even without the flag, as `JvmBinaryAnnotationDeserializer` does.
+     */
+    override fun noClassAnnotationsInBytecode(classFlags: Int): Boolean =
+        super.noClassAnnotationsInBytecode(classFlags) && !Flags.IS_VALUE_CLASS.get(classFlags)
+
     override fun loadPropertyInitializer(container: ProtoContainer, proto: ProtoBuf.Property): ConstantValue<*>? {
+        val initializer = loadStoredPropertyInitializer(container, proto) ?: return null
+        return normalizePropertyInitializer(initializer, proto.returnType(container.typeTable), container.nameResolver)
+    }
+
+    private fun loadStoredPropertyInitializer(container: ProtoContainer, proto: ProtoBuf.Property): ConstantValue<*>? {
         val specialCase = getSpecialCaseContainerClass(
             container, property = true, field = true,
             isConst = Flags.IS_CONST.get(proto.flags),
@@ -243,12 +264,28 @@ private class JvmClsAnnotationLoader(
 
         ProgressManager.checkCanceled()
         kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-            override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor {
+            override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>): KotlinJvmBinaryClass.MethodAnnotationVisitor {
                 ProgressManager.checkCanceled()
+
+                val signature = MemberSignature.fromMethodNameAndDesc(name.asString(), desc)
+                val extraSynthesizedAnnotations: List<AnnotationWithArgs> = if (exceptions.isNotEmpty()) {
+                    listOf(
+                        AnnotationWithArgs(
+                            JvmStandardClassIds.Annotations.Throws,
+                            mapOf(Name.identifier("exceptionClasses") to ArrayValue(exceptions.map {
+                                KClassValue(
+                                    it,
+                                    arrayDimensions = 0
+                                )
+                            })),
+                        )
+                    )
+                } else emptyList()
 
                 return AnnotationVisitorForMethod(
                     methodName = name,
-                    signature = MemberSignature.fromMethodNameAndDesc(name.asString(), desc),
+                    signature = signature,
+                    extraAnnotations = extraSynthesizedAnnotations
                 )
             }
 
@@ -256,17 +293,18 @@ private class JvmClsAnnotationLoader(
                 ProgressManager.checkCanceled()
 
                 if (initializer != null) {
-                    fieldInitializers[name] = createConstantValue(initializer)
+                    fieldInitializers[name] = createConstantValue(normalizeFieldInitializer(desc, initializer))
                 }
 
                 val signature = MemberSignature.fromFieldNameAndDesc(name.asString(), desc)
-                return MemberAnnotationVisitor(signature)
+                return MemberAnnotationVisitor(signature, emptyList())
             }
 
             inner class AnnotationVisitorForMethod(
                 private val methodName: Name,
                 signature: MemberSignature,
-            ) : MemberAnnotationVisitor(signature),
+                extraAnnotations: List<AnnotationWithArgs>
+            ) : MemberAnnotationVisitor(signature, extraAnnotations),
                 KotlinJvmBinaryClass.MethodAnnotationVisitor {
 
                 override fun visitParameterAnnotation(
@@ -293,7 +331,9 @@ private class JvmClsAnnotationLoader(
                 }
             }
 
-            open inner class MemberAnnotationVisitor(protected val signature: MemberSignature) : KotlinJvmBinaryClass.AnnotationVisitor {
+            open inner class MemberAnnotationVisitor(protected val signature: MemberSignature, private val extraAnnotations: List<AnnotationWithArgs>) :
+                KotlinJvmBinaryClass.AnnotationVisitor {
+
                 private val result = ArrayList<AnnotationWithArgs>()
 
                 override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
@@ -301,6 +341,7 @@ private class JvmClsAnnotationLoader(
                 }
 
                 override fun visitEnd() {
+                    result.addAll(extraAnnotations)
                     if (result.isNotEmpty()) {
                         memberAnnotations[signature] = result
                     }
@@ -317,5 +358,40 @@ private class JvmClsAnnotationLoader(
             fieldInitializers,
             annotationDefaults,
         )
+    }
+}
+
+/**
+ * Returns [initializer] converted to the type of the field with the [desc] descriptor,
+ * as a class file stores the `ConstantValue` of a `boolean`, `char`, `byte` or `short` field as an `int`.
+ */
+private fun normalizeFieldInitializer(desc: String, initializer: Any): Any {
+    val intValue = initializer as? Int ?: return initializer
+    return when (desc) {
+        "Z" -> intValue != 0
+        "C" -> intValue.toChar()
+        "B" -> intValue.toByte()
+        "S" -> intValue.toShort()
+        else -> initializer
+    }
+}
+
+/**
+ * Returns [value] normalized to the property [type]: a class file stores an unsigned constant as its underlying signed primitive.
+ * Other values are returned as is. The compiler converts by the property type too: `FirMemberDeserializer` for constants
+ * and `JvmBinaryAnnotationDeserializer.loadAnnotationPropertyDefaultValue` for annotation defaults.
+ */
+private fun normalizePropertyInitializer(value: ConstantValue<*>, type: ProtoBuf.Type, nameResolver: NameResolver): ConstantValue<*> {
+    if (!type.hasClassName()) {
+        return value
+    }
+
+    val classId = nameResolver.getClassId(type.className)
+    return when {
+        value is ByteValue && classId == StandardClassIds.UByte -> UByteValue(value.value)
+        value is ShortValue && classId == StandardClassIds.UShort -> UShortValue(value.value)
+        value is IntValue && classId == StandardClassIds.UInt -> UIntValue(value.value)
+        value is LongValue && classId == StandardClassIds.ULong -> ULongValue(value.value)
+        else -> value
     }
 }

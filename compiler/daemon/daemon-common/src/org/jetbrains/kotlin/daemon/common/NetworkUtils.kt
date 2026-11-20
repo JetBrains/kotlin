@@ -66,7 +66,8 @@ object LoopbackNetworkInterface {
         override fun hashCode(): Int = super.hashCode()
 
         @Throws(IOException::class)
-        override fun createServerSocket(port: Int): ServerSocket = ServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(null))
+        override fun createServerSocket(port: Int): ServerSocket =
+            AuthenticatingServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(null))
     }
 
     abstract class AbstractClientLoopbackSocketFactory<SocketType> : Serializable {
@@ -91,7 +92,7 @@ object LoopbackNetworkInterface {
 
 
     class ClientLoopbackSocketFactory : AbstractClientLoopbackSocketFactory<java.net.Socket>(), RMIClientSocketFactory {
-        override fun socketCreate(host: String, port: Int): Socket = Socket(InetAddress.getByName(null), port)
+        override fun socketCreate(host: String, port: Int): Socket = AuthenticatingClientSocket(InetAddress.getByName(null), port)
     }
 
 }

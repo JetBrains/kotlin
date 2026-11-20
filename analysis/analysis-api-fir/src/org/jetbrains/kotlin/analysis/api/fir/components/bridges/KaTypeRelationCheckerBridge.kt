@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.analysis.api.types.isSubtypeOf as isSubtypeOfEndpoin
 import org.jetbrains.kotlin.analysis.api.types.semanticallyEquals as semanticallyEqualsEndpoint
 
 internal class KaTypeRelationCheckerBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaTypeRelationChecker {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaTypeRelationChecker {
     override fun KaType.semanticallyEquals(other: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
         context(analysisSession) { semanticallyEqualsEndpoint(other, errorTypePolicy.toEndpointPolicy()) }
 

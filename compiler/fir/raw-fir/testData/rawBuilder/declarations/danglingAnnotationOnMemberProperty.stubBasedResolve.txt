@@ -10,6 +10,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationOnMemberProperty.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|Ann|[Types]() public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
+        @R|Ann|[Types]() private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)
+            private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Initializer required for destructuring declaration>
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=/C.<destruct>] val x: R|kotlin/Int| = R|/C.<destruct>|.<Unresolved name: >#
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
     }

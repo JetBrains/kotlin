@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 // MODULE: lib
@@ -171,3 +172,7 @@ import kotlinx.serialization.*
 // Subclassing from another file must not re-report the supertype's annotation at this file's offsets.
 @Serializable
 class ProtoDerivedElsewhere(val own: Int) : ProtoBase(own)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, enumDeclaration, enumEntry,
+inheritanceDelegation, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, sealed, typeParameter,
+value */

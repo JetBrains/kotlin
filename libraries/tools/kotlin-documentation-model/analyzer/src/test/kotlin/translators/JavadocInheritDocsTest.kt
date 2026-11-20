@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 
 @MustRunOnChangesInAnalysisApi
 class JavadocInheritDocsTest : BaseAbstractTest() {
-    val configuration = dokkaConfiguration {
+    internal val configuration = dokkaConfiguration {
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/main/java")

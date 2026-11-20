@@ -11,6 +11,7 @@ plugins {
 dependencies {
     testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesImplementation(project(":compiler:cli-jklib"))
     testFixturesImplementation(project(":compiler:ir.serialization.jklib"))
 
@@ -32,6 +33,8 @@ sourceSets {
 
 projectTests {
     testData(project(":compiler").isolated, "testData/ir/irText")
+    testData(project(":compiler").isolated, "testData/cli")
+    testData(project(":compiler").isolated, "testData/klib/jklibIrInliner")
     testData(rootProject.isolated, "third-party/mockJDKs/mockJDK")
 
     withJvmStdlibAndReflect()
@@ -41,7 +44,7 @@ projectTests {
     withThirdPartyJsr305()
 
     testTask(
-        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)
     ) {
         val klibProvider = objects.newInstance<SystemPropertyClasspathProvider>().apply {
             property.set(KOTLIN_JKLIB_STDLIB_PATH)
@@ -59,7 +62,7 @@ val stdlibJvmIr = configurations.create("stdlibJvmIr") {
 }
 
 dependencies {
-    stdlibJvmIr(project(":kotlin-stdlib-jklib-for-test", configuration = "distMinimalJKlib"))
+    stdlibJvmIr(project(":kotlin-stdlib-jklib-for-test", configuration = "distJKlib"))
     testRuntimeOnly(files(stdlibJvmIr))
 }
 

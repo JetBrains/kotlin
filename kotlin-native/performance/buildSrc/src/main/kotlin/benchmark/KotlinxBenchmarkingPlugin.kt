@@ -47,6 +47,16 @@ open class KotlinxBenchmarkExtension @Inject constructor(private val project: Pr
      */
     val hidePackage: Property<Boolean> = project.objects.property(Boolean::class.java).convention(true)
 
+    /**
+     * Do not add the parameters whose name matches the filter to the final benchmark names.
+     *
+     * Possible values:
+     * - blank string: all parameters are added
+     * - comma-separated list of names: the listed parameters are ignored
+     * - `*`: all parameters are ignored
+     */
+    val hideParameterFilter: Property<String> = project.objects.property(String::class.java).convention("baseOnly")
+
     val runBenchmark
         get() = project.tasks.named("${hostKotlinNativeTargetName}Benchmark", NativeBenchmarkExec::class)
 
@@ -116,6 +126,8 @@ open class KotlinxBenchmarkingPlugin : BenchmarkingPlugin() {
             if (benchmark.hidePackage.get()) {
                 arguments.add("--hidePackage")
             }
+
+            arguments.add(benchmark.hideParameterFilter.map { "--hideParameterFilter=$it" })
 
             finalizedBy(benchmark.konanJsonReport)
         }

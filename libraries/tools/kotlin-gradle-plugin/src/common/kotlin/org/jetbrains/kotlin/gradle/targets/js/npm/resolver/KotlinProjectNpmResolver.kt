@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.withType
 import java.io.Serializable
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
  */
+@ObsoleteNpmDependencyModel
 class KotlinProjectNpmResolver(
     project: Project,
     var resolver: KotlinRootNpmResolver,
@@ -67,10 +69,7 @@ class KotlinProjectNpmResolver(
         if (target.platformType == resolver.platform && target.wasmTargetType != KotlinWasmTargetType.WASI
         ) {
             target.compilations.all { compilation ->
-                if (compilation is KotlinJsIrCompilation) {
-                    // compilation may be KotlinWithJavaTarget for old Kotlin2JsPlugin
-                    addCompilation(compilation)
-                }
+                addCompilation(compilation)
             }
         }
     }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 <!ANNOTATION_HAS_NO_EFFECT!>@file:EqualsAndHashCode<!>
@@ -181,3 +182,8 @@ class UnsupportedArguments(
     )
     val x: Int
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, anonymousObjectExpression, classDeclaration,
+collectionLiteral, companionObject, data, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+integerLiteral, interfaceDeclaration, isExpression, javaProperty, nullableType, objectDeclaration, operator, override,
+primaryConstructor, propertyDeclaration, safeCall, stringLiteral, typeAliasDeclaration, typeParameter */

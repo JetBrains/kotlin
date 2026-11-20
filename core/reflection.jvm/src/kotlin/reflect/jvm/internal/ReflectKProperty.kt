@@ -9,6 +9,7 @@ import java.lang.reflect.*
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.KotlinGenericDeclaration
 import kotlin.jvm.internal.findMethodBySignature
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.IllegalPropertyDelegateAccessException
@@ -18,9 +19,22 @@ import kotlin.reflect.jvm.isAccessible
 internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KProperty<V>, KotlinGenericDeclaration {
     val signature: String
 
+    override val overridden: Collection<ReflectKProperty<*>>
+
     val javaField: Field?
 
     override fun findJavaDeclaration(): GenericDeclaration? = originalContainer.findMethodBySignature(signature)
+}
+
+internal fun KProperty.Accessor<*>.computeOverriddenAccessors(): Collection<ReflectKCallable<*>> {
+    val property = property as ReflectKProperty<*>
+    return property.overridden.mapNotNull { overriddenProperty ->
+        when (this) {
+            is KProperty.Getter<*> -> overriddenProperty.getter as? ReflectKCallable<*>
+            is KMutableProperty.Setter<*> -> (overriddenProperty as? KMutableProperty<*>)?.setter as? ReflectKCallable<*>
+            else -> null
+        }
+    }
 }
 
 internal fun ReflectKProperty<*>.countUnboundReceivers(boundReceiver: Any?): Int =

@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // RENDER_DIAGNOSTIC_ARGUMENTS
-// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED -INLINE_CLASS_DEPRECATED_ERROR
 
 package foo
 
@@ -49,16 +49,16 @@ interface InterfaceWithNamedCompanion {
 }
 
 @JsExport
-value class A(val a: Int)
+<!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_WARNING!>value<!> class A(val a: Int)
 
 @JsExport
 inline class B(val b: Int)
 
 @JsExport
-<!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> <!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> class C(val c: Int)
+inline value class C(val c: Int)
 
 <!MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE!>@JsExport.Default
-<!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> <!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> class D(val d: Int)<!>
+value inline class D(val d: Int)<!>
 
 @JsExport
 external interface ExternalInterface

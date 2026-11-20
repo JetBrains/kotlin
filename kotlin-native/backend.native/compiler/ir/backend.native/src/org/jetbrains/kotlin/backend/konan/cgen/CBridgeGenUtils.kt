@@ -51,12 +51,13 @@ internal class CFunctionBuilder {
 
     fun getType(): CType = CTypes.function(returnType, parameters.map { it.type }, variadic)
 
+    context(_: CDeclarationScope)
     fun buildSignature(name: String, language: String): String =
         (if (language == "C++") "extern \"C\" const " else "") +
         returnType.render(buildString {
             append(name)
             append('(')
-            parameters.joinTo(this)
+            parameters.joinTo(this) { it.render() }
             if (parameters.isEmpty()) {
                 if (!variadic) append("void")
             } else {
@@ -168,6 +169,7 @@ internal class KotlinCBridgeBuilder(
         cBridgeBuilder.setReturnType(cReturnType)
     }
 
+    context(_: CDeclarationScope)
     fun buildCSignature(name: String): String = cBridgeBuilder.buildSignature(name, stubs.language)
 
     fun getKotlinBridge() = kotlinBridgeBuilder.getBridge()

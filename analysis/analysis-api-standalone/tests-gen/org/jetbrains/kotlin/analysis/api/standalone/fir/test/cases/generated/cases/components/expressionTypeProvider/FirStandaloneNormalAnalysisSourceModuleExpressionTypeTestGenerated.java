@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpressionTypeTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionTypeProvider.AbstractExpressionTypeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -129,6 +129,24 @@ public class FirStandaloneNormalAnalysisSourceModuleExpressionTypeTestGenerated 
   }
 
   @Test
+  @TestMetadata("byteMinValueWithMinus.kt")
+  public void testByteMinValueWithMinus() {
+    run("byteMinValueWithMinus.kt");
+  }
+
+  @Test
+  @TestMetadata("byteMinValueWithMinusPlus_inner.kt")
+  public void testByteMinValueWithMinusPlus_inner() {
+    run("byteMinValueWithMinusPlus_inner.kt");
+  }
+
+  @Test
+  @TestMetadata("byteMinValueWithMinus_literal.kt")
+  public void testByteMinValueWithMinus_literal() {
+    run("byteMinValueWithMinus_literal.kt");
+  }
+
+  @Test
   @TestMetadata("callableReference_consumer.kt")
   public void testCallableReference_consumer() {
     run("callableReference_consumer.kt");
@@ -222,6 +240,18 @@ public class FirStandaloneNormalAnalysisSourceModuleExpressionTypeTestGenerated 
   @TestMetadata("expectedLongLiteral5.kt")
   public void testExpectedLongLiteral5() {
     run("expectedLongLiteral5.kt");
+  }
+
+  @Test
+  @TestMetadata("expectedUByteUnsignedLiteral.kt")
+  public void testExpectedUByteUnsignedLiteral() {
+    run("expectedUByteUnsignedLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("expectedULongUnsignedLiteral.kt")
+  public void testExpectedULongUnsignedLiteral() {
+    run("expectedULongUnsignedLiteral.kt");
   }
 
   @Test
@@ -327,6 +357,18 @@ public class FirStandaloneNormalAnalysisSourceModuleExpressionTypeTestGenerated 
   }
 
   @Test
+  @TestMetadata("intMinValueWithMinus.kt")
+  public void testIntMinValueWithMinus() {
+    run("intMinValueWithMinus.kt");
+  }
+
+  @Test
+  @TestMetadata("intMinValueWithMinusPlus_inner.kt")
+  public void testIntMinValueWithMinusPlus_inner() {
+    run("intMinValueWithMinusPlus_inner.kt");
+  }
+
+  @Test
   @TestMetadata("isExpression.kt")
   public void testIsExpression() {
     run("isExpression.kt");
@@ -414,6 +456,30 @@ public class FirStandaloneNormalAnalysisSourceModuleExpressionTypeTestGenerated 
   @TestMetadata("loopExpression.kt")
   public void testLoopExpression() {
     run("loopExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("malformedCharacterLiteral.kt")
+  public void testMalformedCharacterLiteral() {
+    run("malformedCharacterLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("malformedDoubleLiteral.kt")
+  public void testMalformedDoubleLiteral() {
+    run("malformedDoubleLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("malformedLongLiteral.kt")
+  public void testMalformedLongLiteral() {
+    run("malformedLongLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("malformedLongLiteralWithLeadingZeros.kt")
+  public void testMalformedLongLiteralWithLeadingZeros() {
+    run("malformedLongLiteralWithLeadingZeros.kt");
   }
 
   @Test
@@ -588,6 +654,18 @@ public class FirStandaloneNormalAnalysisSourceModuleExpressionTypeTestGenerated 
   @TestMetadata("unresolvedSuper_singleSuperType.kt")
   public void testUnresolvedSuper_singleSuperType() {
     run("unresolvedSuper_singleSuperType.kt");
+  }
+
+  @Test
+  @TestMetadata("unsignedLongLiteralWithoutStdlib.kt")
+  public void testUnsignedLongLiteralWithoutStdlib() {
+    run("unsignedLongLiteralWithoutStdlib.kt");
+  }
+
+  @Test
+  @TestMetadata("unterminatedCharacterLiteral.kt")
+  public void testUnterminatedCharacterLiteral() {
+    run("unterminatedCharacterLiteral.kt");
   }
 
   @Test

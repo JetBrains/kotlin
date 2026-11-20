@@ -58,6 +58,25 @@ interface JvmDependenciesIndex {
     ): Collection<VirtualFile>
 
     /**
+     * Like [findClassVirtualFiles], but only considers results accepted by [filter].
+     *
+     * The default implementation filters the results using [indexedRoots]. Implementations that can search individual roots should
+     * override this method to continue the search when a class in a rejected root is encountered.
+     */
+    fun findClassVirtualFiles(
+        classId: ClassId,
+        acceptedExtensions: JavaFileExtensions,
+        filter: ClassFileFilter,
+    ): Collection<VirtualFile> {
+        val roots = indexedRoots.mapTo(hashSetOf(), JavaRoot::file)
+
+        return findClassVirtualFiles(classId, acceptedExtensions).filter { file ->
+            val root = file.findIndexedRoot(roots) ?: return@filter false
+            filter.accepts(root, file)
+        }
+    }
+
+    /**
      * Traverses the index for all *class* [VirtualFile]s contained in directories corresponding to the [packageFqName], and calls
      * [continueSearch] for each class [VirtualFile].
      *
@@ -104,6 +123,32 @@ interface JvmDependenciesIndex {
         acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
         continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
     )
+}
+
+private fun VirtualFile.findIndexedRoot(roots: Set<VirtualFile>): VirtualFile? {
+    var file: VirtualFile? = this
+    while (file != null) {
+        if (file in roots) return file
+        file = file.parent
+    }
+    return null
+}
+
+/**
+ * Filters a class-file candidate while the index is traversed.
+ *
+ * Filtering during traversal, rather than on the first found file, ensures that a candidate in a rejected root or file does not hide
+ * a later accepted copy of the class.
+ *
+ * Compiler code restricts lookups by [org.jetbrains.kotlin.jvm.environment.JvmClasspath], which is decided per indexed `root`
+ * (see [JvmClasspathRootFilter]) and ignores `file`.
+ *
+ * The `file` parameter exists for finders created from a `GlobalSearchScope`. Within the compiler such scopes accept whole roots
+ * (e.g. `allScope`), so the per-file check is needed mostly for the Analysis API, whose library scopes may accept individual files.
+ * KT-91449 tracks removing the scope-based path from the CLI finder, after which this becomes a root-only filter.
+ */
+fun interface ClassFileFilter {
+    fun accepts(root: VirtualFile, file: VirtualFile): Boolean
 }
 
 data class JavaRoot(val file: VirtualFile, val type: RootType, val prefixFqName: FqName? = null) {

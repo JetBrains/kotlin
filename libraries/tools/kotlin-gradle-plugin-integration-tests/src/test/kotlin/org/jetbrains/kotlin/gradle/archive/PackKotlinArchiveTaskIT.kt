@@ -19,12 +19,14 @@ import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import kotlin.io.path.appendText
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class PackKotlinArchiveTaskIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
@@ -146,6 +148,28 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
         }.buildAndFail("assembleKotlinArchive") {
             assertTasksSkipped(":compileKotlinMacosArm64")
             assertHasDiagnostic(KotlinToolingDiagnostics.IncompleteKotlinArchivePublication)
+        }
+    }
+
+    @GradleTest
+    @OsCondition(supportedOn = [OS.MAC, OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
+    fun testIncompleteArchiveIsPackedWhenSharedAppleSourceSetUsesCInterop(gradleVersion: GradleVersion) {
+        packKotlinArchive(
+            gradleVersion,
+            projectName = "producerWithHostSpecificSharedSourceSet",
+            "-P${PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION}=true",
+            "-P${PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION}=true",
+        ) {
+            iosArm64 { createCInterop("first", packageName = "first") }
+            iosSimulatorArm64 { createCInterop("first", packageName = "first") }
+            sourceSets.iosMain {
+                compileSource(
+                    """
+                @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                fun useInterop() = first.first()
+                """.trimIndent()
+                )
+            }
         }
     }
 
@@ -281,11 +305,12 @@ private fun KotlinMultiplatformExtension.setupHostSpecificKarTestTargets() {
     sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
 }
 
-private fun KotlinNativeTarget.createCInterop(interopName: String) {
+private fun KotlinNativeTarget.createCInterop(interopName: String, packageName: String? = null) {
     val definitionFile = project.layout.projectDirectory.file("$interopName.def")
     definitionFile.asFile.writeText(
         """
         language = C
+        ${packageName?.let { "package = $it" }.orEmpty()}
         ---
         void $interopName(void);
         """.trimIndent()

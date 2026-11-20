@@ -28,8 +28,6 @@ class CoroutineTransformer(
     private val methods: List<MethodNode>,
     private val superClassName: String
 ) {
-    private val state = inliningContext.state
-
     // If we inline into inline function, we should generate both method with state-machine for Java interop and method without
     // state-machine for further transformation/inlining.
     private val generateForInline = inliningContext.callSiteInfo.isInlineOrInsideInline
@@ -94,7 +92,7 @@ class CoroutineTransformer(
                 // TODO: this linenumbers might not be correct and since they are used only for step-over, check them.
                 lineNumber = inliningContext.callSiteInfo.lineNumber,
                 sourceFile = inliningContext.callSiteInfo.file?.name ?: "",
-                config = state.config,
+                config = inliningContext.config,
             )
 
             if (generateForInline)
@@ -124,7 +122,7 @@ class CoroutineTransformer(
                 onStateMachineGenerated = { methodsWithGeneratedStateMachine += it },
                 lineNumber = inliningContext.callSiteInfo.lineNumber,
                 sourceFile = inliningContext.callSiteInfo.file?.name ?: "",
-                config = state.config,
+                config = inliningContext.config,
                 needDispatchReceiver = true,
                 internalNameForDispatchReceiver = classBuilder.thisName,
             )
@@ -141,7 +139,8 @@ class CoroutineTransformer(
     }
 
     fun replaceFakesWithReals(node: MethodNode) {
-        findFakeContinuationConstructorClassName(node)?.let(::unregisterClassBuilder)?.done(state.config.generateSmapCopyToAnnotation)
+        findFakeContinuationConstructorClassName(node)?.let(::unregisterClassBuilder)
+            ?.done(inliningContext.config.generateSmapCopyToAnnotation)
         replaceFakeContinuationsWithRealOnes(
             node, if (!inliningContext.isContinuation) getLastParameterIndex(node.desc, node.access) else 0
         )

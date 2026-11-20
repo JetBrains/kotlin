@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompositeMetadataArtifactContent.SourceSetContent
+import org.jetbrains.kotlin.gradle.utils.resolveInside
 import java.io.Closeable
 import java.io.File
 
@@ -112,7 +113,7 @@ internal interface CompositeMetadataArtifactContent : Closeable {
          * Copies the content of this [Binary] into the [directory] appending the [relativeFile] to it.
          * @see copyTo
          */
-        fun copyIntoDirectory(directory: File) = copyTo(directory.resolve(relativeFile))
+        fun copyIntoDirectory(directory: File) = copyTo(directory.resolveInside(relativeFile))
     }
 
 

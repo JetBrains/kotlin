@@ -15,16 +15,16 @@ import kotlin.io.path.readLines
 
 fun TestProject.collectFusEvents(
     vararg buildArguments: String = emptyArray(),
-    buildAction: BuildAction = BuildActions.build,
     deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
 ): Set<String> {
     val fusEventPath = projectPath.resolve("fusEvent_${generateIdentifier()}")
-    buildAction(
-        arrayOf(
+    build(
+        buildArguments = arrayOf(
             *buildArguments,
         ),
-        deriveBuildOptions().copy(fusReportDirectory = { fusEventPath }),
-        {}
+        buildOptions = deriveBuildOptions().copy(fusReportDirectory = { fusEventPath }),
+        forwardBuildOutput = false,
+        assertions = {}
     )
     return fusEventPath.resolve("kotlin-profile").filterKotlinFusFiles().single().readLines().toSet()
 }

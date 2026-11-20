@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 // FILE: test.kt
 import kotlinx.serialization.*
@@ -24,3 +25,6 @@ object UselessExternalSerializer : KSerializer<Foo> {
         TODO()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, getter, objectDeclaration, override,
+primaryConstructor, propertyDeclaration */

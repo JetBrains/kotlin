@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
@@ -86,7 +87,7 @@ class ImportedSchemasCompanionGenerator(
                 status {
                     isOverride = true
                 }
-                valueParameter(Name.identifier("path"), session.builtinTypes.stringType.coneType)
+                valueParameter(Name.identifier("path"), StandardTypes.String)
             }
             return listOf(function.symbol)
         }

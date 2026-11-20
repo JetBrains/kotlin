@@ -49,7 +49,7 @@ public interface JsPlatformToolchain : KotlinToolchains.Toolchain {
      * declarations (`.d.ts`) from compiled KLIBs.
      *
      * @param klibs the main klib and all of its dependencies
-     * @param outputDirectory the directory to write the generated `.d.ts` files into
+     * @param outputDirectory the directory to write the generated `.d.ts` files into; it is created if it does not exist
      * @since 2.5.0
      */
     public fun jsDtsGenerationOperationBuilder(klibs: List<Path>, outputDirectory: Path): JsDtsGenerationOperation.Builder

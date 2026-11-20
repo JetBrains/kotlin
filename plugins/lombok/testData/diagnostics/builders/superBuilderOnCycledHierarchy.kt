@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-87563
 // MUTE_LL_FIR: inconsistent resolution behavior, but it doesn't make sense to fix unless IDEA-393430 is fixed
 // because it's SO on Java code that's reproducable without Kotlin.
@@ -26,3 +27,5 @@ fun test() {
     X1.builder().field1("str1").<!UNRESOLVED_REFERENCE!>field2<!>(1).build()
     X2.builder().field2(2).<!UNRESOLVED_REFERENCE!>field1<!>("str2").build()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, integerLiteral, javaFunction, starProjection, stringLiteral */

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.decompiler.konan
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinLabelProviderService
-import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.psi.KtPlatformInterface
 import javax.swing.Icon
 
@@ -23,11 +22,12 @@ object KlibMetaFileType : FileType {
             ?: DEFAULT_DESCRIPTION
     }
 
-    override fun getDefaultExtension(): String = KLIB_METADATA_FILE_EXTENSION
+    override fun getDefaultExtension(): String = DEFAULT_EXTENSION
     override fun getIcon(): Icon? = null
     override fun isBinary(): Boolean = true
     override fun isReadOnly(): Boolean = true
     override fun getCharset(file: VirtualFile, content: ByteArray): String? = null
 
     private const val DEFAULT_DESCRIPTION = "Klib Metadata"
+    private const val DEFAULT_EXTENSION = "knm"
 }

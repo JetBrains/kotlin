@@ -9,7 +9,6 @@ output/sources
 ap/LeakingProcessor.kt
 
 # kapt
--Xallow-pre-17-runtime-jdk
 -Kapt-detect-memory-leaks=paranoid
 -Kapt-mode=stubsAndApt
 -Kapt-stubs=output/stubs
@@ -22,12 +21,12 @@ ap/LeakingProcessor.kt
 Test.kt
 
 # output
+warning: warning: Supported source version 'RELEASE_8' from annotation processor 'org.jetbrains.kotlin.kapt.base.ProcessorWrapper' less than -source '17'
 warning: [kapt] Memory leak detected!
 Location: 'apt.LeakingProcessor', static field 'leakedProcessor'
 Field leaks an Annotation Processing component (LeakingProcessor).
 
 # kapt
--Xallow-pre-17-runtime-jdk
 -Kapt-detect-memory-leaks=default
 -Kapt-mode=stubsAndApt
 -Kapt-stubs=output/stubs
@@ -41,5 +40,6 @@ Test.kt
 
 # output
 warning: [kapt] The 'default' value for 'detectMemoryLeaks' is deprecated. Use 'standard' instead.
+warning: warning: Supported source version 'RELEASE_8' from annotation processor 'org.jetbrains.kotlin.kapt.base.ProcessorWrapper' less than -source '17'
 
 # after

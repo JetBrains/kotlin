@@ -29,7 +29,7 @@ data class Scenario(
         val kotlinVersion = if (kotlinVersionString != null) KotlinToolingVersion(kotlinVersionString) else null
 
         val sanitizedKotlinVersionString = if (kotlinVersionString == TestVersions.Kotlin.CURRENT) "snapshot" else kotlinVersionString
-        val sanitizedGradleVersionString = if (gradleVersionString == TestVersions.Gradle.MAX_SUPPORTED) "max" else gradleVersionString
+        val sanitizedGradleVersionString = if (gradleVersionString == TestVersions.Gradle.MAX_SUPPORTED.version) "max" else gradleVersionString
         val sanitizedAndroidVersionString = if (agpVersionString == TestVersions.AGP.MAX_SUPPORTED) "max" else agpVersionString
 
         val isKmp get() = variant is ProjectVariant.Kmp

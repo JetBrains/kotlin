@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.capitalize
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
@@ -18,6 +19,7 @@ class CommonNativeIT : KGPBaseTest() {
 
     private val String.withPrefix get() = "native-apple-devices-common/$this"
 
+    @TestMetadata("native-apple-devices-common/common-ios")
     @DisplayName("Common ios")
     @GradleTest
     fun testCommonIos(gradleVersion: GradleVersion) {
@@ -29,6 +31,7 @@ class CommonNativeIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("native-apple-devices-common/common-watchos")
     @DisplayName("Common watchos")
     @GradleTest
     fun testCommonWatchos(gradleVersion: GradleVersion) {
@@ -40,6 +43,7 @@ class CommonNativeIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("native-apple-devices-common/common-tvos")
     @DisplayName("Common tvos")
     @GradleTest
     fun testCommonTvos(gradleVersion: GradleVersion) {

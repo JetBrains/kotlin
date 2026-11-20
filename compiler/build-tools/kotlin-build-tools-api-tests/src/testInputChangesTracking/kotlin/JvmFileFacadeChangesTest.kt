@@ -50,17 +50,8 @@ class JvmFileFacadeChangesTest : BaseCompilationTest() {
             mod.replaceFileWithVersion("Foo.kt", "unwrap-object")
 
             mod.compile {
-                // TODO(KT-89352): only `Foo.kt` is recompiled. `test.Foo` stops being a classifier and becomes a file
-                //  facade of the same JVM name, but IC never rechecks `Usage.kt`, whose import is unresolvable now, so
-                //  the build wrongly succeeds. Once fixed, it has to `expectFail()` and recompile `Usage.kt` as well.
-                assertCompiledSources("Foo.kt")
-            }
-
-            mod.changeFile("Usage.kt") { "$it\n" }
-
-            mod.compile {
-                // the incremental round reports the last unresolved segment, a clean build reports the qualifier
-                expectFailWithError(".*Usage\\.kt:\\d+:\\d+ Unresolved reference '(Foo|bar)'.*".toRegex())
+                expectFailWithError(".*Usage\\.kt:\\d+:\\d+ Unresolved reference 'Foo'.*".toRegex())
+                assertCompiledSources("Foo.kt", "Usage.kt")
             }
         }
     }
@@ -75,11 +66,8 @@ class JvmFileFacadeChangesTest : BaseCompilationTest() {
             mod.replaceFileWithVersion("b.kt", "another-facade")
 
             mod.compile {
-                assertCompiledSources("b.kt")
-                // TODO(KT-89326): `test/Test.class` is wrongly missing here. IC deletes the facade together with the
-                //  moved part `test/Test__BKt.class` and never recompiles `a.kt`, so the facade that `a.kt` still
-                //  declares is not regenerated. Once the issue is fixed, `test/Test.class` has to be expected as well.
-                assertOutputs("test/Test1.class", "test/Test__AKt.class", "test/Test1__BKt.class")
+                assertCompiledSources("a.kt", "b.kt")
+                assertOutputs("test/Test.class", "test/Test1.class", "test/Test__AKt.class", "test/Test1__BKt.class")
             }
         }
     }
@@ -94,10 +82,8 @@ class JvmFileFacadeChangesTest : BaseCompilationTest() {
             mod.deleteFile("b.kt")
 
             mod.compile {
-                // TODO(KT-89326): `test/Test.class` is wrongly missing here: IC deletes the facade together with the output of the
-                //  removed part `test/Test__BKt.class` and never recompiles `a.kt`, so the facade that `a.kt` still
-                //  declares is not regenerated. Once the issue is fixed, `test/Test.class` has to be expected as well.
-                assertOutputs("test/Test__AKt.class")
+                assertCompiledSources("a.kt")
+                assertOutputs("test/Test.class", "test/Test__AKt.class")
             }
         }
     }
@@ -112,21 +98,18 @@ class JvmFileFacadeChangesTest : BaseCompilationTest() {
             mod.replaceFileWithVersion("b.kt", "another-facade")
 
             mod.compile {
-                // TODO(KT-89326): `test/Test.class` is wrongly missing here
-                assertOutputs("test/Test1.class", "test/Test__AKt.class", "test/Test1__BKt.class")
+                assertOutputs("test/Test.class", "test/Test1.class", "test/Test__AKt.class", "test/Test1__BKt.class")
             }
 
             mod.replaceFileWithVersion("b.kt", "original")
 
             mod.compile {
-                assertCompiledSources("b.kt")
+                assertCompiledSources("a.kt", "b.kt")
                 assertOutputs("test/Test.class", "test/Test__AKt.class", "test/Test__BKt.class")
-                // TODO(KT-89326): the facade is restored only formally. It is generated from `b.kt` alone, so it
-                //  exposes `b()` and not `a()`, while `test/Test__AKt.class` is left over as an orphan the facade does
-                //  not reference anymore. Once the issue is fixed, `a()` has to be expected here as well.
                 assertClassDeclarations(
                     classFqn = "test.Test",
                     setOf(
+                        "public static final java.lang.String a();",
                         "public static final java.lang.String b();",
                     )
                 )

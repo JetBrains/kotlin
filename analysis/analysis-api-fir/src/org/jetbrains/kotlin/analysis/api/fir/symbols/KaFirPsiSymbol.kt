@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPsiSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.utils.inferReturnTypeByPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
@@ -135,7 +136,7 @@ internal fun KaFirPsiSymbol<*, *>.psiOrSymbolEquals(other: Any?): Boolean {
  */
 internal fun KaFirKtBasedSymbol<*, *>.psiOrSymbolAnnotationList(anchorPsi: KtElement? = backingPsi): KaAnnotationList {
     if (anchorPsi?.hasAnnotations == false) {
-        return KaBaseEmptyAnnotationList(token)
+        return KaFirEmptyAnnotationList(token)
     }
 
     return KaFirAnnotationListForDeclaration.create(firSymbol, builder)
@@ -335,7 +336,7 @@ internal inline fun <R> KaFirPsiSymbol<*, *>.ifSource(action: () -> R): R? {
 }
 
 /**
- * Potentially, we may use [KaFirKtBasedSymbol.backingPsi] to create [org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer] for library elements as well,
+ * Potentially, we may use [KaFirKtBasedSymbol.backingPsi] to create [org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPsiSymbolPointer] for library elements as well,
  * but it triggers AST tree calculation.
  *
  * Another potential issue: the library PSI may represent both [KaSymbolOrigin.SOURCE] and as [KaSymbolOrigin.LIBRARY],
@@ -344,7 +345,7 @@ internal inline fun <R> KaFirPsiSymbol<*, *>.ifSource(action: () -> R): R? {
 internal inline fun <reified S : KaSymbol> KaFirKtBasedSymbol<*, *>.psiBasedSymbolPointerOfTypeIfSource(): KaSymbolPointer<S>? {
     return ifSource {
         backingPsi?.let {
-            KaBasePsiSymbolPointer(it, S::class, this as S)
+            KaFirPsiSymbolPointer(it, S::class, this as S)
         }
     }
 }
@@ -402,19 +403,24 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaContextParamet
 
 internal fun KaFirKtBasedSymbol<KtTypeParameterListOwner, *>.createKaTypeParameters(): List<KaTypeParameterSymbol>? =
     ifNotLibrarySource {
-        with(analysisSession) {
-            backingPsi?.typeParameters?.map { it.symbol }
+        val backingPsi = backingPsi ?: return@ifNotLibrarySource null
+        val typeParameters = with(analysisSession) {
+            backingPsi.typeParameters.map { it.symbol }
+        }
+
+        val danglingTypeConstraintSubjects = backingPsi.danglingTypeConstraintSubjects()
+        if (danglingTypeConstraintSubjects.isEmpty()) {
+            typeParameters
+        } else {
+            typeParameters + danglingTypeConstraintSubjects.map { KaFirDanglingTypeParameterSymbol(it, analysisSession) }
         }
     }
 
-internal fun KaFirKtBasedSymbol<KtDeclarationWithBody, FirCallableSymbol<*>>.createReturnType(): KaType {
-    val backingPsi = backingPsi
-    if (backingPsi?.hasBlockBody() == true && !backingPsi.hasDeclaredReturnType()) {
-        return analysisSession.builtinTypes.unit
-    }
-
-    return firSymbol.returnType(builder)
-}
+/**
+ * Returns the return type of the declaration, inferred from its PSI if possible.
+ */
+internal fun KaFirKtBasedSymbol<KtDeclaration, FirCallableSymbol<*>>.createReturnType(): KaType =
+    backingPsi?.inferReturnTypeByPsi(analysisSession = analysisSession) ?: firSymbol.returnType(builder)
 
 /**
  * Callable from libraries don't have the override flag as it is not preserved in the metadata

@@ -1,0 +1,16 @@
+STEP 0:
+    modifications:
+        U : log.kt -> log.kt
+        U : parent.kt -> parent.kt
+        U : child.kt -> child.kt
+    added cache: log.kt, parent.kt, child.kt
+
+// KT-89390: -Xcompanion-blocks switches the library to the new companion initialization order (KT-87412),
+// which is recorded only in the klib manifest, so the caches must be rebuilt even though the sources are untouched.
+STEP 1:
+    arguments: -Xcompanion-blocks
+    modified cache: log.kt, parent.kt, child.kt
+
+// KT-89390: and back to the old initialization order.
+STEP 2:
+    modified cache: log.kt, parent.kt, child.kt

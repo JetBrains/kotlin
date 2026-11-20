@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 
 plugins {
     id("common-configuration")
@@ -6,6 +7,7 @@ plugins {
     `jvm-test-suite`
     id("test-symlink-transformation")
     id("test-inputs-check")
+    id("native-bootstrap-distribution-provisioner")
 }
 
 val noArgCompilerPlugin = configurations.detachedConfiguration(
@@ -26,6 +28,12 @@ val pluginSandbox = configurations.detachedConfiguration(
 val scriptingCompilerPlugin = configurations.detachedConfiguration(
     dependencies.project(":kotlin-scripting-compiler-embeddable")
 )
+val kaptCompilerPlugin = configurations.detachedConfiguration(
+    dependencies.project(":kotlin-annotation-processing-embeddable")
+)
+val exampleAnnotationProcessor = configurations.detachedConfiguration(
+    dependencies.project(":examples:annotation-processor-example")
+)
 val unpackedResources = configurations.detachedConfiguration(
     dependencies.project(":compiler:build-tools:kotlin-build-tools-api-tests").apply {
         isTransitive = false
@@ -34,6 +42,21 @@ val unpackedResources = configurations.detachedConfiguration(
     attributes {
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.RESOURCES))
     }
+}
+
+// Kotlin/Native inputs. With K/N enabled, the stdlib klib is built from sources, and the K/N compiler is a runtime dependency of
+// kotlin-build-tools-impl, so every regular suite can compile Native and the platform-agnostic test argument providers fan out over
+// `[Native]`. Otherwise, only the `testNative` suite compiles Native for smoke testing:
+// both the stdlib and the compiler are taken from the bootstrap K/N distribution; the compiler jar is appended after the regular
+// Build Tools API classpath so that the current compiler classes win over the (older) copies in that fat jar.
+val isKotlinNativeEnabled = kotlinBuildProperties.isKotlinNativeEnabled.get()
+val (nativeStdlibKlib: FileCollection, nativeCompilerClasspath: FileCollection?) = if (isKotlinNativeEnabled) {
+    configurations.detachedConfiguration(
+        dependencies.project(":kotlin-native:runtime", configuration = "nativeStdlib")
+    ) to null
+} else {
+    val bootstrapNativeDistribution = registerNativeBootstrapDistribution()
+    files(bootstrapNativeDistribution.map { it.stdlib }) to files(bootstrapNativeDistribution.map { it.compilerClasspath })
 }
 
 class PlatformDefinition(
@@ -84,6 +107,7 @@ val platforms = listOf(
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
             attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "wasm")
             attribute(Attribute.of("org.jetbrains.kotlin.wasm.target", String::class.java), "wasi")
+            attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, "klib")
         },
         "kotlin.build-tools-api.test.wasmWasiStdlibClasspath",
     ),
@@ -129,10 +153,13 @@ val compatibilityTestsVersions = listOf(
     BuildToolsVersion(KotlinToolingVersion(2, 3, 21, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 4, 0, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 4, 10, null)),
-    BuildToolsVersion(KotlinToolingVersion(2, 4, 20, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 4, 21, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 5, 0, "RC")),
 )
 
 val compatibilityTestsExcludedVersions = listOf(
+    BuildToolsVersion(KotlinToolingVersion(2, 4, 20, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 3, 20, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 2, 20, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 2, 10, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 2, 0, null)),
@@ -143,6 +170,9 @@ class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolea
 }
 
 val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
+// Keep the Kotlin/Native properties in sync with the constants in src/main/kotlin/compilation/util/DependencyUtils.kt
+val NATIVE_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.nativeStdlibClasspath"
+val NATIVE_STDLIB_IS_BOOTSTRAP_PROPERTY = "kotlin.build-tools-api.test.nativeStdlibIsBootstrap"
 
 fun Test.ensureExecutedAgainstExpectedBuildToolsImplVersion(version: BuildToolsVersion) {
     if (version.isCurrent) return
@@ -203,10 +233,13 @@ val businessLogicTestSuits = setOf(
     "testArgumentParsingWarnings",
     "testClasspathMetadata",
     "testBuildSession",
+    "testLint",
+    "testIcEvents",
+    "testNative", // smoke tests for Native running even when kotlin.native.enabled == false
 )
 
 val buildToolsImplConfigurationsCache = mutableMapOf<String, Configuration>()
-fun JvmTestSuite.addSpecificBuildToolsImpl(version: String = "") {
+fun JvmTestSuite.addSpecificBuildToolsImpl(version: String = "", extraCompilerClasspath: FileCollection? = null) {
     val compilerClasspath = buildToolsImplConfigurationsCache.computeIfAbsent(version) {
         configurations.detachedConfiguration(
             project.dependencies.project(":compiler:build-tools:kotlin-build-tools-compat"),
@@ -221,7 +254,10 @@ fun JvmTestSuite.addSpecificBuildToolsImpl(version: String = "") {
     targets.all {
         val platformConfigurations = platforms.associateWith { platform -> platform.getOrCreateConfiguration(version) }
         testTask.configure {
-            addClasspathProperty(compilerClasspath, COMPILER_CLASSPATH_PROPERTY)
+            addClasspathProperty(
+                if (extraCompilerClasspath != null) compilerClasspath + extraCompilerClasspath else compilerClasspath,
+                COMPILER_CLASSPATH_PROPERTY
+            )
             platformConfigurations.forEach { (platform, configuration) ->
                 platform.addClasspathProperty(this, configuration)
             }
@@ -247,9 +283,7 @@ testing {
                     projectTests {
                         testTask(
                             taskName = testTask.name,
-                            javaLauncher = JdkMajorVersion.JDK_1_8,
                             skipInLocalBuild = false,
-                            garbageCollector = GarbageCollector.Parallel
                         ) {
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
@@ -259,8 +293,8 @@ testing {
             }
         }
 
-        withType<JvmTestSuite>().configureEach configureSuit@{
-            val isRegular = this@configureSuit.name in businessLogicTestSuits
+        withType<JvmTestSuite>().configureEach configureSuite@{
+            val isRegular = this@configureSuite.name in businessLogicTestSuits
             dependencies {
                 useJUnitJupiter(libs.versions.junit5.get())
 
@@ -269,7 +303,11 @@ testing {
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
                 implementation(project(":compiler:arguments"))
                 if (isRegular) {
-                    addSpecificBuildToolsImpl()
+                    if (this@configureSuite.name == "testNative") {
+                        addSpecificBuildToolsImpl(extraCompilerClasspath = nativeCompilerClasspath)
+                    } else {
+                        addSpecificBuildToolsImpl()
+                    }
                 }
             }
 
@@ -279,7 +317,10 @@ testing {
                         testTask(
                             taskName = testTask.name,
                             skipInLocalBuild = false,
-                            garbageCollector = GarbageCollector.Parallel
+                            garbageCollector = GarbageCollector.Parallel,
+                            defineJDKEnvVariables = listOf(
+                                JdkMajorVersion.JDK_11_0, // for tests with JPMS
+                            ),
                         ) {
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
 
@@ -292,6 +333,9 @@ testing {
                         "build/daemon"
                     )
                     addClasspathProperty(unpackedResources, "kotlin.test.templates.classpath")
+                    if (isRegular && isKotlinNativeEnabled) {
+                        addClasspathProperty(nativeStdlibKlib, NATIVE_STDLIB_CLASSPATH_PROPERTY)
+                    }
                 }
             }
         }
@@ -347,6 +391,8 @@ testing {
                     addClasspathProperty(serializationCompilerPlugin, "SERIALIZATION_COMPILER_PLUGIN")
                     addClasspathProperty(serializationCore, "SERIALIZATION_CORE")
                     addClasspathProperty(pluginSandbox, "PLUGIN_SANDBOX")
+                    addClasspathProperty(kaptCompilerPlugin, "KAPT_COMPILER_PLUGIN")
+                    addClasspathProperty(exampleAnnotationProcessor, "EXAMPLE_ANNOTATION_PROCESSOR")
 
                     // those classes use compileOnly dependency on scripting and should not be considered as containing test classes to avoid runtime failures
                     exclude(
@@ -355,6 +401,36 @@ testing {
                         "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptMyExtensionTemplate.class",
                         "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptDefinition.class",
                     )
+                }
+            }
+        }
+
+        named<JvmTestSuite>("testLint") {
+            dependencies {
+                implementation(project(":analysis:analysis-api"))
+                implementation(project(":analysis:analysis-api-standalone"))
+                implementation(libs.intellij.asm)
+                runtimeOnly(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
+                runtimeOnly(project(":analysis:analysis-api-fir"))
+                runtimeOnly(intellijCore())
+                runtimeOnly(libs.intellij.fastutil)
+                runtimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom:2.0.6"))
+                runtimeOnly(commonDependency("com.fasterxml:aalto-xml"))
+                runtimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+                runtimeOnly(commonDependency("one.util:streamex"))
+                implementation(project(":core:language.targets.jvm"))
+                implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
+            }
+        }
+
+        named<JvmTestSuite>("testNative") {
+            if (!isKotlinNativeEnabled) {
+                targets.all {
+                    testTask.configure {
+                        addClasspathProperty(nativeStdlibKlib, NATIVE_STDLIB_CLASSPATH_PROPERTY)
+                        // the bootstrap stdlib is older than the compiler under test, see NativeModule
+                        systemProperty(NATIVE_STDLIB_IS_BOOTSTRAP_PROPERTY, "true")
+                    }
                 }
             }
         }
@@ -401,6 +477,7 @@ fun Project.checkCompatibilityCoverage(
 
 tasks.register("resolveDependencies") {
     description = "Resolves dependencies (for dependency verification or populating caches) in detached configurations."
+    notCompatibleWithConfigurationCache("Uses project during task execution")
     doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
     doLast {
         platforms.flatMap { platform -> platform.configurationsCache.values }.forEach { it.resolve() }

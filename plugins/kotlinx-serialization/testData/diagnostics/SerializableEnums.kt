@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // FILE: test.kt
 import kotlinx.serialization.*
@@ -22,3 +23,6 @@ object EnumSerializer: KSerializer<ExplicitlyMarkedEnumCustom> {
 
 @Serializable
 data class EnumUsage(val s: SimpleEnum, val m: MarkedNameEnum, val e: ExplicitlyMarkedEnum)
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, data, enumDeclaration, enumEntry, functionDeclaration,
+objectDeclaration, override, primaryConstructor, propertyDeclaration, stringLiteral */

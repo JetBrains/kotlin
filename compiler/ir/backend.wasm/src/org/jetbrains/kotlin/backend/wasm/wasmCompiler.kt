@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendErrors.WASM_BACKEND_MISSING_
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
 import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmServiceImportExportKind
-import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markFunctionToExport
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -30,6 +28,7 @@ import org.jetbrains.kotlin.js.config.generateDts
 import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.wasm.WasmSpecialExportNames
 import org.jetbrains.kotlin.wasm.config.wasmTestBoxFunctionToExport
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.writeTo
@@ -147,8 +146,6 @@ fun lowerPreservingTags(
 
 data class WasmModuleDependencyImport(val name: String, val fileName: String)
 
-const val wasmInitializeExportName = "_initialize"
-const val wasmStartExportName = "_start"
 const val jsBuiltinsModulePrefix = "wasm:"
 const val importedStringConstants = "'"
 
@@ -208,16 +205,14 @@ fun writeCompilationResult(
 }
 
 private val WasmExport<*>.isWasmInternalUsageExport
-    get() = name.startsWith(JsInteropFunctionsLowering.CALL_FUNCTION) ||
-            name == "memory" ||
-            WasmServiceImportExportKind.entries.any { name.startsWith(it.prefix) }
+    get() = WasmSpecialExportNames.isInternal(name)
 
 fun generateExports(
     exports: List<WasmExport<*>>,
     wholeProgramMode: Boolean,
     isStdlibModule: Boolean,
 ): String {
-    // TODO: necessary to move export check onto common place
+
     val exportNames = exports
         .filterNot { it.isWasmInternalUsageExport }
 

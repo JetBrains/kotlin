@@ -14,11 +14,11 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.utilities.DokkaLogger
 
 @InternalDokkaApi
-public class DocCommentFinder(
+internal class DocCommentFinder(
     private val logger: DokkaLogger,
     private val docCommentFactory: DocCommentFactory,
 ) {
-    public fun findClosestToElement(element: PsiNamedElement): DocComment? {
+    fun findClosestToElement(element: PsiNamedElement): DocComment? {
         val docComment = docCommentFactory.fromElement(element)
         if (docComment != null) {
             return docComment

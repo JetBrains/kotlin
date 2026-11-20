@@ -71,7 +71,7 @@ fun createIncrementalProvidersForNonLeafMppModules(
         session = session,
         moduleDataProvider = SingleModuleDataProvider(moduleData),
         kotlinScopeProvider = session.kotlinScopeProvider,
-        icData = KlibIcData(KlibIcMetadataComponent(incrementalCache.getMetadata(moduleName))),
+        icData = KlibIcData(KlibIcMetadataComponent(incrementalCache.getCommonMetadata(moduleName))),
         defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled,
     )
     return FirJvmIncrementalCompilationSymbolProviders(

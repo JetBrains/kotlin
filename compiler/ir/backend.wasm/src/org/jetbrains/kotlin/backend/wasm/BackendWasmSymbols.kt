@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -52,8 +53,7 @@ class BackendWasmSymbols(
         val isSupportedInterface by CallableIds.isSupportedInterface.functionSymbol()
         val getInterfaceVTable by CallableIds.getInterfaceVTable.functionSymbol()
         val wasmGetInterfaceVTableBodyImpl by CallableIds.wasmGetInterfaceVTableBodyImpl.functionSymbol()
-        // XXX Drop fallback to KFunctionImplNew (now it is older than KFunctionImpl) after bootstrap.
-        val kFunctionImpl: IrClassSymbol = ClassIds.KFunctionImpl.classSymbolOrNull() ?: ClassIds.KFunctionImplNew.classSymbol()
+        val kFunctionImpl: IrClassSymbol = ClassIds.KFunctionImpl.classSymbol()
         val kFunctionErrorImpl: IrClassSymbol = ClassIds.KFunctionErrorImpl.classSymbol()
     }
 
@@ -164,9 +164,6 @@ class BackendWasmSymbols(
     val refCastNull by CallableIds.wasm_ref_cast_null.functionSymbol()
     val callRef by CallableIds.wasm_call_ref.functionSymbol()
     val wasmArrayCopy by CallableIds.wasm_array_copy.functionSymbol()
-    val wasmArrayNewData0 by CallableIds.array_new_data0.functionSymbol()
-    val wasmArrayNewData by CallableIds.array_new_data.functionSymbol()
-    val wasmArrayNewData0CharArray by CallableIds.array_new_data0_char_array.functionSymbolOrNull()
 
     val intToLong by CallableIds.wasm_i64_extend_i32_s.functionSymbol()
 
@@ -224,10 +221,6 @@ class BackendWasmSymbols(
 
     val returnArgumentIfItIsKotlinAny by CallableIds.returnArgumentIfItIsKotlinAny.functionSymbol()
 
-    val startCoroutineUninterceptedOrReturnIntrinsic0 by CallableIds.startCoroutineUninterceptedOrReturnIntrinsic0.functionSymbol()
-    val startCoroutineUninterceptedOrReturnIntrinsic1 by CallableIds.startCoroutineUninterceptedOrReturnIntrinsic1.functionSymbol()
-    val startCoroutineUninterceptedOrReturnIntrinsic2 by CallableIds.startCoroutineUninterceptedOrReturnIntrinsic2.functionSymbol()
-
     val interceptedIntrinsic by CallableIds.interceptedIntrinsic.functionSymbol()
 
     val coroutinesStackSwitchingIntrinsics =
@@ -245,21 +238,23 @@ class BackendWasmSymbols(
         val suspendFunction1ToContref by CallableIds.suspendFunction1ToContref.functionSymbol()
         val suspendFunction2ToContref by CallableIds.suspendFunction2ToContref.functionSymbol()
 
-        val suspendFunction0ToContrefImpl by CallableIds.suspendFunction0ToContrefImpl.functionSymbol()
-        val suspendFunction1ToContrefImpl by CallableIds.suspendFunction1ToContrefImpl.functionSymbol()
-        val suspendFunction2ToContrefImpl by CallableIds.suspendFunction2ToContrefImpl.functionSymbol()
-
         val nullContrefIntrinsic by CallableIds.nullContrefIntrinsic.functionSymbol()
         val suspendIntrinsic by CallableIds.suspendIntrinsic.functionSymbol()
         val resumeThrowIntrinsic by CallableIds.resumeThrowIntrinsic.functionSymbol()
         val resumeWithIntrinsic by CallableIds.resumeWithIntrinsic.functionSymbol()
-        val resumeWithImpl by CallableIds.resumeWithImpl.functionSymbol()
 
         val createCoroutineUninterceptedIntrinsic0StackSwitching by CallableIds.createCoroutineUninterceptedIntrinsic0StackSwitching.functionSymbol()
         val createCoroutineUninterceptedIntrinsic1StackSwitching by CallableIds.createCoroutineUninterceptedIntrinsic1StackSwitching.functionSymbol()
 
-        val suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching by
-        CallableIds.suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching.functionSymbol()
+        val suspendOrReturnStackSwitching by
+        CallableIds.suspendOrReturnStackSwitching.functionSymbol()
+
+        val startCoroutineUninterceptedOrReturnStackSwitchingImpl0 by
+        CallableIds.startCoroutineUninterceptedOrReturnStackSwitchingImpl.forSuspendArity(0)
+        val startCoroutineUninterceptedOrReturnStackSwitchingImpl1 by
+        CallableIds.startCoroutineUninterceptedOrReturnStackSwitchingImpl.forSuspendArity(1)
+        val startCoroutineUninterceptedOrReturnStackSwitchingImpl2 by
+        CallableIds.startCoroutineUninterceptedOrReturnStackSwitchingImpl.forSuspendArity(2)
 
         val intercepted by
         CallableIds.coroutineImplStackSwitchingIntercepted.functionSymbol()
@@ -272,15 +267,23 @@ class BackendWasmSymbols(
         val intercepted by
         CallableIds.coroutineImplIntercepted.functionSymbol()
 
-        val createSimpleCoroutineFromSuspendFunction by
-        CallableIds.createSimpleCoroutineFromSuspendFunction.functionSymbol()
     }
 
     val createCoroutineUninterceptedIntrinsic0 by CallableIds.createCoroutineUninterceptedIntrinsic0.functionSymbol()
     val createCoroutineUninterceptedIntrinsic1 by CallableIds.createCoroutineUninterceptedIntrinsic1.functionSymbol()
 
-    val suspendCoroutineUninterceptedOrReturnIntrinsic by
-    CallableIds.suspendCoroutineUninterceptedOrReturnIntrinsic.functionSymbol()
+    val suspendOrReturn by
+    CallableIds.suspendOrReturn.functionSymbol()
+
+    private fun CallableId.forSuspendArity(n: Int) =
+        functionSymbol { it.hasShape(extensionReceiver = true, regularParameters = n + 1) }
+
+    val startCoroutineUninterceptedOrReturnImpl0 by
+    CallableIds.startCoroutineUninterceptedOrReturnImpl.forSuspendArity(0)
+    val startCoroutineUninterceptedOrReturnImpl1 by
+    CallableIds.startCoroutineUninterceptedOrReturnImpl.forSuspendArity(1)
+    val startCoroutineUninterceptedOrReturnImpl2 by
+    CallableIds.startCoroutineUninterceptedOrReturnImpl.forSuspendArity(2)
 
     // KProperty implementations
     val kLocalDelegatedPropertyImpl: IrClassSymbol = ClassIds.KLocalDelegatedPropertyImpl.classSymbol()
@@ -325,6 +328,7 @@ class BackendWasmSymbols(
         val numberToDoubleAdapter by CallableIds.numberToDoubleAdapter.functionSymbol()
 
         val jsCheckIsNullOrUndefinedAdapter by CallableIds.jsCheckIsNullOrUndefinedAdapter.functionSymbol()
+        val jsIsUndefinedAdapter by CallableIds.jsIsUndefinedAdapter.functionSymbol()
 
         val jsToKotlinStringAdapter by CallableIds.jsToKotlinStringAdapter.functionSymbol()
         val jsToKotlinAnyAdapter by CallableIds.jsToKotlinAnyAdapter.functionSymbol()
@@ -445,8 +449,6 @@ private object ClassIds {
     val KClassImpl = "KClassImpl".wasmClassId
     val KClassInterfaceImpl = "KClassInterfaceImpl".wasmClassId
     val KFunctionImpl = "KFunctionImpl".wasmClassId
-    // XXX To be removed after bootstrap.
-    val KFunctionImplNew = "KFunctionImplNew".wasmClassId
     val KFunctionErrorImpl = "KFunctionErrorImpl".wasmClassId
     val WasmLongImmutableArray = "WasmLongImmutableArray".wasmClassId
     val FunctionAdapter = "FunctionAdapter".wasmClassId
@@ -539,9 +541,6 @@ private object CallableIds {
     val wasm_ref_test = "wasm_ref_test".wasmCallableId
     val wasm_ref_cast_null = "wasm_ref_cast_null".wasmCallableId
     val wasm_array_copy = "wasm_array_copy".wasmCallableId
-    val array_new_data0 = "array_new_data0".wasmCallableId
-    val array_new_data = "array_new_data".wasmCallableId
-    val array_new_data0_char_array = "array_new_data0_char_array".wasmCallableId
     val wasm_i64_extend_i32_s = "wasm_i64_extend_i32_s".wasmCallableId
     val rangeCheck = "rangeCheck".wasmCallableId
 
@@ -581,6 +580,7 @@ private object CallableIds {
     val kotlinToJsAnyAdapter = "kotlinToJsAnyAdapter".wasmCallableId
     val numberToDoubleAdapter = "numberToDoubleAdapter".wasmCallableId
     val jsCheckIsNullOrUndefinedAdapter = "jsCheckIsNullOrUndefinedAdapter".wasmCallableId
+    val jsIsUndefinedAdapter = "jsIsUndefinedAdapter".wasmCallableId
     val jsToKotlinStringAdapter = "jsToKotlinStringAdapter".wasmCallableId
     val jsToKotlinAnyAdapter = "jsToKotlinAnyAdapter".wasmCallableId
     val jsToKotlinByteAdapter = "jsToKotlinByteAdapter".wasmCallableId
@@ -625,31 +625,19 @@ private object CallableIds {
     val getJsError = "getJsError".wasmCallableId
 
     // Coroutines intrinsics
-    val startCoroutineUninterceptedOrReturnIntrinsic0 = "startCoroutineUninterceptedOrReturnIntrinsic0".wasmCallableId
-    val startCoroutineUninterceptedOrReturnIntrinsic1 = "startCoroutineUninterceptedOrReturnIntrinsic1".wasmCallableId
-    val startCoroutineUninterceptedOrReturnIntrinsic2 = "startCoroutineUninterceptedOrReturnIntrinsic2".wasmCallableId
-
     val interceptedIntrinsic = "interceptedIntrinsic".wasmCallableId
 
-    val suspendCoroutineUninterceptedOrReturnIntrinsic = "suspendCoroutineUninterceptedOrReturnIntrinsic".wasmCallableId
-    val suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching = "suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching".wasmCallableId
+    val suspendOrReturn = "suspendOrReturn".wasmCallableId
+    val suspendOrReturnStackSwitching = "suspendOrReturnStackSwitching".wasmCallableId
 
     val suspendFunction0ToContref = "suspendFunction0ToContref".wasmCallableId
     val suspendFunction1ToContref = "suspendFunction1ToContref".wasmCallableId
     val suspendFunction2ToContref = "suspendFunction2ToContref".wasmCallableId
 
-    val suspendFunction0ToContrefImpl = "suspendFunction0ToContrefImpl".wasmCallableId
-    val suspendFunction1ToContrefImpl = "suspendFunction1ToContrefImpl".wasmCallableId
-    val suspendFunction2ToContrefImpl = "suspendFunction2ToContrefImpl".wasmCallableId
-
     val nullContrefIntrinsic = "nullContrefIntrinsic".wasmCallableId
     val suspendIntrinsic = "suspendIntrinsic".wasmCallableId
     val resumeThrowIntrinsic = "resumeThrowIntrinsic".wasmCallableId
     val resumeWithIntrinsic = "resumeWithIntrinsic".wasmCallableId
-    val resumeWithImpl = "resumeWithImpl".wasmCallableId
-
-    val createSimpleCoroutineFromSuspendFunction =
-        "createSimpleCoroutineFromSuspendFunction".coroutinesIntrinsicsCallableId
 
     val createCoroutineUninterceptedIntrinsic0 = "createCoroutineUninterceptedIntrinsic0".coroutinesIntrinsicsCallableId
     val createCoroutineUninterceptedIntrinsic1 = "createCoroutineUninterceptedIntrinsic1".coroutinesIntrinsicsCallableId
@@ -658,6 +646,11 @@ private object CallableIds {
         "createCoroutineUninterceptedIntrinsic0StackSwitching".coroutinesIntrinsicsCallableId
     val createCoroutineUninterceptedIntrinsic1StackSwitching =
         "createCoroutineUninterceptedIntrinsic1StackSwitching".coroutinesIntrinsicsCallableId
+
+    val startCoroutineUninterceptedOrReturnImpl =
+        "startCoroutineUninterceptedOrReturnImpl".coroutinesIntrinsicsCallableId
+    val startCoroutineUninterceptedOrReturnStackSwitchingImpl =
+        "startCoroutineUninterceptedOrReturnStackSwitchingImpl".coroutinesIntrinsicsCallableId
 
     val coroutineImplIntercepted =
         CallableId(Name.identifier("intercepted")).withClassId(ClassIds.coroutineImpl)

@@ -1,5 +1,11 @@
 public abstract class CListIterator /* test.CListIterator*/<Elem>  implements test.IListIterator<Elem> {
   @java.lang.Override()
+  public Elem next();//  next()
+
+  @java.lang.Override()
+  public boolean hasNext();//  hasNext()
+
+  @java.lang.Override()
   public void add(Elem);//  add(Elem)
 
   @java.lang.Override()

@@ -33,11 +33,18 @@ FILE: [ResolvedTo(IMPORTS)] errorProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/transformation|<R|MyPair|>(<L> = [ResolvedTo(BODY_RESOLVE)] transformation@fun <anonymous>(): R|MyPair| <inline=NoInline>  {
+        private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|MyPair| = R|/transformation|<R|MyPair|>(<L> = [ResolvedTo(BODY_RESOLVE)] transformation@fun <anonymous>(): R|MyPair| <inline=NoInline>  {
             [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|kotlin/Int| = Int(1)
             ^ R|/MyPair.MyPair|(R|<local>/localProperty|, String(str))
         }
         )
+            private [ResolvedTo(BODY_RESOLVE)] get(): R|MyPair|
+
+        public final [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> transformation([ResolvedTo(RAW_FIR)] body: ( () -> T )): T { LAZY_BLOCK }

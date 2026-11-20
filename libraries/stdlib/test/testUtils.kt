@@ -17,15 +17,25 @@ public enum class TestPlatform {
     WasmJs,
     WasmWasi;
     companion object
+
+    fun isJvm(version: Int? = null): Boolean = this == Jvm && (version == null || jvmVersion == version)
+    fun isJvmEarlierThan(version: Int): Boolean = this == Jvm && jvmVersion!! < version
+    fun isJsOrWasmJs(): Boolean = this == Js || this == WasmJs
 }
 
 public expect val TestPlatform.Companion.current: TestPlatform
+public expect val TestPlatform.Companion.jvmVersion: Int?
+
 
 public fun testOn(platformPredicate: (TestPlatform) -> Boolean, action: () -> Unit) {
     if (platformPredicate(TestPlatform.current)) action()
 }
+public fun testExceptOn(platformPredicate: (TestPlatform) -> Boolean, action: () -> Unit) {
+    if (!platformPredicate(TestPlatform.current)) action()
+}
+
 public fun testOnlyOn(platform: TestPlatform, action: () -> Unit) = testOn({ it == platform }, action)
-public fun testExceptOn(platform: TestPlatform, action: () -> Unit) = testOn({ it != platform}, action)
+public fun testExceptOn(platform: TestPlatform, action: () -> Unit) = testExceptOn({ it == platform }, action)
 
 
 // just a static type check

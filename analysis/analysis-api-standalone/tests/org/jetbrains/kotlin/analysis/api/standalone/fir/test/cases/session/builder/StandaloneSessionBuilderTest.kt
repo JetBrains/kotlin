@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.components.resolveToSymbol
+import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalSourceOutOfBlockModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AbstractStandaloneTest
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -51,18 +52,25 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.nameWithoutExtension
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(KaExperimentalApi::class)
 class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
     override val suiteName: Path
         get() = Paths.get("sessionBuilder")
+
+    @TempDir
+    lateinit var tempDir: Path
 
     @Test
     fun testJdkSessionBuilder() {
@@ -209,7 +217,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val kLib = addModule(
                     buildKtLibraryModule {
-                        val compiledKLibRoot = compileCommonKlib(testDataPath(root).resolve("klibSrc"))
+                        val compiledKLibRoot = compileCommonKlib(testDataPath(root).resolve("klibSrc"), tempDir)
                         addBinaryRoot(compiledKLibRoot)
                         platform = CommonPlatforms.defaultCommonPlatform
                         libraryName = "klib"
@@ -241,7 +249,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
                 platform = CommonPlatforms.defaultCommonPlatform
                 val kLib = addModule(
                     buildKtLibraryModule {
-                        val compiledKLibRoot = compileCommonKlib(testDataPath(root).resolve("klibSrc"))
+                        val compiledKLibRoot = compileCommonKlib(testDataPath(root).resolve("klibSrc"), tempDir)
                         addBinaryRoot(compiledKLibRoot)
                         platform = CommonPlatforms.defaultCommonPlatform
                         libraryName = "klib"
@@ -353,7 +361,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
-                val compiledJar = compileToJar(testDataPath(root).resolve("dependent"))
+                val compiledJar = compileToJar(testDataPath(root).resolve("dependent"), tempDir)
                 val dep = addModule(
                     buildKtLibraryModule {
                         // addBinaryRoot(compiledJar)
@@ -385,7 +393,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 platform = JvmPlatforms.defaultJvmPlatform
-                val compiledJar = compileToJar(testDataPath(root).resolve("dependent"))
+                val compiledJar = compileToJar(testDataPath(root).resolve("dependent"), tempDir)
                 val dep = addModule(
                     buildKtLibraryModule {
                         // addBinaryRoot(compiledJar)
@@ -650,10 +658,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val kotlinPsiClass = mainModule.findKotlinClassAsPsi()
         require(kotlinPsiClass != null)
 
-        val kotlinPsiClassFromFacade = JavaPsiFacade
-            .getInstance(project)
-            .findClass("org.test.KotlinClass", GlobalSearchScope.projectScope(project))
-
+        val kotlinPsiClassFromFacade = findLightClass("org.test.KotlinClass")
         require(kotlinPsiClassFromFacade == kotlinPsiClass)
 
         checkKotlinPsiClass(kotlinPsiClass)
@@ -664,13 +669,89 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val kotlinPsiClass = mainModule.findKotlinClassAsPsi()
         require(kotlinPsiClass != null)
 
-        val kotlinPsiClassFromFacade = JavaPsiFacade
-            .getInstance(project)
-            .findClass("org.test.KotlinClass", GlobalSearchScope.projectScope(project))
-
+        val kotlinPsiClassFromFacade = findLightClass("org.test.KotlinClass")
         require(kotlinPsiClassFromFacade == kotlinPsiClass)
 
         checkKotlinPsiClass(kotlinPsiClass)
+    }
+
+    /**
+     * KT-89902: Kotlin classes from binary libraries must be found by [JavaPsiFacade], e.g., to resolve supertypes of light classes.
+     */
+    @Test
+    fun testJvmLightClassesWithKotlinLibrarySupertypes() {
+        val root = testDataPath("lightClassesWithKotlinLibrarySupertypes")
+        val libraryRoots = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath(), compileToJar(root.resolve("library"), tempDir))
+
+        testLightClasses(JvmPlatforms.defaultJvmPlatform, root.resolve("main"), libraryRoots, withJdk = true) {
+            val itemList = findLightClass("org.test.ItemList")!!
+            assertEquals("kotlin.collections.AbstractList", itemList.superClass?.qualifiedName)
+
+            val librarySubclass = findLightClass("org.test.LibrarySubclass")!!
+            assertEquals("lib.LibraryClass", librarySubclass.superClass?.qualifiedName)
+            assertEquals(listOf("lib.LibraryInterface"), librarySubclass.interfaces.map { it.qualifiedName })
+        }
+    }
+
+    /**
+     * KT-89902: Kotlin classes from binary libraries must be found by [JavaPsiFacade], e.g., to resolve references to them in Java sources.
+     */
+    @Test
+    fun testJvmJavaReferencesToKotlinLibraryClasses() {
+        val root = testDataPath("lightClassesWithKotlinLibrarySupertypes")
+        val libraryRoots = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath(), compileToJar(root.resolve("library"), tempDir))
+
+        testLightClasses(JvmPlatforms.defaultJvmPlatform, root.resolve("main"), libraryRoots, withJdk = true) {
+            val javaClass = JavaPsiFacade.getInstance(project).findClass("org.test.JavaClass", GlobalSearchScope.projectScope(project))!!
+            val fieldTypes = javaClass.fields.map { (it.type as PsiClassReferenceType).resolve()?.qualifiedName }
+            assertEquals(listOf("kotlin.jvm.functions.Function1", "kotlin.collections.AbstractMap", "lib.LibraryClass"), fieldTypes)
+        }
+    }
+
+    /**
+     * KT-91146: Kotlin supertypes of Java classes from binary libraries must be kept, so that subtyping and inherited members work. Before
+     * KT-89902, [JavaPsiFacade] didn't find Kotlin library classes, and a supertype from the package of the Java class was then resolved by
+     * the fallback for unresolved Java types in `FirSignatureEnhancement` as a flexible type, which was dropped from the supertypes.
+     */
+    @Test
+    fun testJvmKotlinSupertypesOfJavaLibraryClasses() {
+        val root = testDataPath("kotlinSupertypesOfJavaLibraryClasses")
+        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(root.resolve("library").toString(), "library").toPath()
+
+        testLightClasses(JvmPlatforms.defaultJvmPlatform, root.resolve("main"), listOf(libraryJar), withJdk = true) {
+            val ktFile = modulesWithFiles.values.single().single() as KtFile
+            val diagnostics = analyze(ktFile) {
+                ktFile.diagnostics().map { "${it.factoryName}: ${it.defaultMessage}" }.toList()
+            }
+            assertEquals(emptyList(), diagnostics)
+        }
+    }
+
+    /**
+     * Java classes for Kotlin class files from binary libraries should be built from the class files alone, without loading the stubs or
+     * ASTs of the decompiled files. The stdlib facade `CollectionsKt` inherits its parts, so looking up a method in it involves them all.
+     */
+    @Test
+    fun testJvmClassesForKotlinLibraryClassFiles() {
+        val libraryRoots = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath())
+
+        testLightClasses(JvmPlatforms.defaultJvmPlatform, libraryRoots = libraryRoots) {
+            val abstractList = findLibraryClass("kotlin.collections.AbstractList")!!
+
+            val collectionsKt = findLibraryClass("kotlin.collections.CollectionsKt")!!
+            assertTrue(collectionsKt.findMethodsByName("listOf", true).isNotEmpty())
+
+            val parts = generateSequence(collectionsKt.superClass) { it.superClass }.toList()
+            assertTrue(parts.isNotEmpty())
+            assertTrue(parts.all { "CollectionsKt__" in it.name!! }, parts.map { it.name }.toString())
+
+            val decompiledFiles = (listOf(abstractList, collectionsKt) + parts).map { findDecompiledFile(it) }
+            assertEquals(emptyList(), decompiledFiles.filter { it.isStubLoaded }.map { it.name })
+            assertEquals(emptyList(), decompiledFiles.filter { it.isContentsLoaded }.map { it.name })
+
+            // The navigation element of the class file is computed on demand
+            assertEquals(findDecompiledFile(abstractList), abstractList.containingFile.navigationElement)
+        }
     }
 
     @Test
@@ -678,10 +759,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         // By default, light classes are not available for non-JVM platforms
         require(mainModule.findKotlinClassAsPsi() == null)
 
-        val unavailableKotlinClassFromFacade = JavaPsiFacade
-            .getInstance(project)
-            .findClass("org.test.KotlinClass", GlobalSearchScope.projectScope(project))
-
+        val unavailableKotlinClassFromFacade = findLightClass("org.test.KotlinClass")
         require(unavailableKotlinClassFromFacade == null)
 
         runWriteAction {
@@ -699,9 +777,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
             val kotlinPsiClass = mainModule.findKotlinClassAsPsi()
             require(kotlinPsiClass != null)
 
-            val kotlinPsiClassFromFacade = JavaPsiFacade
-                .getInstance(project)
-                .findClass("org.test.KotlinClass", GlobalSearchScope.projectScope(project))
+            val kotlinPsiClassFromFacade = findLightClass("org.test.KotlinClass")
 
             // Inside withMultiplatformLightClassSupport, 'JavaPsiFacade' doesn't return Kotlin LC
             require(kotlinPsiClassFromFacade == null)
@@ -714,15 +790,58 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         findClass(ClassId.fromString("org/test/KotlinClass"))!!.asPsiClass()
     }
 
-    private fun testLightClasses(platform: TargetPlatform, block: StandaloneAnalysisAPISession.(KaModule) -> Unit) {
-        val root = "lightClasses"
+    private fun StandaloneAnalysisAPISession.findLightClass(fqName: String): PsiClass? =
+        JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.projectScope(project))
 
+    private fun StandaloneAnalysisAPISession.findLibraryClass(fqName: String): PsiClass? =
+        JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project))
+
+    private fun StandaloneAnalysisAPISession.findDecompiledFile(psiClass: PsiClass): KtFile =
+        PsiManager.getInstance(project).findFile(psiClass.containingFile.virtualFile) as KtFile
+
+    /**
+     * Whether the stub of the file is loaded. Unlike [KtFile.getStub], it doesn't build the stub.
+     */
+    @Suppress("UnstableApiUsage")
+    private val KtFile.isStubLoaded: Boolean
+        get() = derefStub() != null
+
+    private fun testLightClasses(
+        platform: TargetPlatform,
+        sourceRoot: Path = testDataPath("lightClasses"),
+        libraryRoots: List<Path> = emptyList(),
+        withJdk: Boolean = false,
+        block: StandaloneAnalysisAPISession.(KaModule) -> Unit,
+    ) {
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 this.platform = platform
+                val jdkModule = if (withJdk) {
+                    addModule(
+                        buildKtSdkModule {
+                            addBinaryRootsFromJdkHome(Paths.get(System.getProperty("java.home")), isJre = false)
+                            this.platform = platform
+                            libraryName = "JDK"
+                        }
+                    )
+                } else {
+                    null
+                }
+                val libraryModules = libraryRoots.map { libraryRoot ->
+                    addModule(
+                        buildKtLibraryModule {
+                            addBinaryRoot(libraryRoot)
+                            this.platform = platform
+                            libraryName = libraryRoot.nameWithoutExtension
+                        }
+                    )
+                }
                 addModule(
                     buildKtSourceModule {
-                        addSourceRoot(testDataPath(root))
+                        addSourceRoot(sourceRoot)
+                        for (dependency in listOfNotNull(jdkModule) + libraryModules) {
+                            addRegularDependency(dependency)
+                        }
                         this.platform = platform
                         moduleName = "main"
                     }

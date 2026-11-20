@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -96,6 +96,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleCollectDiagnosticsTestGenerated
   @TestMetadata("cloneableWasmJvm.kt")
   public void testCloneableWasmJvm() {
     run("cloneableWasmJvm.kt");
+  }
+
+  @Test
+  @TestMetadata("constFromLibrary.kt")
+  public void testConstFromLibrary() {
+    run("constFromLibrary.kt");
   }
 
   @Test
@@ -255,6 +261,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleCollectDiagnosticsTestGenerated
   }
 
   @Test
+  @TestMetadata("inlineFromHigherPlatformMembers.kt")
+  public void testInlineFromHigherPlatformMembers() {
+    run("inlineFromHigherPlatformMembers.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFromHigherPlatformMultifileFacade.kt")
+  public void testInlineFromHigherPlatformMultifileFacade() {
+    run("inlineFromHigherPlatformMultifileFacade.kt");
+  }
+
+  @Test
   @TestMetadata("inlineFromHigherPlatformUnspecifiedJvmTarget.kt")
   public void testInlineFromHigherPlatformUnspecifiedJvmTarget() {
     run("inlineFromHigherPlatformUnspecifiedJvmTarget.kt");
@@ -318,6 +336,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleCollectDiagnosticsTestGenerated
   @TestMetadata("noPackageAnnotationsFromLibrary.kt")
   public void testNoPackageAnnotationsFromLibrary() {
     run("noPackageAnnotationsFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("optInEnumEntryFromLibrary.kt")
+  public void testOptInEnumEntryFromLibrary() {
+    run("optInEnumEntryFromLibrary.kt");
   }
 
   @Test
@@ -680,9 +704,33 @@ public class FirIdeNormalAnalysisSourceLikeModuleCollectDiagnosticsTestGenerated
     }
 
     @Test
+    @TestMetadata("classRedeclarationKotlinKotlinKotlinCopyOfDanglingFile.kt")
+    public void testClassRedeclarationKotlinKotlinKotlinCopyOfDanglingFile() {
+      run("classRedeclarationKotlinKotlinKotlinCopyOfDanglingFile.kt");
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationKotlinKotlinKotlinIgnoreSelf.kt")
+    public void testClassRedeclarationKotlinKotlinKotlinIgnoreSelf() {
+      run("classRedeclarationKotlinKotlinKotlinIgnoreSelf.kt");
+    }
+
+    @Test
     @TestMetadata("functionRedeclaration.kt")
     public void testFunctionRedeclaration() {
       run("functionRedeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("functionRedeclarationCopyOfDanglingFile.kt")
+    public void testFunctionRedeclarationCopyOfDanglingFile() {
+      run("functionRedeclarationCopyOfDanglingFile.kt");
+    }
+
+    @Test
+    @TestMetadata("functionRedeclarationIgnoreSelf.kt")
+    public void testFunctionRedeclarationIgnoreSelf() {
+      run("functionRedeclarationIgnoreSelf.kt");
     }
 
     @Test

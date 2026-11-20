@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByFqNameTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.AbstractSymbolByFqNameTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -80,6 +80,24 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("enumEntryWithAnnotationsFromLibrary.kt")
+  public void testEnumEntryWithAnnotationsFromLibrary() {
+    run("enumEntryWithAnnotationsFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("expectFullValueClassWithNoConstructorFromCommonBinary.kt")
+  public void testExpectFullValueClassWithNoConstructorFromCommonBinary() {
+    run("expectFullValueClassWithNoConstructorFromCommonBinary.kt");
+  }
+
+  @Test
+  @TestMetadata("expectInlineValueClassWithNoConstructorFromCommonBinary.kt")
+  public void testExpectInlineValueClassWithNoConstructorFromCommonBinary() {
+    run("expectInlineValueClassWithNoConstructorFromCommonBinary.kt");
+  }
+
+  @Test
   @TestMetadata("explicitBackingField.kt")
   public void testExplicitBackingField() {
     run("explicitBackingField.kt");
@@ -89,6 +107,24 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   @TestMetadata("explicitBackingFieldTopLevel.kt")
   public void testExplicitBackingFieldTopLevel() {
     run("explicitBackingFieldTopLevel.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitInlineValueClassFromBinary.kt")
+  public void testExplicitInlineValueClassFromBinary() {
+    run("explicitInlineValueClassFromBinary.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitInlineValueClassFromCommonBinary.kt")
+  public void testExplicitInlineValueClassFromCommonBinary() {
+    run("explicitInlineValueClassFromCommonBinary.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitInlineValueClassWithJvmInlineFromBinary.kt")
+  public void testExplicitInlineValueClassWithJvmInlineFromBinary() {
+    run("explicitInlineValueClassWithJvmInlineFromBinary.kt");
   }
 
   @Test
@@ -152,6 +188,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("javaConstructorsWithDifferentTypeParameterBounds.kt")
+  public void testJavaConstructorsWithDifferentTypeParameterBounds() {
+    run("javaConstructorsWithDifferentTypeParameterBounds.kt");
+  }
+
+  @Test
+  @TestMetadata("javaOverloadsWithDifferentTypeParameterBounds.kt")
+  public void testJavaOverloadsWithDifferentTypeParameterBounds() {
+    run("javaOverloadsWithDifferentTypeParameterBounds.kt");
+  }
+
+  @Test
   @TestMetadata("kclass.kt")
   public void testKclass() {
     run("kclass.kt");
@@ -182,6 +230,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("memberOverloadsWithDifferentTypeParameterBoundsFromLibrary.kt")
+  public void testMemberOverloadsWithDifferentTypeParameterBoundsFromLibrary() {
+    run("memberOverloadsWithDifferentTypeParameterBoundsFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     run("nestedClass.kt");
@@ -191,6 +245,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   @TestMetadata("nothing.kt")
   public void testNothing() {
     run("nothing.kt");
+  }
+
+  @Test
+  @TestMetadata("overloadsWithDifferentTypeParameterBoundsFromLibrary.kt")
+  public void testOverloadsWithDifferentTypeParameterBoundsFromLibrary() {
+    run("overloadsWithDifferentTypeParameterBoundsFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("overloadsWithVarargAndArrayParametersFromLibrary.kt")
+  public void testOverloadsWithVarargAndArrayParametersFromLibrary() {
+    run("overloadsWithVarargAndArrayParametersFromLibrary.kt");
   }
 
   @Test
@@ -275,6 +341,24 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   @TestMetadata("signatureEnhancementOuterClassBoundsToInner.kt")
   public void testSignatureEnhancementOuterClassBoundsToInner() {
     run("signatureEnhancementOuterClassBoundsToInner.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverridesWithSameSignature.kt")
+  public void testSubstitutionOverridesWithSameSignature() {
+    run("substitutionOverridesWithSameSignature.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverridesWithSameSignatureFromLibrary.kt")
+  public void testSubstitutionOverridesWithSameSignatureFromLibrary() {
+    run("substitutionOverridesWithSameSignatureFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("substitutionOverridesWithSameTypeArguments.kt")
+  public void testSubstitutionOverridesWithSameTypeArguments() {
+    run("substitutionOverridesWithSameTypeArguments.kt");
   }
 
   @Test

@@ -52,12 +52,28 @@ abstract class AbstractIrTypeSubstitutor : TypeSubstitutorMarker {
         /**
          * Returns a substitutor, which would be able to substitute type parameters
          * of [IrType::classifier] of the given type with its arguments.
+         *
+         * The type parameters are those of the class itself followed by the ones captured from the enclosing declarations,
+         * see [extractTypeParameters]. They are matched with the arguments of the type by position.
+         *
+         * The number of arguments is supposed to be equal to the number of type parameters. The cases below are bugs,
+         * which are tolerated here only as a safeguard:
+         * - The type may have no arguments for some of the captured type parameters. For example, [starProjectedType] of
+         *   an anonymous object declared in a generic function has no arguments at all.
+         * - The type may have more arguments than the class has type parameters, if a lowering has moved the class to a declaration
+         *   where some of the captured type parameters are not available. For example, on JVM, an anonymous object in the default
+         *   value of a parameter of a generic member function is moved to a static function, which has no type parameters
+         *   of the containing class.
+         *
+         * A type parameter that has no argument is not substituted, and an argument that has no type parameter is ignored.
          */
         fun forType(type: IrSimpleType): AbstractIrTypeSubstitutor {
             val clazz = type.classOrNull ?: return Empty
-            val typeParameters = clazz.owner.typeConstructorParameters.map { it.symbol }.toList()
-            if (typeParameters.isEmpty()) return Empty
-            return IrTypeSubstitutor(typeParameters, type.arguments, allowEmptySubstitution = true)
+            val substitution = extractTypeParameters(clazz.owner)
+                .zip(type.arguments) { typeParameter, argument -> typeParameter.symbol to argument }
+                .toMap()
+            if (substitution.isEmpty()) return Empty
+            return IrTypeSubstitutor(substitution, allowEmptySubstitution = true)
         }
     }
 }

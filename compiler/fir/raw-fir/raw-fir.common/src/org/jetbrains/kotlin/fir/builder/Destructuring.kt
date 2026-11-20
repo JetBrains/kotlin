@@ -44,6 +44,11 @@ interface DestructuringContext<T> {
     ): FirExpression = buildExpression()
 }
 
+/**
+ * @param isMember whether the entries are members of a class or a file even in a local context, e.g., in a local class.
+ *   It is the case for top-level and member destructuring declarations outside of scripts.
+ * @param isCompanionBlockMember whether the entries are static members declared in a companion block.
+ */
 context(c: DestructuringContext<T>)
 fun <T> AbstractRawFirBuilder<*, *>.addDestructuringVariables(
     destination: MutableList<in FirVariable>,
@@ -54,6 +59,8 @@ fun <T> AbstractRawFirBuilder<*, *>.addDestructuringVariables(
     kind: DestructuringKind,
     isTmpVariable: Boolean,
     forceLocal: Boolean,
+    isMember: Boolean = false,
+    isCompanionBlockMember: Boolean = false,
     configure: (FirVariable) -> Unit = {}
 ) {
     if (isTmpVariable) {
@@ -68,6 +75,8 @@ fun <T> AbstractRawFirBuilder<*, *>.addDestructuringVariables(
             kind,
             forceLocal,
             index,
+            isMember,
+            isCompanionBlockMember,
             configure,
         )
     }
@@ -88,10 +97,13 @@ fun <T> AbstractRawFirBuilder<*, *>.buildDestructuringVariable(
     kind: DestructuringKind,
     forceLocal: Boolean,
     index: Int,
+    isMember: Boolean = false,
+    isCompanionBlockMember: Boolean = false,
     configure: (FirVariable) -> Unit = {}
 ): FirVariable = with(c) {
     buildProperty {
-        val localEntries = forceLocal || context.inLocalContext
+        val inLocalContext = forceLocal || context.inLocalContext
+        val localEntries = inLocalContext && !isMember
         symbol = when {
             localEntries -> FirLocalPropertySymbol()
             else -> FirRegularPropertySymbol(callableIdForName(entry.name))
@@ -135,19 +147,24 @@ fun <T> AbstractRawFirBuilder<*, *>.buildDestructuringVariable(
             }
             this.isVar = entry.isVar
             source = entry.source
-            status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
-            isLocal = localEntries
+            status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL).apply {
+                isStatic = isCompanionBlockMember
+            }
+
+            isLocal = inLocalContext
             context.containerSymbolIfAny?.let { entry.extractAnnotationsTo(this, it) }
             if (!localEntries) {
-                dispatchReceiverType = currentDispatchReceiverType(context)
+                if (!isCompanionBlockMember) {
+                    dispatchReceiverType = currentDispatchReceiverType(context)
+                }
+
                 getter = FirDefaultPropertyGetter(
                     source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter),
                     moduleData = moduleData,
                     origin = FirDeclarationOrigin.Source,
                     propertyTypeRef = returnTypeRef,
-                    visibility = Visibilities.Public,
                     propertySymbol = symbol,
-                    modality = Modality.FINAL,
+                    status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply { isStatic = isCompanionBlockMember },
                 )
                 if (entry.isVar) {
                     setter = FirDefaultPropertySetter(
@@ -155,12 +172,19 @@ fun <T> AbstractRawFirBuilder<*, *>.buildDestructuringVariable(
                         moduleData = moduleData,
                         origin = FirDeclarationOrigin.Source,
                         propertyTypeRef = returnTypeRef,
-                        visibility = Visibilities.Public,
                         propertySymbol = symbol,
-                        modality = Modality.FINAL,
+                        status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply { isStatic = isCompanionBlockMember },
                     )
                 }
             }
         }
-    }.also(configure)
+    }.also {
+        if (isCompanionBlockMember) {
+            it.initContainingClassAttr(context)
+            it.getter?.initContainingClassAttr(context)
+            it.setter?.initContainingClassAttr(context)
+        }
+
+        configure(it)
+    }
 }

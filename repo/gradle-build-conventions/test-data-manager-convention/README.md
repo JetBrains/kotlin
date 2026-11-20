@@ -44,7 +44,7 @@ Run on a single module:
 
 # Filter by test data path
 ./gradlew :analysis:analysis-api-fir:updateTestData \
-    -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=testData/myTest.kt
+    -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/myTest.kt
 
 # Filter by test class pattern
 ./gradlew :analysis:analysis-api-fir:updateTestData \
@@ -63,7 +63,7 @@ Gradle's task-name matching runs the task in every module with the plugin:
 ./gradlew updateTestData
 
 # Filter by path or pattern (applies to all modules)
-./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=testData/myTest.kt
+./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/myTest.kt
 
 # Run only golden tests (skip variant-specific tests)
 ./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.goldenOnly=true
@@ -92,10 +92,43 @@ system properties at execution time.
 
 | Gradle property                                                 | Effect                                                                     |
 |-----------------------------------------------------------------|----------------------------------------------------------------------------|
-| `org.jetbrains.kotlin.testDataManager.options.testDataPath`     | Comma-separated test data paths (dir or file)                              |
-| `org.jetbrains.kotlin.testDataManager.options.testClassPattern` | Regex pattern for test class names                                         |
+| `org.jetbrains.kotlin.testDataManager.options.testDataPath`     | Comma-separated repository-relative test data paths (dir or file)          |
+| `org.jetbrains.kotlin.testDataManager.options.testClassPattern` | Regex the fully qualified test class name must match in full (`.*Fir.*`)   |
 | `org.jetbrains.kotlin.testDataManager.options.goldenOnly`       | Run only golden tests (empty variant chain)                                |
 | `org.jetbrains.kotlin.testDataManager.options.incremental`      | Only run variant tests for changed golden paths (effective in update mode) |
+| `org.jetbrains.kotlin.testDataManager.options.runId`            | Id of the run, names the report (a UUIDv7 is generated if not set)         |
+| `org.jetbrains.kotlin.testDataManager.options.rerunId`          | Id of the run this one reruns; its report survives the rotation            |
+| `org.jetbrains.kotlin.testDataManager.options.output`           | `verbose` prints every group, pass and the timings (default: compact)      |
+
+`testDataPath` entries are relative to the repository root, as in `@TestMetadata`, or absolute paths inside the
+repository. A path matches whole names only (`dir`, `dir/file.kt`, or `dir/file` without the extension), and a path that
+does not exist fails the run instead of silently matching nothing. Only `*Generated` classes implementing `ManagedTest`
+are managed. A module where nothing matches the filters passes, since in a multi-module run most modules have nothing to
+run.
+
+## Reports
+
+Every run writes a machine-readable report into the module's build directory, `build/test-data-manager/<runId>.json`,
+and prints its path as `Test data manager report: <path>`. With `-q`, the task output is only a few lines per module,
+ending with that line. The report holds:
+
+- `status`: `PASSED`, `FAILED` (test data problems or test errors) or `ERROR` (the run itself failed: an invalid
+  `testDataPath`, variant chain conflicts, a crash of the runner; see `runErrors`);
+- the test counts, including the tests skipped by `incremental`;
+- `problems`: one entry per test data file that doesn't match, with its kind (`MISMATCH`, `MISSING_FILE`,
+  `REDUNDANT_FILE`, `UNEXPECTED_FILE`), the file `updateTestData` would write or delete, the file the output was
+  compared with, and in `actualFile` the actual output saved under `build/test-data-manager/<runId>/actual/`, ready for
+  `diff`;
+- `testErrors`: other failures with the exception class, message and the top of the stack trace;
+- `recoveredTests`: tests that failed and then passed when the convergence loop re-ran them, with their earlier
+  failures. They don't fail the run, but may be flaky;
+- `fileActions`: the files the run created, updated or deleted. Only writes made through `ManagedTestAssertions` are
+  listed; use `git status` for the complete picture.
+
+Paths inside the repository are relative to its root, others are absolute. `runId` may contain letters, digits, `.`,
+`_` and `-`; without it, each module generates its own UUIDv7, which sorts by time. Pass one `runId` to several modules
+to find all their reports of one run. The 5 most recent reports of a module are
+kept. Since `runId` is resolved lazily like the other options, changing it doesn't invalidate the configuration cache.
 
 ## Configuration Cache
 

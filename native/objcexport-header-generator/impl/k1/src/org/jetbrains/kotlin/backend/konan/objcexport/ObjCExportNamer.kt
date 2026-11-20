@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
@@ -23,26 +22,11 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
-import org.jetbrains.kotlin.resolve.source.PsiSourceFile
-
-internal interface ObjCExportNameTranslator {
-    fun getFileClassName(file: KtFile): ObjCExportNamer.ClassOrProtocolName
-
-    fun getCategoryName(file: KtFile): String
-
-    fun getClassOrProtocolName(
-        ktClassOrObject: KtClassOrObject,
-    ): ObjCExportNamer.ClassOrProtocolName
-
-    fun getTypeParameterName(ktTypeParameter: KtTypeParameter): String
-}
 
 interface ObjCExportNamer {
     data class ClassOrProtocolName(
@@ -84,6 +68,8 @@ interface ObjCExportNamer {
     fun getObjectInstanceSelector(descriptor: ClassDescriptor): String
     fun getEnumEntrySelector(descriptor: ClassDescriptor): String
     fun getEnumEntrySwiftName(descriptor: ClassDescriptor): String
+    fun getNSClosedEnumEntryName(nsEnumTypeName: String, descriptor: ClassDescriptor): String
+    fun getNSClosedEnumEntrySwiftName(descriptor: ClassDescriptor): String
     fun getEnumStaticMemberSelector(descriptor: CallableMemberDescriptor): String
     fun getTypeParameterName(typeParameterDescriptor: TypeParameterDescriptor): String
 
@@ -101,7 +87,7 @@ interface ObjCExportNamer {
     // Null means no NSEnum property.
     fun getNSEnumTypeName(descriptor: ClassDescriptor): ObjCExportNSEnumTypeName? =
         descriptor.annotations.findAnnotation(KonanFqNames.objCEnum)?.let {
-            val name = ((it.argumentValue("name")?.value as String?)?.ifEmpty { null })
+            val name = ((it.argumentValue("name")?.value as String?)?.mangleIfStdMacro()?.ifEmpty { null })
                 ?: "${getClassOrProtocolName(descriptor).objCName}NSEnum"
             val swiftName = ((it.argumentValue("swiftName")?.value as String?)?.ifEmpty { null })
                 ?: ((it.argumentValue("name")?.value as String?)?.ifEmpty { null })
@@ -124,71 +110,6 @@ interface ObjCExportNamer {
     }
 }
 
-// Note: this class duplicates some of ObjCExportNamerImpl logic,
-// but operates on different representation.
-internal open class ObjCExportNameTranslatorImpl(
-    private val configuration: ObjCExportNamer.Configuration,
-) : ObjCExportNameTranslator {
-
-    private val helper = ObjCExportNamingHelper(configuration.topLevelNamePrefix, configuration.objcGenerics)
-
-    override fun getFileClassName(file: KtFile): ObjCExportNamer.ClassOrProtocolName =
-        helper.getFileClassName(file)
-
-    override fun getCategoryName(file: KtFile): String =
-        helper.translateFileName(file)
-
-    override fun getClassOrProtocolName(ktClassOrObject: KtClassOrObject): ObjCExportNamer.ClassOrProtocolName =
-        ObjCExportNamer.ClassOrProtocolName(
-            swiftName = getClassOrProtocolAsSwiftName(ktClassOrObject, true),
-            objCName = buildString {
-                getClassOrProtocolAsSwiftName(ktClassOrObject, false).split('.').forEachIndexed { index, part ->
-                    append(if (index == 0) part else part.replaceFirstChar(Char::uppercaseChar))
-                }
-            }
-        )
-
-    private fun getClassOrProtocolAsSwiftName(
-        ktClassOrObject: KtClassOrObject,
-        forSwift: Boolean,
-    ): String = buildString {
-        val objCName = ktClassOrObject.getObjCName()
-        if (objCName.isExact) {
-            append(objCName.asIdentifier(forSwift))
-        } else {
-            val outerClass = ktClassOrObject.getStrictParentOfType<KtClassOrObject>()
-            if (outerClass != null) {
-                appendNameWithContainer(ktClassOrObject, objCName, outerClass, forSwift)
-            } else {
-                if (!forSwift) append(configuration.topLevelNamePrefix)
-                append(objCName.asIdentifier(forSwift))
-            }
-        }
-    }
-
-    private fun StringBuilder.appendNameWithContainer(
-        ktClassOrObject: KtClassOrObject,
-        objCName: ObjCName,
-        outerClass: KtClassOrObject,
-        forSwift: Boolean,
-    ) = helper.appendNameWithContainer(
-        this,
-        ktClassOrObject, objCName.asIdentifier(forSwift),
-        outerClass, getClassOrProtocolAsSwiftName(outerClass, forSwift),
-        object : ObjCExportNamingHelper.ClassInfoProvider<KtClassOrObject> {
-            override fun hasGenerics(clazz: KtClassOrObject): Boolean =
-                clazz.typeParametersWithOuter.count() != 0
-
-            override fun isInterface(clazz: KtClassOrObject): Boolean = ktClassOrObject.isInterface
-        }
-    )
-
-    override fun getTypeParameterName(ktTypeParameter: KtTypeParameter): String = buildString {
-        append(ktTypeParameter.name!!.toIdentifier())
-        while (helper.isTypeParameterNameReserved(this.toString())) append('_')
-    }
-}
-
 private class ObjCExportNamingHelper(
     private val topLevelNamePrefix: String,
     private val objcGenerics: Boolean,
@@ -197,15 +118,10 @@ private class ObjCExportNamingHelper(
     fun translateFileName(fileName: String): String =
         PackagePartClassUtils.getFilePartShortName(fileName).toIdentifier()
 
-    fun translateFileName(file: KtFile): String = translateFileName(file.name)
-
     fun getFileClassName(fileName: String): ObjCExportNamer.ClassOrProtocolName {
         val baseName = translateFileName(fileName)
         return ObjCExportNamer.ClassOrProtocolName(swiftName = baseName, objCName = "$topLevelNamePrefix$baseName")
     }
-
-    fun getFileClassName(file: KtFile): ObjCExportNamer.ClassOrProtocolName =
-        getFileClassName(file.name)
 
     fun <T> appendNameWithContainer(
         builder: StringBuilder,
@@ -440,17 +356,15 @@ class ObjCExportNamerImpl(
 
     private val enumClassSelectors = EnumNameMapping()
     private val enumClassSwiftNames = EnumNameMapping()
+    private val closedEnumEntryNames = GlobalNameMapping<ClassDescriptor, String>()
+    private val closedEnumSwiftNames = object : Mapping<ClassDescriptor, String>() {
+        override fun conflict(first: ClassDescriptor, second: ClassDescriptor): Boolean =
+            first.containingDeclaration == second.containingDeclaration
+    }
 
     override fun getFileClassName(file: SourceFile): ObjCExportNamer.ClassOrProtocolName {
         val candidate by lazy {
-            val fileName = when (file) {
-                is PsiSourceFile -> {
-                    val psiFile = file.psiFile
-                    val ktFile = psiFile as? KtFile ?: error("PsiFile '$psiFile' is not KtFile")
-                    ktFile.name
-                }
-                else -> file.name ?: error("$file has no name")
-            }
+            val fileName = file.name ?: error("$file has no name")
             helper.getFileClassName(fileName)
         }
 
@@ -688,7 +602,7 @@ class ObjCExportNamerImpl(
         assert(descriptor.kind == ClassKind.ENUM_ENTRY)
 
         return enumClassSelectors.getOrPut(descriptor) {
-            descriptor.getEnumEntryName(false)
+            descriptor.getEnumEntryName(false).map { it.mangleIfStdMacro() }
         }
     }
 
@@ -697,6 +611,36 @@ class ObjCExportNamerImpl(
 
         return enumClassSwiftNames.getOrPut(descriptor) {
             descriptor.getEnumEntryName(true)
+        }
+    }
+
+    override fun getNSClosedEnumEntryName(nsEnumTypeName: String, descriptor: ClassDescriptor): String {
+        assert(descriptor.kind == ClassKind.ENUM_ENTRY)
+
+        return closedEnumEntryNames.getOrPut(descriptor) {
+            val objCEntryName = descriptor.getObjCEnumEntryName().getName(forSwift = false)
+            if (objCEntryName != null) {
+                val name = nsEnumTypeName + objCEntryName.replaceFirstChar(Char::uppercase)
+                StringBuilder(name.mangleIfStdMacro()).mangledBySuffixUnderscores()
+            } else {
+                descriptor.getEnumEntryName(forSwift = false).map {
+                    val name = nsEnumTypeName + it.replaceFirstChar(Char::uppercase)
+                    name.mangleIfStdMacro()
+                }
+            }
+        }
+    }
+
+    override fun getNSClosedEnumEntrySwiftName(descriptor: ClassDescriptor): String {
+        assert(descriptor.kind == ClassKind.ENUM_ENTRY)
+
+        return closedEnumSwiftNames.getOrPut(descriptor) {
+            val swiftEntryName = descriptor.getObjCEnumEntryName().getName(forSwift = true)
+            if (swiftEntryName != null) {
+                StringBuilder(swiftEntryName).mangledBySuffixUnderscores()
+            } else {
+                descriptor.getEnumEntryName(forSwift = true)
+            }
         }
     }
 
@@ -1127,39 +1071,6 @@ private fun ParameterDescriptor.getObjCName(): ObjCName {
 }
 
 private val objCNameShortName = KonanFqNames.objCName.shortName().asString()
-
-private fun KtClassOrObject.getObjCName(): ObjCName {
-    var objCName: String? = null
-    var swiftName: String? = null
-    var isExact = false
-    annotationEntries.firstOrNull {
-        it.calleeExpression?.constructorReferenceExpression?.getReferencedName() == objCNameShortName
-    }?.let { annotation ->
-        fun ValueArgument.getStringValue(): String? {
-            val stringTemplateExpression = when (this) {
-                is KtValueArgument -> stringTemplateExpression
-                else -> getArgumentExpression() as? KtStringTemplateExpression
-            } ?: return null
-            return (stringTemplateExpression.entries.singleOrNull() as? KtLiteralStringTemplateEntry)?.text
-        }
-
-        fun ValueArgument.getBooleanValue(): Boolean =
-            (getArgumentExpression() as? KtConstantExpression)?.text?.toBooleanStrictOrNull() ?: false
-
-        val argNames = setOf("name", "swiftName", "exact")
-        val processedArgs = mutableSetOf<String>()
-        for (argument in annotation.valueArguments) {
-            val argName = argument.getArgumentName()?.asName?.asString() ?: (argNames - processedArgs).firstOrNull() ?: break
-            when (argName) {
-                "name" -> objCName = argument.getStringValue()
-                "swiftName" -> swiftName = argument.getStringValue()
-                "exact" -> isExact = argument.getBooleanValue()
-            }
-            processedArgs.add(argName)
-        }
-    }
-    return ObjCName(name!!, objCName, swiftName, isExact)
-}
 
 @OptIn(K1Deprecation::class)
 internal val ModuleDescriptor.objCExportAdditionalNamePrefix: String

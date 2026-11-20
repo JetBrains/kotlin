@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 // `Outer`'s own `implements` clause references the qualified `Outer.Nested` — a nested class
 // `Outer` inherits transitively through `Base` from `Grandparent`. The reference is resolved

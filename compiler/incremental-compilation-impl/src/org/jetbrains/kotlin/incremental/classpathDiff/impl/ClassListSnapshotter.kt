@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.classpathDiff.InaccessibleClassSnapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.SingleClassSnapshotter.snapshotJavaClass
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.SingleClassSnapshotter.snapshotKotlinClass
+import org.jetbrains.kotlin.incremental.classpathDiff.impl.SingleClassSnapshotter.snapshotPackageInfoClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.CLASS
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.SYNTHETIC_CLASS
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -53,6 +54,8 @@ internal class PlainClassListSnapshotter(
                 outerClassFile?.let { snapshotClass(it) }
             }
             when {
+                // `package-info.class` is marked by javac as synthetic, so it must be recognized before the accessibility check below.
+                clazz.classInfo.isPackageInfo -> snapshotPackageInfoClass(clazz)
                 // We don't need to snapshot (directly or transitively) inaccessible classes.
                 // A class is transitively inaccessible if its outer class is inaccessible.
                 clazz.classInfo.isInaccessible() || outerClassSnapshot is InaccessibleClassSnapshot -> {
@@ -163,7 +166,10 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
 
         // TODO consider reusing loaded classes across the pipeline - it should be benefitial but it makes the process more complicated
 
-        val snapshot = if (isInaccessible(classFileWithContents)) {
+        val snapshot = if (classFileWithContents.classInfo.isPackageInfo) {
+            // `package-info.class` is marked by javac as synthetic, so it must be recognized before the accessibility check below.
+            snapshotPackageInfoClass(classFileWithContents)
+        } else if (isInaccessible(classFileWithContents)) {
             InaccessibleClassSnapshot
         } else if (classFileWithContents.classInfo.isKotlinClass) {
             metrics.measure(SNAPSHOT_KOTLIN_CLASSES) {

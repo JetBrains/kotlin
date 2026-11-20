@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.light.classes.symbol.base.service.NullabilityAnnotationSourceProvider
 import org.jetbrains.kotlin.light.classes.symbol.withMultiplatformLightClassSupport
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.has
@@ -52,9 +51,6 @@ abstract class AbstractSymbolLightClassesTestBase(
         with(builder) {
             useAdditionalServices(service(::CompiledLibraryProvider))
             useDirectives(Directives, TestModuleCompiler.Directives)
-            if (configurator.defaultTargetPlatform.has<JvmPlatform>()) {
-                useAdditionalSourceProviders(::NullabilityAnnotationSourceProvider)
-            }
             defaultDirectives {
                 +ConfigurationDirectives.WITH_STDLIB
                 ModuleStructureDirectives.MODULE + TEST_MODULE_NAME

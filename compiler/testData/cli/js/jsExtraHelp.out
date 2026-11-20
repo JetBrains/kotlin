@@ -9,6 +9,7 @@ where advanced options include:
                              Enable exporting suspend functions to JavaScript/TypeScript.
   -Xes-arrow-functions       Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage
   -Xes-classes               Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
+  -Xes-const-let             Variables in generated JavaScript code are declared with 'let' or 'const' keywords instead of 'var'
   -Xes-generators            Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage
   -Xes-long-as-bigint        Compile Long values as ES2020 bigint instead of object.
   -Xexport-kdoc              Export KDoc entries as JSDoc into the TypeScript declaration files.
@@ -122,7 +123,6 @@ where advanced options include:
                              Allow contracts on some operators and accessors, and allow checks for erased types.
   -Xallow-holdsin-contract   Allow contracts that specify a condition that holds true inside a lambda argument.
   -Xallow-kotlin-package     Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.
-  -Xallow-pre-17-runtime-jdk Temporarily allow running Kotlin compiler with JDK older than JDK 17. This option will not work starting Kotlin 2.5.20-Beta1. See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.
   -Xallow-reified-type-in-catch Allow 'catch' parameters to have reified types.
   -Xallow-returns-result-of  Allows to use `returnsResultOf()` in `contract {}` block of function body. This contract provides additional information for return value checker. Enabling this feature will force compiler to produce pre-release binaries, because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.
   -Xannotation-default-target=first-only|first-only-warn|param-property
@@ -248,6 +248,7 @@ where advanced options include:
   -Xreport-perf              Report detailed performance statistics.
   -Xreturn-value-checker={check|full|disable|default}
                              Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.
+  -Xrich-errors              Enable experimental language support for Rich Errors.
   -Xseparate-kmp-compilation Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
@@ -257,8 +258,6 @@ where advanced options include:
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
                              The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases.
-  -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
-                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.
   -Xverbose-phases           Be verbose while performing the given backend phases.
   -Xverify-ir={none|warning|error}
                              IR verification mode (no verification by default).

@@ -1,0 +1,30 @@
+FILE: brokenRenamedDestructuringScript.kts
+    SCRIPT: <script-brokenRenamedDestructuringScript.kts>
+        <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ContainingScriptKey=FirScriptSymbol <script-brokenRenamedDestructuringScript.kts>, ScriptTopLevelDeclaration=true] class Tuple : R|kotlin/Any| {
+            public? [ContainingClassKey=Tuple] constructor([CorrespondingProperty=/Tuple.first] first: String, [CorrespondingProperty=/Tuple.second] second: Int): R|Tuple| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+                public? [ContainingClassKey=Tuple] get(): String
+
+            public? final? [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+                public? [ContainingClassKey=Tuple] get(): Int
+
+        }
+
+        [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val m: <implicit> = LAZY_EXPRESSION
+            public get(): <implicit>
+
+        [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
+
+        [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val n: <implicit> = LAZY_EXPRESSION
+            public get(): <implicit>
+
+        public? final? [ScriptTopLevelDeclaration=true] val o: <implicit> = LAZY_EXPRESSION
+            public? get(): <implicit>

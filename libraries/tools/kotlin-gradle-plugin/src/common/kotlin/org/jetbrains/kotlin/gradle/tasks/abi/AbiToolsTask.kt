@@ -12,6 +12,7 @@ import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
 import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain.Companion.abiValidation
@@ -27,6 +28,7 @@ internal abstract class AbiToolsTask : DefaultTask(), UsesClassLoadersCachingBui
     abstract val buildSessionService: Property<BuildSessionService>
 
     @get:Classpath
+    @get:NormalizeLineEndings
     abstract val buildToolsClasspath: ConfigurableFileCollection
 
     @TaskAction

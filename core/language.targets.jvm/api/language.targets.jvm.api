@@ -38,6 +38,10 @@ public final class org/jetbrains/kotlin/config/JvmTarget$Companion {
 	public final fun supportedValues ()Ljava/util/List;
 }
 
+public final class org/jetbrains/kotlin/config/JvmTargetKt {
+	public static final fun isJvmTargetValhallaCompatible (Lorg/jetbrains/kotlin/config/JvmTarget;Z)Z
+}
+
 public final class org/jetbrains/kotlin/platform/jvm/JdkPlatform : org/jetbrains/kotlin/platform/jvm/JvmPlatform {
 	public fun <init> (Lorg/jetbrains/kotlin/config/JvmTarget;)V
 	public fun equals (Ljava/lang/Object;)Z

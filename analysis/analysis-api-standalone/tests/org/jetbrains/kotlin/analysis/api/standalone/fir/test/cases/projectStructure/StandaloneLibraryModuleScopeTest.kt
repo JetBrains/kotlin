@@ -7,20 +7,24 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.projectStruc
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
+import org.jetbrains.kotlin.analysis.api.fir.utils.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AbstractStandaloneTest
+import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder.compileCommonKlib
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder.compileToJar
 import org.jetbrains.kotlin.analysis.api.standalone.projectStructure.StandaloneLibraryScopeConstructionMode
 import org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
+import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -29,10 +33,13 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
     override val suiteName: Path
         get() = Paths.get("projectStructure", "libraryModuleScope")
 
+    @TempDir
+    lateinit var tempDir: Path
+
     @Test
     fun testLibraryModuleScopeUsesParentTraversalByDefault() {
-        val libraryJar = compileToJar(testDataPath("library"))
-        val otherLibraryJar = compileToJar(testDataPath("otherLibrary"))
+        val libraryJar = compileToJar(testDataPath("library"), tempDir)
+        val otherLibraryJar = compileToJar(testDataPath("otherLibrary"), tempDir)
 
         lateinit var libraryModule: KaLibraryModule
 
@@ -51,8 +58,8 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
 
     @Test
     fun testLibraryModuleScopeRespectsProviderDefaultAndModuleOverride() {
-        val libraryJar = compileToJar(testDataPath("library"))
-        val otherLibraryJar = compileToJar(testDataPath("otherLibrary"))
+        val libraryJar = compileToJar(testDataPath("library"), tempDir)
+        val otherLibraryJar = compileToJar(testDataPath("otherLibrary"), tempDir)
 
         lateinit var inheritedModule: KaLibraryModule
         lateinit var parentTraversalModule: KaLibraryModule
@@ -85,6 +92,33 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
         assertLibraryScope(parentTraversalModule, "Parent-traversal library search scope", files)
         assertLibraryScope(trieModule, "Trie-based library search scope", files)
         assertLibraryScope(enumerationModule, "Enumeration-based library search scope", files)
+    }
+
+    @Test
+    fun testUnpackedKlibLibraryModuleScope() {
+        // An unpacked KLIB in a directory whose name ends with `klib`, like the name of a KLIB archive: `library.klib`.
+        val unpackedKlib = compileCommonKlib(testDataPath("library"), tempDir)
+
+        lateinit var libraryModule: KaLibraryModule
+
+        buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                platform = CommonPlatforms.defaultCommonPlatform
+                libraryModule = addLibraryModule(unpackedKlib, "library")
+            }
+        }
+
+        val klibRoot = getLocalVirtualFile(unpackedKlib)
+        val klibFiles = LibraryUtils.getAllVirtualFilesFromRoot(klibRoot, includeRoot = true)
+
+        Assertions.assertTrue(klibRoot.isDirectory, "The KLIB should be unpacked.")
+        Assertions.assertTrue(
+            klibFiles.any { it.extension == KLIB_METADATA_FILE_EXTENSION },
+            "The unpacked KLIB should contain at least one metadata file.",
+        )
+
+        val nonContainedFiles = listOf(klibRoot.parent, getLocalVirtualFile(testDataPath("library").resolve("library.kt")))
+        assertLibraryScope(libraryModule, "Parent-traversal library search scope", LibraryFiles(klibFiles, nonContainedFiles))
     }
 
     /**

@@ -1,0 +1,137 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.analysis.checkers.declaration
+
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
+import org.jetbrains.kotlin.fir.analysis.checkers.willBecomeKotlinValueClass
+import org.jetbrains.kotlin.fir.analysis.checkers.willBecomeValueInapplicableTarget
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.isMethodOfAny
+import org.jetbrains.kotlin.fir.declarations.utils.expandedClassLikeType
+import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.OperatorNameConventions
+
+/**
+ * Checks that '@WillBecomeValue' is applied to a class which can actually become a value class. That such a class does not rely on
+ * the identity-based 'equals'/'hashCode'/'toString' inherited from 'Any' is checked by [FirWillBecomeValueIdentityBasedMembersChecker].
+ *
+ * The remaining value class declaration checks are shared with real value classes and are performed by
+ * [FirValueClassDeclarationChecker].
+ */
+object FirWillBecomeValueDeclarationChecker : FirClassChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirClass) {
+        val annotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.WillBecomeValue, context.session) ?: return
+
+        val inapplicableTarget = when (declaration) {
+            is FirAnonymousObject -> "an anonymous object"
+            is FirRegularClass -> declaration.symbol.willBecomeValueInapplicableTarget()
+        }
+        if (inapplicableTarget != null) {
+            reporter.reportOn(annotation.source, FirErrors.WILL_BECOME_VALUE_NOT_APPLICABLE, inapplicableTarget)
+        }
+    }
+}
+
+/**
+ * Checks the identity-based members of a '@WillBecomeValue' class with the session of the platform module, where its expect
+ * superclasses are actualized and have the members of their actual classes.
+ */
+object FirWillBecomeValueIdentityBasedMembersChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
+        // The members of an expect class come from its actual class, which is checked instead.
+        if (declaration.isExpect || !declaration.symbol.willBecomeKotlinValueClass(context.session)) return
+        // Without the platform module, as in the metadata compilation, an expect superclass doesn't have the members of its actual class.
+        if (declaration.symbol.hasExpectSuperclass(context.session)) return
+        checkIdentityBasedMembers(declaration.symbol, declaration.source)
+    }
+
+    private fun FirRegularClassSymbol.hasExpectSuperclass(session: FirSession): Boolean {
+        val visited = mutableSetOf<FirRegularClassSymbol>()
+        var superclass = getSuperClassSymbolOrAny(session)
+        while (superclass != null && superclass.classId != StandardClassIds.Any && visited.add(superclass)) {
+            if (superclass.isExpect) return true
+            superclass = superclass.getSuperClassSymbolOrAny(session)
+        }
+        return false
+    }
+}
+
+/**
+ * An actual typealias to a Java class annotated with '@WillBecomeValue' is checked for the identity-based members of that class,
+ * which the class checkers never see, as they only run on Kotlin declarations.
+ */
+object FirWillBecomeValueActualTypeAliasToJavaChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirTypeAlias) {
+        if (!declaration.isActual) return
+        val expandedClass = declaration.expandedClassLikeType?.toRegularClassSymbol(context.session) ?: return
+        if (expandedClass.origin !is FirDeclarationOrigin.Java || !expandedClass.willBecomeKotlinValueClass(context.session)) return
+        checkIdentityBasedMembers(expandedClass, declaration.source)
+    }
+}
+
+private val identityBasedMemberNames = listOf(
+    OperatorNameConventions.EQUALS,
+    OperatorNameConventions.HASH_CODE,
+    OperatorNameConventions.TO_STRING,
+)
+
+private val identityBasedObjectMemberNames = listOf(OperatorNameConventions.TO_STRING)
+
+/**
+ * Once the class becomes a value class, its 'equals'/'hashCode'/'toString' become structural, so a class that still
+ * inherits the identity-based implementations from 'Any' would silently change behavior. 'Any.toString' is
+ * identity-based as well: it renders the identity hash code.
+ *
+ * Only final classes and objects are checked. An abstract or sealed value class has no 'equals'/'hashCode' of its
+ * own; they come from its concrete subclasses. And for an object there is a single instance, so the identity-based
+ * 'equals'/'hashCode' already coincide with the structural ones, and only 'toString' is checked.
+ */
+context(context: CheckerContext, reporter: DiagnosticReporter)
+private fun checkIdentityBasedMembers(classSymbol: FirRegularClassSymbol, source: KtSourceElement?) {
+    val memberNames = when (classSymbol.classKind) {
+        ClassKind.CLASS if classSymbol.isFinal -> identityBasedMemberNames
+        ClassKind.OBJECT -> identityBasedObjectMemberNames
+        else -> return
+    }
+
+    val classScope = classSymbol.unsubstitutedScope()
+    for (name in memberNames) {
+        var isInheritedFromAny = false
+        classScope.processFunctionsByName(name) {
+            if (!it.isMethodOfAny) return@processFunctionsByName
+            if (it.unwrapFakeOverrides().getContainingClassSymbol()?.classId == StandardClassIds.Any) {
+                isInheritedFromAny = true
+            }
+        }
+        if (isInheritedFromAny) {
+            reporter.reportOn(source, FirErrors.IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, name.asString())
+        }
+    }
+}

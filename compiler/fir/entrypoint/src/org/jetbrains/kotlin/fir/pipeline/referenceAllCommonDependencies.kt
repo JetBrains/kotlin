@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
@@ -88,8 +89,8 @@ private class Visitor(val session: FirSession) : FirDefaultVisitorVoid() {
     }
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
-        resolvedQualifier.qualifierSymbol?.classId?.let(session.symbolProvider::getClassLikeSymbolByClassId)
-        resolvedQualifier.accessedObjectSymbol?.classId?.let(session.symbolProvider::getClassLikeSymbolByClassId)
+        resolvedQualifier.qualifierSymbol?.classId?.let(::lookupClass)
+        resolvedQualifier.accessedObjectSymbol?.classId?.let(::lookupClass)
         resolvedQualifier.acceptChildren(this)
     }
 
@@ -101,11 +102,15 @@ private class Visitor(val session: FirSession) : FirDefaultVisitorVoid() {
         type.forEachType l@{
             val lookupTag = it.classLikeLookupTagIfAny ?: return@l
             if (lookupTag is ConeClassLikeLookupTagWithFixedSymbol) return@l
-            val classSymbol = session.symbolProvider.getClassLikeSymbolByClassId(lookupTag.classId) ?: return@l
-            if (classSymbol.origin != FirDeclarationOrigin.Source && visitedClasses.add(classSymbol)) {
-                @OptIn(SymbolInternals::class)
-                classSymbol.fir.accept(this)
-            }
+            lookupClass(lookupTag.classId)
+        }
+    }
+
+    private fun lookupClass(classId: ClassId) {
+        val classSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return
+        if (classSymbol.origin != FirDeclarationOrigin.Source && visitedClasses.add(classSymbol)) {
+            @OptIn(SymbolInternals::class)
+            classSymbol.fir.accept(this)
         }
     }
 }

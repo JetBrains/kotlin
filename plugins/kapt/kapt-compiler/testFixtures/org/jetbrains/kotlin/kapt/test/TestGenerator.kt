@@ -24,6 +24,11 @@ fun main(args: Array<String>) {
             ) {
                 model("converter")
             }
+            testClass<AbstractKaptStubConverterDirectHeaderModeTest>(
+                suiteTestClassName = "KaptStubConverterDirectHeaderModeTestGenerated",
+            ) {
+                model("converter")
+            }
             testClass<AbstractKaptStubConverterDirectWithCollectionLiteralsTest>(
                 suiteTestClassName = "KaptStubConverterDirectWithCollectionLiteralsTestGenerated",
             ) {

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.createCurrentScopeList
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
+import org.jetbrains.kotlin.fir.resolve.transformers.varargErrorElementTypeRef
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -99,6 +100,8 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
                 typeRef.transformPartiallyResolvedTypeRef(this, data)
             }
 
+            typeRef.varargErrorElementTypeRef?.transformPartiallyResolvedTypeRef(this, data)
+
             typeRef
         } else {
             typeResolverTransformer.transformTypeRef(
@@ -108,6 +111,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
                     context.containingClassDeclarations,
                     context.file,
                     context.topContainerForTypeResolution,
+                    lastCompanionBlockOwner = context.lastCompanionBlockOwner,
                 )
             )
         }

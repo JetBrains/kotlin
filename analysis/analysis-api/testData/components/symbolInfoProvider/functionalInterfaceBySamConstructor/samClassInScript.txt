@@ -88,7 +88,23 @@ CONSTRUCTOR:
             hasFlexibleNullability: false
         ]
         parameters: [
-          KaBaseFunctionValueParameter [name: null, type: kotlin/Int]
+          KaFunctionValueParameter:
+            name: null
+            type: KaUsualClassType:
+              abbreviation: null
+              annotations: []
+              classId: kotlin/Int
+              qualifiers: [
+                KaResolvedClassTypeQualifier:
+                  name: Int
+                  symbol: KaNamedClassSymbol(kotlin/Int)
+                  typeArguments: []
+              ]
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
         ]
         qualifiers: [
           KaResolvedClassTypeQualifier:

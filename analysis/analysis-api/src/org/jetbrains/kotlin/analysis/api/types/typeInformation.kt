@@ -41,9 +41,11 @@ public val KaType.isFunctionalInterface: Boolean
  * For example, `(Int) -> String` belongs to the [Function][KaBuiltinFunctionTypeFamilies.function] family,
  * while `suspend () -> Unit` belongs to the [SuspendFunction][KaBuiltinFunctionTypeFamilies.suspendFunction] family.
  *
+ * The family is determined on the fully expanded type, so a non-null family does not imply that the type itself is
+ * a [KaFunctionType] (e.g., for a type alias of a function type).
+ *
  * @see KaBuiltinFunctionTypeFamilies
  */
-@KaExperimentalApi
 context(session: KaSession)
 public val KaType.functionTypeFamily: KaFunctionTypeFamily?
     get() {
@@ -528,7 +530,6 @@ public val KaType.defaultInitializer: String?
 /**
  * Provides access to the built-in [function type families][KaFunctionTypeFamily].
  */
-@KaExperimentalApi
 context(session: KaSession)
 public val builtinFunctionTypeFamilies: KaBuiltinFunctionTypeFamilies
     get() {

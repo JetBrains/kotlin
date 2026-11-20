@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.AbstractDeclaredMemberScopeTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.scopeProvider.AbstractDeclaredMemberScopeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -176,6 +176,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
   }
 
   @Test
+  @TestMetadata("memberDestructuringDeclarations.kt")
+  public void testMemberDestructuringDeclarations() {
+    run("memberDestructuringDeclarations.kt");
+  }
+
+  @Test
   @TestMetadata("properties.kt")
   public void testProperties() {
     run("properties.kt");
@@ -191,5 +197,11 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
   @TestMetadata("substitutionOverrideOfKotlinInJava.kt")
   public void testSubstitutionOverrideOfKotlinInJava() {
     run("substitutionOverrideOfKotlinInJava.kt");
+  }
+
+  @Test
+  @TestMetadata("unsignedAnnotationArgumentsCompiled.kt")
+  public void testUnsignedAnnotationArgumentsCompiled() {
+    run("unsignedAnnotationArgumentsCompiled.kt");
   }
 }

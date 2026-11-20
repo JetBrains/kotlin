@@ -9,8 +9,8 @@ import androidx.compose.compiler.plugins.kotlin.services.ComposeExtensionRegistr
 import androidx.compose.compiler.plugins.kotlin.services.ComposeJsClasspathProvider
 import androidx.compose.compiler.plugins.kotlin.services.ComposeJvmClasspathConfigurator
 import androidx.compose.compiler.plugins.kotlin.services.ComposeJvmClasspathProvider
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler.Directives.COMPILER_ARGUMENTS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.configureModernJavaTest
-import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DISABLE_IR_FIELD_VISIBILITY_CHECK
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR

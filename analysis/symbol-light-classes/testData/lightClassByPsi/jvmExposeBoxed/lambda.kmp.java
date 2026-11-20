@@ -7,6 +7,7 @@ public final class LambdaKt /* LambdaKt*/ {
   public static final @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<@org.jetbrains.annotations.NotNull() TopLevelValueClass> getLambda();//  getLambda()
 }
 
+@kotlin.jvm.JvmInline()
 public final class TopLevelValueClass /* TopLevelValueClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;

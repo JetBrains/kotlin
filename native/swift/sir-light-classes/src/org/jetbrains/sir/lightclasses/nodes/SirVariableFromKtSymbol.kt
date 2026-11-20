@@ -7,10 +7,7 @@ package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols
-import org.jetbrains.kotlin.analysis.api.symbols.containingSymbol
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetterCopy
 import org.jetbrains.kotlin.sir.builder.buildSetterCopy
@@ -30,11 +27,9 @@ import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.isUnavailable
-import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.sir.util.swiftIdentifier
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.*
@@ -137,7 +132,7 @@ internal abstract class SirAbstractVariableFromKtSymbol(
     internal fun directDispatchProtocolWitnessOrNull(): SirVariable? {
         if (parent !is SirProtocol) return null
         if (!isInstance || isUnavailable || isAbstractKotlinProperty) return null
-        if (!accessorNeedsReverseBridge()) return null
+        if (!needsReverseBridge()) return null
         val getterWitness = (getter as? SirAbstractGetter)?.directWitnessBridgeAndBody() ?: return null
         val setterWitness = (setter as? SirAbstractSetter)?.directWitnessBridgeAndBody()
         if (setter != null && setterWitness == null) return null
@@ -234,10 +229,10 @@ internal abstract class SirAbstractGetter(
             addAll(proxy.createSirBridges(nonVirtualTargetMethod = null, forwardCall))
 
             if (variable != null && propName != null && !isUnavailable) {
-                if (variable.accessorNeedsNonVirtualForwardBridge() && !variable.isAbstractKotlinProperty) {
+                if (variable.needsNonVirtualForwardBridge() && !variable.isAbstractKotlinProperty) {
                     add(proxy.createDirectDispatchForwardBridge("<get-$propName>", forwardCall))
                 }
-                if (variable.accessorNeedsReverseBridge()) {
+                if (variable.needsReverseBridge()) {
                     val tryPrefix = if (errorType != SirType.never) "try " else ""
                     val swiftName = variable.name.swiftIdentifier
                     addAll(
@@ -341,10 +336,10 @@ internal abstract class SirAbstractSetter(
             addAll(proxy.createSirBridges(nonVirtualTargetMethod = null, forwardCall))
 
             if (variable != null && propName != null && !isUnavailable) {
-                if (variable.accessorNeedsNonVirtualForwardBridge() && !variable.isAbstractKotlinProperty) {
+                if (variable.needsNonVirtualForwardBridge() && !variable.isAbstractKotlinProperty) {
                     add(proxy.createDirectDispatchForwardBridge("<set-$propName>", forwardCall))
                 }
-                if (variable.accessorNeedsReverseBridge()) {
+                if (variable.needsReverseBridge()) {
                     val swiftName = variable.name.swiftIdentifier
                     addAll(
                         proxy.createReverseSirBridges(
@@ -388,77 +383,24 @@ internal class SirSetterFromKtSymbol(
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
 }
 
-private fun SirVariable.accessorNeedsReverseBridge(): Boolean {
-    if (!isInstance) return false
-    if (isUnavailable) return false
-    return when (val container = parent) {
-        is SirClass -> modality == SirModality.OPEN && container.modality == SirModality.OPEN && !container.isUnavailable
-        is SirProtocol -> !container.isUnavailable
-        else -> false
-    }
-}
-
-private fun SirVariable.accessorNeedsNonVirtualForwardBridge(): Boolean =
-    accessorNeedsReverseBridge() && parent is SirClass
-
 private val SirVariable.isAbstractKotlinProperty: Boolean
     get() = kaSymbolOrNull<KaVariableSymbol>()?.modality == KaSymbolModality.ABSTRACT
 
 private val SirVariable.kotlinPropertyName: String?
     get() = kaSymbolOrNull<KaVariableSymbol>()?.name?.asString()
 
-private fun SirVariable.effectiveReverseBridgeDeprecation(): SirAttribute.Available? {
-    fun SirDeclaration.deprecatedAttr(): SirAttribute.Available? =
-        attributes.firstOrNull { it is SirAttribute.Available && it.deprecated } as? SirAttribute.Available
-    return this.deprecatedAttr()
-        ?: (parent as? SirClass)?.deprecatedAttr()
-        ?: (parent as? SirProtocol)?.deprecatedAttr()
-}
-
 context(_: KaSession, _: SirSession)
 private fun SirVariable.reverseBridgeTargetClassFqName(): String =
-    kaSymbolOrNull<KaVariableSymbol>()
-        ?.containingSymbol
-        ?.let { (it as? KaNamedClassSymbol)?.classId?.asSingleFqName()?.render() }
-        ?: ""
+    kaSymbolOrNull<KaVariableSymbol>()?.reverseBridgeTargetClassFqName ?: ""
 
-context(_: KaSession, sirSession: SirSession)
-private fun SirVariable.computeInterfaceSelfType(): SirType? {
-    if (!isInstance) return null
-    (parent as? SirProtocol)?.let { return SirExistentialType(it) }
-    val containingClass = (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>() ?: return null
-    if (!containingClass.hasFBoundedTypeParameters()) return null
-    val propertySymbol = kaSymbolOrNull<KaVariableSymbol>() ?: return null
-    val overriddenInterfaceProperty = propertySymbol.allOverriddenSymbols
-        .filterIsInstance<KaVariableSymbol>()
-        .firstOrNull { overridden ->
-            val containingSymbol = overridden.containingSymbol
-            containingSymbol is KaClassSymbol && containingSymbol.classKind == KaClassKind.INTERFACE
-        } ?: return null
-    val interfaceSymbol = overriddenInterfaceProperty.containingSymbol as? KaNamedClassSymbol ?: return null
-    // `toSir` is a member-extension of SirSession, so it needs SirSession as a dispatch receiver.
-    val sirDeclarations = with(sirSession) { interfaceSymbol.toSir().allDeclarations }
-    val sirProtocol = sirDeclarations.firstIsInstanceOrNull<SirProtocol>() ?: return null
-    return SirExistentialType(sirProtocol)
-}
+context(_: KaSession, _: SirSession)
+private fun SirVariable.computeInterfaceSelfType(): SirType? =
+    kaSymbolOrNull<KaVariableSymbol>()?.let { interfaceSelfType(it) }
 
 context(_: KaSession, _: SirSession)
 private fun buildAccessorBody(proxy: BridgeFunctionProxy, variable: SirVariable?, accessorUnavailable: Boolean): SirFunctionBody? {
-    if (accessorUnavailable || variable == null || !variable.accessorNeedsNonVirtualForwardBridge()) {
+    if (accessorUnavailable || variable == null) {
         return SirFunctionBody(proxy.createSwiftInvocation { "return $it" })
     }
-    val wrapperFqName = (variable.parent as SirClass).swiftFqName
-    val virtualLines = proxy.createSwiftInvocation { "return $it" }
-    val fallbackLines = if (variable.isAbstractKotlinProperty) {
-        listOf("fatalError(\"Cannot invoke the inherited implementation of abstract property '$wrapperFqName.${variable.name}': a Swift subclass must override it and must not call super.\")")
-    } else {
-        proxy.createSwiftInvocation(useDirectDispatch = true) { "return $it" }
-    }
-    return SirFunctionBody(buildList {
-        add("if Self.self == $wrapperFqName.self {")
-        virtualLines.forEach { add("    $it") }
-        add("} else {")
-        fallbackLines.forEach { add("    $it") }
-        add("}")
-    })
+    return variable.forwardBridgedBody(proxy, variable.isAbstractKotlinProperty, memberKind = "property", memberName = variable.name)
 }

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.ir.ClassGlobalHierarchyInfo
 import org.jetbrains.kotlin.backend.konan.ir.OverriddenFunctionInfo
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
-import org.jetbrains.kotlin.backend.konan.isCache
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.isCache
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 
@@ -314,6 +314,18 @@ internal val IrSimpleFunction.needsVirtualTrampoline: Boolean
 context(config: NativeSecondStageCompilationConfig)
 internal val IrSimpleFunction.needsCacheEntryPointForFinalFakeOverride: Boolean
     get() = config.produce.isCache && isFakeOverride && !isOverridable && isExported
+            /*
+            On the one hand, a cache entry point for a fake override of an Objective-C method is not needed:
+            Kotlin subclasses of Objective-C classes must be final (KT-23529); so, this method couldn't have been
+            overridable in the previous version, and the caller couldn't have been used a virtual trampoline.
+
+            On the other hand, generation of such a cache entry point is tricky as it needs to call an Objective-C method
+            but the generation bypasses the interop lowering that normally handles such calls: it happens much later
+            and in LLVM IR instead of Kotlin IR. Wrong generation of them caused KT-90589.
+
+            So here we mark such methods as not needing a cache entry point:
+            */
+            && !target.isExternalObjCClassMethod()
 
 /*
  * Special trampoline function that performs the vtable/itable lookup and dispatches to the actual virtual
@@ -431,11 +443,11 @@ internal class StackLocalsManagerImpl(
             alloca(llvm.pointerType, true)
 
     override fun alloc(irClass: IrClass): LLVMValueRef = with(functionGenerationContext) {
-        val classInfo = llvmDeclarations.forClass(irClass)
-        val type = classInfo.bodyType.llvmBodyType
+        val bodyType = irClass.objectBodyType
+        val type = bodyType.llvmBodyType
         val stackLocal = appendingTo(bbInitStackLocals) {
             val stackSlot = LLVMBuildAlloca(builder, type, "")!!
-            LLVMSetAlignment(stackSlot, classInfo.alignment)
+            LLVMSetAlignment(stackSlot, bodyType.alignment)
 
             memset(stackSlot, 0, LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8)
 
@@ -532,17 +544,14 @@ internal class StackLocalsManagerImpl(
                 )
             }
         } else {
-            val info = llvmDeclarations.forClass(stackLocal.irClass)
-            val type = info.bodyType.llvmBodyType
-            for ([fieldSymbol, fieldIndex] in info.fieldIndices.entries.sortedBy{ e -> e.value }) {
-
-                if (fieldSymbol.owner.type.binaryTypeIsReference()) {
-                    val fieldPtr = structGep(type, stackLocal.stackAllocationPtr, fieldIndex, "")
-                    if (refsOnly)
-                        storeHeapRef(llvm.kNull, fieldPtr)
-                    else
-                        call(llvm.zeroHeapRefFunction, listOf(fieldPtr))
-                }
+            val bodyType = stackLocal.irClass.objectBodyType
+            val type = bodyType.llvmBodyType
+            for (fieldIndex in bodyType.sortedIndicesOfObjectFields) {
+                val fieldPtr = structGep(type, stackLocal.stackAllocationPtr, fieldIndex, "")
+                if (refsOnly)
+                    storeHeapRef(llvm.kNull, fieldPtr)
+                else
+                    call(llvm.zeroHeapRefFunction, listOf(fieldPtr))
             }
 
             if (!refsOnly) {

@@ -1,0 +1,67 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.diagnosticProvider
+
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticCheckerKind
+import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
+
+/** @see AbstractCollectDiagnosticsTest */
+abstract class AbstractElementDiagnosticsTest : AbstractAnalysisApiBasedTest() {
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + Directives
+
+    private object Directives : SimpleDirectivesContainer() {
+        val CHECKER_KIND by valueDirective(
+            description = "Checker kind to request the diagnostics of. " +
+                    "'COMMON' and 'EXTENDED' by default. " +
+                    "A few kinds can be declared as separate directives",
+            parser = { name -> KaDiagnosticCheckerKind.ALL.firstOrNull { it.name == name } },
+        )
+    }
+
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        val targetDeclaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeByDirective(
+            mainFile,
+            mainModule.testModule,
+            defaultType = KtElement::class,
+        ) as KtElement
+
+        val checkerKinds = testServices.moduleStructure.allDirectives[Directives.CHECKER_KIND]
+            .ifEmpty { listOf(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED) }
+            .toSet()
+
+        analyzeForTest(mainFile) {
+            val diagnostics = targetDeclaration.diagnostics()
+                .directOnly(true)
+                .withCheckers(checkerKinds)
+                .toList()
+
+            val actualText = buildString {
+                if (diagnostics.isNotEmpty()) {
+                    for (diagnostic in diagnostics) {
+                        append(diagnostic.factoryName).append(": ")
+                        diagnostic.textRanges.joinTo(this)
+                        appendLine()
+                    }
+                } else {
+                    appendLine("No diagnostics found")
+                }
+            }
+
+            testServices.assertions.assertEqualsToTestOutputFile(actualText)
+        }
+    }
+}

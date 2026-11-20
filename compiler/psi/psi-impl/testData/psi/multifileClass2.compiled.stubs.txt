@@ -10,7 +10,7 @@ MultifileClass.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     PROPERTY[fqName=test.p1Val, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p1Val]
-      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -19,7 +19,7 @@ MultifileClass.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.p1ExtVal, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p1ExtVal]
-      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -37,7 +37,7 @@ MultifileClass.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=test.p1Var, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=p1Var]
-      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -47,7 +47,7 @@ MultifileClass.class:
             isClassRef: true
     PROPERTY[fqName=test.annotatedConstVal, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
       constantInitializer: 42
-      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
           valueArguments: [ message -> "deprecated" ]
@@ -72,7 +72,7 @@ MultifileClass.class:
             isClassRef: true
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
     FUNCTION[fqName=test.p1Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1Fun]
-      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -82,7 +82,7 @@ MultifileClass.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=test.p1ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p1ExtFun]
-      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -98,7 +98,7 @@ MultifileClass.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=test.p1ExprFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1ExprFun]
-      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -108,7 +108,7 @@ MultifileClass.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     FUNCTION[fqName=test.p1FunWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1FunWithParams]
-      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -125,7 +125,7 @@ MultifileClass.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.p3Val, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p3Val]
-      origin: MultiFileFacade(className=test/MultifileClass__MultifileClass__PartKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__MultifileClass__PartKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -134,7 +134,7 @@ MultifileClass.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.p3ExtVal, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p3ExtVal]
-      origin: MultiFileFacade(className=test/MultifileClass__MultifileClass__PartKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__MultifileClass__PartKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -152,7 +152,7 @@ MultifileClass.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     FUNCTION[fqName=test.p3Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p3Fun]
-      origin: MultiFileFacade(className=test/MultifileClass__MultifileClass__PartKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__MultifileClass__PartKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -162,7 +162,7 @@ MultifileClass.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=test.p3ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p3ExtFun]
-      origin: MultiFileFacade(className=test/MultifileClass__MultifileClass__PartKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__MultifileClass__PartKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -178,7 +178,7 @@ MultifileClass.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     PROPERTY[fqName=test.p2Val, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p2Val]
-      origin: MultiFileFacade(className=test/MultifileClass__PartKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__PartKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -187,7 +187,7 @@ MultifileClass.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.p2ExtVal, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p2ExtVal]
-      origin: MultiFileFacade(className=test/MultifileClass__PartKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__PartKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -205,7 +205,7 @@ MultifileClass.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     FUNCTION[fqName=test.p2Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p2Fun]
-      origin: MultiFileFacade(className=test/MultifileClass__PartKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__PartKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -215,7 +215,7 @@ MultifileClass.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=test.p2ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p2ExtFun]
-      origin: MultiFileFacade(className=test/MultifileClass__PartKt, facadeClassName=test/MultifileClass)
+      origin: MultiFileFacade(className=test/MultifileClass__PartKt, facadeClassName=test/MultifileClass, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -240,7 +240,7 @@ MultifileClass__MultifileClassKt.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     PROPERTY[fqName=test.p1Val, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p1Val]
-      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -249,7 +249,7 @@ MultifileClass__MultifileClassKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.p1ExtVal, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p1ExtVal]
-      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -267,7 +267,7 @@ MultifileClass__MultifileClassKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=test.p1Var, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=p1Var]
-      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -276,7 +276,7 @@ MultifileClass__MultifileClassKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.annotatedConstVal, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
-      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
           valueArguments: [ message -> "deprecated" ]
@@ -300,7 +300,7 @@ MultifileClass__MultifileClassKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     FUNCTION[fqName=test.p1Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1Fun]
-      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -310,7 +310,7 @@ MultifileClass__MultifileClassKt.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=test.p1ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p1ExtFun]
-      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -326,7 +326,7 @@ MultifileClass__MultifileClassKt.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=test.p1ExprFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1ExprFun]
-      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -336,7 +336,7 @@ MultifileClass__MultifileClassKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     FUNCTION[fqName=test.p1FunWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1FunWithParams]
-      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -362,7 +362,7 @@ MultifileClass__MultifileClass__PartKt.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     PROPERTY[fqName=test.p3Val, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p3Val]
-      origin: Facade(className=test/MultifileClass__MultifileClass__PartKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__MultifileClass__PartKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -371,7 +371,7 @@ MultifileClass__MultifileClass__PartKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.p3ExtVal, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p3ExtVal]
-      origin: Facade(className=test/MultifileClass__MultifileClass__PartKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__MultifileClass__PartKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -389,7 +389,7 @@ MultifileClass__MultifileClass__PartKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     FUNCTION[fqName=test.p3Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p3Fun]
-      origin: Facade(className=test/MultifileClass__MultifileClass__PartKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__MultifileClass__PartKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -399,7 +399,7 @@ MultifileClass__MultifileClass__PartKt.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=test.p3ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p3ExtFun]
-      origin: Facade(className=test/MultifileClass__MultifileClass__PartKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__MultifileClass__PartKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -424,7 +424,7 @@ MultifileClass__PartKt.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     PROPERTY[fqName=test.p2Val, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p2Val]
-      origin: Facade(className=test/MultifileClass__PartKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__PartKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -433,7 +433,7 @@ MultifileClass__PartKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.p2ExtVal, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p2ExtVal]
-      origin: Facade(className=test/MultifileClass__PartKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__PartKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -451,7 +451,7 @@ MultifileClass__PartKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     FUNCTION[fqName=test.p2Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p2Fun]
-      origin: Facade(className=test/MultifileClass__PartKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__PartKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -461,7 +461,7 @@ MultifileClass__PartKt.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=test.p2ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p2ExtFun]
-      origin: Facade(className=test/MultifileClass__PartKt, jvmClassName=null)
+      origin: Facade(className=test/MultifileClass__PartKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE

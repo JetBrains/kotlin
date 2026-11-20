@@ -14,17 +14,14 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.ArgumentLifecycleStatus
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.getArgumentsInfo
+import org.jetbrains.kotlin.cli.common.arguments.reportCliArgumentNonFatalDiagnostics
 import org.jetbrains.kotlin.cli.common.generateLifecycleWarning
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.nio.file.Path
-import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
-import kotlin.reflect.jvm.jvmName
 
 internal fun CommonToolArgumentsImpl.reportRestrictedViolations(logger: KotlinLogger) {
     for (violation in restrictedArgViolations) {
@@ -57,7 +54,7 @@ internal fun CommonToolArgumentsImpl.reportArgumentParseWarnings(
 ) {
     if (argumentParseDiagnostics.isEmpty()) return
     val arguments = argumentParseDiagnostics.buildReportableArguments(finalArguments) ?: return
-    collector.reportArgumentParseProblems(arguments)
+    collector.reportCliArgumentNonFatalDiagnostics(arguments)
     // `REMOVED_CLI_ARG` is reported by the compiler out of `explicitArguments`, but a removed argument has no property
     // on the arguments class, so it can never reach the compiler through the Build Tools API argument model.
     for (field in arguments.explicitArguments.keys) {
@@ -65,21 +62,6 @@ internal fun CommonToolArgumentsImpl.reportArgumentParseWarnings(
         val message = field.generateLifecycleWarning(forExtraHelp = false)?.first ?: continue
         collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
     }
-}
-
-internal fun <T> CommonToolArguments.setUsingReflection(propertyName: String, value: T) {
-    this::class.declaredMemberProperties.filterIsInstance<KMutableProperty<T>>().firstOrNull { it.name == propertyName }
-        ?.let { property: KMutableProperty<T> ->
-            property.setter.call(this, value)
-        } ?: throw NoSuchMethodError("No property found with name $propertyName in ${this::class.jvmName}")
-}
-
-internal fun <T> CommonToolArguments.getUsingReflection(propertyName: String): T {
-    return this::class.declaredMemberProperties.filterIsInstance<KProperty<T>>()
-        .firstOrNull { it.name == propertyName }
-        ?.let { property: KProperty<T> ->
-            property.getter.call(this)
-        } ?: throw NoSuchMethodError("No property found with name $propertyName in ${this::class.jvmName}")
 }
 
 internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
@@ -154,7 +136,7 @@ internal fun populateExplicitArguments(arguments: CommonToolArguments) {
 internal fun handleCustomPluginArguments(btaArguments: CommonCompilerArgumentsImpl, compilerArgs: CommonCompilerArguments) {
     val explicitArgumentNames = compilerArgs.explicitArguments.keys.map { it.argument.value }
     if (setOf("-Xplugin", "-P", "-Xcompiler-plugin-order").any { it in explicitArgumentNames }) {
-        btaArguments[CommonCompilerArgumentsImpl.COMPILER_PLUGINS] = emptyList()
+        btaArguments.compilerPlugins = emptyList()
     } else {
         compilerArgs.pluginClasspaths = emptyArray()
         compilerArgs.pluginOptions = emptyArray()

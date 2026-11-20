@@ -1,0 +1,28 @@
+FILE fqName:<root> fileName:/nonReifiedTypeParameters.kt lineStartOffsets: [0, 134, 135, 164, 181, 194, 196, 197, 233]
+  FUN[142, 195] name:id visibility:public modality:FINAL returnType:T of <root>.id [inline]
+    TYPE_PARAMETER[147, 148] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER[153, 157] kind:Regular name:x index:0 type:T of <root>.id
+    BLOCK_BODY[162, 195]
+      VAR[168, 180] name:y type:T of <root>.id [val]
+        GET_VAR[179, 180] 'x: T of <root>.id declared in <root>.id' type=T of <root>.id origin=null
+      RETURN[185, 193] type=kotlin.Nothing from='public final fun id <T> (x: T of <root>.id): T of <root>.id declared in <root>'
+        GET_VAR[192, 193] 'val y: T of <root>.id declared in <root>.id' type=T of <root>.id origin=null
+  FUN[197, 232] name:test visibility:public modality:FINAL returnType:kotlin.String
+    VALUE_PARAMETER[206, 215] kind:Regular name:s index:0 type:kotlin.String
+    BLOCK_BODY[227, 232]
+      RETURN[232, 232] type=kotlin.Nothing from='public final fun test (s: kotlin.String): kotlin.String declared in <root>'
+        BLOCK[227, 232] type=kotlin.String origin=INLINE_ARGS_CONTAINER
+          VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
+            TYPE_OP[230, 231] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+              GET_VAR[230, 231] 's: kotlin.String declared in <root>.test' type=kotlin.String origin=null
+          RETURNABLE_BLOCK[227, 232] type=kotlin.String origin=null
+            INLINED_BLOCK[227, 232]->[142, 195] type=kotlin.String origin=null
+              inlinedFunctionSymbol: public final fun id <T> (x: T of <root>.id): T of <root>.id declared in <root>
+              inlinedFunctionFileEntry: FILE_ENTRY path:/nonReifiedTypeParameters.kt
+              VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:kotlin.Any? [val]
+                GET_VAR[-1, -1] 'val tmp_0: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
+              VAR[168, 180] name:y type:kotlin.Any? [val]
+                GET_VAR[179, 180] 'val x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
+              RETURN[185, 193] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                TYPE_OP[192, 193] type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                  GET_VAR[192, 193] 'val y: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null

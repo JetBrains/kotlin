@@ -170,12 +170,12 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         private inline fun <reified D : FirCallableDeclaration, S : FirCallableSymbol<D>> registerCallable(
             symbol: S,
             data: FirRecorderData,
-            map: MutableMap<CallableId, List<S>>,
+            map: MutableMap<CallableId, List<S>>?,
         ) {
             // TODO: KT-78984: we shouldn't call this function for symbols with callableId == null
             val callableId = symbol.callableId
                 ?: return // For scripts, we can come here with local variables like <local>/<destruct>
-            map.merge(callableId, listOf(symbol)) { a, b -> a + b }
+            map?.merge(callableId, listOf(symbol)) { a, b -> a + b }
             data.state.callableContainerMap[symbol] = data.file
         }
 
@@ -191,7 +191,11 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
 
         override fun visitProperty(property: FirProperty, data: FirRecorderData) {
             val symbol = property.symbol
-            registerCallable(symbol, data, data.state.propertyMap)
+            // Destructuring declaration containers cannot be referenced by name, so they are not indexed by their callable id
+            val isDestructuringDeclarationContainer =
+                property.origin == FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer
+
+            registerCallable(symbol, data, data.state.propertyMap.takeUnless { isDestructuringDeclarationContainer })
             property.getter?.let { visitPropertyAccessor(it, data) }
             property.setter?.let { visitPropertyAccessor(it, data) }
         }

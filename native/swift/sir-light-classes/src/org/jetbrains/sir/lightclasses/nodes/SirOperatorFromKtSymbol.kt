@@ -127,7 +127,7 @@ internal class SirSubscriptTrampoline(
 
     override val visibility: SirVisibility get() = SirVisibility.PUBLIC
     override val documentation: String? get() = getterFunction.documentation
-    override val attributes: List<SirAttribute> get() = getterFunction.attributes
+    override val attributes: List<SirAttribute> get() = getterFunction.attributes.filter { it !is SirAttribute.DiscardableResult }
     override val isOverride: Boolean = false
     override val isInstance: Boolean = true
     override val modality: SirModality = SirModality.FINAL

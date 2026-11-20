@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalComp
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
@@ -45,27 +47,34 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
 
-internal class JsKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(JsKlibCompilationOperation::class),
-    override val sources: List<Path>,
-    override val destination: Path,
-    compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-    private val compilerVersion: String,
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments),
+internal class JsKlibCompilationOperationImpl : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>,
     JsKlibCompilationOperation, JsKlibCompilationOperation.Builder,
     DeepCopyable<JsKlibCompilationOperationImpl> {
+    override val options: Options
+    override val sources: List<Path>
+    override val destination: Path
+    override val compilerArguments: JsArgumentsImpl
+    private val compilerVersion: String
+
+    private constructor(other: JsKlibCompilationOperationImpl) : super(other) {
+        options = other.options.deepCopy()
+        sources = other.sources.toList()
+        destination = other.destination
+        compilerArguments = other.compilerArguments.deepCopy()
+        compilerVersion = other.compilerVersion
+    }
+
     constructor(
         sources: List<Path>,
         destination: Path,
         compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
         compilerVersion: String,
-    ) : this(
-        options = Options(JsKlibCompilationOperation::class),
-        sources = sources,
-        destination = destination,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
+    ) : super() {
+        this.options = Options(JsKlibCompilationOperation::class)
+        this.sources = sources
+        this.destination = destination
+        this.compilerArguments = compilerArguments
+        this.compilerVersion = compilerVersion
         initializeOptions(this::class, options)
     }
 
@@ -81,13 +90,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
     override fun toBuilder(): JsKlibCompilationOperation.Builder = deepCopy()
 
     override fun deepCopy(): JsKlibCompilationOperationImpl {
-        return JsKlibCompilationOperationImpl(
-            options.deepCopy(),
-            sources,
-            destination,
-            compilerArguments.deepCopy(),
-            compilerVersion
-        )
+        return JsKlibCompilationOperationImpl(this)
     }
 
     @UseFromImplModuleRestricted
@@ -152,7 +155,6 @@ internal class JsKlibCompilationOperationImpl private constructor(
                     buildDir = aggregatedIcConfiguration[MODULE_BUILD_DIR]?.toFile(),
                     icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures(),
                     useJvmFirRunner = false,
-                    generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
                     configurationInputs = makeConfigurationInputs(aggregatedIcConfiguration)
                 )
             }
@@ -211,7 +213,8 @@ internal class JsKlibCompilationOperationImpl private constructor(
 
     override fun compileIncrementallyInProcess(
         arguments: K2JSCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext
     ): CompilationResult {
         val icConfiguration = get(INCREMENTAL_COMPILATION)
@@ -238,7 +241,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
         metricsReporter.startMeasureGc()
         val buildReporter = BuildReporter(
             icReporter = BuildToolsApiBuildICReporter(
-                kotlinLogger = loggerAdapter.kotlinLogger,
+                kotlinLogger = logger,
                 rootProjectDir = projectDir,
                 buildMetricsReporter = metricsReporter,
             ), buildMetricsReporter = metricsReporter
@@ -262,7 +265,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
         )
 
         arguments.incrementalCompilation = true
-        logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
+        logCompilerArguments(logger, arguments, compilerArgumentsLogLevel)
 
         val fileLocations = if (projectDir != null && buildDir != null) {
             FileLocations(projectDir, buildDir)
@@ -270,7 +273,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
         val compilationResult = incrementalCompiler.compile(
             kotlinSources,
             arguments,
-            loggerAdapter,
+            messageCollector,
             icConfiguration.sourcesChanges.asChangedFiles,
             fileLocations,
             makeConfigurationInputs(icConfiguration)
@@ -286,11 +289,11 @@ internal class JsKlibCompilationOperationImpl private constructor(
     private fun JsHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return IncrementalCompilationFeatures(
             usePreciseJavaTracking = false,
-            withAbiSnapshot = false,
             preciseCompilationResultsBackup = this[BACKUP_CLASSES],
             keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
             enableUnsafeIncrementalCompilationForMultiplatform = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
             enableMonotonousIncrementalCompileSetExpansion = this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
+            enableErrorRecoveryRound = false,
         )
     }
 
@@ -306,7 +309,6 @@ private fun List<IncrementalModule>.toIncrementalModuleInfo(rootProjectBuildDir:
             it.name,
             it.buildDir.toFile(),
             (it.buildHistoryDir ?: it.buildDir).resolve(IncrementalCompilerRunner.BUILD_HISTORY_FILE_NAME).toFile(),
-            null
         )
     }
     return IncrementalModuleInfo(
@@ -317,7 +319,6 @@ private fun List<IncrementalModule>.toIncrementalModuleInfo(rootProjectBuildDir:
         },
         emptyMap(),
         map.mapKeys { it.key.output.toFile() }.toMap(),
-        emptyMap()
     )
 }
 

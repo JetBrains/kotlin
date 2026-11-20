@@ -88,14 +88,29 @@ class LLResolutionFacade internal constructor(
      *
      * Please use [getOrBuildFirFile] to get [FirFile] in undefined phase.
      *
+     * A type reference of a compiled declaration from a binary module is mapped to the deserialized FIR, which is used by
+     * [resolveToFirSymbol] as well. Otherwise, type parameter types of the type would refer to type parameters of another
+     * session, which builds FIR from the decompiled PSI.
+     *
      * @return associated [FirElement] in final resolved state if it exists.
      *
      * @see getOrBuildFirFile
      * @see org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder.getOrBuildFirFor
      */
     internal fun getOrBuildFirFor(element: KtElement): FirElement? {
-        val moduleComponents = getModuleComponentsForElement(element)
-        return moduleComponents.elementsBuilder.getOrBuildFirFor(element)
+        val module = getModule(element)
+        if (element is KtTypeReference && element.containingKtFile.isCompiled) {
+            findCompiledTypeRef(element, module)?.let { return it }
+        }
+
+        return sessionProvider.getResolvableSession(module).moduleComponents.elementsBuilder.getOrBuildFirFor(element)
+    }
+
+    private fun findCompiledTypeRef(typeReference: KtTypeReference, module: KaModule): FirElement? {
+        if (getModuleResolutionStrategy(module) != LLModuleResolutionStrategy.STATIC) return null
+
+        val searcher = FirDeclarationForCompiledElementSearcher(getSessionFor(module))
+        return searcher.findTypeReference(typeReference)
     }
 
     /**

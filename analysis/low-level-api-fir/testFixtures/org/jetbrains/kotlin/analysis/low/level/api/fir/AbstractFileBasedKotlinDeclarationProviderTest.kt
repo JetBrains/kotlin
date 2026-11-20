@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
+import org.jetbrains.kotlin.analysis.api.fir.utils.callableId
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysisApiBasedTest() {
@@ -60,6 +61,9 @@ abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysis
     }
 
     private fun checkByVisitor(ktFile: KtFile, provider: KotlinFileBasedDeclarationProvider) {
+        val topLevelFunctionIds = mutableSetOf<CallableId>()
+        val topLevelPropertyIds = mutableSetOf<CallableId>()
+
         ktFile.accept(object : KtTreeVisitorVoid() {
             override fun visitClass(klass: KtClass) {
                 super.visitClass(klass)
@@ -75,12 +79,6 @@ abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysis
                 super.visitScript(script)
 
                 assertContains(provider.findFilesForScript(script.fqName), script)
-
-                @OptIn(KtExperimentalApi::class)
-                val replSnippetClassId = script.replSnippetClassId ?: return
-                val shortName = replSnippetClassId.shortClassName
-
-                assertContains(provider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(replSnippetClassId.packageFqName), shortName)
             }
 
             private fun processClassLikeDeclaration(declaration: KtClassLikeDeclaration) {
@@ -115,12 +113,32 @@ abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysis
                     assertContains(provider.getTopLevelCallableNamesInPackage(callableId.packageName), callableId.callableName)
 
                     when (declaration) {
-                        is KtFunction -> assertContains(provider.getTopLevelFunctions(callableId), declaration)
-                        is KtProperty -> assertContains(provider.getTopLevelProperties(callableId), declaration)
+                        is KtFunction -> {
+                            assertContains(provider.getTopLevelFunctions(callableId), declaration)
+                            topLevelFunctionIds += callableId
+                        }
+                        is KtProperty -> {
+                            assertContains(provider.getTopLevelProperties(callableId), declaration)
+                            topLevelPropertyIds += callableId
+                        }
                     }
                 }
             }
         })
+
+        for (callableId in topLevelFunctionIds + topLevelPropertyIds) {
+            assertEquals(
+                callableId in topLevelFunctionIds,
+                ktFile in provider.getTopLevelFunctionFiles(callableId),
+                "Unexpected `getTopLevelFunctionFiles` result for $callableId",
+            )
+
+            assertEquals(
+                callableId in topLevelPropertyIds,
+                ktFile in provider.getTopLevelPropertyFiles(callableId),
+                "Unexpected `getTopLevelPropertyFiles` result for $callableId",
+            )
+        }
     }
 
     object Directives : SimpleDirectivesContainer() {

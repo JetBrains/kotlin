@@ -73,14 +73,18 @@ internal class PreCodegenInliner(
         while (stack.isNotEmpty()) {
             val functionSymbol = stack.peek()!!
             val color = nodeColors[functionSymbol]!!
-            val callSites = callGraph.directEdges[functionSymbol]!!.callSites.filter {
-                !it.isVirtual && callGraph.directEdges.containsKey(it.actualCallee)
+            val callees = buildList {
+                for (callSite in callGraph.directEdges[functionSymbol]!!.callSites) {
+                    (callSite as? CallGraphNode.CallSite.Static)?.forEachCallee {
+                        if (callGraph.directEdges.containsKey(it)) add(it)
+                    }
+                }
             }
             when (color) {
                 NodeColor.WHITE -> {
                     nodeColors[functionSymbol] = NodeColor.GRAY
-                    for (callSite in callSites) {
-                        val calleeSymbol = callSite.actualCallee as DataFlowIR.FunctionSymbol.Declared
+                    for (callee in callees) {
+                        val calleeSymbol = callee as DataFlowIR.FunctionSymbol.Declared
                         if (nodeColors[calleeSymbol] == null || nodeColors[calleeSymbol] == NodeColor.WHITE) {
                             nodeColors[calleeSymbol] = NodeColor.WHITE
                             stack.push(calleeSymbol)
@@ -108,10 +112,9 @@ internal class PreCodegenInliner(
                     }
 
                     val functionsToInline = mutableSetOf<IrFunction>()
-                    for (callSite in callSites) {
-                        val calleeSymbol = callSite.actualCallee as DataFlowIR.FunctionSymbol.Declared
+                    for (calleeSymbol in callees) {
                         if (nodeColors[calleeSymbol] != NodeColor.BLACK) continue
-                        val calleeIrFunction = calleeSymbol.irFunction ?: continue
+                        val calleeIrFunction = (calleeSymbol as DataFlowIR.FunctionSymbol.Declared).irFunction ?: continue
                         val callee = moduleDFG.functions[calleeSymbol]!!
 
                         var isALoop = false

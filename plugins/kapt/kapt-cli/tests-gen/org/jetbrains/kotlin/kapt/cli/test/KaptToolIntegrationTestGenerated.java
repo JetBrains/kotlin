@@ -40,6 +40,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   }
 
   @Test
+  @TestMetadata("classpathChanges")
+  public void testClasspathChanges() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/classpathChanges/");
+  }
+
+  @Test
   @TestMetadata("compileModeUnsupported")
   public void testCompileModeUnsupported() {
     runTest("plugins/kapt/kapt-cli/testData/integration/compileModeUnsupported/");
@@ -91,6 +97,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   @TestMetadata("detectMemoryLeaks")
   public void testDetectMemoryLeaks() {
     runTest("plugins/kapt/kapt-cli/testData/integration/detectMemoryLeaks/");
+  }
+
+  @Test
+  @TestMetadata("headerMode")
+  public void testHeaderMode() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/headerMode/");
   }
 
   @Test
@@ -175,6 +187,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   @TestMetadata("stubWriterThreadsJtree")
   public void testStubWriterThreadsJtree() {
     runTest("plugins/kapt/kapt-cli/testData/integration/stubWriterThreadsJtree/");
+  }
+
+  @Test
+  @TestMetadata("valhallaValueClasses")
+  public void testValhallaValueClasses() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/valhallaValueClasses/");
   }
 
   @Test

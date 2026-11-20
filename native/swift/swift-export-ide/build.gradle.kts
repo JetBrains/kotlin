@@ -27,7 +27,6 @@ dependencies {
 
     testRuntimeOnly(testFixtures(project(":analysis:low-level-api-fir")))
 
-    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))

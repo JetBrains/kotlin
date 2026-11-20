@@ -1,0 +1,11 @@
+val a: kotlin.Int
+
+val b: kotlin.String
+
+val c: kotlin.Int
+
+val d: kotlin.String
+
+val e: kotlin.Int
+
+data class X(a: kotlin.Int, b: kotlin.String)

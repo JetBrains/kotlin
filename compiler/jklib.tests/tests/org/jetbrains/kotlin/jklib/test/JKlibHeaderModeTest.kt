@@ -21,20 +21,30 @@ class JKlibHeaderModeTest {
         get() = ForTestCompileRuntime.jklibStdlibForTests().path
 
     private fun compile(
-        srcFile: File,
+        srcFiles: List<File>,
         outputKlib: File,
         moduleName: String,
         vararg extraArgs: String
     ): Pair<String, ExitCode> {
-        val args = mutableListOf(
-            srcFile.path,
-            "-d", outputKlib.path,
-            "-module-name", moduleName,
-            "-no-stdlib",
-            "-Xklib=$stdlibKlib"
-        ).apply { addAll(extraArgs) }
+        val args = mutableListOf<String>().apply {
+            srcFiles.forEach { add(it.path) }
+            add("-d")
+            add(outputKlib.path)
+            add("-module-name")
+            add(moduleName)
+            add("-no-stdlib")
+            add("-Xklib=$stdlibKlib")
+            addAll(extraArgs)
+        }
         return AbstractCliTest.executeCompilerGrabOutput(K2JKlibCompiler(), args)
     }
+
+    private fun compile(
+        srcFile: File,
+        outputKlib: File,
+        moduleName: String,
+        vararg extraArgs: String
+    ): Pair<String, ExitCode> = compile(listOf(srcFile), outputKlib, moduleName, *extraArgs)
 
     private fun File.hasAnyIrEntries(): Boolean {
         return ZipFile(this).use { zip ->
@@ -139,6 +149,37 @@ class JKlibHeaderModeTest {
         assertTrue(outputKlib.exists(), "Output KLIB file does not exist")
         assertTrue(outputKlib.hasAnyIrEntries()) {
             "KLIB compiled with value classes MUST contain IR entries. Found entries: ${outputKlib.getAllEntryNames()}"
+        }
+    }
+
+    @Test
+    fun testHeaderModeKlibWithExpectDeclarationPreservesIr(@TempDir tempDir: File) {
+        val expectSrc = File(tempDir, "Expect.kt").apply {
+            writeText(
+                """
+                package test
+
+                expect fun expectHelper(): String
+                """.trimIndent()
+            )
+        }
+        val actualSrc = File(tempDir, "Actual.kt").apply {
+            writeText(
+                """
+                package test
+
+                actual fun expectHelper(): String = "OK"
+                """.trimIndent()
+            )
+        }
+        val outputKlib = File(tempDir, "libExpect.klib")
+
+        val result = compile(listOf(expectSrc, actualSrc), outputKlib, "libExpect", "-Xheader-mode", "-Xheader-mode-type=compilation", "-Xmulti-platform")
+        assertEquals(ExitCode.OK, result.second) { "Compilation failed: ${result.first}" }
+
+        assertTrue(outputKlib.exists(), "Output KLIB file does not exist")
+        assertTrue(outputKlib.hasAnyIrEntries()) {
+            "KLIB compiled with expect declarations MUST contain IR entries. Found entries: ${outputKlib.getAllEntryNames()}"
         }
     }
 

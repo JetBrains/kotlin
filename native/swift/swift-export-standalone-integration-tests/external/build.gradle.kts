@@ -20,10 +20,8 @@ dependencies {
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testImplementation(project(":kotlin-util-klib-metadata"))
     testRuntimeOnly(testFixtures(project(":analysis:low-level-api-fir")))
-    testRuntimeOnly(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
 }
 

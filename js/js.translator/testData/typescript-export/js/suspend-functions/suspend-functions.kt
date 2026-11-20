@@ -319,6 +319,33 @@ suspend fun assertIntermediateNotExportedInterface(holder: IntermediateNotExport
     })
 }
 
+@JsExport
+abstract class AbstractWithSuspend {
+    abstract suspend fun value(): String
+}
+
+@JsExport
+class KotlinImplWithSuspend : AbstractWithSuspend() {
+    override suspend fun value(): String = "KotlinImplWithSuspend"
+}
+
+@JsExport
+abstract class AbstractWithSuspendAndDefaultArgument {
+    abstract suspend fun value(suffix: String = "!"): String
+}
+
+@JsExport
+class KotlinImplWithSuspendAndDefaultArg : AbstractWithSuspendAndDefaultArgument() {
+    override suspend fun value(suffix: String): String = "KotlinImplWithSuspendAndDefaultArg$suffix"
+}
+
+@JsExport
+suspend fun acceptAbstractWithSuspend(x: AbstractWithSuspend) = x.value()
+
+@JsExport
+suspend fun acceptAbstractWithSuspendAndDefaultArgument(x: AbstractWithSuspendAndDefaultArgument, suffix: String?) =
+    if (suffix == null) x.value() else x.value(suffix)
+
 // FILE: another_file.kt
 package foo
 

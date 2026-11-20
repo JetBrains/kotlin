@@ -81,6 +81,9 @@ class OnBuildCompletionSerializingInjection<Return : Any>(
 
     override fun inject(target: Project) {
         val returnEvaluationProvider = GradleProjectBuildScriptInjectionContext(target).returnValueInjection()
+        // Don't capture `this` in the closure below: CC would otherwise serialize `returnValueInjection`, which fails for
+        // deserialized non-capturing lambdas since Gradle 9.8 ("Kotlin object that is not its singleton instance")
+        val serializedReturnPath = serializedReturnPath
         val serializeOutput = {
             val returnValue = returnEvaluationProvider.orNull
             serializedReturnPath.outputStream().use {
@@ -870,7 +873,7 @@ private fun scriptIsolatedInjectionLoad(
             ).invoke(
                 injectionLoaderClass.getConstructor().newInstance(), 
                 ${targetPropertyName},
-                File("${serializedInjectionPath.path.normalizePath()}")
+                File(${injectionDirectory(targetPropertyName)}, "${serializedInjectionPath.name}")
             )
         }
         ${lambdaName}()
@@ -902,11 +905,21 @@ private fun scriptIsolatedInjectionLoadGroovy(
             ).invoke(
                 injectionLoaderClass.getConstructor().newInstance(), 
                 ${targetPropertyName},
-                new java.io.File('${serializedInjectionPath.path.normalizePath()}')
+                new java.io.File(${injectionDirectory(targetPropertyName)}, '${serializedInjectionPath.name}')
             )
         }
         ${lambdaName}()
     """.trimIndent()
+}
+
+/**
+ * The directory that [serializeInjection] writes the injection of [targetPropertyName] to.
+ * Scripts reference it instead of the absolute path to keep their text identical across tests, so Gradle reuses compiled scripts.
+ */
+private fun injectionDirectory(targetPropertyName: String): String = when (targetPropertyName) {
+    "project" -> "project.projectDir"
+    "settings" -> "settings.settingsDir"
+    else -> error("Unexpected injection target '$targetPropertyName'")
 }
 
 private fun injectionLoadSettings(
@@ -931,14 +944,14 @@ private fun injectionLoadProject(
     serializedInjectionPath: File,
 ): String = """
     
-    org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, File("${serializedInjectionPath.path.normalizePath()}"))
+    org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, File(${injectionDirectory("project")}, "${serializedInjectionPath.name}"))
 """.trimIndent()
 
 private fun injectionLoadProjectGroovy(
     serializedInjectionPath: File,
 ): String = """
     
-    new org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, new java.io.File('${serializedInjectionPath.path.normalizePath()}'))
+    new org.jetbrains.kotlin.gradle.testbase.InjectionLoader().invokeBuildScriptInjection(project, new java.io.File(${injectionDirectory("project")}, '${serializedInjectionPath.name}'))
 """.trimIndent()
 
 private fun escapedBuildScriptClasspath(): List<String> {

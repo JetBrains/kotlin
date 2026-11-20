@@ -93,8 +93,8 @@ private class GitHubRenderingContext(val repository: String, val sha1: GitSHA1) 
         return "[${path.fileName}:$line](https://github.com/$repository/blob/${sha1.sha1}/$path?plain=1#L$line)"
     }
 
-    override fun markdownLink(path: ProjectFilePath, title: String): String {
-        return "[$title](https://github.com/$repository/blob/${sha1.sha1}/$path#${slugifyMarkdownTitle(title)})"
+    override fun markdownLink(path: ProjectFilePath, heading: String, linkText: String): String {
+        return "[$linkText](https://github.com/$repository/blob/${sha1.sha1}/$path#${slugifyMarkdownTitle(heading)})"
     }
 
     override fun localLink(text: String, title: String): String? {

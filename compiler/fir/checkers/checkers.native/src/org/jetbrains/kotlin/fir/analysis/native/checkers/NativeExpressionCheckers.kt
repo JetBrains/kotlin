@@ -18,16 +18,15 @@ object NativeExpressionCheckers : ExpressionCheckers() {
         FirNativeForwardDeclarationReifiedChecker
     )
 
-    override val functionCallCheckers: Set<FirFunctionCallChecker>
-        get() = setOf(
-            FirSuperCallWithDefaultsChecker,
-            FirNativeAtomicReferenceToPrimitiveCallChecker,
-            FirNativeAtomicArrayToPrimitiveCallChecker,
-            FirNativeIdentityHashCodeCallOnValueTypeObjectChecker,
-            FirNativeVariadicFunctionPointerChecker,
-            FirNativeObjCStringAsVariadicChecker,
-            FirNativeVariadicSpreadChecker,
-        )
+    override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
+        FirSuperCallWithDefaultsChecker,
+        FirNativeAtomicReferenceToPrimitiveCallChecker,
+        FirNativeAtomicArrayToPrimitiveCallChecker,
+        FirNativeIdentityHashCodeCallOnValueTypeObjectChecker,
+        FirNativeVariadicFunctionPointerChecker,
+        FirNativeObjCStringAsVariadicChecker,
+        FirNativeVariadicSpreadChecker,
+    )
     override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> = setOf(
         FirNativeVariadicCallableReferenceChecker,
     )

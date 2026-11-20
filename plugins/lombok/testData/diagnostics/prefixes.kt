@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: Prefixes.java
 
 import lombok.*;
@@ -26,3 +27,5 @@ fun test() {
         <!INVISIBLE_REFERENCE("field noPrefix: String!; private; 'Prefixes'")!>noPrefix<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral */

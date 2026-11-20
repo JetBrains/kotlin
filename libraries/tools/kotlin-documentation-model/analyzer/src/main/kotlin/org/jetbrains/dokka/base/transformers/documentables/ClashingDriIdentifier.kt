@@ -9,4 +9,5 @@ package org.jetbrains.dokka.base.transformers.documentables
     replaceWith = ReplaceWith("org.jetbrains.dokka.transformers.documentation.ClashingDriIdentifier"),
     level = DeprecationLevel.WARNING // TODO change to error after Kotlin 1.9.20
 )
-public typealias ClashingDriIdentifier = org.jetbrains.dokka.transformers.documentation.ClashingDriIdentifier
+@Suppress("unused")
+internal typealias ClashingDriIdentifier = org.jetbrains.dokka.transformers.documentation.ClashingDriIdentifier

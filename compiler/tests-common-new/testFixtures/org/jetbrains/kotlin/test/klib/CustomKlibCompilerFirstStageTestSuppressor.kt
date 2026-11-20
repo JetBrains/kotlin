@@ -54,6 +54,10 @@ class CustomKlibCompilerFirstStageTestSuppressor(
                     is BinaryArtifactHandler -> processNonFirstStageException(wrappedException, IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE)
                     else -> listOf(wrappedException)
                 }
+            } else if (wrappedException is WrappedException.FromGroupingFacade) {
+                processNonFirstStageException(wrappedException, IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE)
+            } else if (wrappedException is WrappedException.FromGroupingHandler) {
+                processNonFirstStageException(wrappedException, IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE)
             } else {
                 listOf(wrappedException)
             }

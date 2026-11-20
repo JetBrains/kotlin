@@ -81,31 +81,16 @@
  */
 @kotlin.Metadata()
 public final class ConstReferences {
-    private static final boolean booleanFalse = false;
-    private static final boolean booleanTrue = true;
-    private static final int int11 = 11;
-    private static final byte byte12 = (byte)12;
-    private static final short short13 = (short)13;
-    private static final char charC = 'C';
-    private static final long long14 = 14L;
-    private static final float float15 = 1.5F;
-    private static final double double16 = 1.6;
-    private static final int uint21 = 21;
-    private static final byte ubyte22 = (byte)22;
-    private static final short ushort23 = (short)23;
-    private static final long ulong24 = 24L;
-    @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String string = "Hello, world!";
-    @org.jetbrains.annotations.NotNull()
-    public static final ConstReferences INSTANCE = null;
 
     private ConstReferences() {
         super();
     }
+    private static final boolean booleanFalse = false;
 
     public final boolean getBooleanFalse() {
         return false;
     }
+    private static final boolean booleanTrue = true;
 
     public final boolean getBooleanTrue() {
         return false;
@@ -114,6 +99,8 @@ public final class ConstReferences {
     public final int getInt11() {
         return 0;
     }
+    private static final int int11 = 11;
+    private static final byte byte12 = (byte)12;
 
     public final byte getByte12() {
         return 0;
@@ -122,6 +109,8 @@ public final class ConstReferences {
     public final short getShort13() {
         return 0;
     }
+    private static final short short13 = (short)13;
+    private static final char charC = 'C';
 
     public final char getCharC() {
         return '\u0000';
@@ -130,19 +119,28 @@ public final class ConstReferences {
     public final long getLong14() {
         return 0L;
     }
+    private static final long long14 = 14L;
+    private static final float float15 = 1.5F;
 
     public final float getFloat15() {
         return 0.0F;
     }
+    private static final double double16 = 1.6;
 
     public final double getDouble16() {
         return 0.0;
     }
+    private static final int uint21 = 21;
+    private static final byte ubyte22 = (byte)22;
+    private static final short ushort23 = (short)23;
+    private static final long ulong24 = 24L;
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getString() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String string = "Hello, world!";
 
     /**
      * public final object ConstReferences.Consts : kotlin/Any {
@@ -211,6 +209,10 @@ public final class ConstReferences {
      */
     @kotlin.Metadata()
     public static final class Consts {
+
+        private Consts() {
+            super();
+        }
         public static final boolean booleanFalse = false;
         public static final boolean booleanTrue = true;
         public static final int int11 = 11;
@@ -228,11 +230,9 @@ public final class ConstReferences {
         public static final java.lang.String string = "Hello, world!";
         @org.jetbrains.annotations.NotNull()
         public static final ConstReferences.Consts INSTANCE = null;
-
-        private Consts() {
-            super();
-        }
     }
+    @org.jetbrains.annotations.NotNull()
+    public static final ConstReferences INSTANCE = null;
 }
 
 ////////////////////
@@ -319,31 +319,16 @@ public final class ConstReferences {
  */
 @kotlin.Metadata()
 public final class Literals {
-    private static final boolean booleanFalse = false;
-    private static final boolean booleanTrue = true;
-    private static final int int11 = 11;
-    private static final byte byte12 = (byte)12;
-    private static final short short13 = (short)13;
-    private static final char charC = 'C';
-    private static final long long14 = 14L;
-    private static final float float15 = 1.5F;
-    private static final double double16 = 1.6;
-    private static final int uint21 = 21;
-    private static final byte ubyte22 = (byte)22;
-    private static final short ushort23 = (short)23;
-    private static final long ulong24 = 24L;
-    @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String string = "Hello, world!";
-    @org.jetbrains.annotations.NotNull()
-    public static final Literals INSTANCE = null;
 
     private Literals() {
         super();
     }
+    private static final boolean booleanFalse = false;
 
     public final boolean getBooleanFalse() {
         return false;
     }
+    private static final boolean booleanTrue = true;
 
     public final boolean getBooleanTrue() {
         return false;
@@ -352,6 +337,8 @@ public final class Literals {
     public final int getInt11() {
         return 0;
     }
+    private static final int int11 = 11;
+    private static final byte byte12 = (byte)12;
 
     public final byte getByte12() {
         return 0;
@@ -360,6 +347,8 @@ public final class Literals {
     public final short getShort13() {
         return 0;
     }
+    private static final short short13 = (short)13;
+    private static final char charC = 'C';
 
     public final char getCharC() {
         return '\u0000';
@@ -368,19 +357,30 @@ public final class Literals {
     public final long getLong14() {
         return 0L;
     }
+    private static final long long14 = 14L;
+    private static final float float15 = 1.5F;
 
     public final float getFloat15() {
         return 0.0F;
     }
+    private static final double double16 = 1.6;
 
     public final double getDouble16() {
         return 0.0;
     }
+    private static final int uint21 = 21;
+    private static final byte ubyte22 = (byte)22;
+    private static final short ushort23 = (short)23;
+    private static final long ulong24 = 24L;
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getString() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String string = "Hello, world!";
+    @org.jetbrains.annotations.NotNull()
+    public static final Literals INSTANCE = null;
 }
 
 ////////////////////
@@ -407,12 +407,6 @@ public final class Literals {
  */
 @kotlin.Metadata()
 public final class Other {
-    @org.jetbrains.annotations.NotNull()
-    private static final kotlin.reflect.KProperty0<java.lang.String> reference = null;
-    @org.jetbrains.annotations.NotNull()
-    private static final Other thiz = null;
-    @org.jetbrains.annotations.NotNull()
-    public static final Other INSTANCE = null;
 
     private Other() {
         super();
@@ -422,9 +416,15 @@ public final class Other {
     public final kotlin.reflect.KProperty0<java.lang.String> getReference() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private static final kotlin.reflect.KProperty0<java.lang.String> reference = null;
 
     @org.jetbrains.annotations.NotNull()
     public final Other getThiz() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private static final Other thiz = null;
+    @org.jetbrains.annotations.NotNull()
+    public static final Other INSTANCE = null;
 }

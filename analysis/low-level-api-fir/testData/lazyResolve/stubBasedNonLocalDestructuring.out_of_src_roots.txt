@@ -5,10 +5,22 @@ FILE: [ResolvedTo(RAW_FIR)] stubBasedNonLocalDestructuring.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] stubBasedNonLocalDestructuring.kt
@@ -17,10 +29,22 @@ FILE: [ResolvedTo(IMPORTS)] stubBasedNonLocalDestructuring.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] stubBasedNonLocalDestructuring.kt
@@ -29,10 +53,22 @@ FILE: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] stubBasedNonLocalDestructuring
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(COMPANION_GENERATION)] stubBasedNonLocalDestructuring.kt
@@ -41,10 +77,22 @@ FILE: [ResolvedTo(COMPANION_GENERATION)] stubBasedNonLocalDestructuring.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 SUPER_TYPES:
 FILE: [ResolvedTo(SUPER_TYPES)] stubBasedNonLocalDestructuring.kt
@@ -53,10 +101,22 @@ FILE: [ResolvedTo(SUPER_TYPES)] stubBasedNonLocalDestructuring.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 TYPES:
 FILE: [ResolvedTo(TYPES)] stubBasedNonLocalDestructuring.kt
@@ -65,10 +125,22 @@ FILE: [ResolvedTo(TYPES)] stubBasedNonLocalDestructuring.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 STATUS:
 FILE: [ResolvedTo(STATUS)] stubBasedNonLocalDestructuring.kt
@@ -77,10 +149,22 @@ FILE: [ResolvedTo(STATUS)] stubBasedNonLocalDestructuring.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] stubBasedNonLocalDestructuring.kt
@@ -89,10 +173,22 @@ FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] stubBasedNonLocalDestructuring.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 CONTRACTS:
 FILE: [ResolvedTo(CONTRACTS)] stubBasedNonLocalDestructuring.kt
@@ -101,10 +197,22 @@ FILE: [ResolvedTo(CONTRACTS)] stubBasedNonLocalDestructuring.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] stubBasedNonLocalDestructuring.kt
@@ -113,10 +221,22 @@ FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] stubBasedNonLocalDestructuring.k
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(CONSTANT_EVALUATION)] stubBasedNonLocalDestructuring.kt
@@ -125,10 +245,22 @@ FILE: [ResolvedTo(CONSTANT_EVALUATION)] stubBasedNonLocalDestructuring.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] stubBasedNonLocalDestructuring.kt
@@ -137,10 +269,22 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] stubBasedNonLocalDestructuring.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(BODY_RESOLVE)] stubBasedNonLocalDestructuring.kt
@@ -149,10 +293,22 @@ FILE: [ResolvedTo(BODY_RESOLVE)] stubBasedNonLocalDestructuring.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+    private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+        private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: to>
+    public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <ERROR TYPE REF: Unresolved name: component1> = R|/<destruct>|.<Unresolved name: component1>#()
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component1>
+    public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <ERROR TYPE REF: Unresolved name: component2> = R|/<destruct>|.<Unresolved name: component2>#()
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component2>
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] stubBasedNonLocalDestructuring.kt
@@ -161,7 +317,19 @@ FILE: [ResolvedTo(BODY_RESOLVE)] stubBasedNonLocalDestructuring.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+        private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+            private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: to>
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <ERROR TYPE REF: Unresolved name: component1> = R|/A.<destruct>|.<Unresolved name: component1>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component1>
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <ERROR TYPE REF: Unresolved name: component2> = R|/A.<destruct>|.<Unresolved name: component2>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component2>
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+    private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+        private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: to>
+    public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val c: <ERROR TYPE REF: Unresolved name: component1> = R|/<destruct>|.<Unresolved name: component1>#()
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component1>
+    public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val d: <ERROR TYPE REF: Unresolved name: component2> = R|/<destruct>|.<Unresolved name: component2>#()
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component2>

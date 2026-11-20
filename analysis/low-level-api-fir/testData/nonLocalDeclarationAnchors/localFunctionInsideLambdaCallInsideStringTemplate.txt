@@ -1,4 +1,4 @@
-package one
+/* anchor (KtFile) --> */package one
 
 /* anchor (KtClass) --> */open class ClassWithParameter/* anchor (KtPrimaryConstructor) --> */(/* anchor (KtParameter) --> */s: String/* <-- */)/* <-- *//* <-- */
 
@@ -8,3 +8,4 @@ package one
         str()
     }()
 }")/* <-- */
+/* <-- */

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-83273
 // FIR_DUMP
 
@@ -36,3 +37,6 @@ fun usageWithStarImport() {
     val justBuilder: TestJavaBuilder? = null
     justBuilder?.a(2)?.build()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, localProperty, nullableType,
+propertyDeclaration, safeCall */

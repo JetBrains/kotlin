@@ -34,6 +34,18 @@ public class OutOfContentRootDanglingFileInBlockModificationTestGenerated extend
   }
 
   @Test
+  @TestMetadata("danglingModifierListInClass.kt")
+  public void testDanglingModifierListInClass() {
+    run("danglingModifierListInClass.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingModifierListInFile.kt")
+  public void testDanglingModifierListInFile() {
+    run("danglingModifierListInFile.kt");
+  }
+
+  @Test
   @TestMetadata("entireContract.kt")
   public void testEntireContract() {
     run("entireContract.kt");

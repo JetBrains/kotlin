@@ -74,7 +74,7 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
     internal val isSealed: Boolean get() = withClassSymbol { it.modality == KaSymbolModality.SEALED }
 
     context(session: KaSession)
-    internal fun addFieldsFromCompanionIfNeeded(
+    internal fun addFieldsFromCompanionObjectIfNeeded(
         result: MutableList<PsiField>,
         classSymbol: KaNamedClassSymbol,
         nameGenerator: SymbolLightField.FieldNameGenerator,

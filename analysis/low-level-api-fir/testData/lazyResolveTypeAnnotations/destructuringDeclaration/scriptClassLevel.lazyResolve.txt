@@ -38,7 +38,14 @@ FILE: [ResolvedTo(RAW_FIR)] scriptClassLevel.kts
 
             }
 
-            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @Anno[Unresolved](LAZY_EXPRESSION) private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -93,7 +100,14 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
             }
 
-            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @Anno[Unresolved](LAZY_EXPRESSION) private final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -148,7 +162,14 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
             }
 
-            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @Anno[Unresolved](LAZY_EXPRESSION) private final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -203,7 +224,14 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
             }
 
-            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(COMPANION_GENERATION)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @Anno[Unresolved](LAZY_EXPRESSION) private final [ResolvedTo(COMPANION_GENERATION)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -234,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -258,7 +286,14 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
             }
 
-            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(SUPER_TYPES)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @Anno[Unresolved](LAZY_EXPRESSION) private final [ResolvedTo(SUPER_TYPES)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(SUPER_TYPES)] get(): <implicit>
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -289,7 +324,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -313,7 +348,14 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
             }
 
-            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(TYPES)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @R|util/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(TYPES)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(TYPES)] get(): <implicit>
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -344,8 +386,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -368,7 +410,14 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
             }
 
-            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @R|util/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(STATUS)] get(): <implicit>
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -399,8 +448,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -423,7 +472,14 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
             }
 
-            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @R|util/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -454,8 +510,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -478,7 +534,14 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
             }
 
-            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @R|util/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(CONTRACTS)] get(): <implicit>
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -509,31 +572,38 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] class Pair : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
+            public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] class Pair : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Pair] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Foo.Pair.a] a: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=util/Foo.Pair.b] b: R|kotlin/Int|): R|util/Foo.Pair| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Foo.Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/Foo.Pair.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Pair] get(): R|kotlin/Int|
 
-                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Foo.Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/Foo.Pair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Pair] get(): R|kotlin/Int|
 
-                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+                public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+                public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
 
-                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+                public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|kotlin/Int| = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
             }
 
-            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @R|util/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: R|util/Foo.Pair| = R|util/Foo.Pair.Pair|(Int(0), Int(1))
+                private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|util/Foo.Pair|
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -564,31 +634,38 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] class Pair : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
+            public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] class Pair : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Pair] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Foo.Pair.a] a: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=util/Foo.Pair.b] b: R|kotlin/Int|): R|util/Foo.Pair| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Foo.Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/Foo.Pair.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Pair] get(): R|kotlin/Int|
 
-                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Foo.Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/Foo.Pair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Pair] get(): R|kotlin/Int|
 
-                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+                public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+                public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
 
-                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+                public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|kotlin/Int| = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
             }
 
-            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @R|util/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(CONSTANT_EVALUATION)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: R|util/Foo.Pair| = R|util/Foo.Pair.Pair|(Int(0), Int(1))
+                private [ResolvedTo(CONSTANT_EVALUATION)] get(): R|util/Foo.Pair|
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -619,31 +696,38 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] class Pair : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
+            public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] class Pair : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Pair] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Foo.Pair.a] a: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=util/Foo.Pair.b] b: R|kotlin/Int|): R|util/Foo.Pair| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Foo.Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/Foo.Pair.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Pair] get(): R|kotlin/Int|
 
-                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Foo.Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/Foo.Pair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Pair] get(): R|kotlin/Int|
 
-                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+                public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+                public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
 
-                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+                public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|kotlin/Int| = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
             }
 
-            @R|util/Anno|[Types](position = <strcat>(String(destr ), <Unresolved name: prop>#) [evaluated = <strcat>(String(destr ), <Unresolved name: prop>#)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @R|util/Anno|[Types](position = <strcat>(String(destr ), <Unresolved name: prop>#) [evaluated = <strcat>(String(destr ), <Unresolved name: prop>#)]) private final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: R|util/Foo.Pair| = R|util/Foo.Pair.Pair|(Int(0), Int(1))
+                private [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|util/Foo.Pair|
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -674,31 +758,38 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] class Pair : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
+            public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] class Pair : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Pair] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Foo.Pair.a] a: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=util/Foo.Pair.b] b: R|kotlin/Int|): R|util/Foo.Pair| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Foo.Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/Foo.Pair.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Pair] get(): R|kotlin/Int|
 
-                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Foo.Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+                public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/Foo.Pair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=Pair] get(): R|kotlin/Int|
 
-                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+                public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+                public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
 
-                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+                public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|kotlin/Int| = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
 
             }
 
-            @R|util/Anno|[Types](position = <strcat>(String(destr ), <Unresolved name: prop>#) [evaluated = <strcat>(String(destr ), <Unresolved name: prop>#)]) public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/Int|>(Int(0), Int(1))
+            @R|util/Anno|[Types](position = <strcat>(String(destr ), <Unresolved name: prop>#) [evaluated = <strcat>(String(destr ), <Unresolved name: prop>#)]) private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: R|util/Foo.Pair| = R|util/Foo.Pair.Pair|(Int(0), Int(1))
+                private [ResolvedTo(BODY_RESOLVE)] get(): R|util/Foo.Pair|
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
+
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): <implicit>
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -753,7 +844,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptClassLevel.kts
 
             }
 
-            @R|util/Anno|[Types](position = <strcat>(String(destr ), <Unresolved name: prop>#) [evaluated = <strcat>(String(destr ), <Unresolved name: prop>#)]) public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|util/Foo.Pair.Pair|(Int(0), Int(1))
+            @R|util/Anno|[Types](position = <strcat>(String(destr ), <Unresolved name: prop>#) [evaluated = <strcat>(String(destr ), <Unresolved name: prop>#)]) private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: R|util/Foo.Pair| = R|util/Foo.Pair.Pair|(Int(0), Int(1))
+                private [ResolvedTo(BODY_RESOLVE)] get(): R|util/Foo.Pair|
+
+            @R|util/Anno|[Types](position = <strcat>(String(a ), <Unresolved name: prop>#) [evaluated = <strcat>(String(a ), <Unresolved name: prop>#)]) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: R|kotlin/Int| = R|util/Foo.<destruct>|.R|util/Foo.Pair.component1|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            @R|util/Anno|[Types](position = <strcat>(String(b ), <Unresolved name: prop>#) [evaluated = <strcat>(String(b ), <Unresolved name: prop>#)]) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: R|kotlin/Int| = R|util/Foo.<destruct>|.R|util/Foo.Pair.component2|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
             public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {

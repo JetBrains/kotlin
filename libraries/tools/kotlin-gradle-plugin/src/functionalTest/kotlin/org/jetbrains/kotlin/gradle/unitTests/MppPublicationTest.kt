@@ -19,6 +19,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import kotlin.test.*
@@ -48,6 +49,20 @@ class MppPublicationTest {
             .findByName("kotlinMultiplatform") ?: fail("Missing 'kotlinMultiplatform' publication")
     }
 
+    @Test
+    fun `values set in publications configureEach are not overridden by KGP defaults`() {
+        kotlin.linuxX64()
+        val publications = project.extensions.getByType(PublishingExtension::class.java).publications
+            .withType(MavenPublication::class.java)
+        publications.configureEach { it.artifactId = "custom-${it.name}" }
+
+        project.evaluate()
+
+        assertEquals(
+            listOf("kotlinMultiplatform", "jvm", "js", "linuxX64").associateWith { "custom-$it" }.prettyPrinted,
+            publications.associate { it.name to it.artifactId }.prettyPrinted,
+        )
+    }
 
     @Test
     fun `all publication contains sourcesJar`() {
@@ -106,7 +121,7 @@ class MppPublicationTest {
             targets.all { target -> target.attributes { attribute(userAttribute, target.name) } }
             js()
             linuxX64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             iosX64()
         }
 
@@ -284,13 +299,13 @@ class MppPublicationTest {
 
                 linuxX64()
                 mingwX64()
-                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                macosX64()
 
                 js { browser() }
 
                 wasmJs { browser() }
-                wasmWasi { nodejs() }
+                wasmWasi {
+                    wasmtime()
+                }
             }
         }.evaluate()
 

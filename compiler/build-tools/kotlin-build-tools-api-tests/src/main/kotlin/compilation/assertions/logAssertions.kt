@@ -5,8 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.assertions
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+
+// TODO: KT-85024 — the daemon forwards IC messages as plain build report lines, so they always land on the DEBUG level
+fun expectedLogLevelForRebuildReason(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
+    if (strategyConfig.second is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO
 
 fun CompilationOutcome.assertLogContainsLines(logLevel: LogLevel, vararg expectedLines: String) {
     assertLogContainsLines(logLevel, expectedLines.toSet())

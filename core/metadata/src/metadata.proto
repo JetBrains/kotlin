@@ -163,6 +163,14 @@ message Type {
   optional Type abbreviated_type = 13;
   optional int32 abbreviated_type_id = 14 [(type_id_in_table) = true];
 
+  repeated Type rich_error = 15;
+  repeated int32 rich_error_id = 16 [(type_id_in_table) = true];
+
+  repeated Annotation union_type_annotation = 17;
+
+  optional Type union_abbreviated_type = 18;
+  optional int32 union_abbreviated_type_id = 19 [(type_id_in_table) = true];
+
   /*
     suspend
     definitelyNonNull
@@ -220,9 +228,11 @@ message Class {
     isData
     isExternal
     isExpect
-    isInline
+    isValue
     isFun
     hasEnumEntries
+    isRichError
+    isFullValue
   */
   optional int32 flags = 1 [default = 6 /* public final class, no annotations */];
 

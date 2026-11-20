@@ -15,7 +15,7 @@ import org.jetbrains.dokka.analysis.test.api.TestDataFile
  *
  * @see TestData
  */
-class MarkdownTestData : TestData, MdFileCreator {
+internal class MarkdownTestData : TestData, MdFileCreator {
 
     private val files = mutableListOf<TestDataFile>()
 

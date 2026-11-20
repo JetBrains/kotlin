@@ -52,11 +52,11 @@ NSString * KotlinBridgeable_String_unbox(void * ref);
 void * KotlinBridgeable_Array_box(NSArray * value);
 NSArray * KotlinBridgeable_Array_unbox(void * ref);
 
-void * KotlinBridgeable_Set_box(void * value);
-void * KotlinBridgeable_Set_unbox(void * ref);
+void * KotlinBridgeable_Set_box(NSSet * value);
+NSSet * KotlinBridgeable_Set_unbox(void * ref);
 
-void * KotlinBridgeable_Dictionary_box(void * value);
-void * KotlinBridgeable_Dictionary_unbox(void * ref);
+void * KotlinBridgeable_Dictionary_box(NSDictionary * value);
+NSDictionary * KotlinBridgeable_Dictionary_unbox(void * ref);
 
 // _KotlinBridgeable type-tag dispatch for __createBridgeable
 int32_t KotlinBridgeable_getTypeTag(void * ref);

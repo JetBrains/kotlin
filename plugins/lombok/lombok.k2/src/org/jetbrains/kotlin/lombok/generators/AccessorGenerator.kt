@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.lombok.AccessorNames
-import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Accessors
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Getter
@@ -38,6 +36,8 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.collections.orEmpty
+
+object LombokAccessorGeneratorKey : LombokDeclarationKey()
 
 @OptIn(DirectDeclarationsAccess::class)
 class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
@@ -84,6 +84,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                         returnTypeRef = field.returnTypeRef,
                         visibility = getterVisibility,
                         modality = Modality.OPEN,
+                        key = LombokAccessorGeneratorKey,
                         dispatchReceiverType = dispatchReceiverType,
                         isStatic = field.isStatic,
                     )
@@ -113,24 +114,13 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                         returnTypeRef = returnTypeRef,
                         visibility = setterVisibility,
                         modality = Modality.OPEN,
+                        key = LombokAccessorGeneratorKey,
                         dispatchReceiverType = dispatchReceiverType,
                         isStatic = field.isStatic,
                     )
 
                     getOrPut(setterName) { mutableListOf() }.add(function)
                 }
-            }
-
-            if (data != null) {
-                getOrPut(LombokNames.CAN_EQUAL) { mutableListOf() }.add(
-                    classSymbol.createJavaMethod(
-                        name = LombokNames.CAN_EQUAL,
-                        valueParameters = listOf(ConeLombokValueParameter(Name.identifier("other"), session.builtinTypes.nullableAnyType)),
-                        returnTypeRef = session.builtinTypes.booleanType,
-                        visibility = JavaVisibilities.ProtectedAndPackage,
-                        modality = Modality.OPEN,
-                    )
-                )
             }
         }.takeIf { it.isNotEmpty() }
     }

@@ -13,7 +13,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
-import org.jetbrains.kotlin.konan.target.Xcode
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.*
@@ -27,8 +28,10 @@ import kotlin.test.assertTrue
 @OptIn(EnvironmentalVariablesOverride::class)
 @DisplayName("SwiftPM import integration tests for local packages")
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `local package cinterop klib signatures are updated when Swift source changes`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -144,6 +147,84 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `local package with trait`(version: GradleVersion) {
+        project("empty", version) {
+            val packageWithTraitName = "PackageWithTrait"
+            val packageWithTraitPath = projectPath.resolve(packageWithTraitName).createDirectories()
+
+            packageWithTraitPath.resolve("Package.swift").writeText(
+                """
+                    // swift-tools-version: 6.1
+                    import PackageDescription
+
+                    let package = Package(
+                        name: "$packageWithTraitName",
+                        platforms: [.iOS(.v15)],
+                        products: [
+                            .library(name: "$packageWithTraitName", targets: ["$packageWithTraitName"])
+                        ],
+                        traits: [
+                            .trait(name: "ExtraAPI")
+                        ],
+                        targets: [
+                            .target(name: "$packageWithTraitName")
+                        ]
+                    )
+                """.trimIndent()
+            )
+            packageWithTraitPath.resolve("Sources/$packageWithTraitName").createDirectories()
+                .resolve("$packageWithTraitName.swift").writeText(
+                    """
+                        import Foundation
+
+                        @objc public class ${packageWithTraitName}: NSObject {
+                            #if ExtraAPI
+                            @objc public func availableWithTrait() -> String {
+                                return "trait enabled"
+                            }
+                            #endif
+                        }
+                    """.trimIndent()
+                )
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            val property = "enableTrait"
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+
+                    swiftPMDependencies {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir(packageWithTraitName),
+                            products = listOf(packageWithTraitName),
+                            traits = if (project.hasProperty(property)) setOf("ExtraAPI") else emptySet()
+                        )
+                    }
+                }
+            }
+
+            assertEquals(
+                listOf(),
+                commonizeAndDumpCinteropSignatures().lineSequence()
+                    .filter { "availableWithTrait" in it }
+                    .toList()
+            )
+            assertEquals(
+                listOf(
+                    "public open expect fun swiftPMImport/empty/${packageWithTraitName}.availableWithTrait(): kotlin/String",
+                ),
+                commonizeAndDumpCinteropSignatures(extraArgs = arrayOf("-P${property}")).lineSequence()
+                    .filter { "availableWithTrait" in it }
+                    .toList()
+            )
+        }
+    }
+
+    @TestMetadata("emptyxcode")
+    @GradleTest
     fun `local package with objc sources`(version: GradleVersion) {
         project("emptyxcode", version) {
             val localPackageRelativePath = "../localObjcPackage"
@@ -195,6 +276,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `check that cpp packages with c compatible header visible in kotlin`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -272,6 +354,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `check that cpp packages without c compatible header and without any valid package will fail cinterop`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -309,6 +392,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `check that cpp packages without c compatible header but with valid packages will not be visible`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -411,6 +495,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `check that swift packages with cxx target do not fail cinterop and built in xcode`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -419,7 +504,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
             val targetName = "LocalPackage"
             localPackageDir.resolve("Package.swift").writeText(
                 """
-            // swift-tools-version: 5.9
+            // swift-tools-version: 6.1
             import PackageDescription
 
             let package = Package(
@@ -515,6 +600,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `check that pure swift packages not visible in kotlin, but passed to xcodebuild`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -588,6 +674,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `local package with resources - packaging and runtime lookup in iosApp`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -684,6 +771,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `test apple target without macosArm64 slice in swift package`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -740,6 +828,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `local swift package with valid slices for all apple targets`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -749,7 +838,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
 
             localPackageDir.resolve("Package.swift").writeText(
                 """
-                    // swift-tools-version: 5.9
+                    // swift-tools-version: 6.1
                     import PackageDescription
 
                     let package = Package(

@@ -234,6 +234,12 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
     public void testUncheckedCastTest() {
       run("UncheckedCastTest.kt");
     }
+
+    @Test
+    @TestMetadata("UsageInExtensions.kt")
+    public void testUsageInExtensions() {
+      run("UsageInExtensions.kt");
+    }
   }
 
   @Nested
@@ -274,6 +280,12 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
     @TestMetadata("CompanionFunctions.kt")
     public void testCompanionFunctions() {
       run("CompanionFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionLoopingFunctions.kt")
+    public void testCompanionLoopingFunctions() {
+      run("CompanionLoopingFunctions.kt");
     }
 
     @Test
@@ -326,6 +338,12 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
     @Test
     public void testAllFilesPresentInDelegated() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/delegated"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^KT83367\\.kt$"), true);
+    }
+
+    @Test
+    @TestMetadata("DelegatedPropertiesAdvancedTest.kt")
+    public void testDelegatedPropertiesAdvancedTest() {
+      run("DelegatedPropertiesAdvancedTest.kt");
     }
 
     @Test

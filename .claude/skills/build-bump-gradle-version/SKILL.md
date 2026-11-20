@@ -33,7 +33,7 @@ It is one of three Gradle-version skills; make sure you're in the right one:
 | `GRADLE_COMMON_COMPILE_API_VERSION` (plugin compile API) | `build-tools-bump-gradle-api` |
 | the KGP integration-test version matrix (`MAX_SUPPORTED`) | `build-tools-bump-gradle-in-tests` |
 
-**Tooling:** per the project `CLAUDE.md`, use JetBrains IDE MCP tools for every read and write on
+**Tooling:** per `.ai/guidelines.md`, use JetBrains IDE MCP tools for every read and write on
 project files — `mcp__idea__read_file`, `mcp__idea__search_text` / `mcp__idea__search_regex`,
 `mcp__idea__get_symbol_info`, and `mcp__idea__apply_patch` for edits — not `Read`/`Edit`/`Grep`/`Glob`,
 which bypass the IDE's view of open buffers. Use the default `Bash` tool for Gradle commands (never
@@ -337,7 +337,20 @@ Root-cause each failure:
 
 ---
 
-## Step 6 — Handover (do not commit)
+### Step 6 - Update CI infrastructure
+
+Repository CI configuration should also be updated to properly support new Gradle version in the repository:
+1. Ask user the path to the infrastructure repository
+2. In this repository create a new branch `gradle-version-update`
+3. Update constant `GRADLE_VERSION_DEFAULT` in `.teamcity/common/gradle.kt` file to new version
+4. Commit the change with the following commit message:
+```text
+[Build] Update GRADLE_VERSION_DEFAULT to <new Gradle version>
+```
+
+---
+
+## Step 7 — Handover (do not commit)
 
 The user reviews and commits this change themselves; a wrapper bump usually gets split into a core
 commit plus per-area fix commits, and that split is theirs to make. **Leave everything in the
@@ -351,7 +364,8 @@ Finish by reporting:
 3. **Anything still not clean** — in particular any warning that still needs
    `-Pkotlin.build.disable.werror=true` or any step you could only get through with a flag.
 4. **`local.properties` restored** to its original content (confirm this explicitly).
-5. **A suggested commit message** for the user to apply if they want it — the style prior bumps
+5. **Ask user to update infrastructure** by creating merge request in the infrastructure repository.
+6. **A suggested commit message** for the user to apply if they want it — the style prior bumps
    used (`91b45e1ee110`):
 
    ```

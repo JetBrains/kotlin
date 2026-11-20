@@ -119,7 +119,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         @Deprecated(
             message = "Use setPackageFqName(value) instead",
             replaceWith = ReplaceWith("this.setPackageFqName(value)", "org.jetbrains.kotlin.idea.base.psi.setPackageFqName"),
-            level = DeprecationLevel.ERROR,
+            level = DeprecationLevel.HIDDEN,
         )
         set(value) {
             KtPsiMutationService.getInstance().setPackageFqName(this, value)
@@ -133,7 +133,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     @Deprecated(
         message = "Use 'packageFqName' property instead",
         replaceWith = ReplaceWith("packageFqName"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     val packageFqNameByTree: FqName
         get() = packageFqName
@@ -174,7 +174,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     @Deprecated(
         message = "Use 'isScript()' instead",
         replaceWith = ReplaceWith("isScript()"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     val isScriptByTree: Boolean
         get() = isScript()

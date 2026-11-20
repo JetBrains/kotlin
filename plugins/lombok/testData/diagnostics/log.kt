@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-86839
 // FULL_JDK
 
@@ -33,3 +34,5 @@ fun test() {
     JavaLogExamplePrivate.<!INVISIBLE_REFERENCE!>log<!>.info("Access to invisible private log field")
     JavaLogExampleProtected.<!INVISIBLE_REFERENCE!>log<!>.info("Access to invisible protected log field")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaProperty, javaType, stringLiteral */

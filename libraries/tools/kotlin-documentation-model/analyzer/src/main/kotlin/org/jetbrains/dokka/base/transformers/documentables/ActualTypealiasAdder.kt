@@ -17,7 +17,7 @@ import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
  * The transformer should be applied after merging all documentables
  */
 // TODO assign actual [DTypeAlias.expectPresentInSet] an expect source set, currently, [DTypeAlias.expectPresentInSet] always = null
-public class ActualTypealiasAdder : DocumentableTransformer {
+internal class ActualTypealiasAdder : DocumentableTransformer {
 
     override fun invoke(original: DModule, context: DokkaContext): DModule {
         return original.generateTypealiasesMap().let { aliases ->

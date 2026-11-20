@@ -10,9 +10,10 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.fus.internal.isCiBuild
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_VERSION_CHECKSUM
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
@@ -64,11 +66,15 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainMode
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.WasmToolsToolchainMode
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
+import org.jetbrains.kotlin.gradle.targets.web.WebIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.localProperties
+import org.jetbrains.kotlin.internal.KgpBuildConstants
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.util.prefixIfNot
@@ -276,6 +282,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val computeTransformedLibraryChecksum: Boolean
         get() = booleanProperty(KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM) ?: true
 
+    // KT-91297: This property uses actual dependency versions in GMT output paths instead of hashing them to help with testability
+    val computeTransformedLibraryVersionChecksum: Boolean
+        get() = booleanProperty(KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_VERSION_CHECKSUM) ?: true
+
     val mppEnableOptimisticNumberCommonization: Boolean
         get() = booleanProperty(KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION) ?: true
 
@@ -414,6 +424,15 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val nativeParallelThreads: Int?
         get() = this.property(PropertyNames.KOTLIN_NATIVE_PARALLEL_THREADS).orNull?.toInt()
 
+    val nativeCompileMaxWorkers: Int?
+        get() = this.property(PropertyNames.KOTLIN_NATIVE_COMPILE_MAX_WORKERS).orNull?.toIntOrNull()
+
+    val nativeLinkMaxWorkers: Int?
+        get() = this.property(PropertyNames.KOTLIN_NATIVE_LINK_MAX_WORKERS).orNull?.toIntOrNull()
+
+    val nativeCommonizeCInteropMaxWorkers: Int?
+        get() = this.property(PropertyNames.KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS).orNull?.toIntOrNull()
+
     val nativeEnableReleaseBinaryCache: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_RELEASE_BINARY_CACHE) ?: false
 
@@ -449,10 +468,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING) ?: false
 
     val jvmTargetValidationMode: JvmTargetValidationMode
-        get() = enumProperty(
-            "kotlin.jvm.target.validation.mode",
-            if (GradleVersion.current().baseVersion >= GradleVersion.version("8.0")) JvmTargetValidationMode.ERROR else JvmTargetValidationMode.WARNING
-        )
+        get() = enumProperty("kotlin.jvm.target.validation.mode", JvmTargetValidationMode.ERROR)
 
     val kotlinDaemonJvmArgs: String?
         get() = property("kotlin.daemon.jvmargs").orNull
@@ -544,20 +560,29 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val cocoapodsSwiftPMMigrationNowarn: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_COCOAPODS_SWIFTPM_MIGRATION_NOWARN) ?: false
 
-    val appleCreateSymbolicLinkToFrameworkInBuiltProductsDir: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_APPLE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_IN_BUILT_PRODUCTS_DIR) ?: true
+    val createSymbolicLinkToFrameworkInBuiltProductsDir: Boolean
+        get() = propertyWithDeprecatedVariant(
+            PropertyNames.KOTLIN_NATIVE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_IN_BUILT_PRODUCTS_DIR,
+            PropertyNames.KOTLIN_APPLE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_IN_BUILT_PRODUCTS_DIR_DEPRECATED,
+        )?.toBoolean() ?: true
+
+    val createSymbolicLinkToFrameworkForXcodeIndexing: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_FOR_XCODE_INDEXING) ?: true
 
     val appleCopyDsymDuringArchiving: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_APPLE_COPY_DSYM_DURING_ARCHIVING) ?: true
 
     val swiftExportIgnoreExperimental: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN) == true
+        get() = propertyWithDeprecatedVariant(
+            PropertyNames.KOTLIN_NATIVE_SUPPRESS_SWIFT_EXPORT_EXPERIMENTAL_WARNING,
+            PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN_DEPRECATED,
+        )?.toBoolean() == true
 
     /**
      * Extra JVM arguments for the Swift Export worker process.
      */
     val swiftExportJvmArgs: List<String>
-        get() = get(PropertyNames.KOTLIN_SWIFT_EXPORT_JVM_ARGS).orEmpty()
+        get() = get(PropertyNames.KOTLIN_NATIVE_SWIFT_EXPORT_WORKER_JVM_ARGS).orEmpty()
             .split("\\s+".toRegex())
             // Leading or trailing whitespace leaves empty strings, which would reach the JVM as arguments
             .filterNot { it.isBlank() }
@@ -656,6 +681,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     val enableMonotonousIncrementalCompileSetExpansion: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_MONOTONOUS_COMPILE_SET_EXPANSION) ?: true
+
+    /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableErrorRecoveryRound] */
+    val enableErrorRecoveryRound: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.KOTLIN_JVM_ENABLE_ERROR_RECOVERY_ROUND).orElse(true)
 
     /**
      * Enables incremental compilation of common KMP sources targeting JVM (KT-86703).
@@ -760,18 +789,91 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val playwrightBrowsersPath: Provider<String>
         get() = property(PropertyNames.KOTLIN_PLAYWRIGHT_BROWSERS_PATH)
 
+    /**
+     * The Node.js version used by default for JS and WasmJS,
+     * and both by the Node.js toolchain and the (to-be-deprecated) [org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec].
+     *
+     * This property is temporary and will be replaced with a settings plugin DSL in KT-90504.
+     */
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
+    val nodejsDefaultVersion: Provider<NodeJsVersion>
+        get() = property(PropertyNames.KOTLIN_NODEJS_DEFAULT_VERSION)
+            .orElse(KgpBuildConstants.DEFAULT_NODE_JS_VERSION)
+            .map(::NodeJsVersion)
+
     val nodeJsToolchainMode: NodeJsToolchainMode
-        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN).orNull
-            ?.let { NodeJsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) } ?: NodeJsToolchainMode.DISABLE
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_MODE).orNull
+            ?.let { NodeJsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) }
+            ?.also { mode ->
+                if (mode != NodeJsToolchainMode.DISABLE) {
+                    project.reportDiagnosticOncePerBuild(
+                        KotlinToolingDiagnostics.ExperimentalFeatureWarning(
+                            "Node.js toolchain",
+                            "https://kotl.in/experimental-nodejs-toolchain",
+                        ),
+                        key = "NodeJsToolchain"
+                    )
+                }
+            } ?: NodeJsToolchainMode.DISABLE
 
-    val nodeJsToolchainDefaultInstallPath: Provider<String>
-        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_INSTALL_PATH)
+    val nodeJsToolchainInstallationDir: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_INSTALLATION_DIR)
 
-    val nodeJsToolchainDefaultDownloadUrl: Provider<String>
-        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_DOWNLOAD_URL)
+    val nodeJsToolchainDownloadUrl: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_DOWNLOAD_URL)
 
-    val nodeJsToolchainLocalPath: Provider<String>
-        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_LOCAL_PATH)
+    val nodeJsToolchainPreinstalledExecutablePath: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH)
+
+    val wasiAdapterToolchainMode: WasiAdapterToolchainMode
+        get() = property(PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_MODE).orNull
+            ?.let { WasiAdapterToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) }
+            ?.also { mode ->
+                if (mode != WasiAdapterToolchainMode.DISABLE) {
+                    project.reportDiagnosticOncePerBuild(
+                        KotlinToolingDiagnostics.ExperimentalFeatureWarning(
+                            "Wasi Adapter toolchain",
+                            "https://kotl.in/experimental-wasm-toolchains",
+                        ),
+                        key = "WasiAdapterToolchain"
+                    )
+                }
+            }
+            ?: WasiAdapterToolchainMode.DOWNLOAD
+
+    val wasiAdapterToolchainInstallationDir: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_INSTALLATION_DIR)
+
+    val wasiAdapterToolchainDefaultDownloadUrl: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_DOWNLOAD_URL)
+
+    val wasiAdapterToolchainPreinstalledExecutablePath: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH)
+
+    val wasmToolsToolchainMode: WasmToolsToolchainMode
+        get() = property(PropertyNames.KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_MODE).orNull
+            ?.let { WasmToolsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) }
+            ?.also { mode ->
+                if (mode != WasmToolsToolchainMode.DISABLE) {
+                    project.reportDiagnosticOncePerBuild(
+                        KotlinToolingDiagnostics.ExperimentalFeatureWarning(
+                            "Wasm Tools toolchain",
+                            "https://kotl.in/experimental-wasm-toolchains",
+                        ),
+                        key = "WasmToolsToolchain"
+                    )
+                }
+            }
+            ?: WasmToolsToolchainMode.DOWNLOAD
+
+    val wasmToolsToolchainInstallationDir: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_INSTALLATION_DIR)
+
+    val wasmToolsToolchainDefaultDownloadUrl: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_DOWNLOAD_URL)
+
+    val wasmToolsToolchainPreinstalledExecutablePath: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH)
 
     /**
      * Connection URL of the debug session hosted by the IDE, set when the browser tests are being debugged.
@@ -790,6 +892,16 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val npmSharedDependenciesProjectMode: Provider<String>
         get() = property(PropertyNames.NPM_SHARED_DEPENDENCIES_PROJECT_MODE)
 
+    /**
+     * Whether KGP JS and Wasm code avoids configuration that is incompatible with Isolated Projects.
+     *
+     * Internal property, intended to help test Isolated Projects support KT-80311.
+     */
+    val webIsolatedProjectsSupport: WebIsolatedProjectsSupport
+        get() = property(PropertyNames.KOTLIN_WEB_ISOLATED_PROJECTS_SUPPORT).orNull
+            ?.let { WebIsolatedProjectsSupport.valueOf(it) }
+            ?: WebIsolatedProjectsSupport.Off
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = get(deprecatedPropName)
         if (deprecatedProperty != null) {
@@ -804,7 +916,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
     private fun booleanProvider(propName: String): Provider<Boolean> =
         getProvider(propName).map { it.toBoolean() }
 
-    private inline fun <reified T: Enum<T>> String.toEnumValue(): T =
+    private inline fun <reified T : Enum<T>> String.toEnumValue(): T =
         enumValueOf<T>(this.toUpperCaseAsciiOnly())
 
     private inline fun <reified T : Enum<T>> enumProperty(
@@ -847,6 +959,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_JS_STDLIB_DOM_API_INCLUDED = property("kotlin.js.stdlib.dom.api.included")
         val KOTLIN_JS_YARN = property("kotlin.js.yarn")
         val KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM = property("${KOTLIN_INTERNAL_NAMESPACE}.mpp.computeTransformedLibraryChecksum")
+        val KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_VERSION_CHECKSUM = property("${KOTLIN_INTERNAL_NAMESPACE}.mpp.computeTransformedLibraryVersionChecksum")
         val KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA = property("kotlin.mpp.enableGranularSourceSetsMetadata")
         val KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT = property("kotlin.mpp.enableCompatibilityMetadataVariant")
         val KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION = property("kotlin.mpp.enableCInteropCommonization")
@@ -860,16 +973,28 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = property("kotlin.native.enableDependencyPropagation")
         val KOTLIN_NATIVE_PARALLEL_THREADS = property("kotlin.native.parallelThreads")
         val KOTLIN_NATIVE_INCREMENTAL_COMPILATION = property("kotlin.incremental.native")
+        val KOTLIN_NATIVE_LINK_MAX_WORKERS = property("kotlin.native.linkMaxWorkers")
+        val KOTLIN_NATIVE_COMPILE_MAX_WORKERS = property("kotlin.native.compileMaxWorkers")
+        val KOTLIN_NATIVE_COMMONIZE_CINTEROP_MAX_WORKERS = property("kotlin.native.commonizeCInteropMaxWorkers")
         val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = property("kotlin.mpp.enableOptimisticNumberCommonization")
         val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = property("kotlin.mpp.enablePlatformIntegerCommonization")
         val KOTLIN_JS_KARMA_BROWSERS = property("kotlin.js.browser.karma.browsers")
         val KOTLIN_JS_GENERATE_RICH_TYPESCRIPT_DECLARATIONS = property("kotlin.js.generateRichTypeScriptDeclarations")
         val KOTLIN_PLAYWRIGHT_BROWSERS_PATH = property("kotlin.gradle.playwright.browsers.path")
-        val KOTLIN_JS_NODEJS_TOOLCHAIN = property("kotlin.js.nodejs.toolchain")
-        val KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_INSTALL_PATH = property("kotlin.js.nodejs.toolchain.default.install.path")
-        val KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_DOWNLOAD_URL = property("kotlin.js.nodejs.toolchain.default.download.url")
+        val KOTLIN_NODEJS_DEFAULT_VERSION = property("kotlin.defaultNodeJsVersion")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_MODE = property("kotlin.js.nodeJsToolchainMode")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_INSTALLATION_DIR = property("kotlin.js.nodeJsToolchainInstallationDir")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_DOWNLOAD_URL = property("kotlin.js.nodeJsToolchainDownloadUrl")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH = property("kotlin.js.nodeJsToolchainPreinstalledExecutablePath")
+        val KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_MODE = property("kotlin.wasm.wasiAdapterToolchainMode")
+        val KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_INSTALLATION_DIR = property("kotlin.wasm.wasiAdapterToolchainInstallationDir")
+        val KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_DOWNLOAD_URL = property("kotlin.wasm.wasiAdapterToolchainDownloadUrl")
+        val KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH = property("kotlin.wasm.wasiAdapterToolchainPreinstalledExecutablePath")
 
-        val KOTLIN_JS_NODEJS_TOOLCHAIN_LOCAL_PATH = property("kotlin.js.nodejs.toolchain.local.path")
+        val KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_MODE = property("kotlin.wasm.wasmToolsToolchainMode")
+        val KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_INSTALLATION_DIR = property("kotlin.wasm.wasmToolsToolchainInstallationDir")
+        val KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_DOWNLOAD_URL = property("kotlin.wasm.wasmToolsToolchainDownloadUrl")
+        val KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH = property("kotlin.wasm.wasmToolsToolchainPreinstalledExecutablePath")
         val KOTLIN_JS_IDE_DEBUG_SESSION_URL = property("kotlin.internal.js.ideDebugSessionUrl")
         val KOTLIN_BUILD_REPORT_SINGLE_FILE = property("kotlin.build.report.single_file")
         val KOTLIN_BUILD_REPORT_HTTP_URL = property("kotlin.build.report.http.url")
@@ -894,16 +1019,21 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_USER_HOME_DIR = property("kotlin.user.home")
         val KOTLIN_PROJECT_PERSISTENT_DIR = property("kotlin.project.persistent.dir")
         val KOTLIN_PROJECT_PERSISTENT_DIR_GRADLE_DISABLE_WRITE = property("kotlin.project.persistent.dir.gradle.disableWrite")
-        val KOTLIN_APPLE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_IN_BUILT_PRODUCTS_DIR =
+        val KOTLIN_NATIVE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_IN_BUILT_PRODUCTS_DIR =
+            property("kotlin.native.createSymbolicLinkToFrameworkInBuiltProductsDir")
+        val KOTLIN_APPLE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_IN_BUILT_PRODUCTS_DIR_DEPRECATED =
             property("kotlin.apple.createSymbolicLinkToFrameworkInBuiltProductsDir")
+        val KOTLIN_NATIVE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_FOR_XCODE_INDEXING =
+            property("kotlin.native.createSymbolicLinkToFrameworkForXcodeIndexing")
         val KOTLIN_APPLE_COPY_DSYM_DURING_ARCHIVING = property("kotlin.apple.copyDsymDuringArchiving")
         val KOTLIN_APPLE_XCODE_COMPATIBILITY_NOWARN = property("kotlin.apple.xcodeCompatibility.nowarn")
         val KOTLIN_NATIVE_COCOAPODS_SWIFTPM_MIGRATION_NOWARN = property("kotlin.native.cocoapods.swiftpmMigration.nowarn")
         val KOTLIN_APPLE_COCOAPODS_EXECUTABLE = property("kotlin.apple.cocoapods.bin")
         val KOTLIN_APPLE_ALLOW_EMBED_AND_SIGN_WITH_COCOAPODS =
             property("kotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies")
-        val KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN = property("kotlin.swift-export.experimental.nowarn")
-        val KOTLIN_SWIFT_EXPORT_JVM_ARGS = property("kotlin.swift-export.jvmArgs")
+        val KOTLIN_NATIVE_SUPPRESS_SWIFT_EXPORT_EXPERIMENTAL_WARNING = property("kotlin.native.suppressSwiftExportExperimentalWarning")
+        val KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN_DEPRECATED = property("kotlin.swift-export.experimental.nowarn")
+        val KOTLIN_NATIVE_SWIFT_EXPORT_WORKER_JVM_ARGS = property("kotlin.native.swiftExportWorkerJvmArgs")
         val KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION = property("kotlin.native.enableKlibsCrossCompilation")
         val KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED = property("kotlin.build.archivesTaskOutputAsFriendModule")
         val KOTLIN_KMP_PUBLICATION_STRATEGY = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.kmpPublicationStrategy")
@@ -915,6 +1045,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_INCREMENTAL_FIR = property("kotlin.incremental.jvm.fir")
         val KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
             property("kotlin.jvm.enableIncrementalCompilationOfCommonSources")
+        val KOTLIN_JVM_ENABLE_ERROR_RECOVERY_ROUND = property("kotlin.jvm.enableErrorRecoveryRound")
         val KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.unresolvedDependenciesDiagnostic")
         val KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.eagerUnresolvedDependenciesDiagnostic")
         val KOTLIN_DISPLAY_DIAGNOSTICS_IN_IDE_BUILD_LOG = property("kotlin.displayDiagnosticsInIdeBuildLog")
@@ -941,12 +1072,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
             property("$KOTLIN_INTERNAL_NAMESPACE.mpp.createArchiveTasksForCustomCompilations")
         val KOTLIN_COMPILER_ARGUMENTS_LOG_LEVEL = property("$KOTLIN_INTERNAL_NAMESPACE.compiler.arguments.log.level")
 
-        /**
-         * Replaced by the per-target properties, kept only to report
-         * [org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.DeprecatedErrorGradleProperties] on its usage.
-         */
-        val KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
-            property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
             property("$KOTLIN_INTERNAL_NAMESPACE.js.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
@@ -966,6 +1091,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
 
         val NPM_SHARED_DEPENDENCIES_PROJECT_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.npm.sharedNpmDependenciesProjectMode")
+        val KOTLIN_WEB_ISOLATED_PROJECTS_SUPPORT = property("$KOTLIN_INTERNAL_NAMESPACE.web.isolatedProjectsSupport")
     }
 
     companion object {

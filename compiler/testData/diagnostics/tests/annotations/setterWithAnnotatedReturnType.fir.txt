@@ -1,0 +1,47 @@
+FILE: setterWithAnnotatedReturnType.kt
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(position: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val position: R|kotlin/String| = R|<local>/position|
+            public get(): R|kotlin/String|
+
+    }
+    public final const val prop: R|kotlin/String| = String(str)
+        public get(): R|kotlin/String|
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var property: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int| {
+                ^ this@R|/A|.F|/A.property|
+            }
+            public set(value: R|kotlin/Int|): R|@R|Anno|(position = <strcat>(String(member setter return type ), R|/prop|) [evaluated = String(member setter return type str)])  kotlin/Unit| {
+                this@R|/A|.F|/A.property| = R|<local>/value|
+            }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        local final class Local : R|kotlin/Any| {
+            public constructor(): R|<local>/Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun usage(): R|kotlin/Int| {
+                ^usage this@R|<local>/Local|.R|<local>/property|
+            }
+
+            public final var property: R|kotlin/Int| = Int(1)
+                public get(): R|kotlin/Int| {
+                    ^ this@R|<local>/Local|.F|<local>/property|
+                }
+                public set(value: R|kotlin/Int|): R|@R|Anno|(position = <strcat>(String(local setter return type ), R|/prop|) [evaluated = String(local setter return type str)])  kotlin/Unit| {
+                    this@R|<local>/Local|.F|<local>/property| = R|<local>/value|
+                }
+
+        }
+
+    }

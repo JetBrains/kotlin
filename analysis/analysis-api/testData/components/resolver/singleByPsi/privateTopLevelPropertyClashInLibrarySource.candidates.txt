@@ -1,0 +1,35 @@
+KtNameReferenceExpression(74,76): 'pv'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = pv
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val pv: kotlin.Int
+        contextParameters = []
+        callableId = test/pv
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = pv
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val pv: kotlin.String
+        contextParameters = []
+        callableId = test/pv
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'val pv: String': it is private in file.>
+    isInBestCandidates = false

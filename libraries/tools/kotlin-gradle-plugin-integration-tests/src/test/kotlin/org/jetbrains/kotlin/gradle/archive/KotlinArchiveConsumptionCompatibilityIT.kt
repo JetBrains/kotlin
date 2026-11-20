@@ -18,16 +18,18 @@ import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.publish
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Consumption of a project published in the Kotlin Archive format by the previous Kotlin release")
-@MppGradlePluginTests
+@MustRunOnChangesInGradle
 class KotlinArchiveConsumptionCompatibilityIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @GradleTest
+    @MppGradlePluginTests
     fun jvmProjectConsumptionTest(gradleVersion: GradleVersion) {
         val publishedProject = publishKotlinArchive(gradleVersion)
 
@@ -43,6 +45,7 @@ class KotlinArchiveConsumptionCompatibilityIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @MppGradlePluginTests
     fun jvmOnlyMultiplatformProjectConsumptionTest(gradleVersion: GradleVersion) {
         val publishedProject = publishKotlinArchive(gradleVersion)
 
@@ -63,6 +66,7 @@ class KotlinArchiveConsumptionCompatibilityIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @MppGradlePluginTests
     fun otherTargetsConsumptionReportsUnsupportedArchiveTest(gradleVersion: GradleVersion) {
         val publishedProject = publishKotlinArchive(gradleVersion)
 

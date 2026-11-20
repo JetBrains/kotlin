@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.test.backend.handlers
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
-import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_DIAGNOSTICS
@@ -78,11 +75,6 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
                 val finder = SequentialPositionFinder(it)
                 for (metaInfo in testServices.globalMetadataInfoHandler.getReportedMetaInfosForFile(testFile).sortedWith(CodeMetaInfoComparator)) {
                     val rendered = when (metaInfo) {
-                        is DiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
-                            val message = DefaultErrorMessages.render(it)
-                            val position = DiagnosticUtils.getLineAndColumnRange(it.psiFile, it.textRanges).start
-                            renderDiagnosticMessage(it.psiFile.name, it.severity, message, position.line, position.column)
-                        }
                         is FirDiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
                             val message = it.renderMessage()
                             val position = finder.findNextPosition(it.firstRange.startOffset, false)
@@ -137,13 +129,11 @@ private object CodeMetaInfoComparator : Comparator<CodeMetaInfo> {
     }
 
     private fun severityOrdinal(codeMetaInfo: CodeMetaInfo) = when (codeMetaInfo) {
-        is DiagnosticCodeMetaInfo -> codeMetaInfo.diagnostic.severity.ordinal
         is FirDiagnosticCodeMetaInfo -> codeMetaInfo.diagnostic.severity.ordinal
         else -> -1
     }
 
     private fun renderForSort(codeMetaInfo: CodeMetaInfo) = when (codeMetaInfo) {
-        is DiagnosticCodeMetaInfo -> DefaultErrorMessages.render(codeMetaInfo.diagnostic)
         is FirDiagnosticCodeMetaInfo -> codeMetaInfo.diagnostic.renderMessage()
         else -> ""
     }

@@ -624,6 +624,63 @@ class ScriptingHostTest {
         assertEquals(greeting, output)
     }
 
+    @Test
+    fun testRefinedCompilerOptionsOfImportedScriptAreAppliedWithBaseOptionsOnce() {
+        val importedScript = "package kotlin\nval importedValue = 42".toScriptSource("imported.kts")
+        val mainScript = "println(\"Hello from main!\")".toScriptSource("main.kts")
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            // a duplicated warning level is reported as an error
+            compilerOptions("-Xwarning-level=UNUSED_VARIABLE:disabled")
+            refineConfiguration {
+                beforeCompiling { ctx ->
+                    when (ctx.script.name) {
+                        "main.kts" -> ctx.compilationConfiguration.with {
+                            importScripts(importedScript)
+                            compilerOptions.append("-opt-in=kotlin.ExperimentalStdlibApi")
+                        }
+                        "imported.kts" -> ctx.compilationConfiguration.with {
+                            compilerOptions.append(K2JVMCompilerArguments::allowKotlinPackage.cliArgument)
+                        }
+                        else -> ctx.compilationConfiguration
+                    }.asSuccess()
+                }
+            }
+        }
+        val output = captureOut {
+            val res = makeScriptingHost().eval(mainScript, compilationConfiguration, null)
+            assertTrue(res is ResultWithDiagnostics.Success, "Unexpected failure:\n  ${res.reports.joinToString("\n  ") { it.message }}")
+        }
+        assertEquals("Hello from main!", output)
+    }
+
+    @Test
+    fun testSameRefinedCompilerOptionsOfMainAndImportedScriptAreAppliedOnce() {
+        val importedScript = "val importedValue = 42".toScriptSource("imported.kts")
+        val mainScript = "println(\"Hello from main!\")".toScriptSource("main.kts")
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            refineConfiguration {
+                beforeCompiling { ctx ->
+                    when (ctx.script.name) {
+                        "main.kts" -> ctx.compilationConfiguration.with {
+                            importScripts(importedScript)
+                            // a duplicated warning level is reported as an error
+                            compilerOptions.append("-Xwarning-level=UNUSED_VARIABLE:disabled")
+                        }
+                        "imported.kts" -> ctx.compilationConfiguration.with {
+                            compilerOptions.append("-Xwarning-level=UNUSED_VARIABLE:disabled")
+                        }
+                        else -> ctx.compilationConfiguration
+                    }.asSuccess()
+                }
+            }
+        }
+        val output = captureOut {
+            val res = makeScriptingHost().eval(mainScript, compilationConfiguration, null)
+            assertTrue(res is ResultWithDiagnostics.Success, "Unexpected failure:\n  ${res.reports.joinToString("\n  ") { it.message }}")
+        }
+        assertEquals("Hello from main!", output)
+    }
+
     private fun doDiamondImportTest(evaluationConfiguration: ScriptEvaluationConfiguration? = null): List<String> {
         val mainScript = "sharedVar += 1\nprintln(\"sharedVar == \$sharedVar\")".toScriptSource("main.kts")
         val middleScript = File(TEST_DATA_DIR, "importTest/diamondImportMiddle.kts").toScriptSource()
@@ -723,7 +780,7 @@ class ScriptingHostTest {
         }
         val res1 = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(
-            res1 is ResultWithDiagnostics.Failure && res1.reports.find { it.message == "Invalid argument: -jvm-target->1.8" } != null,
+            res1 is ResultWithDiagnostics.Failure && res1.reports.find { it.message == "Invalid argument: '-jvm-target->1.8'." } != null,
             "Expected failure with invalid JVM target option, but got: $res1"
         )
 
@@ -738,7 +795,7 @@ class ScriptingHostTest {
         }
         val res2 = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration2, null)
         assertTrue(
-            res2 is ResultWithDiagnostics.Failure && res2.reports.find { it.message == "Invalid argument: -jvm-target->1.6" } != null,
+            res2 is ResultWithDiagnostics.Failure && res2.reports.find { it.message == "Invalid argument: '-jvm-target->1.6'." } != null,
             "Expected failure with invalid JVM target option, but got: $res2"
         )
     }
@@ -758,8 +815,8 @@ class ScriptingHostTest {
         }
         val res = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
         assertTrue(res is ResultWithDiagnostics.Success)
-        assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: -Xunknown1" })
-        assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: -Xunknown2" })
+        assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: '-Xunknown1'." })
+        assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: '-Xunknown2'." })
     }
 
     @Test

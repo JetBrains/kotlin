@@ -1,0 +1,19 @@
+KT element: KtDelegatedSuperTypeEntry
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] delegatedSuperTypeEntry.kt
+    public abstract [ResolvedTo(STATUS)] interface MyInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=/MyClass.$$delegate_0}] class MyClass : R|MyInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] i: R|MyInterface|): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|MyInterface| = R|<local>/i|
+
+    }

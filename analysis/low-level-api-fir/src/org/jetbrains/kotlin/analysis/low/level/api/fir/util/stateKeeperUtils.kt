@@ -25,8 +25,7 @@ internal fun blockGuard(fir: FirBlock): FirBlock {
 }
 
 internal fun expressionGuard(fir: FirExpression): FirExpression {
-    // Expression references shouldn't be replaced since they belong to the snippet
-    if (isLazyStatement(fir) || fir is FirReplExpressionReference) {
+    if (isLazyStatement(fir)) {
         return fir
     }
 

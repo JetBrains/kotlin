@@ -38,7 +38,7 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
     public val klibs: List<Path>
 
     /**
-     * The directory the generated `.d.ts` files are written into.
+     * The directory the generated `.d.ts` files are written into. It is created if it does not exist.
      */
     public val outputDirectory: Path
 
@@ -60,7 +60,7 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
         public val klibs: List<Path>
 
         /**
-         * The directory the generated `.d.ts` files are written into.
+         * The directory the generated `.d.ts` files are written into. It is created if it does not exist.
          */
         public val outputDirectory: Path
 
@@ -141,6 +141,13 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
         public val EXPORT_SUSPEND_LAMBDAS: Option<Boolean> = Option("EXPORT_SUSPEND_LAMBDAS", KotlinReleaseVersion(2, 5, 0))
 
         /**
+         * Whether suspend functions are compiled as ES generators. Must match the JS linking `-Xes-generators`.
+         * Exporting suspend lambdas (see [EXPORT_SUSPEND_LAMBDAS]) is only supported when this option is enabled.
+         */
+        @JvmField
+        public val COMPILE_SUSPEND_AS_JS_GENERATOR: Option<Boolean> = Option("COMPILE_SUSPEND_AS_JS_GENERATOR", KotlinReleaseVersion(2, 5, 20))
+
+        /**
          * Whether the generated `copy` of a data class respects the visibility of its primary constructor
          * (corresponds to the `DataClassCopyRespectsConstructorVisibility` language feature).
          */
@@ -150,10 +157,37 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
 
         /**
          * Whether `unknown` (a built-in TypeScript type) should be used instead of `any`
-         * Must match the JS linking `-Xts-export-untyped-as-unknown`.
+         * Must match the JS linking `-Xdts-use-unknown-instead-any`.
          */
         @JvmField
-        public val EXPORT_UNTYPED_AS_UNKNOWN: Option<Boolean> =
-            Option("EXPORT_UNTYPED_AS_UNKNOWN", KotlinReleaseVersion(2, 5, 0))
+        public val USE_UNKNOWN_INSTEAD_ANY: Option<Boolean> =
+            Option("USE_UNKNOWN_INSTEAD_ANY", KotlinReleaseVersion(2, 5, 0))
+
+        /**
+         * The base name of the generated declaration file, without the extension.
+         * Must match the JS linking `-ir-output-name`.
+         * The name is resolved in the following order; the first value that is not `null` is used:
+         * 1. The value of this option.
+         * 2. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerKlibArguments.X_IR_PER_MODULE_OUTPUT_NAME] the main KLIB was compiled with.
+         * 3. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.X_IR_MODULE_NAME] the main KLIB was compiled with.
+         * 4. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.IR_OUTPUT_NAME] the main KLIB was compiled with.
+         */
+        @JvmField
+        public val OUTPUT_NAME: Option<String?> =
+            Option("OUTPUT_NAME", KotlinReleaseVersion(2, 5, 0))
+
+        /**
+         * The name of the main module. For the `umd` and `plain` module kinds, it is the name of the global namespace
+         * in the declarations, converted to a valid identifier; other module kinds do not use it.
+         * Must match the JS linking `-Xir-module-name`.
+         * The name is resolved in the following order; the first value that is not `null` is used:
+         * 1. The value of this option.
+         * 2. The value of [OUTPUT_NAME].
+         * 3. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.X_IR_MODULE_NAME] the main KLIB was compiled with.
+         * 4. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.IR_OUTPUT_NAME] the main KLIB was compiled with.
+         */
+        @JvmField
+        public val MAIN_MODULE_NAME: Option<String?> =
+            Option("MAIN_MODULE_NAME", KotlinReleaseVersion(2, 5, 0))
     }
 }

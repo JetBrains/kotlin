@@ -1,0 +1,27 @@
+@Anno(String(nested function constraint))
+owner -> FirNamedFunctionSymbol /function
+context -> FirTypeParameterSymbol AA from FirNamedFunctionSymbol /function
+
+@Anno(String(function constraint))
+owner -> FirNamedFunctionSymbol /function
+context -> FirTypeParameterSymbol AA from FirNamedFunctionSymbol /function
+
+AnnoString(declared constraint)Anno#
+owner -> FirNamedFunctionSymbol /annotatedConstraint
+context -> FirTypeParameterSymbol T from FirNamedFunctionSymbol /annotatedConstraint
+
+AnnoString(dangling constraint)Anno#
+owner -> FirNamedFunctionSymbol /annotatedConstraint
+context -> FirTypeParameterSymbol AA from FirNamedFunctionSymbol /annotatedConstraint
+
+@Anno(String(property constraint))
+owner -> FirRegularPropertySymbol /property
+context -> FirTypeParameterSymbol AA from FirRegularPropertySymbol /property
+
+@Anno(String(class constraint))
+owner -> FirRegularClassSymbol TopLevelClass
+context -> FirTypeParameterSymbol AA from FirRegularClassSymbol TopLevelClass
+
+@Anno(String(member function constraint))
+owner -> FirNamedFunctionSymbol /TopLevelClass.memberFunction
+context -> FirTypeParameterSymbol BB from FirNamedFunctionSymbol /TopLevelClass.memberFunction

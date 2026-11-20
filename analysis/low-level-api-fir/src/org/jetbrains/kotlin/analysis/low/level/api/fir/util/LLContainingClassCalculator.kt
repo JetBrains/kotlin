@@ -64,7 +64,6 @@ internal object LLContainingClassCalculator {
             ImplicitConstructor,
             is EnumGeneratedDeclaration,
             is MembersImplementedByDelegation,
-            ReplEvalFunction,
                 -> computeContainingClass(symbol, source.psi)
 
             is ClassDelegationField -> {
@@ -104,7 +103,9 @@ internal object LLContainingClassCalculator {
 
             is KtRealSourceElementKind -> when (symbol) {
                 is FirCallableSymbol<*>, is FirClassLikeSymbol<*> -> when (val selfCallable = source.psi) {
-                    is KtCallableDeclaration, is KtEnumEntry, is KtClassLikeDeclaration, is KtScriptInitializer -> {
+                    is KtCallableDeclaration, is KtEnumEntry, is KtClassLikeDeclaration, is KtScriptInitializer,
+                    is KtDestructuringDeclaration, // The container of a non-local destructuring declaration
+                        -> {
                         computeContainingClass(symbol, selfCallable.containingClassOrScript)
                     }
 
@@ -131,7 +132,7 @@ internal object LLContainingClassCalculator {
     }
 
     private fun computeContainingClass(symbol: FirBasedSymbol<*>, psi: PsiElement?): FirClassSymbol<*>? {
-        if (psi !is KtClassOrObject && (psi !is KtScript || !psi.isReplSnippet)) {
+        if (psi !is KtClassOrObject) {
             return null
         }
 
@@ -139,7 +140,6 @@ internal object LLContainingClassCalculator {
         val resolutionFacade = module.getResolutionFacade(module.project)
         return when (val symbol = psi.resolveToFirSymbol(resolutionFacade)) {
             is FirClassSymbol<*> -> symbol
-            is FirReplSnippetSymbol -> symbol.snippetClassSymbol
             else -> null
         }
     }

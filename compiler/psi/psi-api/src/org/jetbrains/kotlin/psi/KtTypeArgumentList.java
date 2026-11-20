@@ -63,7 +63,7 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
                     expression = "this.appendTypeArgument(typeArgument)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.appendTypeArgument"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public KtTypeProjection addArgument(@NotNull KtTypeProjection typeArgument) {

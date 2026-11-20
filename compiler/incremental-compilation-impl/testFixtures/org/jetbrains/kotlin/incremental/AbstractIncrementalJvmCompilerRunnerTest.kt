@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
+import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.incremental.utils.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.ByteArrayOutputStream
@@ -32,6 +33,9 @@ import java.io.File
 import javax.tools.ToolProvider
 
 abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCompilerRunnerTestBase<K2JVMCompilerArguments>() {
+    /** Specifies source and output roots when testing relocatable caches. */
+    protected open val fileLocations: FileLocations? get() = null
+
     override fun make(cacheDir: File, outDir: File, sourceRoots: Iterable<File>, args: K2JVMCompilerArguments): TestCompilationResult {
         val reporter = TestICReporter()
         val messageCollector = MessageCollectorImpl()
@@ -85,7 +89,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
 
             val compiler =
                 @Suppress("DEPRECATION")
-                if (k2Mode && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */) {
+                if (k2Mode && args.useFirIC) {
                     IncrementalFirJvmCompilerTestRunner(
                         cachesDir,
                         buildReporter,
@@ -103,14 +107,17 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                         outputDirs = null,
                         kotlinSourceFilesExtensions = kotlinExtensions,
                         icFeatures = IncrementalCompilationFeatures(
-                            withAbiSnapshot = false,
                             usePreciseJavaTracking = verifiedPreciseJavaTracking
                         ),
                         lookupTrackerDelegate = testLookupTracker
                     )
                 }
             //TODO by @Ilya.Chernikov: set properly
-            compiler.compile(sourceFiles, args, messageCollector, changedFiles = ChangedFiles.DeterminableFiles.ToBeComputed)
+            compiler.compile(
+                sourceFiles, args, messageCollector,
+                changedFiles = ChangedFiles.DeterminableFiles.ToBeComputed,
+                fileLocations = fileLocations,
+            )
         }
     }
 

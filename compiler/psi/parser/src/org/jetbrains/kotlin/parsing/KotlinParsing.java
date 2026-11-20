@@ -70,7 +70,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet COMMA_COLON_GT_SET = TokenSet.create(COMMA, COLON, GT);
     private static final TokenSet IDENTIFIER_RBRACKET_LBRACKET_SET = TokenSet.create(IDENTIFIER, RBRACKET, LBRACKET);
     private static final TokenSet LBRACE_RBRACE_SET = TokenSet.create(LBRACE, RBRACE);
-    private static final TokenSet COMMA_SEMICOLON_RBRACE_SET = TokenSet.create(COMMA, SEMICOLON, RBRACE);
+    private static final TokenSet NO_MODIFIERS_BEFORE_FOR_ENUM_ENTRY = TokenSet.create(COMMA, SEMICOLON, RBRACE, LPAR, LBRACE);
     private static final TokenSet VALUE_ARGS_RECOVERY_SET = TokenSet.create(LBRACE, SEMICOLON, RPAR, EOL_OR_SEMICOLON, RBRACE);
     private static final TokenSet PROPERTY_NAME_FOLLOW_SET =
       TokenSet.create(COLON, EQ, LBRACE, RBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
@@ -524,7 +524,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         switch (getTokenId()) {
             case CLASS_KEYWORD_Id:
             case INTERFACE_KEYWORD_Id:
-                return parseClass(detector.isEnumDetected(), true);
+                return parseClass(detector.isEnumDetected(), true, declarationParsingMode);
             case FUN_KEYWORD_Id:
                 return parseFunction();
             case VAL_KEYWORD_Id:
@@ -537,11 +537,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
             case TYPE_ALIAS_KEYWORD_Id:
                 return parseTypeAlias();
             case OBJECT_KEYWORD_Id:
-                parseObject(nameParsingModeForObject, true);
+                parseObject(nameParsingModeForObject, true, declarationParsingMode);
                 return OBJECT_DECLARATION;
             case IDENTIFIER_Id:
                 if (detector.isEnumDetected() && declarationParsingMode.canBeEnumUsedAsSoftKeyword) {
-                    return parseClass(true, false);
+                    return parseClass(true, false, declarationParsingMode);
                 }
         }
 
@@ -1028,7 +1028,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
             NameParsingMode nameParsingMode,
             boolean optionalBody,
             boolean enumClass,
-            boolean expectKindKeyword
+            boolean expectKindKeyword,
+            @NotNull DeclarationParsingMode declarationParsingMode
     ) {
         if (expectKindKeyword) {
             if (object) {
@@ -1064,10 +1065,18 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker beforeConstructorModifiers = mark();
         PsiBuilder.Marker primaryConstructorMarker = mark();
+        boolean statementWithNewlineBeforeConstructorModifiers =
+                declarationParsingMode != DeclarationParsingMode.MEMBER_OR_TOPLEVEL && myBuilder.newlineBeforeCurrentToken();
         boolean hasConstructorModifiers = parseModifierList(TokenSet.EMPTY);
 
-        // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
-        if (hasConstructorModifiers && !atSet(LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET)) {
+        // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else.
+        // The same applies to local and script top-level classes if the modifiers start on a new line and aren't followed by
+        // the `constructor` keyword because they likely belong to the next statement, e.g.
+        //    class A
+        //    error("")
+        if (hasConstructorModifiers &&
+            (!atSet(LPAR_LBRACE_COLON_CONSTRUCTOR_KEYWORD_SET) || statementWithNewlineBeforeConstructorModifiers && !at(CONSTRUCTOR_KEYWORD))
+        ) {
             beforeConstructorModifiers.rollbackTo();
             return object ? OBJECT_DECLARATION : CLASS;
         }
@@ -1127,12 +1136,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         return object ? OBJECT_DECLARATION : CLASS;
     }
 
-    private IElementType parseClass(boolean enumClass, boolean expectKindKeyword) {
-        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass, expectKindKeyword);
+    private IElementType parseClass(boolean enumClass, boolean expectKindKeyword, @NotNull DeclarationParsingMode declarationParsingMode) {
+        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass, expectKindKeyword, declarationParsingMode);
     }
 
-    void parseObject(NameParsingMode nameParsingMode, boolean optionalBody) {
-        parseClassOrObject(true, nameParsingMode, optionalBody, false, true);
+    void parseObject(NameParsingMode nameParsingMode, boolean optionalBody, @NotNull DeclarationParsingMode declarationParsingMode) {
+        parseClassOrObject(true, nameParsingMode, optionalBody, false, true, declarationParsingMode);
     }
 
     /*
@@ -1203,7 +1212,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private ParseEnumEntryResult parseEnumEntry() {
         PsiBuilder.Marker entry = mark();
 
-        parseModifierList(COMMA_SEMICOLON_RBRACE_SET);
+        parseModifierList(NO_MODIFIERS_BEFORE_FOR_ENUM_ENTRY);
 
         if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
             advance(); // IDENTIFIER
@@ -1459,16 +1468,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     enum DeclarationParsingMode {
-        MEMBER_OR_TOPLEVEL(false, true, true),
-        LOCAL(true, false, false),
-        SCRIPT_TOPLEVEL(true, true, false);
+        MEMBER_OR_TOPLEVEL(true, true),
+        LOCAL(false, false),
+        SCRIPT_TOPLEVEL(true, false);
 
-        public final boolean destructuringAllowed;
         public final boolean accessorsAllowed;
         public final boolean canBeEnumUsedAsSoftKeyword;
 
-        DeclarationParsingMode(boolean destructuringAllowed, boolean accessorsAllowed, boolean canBeEnumUsedAsSoftKeyword) {
-            this.destructuringAllowed = destructuringAllowed;
+        DeclarationParsingMode(boolean accessorsAllowed, boolean canBeEnumUsedAsSoftKeyword) {
             this.accessorsAllowed = accessorsAllowed;
             this.canBeEnumUsedAsSoftKeyword = canBeEnumUsedAsSoftKeyword;
         }
@@ -1510,12 +1517,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker beforeName = mark();
 
         if (multiDeclaration) {
-            PsiBuilder.Marker multiDecl = mark();
             parseMultiDeclarationEntry(
                     isShortForm ? PROPERTY_NAME_FOLLOW_SET : DESTRUCTURING_PROPERTY_NAME_FOLLOW_SET,
                     PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET,
                     isShortForm ? MultiDeclarationMode.SHORT : MultiDeclarationMode.FULL);
-            errorIf(multiDecl, !mode.destructuringAllowed, "Destructuring declarations are only allowed for local variables/values");
         }
         else {
             parseFunctionOrPropertyName(receiverTypeDeclared, "property", PROPERTY_NAME_FOLLOW_SET, PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET, /*nameRequired = */ true);
@@ -2329,9 +2334,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         boolean wasUnion = false;
         if (allowUnionTypes && at(OR)) {
-            PsiBuilder.Marker firstTypeRef = typeElementMarker;
+            PsiBuilder.Marker firstTypeRef = typeRefMarker;
 
-            typeElementMarker = typeElementMarker.precede();
+            typeRefMarker = typeRefMarker.precede();
             PsiBuilder.Marker unionType = firstTypeRef.precede();
 
             firstTypeRef.done(TYPE_REFERENCE);

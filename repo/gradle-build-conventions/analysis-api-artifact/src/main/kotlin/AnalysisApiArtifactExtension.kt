@@ -5,8 +5,15 @@
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Property
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
+import org.gradle.language.base.plugins.LifecycleBasePlugin
+import java.io.File
 import javax.inject.Inject
 
 abstract class AnalysisApiArtifactExtension @Inject constructor(private val project: Project) {
@@ -79,6 +86,49 @@ abstract class AnalysisApiArtifactExtension @Inject constructor(private val proj
         }
 
         javadocJar()
+    }
+
+    /**
+     * Registers the checks that the artifact is self-sufficient at runtime: ProGuard verifies that its JAR together with its
+     * runtime classpath references no missing class ('validateClasspath', configured by [proguardConfiguration]), and no
+     * entry is shipped by two JARs of that classpath ('validateNoDuplicateClasses', with the exceptions listed in
+     * [permittedDuplicatesFile]). Both run as part of 'check'.
+     */
+    fun validateClasspath(proguardConfiguration: File, permittedDuplicatesFile: File): Unit = with(project) {
+        val artifactClasspath = files(tasks.named(JavaPlugin.JAR_TASK_NAME), configurations.named(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME))
+
+        val mergedClasspathJar = tasks.register<Jar>("mergedClasspathJar") {
+            description = "Merges the artifact and its runtime classpath JARs into a single JAR for ProGuard validation"
+            destinationDirectory.set(layout.buildDirectory.dir("proguard"))
+            archiveFileName.set("merged-classpath.jar")
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+            dependsOn(artifactClasspath)
+            from({ artifactClasspath.files.map(::zipTree) })
+        }
+
+        val validateClasspath = tasks.register<CacheableProguardTask>("validateClasspath") {
+            group = LifecycleBasePlugin.VERIFICATION_GROUP
+            description = "Validates that the artifact and its runtime classpath have all required classes"
+
+            javaLauncher.set(getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+
+            configuration(proguardConfiguration)
+
+            injars(files(mergedClasspathJar))
+            outjars(layout.buildDirectory.file("proguard/output.jar"))
+
+            libraryjars(files(javaLauncher.map { it.metadata.installationPath.asFile.resolve("jmods") }))
+        }
+
+        val validateNoDuplicateClasses = tasks.register<VerifyNoDuplicateClasspathEntriesTask>("validateNoDuplicateClasses") {
+            classpath.from(artifactClasspath)
+            this.permittedDuplicatesFile.set(permittedDuplicatesFile)
+        }
+
+        tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
+            dependsOn(validateClasspath, validateNoDuplicateClasses)
+        }
     }
 }
 

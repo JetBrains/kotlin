@@ -19,7 +19,6 @@ class KlibKotlinp(
     fun renderModule(module: KlibModuleMetadata, printer: Printer): Unit = with(printer) {
         appendLine("library {")
         withIndent {
-            appendCommentedLine("module name: ", module.name)
             module.fragments.forEach { renderModuleFragment(it, printer) }
         }
         appendLine("}")

@@ -177,7 +177,35 @@ CONSTRUCTOR:
             hasFlexibleNullability: false
         ]
         parameters: [
-          KaBaseFunctionValueParameter [name: null, type: null]
+          KaFunctionValueParameter:
+            name: null
+            type: KaTypeParameterType:
+              abbreviation: null
+              annotations: []
+              name: A
+              symbol: KaTypeParameterSymbol:
+                anchorPsi: KtTypeParameter
+                annotations: []
+                isActual: false
+                isExpect: false
+                isExternal: false
+                isReified: false
+                location: LOCAL
+                modality: FINAL
+                name: A
+                origin: SAM_CONSTRUCTOR
+                psi: KtTypeParameter
+                realPsi: null
+                upperBounds: []
+                variance: INVARIANT
+                visibility: LOCAL
+                getContainingFileSymbol: null
+                getContainingModule: KaDanglingFileModule "Temporary file"
+                deprecation: null
+                importableFqName: null
+              isMarkedNullable: false
+              isNullable: true
+              hasFlexibleNullability: false
         ]
         qualifiers: [
           KaResolvedClassTypeQualifier:

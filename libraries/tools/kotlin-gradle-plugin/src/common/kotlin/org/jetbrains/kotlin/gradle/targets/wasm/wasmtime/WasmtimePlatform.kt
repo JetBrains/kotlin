@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.wasmtime
 
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
+
 /**
  * Provides platform and architecture names that are used to download Wasmtime.
  *
  * See https://github.com/bytecodealliance/wasmtime/releases for the available archives.
  */
+@ObsoleteJsAndWasmToolingProvisioning
 internal object WasmtimePlatform {
     private val props = System.getProperties()
     private fun property(name: String) = props.getProperty(name) ?: System.getProperty(name)

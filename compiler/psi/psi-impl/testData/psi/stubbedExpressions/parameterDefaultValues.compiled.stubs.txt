@@ -7,7 +7,7 @@ ParameterDefaultValuesKt.class:
     IMPORT_LIST
     PROPERTY[fqName=test.constant, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=constant]
       constantInitializer: 1
-      origin: Facade(className=test/ParameterDefaultValuesKt, jvmClassName=null)
+      origin: Facade(className=test/ParameterDefaultValuesKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -17,7 +17,7 @@ ParameterDefaultValuesKt.class:
             isClassRef: true
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     FUNCTION[fqName=test.withDefaults, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withDefaults]
-      origin: Facade(className=test/ParameterDefaultValuesKt, jvmClassName=null)
+      origin: Facade(className=test/ParameterDefaultValuesKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=int]
@@ -66,6 +66,7 @@ WithArrayDefaults.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/WithArrayDefaults, fqName=test.WithArrayDefaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithArrayDefaults, superNames=[Annotation]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithArrayDefaults]
         MODIFIER_LIST[public]
@@ -109,6 +110,7 @@ WithConstructorDefaults.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/WithConstructorDefaults, fqName=test.WithConstructorDefaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithConstructorDefaults, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithConstructorDefaults]
         MODIFIER_LIST[public]

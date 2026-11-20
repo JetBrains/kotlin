@@ -407,9 +407,9 @@ class FirCallCompletionResultsWriterTransformer(
             session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.resolvedType })?.let {
                 typeApproximator.approximateToSuperType(
                     it,
-                    TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
+                    IntermediateApproximationToSupertypeAfterCompletionInK2
                 ) ?: it
-            } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.coneType
+            } ?: expectedArrayElementType ?: StandardTypes.NullableAny
         arrayLiteral.resultType =
             arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType()?.isPrimitiveArray == true)
         return arrayLiteral
@@ -585,7 +585,7 @@ class FirCallCompletionResultsWriterTransformer(
     private fun FirBasedSymbol<*>.isJavaConstructor(): Boolean {
         if (this !is FirConstructorSymbol) return false
 
-        return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.Enhancement
+        return this.unwrapUseSiteSubstitutionOverrides().origin is FirDeclarationOrigin.Enhancement
     }
 
     private fun FirCall.transformArgumentList(
@@ -1152,7 +1152,7 @@ class FirCallCompletionResultsWriterTransformer(
         val initialReturnType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         val expectedReturnType = initialReturnType?.let { finallySubstituteOrSelf(it) }
             ?: runIf(returnExpressions.any { it.expression.source?.kind is KtFakeSourceElementKind.ImplicitUnit.Return })
-            { session.builtinTypes.unitType.coneType }
+            { StandardTypes.Unit }
             ?: (expectedType as? ConeClassLikeType)?.returnType(session) as? ConeClassLikeType
             ?: runUnless(containingCallIsError) { (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction) }
 
@@ -1278,7 +1278,7 @@ class FirCallCompletionResultsWriterTransformer(
     override fun transformBlock(block: FirBlock, data: ExpectedArgumentType?): FirStatement {
         transformElement(block, data)
         if (!block.isUnitCoerced) {
-            block.writeResultType(session)
+            block.writeResultType()
         }
         return block
     }
@@ -1297,7 +1297,7 @@ class FirCallCompletionResultsWriterTransformer(
                 else -> null
             }
         }.apply {
-            replaceReturnTypeIfNotExhaustive(session)
+            replaceReturnTypeIfNotExhaustive()
         }
     }
 

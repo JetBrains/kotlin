@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.CommonNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NodeJsRootPluginApplier
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.configureNodeJsEnvironmentTasks
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -43,6 +44,7 @@ import javax.inject.Inject
  * - Configuring dependencies and lockfile management for Wasm project setups.
  *
  */
+@ObsoleteNpmDependencyModel
 abstract class WasmNodeJsRootPlugin
 @Inject
 internal constructor(
@@ -131,7 +133,7 @@ internal constructor(
                 toolingInstall.dependsOn(target.nodeJsSetupTaskProvider)
             }
             toolingInstall.group = TASKS_GROUP_NAME
-            toolingInstall.description = "Find, download and link NPM dependencies and projects"
+            toolingInstall.description = "Install NPM dependencies required for Kotlin/Wasm tooling"
 
             toolingInstall.outputs.upToDateWhen {
                 toolingInstall.nodeModules.getFile().exists()
@@ -142,6 +144,7 @@ internal constructor(
             .value(npmTooling)
     }
 
+    @ObsoleteNpmDependencyModel
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         fun apply(rootProject: Project): WasmNodeJsRootExtension {
             checkIsJsToolingProject(rootProject) {

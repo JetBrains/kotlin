@@ -9,7 +9,6 @@ publishTestJarsForIde(
         ":analysis:analysis-api-fir",
         ":analysis:low-level-api-fir",
         ":analysis:analysis-test-framework",
-        ":analysis:analysis-api-impl-base",
         ":analysis:analysis-api-standalone",
     )
 )

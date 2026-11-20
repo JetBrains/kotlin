@@ -14,12 +14,16 @@ import java.math.MathContext
 
 /**
  * Enables the use of the `+` operator for [BigInteger] instances.
+ *
+ * @sample samples.misc.BigIntegers.plus
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BigInteger.plus(other: BigInteger): BigInteger = this.add(other)
 
 /**
  * Enables the use of the `-` operator for [BigInteger] instances.
+ *
+ * @sample samples.misc.BigIntegers.minus
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BigInteger.minus(other: BigInteger): BigInteger = this.subtract(other)

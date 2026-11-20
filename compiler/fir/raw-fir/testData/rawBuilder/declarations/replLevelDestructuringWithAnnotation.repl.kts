@@ -1,5 +1,3 @@
-// IGNORE_TREE_ACCESS: KT-89821
-
 @DestrAnno("destr 1 $prop")
 val (@LeftAnno("a $prop") a, @RightAnno("b $prop") b) = 0 to 1
 

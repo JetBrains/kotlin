@@ -350,7 +350,7 @@ class FirCallResolver(
             info,
             applicability,
             reducedCandidates,
-            resultCollector.forwardedDiagnostics(),
+            resultCollector.forwardedDiagnostics,
             resultCollector.metInapplicableCandidate
         )
     }
@@ -805,7 +805,9 @@ class FirCallResolver(
                 callInfo,
                 if (annotationClassSymbol != null) {
                     ConeIllegalAnnotationError(reference.name)
-                } else if (annotationConeType is ConeErrorType || annotationConeType !is ConeClassLikeType) {
+                } else if (
+                    annotationConeType is ConeErrorType || annotationConeType !is ConeClassLikeType && annotationConeType !is ConeUnionType
+                ) {
                     //calleeReference and annotationTypeRef are both error nodes so we need to avoid doubling of the diagnostic report
                     ConeUnreportedDuplicateDiagnostic(
                         //prefer diagnostic with symbol, e.g. to use the symbol during navigation in IDE

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirSecondaryCons
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTypeAliasedConstructorMemberPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer

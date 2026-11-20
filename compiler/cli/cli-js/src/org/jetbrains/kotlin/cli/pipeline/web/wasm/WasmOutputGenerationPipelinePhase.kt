@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.wasm.WasmSpecialExportNames
 import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.ir.ByteWriterWithOffsetWrite
 import org.jetbrains.kotlin.wasm.ir.WasmExport
@@ -91,8 +92,8 @@ object WasmOutputGenerationPipelinePhase : PipelinePhase<WasmIntermediatePipelin
         val multimoduleParameters = moduleConfiguration.multimoduleOptions
         val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
 
-        val wasmStartFunctionDefined = linkedModule.exports.any { it.name == wasmStartExportName }
-        val wasmInitializeFunctionDefined = linkedModule.exports.any { it.name == wasmInitializeExportName }
+        val wasmStartFunctionDefined = linkedModule.exports.any { it.name == WasmSpecialExportNames.START }
+        val wasmInitializeFunctionDefined = linkedModule.exports.any { it.name == WasmSpecialExportNames.INITIALIZE }
 
         val dwarfGeneratorForBinary = runIf(configuration.wasmGenerateDwarf) {
             DwarfGenerator()
@@ -496,9 +497,9 @@ $imports};
         val commonStdlibExports = if (isStdlibModule) ", getCachedJsObject, __TAG as wasmTag" else ""
 
         val mainFunctionCall = if (wasmStartFunctionDefined)
-            "exports.$wasmStartExportName();"
+            "exports.${WasmSpecialExportNames.START}();"
         else if (wasmInitializeFunctionDefined)
-            "exports.$wasmInitializeExportName();"
+            "exports.${WasmSpecialExportNames.INITIALIZE}();"
         else ""
 
         val staticImports = """
@@ -567,4 +568,3 @@ $mainFunctionCall
 """
     }
 }
-

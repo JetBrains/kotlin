@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -23,6 +24,7 @@ import java.io.File
     enabledOnCI = [OS.MAC],
 )
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class ApplePrivacyManifestIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
@@ -42,7 +44,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
             frameworks = "Contents/Frameworks",
             frameworksFolderPath = "My.app/Contents/Frameworks",
             resourcesFolderPath = "My.app/Contents/Resources",
-            sdkName = "macosx",
+            platformName = "macosx",
             expectedPrivacyManifestPlacement = "My.app/Contents/Resources/KotlinMultiplatformPrivacyManifest.bundle/Contents/Resources/PrivacyInfo.xcprivacy",
             expectedInfoPlistPlacement = "My.app/Contents/Resources/KotlinMultiplatformPrivacyManifest.bundle/Contents/Info.plist",
             expectedInfoPlistContent = "info",
@@ -63,7 +65,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
             frameworks = "Frameworks",
             frameworksFolderPath = "My.app/Frameworks",
             resourcesFolderPath = "My.app",
-            sdkName = "iphoneos",
+            platformName = "iphoneos",
             expectedPrivacyManifestPlacement = "My.app/KotlinMultiplatformPrivacyManifest.bundle/PrivacyInfo.xcprivacy",
             expectedInfoPlistPlacement = "My.app/KotlinMultiplatformPrivacyManifest.bundle/Info.plist",
             expectedInfoPlistContent = "info",
@@ -84,7 +86,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
             frameworks = "Frameworks",
             frameworksFolderPath = "My.app/Frameworks",
             resourcesFolderPath = "My.app",
-            sdkName = "iphoneos",
+            platformName = "iphoneos",
             expectedPrivacyManifestPlacement = "My.app/KotlinMultiplatformPrivacyManifest.bundle/PrivacyInfo.xcprivacy",
             expectedInfoPlistPlacement = "My.app/KotlinMultiplatformPrivacyManifest.bundle/Info.plist",
             expectedInfoPlistContent = """
@@ -122,7 +124,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
             frameworks = "Frameworks",
             frameworksFolderPath = "My.app/Frameworks",
             resourcesFolderPath = "My.app",
-            sdkName = "iphoneos",
+            platformName = "iphoneos",
             expectedPrivacyManifestPlacement = "My.app/KotlinMultiplatformPrivacyManifest.bundle/PrivacyInfo.xcprivacy",
             expectedInfoPlistPlacement = "My.app/KotlinMultiplatformPrivacyManifest.bundle/Info.plist",
             expectedInfoPlistContent = "info",
@@ -149,7 +151,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
         temp: File,
         frameworksFolderPath: String,
         resourcesFolderPath: String,
-        sdkName: String,
+        platformName: String,
         expectedPrivacyManifestPlacement: String,
         expectedInfoPlistPlacement: String,
         expectedInfoPlistContent: String,
@@ -200,7 +202,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
                 "ENABLE_USER_SCRIPT_SANDBOXING" to "NO",
                 "CONFIGURATION" to "Debug",
                 "ARCHS" to "arm64",
-                "SDK_NAME" to sdkName,
+                "PLATFORM_NAME" to platformName,
                 "FRAMEWORKS_FOLDER_PATH" to frameworksFolderPath,
                 "UNLOCALIZED_RESOURCES_FOLDER_PATH" to resourcesFolderPath,
                 "TARGET_BUILD_DIR" to embedAndSignOutputs.canonicalPath,
@@ -344,8 +346,6 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
 
                     // Universal
                     watchosSimulatorArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                    watchosX64()
 
                     with(cocoapods) {
                         version = "1.0"

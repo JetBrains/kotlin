@@ -14,7 +14,7 @@ import kotlin.wasm.internal.*
  */
 @UnsafeWasmMemoryApi
 @ExperimentalWasmInterop
-public value class Pointer public constructor(public val address: UInt) {
+public inline value class Pointer public constructor(public val address: UInt) {
 
     /** Adds an [Int] to the address of this [Pointer] */
     public operator fun plus(other: Int): Pointer =

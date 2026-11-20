@@ -25,7 +25,6 @@ analysisApiArtifact {
         testFixtures(
             listOf(
                 ":analysis:analysis-api-fir",
-                ":analysis:analysis-api-impl-base",
                 ":analysis:analysis-api-standalone",
                 ":analysis:analysis-test-framework",
                 ":analysis:low-level-api-fir",

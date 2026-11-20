@@ -4,6 +4,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] invalidDestructing.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+        private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+            private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: to>
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <ERROR TYPE REF: Unresolved name: component1> = R|/A.<destruct>|.<Unresolved name: component1>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component1>
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <ERROR TYPE REF: Unresolved name: component2> = R|/A.<destruct>|.<Unresolved name: component2>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component2>
 
     }

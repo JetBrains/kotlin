@@ -1,0 +1,19 @@
+KtNameReferenceExpression(106,107): 'b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = /C
+        type = C
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val b: kotlin.String
+        contextParameters = []
+        callableId = /C.b
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

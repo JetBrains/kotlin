@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: JKLIB
+// DUMP_IR_DIFFERENCE: JKLIB
+//   JKlib tests compile against a real JDK, whose default methods (`forEach`, `stream`, `spliterator`, ...) add fake overrides.
 // KT-64271
 
 inline class IT(val x: Int)

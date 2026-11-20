@@ -7,34 +7,36 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolver
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolver
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.extensions.predicate.AbstractPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.PredicateVisitor
+import org.jetbrains.kotlin.fir.extensions.predicate.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.abbreviatedType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.AnnotationTargetLists
 
 /**
  * PSI index based implementation of [FirPredicateBasedProvider].
@@ -60,6 +62,7 @@ internal class LLFirIdePredicateBasedProvider(
 
         return annotatedDeclarations
             .asSequence()
+            .withSourceFilterIfNeeded(predicate)
             .mapNotNull { it.findFirDeclarationForLookupPredicate() }
             .filter { matches(predicate, it) }
             .map { it.symbol }
@@ -131,6 +134,10 @@ internal class LLFirIdePredicateBasedProvider(
             return predicate.a.accept(this, data) || predicate.b.accept(this, data)
         }
 
+        override fun visitMatchingType(predicate: AbstractPredicate.MatchingType<P>, data: FirDeclaration): Boolean {
+            return predicate.type.matches(data) && predicate.predicate.accept(this, data)
+        }
+
         override fun visitAnnotatedWith(predicate: AbstractPredicate.AnnotatedWith<P>, data: FirDeclaration): Boolean {
             return annotationsOnDeclaration(data).any { it in predicate.annotations }
         }
@@ -175,9 +182,16 @@ internal class LLFirIdePredicateBasedProvider(
     private fun annotationsOnDeclaration(declaration: FirDeclaration): Set<AnnotationFqn> {
         if (declaration.annotations.isEmpty()) return emptySet()
 
+        // The compiler matches `annotated` predicates on non-local declarations against the plugin annotations collected
+        // at the COMPILER_REQUIRED_ANNOTATIONS phase, where type aliases are not expanded, so an annotation used through
+        // a type alias doesn't match there (KT-69777). Local classes are matched against their resolved annotations instead,
+        // which see through type aliases (see `FirPredicateBasedProviderImpl.matchWith`)
+        val includeAliasedAnnotations = declaration is FirClass && declaration.isLocal
+
         val firResolvedAnnotations = declaration.annotations
             .asSequence()
             .mapNotNull { it.annotationTypeRef as? FirResolvedTypeRef }
+            .filter { includeAliasedAnnotations || it.coneType.abbreviatedType == null }
             .mapNotNull { it.coneType.classId }
             .map { it.asSingleFqName() }
             .toSet()
@@ -192,6 +206,107 @@ internal class LLFirIdePredicateBasedProvider(
 
     private fun annotationsOnOuterDeclarations(declaration: FirDeclaration): Set<AnnotationFqn> {
         return getOwnersOfDeclaration(declaration)?.flatMap { annotationsOnDeclaration(it.fir) }.orEmpty().toSet()
+    }
+}
+
+/**
+ * Filters out declarations whose kind cannot match before building FIR. The full predicate is still checked on FIR.
+ * Returns this sequence when the predicate does not provide a safe PSI filter.
+ */
+private fun Sequence<KtAnnotated>.withSourceFilterIfNeeded(predicate: LookupPredicate): Sequence<KtAnnotated> {
+    val sourceFilter = predicate.accept(SourceFilterBuilder, null)
+    return if (sourceFilter == null) {
+        this
+    } else {
+        this.filter(sourceFilter)
+    }
+}
+
+private typealias SourceFilter = (KtElement) -> Boolean
+
+/**
+ * Builds a conservative PSI filter from the predicate's declaration targets to avoid building FIR for declarations that cannot match.
+ * A null filter means that no declarations can be safely rejected using PSI alone. The full predicate still needs to be checked on FIR.
+ */
+private object SourceFilterBuilder : PredicateVisitor<LookupPredicate, SourceFilter?, Nothing?>() {
+    override fun visitPredicate(predicate: AbstractPredicate<LookupPredicate>, data: Nothing?): SourceFilter? = null
+
+    override fun visitAnd(predicate: AbstractPredicate.And<LookupPredicate>, data: Nothing?): SourceFilter? {
+        val a = predicate.a.accept(this, data)
+        val b = predicate.b.accept(this, data)
+        return when {
+            a == null -> b
+            b == null -> a
+            else -> { declaration -> a(declaration) && b(declaration) }
+        }
+    }
+
+    override fun visitOr(predicate: AbstractPredicate.Or<LookupPredicate>, data: Nothing?): SourceFilter? {
+        val a = predicate.a.accept(this, data) ?: return null
+        val b = predicate.b.accept(this, data) ?: return null
+        return { declaration -> a(declaration) || b(declaration) }
+    }
+
+    @OptIn(FirExtensionApiInternals::class)
+    override fun visitMatchingType(predicate: AbstractPredicate.MatchingType<LookupPredicate>, data: Nothing?): SourceFilter? {
+        val childFilter = predicate.predicate.accept(this, data)
+        val type = predicate.type
+        if (type !is KotlinTargetDeclarationType) {
+            return childFilter
+        }
+        return { declaration ->
+            mayMatchTargets(type.targets, declaration) && (childFilter == null || childFilter(declaration))
+        }
+    }
+
+    // FIR distinguishes companion members and extensions after this conservative PSI check.
+    private fun mayMatchTargets(targets: Set<KotlinTarget>, declaration: KtElement): Boolean {
+        val possibleTargets = when (declaration) {
+            is KtEnumEntry -> KotlinTarget.ENUM_ENTRY_LIST
+            is KtObjectDeclaration -> {
+                if (declaration.isCompanion()) {
+                    KotlinTarget.COMPANION_OBJECT_LIST
+                } else {
+                    KotlinTarget.OBJECT_LIST
+                }
+            }
+            is KtClass -> when {
+                declaration.isAnnotation() -> KotlinTarget.ANNOTATION_CLASS_LIST
+                declaration.isInterface() -> KotlinTarget.INTERFACE_LIST
+                declaration.isEnum() -> KotlinTarget.ENUM_LIST
+                else -> KotlinTarget.CLASS_LIST
+            }
+            is KtTypeAlias -> AnnotationTargetLists.T_TYPEALIAS.defaultTargets
+            is KtConstructor<*> -> AnnotationTargetLists.T_CONSTRUCTOR.defaultTargets
+            is KtNamedFunction -> {
+                if (KotlinTarget.FUNCTION in targets) {
+                    return true
+                }
+                return when (declaration.parent) {
+                    is KtFile -> KotlinTarget.TOP_LEVEL_FUNCTION in targets
+                    is KtClassBody -> KotlinTarget.MEMBER_FUNCTION in targets
+                    else -> KotlinTarget.TOP_LEVEL_FUNCTION in targets || KotlinTarget.MEMBER_FUNCTION in targets
+                }
+            }
+            is KtProperty -> {
+                if (KotlinTarget.PROPERTY in targets) {
+                    return true
+                }
+                return when (declaration.parent) {
+                    is KtFile -> KotlinTarget.TOP_LEVEL_PROPERTY in targets
+                    is KtClassBody -> KotlinTarget.MEMBER_PROPERTY in targets
+                    else -> KotlinTarget.TOP_LEVEL_PROPERTY in targets || KotlinTarget.MEMBER_PROPERTY in targets
+                }
+            }
+            is KtParameter -> {
+                if (!declaration.hasValOrVar()) {
+                    return true
+                }
+                AnnotationTargetLists.T_VALUE_PARAMETER_WITH_VAL.defaultTargets
+            }
+            else -> return true
+        }
+        return possibleTargets.any { it in targets }
     }
 }
 

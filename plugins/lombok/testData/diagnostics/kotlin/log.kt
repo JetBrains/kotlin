@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 // WITH_STDLIB
 
@@ -136,3 +137,7 @@ class WithNestedCompanionClass {
 fun testNestedCompanion() {
     WithNestedCompanionClass.<!UNRESOLVED_REFERENCE!>log<!>.info("")
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, anonymousObjectExpression, classDeclaration,
+companionObject, functionDeclaration, integerLiteral, interfaceDeclaration, javaFunction, javaProperty, localClass,
+nestedClass, objectDeclaration, propertyDeclaration, stringLiteral, typeAliasDeclaration */

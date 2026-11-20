@@ -108,13 +108,12 @@ fun updateIncrementalCache(
     generatedFiles: Iterable<GeneratedFile>,
     cache: IncrementalJvmCache,
     changesCollector: ChangesCollector,
-    javaChangesTracker: JavaClassesTrackerImpl?,
-    jvmMetadataTracker: ICJvmMetadataTrackerImpl?,
+    jvmCommonMetadataTracker: ICJvmCommonMetadataTrackerImpl?,
 ) {
-    // Store common-fragment metadata before class files: an `expect` declaration and its `actual` share an FqName, and
-    // `ChangesCollector.protoDataChanges()` keeps the last proto recorded under it, and the platform proto has precedence.
-    jvmMetadataTracker?.metadataByModule?.forEach { [moduleName, metadata] ->
-        cache.saveMetadataToCache(moduleName, metadata, changesCollector)
+    // Store common-fragment metadata before class files: an `expect` declaration and its `actual` share an FqName,
+    // so the platform proto is recorded last.
+    jvmCommonMetadataTracker?.commonMetadataByModule?.forEach { [moduleName, metadata] ->
+        cache.saveCommonMetadataToCache(moduleName, metadata, changesCollector)
     }
 
     for (generatedFile in generatedFiles) {
@@ -125,10 +124,6 @@ fun updateIncrementalCache(
                 generatedFile.outputFile
             )
         }
-    }
-
-    javaChangesTracker?.javaClassesUpdates?.forEach { (val source, val serializedJavaClass = proto) ->
-        cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
     }
 
     cache.clearCacheForRemovedClasses(changesCollector)
@@ -218,6 +213,11 @@ fun List<ChangeInfo>.getChangedAndImpactedSymbols(
             }
         }
     }
+    reporter.reportProcessedChanges(
+        dirtyLookupSymbols.map { Pair(it.scope, it.name) },
+        dirtyClassesFqNames.map { it.asString() },
+        sealedParents.map { it.asString() }
+    )
     return DirtyData(dirtyLookupSymbols, dirtyClassesFqNames, sealedParents)
 }
 

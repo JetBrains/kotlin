@@ -1,7 +1,7 @@
 @kotlin.OptIn(markerClass = [kotlin.ExperimentalStdlibApi::class])
 @kotlin.jvm.JvmInline
 @kotlin.jvm.JvmExposeBoxed
-inline class ValueInt(i: kotlin.Int) {
+inline value class ValueInt(i: kotlin.Int) {
   val i: kotlin.Int
 
   internal fun internalFun()

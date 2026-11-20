@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageS
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -27,12 +26,12 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 class JsIrLinker(
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
-    partialLinkageConfig: PartialLinkageConfig,
     irDiagnosticReporter: IrDiagnosticReporter,
-    friendModules: Map<String, Collection<String>> = emptyMap(),
+    friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>> = emptyMap(),
 ) : KotlinIrLinker(
     configuration = configuration,
     symbolTable = symbolTable,
+    friendModules = friendModules,
     deserializedSymbolPostProcessor = { symbol, signature, fileSymbol ->
         runIf(signature.isLocal) {
             symbol.privateSignature = IdSignature.CompositeSignature(IdSignature.FileSignature(fileSymbol), signature)
@@ -41,7 +40,6 @@ class JsIrLinker(
     }) {
 
     override val partialLinkageSupport: PartialLinkageSupportForLinker = createPartialLinkageSupportForLinker(
-        partialLinkageConfig = partialLinkageConfig,
         irFactory = symbolTable.irFactory,
         anyClass = anyClass,
         nothingClass = nothingClass,
@@ -51,10 +49,9 @@ class JsIrLinker(
     override val irMangler: KotlinMangler.IrMangler = JsManglerIr
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
-        linker = this,
+        fileLocalSymbolProvider = fileLocalSymbolProvider,
         symbolTable = symbolTable,
         mangler = irMangler,
-        friendModules = friendModules,
         partialLinkageSupport = partialLinkageSupport
     )
 
@@ -68,7 +65,7 @@ class JsIrLinker(
     override fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
-        strategyResolver: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
     ): IrModuleDeserializer {
         require(klib != null) { "Expecting kotlin library" }
         val libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
@@ -80,7 +77,7 @@ class JsIrLinker(
     private inner class JsModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary,
-        strategyResolver: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
         libraryAbiVersion: KotlinAbiVersion,
     ) : BasicIrModuleDeserializer(this, moduleFragment, klib, strategyResolver, libraryAbiVersion) {
         init {

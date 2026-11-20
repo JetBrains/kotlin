@@ -37,12 +37,13 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val browserTestDsl = browser.test as KotlinJsBrowserTestImpl
 
         val browserRunners = browserTestDsl.browserRunners
-        KotlinJsBrowserTestMetrics.collectMetrics(project, browserRunners)
 
         if (browserRunners.isEmpty()) {
             project.reportDiagnostic(KotlinToolingDiagnostics.NoBrowserSpecifiedForJsBrowserTestFramework(targetName = target.name))
             browserTestDsl.setUpDefaultBrowserRunner()
         }
+
+        KotlinJsBrowserTestMetrics.collectMetrics(project, browserRunners)
 
         // TODO: KT-86706 Implement different browser runners as independent test runs
         //  so it is aligned with KGP API
@@ -110,12 +111,15 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
     }
 }
 
-internal fun KotlinBrowserTestRunnerDsl.getBrowserKind(): PwBrowserKind = when (this) {
+internal fun KotlinBrowserTestRunnerDsl.getBrowserKindOrNull(): PwBrowserKind? = when (this) {
     is KotlinFirefoxTestRunner -> PwBrowserKind.FIREFOX
     is KotlinWebkitTestRunner -> PwBrowserKind.WEBKIT
     is KotlinChromiumTestRunner -> PwBrowserKind.CHROMIUM
-    else -> throw IllegalArgumentException("Unsupported browser runner: ${this::class.simpleName}")
+    else -> null
 }
+
+internal fun KotlinBrowserTestRunnerDsl.getBrowserKind(): PwBrowserKind =
+    getBrowserKindOrNull() ?: throw IllegalArgumentException("Unsupported browser runner: ${this::class.simpleName}")
 
 private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
     project: Project,

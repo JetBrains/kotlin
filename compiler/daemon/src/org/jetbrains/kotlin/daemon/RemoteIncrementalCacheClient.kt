@@ -39,7 +39,7 @@ class RemoteIncrementalCacheClient(
 
     override fun getModuleMappingData(): ByteArray? = profiler.withMeasure(this) { facade.incrementalCache_getModuleMappingData(target) }
 
-    override fun getMetadata(fragmentName: String): Map<File, ByteArray> = profiler.withMeasure(this) { facade.incrementalCache_getMetadata(target, fragmentName) }
+    override fun getCommonMetadata(fragmentName: String): Map<File, ByteArray> = profiler.withMeasure(this) { facade.incrementalCache_getCommonMetadata(target, fragmentName) }
 
     override fun getClassFilePath(internalClassName: String): String = profiler.withMeasure(this) { facade.incrementalCache_getClassFilePath(target,internalClassName) }
 

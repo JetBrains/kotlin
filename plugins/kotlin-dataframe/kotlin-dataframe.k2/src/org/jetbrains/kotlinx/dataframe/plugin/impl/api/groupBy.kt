@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -494,7 +495,7 @@ abstract class GroupByAggregator2(val defaultName: String, val aggregator: Aggre
                 ).toConeKotlinType() ?: returnType
 
             else -> returnType
-        } ?: session.builtinTypes.nullableAnyType.coneType
+        } ?: StandardTypes.NullableAny
 
         val newColumn = simpleColumnOf(newColumnName, newColumnType)
         return PluginDataFrameSchema(receiver.keys.columns() + newColumn)

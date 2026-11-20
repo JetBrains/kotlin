@@ -33,7 +33,7 @@ FILE: delegateTypeMismatch.kt
             )
         }
 
-        public final var classifierNamePolicy: R|ClassifierNamePolicy|by this@R|/A|.R|/A.property|<R|ClassifierNamePolicy|>(Q|ClassifierNamePolicy.SOURCE_CODE_QUALIFIED|)
+        public final var classifierNamePolicy: R|ClassifierNamePolicy| by this@R|/A|.R|/A.property|<R|ClassifierNamePolicy|>(Q|ClassifierNamePolicy.SOURCE_CODE_QUALIFIED|)
             public get(): R|ClassifierNamePolicy| {
                 ^ this@R|/A|.D|/A.classifierNamePolicy|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|ClassifierNamePolicy|>|(this@R|/A|, ::R|/A.classifierNamePolicy|)
             }
@@ -41,7 +41,7 @@ FILE: delegateTypeMismatch.kt
                 ^ this@R|/A|.D|/A.classifierNamePolicy|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.classifierNamePolicy|, R|<local>/<set-?>|)
             }
 
-        public final var typeNormalizer: R|(KotlinType) -> KotlinType|by this@R|/A|.R|/A.property|<R|(KotlinType) -> KotlinType|>(property@fun <anonymous>(it: R|KotlinType|): R|KotlinType| <inline=NoInline>  {
+        public final var typeNormalizer: R|(KotlinType) -> KotlinType| by this@R|/A|.R|/A.property|<R|(KotlinType) -> KotlinType|>(property@fun <anonymous>(it: R|KotlinType|): R|KotlinType| <inline=NoInline>  {
             ^ R|<local>/it|
         }
         )

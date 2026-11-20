@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-89024
 // WITH_STDLIB
 
@@ -24,3 +25,6 @@ fun testRenamed() {
     val builder: Renamed.RenamedBuilder = Renamed.createBuilder()
     builder.x(1).build()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, primaryConstructor,
+propertyDeclaration, stringLiteral */

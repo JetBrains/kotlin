@@ -124,8 +124,4 @@ public interface KaInternalsResolver {
     public fun resolveToSymbol(reference: KtReference): KaSymbol?
 
     public fun isImplicitReferenceToCompanion(reference: KtReference): Boolean
-
-    public fun usesContextSensitiveResolution(reference: KtReference): Boolean
-
-    public fun usesContextSensitiveResolution(simpleNameExpression: KtSimpleNameExpression): Boolean
 }

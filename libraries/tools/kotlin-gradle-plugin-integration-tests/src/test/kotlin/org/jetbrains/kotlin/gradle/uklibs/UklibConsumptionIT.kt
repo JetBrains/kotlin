@@ -25,8 +25,10 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.gradle.testing.PrettyPrint
 import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
+import org.jetbrains.kotlin.gradle.util.computeTransformedLibraryVersionChecksum
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.Serializable
@@ -39,6 +41,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalWasmDsl::class)
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib consumption")
+@MustRunOnChangesInGradle
 class UklibConsumptionIT : KGPBaseTest() {
 
     @GradleAndroidTest
@@ -51,7 +54,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             androidTarget().publishLibraryVariants("debug", "release")
             linuxArm64()
             iosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             iosX64()
             macosArm64()
             jvm()
@@ -307,7 +310,6 @@ class UklibConsumptionIT : KGPBaseTest() {
                     androidVersion = androidVersion,
                 )
                 .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
-                .suppressAgpWarningIsProperty(gradleVersion)
         ) {
             if (androidVersion != null) addAgpToBuildScriptCompilationClasspath(androidVersion)
             addKgpToBuildScriptCompilationClasspath()
@@ -400,6 +402,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             addPublishedProjectToRepositories(transitive)
             buildScriptInjection {
                 project.computeTransformedLibraryChecksum(false)
+                project.computeTransformedLibraryVersionChecksum(enable = false)
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     linuxArm64()
@@ -677,7 +680,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
                     jvm()
                     sourceSets.commonMain.get().compileSource(
@@ -701,7 +704,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
                     jvm {
                         binaries {
@@ -793,6 +796,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             addPublishedProjectToRepositories(direct)
             buildScriptInjection {
                 project.computeTransformedLibraryChecksum()
+                project.computeTransformedLibraryVersionChecksum(enable = false)
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     targetSetup()
@@ -1348,7 +1352,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
                     js()
                     sourceSets.commonMain.get().compileSource("class Common")

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.cri.CompilerRefIndexConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
@@ -212,6 +213,10 @@ internal class KotlinWrapperPre2_3_20(
                     shrunkClasspathSnapshot,
                     options
                 )
+            }
+
+            override fun compilerRefIndexConfigurationBuilder(outputDirectory: Path): CompilerRefIndexConfiguration.Builder {
+                error("The compiler reference index configuration is supported from compiler version 2.5.20.")
             }
 
             inner class JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(

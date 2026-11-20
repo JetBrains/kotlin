@@ -9,8 +9,7 @@ plugins {
 dependencies {
     api(project(":compiler:ir.backend.common"))
     implementation(project(":core:descriptors"))
-    implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:frontend.java"))
+    implementation(project(":core:compiler.common.jvm"))
     compileOnly(project(":kotlin-noarg-compiler-plugin.common"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)

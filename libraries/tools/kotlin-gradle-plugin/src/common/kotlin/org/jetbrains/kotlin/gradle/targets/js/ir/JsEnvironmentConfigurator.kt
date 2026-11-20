@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -28,7 +29,8 @@ abstract class JsEnvironmentConfigurator<RunTask : Task>(protected val subTarget
             .withType<Executable>()
             .configureEach{ productionExecutable ->
                 val assembleTask = if (subTarget.target.wasmTargetType == KotlinWasmTargetType.WASI) {
-                    (productionExecutable as WasmBinary).optimizeTask
+                    @OptIn(ExperimentalWasmDsl::class)
+                    (productionExecutable as ExecutableWasmWasi).componentTask
                 } else {
                     productionExecutable.linkSyncTask
                 }

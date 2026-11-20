@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.expandedClassLikeType
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -39,7 +39,7 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
     val castTypeAlias = type.abbreviatedTypeOrSelf.classLikeLookupTagIfAny?.toTypeAliasSymbol()?.fir
     if (castTypeAlias != null && !canBeUsedAsBareType(castTypeAlias)) return null
 
-    val expandedCastType = type.fullyExpandedType()
+    val expandedCastType = type.fullyExpandedClassLikeType() ?: return null
     val castClass = expandedCastType.lookupTag.toRegularClassSymbol()?.fir ?: return null
 
     val superTypeWithParameters = with(session.typeContext) {
@@ -68,7 +68,7 @@ private fun canBeUsedAsBareType(firTypeAlias: FirTypeAlias): Boolean {
     val typeAliasParameters = firTypeAlias.typeParameters.toSet()
     val usedTypeParameters = mutableSetOf<FirTypeParameter>()
 
-    val expandedType = firTypeAlias.expandedConeType ?: return false
+    val expandedType = firTypeAlias.expandedClassLikeType ?: return false
     for (argument in expandedType.typeArguments) {
         if (argument.kind == ProjectionKind.STAR) continue
         if (argument.kind != ProjectionKind.INVARIANT) return false
@@ -82,4 +82,3 @@ private fun canBeUsedAsBareType(firTypeAlias: FirTypeAlias): Boolean {
 
     return true
 }
-

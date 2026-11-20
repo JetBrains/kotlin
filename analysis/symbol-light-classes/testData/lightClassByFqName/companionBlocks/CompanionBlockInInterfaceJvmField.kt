@@ -1,0 +1,11 @@
+// one.WithJvmField
+// LANGUAGE: +CompanionBlocks
+// LIBRARY_PLATFORMS: JVM
+package one
+
+interface WithJvmField {
+    companion {
+        @JvmField val STRING: String = "s"
+        @JvmField val nullable: Int? = null
+    }
+}

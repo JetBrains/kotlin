@@ -1,0 +1,2 @@
+/module_common_expectInlineClassMessageFullValueClasses.kt:7:8: warning: Standalone 'inline' modifier for classes is deprecated. Use 'value' instead. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-89772
+/module_platform_expectInlineClassMessageFullValueClasses.kt:14:1: warning: Standalone 'inline' modifier for classes is deprecated. Use '@JvmInline value' instead. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-89772

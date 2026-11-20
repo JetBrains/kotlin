@@ -1,0 +1,79 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.psi.stubs.impl
+
+import com.intellij.psi.stubs.StubElement
+import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
+
+@KtImplementationDetail
+class KotlinClassStubImpl(
+    parent: StubElement<*>?,
+    private val qualifiedName: StringRef?,
+    override val classId: ClassId?,
+    private val name: StringRef?,
+    private val superNameRefs: Array<StringRef>,
+    override val isInterface: Boolean,
+    override val isClsStubCompiledToJvmDefaultImplementation: Boolean,
+    override val isTopLevel: Boolean,
+    override val kdocText: String?,
+    /**
+     * How the class is unboxed by the compiler if it is a value class, or `null` if it is not a value class.
+     * Only stubs built from compiled metadata have this information; it is always `null` for stubs built from sources.
+     */
+    val valueClassRepresentation: KotlinValueClassRepresentation?,
+    /**
+     * The major version of the JVM class file the declaration is compiled to.
+     * Only stubs built from class files have this information; it is always `null` for other stubs.
+     */
+    val classFileMajorVersion: Int?,
+) : KotlinStubBaseImpl<KtClass>(
+    parent = parent,
+    elementType = KtNodeTypes.CLASS,
+), KotlinClassStub {
+    override val fqName: FqName?
+        get() = qualifiedName?.string?.let(::FqName)
+
+    override fun getName(): String? = StringRef.toString(name)
+
+    override val superNames: List<String>
+        get() = superNameRefs.map(StringRef::toString)
+
+    @KtImplementationDetail
+    override fun copyInto(newParent: StubElement<*>?): KotlinClassStubImpl = KotlinClassStubImpl(
+        parent = newParent,
+        qualifiedName = qualifiedName,
+        classId = classId,
+        name = name,
+        superNameRefs = superNameRefs,
+        isInterface = isInterface,
+        isClsStubCompiledToJvmDefaultImplementation = isClsStubCompiledToJvmDefaultImplementation,
+        isTopLevel = isTopLevel,
+        valueClassRepresentation = valueClassRepresentation,
+        kdocText = kdocText,
+        classFileMajorVersion = classFileMajorVersion,
+    )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinClassStubImpl &&
+                other.name == name &&
+                other.classId == classId &&
+                other.isClsStubCompiledToJvmDefaultImplementation == isClsStubCompiledToJvmDefaultImplementation &&
+                other.isTopLevel == isTopLevel &&
+                other.qualifiedName == qualifiedName &&
+                other.isInterface == isInterface &&
+                other.kdocText == kdocText &&
+                other.valueClassRepresentation == valueClassRepresentation &&
+                other.classFileMajorVersion == classFileMajorVersion &&
+                other.superNameRefs.contentEquals(superNameRefs)
+}

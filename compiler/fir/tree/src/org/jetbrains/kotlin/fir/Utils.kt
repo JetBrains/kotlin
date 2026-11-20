@@ -56,9 +56,11 @@ fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: KtFakeSourceElementKind): 
 // do we need a deep copy here ?
 fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
     if (source?.kind == newSource.kind) return this
+    // The function type kept as the partially resolved type ref of incomplete code like `context(A)` keeps its source kind
+    // when the error type ref is copied: the kind tells the diagnostic collector not to report anything on it
+    if (source?.kind == KtFakeSourceElementKind.IncompleteFunctionType) return this
 
-    @Suppress("UNCHECKED_CAST")
-    return when (val typeRef = this) {
+    val result = when (val typeRef = this) {
         is FirResolvedTypeRefImpl -> buildResolvedTypeRefCopy(typeRef) {
             source = newSource
         }
@@ -94,7 +96,9 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
             types += typeRef.types
         }
         else -> TODO("Not implemented for ${typeRef::class}")
-    } as R
+    }
+    @Suppress("UNCHECKED_CAST")
+    return result as R
 }
 
 val FirFile.packageFqName: FqName

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi;
 
-import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub;
 import org.jetbrains.kotlin.resolution.KtResolvable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -85,7 +85,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
     @NotNull
     @Override
     public List<KtTypeReference> getTypeArgumentsAsTypes() {
-        List<KtTypeReference> result = Lists.newArrayList();
+        List<KtTypeReference> result = new ArrayList<>();
         for (KtTypeProjection projection : getTypeArguments()) {
             result.add(projection.getTypeReference());
         }
@@ -128,7 +128,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
                     expression = "this.removeQualifier()",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeQualifier"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public void deleteQualifier() {

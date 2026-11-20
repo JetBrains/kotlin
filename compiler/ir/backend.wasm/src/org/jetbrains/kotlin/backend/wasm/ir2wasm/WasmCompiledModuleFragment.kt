@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.wasm.WasmSpecialExportNames
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import java.util.*
@@ -71,9 +72,9 @@ class WasmCompiledModuleFragment(
         createAssociatedObjectGetter(definedDeclarations = definedDeclarations, wasmElements = wasmElements)
 
         val mainFunctionsExportName = if (wasmCommandModuleInitialization)
-            wasmInitializeExportName
+            WasmSpecialExportNames.INITIALIZE
         else
-            wasmStartExportName
+            WasmSpecialExportNames.START
 
         val mainFunctions = selectMainFunctions()
         mainFunctions.forEach { mainFunction ->
@@ -487,7 +488,7 @@ class WasmCompiledModuleFragment(
         } else {
             // Need to export the memory in order to pass complex objects to the host language.
             // Export name "memory" is a WASI ABI convention.
-            val exportMemory = WasmExport.Memory("memory", memory)
+            val exportMemory = WasmExport.Memory(WasmSpecialExportNames.MEMORY, memory)
             exports.add(exportMemory)
         }
         return listOf(memory)
@@ -604,7 +605,8 @@ class WasmCompiledModuleFragment(
     private fun createStartUnitTestsFunction(definedDeclarations: DefinedDeclarationsResolver, exports: MutableList<WasmExport<*>>) {
         if (!definedDeclarations.functions.containsKey(Synthetics.Functions.runRootSuitesBuiltIn.value)) return
 
-        val startUnitTestsFunction = WasmFunction.Defined("startUnitTests", Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType)
+        val startUnitTestsFunction =
+            WasmFunction.Defined(WasmSpecialExportNames.START_UNIT_TESTS, Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType)
         with(WasmExpressionBuilder(startUnitTestsFunction.instructions)) {
             forEachLinkerData { linkerData ->
                 linkerData.testFunctionDeclarators.forEach { declarator ->
@@ -613,7 +615,7 @@ class WasmCompiledModuleFragment(
             }
             buildCall(Synthetics.Functions.runRootSuitesBuiltIn, serviceCodeLocation)
         }
-        exports.add(WasmExport.Function("startUnitTests", startUnitTestsFunction))
+        exports.add(WasmExport.Function(WasmSpecialExportNames.START_UNIT_TESTS, startUnitTestsFunction))
         definedDeclarations.functions[Synthetics.Functions.startUnitTestsFunction.value] = startUnitTestsFunction
     }
 

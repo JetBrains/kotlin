@@ -47,6 +47,7 @@
 -dontwarn kotlinx.coroutines.future.FutureKt
 -dontwarn kotlinx.serialization.**
 -dontwarn net.sf.cglib.**
+-dontwarn io.opentelemetry.common.**
 -dontwarn io.opentelemetry.context.**
 -dontwarn org.apache.hadoop.io.compress.*
 -dontwarn org.apache.xerces.dom.**
@@ -395,6 +396,7 @@
 -keepclassmembers class com.intellij.util.containers.ContainerUtil {
     public static java.util.concurrent.ConcurrentMap createConcurrentSoftMap();
     public static java.util.concurrent.ConcurrentMap createConcurrentWeakMap();
+    public static java.util.concurrent.ConcurrentMap createConcurrentWeakKeySoftValueMap();
     public static java.util.Map createSoftValueMap();
 }
 -keep class com.intellij.codeInsight.PsiEquivalenceUtil {

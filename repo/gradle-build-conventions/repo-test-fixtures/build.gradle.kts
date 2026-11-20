@@ -13,6 +13,7 @@ group = "org.jetbrains.kotlin"
 kotlin {
     jvmToolchain(17)
 
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = embeddedKotlinVersion
     compilerVersion = embeddedKotlinVersion
 
@@ -27,6 +28,7 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
 
     testFixturesImplementation(libs.jgit)
+    testFixturesApi(project(":test-federation-convention"))
 }
 
 tasks.test {

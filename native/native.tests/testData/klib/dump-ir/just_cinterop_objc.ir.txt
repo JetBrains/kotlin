@@ -1,0 +1,119 @@
+EXTERNAL_PACKAGE_FRAGMENT fqName:just_cinterop_c
+  CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:FooProtocolMeta signature:just_cinterop_c/FooProtocolMeta|null[100] modality:ABSTRACT visibility:public superTypes:[kotlinx.cinterop.ObjCClass]
+    annotations:
+      ExternalObjCClass(protocolGetter = "kniprot_just_cinterop_c_Foo_0", binaryName = "Foo")
+      ExperimentalForeignApi
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:just_cinterop_c.FooProtocolMeta
+  CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:FooProtocol signature:just_cinterop_c/FooProtocol|null[100] modality:ABSTRACT visibility:public superTypes:[kotlinx.cinterop.ObjCObject]
+    annotations:
+      ExternalObjCClass(protocolGetter = "kniprot_just_cinterop_c_Foo_0", binaryName = "Foo")
+      ExperimentalForeignApi
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:just_cinterop_c.FooProtocol
+    PROPERTY IR_EXTERNAL_DECLARATION_STUB name:publicProperty signature:just_cinterop_c/FooProtocol.publicProperty|{}publicProperty[100] visibility:public modality:FINAL [var]
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-publicProperty> signature:just_cinterop_c/FooProtocol.publicProperty.<get-publicProperty>|objc:publicProperty#Accessor[100] visibility:public modality:FINAL returnType:kotlin.Int [external]
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.FooProtocol
+        annotations:
+          ObjCMethod(selector = "publicProperty", encoding = "i16@0:8", isStret = false)
+        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:publicProperty signature:just_cinterop_c/FooProtocol.publicProperty|{}publicProperty[100] visibility:public modality:FINAL [var]
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<set-publicProperty> signature:just_cinterop_c/FooProtocol.publicProperty.<set-publicProperty>|objc:setPublicProperty:#Accessor[100] visibility:public modality:FINAL returnType:kotlin.Unit [external]
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.FooProtocol
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:value index:1 type:kotlin.Int
+        annotations:
+          ObjCMethod(selector = "setPublicProperty:", encoding = "v20@0:8i16", isStret = false)
+        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:publicProperty signature:just_cinterop_c/FooProtocol.publicProperty|{}publicProperty[100] visibility:public modality:FINAL [var]
+    FUN IR_EXTERNAL_DECLARATION_STUB name:publicFunction signature:just_cinterop_c/FooProtocol.publicFunction|objc:publicFunction[100] visibility:public modality:ABSTRACT returnType:kotlin.Unit
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.FooProtocol
+      annotations:
+        ObjCMethod(selector = "publicFunction", encoding = "v16@0:8", isStret = false)
+    FUN IR_EXTERNAL_DECLARATION_STUB name:publicProperty signature:just_cinterop_c/FooProtocol.publicProperty|objc:publicProperty[100] visibility:public modality:ABSTRACT returnType:kotlin.Int
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.FooProtocol
+      annotations:
+        ObjCMethod(selector = "publicProperty", encoding = "i16@0:8", isStret = false)
+    FUN IR_EXTERNAL_DECLARATION_STUB name:setPublicProperty signature:just_cinterop_c/FooProtocol.setPublicProperty|objc:setPublicProperty:[100] visibility:public modality:ABSTRACT returnType:kotlin.Unit
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.FooProtocol
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:publicProperty index:1 type:kotlin.Int
+      annotations:
+        ObjCMethod(selector = "setPublicProperty:", encoding = "v20@0:8i16", isStret = false)
+  CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:BarMeta signature:just_cinterop_c/BarMeta|null[100] modality:OPEN visibility:public superTypes:[kotlinx.cinterop.ObjCObjectBaseMeta]
+    annotations:
+      ExternalObjCClass
+      ExperimentalForeignApi
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:just_cinterop_c.BarMeta
+    CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB signature:just_cinterop_c/BarMeta.<init>|<init>(){}[100] visibility:protected returnType:just_cinterop_c.BarMeta
+  CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Bar signature:just_cinterop_c/Bar|null[100] modality:OPEN visibility:public superTypes:[kotlinx.cinterop.ObjCObjectBase]
+    annotations:
+      ExternalObjCClass
+      ExperimentalForeignApi
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:just_cinterop_c.Bar
+    CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB signature:just_cinterop_c/Bar.<init>|<init>(){}[100] visibility:protected returnType:just_cinterop_c.Bar
+    PROPERTY IR_EXTERNAL_DECLARATION_STUB name:publicProperty signature:just_cinterop_c/Bar.publicProperty|{}publicProperty[100] visibility:public modality:FINAL [var]
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-publicProperty> signature:just_cinterop_c/Bar.publicProperty.<get-publicProperty>|objc:publicProperty#Accessor[100] visibility:public modality:FINAL returnType:kotlin.Int [external]
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+        annotations:
+          ObjCMethod(selector = "publicProperty", encoding = "i16@0:8", isStret = false)
+        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:publicProperty signature:just_cinterop_c/Bar.publicProperty|{}publicProperty[100] visibility:public modality:FINAL [var]
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<set-publicProperty> signature:just_cinterop_c/Bar.publicProperty.<set-publicProperty>|objc:setPublicProperty:#Accessor[100] visibility:public modality:FINAL returnType:kotlin.Unit [external]
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:value index:1 type:kotlin.Int
+        annotations:
+          ObjCMethod(selector = "setPublicProperty:", encoding = "v20@0:8i16", isStret = false)
+        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:publicProperty signature:just_cinterop_c/Bar.publicProperty|{}publicProperty[100] visibility:public modality:FINAL [var]
+    PROPERTY IR_EXTERNAL_DECLARATION_STUB name:protectedProperty signature:just_cinterop_c/Bar.protectedProperty|{}protectedProperty[100] visibility:public modality:FINAL [var]
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-protectedProperty> signature:just_cinterop_c/Bar.protectedProperty.<get-protectedProperty>|objc:protectedProperty#Accessor[100] visibility:public modality:FINAL returnType:kotlin.Int [external]
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+        annotations:
+          ObjCMethod(selector = "protectedProperty", encoding = "i16@0:8", isStret = false)
+        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:protectedProperty signature:just_cinterop_c/Bar.protectedProperty|{}protectedProperty[100] visibility:public modality:FINAL [var]
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<set-protectedProperty> signature:just_cinterop_c/Bar.protectedProperty.<set-protectedProperty>|objc:setProtectedProperty:#Accessor[100] visibility:public modality:FINAL returnType:kotlin.Unit [external]
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:value index:1 type:kotlin.Int
+        annotations:
+          ObjCMethod(selector = "setProtectedProperty:", encoding = "v20@0:8i16", isStret = false)
+        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:protectedProperty signature:just_cinterop_c/Bar.protectedProperty|{}protectedProperty[100] visibility:public modality:FINAL [var]
+    PROPERTY IR_EXTERNAL_DECLARATION_STUB name:privateProperty signature:just_cinterop_c/Bar.privateProperty|{}privateProperty[100] visibility:public modality:FINAL [var]
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-privateProperty> signature:just_cinterop_c/Bar.privateProperty.<get-privateProperty>|objc:privateProperty#Accessor[100] visibility:public modality:FINAL returnType:kotlin.Int [external]
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+        annotations:
+          ObjCMethod(selector = "privateProperty", encoding = "i16@0:8", isStret = false)
+        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:privateProperty signature:just_cinterop_c/Bar.privateProperty|{}privateProperty[100] visibility:public modality:FINAL [var]
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<set-privateProperty> signature:just_cinterop_c/Bar.privateProperty.<set-privateProperty>|objc:setPrivateProperty:#Accessor[100] visibility:public modality:FINAL returnType:kotlin.Unit [external]
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:value index:1 type:kotlin.Int
+        annotations:
+          ObjCMethod(selector = "setPrivateProperty:", encoding = "v20@0:8i16", isStret = false)
+        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:privateProperty signature:just_cinterop_c/Bar.privateProperty|{}privateProperty[100] visibility:public modality:FINAL [var]
+    FUN IR_EXTERNAL_DECLARATION_STUB name:publicFunction signature:just_cinterop_c/Bar.publicFunction|objc:publicFunction[100] visibility:public modality:OPEN returnType:kotlin.Unit [external]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+      annotations:
+        ObjCMethod(selector = "publicFunction", encoding = "v16@0:8", isStret = false)
+    FUN IR_EXTERNAL_DECLARATION_STUB name:publicProperty signature:just_cinterop_c/Bar.publicProperty|objc:publicProperty[100] visibility:public modality:OPEN returnType:kotlin.Int [external]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+      annotations:
+        ObjCMethod(selector = "publicProperty", encoding = "i16@0:8", isStret = false)
+    FUN IR_EXTERNAL_DECLARATION_STUB name:setPublicProperty signature:just_cinterop_c/Bar.setPublicProperty|objc:setPublicProperty:[100] visibility:public modality:OPEN returnType:kotlin.Unit [external]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:publicProperty index:1 type:kotlin.Int
+      annotations:
+        ObjCMethod(selector = "setPublicProperty:", encoding = "v20@0:8i16", isStret = false)
+    FUN IR_EXTERNAL_DECLARATION_STUB name:protectedProperty signature:just_cinterop_c/Bar.protectedProperty|objc:protectedProperty[100] visibility:public modality:OPEN returnType:kotlin.Int [external]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+      annotations:
+        ObjCMethod(selector = "protectedProperty", encoding = "i16@0:8", isStret = false)
+    FUN IR_EXTERNAL_DECLARATION_STUB name:setProtectedProperty signature:just_cinterop_c/Bar.setProtectedProperty|objc:setProtectedProperty:[100] visibility:public modality:OPEN returnType:kotlin.Unit [external]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:protectedProperty index:1 type:kotlin.Int
+      annotations:
+        ObjCMethod(selector = "setProtectedProperty:", encoding = "v20@0:8i16", isStret = false)
+    FUN IR_EXTERNAL_DECLARATION_STUB name:privateProperty signature:just_cinterop_c/Bar.privateProperty|objc:privateProperty[100] visibility:public modality:OPEN returnType:kotlin.Int [external]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+      annotations:
+        ObjCMethod(selector = "privateProperty", encoding = "i16@0:8", isStret = false)
+    FUN IR_EXTERNAL_DECLARATION_STUB name:setPrivateProperty signature:just_cinterop_c/Bar.setPrivateProperty|objc:setPrivateProperty:[100] visibility:public modality:OPEN returnType:kotlin.Unit [external]
+      VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.Bar
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:privateProperty index:1 type:kotlin.Int
+      annotations:
+        ObjCMethod(selector = "setPrivateProperty:", encoding = "v20@0:8i16", isStret = false)
+    CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion signature:just_cinterop_c/Bar.Companion|null[100] modality:FINAL visibility:public [companion] superTypes:[just_cinterop_c.BarMeta; kotlinx.cinterop.ObjCClassOf<just_cinterop_c.Bar>]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:just_cinterop_c.Bar.Companion
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB signature:just_cinterop_c/Bar.Companion.<init>|<init>(){}[100] visibility:private returnType:just_cinterop_c.Bar.Companion [primary]
+MODULE_FRAGMENT name:<just_cinterop_objc>

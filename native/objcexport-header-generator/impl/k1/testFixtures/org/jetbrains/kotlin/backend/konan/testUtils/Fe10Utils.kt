@@ -5,41 +5,26 @@
 
 package org.jetbrains.kotlin.backend.konan.testUtils
 
-import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.CoreEnvironmentDeprecation
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
-import org.jetbrains.kotlin.cli.common.createPhaseConfig
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
+import org.jetbrains.kotlin.cli.common.createPerformanceManagerFor
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.context.ProjectContext
-import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
-import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.native.FakeTopDownAnalyzerFacadeForNative
+import org.jetbrains.kotlin.library.nativeTargets
+import org.jetbrains.kotlin.native.pipeline.NativeKlibCliPipeline
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.nio.file.Path
 
-fun createModuleDescriptor(
-    environment: KotlinCoreEnvironment,
-    tempDir: File,
-    kotlinSources: List<String>,
-): ModuleDescriptor {
+fun compileAndDeserializeSources(tempDir: File, kotlinSources: List<String>): ModuleDescriptor {
     val testModuleRoot = tempDir.resolve("testModule")
     testModuleRoot.mkdirs()
     val testSourcesFiles = kotlinSources.mapIndexed { index, kotlinSource ->
@@ -47,16 +32,11 @@ fun createModuleDescriptor(
             writeText(kotlinSource)
         }
     }
-    return createModuleDescriptor(environment, testSourcesFiles)
+    return compileAndDeserializeSources(testSourcesFiles)
 }
 
 @OptIn(K1Deprecation::class)
-fun createModuleDescriptor(
-    environment: KotlinCoreEnvironment,
-    kotlinFiles: List<File>,
-    dependencyKlibs: List<Path> = emptyList(),
-): ModuleDescriptor {
-
+fun compileAndDeserializeSources(kotlinFiles: List<File>, dependencyKlibs: List<Path> = emptyList()): ModuleDescriptor {
     val moduleDescriptorFactory = K1KlibMetadataModuleDescriptorFactoryImpl()
 
     val stdlibModuleDescriptor = moduleDescriptorFactory.createDescriptorAndNewBuiltIns(
@@ -65,9 +45,11 @@ fun createModuleDescriptor(
         storageManager = LockBasedStorageManager.NO_LOCKS,
     ).also { it.setDependencies(it) }
 
-    val dependencyKlibDescriptors = dependencyKlibs.map { dependencyKlib ->
+    val dependencyLibraries = dependencyKlibs.map { loadKlib(it) }
+
+    val dependencyKlibDescriptors = dependencyLibraries.map { dependencyLibrary ->
         moduleDescriptorFactory.createDescriptorAndNewBuiltIns(
-            library = loadKlib(dependencyKlib),
+            library = dependencyLibrary,
             languageVersionSettings = createLanguageVersionSettings(),
             storageManager = LockBasedStorageManager.NO_LOCKS,
         )
@@ -79,16 +61,12 @@ fun createModuleDescriptor(
         )
     }
 
-    val moduleDescriptor = ModuleDescriptorImpl(
-        moduleName = Name.special("<test_module>"),
+    val testModuleKlib = compileTestModuleKlib(kotlinFiles, dependencyKlibs, dependencyLibraries)
+
+    val moduleDescriptor = moduleDescriptorFactory.createDescriptorAndNewBuiltIns(
+        library = loadKlib(testModuleKlib),
+        languageVersionSettings = createLanguageVersionSettings(),
         storageManager = LockBasedStorageManager.NO_LOCKS,
-        builtIns = KonanBuiltIns(LockBasedStorageManager.NO_LOCKS).apply {
-            builtInsModule = stdlibModuleDescriptor.builtIns.builtInsModule
-        },
-        platform = NativePlatforms.unspecifiedNativePlatform,
-        capabilities = mapOf(
-            KlibModuleOrigin.CAPABILITY to CurrentKlibModuleOrigin,
-        )
     )
 
     moduleDescriptor.setDependencies(
@@ -100,35 +78,53 @@ fun createModuleDescriptor(
         )
     )
 
-    val projectContext = ProjectContext(environment.project, "test project context")
-
-    val psiFactory = KtPsiFactory(environment.project)
-    val kotlinPsiFiles = kotlinFiles.map { file -> psiFactory.createFile(file.name, KtTestUtil.doLoadFile(file)) }
-
-    return FakeTopDownAnalyzerFacadeForNative.analyzeFilesWithGivenTrace(
-        files = kotlinPsiFiles,
-        trace = NoScopeRecordCliBindingTrace(environment.project),
-        languageVersionSettings = createLanguageVersionSettings(),
-        moduleContext = projectContext.withModule(moduleDescriptor)
-    ).moduleDescriptor
+    return moduleDescriptor
 }
 
-fun createKotlinCoreEnvironment(
-    disposable: Disposable, compilerConfiguration: CompilerConfiguration = createCompilerConfiguration(),
-): KotlinCoreEnvironment {
-    @OptIn(CoreEnvironmentDeprecation::class)
-    return KotlinCoreEnvironment.createForTests(
-        parentDisposable = disposable,
-        initialConfiguration = compilerConfiguration,
-        extensionConfigs = EnvironmentConfigFiles.METADATA_CONFIG_FILES
-    )
-}
+private fun compileTestModuleKlib(
+    kotlinFiles: List<File>,
+    dependencyKlibs: List<Path>,
+    dependencyLibraries: List<KotlinLibrary>,
+): File {
+    val targets = dependencyLibraries.flatMapTo(LinkedHashSet()) { it.nativeTargets }
+    val target = when {
+        targets.isEmpty() -> null
+        targets.size == 1 -> targets.single()
+        else -> error("Dependency klibs of the test module have mixed targets: $targets")
+    }
 
-private fun createCompilerConfiguration(): CompilerConfiguration {
-    val configuration = KotlinTestUtils.newConfiguration()
-    configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, createLanguageVersionSettings())
-    configuration.phaseConfig = createPhaseConfig(K2NativeCompilerArguments())
-    return configuration
+    val outputKlib = FileUtil.createTempDirectory("objcExportTestModule", null).resolve("testModule.klib")
+
+    val arguments = K2NativeCompilerArguments().apply {
+        disableDefaultScriptingPlugin = true
+        produce = "library"
+        target?.let { this.target = it }
+        outputName = outputKlib.path
+        moduleName = "test_module"
+        exportKDoc = true
+        companionBlocksAndExtensions = true
+        optIn = arrayOf(
+            "kotlin.experimental.ExperimentalObjCEnum",
+            "kotlin.experimental.ExperimentalObjCName",
+            "kotlin.native.internal.InternalForKotlinNative",
+            "kotlinx.cinterop.ExperimentalForeignApi",
+        )
+        kotlinHome = konanHomePath
+        libraries = dependencyKlibs.map { it.toString() }.toTypedArray()
+        freeArgs = kotlinFiles.map { it.absolutePath }
+    }
+
+    val messageCollector = MessageCollectorImpl()
+    val exitCode = NativeKlibCliPipeline(
+        defaultPerformanceManager = createPerformanceManagerFor(NativePlatforms.unspecifiedNativePlatform),
+        isNativeOneStage = false,
+    ).execute(arguments, Services.EMPTY, messageCollector)
+
+    check(exitCode == ExitCode.OK && !messageCollector.hasErrors()) {
+        "Failed to compile the ObjC Export test module to a klib:\n$messageCollector"
+    }
+
+    return outputKlib
 }
 
 internal fun createLanguageVersionSettings() = LanguageVersionSettingsImpl(
@@ -138,6 +134,7 @@ internal fun createLanguageVersionSettings() = LanguageVersionSettingsImpl(
 
 private fun loadKlib(path: String): KotlinLibrary = KlibLoader { libraryPaths(path) }.loadOrFail()
 private fun loadKlib(path: Path): KotlinLibrary = KlibLoader { libraryPaths(path) }.loadOrFail()
+private fun loadKlib(file: File): KotlinLibrary = KlibLoader { libraryPaths(file.toPath()) }.loadOrFail()
 
 private fun KlibLoader.loadOrFail(): KotlinLibrary {
     val result = load()

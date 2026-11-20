@@ -2,6 +2,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
@@ -128,7 +129,7 @@ class ToDataFrameDslIntoString : AbstractInterpreter<Unit>() {
     val Arguments.name: String by arg()
 
     override fun Arguments.interpret() {
-        val valuesType = extractBaseColumnValuesType(receiver.coneType) ?: session.builtinTypes.nullableAnyType.coneType
+        val valuesType = extractBaseColumnValuesType(receiver.coneType) ?: StandardTypes.NullableAny
         dsl.columns += simpleColumnOf(name, valuesType).toPathToColPair()
     }
 }
@@ -139,7 +140,7 @@ class ToDataFrameDslIntoPath : AbstractInterpreter<Unit>() {
     val Arguments.path: ColumnPathApproximation by arg()
 
     override fun Arguments.interpret() {
-        val valuesType = extractBaseColumnValuesType(receiver.coneType) ?: session.builtinTypes.nullableAnyType.coneType
+        val valuesType = extractBaseColumnValuesType(receiver.coneType) ?: StandardTypes.NullableAny
         dsl.columns += path.path to simpleColumnOf(path.name(), valuesType)
     }
 }
@@ -273,15 +274,15 @@ internal fun KotlinTypeFacade.toDataFrame(
 
                 returnType = if (returnType is ConeTypeParameterType) {
                     if (returnType.canBeNull()) {
-                        session.builtinTypes.nullableAnyType.coneType
+                        StandardTypes.NullableAny
                     } else {
-                        session.builtinTypes.anyType.coneType
+                        StandardTypes.Any
                     }
                 } else {
                     returnType.withArguments {
                         val type = it.type
                         if (type is ConeTypeParameterType) {
-                            session.builtinTypes.nullableAnyType.coneType
+                            StandardTypes.NullableAny
                         } else {
                             type?.upperBoundIfFlexible() ?: it
                         }
@@ -330,8 +331,8 @@ internal fun KotlinTypeFacade.toDataFrame(
                     returnType.isIterable(session) -> {
                         val type: ConeKotlinType = when (val typeArgument = returnType.typeArguments[0]) {
                             is ConeKotlinType -> typeArgument
-                            ConeStarProjection -> session.builtinTypes.nullableAnyType.coneType
-                            else -> session.builtinTypes.nullableAnyType.coneType
+                            ConeStarProjection -> StandardTypes.NullableAny
+                            else -> StandardTypes.NullableAny
                         }
                         if (type.isValueType(session)) {
                             val columnType = List.constructClassLikeType(arrayOf(type), returnType.isMarkedNullable)

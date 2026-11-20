@@ -8,13 +8,13 @@ import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.model.doc.*
 
 @InternalDokkaApi
-public abstract class Parser {
+internal abstract class Parser {
 
-    public abstract fun parseStringToDocNode(extractedString: String): DocTag
+    abstract fun parseStringToDocNode(extractedString: String): DocTag
 
     protected abstract fun preparse(text: String): String
 
-    public open fun parse(text: String): DocumentationNode =
+    open fun parse(text: String): DocumentationNode =
         DocumentationNode(extractTagsToListOfPairs(preparse(text)).map { (tag, content) -> parseTagWithBody(tag, content) })
 
     protected open fun parseTagWithBody(tagName: String, content: String): TagWrapper =

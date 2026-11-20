@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.utils.getFile
 
 /**
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
  * @suppress
  */
 @InternalKotlinGradlePluginApi
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class SwcEnvSpec : EnvSpec<SwcEnv>() {
     /**
      * Specify Swc platform information, with name and architecture.
@@ -61,6 +63,7 @@ abstract class SwcEnvSpec : EnvSpec<SwcEnv>() {
             .named(JsPlatformDisambiguator.extensionName(SwcSetupTask.BASE_NAME))
 
     @InternalKotlinGradlePluginApi
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object : HasPlatformDisambiguator by JsPlatformDisambiguator {
         val EXTENSION_NAME: String
             get() = extensionName("swcSpec")

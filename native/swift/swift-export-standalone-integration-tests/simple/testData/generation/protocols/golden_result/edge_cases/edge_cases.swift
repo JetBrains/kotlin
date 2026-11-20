@@ -121,15 +121,15 @@ extension edge_cases.Baz where Self : edge_cases.__Baz {
 extension edge_cases.Baz {
 }
 @_documentation(visibility: internal)
-extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo where Self : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__Foo {
-}
-extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo {
-}
-@_documentation(visibility: internal)
 extension ExportedKotlinPackages.conflictingTypealiases.Foo where Self : ExportedKotlinPackages.conflictingTypealiases.__Foo {
 }
 extension ExportedKotlinPackages.conflictingTypealiases.Foo {
     public typealias Conflict = edge_cases._ExportedKotlinPackages_conflictingTypealiases_Foo_Conflict
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo where Self : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__Foo {
+}
+extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo {
 }
 @_documentation(visibility: internal)
 extension edge_cases.InterfaceA where Self : edge_cases.__InterfaceA {
@@ -158,8 +158,8 @@ extension edge_cases.SomeInterface where Self : edge_cases.__SomeInterface {
         _ context: (any edge_cases.Baz, any ExportedKotlinPackages.conflictingTypealiases.Foo),
         _ receiver: Swift.String
     ) -> Swift.Int32 {
-        let (_1, _2) = context
-        return SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__Swift_String_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__(self.__externalRCRef(), receiver, _1.__externalRCRef(), _2.__externalRCRef())
+        let (_0, _1) = context
+        return SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String__(self.__externalRCRef(), _0.__externalRCRef(), _1.__externalRCRef(), receiver)
     }
     public func `repeat`(
         _ receiver: Swift.String,
@@ -172,8 +172,8 @@ extension edge_cases.SomeInterface where Self : edge_cases.__SomeInterface {
         _ receiver: Swift.String,
         count: Swift.Int32
     ) -> [Swift.String] {
-        let (_2, _3) = context
-        return SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__(self.__externalRCRef(), receiver, count, _2.__externalRCRef(), _3.__externalRCRef()) as! Swift.Array<Swift.String>
+        let (_0, _1) = context
+        return SomeInterface_repeatWithContext__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32__(self.__externalRCRef(), _0.__externalRCRef(), _1.__externalRCRef(), receiver, count) as! Swift.Array<Swift.String>
     }
     public func setSomething(
         _ receiver: Swift.String,
@@ -186,8 +186,8 @@ extension edge_cases.SomeInterface where Self : edge_cases.__SomeInterface {
         _ receiver: Swift.String,
         value: Swift.Int32
     ) -> Swift.Void {
-        let (_2, _3) = context
-        return { SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__(self.__externalRCRef(), receiver, value, _2.__externalRCRef(), _3.__externalRCRef()); return () }()
+        let (_0, _1) = context
+        return { SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32__(self.__externalRCRef(), _0.__externalRCRef(), _1.__externalRCRef(), receiver, value); return () }()
     }
 }
 extension edge_cases.SomeInterface {
@@ -205,16 +205,16 @@ extension KotlinRuntimeSupport._KotlinExistential: edge_cases.InterfaceB, edge_c
 extension KotlinRuntimeSupport._KotlinExistential: edge_cases.Baz, edge_cases.__Baz where Wrapped : edge_cases._Baz {
 }
 @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo, ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__Foo where Wrapped : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`._Foo {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.u2764_️s_u20_Kotlin, ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.___u2764_️s_u20_Kotlin where Wrapped : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__u2764_️s_u20_Kotlin {
-}
-@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.conflictingTypealiases.Foo, ExportedKotlinPackages.conflictingTypealiases.__Foo where Wrapped : ExportedKotlinPackages.conflictingTypealiases._Foo {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.conflictingTypealiases.Bar, ExportedKotlinPackages.conflictingTypealiases.__Bar where Wrapped : ExportedKotlinPackages.conflictingTypealiases._Bar {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo, ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__Foo where Wrapped : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`._Foo {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.u2764_️s_u20_Kotlin, ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.___u2764_️s_u20_Kotlin where Wrapped : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__u2764_️s_u20_Kotlin {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: edge_cases._SomeInterface {
@@ -229,16 +229,16 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: edge_cases._InterfaceB 
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: edge_cases._Baz {
 }
 @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`._Foo {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__u2764_️s_u20_Kotlin {
-}
-@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.conflictingTypealiases._Foo {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.conflictingTypealiases._Bar {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`._Foo {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__u2764_️s_u20_Kotlin {
 }
 extension ExportedKotlinPackages.conflictingTypealiases {
     public protocol Bar: KotlinRuntime.KotlinBase, ExportedKotlinPackages.conflictingTypealiases.Foo, ExportedKotlinPackages.conflictingTypealiases._Bar {
@@ -298,10 +298,10 @@ package func InterfaceB_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPoint
     return { _result; return true }()
 }
 
-@_cdecl("SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo____reverse_swift")
-package func SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.String, _ count: Swift.Int32, _ _2: Swift.UnsafeMutableRawPointer, _ _3: Swift.UnsafeMutableRawPointer) -> Any {
+@_cdecl("SomeInterface_repeatWithContext__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse_swift")
+package func SomeInterface_repeatWithContext__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ _0: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ receiver: Swift.String, _ count: Swift.Int32) -> Any {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.SomeInterface.Type.self) as! any edge_cases.SomeInterface
-    let _result: Swift.Array<Swift.String> = _self.repeatWithContext((KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _2, conformsTo: edge_cases.Baz.Type.self) as! any edge_cases.Baz, KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _3, conformsTo: ExportedKotlinPackages.conflictingTypealiases.Foo.Type.self) as! any ExportedKotlinPackages.conflictingTypealiases.Foo), receiver, count: count)
+    let _result: Swift.Array<Swift.String> = _self.repeatWithContext((KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _0, conformsTo: edge_cases.Baz.Type.self) as! any edge_cases.Baz, KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.conflictingTypealiases.Foo.Type.self) as! any ExportedKotlinPackages.conflictingTypealiases.Foo), receiver, count: count)
     return _result
 }
 
@@ -310,4 +310,32 @@ package func SomeInterface_repeat__TypesOfArgumentsE__Swift_String_Swift_Int32__
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.SomeInterface.Type.self) as! any edge_cases.SomeInterface
     let _result: Swift.Array<Swift.String> = _self.`repeat`(receiver, count: count)
     return _result
+}
+
+@_cdecl("SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String____reverse_swift")
+package func SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ _0: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ receiver: Swift.String) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.SomeInterface.Type.self) as! any edge_cases.SomeInterface
+    let _result: Swift.Int32 = _self.getSomethingWithContext((KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _0, conformsTo: edge_cases.Baz.Type.self) as! any edge_cases.Baz, KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.conflictingTypealiases.Foo.Type.self) as! any ExportedKotlinPackages.conflictingTypealiases.Foo), receiver)
+    return _result
+}
+
+@_cdecl("SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse_swift")
+package func SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ _0: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ receiver: Swift.String, _ value: Swift.Int32) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.SomeInterface.Type.self) as! any edge_cases.SomeInterface
+    let _result: Swift.Void = _self.setSomethingWithContext((KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _0, conformsTo: edge_cases.Baz.Type.self) as! any edge_cases.Baz, KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.conflictingTypealiases.Foo.Type.self) as! any ExportedKotlinPackages.conflictingTypealiases.Foo), receiver, value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("SomeInterface_something_get__TypesOfArgumentsE__Swift_String____reverse_swift")
+package func SomeInterface_something_get__TypesOfArgumentsE__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.String) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.SomeInterface.Type.self) as! any edge_cases.SomeInterface
+    let _result: Swift.Int32 = _self.getSomething(receiver)
+    return _result
+}
+
+@_cdecl("SomeInterface_something_set__TypesOfArgumentsE__Swift_String_Swift_Int32____reverse_swift")
+package func SomeInterface_something_set__TypesOfArgumentsE__Swift_String_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.String, _ value: Swift.Int32) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.SomeInterface.Type.self) as! any edge_cases.SomeInterface
+    let _result: Swift.Void = _self.setSomething(receiver, value: value)
+    return { _result; return true }()
 }

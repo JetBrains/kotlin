@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -26,3 +27,6 @@ typealias MyTransient = Transient
 
 @Serializable
 class Regular(@MySerialName("renamed") val a: Int, @MyTransient val b: Int = 0)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration,
+stringLiteral, typeAliasDeclaration */

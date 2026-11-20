@@ -1,0 +1,121 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] destructuringNonLocal.kt
+    public final data [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int|): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/Int| = R|<local>/b|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = this@R|/X|.R|/X.a|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
+
+    }
+    private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+        private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+    public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Int| = R|/<destruct>|.R|/X.component1|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/Int| = R|/<destruct>|.R|/X.component2|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+            private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val c: R|kotlin/Int| = R|/A.<destruct>|.R|/X.component1|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val d: R|kotlin/Int| = R|/A.<destruct>|.R|/X.component2|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+                private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val e: R|kotlin/Int| = R|/A.Nested.<destruct>|.R|/X.component1|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val f: R|kotlin/Int| = R|/A.Nested.<destruct>|.R|/X.component2|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] enum class E : R|kotlin/Enum<E>| {
+        private [ResolvedTo(BODY_RESOLVE)] constructor(): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] enum entry ENTRY: R|E| = object : R|E| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
+                super<R|E|>()
+            }
+
+            private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+                private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val g: R|kotlin/Int| = R|/<anonymous>.<destruct>|.R|/X.component1|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val h: R|kotlin/Int| = R|/<anonymous>.<destruct>|.R|/X.component2|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|E| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] val entries: R|kotlin/enums/EnumEntries<E>|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<E>|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+                private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val i: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component1|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val j: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component2|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] lval o: R|<anonymous>| = object : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+                private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val k: R|kotlin/Int| = R|/<anonymous>.<destruct>|.R|/X.component1|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val l: R|kotlin/Int| = R|/<anonymous>.<destruct>|.R|/X.component2|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
+
+    }

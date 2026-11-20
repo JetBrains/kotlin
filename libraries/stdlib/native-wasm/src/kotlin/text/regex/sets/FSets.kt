@@ -165,11 +165,8 @@ internal class BehindFSet(groupIndex: Int) : FSet(groupIndex) {
  */
 internal class AtomicFSet(groupIndex: Int) : FSet(groupIndex) {
 
-    var index: Int = 0
-
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         matchResult.setConsumed(groupIndex, startIndex - matchResult.getConsumed(groupIndex))
-        index = startIndex
         return startIndex
     }
 

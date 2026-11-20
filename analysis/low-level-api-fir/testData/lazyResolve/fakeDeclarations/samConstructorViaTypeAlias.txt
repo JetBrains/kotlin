@@ -1,0 +1,165 @@
+STATUS:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final override fun [ResolvedTo(STATUS)] [TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirSyntheticFunctionSymbol test/I, typeAliasSymbol=FirTypeAliasSymbol test/TI, substitutor=null)] fun TI([ResolvedTo(STATUS)] function: R|(kotlin/Int) -> kotlin/String|): R|{test/TI=} test/I<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] samConstructorViaTypeAlias.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public abstract fun [ResolvedTo(STATUS)] interface I<@R|test/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(STATUS)] fun run([ResolvedTo(STATUS)] t: R|T|): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TI = R|test/I<kotlin/Int>|
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final override fun [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirSyntheticFunctionSymbol test/I, typeAliasSymbol=FirTypeAliasSymbol test/TI, substitutor=null)] fun TI([ResolvedTo(EXPECT_ACTUAL_MATCHING)] function: R|(kotlin/Int) -> kotlin/String|): R|{test/TI=} test/I<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] samConstructorViaTypeAlias.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public abstract fun [ResolvedTo(STATUS)] interface I<@R|test/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(STATUS)] fun run([ResolvedTo(STATUS)] t: R|T|): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TI = R|test/I<kotlin/Int>|
+
+CONTRACTS:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final override fun [ResolvedTo(CONTRACTS)] [TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirSyntheticFunctionSymbol test/I, typeAliasSymbol=FirTypeAliasSymbol test/TI, substitutor=null)] fun TI([ResolvedTo(CONTRACTS)] function: R|(kotlin/Int) -> kotlin/String|): R|{test/TI=} test/I<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] samConstructorViaTypeAlias.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public abstract fun [ResolvedTo(STATUS)] interface I<@R|test/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(STATUS)] fun run([ResolvedTo(STATUS)] t: R|T|): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TI = R|test/I<kotlin/Int>|
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final override fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirSyntheticFunctionSymbol test/I, typeAliasSymbol=FirTypeAliasSymbol test/TI, substitutor=null)] fun TI([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] function: R|(kotlin/Int) -> kotlin/String|): R|{test/TI=} test/I<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] samConstructorViaTypeAlias.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public abstract fun [ResolvedTo(STATUS)] interface I<@R|test/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(STATUS)] fun run([ResolvedTo(STATUS)] t: R|T|): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TI = R|test/I<kotlin/Int>|
+
+CONSTANT_EVALUATION:
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final override fun [ResolvedTo(CONSTANT_EVALUATION)] [TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirSyntheticFunctionSymbol test/I, typeAliasSymbol=FirTypeAliasSymbol test/TI, substitutor=null)] fun TI([ResolvedTo(CONSTANT_EVALUATION)] function: R|(kotlin/Int) -> kotlin/String|): R|{test/TI=} test/I<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] samConstructorViaTypeAlias.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Anno.s] s: String): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val C: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public abstract fun [ResolvedTo(STATUS)] interface I<@R|test/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(STATUS)] fun run([ResolvedTo(STATUS)] t: R|T|): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TI = R|test/I<kotlin/Int>|
+
+ANNOTATION_ARGUMENTS:
+TARGET: @R|test/Anno|[Types](s = String(fun).R|kotlin/String.plus|(R|test/C|) [evaluated = String(func)]) public final override fun [ResolvedTo(ANNOTATION_ARGUMENTS)] [TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirSyntheticFunctionSymbol test/I, typeAliasSymbol=FirTypeAliasSymbol test/TI, substitutor=null)] fun TI([ResolvedTo(ANNOTATION_ARGUMENTS)] function: R|(kotlin/Int) -> kotlin/String|): R|{test/TI=} test/I<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] samConstructorViaTypeAlias.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=test/Anno.s] s: R|kotlin/String|): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val C: R|kotlin/String| = String(c)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public abstract fun [ResolvedTo(STATUS)] interface I<@R|test/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](s = String(fun).R|kotlin/String.plus|(R|test/C|) [evaluated = String(func)]) public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] fun run([ResolvedTo(ANNOTATION_ARGUMENTS)] t: R|T|): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TI = R|test/I<kotlin/Int>|
+
+BODY_RESOLVE:
+TARGET: @R|test/Anno|[Types](s = String(fun).R|kotlin/String.plus|(R|test/C|) [evaluated = String(func)]) public final override fun [ResolvedTo(BODY_RESOLVE)] [TypeAliasConstructorInfoKey=TypeAliasConstructorInfo(originalConstructor=FirSyntheticFunctionSymbol test/I, typeAliasSymbol=FirTypeAliasSymbol test/TI, substitutor=null)] fun TI([ResolvedTo(BODY_RESOLVE)] function: R|(kotlin/Int) -> kotlin/String|): R|{test/TI=} test/I<kotlin/Int>|
+
+FILE: [ResolvedTo(IMPORTS)] samConstructorViaTypeAlias.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=test/Anno.s] s: R|kotlin/String|): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val C: R|kotlin/String| = String(c)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public abstract fun [ResolvedTo(STATUS)] interface I<@R|test/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](s = String(fun).R|kotlin/String.plus|(R|test/C|) [evaluated = String(func)]) public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] fun run([ResolvedTo(ANNOTATION_ARGUMENTS)] t: R|T|): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias TI = R|test/I<kotlin/Int>|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] samConstructorViaTypeAlias.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Anno.s] s: R|kotlin/String|): R|test/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(c)] val C: R|kotlin/String| = String(c)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public abstract fun [ResolvedTo(BODY_RESOLVE)] interface I<@R|test/Anno|[Types](s = String(typeParameter).R|kotlin/String.plus|(R|test/C|) [evaluated = String(typeParameterc)]) [ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        @R|test/Anno|[Types](s = String(fun).R|kotlin/String.plus|(R|test/C|) [evaluated = String(func)]) public abstract [ResolvedTo(BODY_RESOLVE)] fun run([ResolvedTo(BODY_RESOLVE)] t: R|T|): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias TI = R|test/I<kotlin/Int>|

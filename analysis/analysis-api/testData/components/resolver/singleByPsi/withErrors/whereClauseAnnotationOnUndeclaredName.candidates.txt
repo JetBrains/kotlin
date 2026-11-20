@@ -1,0 +1,2 @@
+KtAnnotationEntry(62,74): '@Anno("str")'
+  NO_CANDIDATES

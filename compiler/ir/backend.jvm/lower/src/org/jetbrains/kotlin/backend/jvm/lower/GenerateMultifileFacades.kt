@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  */
 internal class GenerateMultifileFacades(private val context: JvmBackendContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
+        if (context.multifileFacadesToAdd.isEmpty()) return
+
         val functionDelegates = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
         // In -Xmultifile-parts-inherit mode, instead of generating "bridge" methods in the facade which call into parts,

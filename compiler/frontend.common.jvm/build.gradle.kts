@@ -9,6 +9,7 @@ dependencies {
     api(project(":compiler:frontend.common"))
     api(project(":compiler:psi:psi-api"))
     api(project(":core:compiler.common.jvm"))
+    implementation(project(":core:language.targets.jvm"))
     compileOnly(intellijCore())
     compileOnly(libs.kotlinx.coroutines.core.jvm)
     compileOnly(libs.intellij.asm)

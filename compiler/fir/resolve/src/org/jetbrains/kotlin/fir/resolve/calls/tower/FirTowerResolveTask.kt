@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
@@ -322,10 +323,16 @@ internal open class FirTowerResolveTask(
                     this.coneTypeOrNull = info.lhsAsType.type
                 }
 
+                val fixedTowerGroupForLhsAsType =
+                    components.session.languageVersionSettings.supportsFeature(CallableReferencesWithBoundCompanionDontWinOverDefaultImports)
+
                 runResolverForExpressionReceiver(
                     info.replaceExplicitReceiver(stubReceiver),
                     stubReceiver,
-                    parentGroup = TowerGroup.QualifierValue,
+                    parentGroup = when {
+                        fixedTowerGroupForLhsAsType -> TowerGroup.QualifierAsTypeLhsForCallableReference
+                        else -> TowerGroup.QualifierValue
+                    },
                 )
             }
 

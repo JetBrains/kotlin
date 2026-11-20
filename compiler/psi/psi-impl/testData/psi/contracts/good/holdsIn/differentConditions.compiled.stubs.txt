@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DifferentConditionsKt]]
   IMPORT_LIST
   FUNCTION[fqName=testConditionInDescription, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription]
     contract: [ effect:param(0) == null HoldsIn(param(1)) ]
-    origin: Facade(className=DifferentConditionsKt, jvmClassName=null)
+    origin: Facade(className=DifferentConditionsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=condition]
@@ -34,7 +34,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DifferentConditionsKt]]
           isClassRef: true
   FUNCTION[fqName=testConditionInDescription2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription2]
     contract: [ effect:param(0) is KotlinClassTypeBean(classId=kotlin/Boolean, arguments=[], nullable=false, abbreviatedType=null) HoldsIn(param(1)) ]
-    origin: Facade(className=DifferentConditionsKt, jvmClassName=null)
+    origin: Facade(className=DifferentConditionsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=condition]
@@ -63,7 +63,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DifferentConditionsKt]]
           isClassRef: true
   FUNCTION[fqName=testConditionInDescription3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription3]
     contract: [ effect:param(0) && param(1) HoldsIn(param(2)) ]
-    origin: Facade(className=DifferentConditionsKt, jvmClassName=null)
+    origin: Facade(className=DifferentConditionsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=condition]
@@ -98,7 +98,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DifferentConditionsKt]]
           isClassRef: true
   FUNCTION[fqName=testConditionInDescription4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription4]
     contract: [ effect:param(0) HoldsIn(param(1)) ]
-    origin: Facade(className=DifferentConditionsKt, jvmClassName=null)
+    origin: Facade(className=DifferentConditionsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=condition]
@@ -126,7 +126,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DifferentConditionsKt]]
           isClassRef: true
   FUNCTION[fqName=testConditionInDescription6, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription6]
     contract: [ effect:param(0) && param(1) HoldsIn(param(2)) ]
-    origin: Facade(className=DifferentConditionsKt, jvmClassName=null)
+    origin: Facade(className=DifferentConditionsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=condition]
@@ -161,7 +161,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DifferentConditionsKt]]
           isClassRef: true
   FUNCTION[fqName=testConditionInDescription10, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testConditionInDescription10]
     contract: [ effect:param(0) HoldsIn(param(1)) ]
-    origin: Facade(className=DifferentConditionsKt, jvmClassName=null)
+    origin: Facade(className=DifferentConditionsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=condition]

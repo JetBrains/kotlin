@@ -90,7 +90,7 @@ FILE: lib.kt
         }
 
     }
-    field:@PROPERTY_DELEGATE_FIELD:R|BinaryAnnotation|(str = Q|EnumClass|.R|/EnumClass.OK|.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>| [evaluated = String(OK)]) public final val p: R|kotlin/String|by Q|Delegate|
+    field:@PROPERTY_DELEGATE_FIELD:R|BinaryAnnotation|(str = Q|EnumClass|.R|/EnumClass.OK|.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>| [evaluated = String(OK)]) public final val p: R|kotlin/String| by Q|Delegate|
         public get(): R|kotlin/String| {
             ^ D|/p|.R|/Delegate.getValue|(Null(null), ::R|/p|)
         }

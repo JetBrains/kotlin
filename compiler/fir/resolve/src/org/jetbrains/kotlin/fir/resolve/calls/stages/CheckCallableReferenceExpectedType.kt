@@ -159,7 +159,7 @@ private fun buildResultingTypeAndAdaptation(
                 ) {
                     returnTypeWithoutCoercion
                 } else {
-                    context.session.builtinTypes.unitType.coneType
+                    StandardTypes.Unit
                 }
             }
 
@@ -220,7 +220,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
      * fun foo(a: A, b: B = B(), vararg c: C)
      */
     var defaults = 0
-    var varargMappingState = VarargMappingState.UNMAPPED
+    var varargMappingState: VarargMappingState? = null
     val mappedArguments = linkedMapOf<FirValueParameter, ResolvedCallArgument<ConeResolutionAtom>>()
     val mappedVarargElements = linkedMapOf<FirValueParameter, MutableList<ConeResolutionAtom>>()
     val mappedArgumentTypes = arrayOfNulls<ConeKotlinType?>(fakeArguments.size)
@@ -229,14 +229,13 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
         for (fakeArgumentAtom in resolvedArgument.arguments) {
             val fakeArgument = fakeArgumentAtom.expression
             val index = fakeArgument.index
-            val substitutedParameter = function.valueParameters.getOrNull(function.indexOf(valueParameter)) ?: continue
 
             val mappedArgument: ConeKotlinType?
-            if (substitutedParameter.isVararg) {
+            if (valueParameter.isVararg) {
                 val [varargType, newVarargMappingState] = varargParameterTypeByExpectedParameter(
                     candidate,
                     inputTypes[index + unboundReceiverCount],
-                    substitutedParameter,
+                    valueParameter,
                     varargMappingState
                 )
                 varargMappingState = newVarargMappingState
@@ -250,11 +249,9 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
                     VarargMappingState.MAPPED_WITH_PLAIN_ARGS -> {
                         mappedVarargElements.getOrPut(valueParameter) { ArrayList() }.add(fakeArgumentAtom)
                     }
-                    VarargMappingState.UNMAPPED -> {
-                    }
                 }
             } else {
-                mappedArgument = substitutedParameter.returnTypeRef.coneType
+                mappedArgument = valueParameter.returnTypeRef.coneType
                 mappedArguments[valueParameter] = resolvedArgument
             }
 
@@ -332,21 +329,27 @@ context(_: SessionHolder)
 private fun varargParameterTypeByExpectedParameter(
     candidate: Candidate,
     expectedParameterType: ConeKotlinType,
-    substitutedParameter: FirValueParameter,
-    varargMappingState: VarargMappingState,
+    parameterOfReferencedFunction: FirValueParameter,
+    varargMappingState: VarargMappingState?, // `null` means calling it for the first time
 ): Pair<ConeKotlinType?, VarargMappingState> {
-    val elementType = substitutedParameter.returnTypeRef.coneType.arrayElementType()
-        ?: errorWithAttachment("Vararg parameter ${substitutedParameter::class.java} does not have vararg type") {
+    val elementType = parameterOfReferencedFunction.returnTypeRef.coneType.arrayElementType()
+        ?: errorWithAttachment("Vararg parameter ${parameterOfReferencedFunction::class.java} does not have vararg type") {
             withConeTypeEntry("expectedParameterType", expectedParameterType)
-            withFirEntry("substitutedParameter", substitutedParameter)
+            withFirEntry("parameterOfReferencedFunction", parameterOfReferencedFunction)
             withEntry("varargMappingState", varargMappingState.toString())
         }
 
     return when (varargMappingState) {
-        VarargMappingState.UNMAPPED -> {
+        null -> {
             when {
                 expectedParameterType.isArrayOrPrimitiveArray() ||
-                        isApplicableTypeVariableForMappingAsArray(expectedParameterType, candidate, elementType.createOutArrayType()) -> {
+                        isApplicableTypeVariableForMappingAsArray(
+                            expectedParameterType,
+                            candidate,
+                            // The declared element type may refer to the referenced function's own type parameters
+                            // so we need to substitute it.
+                            candidate.substitutor.substituteOrSelf(elementType.createOutArrayType()),
+                        ) -> {
                     elementType.createOutArrayType() to VarargMappingState.MAPPED_WITH_ARRAY
                 }
                 else -> {
@@ -414,10 +417,8 @@ private fun Constraint.doesNotContradictToArrayArgument(candidate: Candidate, ar
 }
 
 private enum class VarargMappingState {
-    UNMAPPED, MAPPED_WITH_PLAIN_ARGS, MAPPED_WITH_ARRAY
+    MAPPED_WITH_PLAIN_ARGS, MAPPED_WITH_ARRAY
 }
-
-private fun FirFunction.indexOf(valueParameter: FirValueParameter): Int = valueParameters.indexOf(valueParameter)
 
 private val ConeKotlinType.isBaseTypeForNumberedReferenceTypes: Boolean
     get() {

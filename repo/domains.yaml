@@ -1,71 +1,70 @@
 $schema: domains.schema.json
 
 CompilerInfrastructure:
+  team: "Kotlin Frontend"
   include:
-  - "core"
-  - "build-common"
-  - "compiler/arguments"
-  - "compiler/arguments.common"
-  - "compiler/cli/bin"
-  - "compiler/arguments.common"
-  - "compiler/cli/cli-arguments-generator"
-  - "compiler/cli/cli-base"
-  - "compiler/cli/cli-js"
-  - "compiler/cli/cli-jvm"
-  - "compiler/cli/cli-metadata"
-  - "compiler/cli/cli-native-klib"
-  - "compiler/cli/cli-runner"
-  - "compiler/cli/src"
-  - "compiler/cli/resources"
-  - "compiler/cli/build.gradle.kts"
-  - "compiler/compiler.version"
-  - "compiler/config"
-  - "compiler/config.jvm"
-  - "compiler/container"
-  - "compiler/preloader"
-  - "compiler/test-infrastructure"
-  - "compiler/test-infrastructure-utils"
-  - "compiler/test-infrastructure-utils.common"
-  - "compiler/testResources"
-  - "compiler/testData"
-  - "compiler/tests"
-  - "compiler/tests-common"
-  - "compiler/tests-common-new"
-  - "compiler/tests-compiler-utils"
-  - "compiler/tests-integration"
-  - "compiler/tests-mutes"
-  - "compiler/util"
-  - "compiler/util-io"
-  - "compiler/build.gradle.kts"
-  - "jps"
+    - "core"
+    - "build-common"
+    - "compiler/arguments"
+    - "compiler/arguments.common"
+    - "compiler/cli/bin"
+    - "compiler/arguments.common"
+    - "compiler/cli/cli-arguments-generator"
+    - "compiler/cli/cli-base"
+    - "compiler/cli/cli-js"
+    - "compiler/cli/cli-jvm"
+    - "compiler/cli/cli-metadata"
+    - "compiler/cli/cli-native-klib"
+    - "compiler/cli/cli-runner"
+    - "compiler/cli/src"
+    - "compiler/cli/build.gradle.kts"
+    - "compiler/compiler.version"
+    - "compiler/config"
+    - "compiler/config.jvm"
+    - "compiler/preloader"
+    - "compiler/test-infrastructure"
+    - "compiler/test-infrastructure-utils"
+    - "compiler/test-infrastructure-utils.common"
+    - "compiler/testResources"
+    - "compiler/testData"
+    - "compiler/tests"
+    - "compiler/tests-common"
+    - "compiler/tests-common-new"
+    - "compiler/tests-compiler-utils"
+    - "compiler/tests-integration"
+    - "compiler/tests-mutes"
+    - "compiler/util"
+    - "compiler/util-io"
+    - "compiler/build.gradle.kts"
+    - "jps"
+  exclude:
+    - "core/language.syntax"
   mustRunAllTestsOnChangesIn:
     - CoreLibs
 
 Frontend:
+  team: "Kotlin Frontend"
   include:
     - "compiler/fir"
-    - "compiler/frontend"
     - "compiler/frontend.common"
     - "compiler/frontend.common.jvm"
     - "compiler/frontend.common-psi"
-    - "compiler/frontend.java"
-    - "compiler/ir/ir.psi2ir"
     - "compiler/java-direct"
     - "compiler/multiplatform-parsing"
     - "compiler/psi/parser"
-    - "compiler/resolution"
     - "compiler/resolution.common"
     - "compiler/resolution.common.jvm"
     - "compiler/resolution.common.js"
-    - "compiler/serialization"
     - "compiler/serialization.common"
     - "compiler/tests-java8"
     - "compiler/tests-spec"
+    - "core/language.syntax"
   mustRunAllTestsOnChangesIn:
     - CoreLibs
     - CompilerInfrastructure
 
 CommonBackend:
+  team: "Kotlin Common Backend"
   include:
     - "compiler/ir/ir.actualization"
     - "compiler/ir/ir.inline"
@@ -85,6 +84,7 @@ CommonBackend:
     - Frontend
 
 Jvm:
+  team: "Kotlin JVM"
   include:
     - "compiler/android-tests"
     - "compiler/backend"
@@ -92,6 +92,7 @@ Jvm:
     - "compiler/ir/backend.jvm"
     - "compiler/ir/serialization.jvm"
     - "compiler/tests-different-jdk"
+    - "compiler/jvm.tests"
   mustRunAllTestsOnChangesIn:
     - CoreLibs
     - CompilerInfrastructure
@@ -99,6 +100,7 @@ Jvm:
     - CommonBackend
 
 Wasm:
+  team: "Kotlin Wasm"
   include:
     - "compiler/ir/backend.wasm"
     - "wasm"
@@ -116,6 +118,7 @@ Wasm:
     - CommonBackend
 
 Js:
+  team: "Kotlin JS"
   include:
     - "js"
     - "compiler/ir/backend.js"
@@ -129,6 +132,7 @@ Js:
     - CommonBackend
 
 Native:
+  team: "Kotlin Native"
   include:
     - "compiler/ir/backend.native"
     - "compiler/ir/ir.objcinterop"
@@ -144,6 +148,7 @@ Native:
     - CommonBackend
 
 CoreLibs:
+  team: "Kotlin Libraries"
   include:
     - "libraries/stdlib"
     - "libraries/tools/kotlin-annotations-jvm"
@@ -157,6 +162,7 @@ CoreLibs:
     - "libraries/tools/jdk-api-validator"
 
 AnalysisApi:
+  team: "Kotlin Analysis API"
   include:
     - "analysis"
     - "compiler/psi"
@@ -171,6 +177,7 @@ AnalysisApi:
     - CoreLibs
 
 BuildToolsApi:
+  team: "Build Tools API"
   include:
     - "build-common"
     - "compiler/build-tools"
@@ -181,7 +188,16 @@ BuildToolsApi:
   mustRunAllTestsOnChangesIn:
     - CompilerInfrastructure
 
+BuildToolsLibraries:
+  team: "Kotlin Build Tools"
+  include:
+    - "build-tools/libraries"
+  mustRunAllTestsOnChangesIn:
+    # Libraries may build on the Build Tools API
+    - BuildToolsApi
+
 SwiftExport:
+  team: "Kotlin Native"
   include:
     - "native/swift"
     - "libraries/tools/analysis-api-based-klib-reader"
@@ -190,6 +206,7 @@ SwiftExport:
     - AnalysisApi # todo: Replace this dependency with a reviewed set of @MustRunOnChangesInAnalysisApi tests
 
 CompilerPlugins:
+  team: "Kotlin Frontend"
   include:
     - "compiler/plugin-api"
     - "plugins"
@@ -203,22 +220,26 @@ CompilerPlugins:
     - CoreLibs
 
 DocumentationModel:
+  team: "Dokka"
   include:
     - "libraries/tools/kotlin-documentation-model"
 
 Gradle:
+  team: "Kotlin Build Tools"
   include:
     - "build-common"
     - "libraries/tools/*gradle*"
     - "compiler/build-tools/kotlin-build-statistics"
 
 Maven:
+  team: "Kotlin Build Tools"
   include:
     - "libraries/tools/*maven*"
 
 # The IntelliJ domain has no owned files in this repository.
 # It is used to declare which domains will affect IntelliJ and to infer when to run tests against kt-master
 IntelliJ:
+  team: "Kotlin Analysis API"
   include:
     - "prepare/ide-plugin-dependencies"
   mustRunAllTestsOnChangesIn:
@@ -230,6 +251,7 @@ IntelliJ:
     - CompilerPlugins
 
 BuildInfrastructure:
+  team: "Kotlin Build Infrastructure"
   include:
     - "repo"
     - "gradle"
@@ -241,7 +263,38 @@ BuildInfrastructure:
     - ".idea"
 
 Unknown:
+  team: "Kotlin"
   # Files not matching other domains will be sorted into 'Unknown' by default.
   include: [ ]
   mustRunAllTestsOnChangesIn:
     - CompilerInfrastructure
+
+
+# Files matching these rules belong to no domain.
+#   Such files may not require running any tests or builds before merging to master
+#   An approval from the respective codeowners can suffice.
+# Rules are evaluated in order: the last matching rule wins.
+#   Rules starting with '!' re-include paths matched by a previous rule. They have to be declared after the rule they negate.
+ignore:
+  - "tests/mute-common.csv"
+
+  # Fast track all readme files (except for those in resource folders)
+  - "ReadMe.md"
+  - "**/ReadMe.md"
+  - "**/README.md"
+  - "**/readme.md"
+  - "!**/resources/**"
+  - "!license"
+
+  # Fast track top level documents
+  - "SECURITY.md"
+  - "CODE_OF_CONDUCT.md"
+
+  # Fast track AI rules
+  - ".junie"
+  - ".claude"
+  - ".ai"
+  - "AGENTS.md"
+
+  # Ignore docs
+  - "docs"

@@ -1,5 +1,12 @@
 #include <Foundation/Foundation.h>
+#include <stdint.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+int32_t never_type_internal_functional_type_callee_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Optional_Swift_Never___(void * pointerToClosure, int32_t _1, _Bool _2);
+
+_Bool __root___consume_block_with_never__TypesOfArguments__U28Swift_NeverU29202D_U20Swift_Never__(void * block) __attribute((noreturn));
+
+_Bool __root___consume_block_with_opt_never__TypesOfArguments__U28Swift_Int32_U20Swift_Optional_Swift_Never_U29202D_U20Swift_Int32__(void * block) __attribute((noreturn));
 
 NS_ASSUME_NONNULL_END

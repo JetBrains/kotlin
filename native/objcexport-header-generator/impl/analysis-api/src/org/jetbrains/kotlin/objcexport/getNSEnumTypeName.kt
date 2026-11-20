@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.mangleIfStdMacro
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNSEnumTypeName
 import org.jetbrains.kotlin.name.ClassId
 
@@ -18,5 +19,5 @@ fun ObjCExportContext.getNSEnumTypeName(symbol: KaClassSymbol): ObjCExportNSEnum
     val name = annotation.findArgument("name")?.resolveStringConstantValue()?.ifEmpty { null }
         ?: (getObjCClassOrProtocolName(symbol).objCName + "NSEnum")
     val swiftName = annotation.findArgument("swiftName")?.resolveStringConstantValue()?.ifEmpty { null } ?: name
-    return ObjCExportNSEnumTypeName(swiftName = swiftName, objCName = name)
+    return ObjCExportNSEnumTypeName(swiftName = swiftName, objCName = name.mangleIfStdMacro())
 }

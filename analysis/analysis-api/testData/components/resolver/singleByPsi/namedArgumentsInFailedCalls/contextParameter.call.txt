@@ -1,0 +1,2 @@
+KtNameReferenceExpression(181,182): 's'
+  null

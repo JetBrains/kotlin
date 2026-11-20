@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsPro
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.MethodAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
+import org.jetbrains.kotlin.light.classes.symbol.classes.isJavaLangObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.isTypeParameter
+import org.jetbrains.kotlin.light.classes.symbol.classes.unboxedUnlessNullable
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
@@ -105,6 +107,11 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
      * Computes the type of the stub parameter mirroring [javaParameter], the parameter of [javaMethod] at [index].
      *
      * It is called lazily by [SymbolLightParameterForMappedJavaCollectionStubMethod].
+     *
+     * A boxed primitive is unboxed only where the stub stands for a Kotlin parameter of the element, key or value type,
+     * e.g., `add(int)` and `contains(int)` in `List<Int>`, unless that type is nullable (see [unboxedUnlessNullable]).
+     * JDK default methods are an exception: the mutable Kotlin collection inherits them from Java with their Java types,
+     * so `Map<Int, Int>` gets `replace(Integer, Integer, Integer)`.
      */
     internal fun computeParameterType(javaParameter: PsiParameter, index: Int): PsiType {
         val typeFromJava = javaParameter.type
@@ -112,15 +119,9 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
         val candidateType = providedType ?: substituteType(typeFromJava)
         val shouldTryToUnbox = providedType != null ||
                 (typeFromJava.isJavaLangObject() && substituteObjectWith == candidateType) ||
-                typeFromJava.isTypeParameter()
-        return if (shouldTryToUnbox) candidateType.unboxedOrSelf() else candidateType
+                (typeFromJava.isTypeParameter() && !javaMethod.hasModifierProperty(PsiModifier.DEFAULT))
+        return if (shouldTryToUnbox) candidateType.unboxedUnlessNullable() else candidateType
     }
-
-    private fun PsiType.isJavaLangObject(): Boolean =
-        this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
-
-    private fun PsiType.unboxedOrSelf(): PsiType =
-        PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
 
     /**
      * [classSubstitutor] extended with the mapping from the type parameters of [javaMethod] to the own type parameters of this method,

@@ -270,13 +270,13 @@ package test;
  */
 @kotlin.Metadata()
 public final class TFooBar extends Foo implements test.Intf, Bar {
-    @org.jetbrains.annotations.NotNull()
-    private final X a = null;
 
     public TFooBar(@org.jetbrains.annotations.NotNull()
     X a) {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private final X a = null;
 
     @org.jetbrains.annotations.NotNull()
     public final X getA() {
@@ -304,13 +304,13 @@ package test;
  */
 @kotlin.Metadata()
 public final class TFooBar2 implements Foo, Bar {
-    @org.jetbrains.annotations.NotNull()
-    private final X a = null;
 
     public TFooBar2(@org.jetbrains.annotations.NotNull()
     X a) {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private final X a = null;
 
     @org.jetbrains.annotations.NotNull()
     public final X getA() {

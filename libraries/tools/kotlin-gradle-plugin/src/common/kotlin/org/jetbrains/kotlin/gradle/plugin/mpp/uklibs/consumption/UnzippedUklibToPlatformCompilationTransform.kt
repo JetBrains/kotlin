@@ -12,10 +12,9 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
-import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibTargetFragmentAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.deserializeUklibFromDirectory
-import java.io.File
 
 @CacheableTransform
 internal abstract class UnzippedUklibToPlatformCompilationTransform :
@@ -27,6 +26,7 @@ internal abstract class UnzippedUklibToPlatformCompilationTransform :
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputArtifact
+    @get:NormalizeLineEndings
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {

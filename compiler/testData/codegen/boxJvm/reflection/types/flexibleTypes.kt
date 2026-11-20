@@ -58,8 +58,8 @@ fun box(): String {
         assertEquals(Int::class.javaObjectType, it)
     }
 
-    check(J::raw, List::class, "kotlin.collections.MutableList<(raw) kotlin.Any?>")
-    check(K::raw, List::class, "kotlin.collections.MutableList<(raw) kotlin.Any?>")
+    check(J::raw, List::class, "kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!")
+    check(K::raw, List::class, "kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!")
 
     val ref: (Number) -> Number = J::generic
     val generic = ref as KCallable<*>

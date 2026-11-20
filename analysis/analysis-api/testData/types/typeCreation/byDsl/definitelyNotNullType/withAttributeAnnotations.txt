@@ -1,0 +1,39 @@
+KaType
+KaDefinitelyNotNullType:
+  abbreviation: null
+  annotations: [
+    MyAnno()
+      psi: null
+  ]
+  original: KaTypeParameterType:
+    abbreviation: null
+    annotations: [
+      MyAnno()
+        psi: null
+    ]
+    name: T
+    symbol: KaTypeParameterSymbol:
+      anchorPsi: KtTypeParameter
+      annotations: []
+      isActual: false
+      isExpect: false
+      isExternal: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      psi: KtTypeParameter
+      realPsi: KtTypeParameter
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+    isMarkedNullable: false
+    isNullable: true
+    hasFlexibleNullability: false
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+@MyAnno T & kotlin.Any

@@ -102,10 +102,12 @@ abstract class VariantImplementationFactories : BuildService<VariantImplementati
 
         fun getProvider(
             project: Project
-        ) = getProvider(project.gradle).also { serviceProvider ->
+        ) = getProvider(project.gradle)
+
+        internal fun bindServiceToTasks(project: Project) {
             SingleActionPerProject.run(project, UsesVariantImplementationFactories::class.java.name) {
                 project.tasks.withType<UsesVariantImplementationFactories>().configureEach { task ->
-                    task.usesService(serviceProvider)
+                    task.usesService(getProvider(project))
                 }
             }
         }

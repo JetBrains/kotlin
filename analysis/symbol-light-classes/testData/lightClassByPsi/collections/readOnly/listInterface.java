@@ -36,10 +36,25 @@ public abstract class CList /* test.CList*/<Elem>  implements test.IList<Elem> {
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
+  public java.util.List<Elem> subList(int, int);//  subList(int, int)
+
+  @java.lang.Override()
+  public java.util.ListIterator<Elem> listIterator();//  listIterator()
+
+  @java.lang.Override()
+  public java.util.ListIterator<Elem> listIterator(int);//  listIterator(int)
+
+  @java.lang.Override()
   public void add(int, Elem);//  add(int, Elem)
 
   @java.lang.Override()
   public void clear();//  clear()
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<Elem>);//  replaceAll(java.util.function.UnaryOperator<Elem>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super Elem>);//  sort(java.util.Comparator<? super Elem>)
 
   public  CList();//  .ctor()
 }
@@ -121,6 +136,12 @@ public abstract class CList2 /* test.CList2*/<Elem>  implements test.IList<Elem>
   @java.lang.Override()
   public void clear();//  clear()
 
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<Elem>);//  replaceAll(java.util.function.UnaryOperator<Elem>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super Elem>);//  sort(java.util.Comparator<? super Elem>)
+
   public  CList2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IList<Elem>);//  .ctor(@org.jetbrains.annotations.NotNull() test.IList<Elem>)
 }
 
@@ -200,6 +221,12 @@ public class CList3 /* test.CList3*/<Elem>  implements test.IList<Elem> {
 
   @java.lang.Override()
   public void clear();//  clear()
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<Elem>);//  replaceAll(java.util.function.UnaryOperator<Elem>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super Elem>);//  sort(java.util.Comparator<? super Elem>)
 
   public  CList3();//  .ctor()
 }

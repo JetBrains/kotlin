@@ -1,0 +1,16 @@
+KtNameReferenceExpression(74,76): 'pv'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = pv
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val pv: kotlin.Int
+        contextParameters = []
+        callableId = test/pv
+      typeArgumentsMapping = {}

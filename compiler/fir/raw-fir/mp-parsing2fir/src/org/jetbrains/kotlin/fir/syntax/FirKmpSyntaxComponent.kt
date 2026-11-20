@@ -1,0 +1,99 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.syntax
+
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.ParserMode
+import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.name.Name
+
+/**
+ * Must not depend on the IntelliJ platform.
+ */
+@NoMutableState
+object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
+    override val parserMode: ParserMode
+        get() = KmpTree
+
+    override fun KtSourceElement.unwrap(): Any {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.forEachChildMatching(
+        depth: Int,
+        reverse: Boolean,
+        isTargetType: SyntaxIdPredicate,
+        processChild: (KtSourceElement) -> Boolean,
+    ) {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.findContextParameterListSources(): List<KtSourceElement> {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.findFunctionTypeContextParameterListSource(): KtSourceElement? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.findDefaultValueSource(): KtSourceElement? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.findValOrVarKeywordSource(): KtSourceElement? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.findExplicitReceiverOfDotQualifiedSource(): KtSourceElement? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.hasUnwrappableAsAssignmentLhs(): Boolean {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.findParameterNameSource(name: Name): KtSourceElement? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.getContainingStringTemplateEntriesCount(): Int? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.isTrailingLambdaOnNewLine(): Boolean {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.isInConstructorCallee(): Boolean {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.isInTypeConstraint(): Boolean {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.getRawIdentifier(): CharSequence? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.getRawName(): String? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.isRedundantNullable(): Boolean {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.hasEnumEntryBody(): Boolean {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.hasEnumEntryInitializer(): Boolean {
+        notYetImplemented()
+    }
+
+    private fun notYetImplemented(): Nothing = TODO("Not yet implemented: KT-91322")
+}

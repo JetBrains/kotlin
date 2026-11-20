@@ -88,6 +88,9 @@ internal abstract class DefaultNodeJsToolchainServiceImpl @Inject internal const
         ): Provider<DefaultNodeJsToolchainServiceImpl> {
             return gradle.sharedServices.registerIfAbsent(nodeJsServiceName, DefaultNodeJsToolchainServiceImpl::class.java) { spec ->
                 spec.parameters.downloadBaseUrl.convention(OFFICIAL_NODE_JS_DOWNLOAD_BASE_URL)
+                spec.parameters.installationDir.fileValue(
+                    File(System.getProperty("user.home")).resolve(".kotlin").resolve(NODE_JS_TOOLCHAINS_DIR_NAME)
+                )
                 spec.parameters.offline.convention(gradle.startParameter.isOffline)
                 configureBuildServiceParameters(spec.parameters)
             }
@@ -97,7 +100,7 @@ internal abstract class DefaultNodeJsToolchainServiceImpl @Inject internal const
             return registerIfAbsent(project.gradle) { parameters ->
                 parameters.installationDir.fileProvider(project.nodeJsToolchainInstallationDir)
                 parameters.downloadBaseUrl.set(
-                    project.kotlinPropertiesProvider.nodeJsToolchainDefaultDownloadUrl.orElse(OFFICIAL_NODE_JS_DOWNLOAD_BASE_URL)
+                    project.kotlinPropertiesProvider.nodeJsToolchainDownloadUrl.orElse(OFFICIAL_NODE_JS_DOWNLOAD_BASE_URL)
                 )
             }
         }
@@ -117,9 +120,11 @@ internal abstract class DefaultNodeJsToolchainServiceImpl @Inject internal const
          */
         private val Project.nodeJsToolchainInstallationDir: Provider<File>
             get() {
-                if (kotlinPropertiesProvider.nodeJsToolchainDefaultInstallPath.isPresent) {
-                    return kotlinPropertiesProvider.nodeJsToolchainDefaultInstallPath.map { File(it) }
+                if (kotlinPropertiesProvider.nodeJsToolchainInstallationDir.isPresent) {
+                    return kotlinPropertiesProvider.nodeJsToolchainInstallationDir.map { File(it) }
                 }
+
+                val userKotlinPersistentDir = userKotlinPersistentDir
 
                 return providers.provider { userKotlinPersistentDir.resolve(NODE_JS_TOOLCHAINS_DIR_NAME) }
             }

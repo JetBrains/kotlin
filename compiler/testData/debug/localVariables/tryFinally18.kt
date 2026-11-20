@@ -50,6 +50,7 @@ fun box() {
 // test.kt:24 foo: a:int=2:int
 // test.kt:18 callSite: a:int=2:int, b:int=2:int, $i$f$analyze:int=0:int, $i$a$-analyze-TestKt$callSite$1:int=0:int
 // test.kt:11 callSite: a:int=2:int, b:int=2:int, $i$f$analyze:int=0:int
+// test.kt:18 callSite: a:int=2:int, b:int=2:int
 // test.kt:29 box:
 
 // EXPECTATIONS JVM +USE_INLINE_SCOPES_NUMBERS
@@ -58,11 +59,11 @@ fun box() {
 // test.kt:17 callSite: a:int=1:int, b:int=2:int
 // test.kt:8 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int
 // test.kt:9 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int
-// test.kt:18 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int, $i$a$-analyze-TestKt$callSite$1\2\102\0:int=0:int
+// test.kt:18 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int, $i$a$-analyze-TestKt$callSite$1\2\104\0:int=0:int
 // test.kt:24 foo: a:int=1:int
-// test.kt:18 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int, $i$a$-analyze-TestKt$callSite$1\2\102\0:int=0:int
-// test.kt:19 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int, $i$a$-analyze-TestKt$callSite$1\2\102\0:int=0:int
-// test.kt:20 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int, $i$a$-analyze-TestKt$callSite$1\2\102\0:int=0:int
+// test.kt:18 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int, $i$a$-analyze-TestKt$callSite$1\2\104\0:int=0:int
+// test.kt:19 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int, $i$a$-analyze-TestKt$callSite$1\2\104\0:int=0:int
+// test.kt:20 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int, $i$a$-analyze-TestKt$callSite$1\2\104\0:int=0:int
 // test.kt:9 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int
 // test.kt:11 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int
 // test.kt:9 callSite: a:int=1:int, b:int=2:int, $i$f$analyze\1\17:int=0:int
@@ -71,10 +72,11 @@ fun box() {
 // test.kt:17 callSite: a:int=2:int, b:int=2:int
 // test.kt:8 callSite: a:int=2:int, b:int=2:int, $i$f$analyze\1\17:int=0:int
 // test.kt:9 callSite: a:int=2:int, b:int=2:int, $i$f$analyze\1\17:int=0:int
-// test.kt:18 callSite: a:int=2:int, b:int=2:int, $i$f$analyze\1\17:int=0:int, $i$a$-analyze-TestKt$callSite$1\2\102\0:int=0:int
+// test.kt:18 callSite: a:int=2:int, b:int=2:int, $i$f$analyze\1\17:int=0:int, $i$a$-analyze-TestKt$callSite$1\2\104\0:int=0:int
 // test.kt:24 foo: a:int=2:int
-// test.kt:18 callSite: a:int=2:int, b:int=2:int, $i$f$analyze\1\17:int=0:int, $i$a$-analyze-TestKt$callSite$1\2\102\0:int=0:int
+// test.kt:18 callSite: a:int=2:int, b:int=2:int, $i$f$analyze\1\17:int=0:int, $i$a$-analyze-TestKt$callSite$1\2\104\0:int=0:int
 // test.kt:11 callSite: a:int=2:int, b:int=2:int, $i$f$analyze\1\17:int=0:int
+// test.kt:18 callSite: a:int=2:int, b:int=2:int
 // test.kt:29 box:
 
 // EXPECTATIONS WASM

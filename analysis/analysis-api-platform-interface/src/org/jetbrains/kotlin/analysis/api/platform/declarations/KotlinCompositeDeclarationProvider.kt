@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProvider
 import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProviderFactory
@@ -39,6 +40,13 @@ public class KotlinCompositeDeclarationProvider private constructor(
         return providers.flatMapTo(mutableSetOf()) { it.getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName) }
     }
 
+    @KaExperimentalApi
+    override val mayHaveTopLevelKotlinClassLikeDeclaration: ((classId: ClassId) -> Boolean)? = run {
+        val providersChecks = providers.map { it.mayHaveTopLevelKotlinClassLikeDeclaration ?: return@run null }
+
+        return@run { classId -> providersChecks.any { check -> check(classId) } }
+    }
+
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> {
         return providers.flatMapTo(mutableListOf()) { it.getTopLevelProperties(callableId) }
     }
@@ -51,8 +59,23 @@ public class KotlinCompositeDeclarationProvider private constructor(
         return providers.flatMapTo(mutableListOf()) { it.getTopLevelCallableFiles(callableId) }
     }
 
+    override fun getTopLevelFunctionFiles(callableId: CallableId): Collection<KtFile> {
+        return providers.flatMapTo(mutableListOf()) { it.getTopLevelFunctionFiles(callableId) }
+    }
+
+    override fun getTopLevelPropertyFiles(callableId: CallableId): Collection<KtFile> {
+        return providers.flatMapTo(mutableListOf()) { it.getTopLevelPropertyFiles(callableId) }
+    }
+
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
         return providers.flatMapTo(mutableSetOf()) { it.getTopLevelCallableNamesInPackage(packageFqName) }
+    }
+
+    @KaExperimentalApi
+    override val mayHaveTopLevelCallable: ((packageFqName: FqName, name: Name) -> Boolean)? = run {
+        val providersChecks = providers.map { it.mayHaveTopLevelCallable ?: return@run null }
+
+        return@run { packageFqName, name -> providersChecks.any { check -> check(packageFqName, name) } }
     }
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> {

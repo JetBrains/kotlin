@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.EnumIntrinsicsUtils
-import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.putClassTypeArgument
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -42,60 +40,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
     private fun IrType.findEqualsMethod(): IrSimpleFunction {
         val klass = getClass() ?: irBuiltins.anyClass.owner
-        return klass.functions.single { it.isEqualsInheritedFromAny() }
-    }
-
-    private fun generateStartCoroutineUninterceptedOrReturnIntrinsicStackSwitching(
-        arity: Int,
-        call: IrCall,
-        builder: DeclarationIrBuilder,
-    ): IrExpression {
-        val stackSwitchingIntrinsics = symbols.coroutinesStackSwitchingIntrinsics!!
-
-        val suspendFunctionToContrefImpl = when (arity) {
-            0 -> stackSwitchingIntrinsics.suspendFunction0ToContrefImpl
-            1 -> stackSwitchingIntrinsics.suspendFunction1ToContrefImpl
-            2 -> stackSwitchingIntrinsics.suspendFunction2ToContrefImpl
-            else -> error("Unsupported suspend function arity: $arity")
-        }
-
-        val wasmCont = builder.irCall(suspendFunctionToContrefImpl).apply {
-            copyTypeAndValueArgumentsFrom(call)
-        }
-        return builder.irCall(stackSwitchingIntrinsics.resumeWithImpl).apply {
-            arguments[0] = wasmCont
-        }
-    }
-
-    private fun generateStartCoroutineUninterceptedOrReturnIntrinsicStateMachine(
-        arity: Int,
-        call: IrCall,
-        builder: DeclarationIrBuilder,
-    ): IrExpression {
-        val createSymbol = symbols.coroutinesStateMachineIntrinsics!!.createSimpleCoroutineFromSuspendFunction
-        val invokeSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
-        val coroutineImplType = symbols.coroutineImpl.starProjectedType
-
-        return builder.irComposite(resultType = call.type) {
-            val f = (call.arguments[0] as IrGetValue).symbol.owner
-            val completion = (call.arguments.last() as IrGetValue).symbol.owner
-
-            // If suspend function is not a CoroutineImpl, wrap Completion into CoroutineImpl.
-            val wrappedCompletion =
-                builder.irIfThenElse(
-                    type = completion.type,
-                    condition = irIs(irGet(f), coroutineImplType),
-                    thenPart = irGet(completion),
-                    elsePart = irCall(createSymbol).apply {
-                        typeArguments[0] = call.typeArguments.last()
-                        arguments[0] = irGet(completion)
-                    }
-                )
-
-            +irCall(call, invokeSymbol).apply {
-                arguments[arguments.lastIndex] = wrappedCompletion
-            }
-        }
+        return klass.functions.single { it.isEquals() }
     }
 
     private fun transformCall(
@@ -216,16 +161,6 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     }
                 }
             }
-            symbols.startCoroutineUninterceptedOrReturnIntrinsic0,
-            symbols.startCoroutineUninterceptedOrReturnIntrinsic1,
-            symbols.startCoroutineUninterceptedOrReturnIntrinsic2 -> {
-                val arity = call.arguments.size - 2
-                return if (context.wasmUseStackSwitching)
-                    generateStartCoroutineUninterceptedOrReturnIntrinsicStackSwitching(arity, call, builder)
-                else
-                    generateStartCoroutineUninterceptedOrReturnIntrinsicStateMachine(arity, call, builder)
-            }
-
             // For State Machine:   (cont as? CoroutineImpl)?.intercepted() ?: cont
             // For Stack Switching: (cont as? CoroutineImplStackSwitching<*, *>)?.intercepted() ?: cont
             symbols.interceptedIntrinsic -> {

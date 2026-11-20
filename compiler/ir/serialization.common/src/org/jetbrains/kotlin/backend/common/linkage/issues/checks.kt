@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 // N.B. Checks for absence of unbound symbols only when unbound symbols are not allowed.
-fun KotlinIrLinker.checkNoUnboundSymbols(symbolTable: SymbolTable, whenDetected: String) {
+fun KotlinIrLinker.checkNoUnboundSymbols(whenDetected: String) {
     checkNoUnboundSymbols(symbolTable, whenDetected, errorCallback)
 }
 

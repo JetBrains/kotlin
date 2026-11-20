@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JKLIB
 enum class En { A, B, C }
 
 fun test() {

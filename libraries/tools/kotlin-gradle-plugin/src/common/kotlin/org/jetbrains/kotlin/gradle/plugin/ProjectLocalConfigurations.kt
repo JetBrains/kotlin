@@ -33,7 +33,7 @@ object ProjectLocalConfigurations {
     }
 
     class ProjectLocalDisambiguation : AttributeDisambiguationRule<String> {
-        override fun execute(details: MultipleCandidatesDetails<String?>) = with(details) {
+        override fun execute(details: MultipleCandidatesDetails<String>) = with(details) {
             if (candidateValues.contains(PUBLIC_VALUE)) {
                 closestMatch(PUBLIC_VALUE)
             }

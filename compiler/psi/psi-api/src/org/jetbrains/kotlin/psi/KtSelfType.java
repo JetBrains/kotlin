@@ -18,7 +18,7 @@ import java.util.List;
  */
 @kotlin.Deprecated(
         message = "This class is obsolete. The parser logic for self-types was removed in 2015.",
-        level = DeprecationLevel.ERROR
+        level = DeprecationLevel.HIDDEN
 )
 @Deprecated
 @SubclassOptInRequired(markerClass = KtImplementationDetail.class)

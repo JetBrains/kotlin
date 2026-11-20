@@ -27,8 +27,8 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
             localRepoDir = localRepoDir,
             buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
         ) {
-            val publishedVariants = MPPNativeTargets.supported
-            val nonPublishedVariants = MPPNativeTargets.unsupported
+            val publishedVariants = MPPNativeTargets.supported.map { it.lowercase() }
+            val nonPublishedVariants = MPPNativeTargets.unsupported.map { it.lowercase() }
 
             build("publish") {
 
@@ -45,7 +45,7 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
                 val moduleMetadata = localRepoDir.resolve("com/example/sample-lib/1.0/sample-lib-1.0.module")
                 assertFileContains(moduleMetadata, """"name": "linux64ApiElements-published"""")
                 assertFileContains(moduleMetadata, """"name": "mingw64ApiElements-published"""")
-                assertFileContains(moduleMetadata, """"name": "macos64ApiElements-published"""")
+                assertFileContains(moduleMetadata, """"name": "macosArm64ApiElements-published"""")
             }
         }
     }
@@ -59,7 +59,7 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
         ) {
-            val publishedVariants = MPPNativeTargets.supported + MPPNativeTargets.unsupported
+            val publishedVariants = (MPPNativeTargets.supported + MPPNativeTargets.unsupported).map { it.lowercase() }
 
             build("publish") {
 
@@ -72,7 +72,7 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
                 val moduleMetadata = localRepoDir.resolve("com/example/sample-lib/1.0/sample-lib-1.0.module")
                 assertFileContains(moduleMetadata, """"name": "linux64ApiElements-published"""")
                 assertFileContains(moduleMetadata, """"name": "mingw64ApiElements-published"""")
-                assertFileContains(moduleMetadata, """"name": "macos64ApiElements-published"""")
+                assertFileContains(moduleMetadata, """"name": "macosArm64ApiElements-published"""")
             }
         }
     }

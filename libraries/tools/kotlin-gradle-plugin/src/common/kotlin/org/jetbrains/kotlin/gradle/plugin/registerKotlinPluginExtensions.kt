@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.BlankFreeCompilerArgsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportActionSetupAction
@@ -23,17 +24,17 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CheckXcodeTargetsConfigurati
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SetUpSwiftExportAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.SetupKotlinArchiveAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.DeprecatedMppGradlePropertiesMigrationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataForKMPSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.ExportRootModuleCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.ExportTargetPublicationCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.MultiplatformPublishingSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.SetupRootPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.RegisterMultiplatformResourcesPublicationExtensionAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformJvmResourcesPublicationAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.archive.SetupKotlinArchiveAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.SetupRootPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.UklibConsumptionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UklibPublicationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSetupAction
@@ -55,9 +56,12 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeToolchainProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmBinaryPreparationSetupAction
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmBinaryTransformRegisteringSetupAction
-import org.jetbrains.kotlin.gradle.targets.web.npm.shared.PublishSharedPackageJsonSideEffect
+import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitPreparationSetupAction
+import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitTransformRegisteringSetupAction
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.SetupNpmDependencyReportSideEffect
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.RegisterIsAllGradleProjectsEvaluatedListener
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolParallelismLimitSetupAction
 
 /**
  * Active Extensions (using the [KotlinGradlePluginExtensionPoint] infrastructure) will be registered here by the Kotlin Gradle Plugin.
@@ -68,6 +72,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, @Suppress("DEPRECATION") AddNpmDependencyExtensionProjectSetupAction)
         register(project, RegisterBuildKotlinToolingMetadataTask)
         register(project, KotlinToolingDiagnosticsSetupAction)
+        register(project, BlankFreeCompilerArgsSetupAction)
         register(project, SyncLanguageSettingsWithKotlinExtensionSetupAction)
         register(project, UserDefinedAttributesSetupAction)
         register(project, CustomizeKotlinDependenciesSetupAction)
@@ -123,6 +128,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, UklibConsumptionSetupAction)
             register(project, KotlinMetadataCompilationTargetPlatformConfiguration)
             register(project, SetupKotlinArchiveAction)
+            register(project, KotlinNativeToolParallelismLimitSetupAction)
         }
 
     }
@@ -144,8 +150,9 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, ConfigureNonPackedKlibConsumingSideEffect)
         register(project, WasmBinaryPreparationSetupAction)
         register(project, ConfigureKotlinPlaywrightTestRunner)
-        register(project, PublishSharedPackageJsonSideEffect)
-
+        register(project, WitTransformRegisteringSetupAction)
+        register(project, WitPreparationSetupAction)
+        register(project, SetupNpmDependencyReportSideEffect)
     }
 
     KotlinCompilationSideEffect.extensionPoint.apply {

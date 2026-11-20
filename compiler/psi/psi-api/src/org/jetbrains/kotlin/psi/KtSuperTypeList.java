@@ -58,7 +58,7 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
                     expression = "this.addSuperType(entry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addSuperType"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public KtSuperTypeListEntry addEntry(@NotNull KtSuperTypeListEntry entry) {
@@ -75,7 +75,7 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
                     expression = "this.removeSuperType(entry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeSuperType"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public void removeEntry(@NotNull KtSuperTypeListEntry entry) {

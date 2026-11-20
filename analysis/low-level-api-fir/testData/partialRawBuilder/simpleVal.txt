@@ -1,2 +1,0 @@
-public? final? val test/foo: Int = IntegerLiteral(0)
-    public? get(): Int

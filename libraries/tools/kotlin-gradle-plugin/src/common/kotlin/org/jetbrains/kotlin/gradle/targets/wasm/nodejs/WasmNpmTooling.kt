@@ -10,6 +10,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersionInternal
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NpmToolingEnv
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.toHexString
 import java.io.File
@@ -23,6 +24,7 @@ import java.security.MessageDigest
  * @property installationDir The directory where the NPM dependencies are installed or managed.
  * @property allDeps The list of NPM package versions to be managed, consisting of their names and corresponding versions.
  */
+@ObsoleteNpmDependencyModel
 abstract class WasmNpmTooling internal constructor() {
 
     internal abstract val defaultInstallationDir: DirectoryProperty

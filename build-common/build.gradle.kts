@@ -11,24 +11,21 @@ plugins {
 dependencies {
     implementation(project(":compiler:arguments.common"))
     implementation(project(":compiler:config.jvm"))
-    implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:frontend.java"))
-    implementation(project(":compiler:resolution"))
-    implementation(project(":compiler:serialization"))
+    api(project(":compiler:frontend.common.jvm"))
+    api(project(":core:deserialization.common"))
     implementation(project(":core:descriptors"))
-    implementation(project(":core:descriptors.jvm"))
-    implementation(project(":core:deserialization"))
     compileOnly(project(":core:util.runtime"))
+    implementation(project(":core:language.version-settings"))
     compileOnly(project(":compiler:backend.common.jvm"))
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-base"))
-    compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":js:js.config"))
     compileOnly(project(":kotlin-util-klib-metadata"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
+    compileOnly(libs.guava)
     compileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
 
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))

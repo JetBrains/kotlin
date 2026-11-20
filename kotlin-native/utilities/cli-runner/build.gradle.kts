@@ -4,6 +4,7 @@ plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -17,6 +18,9 @@ dependencies {
     implementation(project(":kotlin-native:klib"))
     implementation(project(":native:cli-native"))
     implementation(project(":native:kotlin-native-utils"))
+
+    testImplementation(kotlinTest("junit5"))
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
@@ -29,5 +33,9 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { none() }
+    "test" { projectDefault() }
+}
+
+projectTests {
+    testTask()
 }

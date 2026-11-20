@@ -1,0 +1,60 @@
+=== after initial build ===
+lookups:
+  a.Impl::member -> b/src/Usage.kt
+  a.Obj::prop -> b/src/Usage.kt
+  a::Base -> a/src/Base.kt, b/src/Untouched.kt, b/src/Usage.kt
+  a::Impl -> a/src/Base.kt, b/src/Usage.kt
+  a::Int -> a/src/Base.kt
+  a::Obj -> a/src/Base.kt, b/src/Usage.kt
+  a::Other -> a/src/Base.kt
+  a::sameModule -> a/src/SameModule.kt
+  a::topLevel -> a/src/Base.kt, b/src/Usage.kt
+  a::topProp -> a/src/Base.kt, a/src/SameModule.kt, b/src/Untouched.kt
+  b::Base -> b/src/Untouched.kt, b/src/Usage.kt
+  b::Child -> b/src/Usage.kt
+  b::Impl -> b/src/Usage.kt
+  b::Obj -> b/src/Usage.kt
+  b::Untouched -> b/src/Untouched.kt
+  b::obj -> b/src/Usage.kt
+  b::untouched -> b/src/Untouched.kt
+  b::use -> b/src/Usage.kt
+subtypes:
+  a.Base -> a.Impl, a.Other, b.Untouched
+  a.Impl -> b.Child
+  a.Obj ->
+  a.Other ->
+  b.Child ->
+  b.Untouched ->
+processed modules:
+  a
+  b
+
+=== after incremental build ===
+lookups:
+  a.Obj::prop -> b/src/Usage.kt
+  a::Base -> a/src/Base.kt, b/src/Untouched.kt, b/src/Usage.kt
+  a::Impl -> a/src/Base.kt
+  a::Int -> a/src/Base.kt
+  a::Obj -> a/src/Base.kt, b/src/Usage.kt
+  a::Other -> a/src/Base.kt
+  a::sameModule -> a/src/SameModule.kt
+  a::topLevel -> a/src/Base.kt
+  a::topProp -> a/src/Base.kt, a/src/SameModule.kt, b/src/Untouched.kt, b/src/Usage.kt
+  b::Base -> b/src/Untouched.kt, b/src/Usage.kt
+  b::Child -> b/src/Usage.kt
+  b::Obj -> b/src/Usage.kt
+  b::Untouched -> b/src/Untouched.kt
+  b::obj -> b/src/Usage.kt
+  b::readTopProp -> b/src/Usage.kt
+  b::untouched -> b/src/Untouched.kt
+  b::use -> b/src/Usage.kt
+subtypes:
+  a.Base -> a.Impl, a.Other, b.Child, b.Untouched
+  a.Impl ->
+  a.Obj ->
+  a.Other ->
+  b.Child ->
+  b.Untouched ->
+processed modules:
+  a
+  b

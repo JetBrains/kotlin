@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.util.runProcess
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.test.assertContains
+import kotlin.test.assertTrue
 import kotlin.test.asserter
 
 private val kotlinSrcRegex by lazy { Regex("\\[KOTLIN] (v: )?compile iteration: ([^\\r\\n]*)") }
@@ -22,7 +24,7 @@ private val javaSrcRegex by lazy { Regex("\\[DEBUG] \\[[^]]*JavaCompiler] Compil
  *
  * The returned paths are relative to the project directory.
  *
- * Note: Log level of output must be set to [LogLevel.DEBUG].
+ * Note: Log level of output must be set to [org.gradle.api.logging.LogLevel.DEBUG].
  */
 fun extractCompiledKotlinFiles(output: String): List<Path> {
     return kotlinSrcRegex.findAll(output).asIterable()
@@ -31,23 +33,11 @@ fun extractCompiledKotlinFiles(output: String): List<Path> {
 }
 
 /**
- * Extracts the list of compiled .kt files from the build output. Results are grouped by compilation step.
- *
- * The returned paths are relative to the project directory.
- *
- * Note: Log level of output must be set to [LogLevel.DEBUG].
- */
-fun extractAllKotlinCompileIterations(output: String): List<List<Path>> {
-    return kotlinSrcRegex.findAll(output).asIterable()
-        .map { matchResult -> matchResult.groups[2]!!.value.split(", ").toPaths() }
-}
-
-/**
  * Extracts the list of compiled .java files from the build output.
  *
  * The returned paths are relative to the project directory.
  *
- * Note: Log level of output must be set to [LogLevel.DEBUG].
+ * Note: Log level of output must be set to [org.gradle.api.logging.LogLevel.DEBUG].
  */
 fun extractCompiledJavaFiles(projectDir: File, output: String): List<Path> {
     return javaSrcRegex.findAll(output).asIterable()
@@ -59,12 +49,12 @@ fun extractCompiledJavaFiles(projectDir: File, output: String): List<Path> {
 /**
  * Asserts all the .kt files from [expectedSources] and only they are compiled
  *
- * Note: log level of output should be set to [LogLevel.DEBUG]
+ * Note: log level of output should be set to [org.gradle.api.logging.LogLevel.DEBUG]
  */
 fun assertCompiledKotlinSources(
     expectedSources: Iterable<Path>,
     output: String,
-    errorMessageSuffix: String = ""
+    errorMessageSuffix: String = "",
 ) {
     val actualSources = extractCompiledKotlinFiles(output)
     assertSameFiles(expectedSources, actualSources, "Compiled Kotlin files differ${errorMessageSuffix}:\n")
@@ -73,32 +63,15 @@ fun assertCompiledKotlinSources(
 /**
  * Asserts all the .java files from [expectedSources] and only they are compiled
  *
- * Note: log level of output should be set to [LogLevel.DEBUG]
+ * Note: log level of output should be set to [org.gradle.api.logging.LogLevel.DEBUG]
  */
 fun GradleProject.assertCompiledJavaSources(
     expectedSources: Iterable<Path>,
     output: String,
-    errorMessageSuffix: String = ""
+    errorMessageSuffix: String = "",
 ) {
     val actualSources = extractCompiledJavaFiles(projectPath.toRealPath().toFile(), output)
     assertSameFiles(expectedSources, actualSources, "Compiled Java files differ${errorMessageSuffix}:\n")
-}
-
-/**
- * Asserts that compilation was non-incremental.
- *
- * Note: Log level of output must be set to [LogLevel.DEBUG].
- */
-fun BuildResult.assertNonIncrementalCompilation(reason: BuildAttribute? = null) {
-    if (reason != null) {
-        assertOutputContains("$NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED: ${reason.readableString}")
-    } else {
-        assertOutputContains(NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED)
-    }
-
-    // Also check that the other cases didn't happen
-    assertOutputDoesNotContain(INCREMENTAL_COMPILATION_COMPLETED)
-    assertOutputDoesNotContain(FALLING_BACK_TO_NON_INCREMENTAL_COMPILATION)
 }
 
 /**
@@ -106,7 +79,7 @@ fun BuildResult.assertNonIncrementalCompilation(reason: BuildAttribute? = null) 
  *
  * [expectedCompiledKotlinFiles] are relative to the project directory.
  *
- * Note: Log level of output must be set to [LogLevel.DEBUG].
+ * Note: Log level of output must be set to [org.gradle.api.logging.LogLevel.DEBUG].
  */
 fun BuildResult.assertIncrementalCompilation(expectedCompiledKotlinFiles: Iterable<Path>? = null) {
     assertOutputContains(INCREMENTAL_COMPILATION_COMPLETED)
@@ -121,20 +94,69 @@ fun BuildResult.assertIncrementalCompilation(expectedCompiledKotlinFiles: Iterab
 }
 
 /**
- * Asserts that incremental compilation was attempted, failed, and fell back to non-incremental compilation.
+ * Asserts that the .kt files from [expectedSources] and only they are reported as compiled incrementally
+ * in the Kotlin build report of this build.
  *
- * Note: Log level of output must be set to [LogLevel.DEBUG].
+ * Note: the build must run with [BuildOptions.buildReport] containing `BuildReportType.FILE`.
  */
-fun BuildResult.assertIncrementalCompilationFellBackToNonIncremental(reason: BuildAttribute? = null) {
-    if (reason != null) {
-        assertOutputContains("$FALLING_BACK_TO_NON_INCREMENTAL_COMPILATION (reason = ${reason.name})")
-    } else {
-        assertOutputContains(FALLING_BACK_TO_NON_INCREMENTAL_COMPILATION)
-    }
+fun BuildResult.assertCompiledKotlinSourcesInBuildReport(expectedSources: Iterable<Path>) {
+    assertSameFiles(
+        expected = expectedSources,
+        actual = extractKotlinBuildReportCompileIterations(kotlinBuildReport()).flatten(),
+        "Compiled Kotlin files differ:\n",
+    )
+}
 
-    // Also check that the other cases didn't happen
-    assertOutputDoesNotContain(INCREMENTAL_COMPILATION_COMPLETED)
-    assertOutputDoesNotContain(NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED)
+/**
+ * Asserts that compilation was incremental and the set of compiled .kt files exactly match [expectedCompiledKotlinFiles],
+ * according to the Kotlin build report of this build.
+ *
+ * [expectedCompiledKotlinFiles] are relative to the project directory.
+ *
+ * Note: the build must run with [BuildOptions.buildReport] containing `BuildReportType.FILE`.
+ */
+fun BuildResult.assertIncrementalCompilationInBuildReport(expectedCompiledKotlinFiles: Iterable<Path>? = null) {
+    assertKotlinBuildReportOutcome(
+        expected = INCREMENTAL_COMPILATION_COMPLETED,
+        NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED,
+        FALLING_BACK_TO_NON_INCREMENTAL_COMPILATION,
+    )
+
+    expectedCompiledKotlinFiles?.let { assertCompiledKotlinSourcesInBuildReport(it) }
+}
+
+/**
+ * Asserts that compilation was non-incremental, according to the Kotlin build report of this build.
+ *
+ * Note: the build must run with [BuildOptions.buildReport] containing `BuildReportType.FILE`.
+ */
+fun BuildResult.assertNonIncrementalCompilationInBuildReport(reason: BuildAttribute? = null) {
+    assertKotlinBuildReportOutcome(
+        expected = NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED + reason?.let { ": ${it.readableString}" }.orEmpty(),
+        INCREMENTAL_COMPILATION_COMPLETED,
+        FALLING_BACK_TO_NON_INCREMENTAL_COMPILATION,
+    )
+}
+
+/**
+ * Asserts that incremental compilation was attempted, failed, and fell back to non-incremental compilation,
+ * according to the Kotlin build report of this build.
+ *
+ * Note: the build must run with [BuildOptions.buildReport] containing `BuildReportType.FILE`.
+ */
+fun BuildResult.assertIncrementalCompilationFellBackToNonIncrementalInBuildReport(reason: BuildAttribute? = null) {
+    assertKotlinBuildReportOutcome(
+        expected = FALLING_BACK_TO_NON_INCREMENTAL_COMPILATION + reason?.let { " (reason = ${it.name})" }.orEmpty(),
+        INCREMENTAL_COMPILATION_COMPLETED,
+        NON_INCREMENTAL_COMPILATION_WILL_BE_PERFORMED,
+    )
+}
+
+private fun BuildResult.assertKotlinBuildReportOutcome(expected: String, vararg unexpected: String) {
+    val report = kotlinBuildReport()
+    assertContains(report, expected)
+    val unexpectedFound = unexpected.filter { it in report }
+    assertTrue(unexpectedFound.isEmpty(), "Report unexpectedly contains $unexpectedFound:\n$report")
 }
 
 // Each of the following messages should uniquely correspond to a case in `IncrementalCompilerRunner.ICResult`
@@ -187,7 +209,7 @@ fun assertClassDeclarationsContain(classesDir: Path, classFqn: String, expectedD
  */
 fun BuildResult.assertCompiledKotlinSourcesHandleKapt(
     sources: List<Path>,
-    taskPath: String = ""
+    taskPath: String = "",
 ) {
     assertCompiledKotlinSources(
         sources,
@@ -208,7 +230,7 @@ fun BuildResult.assertCompiledKotlinSourcesHandleKapt(
  */
 fun BuildResult.assertCompiledKotlinTestSourcesAreHandledByKapt(
     sources: List<Path>,
-    taskPath: String = ""
+    taskPath: String = "",
 ) {
     assertCompiledKotlinSources(
         sources,
@@ -224,20 +246,28 @@ fun BuildResult.assertCompiledKotlinTestSourcesAreHandledByKapt(
 }
 
 /**
- * Asserts the contents of each incremental compilation step. Each element of [sourcesPerStep] defines a single step.
+ * Asserts the contents of each incremental compilation step, according to the Kotlin build report of this build.
+ * Each element of [sourcesPerStep] defines a single step.
  *
  * Example:
- * assertKotlinCompilationSteps(listOf(aKtPath), listOf(aKtPath, bKtPath))
- * - asserts that there were two compilation steps, first one compiled a.kt, and the second one
- *   compiled a.kt and b.kt.
+ * ```
+ * val aKtPath = Path("a.kt")
+ * val bKtPath = Path("b.kt")
+ * assertKotlinCompilationStepsInBuildReport(listOf(aKtPath), listOf(aKtPath, bKtPath))
+ * ```
+ * Asserts that there were two compilation steps.
+ * 1. The first one compiled `a.kt` (but not `b.kt`).
+ * 2. The second one compiled `a.kt` and `b.kt`.
  *
- * Normal assertions such as [assertCompiledKotlinSources] flatMap all compiled sources into a single set,
+ * Normal assertions such as [assertCompiledKotlinSourcesInBuildReport] flatMap all compiled sources into a single set,
  * and in some test scenarios it loses valuable information.
+ *
+ * Note: the build must run with [BuildOptions.buildReport] containing `BuildReportType.FILE`.
  */
-fun BuildResult.assertKotlinCompilationSteps(
-    vararg sourcesPerStep: Iterable<Path>
+fun BuildResult.assertKotlinCompilationStepsInBuildReport(
+    vararg sourcesPerStep: Iterable<Path>,
 ) {
-    val actualSourcesPerStep = extractAllKotlinCompileIterations(output)
+    val actualSourcesPerStep = extractKotlinBuildReportCompileIterations(kotlinBuildReport())
 
     asserter.assertEquals(
         "Logged compilation steps don't match the assertion: ",

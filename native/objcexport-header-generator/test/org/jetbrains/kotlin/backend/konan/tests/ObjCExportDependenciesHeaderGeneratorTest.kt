@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.testUtils.TodoAnalysisApi
 import org.jetbrains.kotlin.backend.konan.testUtils.dependenciesDir
 import org.jetbrains.kotlin.konan.test.*
 import org.jetbrains.kotlin.test.TestDataAssertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.fail
@@ -208,6 +209,18 @@ class ObjCExportDependenciesHeaderGeneratorTest(
             dependenciesDir.resolve("extensionsLibrary"), configuration = HeaderGenerator.Configuration(
                 dependencies = listOfNotNull(testExtensionsLibrary),
                 exportedDependencies = setOf(testExtensionsLibrary)
+            )
+        )
+    }
+
+    @Test
+    @TodoAnalysisApi
+    @Disabled("TODO(KT-85123): `testKDocLibrary` is compiled by the bootstrap Kotlin/Native, which does not yet serialize KDoc of enum entries and accessors; unmute after the bootstrap advances past this change")
+    fun `test - kdoc from dependency`() {
+        doTest(
+            dependenciesDir.resolve("kdocLibrary"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testKDocLibrary),
+                exportedDependencies = setOf(testKDocLibrary)
             )
         )
     }

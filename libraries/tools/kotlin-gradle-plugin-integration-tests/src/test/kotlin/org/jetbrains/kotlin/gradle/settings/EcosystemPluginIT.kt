@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
+import org.jetbrains.kotlin.gradle.testbase.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.JvmGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
@@ -24,12 +25,14 @@ import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.source
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 
 @DisplayName("Kotlin ecosystem plugin")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class EcosystemPluginIT : KGPBaseTest() {
 
     @DisplayName("Works in buildSrc")

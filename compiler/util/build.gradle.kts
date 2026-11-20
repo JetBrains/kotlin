@@ -11,6 +11,7 @@ plugins {
 dependencies {
     api(kotlinStdlib())
     api(project(":compiler:compiler.version"))
+    api(project(":core:error.handling"))
     api(project(":core:util.runtime"))
 
     compileOnly(intellijCore())

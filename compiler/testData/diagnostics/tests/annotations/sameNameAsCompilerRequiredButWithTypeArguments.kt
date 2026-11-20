@@ -10,7 +10,7 @@ class A {
     @Deprecated<String>("msg")
     fun foo() = Unit
 
-    @<!INAPPLICABLE_CANDIDATE!>Deprecated<!><<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Unresolved<!>>("msg")
+    @Deprecated<<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Unresolved<!>>("msg")
     fun bar() = Unit
 }
 

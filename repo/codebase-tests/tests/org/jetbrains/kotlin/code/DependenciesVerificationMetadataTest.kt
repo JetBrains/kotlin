@@ -15,6 +15,7 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 import java.io.File
+import kotlin.test.fail
 
 
 class DependenciesVerificationMetadataTest {
@@ -22,6 +23,8 @@ class DependenciesVerificationMetadataTest {
     private data class VerificationMetadata(
         @field:JacksonXmlElementWrapper(localName = "components")
         val components: List<Component> = listOf(),
+        @field:JacksonXmlProperty
+        val configuration: Configuration,
     )
 
     private data class Component(
@@ -35,6 +38,18 @@ class DependenciesVerificationMetadataTest {
         val artifact: List<Artifact>,
     )
 
+    private data class Configuration(
+        /*  `@JacksonXmlProperty` is used here instead of `@JacksonXmlElementWrapper`
+         *  because even with `localName = "trusted-artifacts"` defined in `@JacksonXmlElementWrapper`
+         *  `trustedArtifacts` property is expected:
+         *    "Could not find creator property with name 'trusted-artifacts' (known Creator properties: [trustedArtifacts])"
+         *  This could be related to https://github.com/FasterXML/jackson-module-kotlin/issues/153
+         *  Not using the wrapper breaks serialization, but the tests only read the verification metadata file.
+         */
+        @field:JacksonXmlProperty(localName = "trusted-artifacts")
+        val trustedArtifacts: List<TrustedArtifact> = listOf(),
+    )
+
     private data class Artifact(
         @field:JacksonXmlProperty(isAttribute = true)
         val name: String,
@@ -42,6 +57,21 @@ class DependenciesVerificationMetadataTest {
     )
 
     private data class Hash(@field:JacksonXmlProperty(isAttribute = true) val value: String)
+
+    private data class TrustedArtifact(
+        @field:JacksonXmlProperty(isAttribute = true)
+        val group: String? = null,
+        @field:JacksonXmlProperty(isAttribute = true)
+        val name: String? = null,
+        @field:JacksonXmlProperty(isAttribute = true)
+        val version: String? = null,
+        @field:JacksonXmlProperty(isAttribute = true)
+        val file: String? = null,
+        @field:JacksonXmlProperty(isAttribute = true)
+        val regex: String? = null,
+        @field:JacksonXmlProperty(isAttribute = true)
+        val reason: String? = null,
+    )
 
     @Test
     fun dependenciesHasValidHashes() {
@@ -62,5 +92,44 @@ class DependenciesVerificationMetadataTest {
         }
 
         assertTrue(fails.isEmpty(), fails.toString())
+    }
+
+    @Test
+    fun noNewTrustedArtifacts() {
+        val mapper = XmlMapper()
+            .apply {
+                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                registerKotlinModule()
+            }
+        val verificationMetadata = mapper.readValue<VerificationMetadata>(File("gradle/verification-metadata.xml"))
+
+        val trustedArtifactsExceptions = listOf(
+            TrustedArtifact(file = ".*-javadoc[.]jar", regex = "true"),
+            TrustedArtifact(file = ".*-sources[.]jar", regex = "true"),
+            TrustedArtifact(file = ".*[.]module", regex = "true"),
+            TrustedArtifact(file = ".*[.]pom", regex = "true"),
+            TrustedArtifact(group = "gradle", name = "gradle", file = "gradle-.*-src[.]zip", regex = "true"),
+        )
+        val trustedArtifacts = verificationMetadata.configuration.trustedArtifacts
+        val unexpectedTrustedArtifacts = trustedArtifacts.filter { it !in trustedArtifactsExceptions }
+        val unneededExceptions = trustedArtifactsExceptions.filter { it !in trustedArtifacts }
+
+        val failMessage = buildString {
+            if (unexpectedTrustedArtifacts.isNotEmpty()) {
+                appendLine("Unexpected trusted artifacts:")
+                unexpectedTrustedArtifacts.forEach {
+                    appendLine("    $it")
+                }
+            }
+            if (unneededExceptions.isNotEmpty()) {
+                appendLine("Unneeded exceptions, remove them from the test:")
+                unneededExceptions.forEach {
+                    appendLine("    $it")
+                }
+            }
+        }
+        if (failMessage.isNotEmpty()) {
+            fail(failMessage)
+        }
     }
 }

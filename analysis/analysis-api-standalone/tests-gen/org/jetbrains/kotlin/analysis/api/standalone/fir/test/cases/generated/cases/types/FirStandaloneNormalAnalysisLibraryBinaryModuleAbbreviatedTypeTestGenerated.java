@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAbbreviatedTypeTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.types.AbstractAbbreviatedTypeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -71,6 +71,18 @@ public class FirStandaloneNormalAnalysisLibraryBinaryModuleAbbreviatedTypeTestGe
   @TestMetadata("FunctionAliasNullableFromLibrary.kt")
   public void testFunctionAliasNullableFromLibrary() {
     run("FunctionAliasNullableFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("IntAliasFromDecompiledLibrary.kt")
+  public void testIntAliasFromDecompiledLibrary() {
+    run("IntAliasFromDecompiledLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("IntAliasInDecompiledLibraryUseSite.kt")
+  public void testIntAliasInDecompiledLibraryUseSite() {
+    run("IntAliasInDecompiledLibraryUseSite.kt");
   }
 
   @Test

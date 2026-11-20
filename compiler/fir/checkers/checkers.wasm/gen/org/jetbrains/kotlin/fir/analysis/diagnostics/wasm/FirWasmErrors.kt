@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.psi.KtElement
 @Suppress("IncorrectFormatting")
 object FirWasmErrors : KtDiagnosticsContainer() {
     // Annotations
-    val JS_MODULE_PROHIBITED_ON_NON_EXTERNAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_NON_EXTERNAL", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE", ProhibitVarInJsModuleFile, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtElement::class, getRendererFactory())
-    val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
 
     // Externals
     val NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
@@ -45,6 +43,7 @@ object FirWasmErrors : KtDiagnosticsContainer() {
     // Wasm interop
     val NESTED_WASM_EXPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_WASM_EXPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WASM_EXPORT_ON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_EXPORT_ON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val WASM_EXPORT_UNSUPPORTED_FUNCTION_KIND: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WASM_EXPORT_UNSUPPORTED_FUNCTION_KIND", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val NESTED_WASM_IMPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_WASM_IMPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
@@ -54,6 +53,8 @@ object FirWasmErrors : KtDiagnosticsContainer() {
     val WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val RESERVED_WORD_AS_JS_EXPORT_NAME: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("RESERVED_WORD_AS_JS_EXPORT_NAME", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // WASI
     val WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())

@@ -31,13 +31,13 @@ import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.findEntry
-import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.asJava.mangleInternalName
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.config.jvmDefaultMode
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getIntroducedAtVersionFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMeth
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
 import org.jetbrains.kotlin.light.classes.symbol.utils.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.utils.copy
+import org.jetbrains.kotlin.light.classes.symbol.utils.isCompanionExtension
 import org.jetbrains.kotlin.light.classes.symbol.utils.isJvmField
 import org.jetbrains.kotlin.light.classes.symbol.utils.mapType
 import org.jetbrains.kotlin.name.ClassId
@@ -110,7 +111,18 @@ private fun lightClassForEnumEntryInitializer(enumEntrySymbol: KaEnumEntrySymbol
         (enumEntrySymbol.containingSymbol as? KaClassSymbol)?.asPsiClass() as? SymbolLightClassForClassOrObject ?: return null
     val enumEntryPsi = enumEntrySymbol.realPsi as? KtEnumEntry
     val enumEntrySymbolPointer = enumEntrySymbol.createPointer()
-    val targetField = symbolLightClass.ownFields.firstOrNull { psiField ->
+
+    // `SymbolLightClassForClassOrObject.addFieldsForEnumEntries` creates the field of the entry with this `kotlinOrigin`, so the
+    // cached lookup by it replaces a scan of all fields for each entry. The filter also matches fields by a different `enumEntryPsi`.
+    val kotlinOrigin = enumEntrySymbol.sourcePsiSafe<KtEnumEntry>()
+    val candidateFields = when {
+        kotlinOrigin == null -> symbolLightClass.ownFields
+        enumEntryPsi != null && enumEntryPsi != kotlinOrigin && symbolLightClass.findOwnFieldsByKotlinOrigin(enumEntryPsi).isNotEmpty() ->
+            symbolLightClass.ownFields
+        else -> symbolLightClass.findOwnFieldsByKotlinOrigin(kotlinOrigin)
+    }
+
+    val targetField = candidateFields.firstOrNull { psiField ->
         psiField is SymbolLightFieldForEnumEntry &&
                 (psiField.kotlinOrigin == enumEntryPsi || psiField.symbolPointer.pointsToTheSameSymbolAs(enumEntrySymbolPointer))
     } ?: return null
@@ -467,6 +479,10 @@ internal fun createAndAddField(
     result += field
 }
 
+/**
+ * Creates the light field for the backing field of [declaration], or returns `null` if the property has no backing field or its
+ * backing field is `@JvmSynthetic`, which Java code can't access.
+ */
 internal fun createField(
     lightClass: SymbolLightClassBase,
     declaration: KaPropertySymbol,
@@ -476,9 +492,11 @@ internal fun createField(
     ProgressManager.checkCanceled()
 
     if (declaration.name.isSpecial) return null
-    if (!hasBackingField(declaration)) return null
 
     val backingFieldSymbol = declaration.backingFieldSymbol ?: return null
+    if (backingFieldSymbol.hasJvmSyntheticAnnotation()) return null
+    if (!declaration.hasFieldInClassFile) return null
+
     val fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString())
     return SymbolLightFieldForProperty(
         propertySymbol = declaration,
@@ -490,34 +508,36 @@ internal fun createField(
     )
 }
 
-private fun hasBackingField(property: KaPropertySymbol): Boolean {
-    // Backing field for KaSyntheticJavaPropertySymbol is always `null`.
-    // Thus, there is no point in proceeding further as `SymbolLightFieldForProperty` expects a non-null backing field pointer.
-    if (property is KaSyntheticJavaPropertySymbol) return false
+/**
+ * Whether this property has a backing field in the class file. A `@JvmSynthetic` backing field counts, although it gets no light
+ * field, see [createField].
+ */
+internal val KaPropertySymbol.hasFieldInClassFile: Boolean
+    get() {
+        // Backing field for KaSyntheticJavaPropertySymbol is always `null`.
+        // Thus, there is no point in proceeding further as `SymbolLightFieldForProperty` expects a non-null backing field pointer.
+        if (this is KaSyntheticJavaPropertySymbol) return false
 
-    requireWithAttachment(
-        property is KaKotlinPropertySymbol,
-        message = { "Expected ${KaKotlinPropertySymbol::class}" },
-        buildAttachment = {
-            withEntry("actualSymbolClassName", property::class.qualifiedName ?: "<null>")
-            withEntry("symbol", property) { it.toString() }
+        requireWithAttachment(
+            this is KaKotlinPropertySymbol,
+            message = { "Expected ${KaKotlinPropertySymbol::class}" },
+            buildAttachment = {
+                withEntry("actualSymbolClassName", this@hasFieldInClassFile::class.qualifiedName ?: "<null>")
+                withEntry("symbol", this@hasFieldInClassFile) { it.toString() }
+            }
+        )
+
+        if (origin.cannotHaveBackingField() || isStatic) return false
+        if (isLateInit || isDelegated || primaryConstructorParameter != null) return true
+        val hasBackingFieldByPsi: Boolean? = psi?.hasBackingField()
+        if (hasBackingFieldByPsi == false) {
+            return hasBackingFieldByPsi
         }
-    )
 
-    if (property.origin.cannotHaveBackingField() || property.isStatic) return false
-    if (property.isLateInit || property.isDelegated || property.primaryConstructorParameter != null) return true
-    val hasBackingFieldByPsi: Boolean? = property.psi?.hasBackingField()
-    if (hasBackingFieldByPsi == false) {
-        return hasBackingFieldByPsi
+        if (isExpect || modality == KaSymbolModality.ABSTRACT) return false
+
+        return hasBackingFieldByPsi ?: hasBackingField
     }
-
-    if (property.isExpect ||
-        property.modality == KaSymbolModality.ABSTRACT ||
-        property.backingFieldSymbol?.hasJvmSyntheticAnnotation() == true
-    ) return false
-
-    return hasBackingFieldByPsi ?: property.hasBackingField
-}
 
 private fun KaSymbolOrigin.cannotHaveBackingField(): Boolean =
     this == KaSymbolOrigin.SOURCE_MEMBER_GENERATED ||
@@ -618,7 +638,6 @@ context(session: KaSession)
 internal fun createInnerClasses(
     declarationContainer: KaDeclarationContainerSymbol,
     containingClass: SymbolLightClassBase,
-    classOrObject: KtClassOrObject?,
 ): List<SymbolLightClassBase> {
     val result = SmartList<SymbolLightClassBase>()
 
@@ -626,10 +645,7 @@ internal fun createInnerClasses(
         symbol.asPsiClass() as? SymbolLightClassBase
     }
 
-    if (containingClass is SymbolLightClassForInterface &&
-        classOrObject?.hasInterfaceDefaultImpls == true &&
-        containingClass.jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY
-    ) {
+    if (containingClass is SymbolLightClassForInterface && containingClass.hasDefaultImpls) {
         result.add(SymbolLightClassForInterfaceDefaultImpls(containingClass))
     }
 
@@ -643,6 +659,38 @@ internal fun createInnerClasses(
 
     return result
 }
+
+/**
+ * Whether the JVM backend generates the `DefaultImpls` class for this interface, see
+ * `org.jetbrains.kotlin.backend.jvm.lower.InterfaceLowering`. The members it holds are computed by
+ * [SymbolLightClassForInterfaceDefaultImpls.getOwnMethods]:
+ * - With `-jvm-default=disable`, `DefaultImpls` holds the implementations of all members with a body, private ones included.
+ * - With `-jvm-default=enable`, `DefaultImpls` holds only compatibility delegates to the non-private JVM default methods.
+ * - With `-jvm-default=no-compatibility`, `DefaultImpls` isn't generated.
+ *
+ * The check is PSI-based to avoid resolving the members.
+ */
+private val SymbolLightClassForInterface.hasDefaultImpls: Boolean
+    get() {
+        val declaration = classOrObjectDeclaration ?: return false
+        val includePrivateMembers = when (jvmDefaultMode) {
+            JvmDefaultMode.DISABLE -> true
+            JvmDefaultMode.ENABLE -> false
+            JvmDefaultMode.NO_COMPATIBILITY -> return false
+        }
+
+        return declaration.declarations.any { member ->
+            val hasBody = when (member) {
+                is KtNamedFunction -> member.hasBody()
+                is KtProperty -> member.hasDelegateExpressionOrInitializer() ||
+                        member.getter?.hasBody() == true ||
+                        member.setter?.hasBody() == true
+                else -> false
+            }
+
+            hasBody && (includePrivateMembers || !member.hasModifier(KtTokens.PRIVATE_KEYWORD))
+        }
+    }
 
 context(session: KaSession)
 internal fun checkIsInheritor(
@@ -750,7 +798,7 @@ internal fun hasInlineClassInSignature(
 
 /**
  * Whether the name of the [callableSymbol] is mangled because of an inline class in a parameter position: a value parameter,
- * an extension receiver, or a context parameter.
+ * an extension receiver of a non-companion extension, or a context parameter.
  *
  * @param valueParameterPickMask a bit mask specifying which value parameters of the callable symbol should be picked during the check
  */
@@ -764,14 +812,19 @@ internal fun hasManglingInlineClassInParameterPosition(
     valueParameterPickMask = valueParameterPickMask,
 ) { parameterTypeRequiresMangling(it) }
 
-context(_: KaSession)
+/**
+ * Whether [predicate] holds for the type of a parameter of the JVM method of [callableSymbol]: a context parameter, the extension receiver,
+ * or a value parameter picked by [valueParameterPickMask], unless [skipValueParametersCheck] is `true`. A companion extension has no
+ * receiver parameter on the JVM, see `SymbolLightParameterForReceiver`.
+ */
 private inline fun hasInlineClassInParameterPosition(
     callableSymbol: KaCallableSymbol,
     skipValueParametersCheck: Boolean,
     valueParameterPickMask: BitSet?,
     predicate: (KaType) -> Boolean,
 ): Boolean {
-    if (callableSymbol.receiverType?.let { predicate(it) } == true) return true
+    val receiverType = callableSymbol.receiverType
+    if (receiverType != null && !callableSymbol.isCompanionExtension && predicate(receiverType)) return true
     if (callableSymbol.contextParameters.any { predicate(it.returnType) }) return true
     if (!skipValueParametersCheck && callableSymbol is KaFunctionSymbol) {
         return callableSymbol.valueParameters.withIndex().any { [index, valueParameter] ->
@@ -822,6 +875,10 @@ internal fun hasMangledNameDueToInlineClassesInSignature(
 context(_: KaSession)
 internal fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String, ignoreInlineClassMangling: Boolean): String? {
     symbol.jvmNameFromAnnotation?.let { return it }
+
+    // Neither of the manglings below applies to such accessors
+    val property = (symbol as? KaPropertyAccessorSymbol)?.containingDeclaration as? KaPropertySymbol
+    if (property?.hasPrefixlessAccessorNames == true) return defaultName
 
     // 'JvmName' above wins over inline class mangling, so the check has to be performed afterwards
     if (!ignoreInlineClassMangling && hasMangledNameDueToInlineClasses(symbol)) return null
@@ -875,8 +932,33 @@ private fun hasMangledNameDueToInlineClasses(symbol: KaCallableSymbol): Boolean 
         isTopLevel = owner == null,
     )
 
-    return isMangledBySignature || isNonMaterializedInlineClassMember(symbol, owner)
+    return isMangledBySignature || isNonMaterializedInlineClassMember(declaration, owner)
 }
+
+/**
+ * Whether the accessors of this property are named after the property itself, without the `get`/`set` prefix, as for the
+ * properties of annotation classes and [JvmRecord] classes.
+ *
+ * The JVM backend returns such names before applying any mangling,
+ * see `org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper.mapFunctionName`.
+ */
+context(_: KaSession)
+internal val KaPropertySymbol.hasPrefixlessAccessorNames: Boolean
+    get() {
+        val containingClass = containingDeclaration as? KaClassSymbol ?: return false
+        return containingClass.classKind == KaClassKind.ANNOTATION_CLASS ||
+                JvmStandardClassIds.Annotations.JvmRecord in containingClass.annotations
+    }
+
+/**
+ * Whether this property is a member of an annotation class, which the JVM backend compiles to an abstract annotation method.
+ *
+ * Unlike checking the light class that receives the accessor, this excludes the static accessors which `@JvmStatic` copies from
+ * the companion object into the annotation class.
+ */
+context(_: KaSession)
+internal val KaPropertySymbol.isAnnotationClassMember: Boolean
+    get() = (containingDeclaration as? KaClassSymbol)?.classKind == KaClassKind.ANNOTATION_CLASS
 
 /**
  * The declaration that owns the JVM method for [symbol], or `null` if the method is placed into a file facade class.
@@ -890,24 +972,30 @@ private fun jvmMethodOwner(symbol: KaCallableSymbol): KaDeclarationSymbol? {
 }
 
 /**
- * Whether [symbol] is a member of an inline class that is replaced with a static `-impl` method instead of being materialized as is.
+ * Whether [declaration] is a member of an inline class that is replaced with a static `-impl` method instead of being materialized as is.
+ *
+ * Every member of an inline class is replaced, except for:
+ * - Companion block members, which have no instance to unbox, so they are compiled to plain static methods.
+ * - Overrides, as a member that implements a supertype member keeps an unmangled bridge method.
+ * - The underlying property, which is materialized as a field, so its getter is not replaced.
+ *
+ * For a property accessor, the caller must pass its property as [declaration]: none of the exceptions above recognizes an accessor,
+ * so it would always be reported as replaced.
  */
-context(_: KaSession)
-private fun isNonMaterializedInlineClassMember(symbol: KaCallableSymbol, owner: KaDeclarationSymbol?): Boolean {
-    if (owner !is KaNamedClassSymbol || !owner.isInline) return false
-
-    // A member that implements a supertype member keeps an unmangled bridge method
-    val isOverride = when (symbol) {
-        is KaNamedFunctionSymbol -> symbol.isOverride
-        is KaPropertyAccessorSymbol -> (symbol.containingDeclaration as? KaPropertySymbol)?.isOverride == true
+private fun isNonMaterializedInlineClassMember(declaration: KaCallableSymbol, owner: KaDeclarationSymbol?): Boolean {
+    fun isOverride(): Boolean = when (declaration) {
+        is KaNamedFunctionSymbol -> declaration.isOverride
+        is KaPropertySymbol -> declaration.isOverride
         else -> false
     }
 
-    if (isOverride) return false
-
-    // The underlying property is materialized as a field, so its getter is not replaced
-    val property = (symbol as? KaPropertyAccessorSymbol)?.containingDeclaration
-    return property !is KaKotlinPropertySymbol || property.primaryConstructorParameter == null
+    return when {
+        owner !is KaNamedClassSymbol || !owner.isInline -> false
+        declaration.isCompanion -> false
+        isOverride() -> false
+        declaration is KaKotlinPropertySymbol && declaration.primaryConstructorParameter != null -> false
+        else -> true
+    }
 }
 
 /**

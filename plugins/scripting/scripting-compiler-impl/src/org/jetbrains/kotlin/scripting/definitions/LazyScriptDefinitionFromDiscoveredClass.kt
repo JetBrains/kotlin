@@ -52,8 +52,9 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         }
     }
 
-    override val hostConfiguration: ScriptingHostConfiguration
-        get() = definition.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: baseHostConfiguration
+    override val hostConfiguration: ScriptingHostConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        definition.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration].withDefaultsFrom(baseHostConfiguration)
+    }
 
     override val compilationConfiguration: ScriptCompilationConfiguration get() = definition.compilationConfiguration
     override val evaluationConfiguration: ScriptEvaluationConfiguration get() = definition.evaluationConfiguration

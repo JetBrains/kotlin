@@ -47,7 +47,7 @@ internal class FirRegularClassImpl(
     override val name: Name,
     override val symbol: FirRegularClassSymbol,
     override var companionObjectSymbol: FirRegularClassSymbol?,
-    override val superTypeRefs: MutableList<FirTypeRef>,
+    override var superTypeRefs: MutableOrEmptyList<FirTypeRef>,
     override var contextParameters: MutableOrEmptyList<FirValueParameter>,
 ) : FirRegularClass() {
     override val isLocal: Boolean
@@ -147,8 +147,6 @@ internal class FirRegularClassImpl(
     }
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
-        if (superTypeRefs === newSuperTypeRefs) return
-        superTypeRefs.clear()
-        superTypeRefs.addAll(newSuperTypeRefs)
+        superTypeRefs = newSuperTypeRefs.toMutableOrEmpty()
     }
 }

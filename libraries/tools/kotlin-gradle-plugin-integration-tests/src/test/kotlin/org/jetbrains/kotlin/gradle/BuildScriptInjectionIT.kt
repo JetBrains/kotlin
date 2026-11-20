@@ -28,10 +28,13 @@ import org.jetbrains.kotlin.gradle.testing.PrettyPrint
 import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
+import org.jetbrains.kotlin.gradle.util.computeTransformedLibraryVersionChecksum
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.test.*
 
+@MustRunOnChangesInGradle
 @MppGradlePluginTests
 class BuildScriptInjectionIT : KGPBaseTest() {
 
@@ -561,9 +564,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     this.javaClass.classLoader.loadClass(LibraryExtension::class.java.name).isInstance(
                         project.extensions.getByName("android")
                     )
-                }.buildAndReturn(
-                    deriveBuildOptions = { buildOptions.suppressAgpWarningIsProperty(gradleVersion) }
-                ),
+                }.buildAndReturn(),
                 "At this point the plugin is expected to be applied and the extension must inherit from the relevant class",
             )
         }
@@ -663,6 +664,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             addPublishedProjectToRepositories(publishedProject)
             buildScriptInjection {
+                project.computeTransformedLibraryVersionChecksum(enable = false)
                 project.applyMultiplatform {
                     linuxArm64()
                     linuxX64()

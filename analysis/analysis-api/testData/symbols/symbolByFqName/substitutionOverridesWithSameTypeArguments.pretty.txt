@@ -1,0 +1,4 @@
+override fun foo(x: kotlin.String)
+
+@kotlin.jvm.JvmName(name = "fooY")
+override fun foo(x: kotlin.String)

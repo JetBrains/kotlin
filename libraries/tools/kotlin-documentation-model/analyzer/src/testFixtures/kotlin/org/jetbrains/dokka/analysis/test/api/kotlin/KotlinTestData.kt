@@ -18,7 +18,7 @@ import org.jetbrains.dokka.analysis.test.api.TestDataFile
  *                            Must be relative to the root of the test project. Example: `/src/main/kotlin`
  * @see TestData
  */
-class KotlinTestData(
+internal class KotlinTestData(
     private val pathToKotlinSources: String
 ) : TestData, KtFileCreator {
 

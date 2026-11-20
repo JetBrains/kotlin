@@ -15,7 +15,7 @@ FILE: noInferenceFromWrappedDelegate.kt
     public final inline fun <M> remember(block: R|() -> M|): R|M| {
         ^remember R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|M|>|()
     }
-    public final val list: R|kotlin/collections/List<kotlin/Int>|by R|/remember|<R|State<kotlin/collections/List<kotlin/Int>>|>(<L> = remember@fun <anonymous>(): R|State<kotlin/collections/List<kotlin/Int>>| <inline=Inline, kind=UNKNOWN>  {
+    public final val list: R|kotlin/collections/List<kotlin/Int>| by R|/remember|<R|State<kotlin/collections/List<kotlin/Int>>|>(<L> = remember@fun <anonymous>(): R|State<kotlin/collections/List<kotlin/Int>>| <inline=Inline, kind=UNKNOWN>  {
         ^ R|/State.State|<R|kotlin/collections/List<kotlin/Int>|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(0)))
     }
     )

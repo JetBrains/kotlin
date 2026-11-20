@@ -10,7 +10,7 @@
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> annotation class A
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> value class V(val s: String)
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> inline value class V(val s: String)
 
 open class C1(s: String)
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.utils
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.utils.UseSiteKind.*
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -19,6 +20,8 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.findClassRepresentation
+import org.jetbrains.kotlin.fir.types.ConeUnionType
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -34,6 +37,7 @@ import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 enum class ConversionTypeOrigin(val forSetter: Boolean) {
@@ -53,10 +57,16 @@ fun FirClassifierSymbol<*>.toIrSymbol(
 
         is FirTypeAliasSymbol -> {
             handleAnnotations?.invoke(symbol.fir.expandedTypeRef.annotations)
-            val coneClassLikeType = symbol.fir.expandedTypeRef.coneType as ConeClassLikeType
-            coneClassLikeType.lookupTag.toSymbol()
-                ?.toIrSymbol(typeOrigin, handleAnnotations)
-                ?: classifierStorage.getIrClassForNotFoundClass(coneClassLikeType.lookupTag).symbol
+            when (val expandedType = symbol.fir.expandedTypeRef.coneType) {
+                is ConeClassLikeType -> expandedType.lookupTag.toSymbol()
+                    ?.toIrSymbol(typeOrigin, handleAnnotations)
+                    ?: classifierStorage.getIrClassForNotFoundClass(expandedType.lookupTag).symbol
+                // Union types are erased to `Any`, see `Fir2IrTypeConverter`
+                is ConeUnionType -> builtins.anyClass
+                else -> errorWithAttachment("Unexpected expanded type of a type alias: ${expandedType::class.simpleName}") {
+                    withConeTypeEntry("expandedType", expandedType)
+                }
+            }
         }
 
         is FirClassSymbol -> {
@@ -159,6 +169,12 @@ private fun Fir2IrComponents.toIrSymbol(
             (explicitReceiver as? FirResolvedQualifier)?.toLookupTag(session)
         }
         else -> null
+    }?.let {
+        if (it.classId == StandardClassIds.NonError) {
+            StandardTypes.Any.lookupTag
+        } else {
+            it
+        }
     }
     return when (symbol) {
         is FirSimpleSyntheticPropertySymbol -> {

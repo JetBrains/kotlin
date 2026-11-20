@@ -978,7 +978,7 @@ class CallAndReferenceGenerator(
             irAnnotation
                 .applyReceiversAndArguments(annotationCall, declarationSiteSymbol = firConstructorSymbol, explicitReceiverExpression = null)
                 .applyTypeArgumentsWithTypealiasConstructorRemapping(firConstructorSymbol?.fir, annotationCall?.typeArguments.orEmpty())
-                .filterOutErrorArgsInAnnotation()
+                .filterOutErrorArgsInAnnotation(isJavaOrBinaryAnnotation = annotation !is FirAnnotationCall)
         }
     }
 
@@ -1010,9 +1010,22 @@ class CallAndReferenceGenerator(
         }
     }
 
-    private fun IrExpression.filterOutErrorArgsInAnnotation(): IrExpression {
-        if (!configuration.skipBodies || this !is IrAnnotation) return this
-
+    /**
+     * Drops erroneous arguments from this annotation if it is an [IrAnnotation], so that no error nodes reach the backend.
+     *
+     * The default value of the parameter applies, if any. Error elements of array arguments are removed from the array. Nested
+     * annotations are cleaned up recursively.
+     *
+     * The cleanup is done only in two cases:
+     * - In Kapt stub generation mode ([Fir2IrConfiguration.skipBodies]), for all annotations: Kapt generates stubs for code that
+     *   does not have to resolve, so frontend errors do not stop the compilation, and error nodes must not reach the backend.
+     * - For annotations that do not come from Kotlin sources ([isJavaOrBinaryAnnotation]): Java sources and binaries are not
+     *   checked by the Kotlin frontend, so their arguments may refer to declarations missing from the classpath, e.g., an enum
+     *   entry removed after a Java binary was compiled (KT-90361, KT-90363).
+     *
+     * Errors in annotations from Kotlin sources are reported by the frontend and stop the compilation before fir2ir.
+     */
+    private fun IrExpression.filterOutErrorArgsInAnnotation(isJavaOrBinaryAnnotation: Boolean): IrExpression {
         fun IrElement?.cleanUp(): Boolean {
             return when (this) {
                 is IrErrorExpression -> true
@@ -1033,8 +1046,7 @@ class CallAndReferenceGenerator(
             }
         }
 
-        // This is needed for kapt. We must ignore error nodes in annotations completely.
-        this.cleanUp()
+        if (this is IrAnnotation && (configuration.skipBodies || isJavaOrBinaryAnnotation)) cleanUp()
         return this
     }
 

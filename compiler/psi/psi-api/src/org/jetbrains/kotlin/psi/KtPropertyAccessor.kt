@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
@@ -129,11 +128,12 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     open val namePlaceholder: PsiElement
         get() = findChildByType(KtTokens.GET_KEYWORD) ?: findChildByType(KtTokens.SET_KEYWORD)!!
 
+    // Without a block body, the body is the expression after '='
     override fun getInitializer(): KtExpression? =
-        PsiTreeUtil.getNextSiblingOfType(equalsToken, KtExpression::class.java)
+        if (hasBlockBody()) null else bodyExpression
 
     override fun hasInitializer(): Boolean =
-        initializer != null
+        !hasBlockBody() && hasBody()
 
     /**
      * The property this accessor belongs to.
@@ -156,7 +156,7 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     @Deprecated(
         message = "Use typeReference instead",
         replaceWith = ReplaceWith("typeReference"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     open val returnTypeReference: KtTypeReference?
         get() = typeReference
@@ -165,7 +165,7 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     @Deprecated(
         message = "use `parameterList?.leftParenthesis`",
         replaceWith = ReplaceWith("parameterList?.leftParenthesis"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     open val leftParenthesis: PsiElement?
         get() = parameterList?.leftParenthesis
@@ -174,7 +174,7 @@ open class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, K
     @Deprecated(
         message = "use `parameterList?.rightParenthesis`",
         replaceWith = ReplaceWith("parameterList?.rightParenthesis"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     open val rightParenthesis: PsiElement?
         get() = parameterList?.rightParenthesis

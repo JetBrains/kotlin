@@ -10,16 +10,21 @@ package org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.statistics.NodeJsToolchainServiceMetrics
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.computeNodeBinDir
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
 private val serviceClass = NodeJsToolchainService::class.java
@@ -37,18 +42,25 @@ internal fun <P : NodeJsToolchainService.Parameters, T : NodeJsToolchainService<
 
     @Suppress("UNCHECKED_CAST")
     return when (nodeJsToolchainClass) {
-        DefaultNodeJsToolchainService::class.java -> DefaultNodeJsToolchainServiceImpl.registerIfAbsent(
-            gradle,
-            configureBuildServiceParameters as (DefaultNodeJsToolchainService.Parameters) -> Unit
-        )
-        PreInstalledNodeJsToolchainService::class.java -> PreInstalledNodeJsToolchainServiceImpl.registerIfAbsent(
-            gradle,
-            configureBuildServiceParameters as (PreInstalledNodeJsToolchainService.Parameters) -> Unit
-        )
-        DisabledNodeJsToolchainService::class.java -> DisabledNodeJsToolchainServiceImpl.registerIfAbsent(gradle)
-        else -> gradle.sharedServices.registerIfAbsent(nodeJsServiceName, nodeJsToolchainClass) { spec ->
-            configureBuildServiceParameters(spec.parameters)
-        }
+        DefaultNodeJsToolchainService::class.java ->
+            DefaultNodeJsToolchainServiceImpl.registerIfAbsent(
+                gradle,
+                configureBuildServiceParameters as (DefaultNodeJsToolchainService.Parameters) -> Unit
+            )
+
+        PreInstalledNodeJsToolchainService::class.java ->
+            PreInstalledNodeJsToolchainServiceImpl.registerIfAbsent(
+                gradle,
+                configureBuildServiceParameters as (PreInstalledNodeJsToolchainService.Parameters) -> Unit
+            )
+
+        DisabledNodeJsToolchainService::class.java ->
+            DisabledNodeJsToolchainServiceImpl.registerIfAbsent(gradle)
+
+        else ->
+            gradle.sharedServices.registerIfAbsent(nodeJsServiceName, nodeJsToolchainClass) { spec ->
+                configureBuildServiceParameters(spec.parameters)
+            }
     }
 }
 
@@ -72,9 +84,10 @@ private fun registerIfAbsent(
  * Registers the [NodeJsToolchainService] selected for the build, and makes every
  * [UsesNodeJsToolchainService] task in [project] use it.
  */
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
 internal fun registerNodeJsToolchainServiceIfAbsent(
     project: Project,
-) {
+): Provider<out NodeJsToolchainService<out NodeJsToolchainService.Parameters>> {
     val serviceProvider = registerIfAbsent(project)
 
     SingleActionPerProject.run(project, UsesNodeJsToolchainService::class.java.name) {
@@ -84,7 +97,7 @@ internal fun registerNodeJsToolchainServiceIfAbsent(
         }
         NodeJsToolchainServiceMetrics.collectServiceCreated(project, serviceProvider)
     }
-
+    return serviceProvider
 }
 
 /**
@@ -128,10 +141,56 @@ internal enum class NodeJsToolchainMode {
     ;
 }
 
-private val DEFAULT_NODE_JS_VERSION = "24.16.0"
+/**
+ * The Node.js executable of the old (non-toolchain) setup. It is empty when a toolchain service provisions Node.js.
+ *
+ * Intended to be a task input, so the task is not tied to the old executable when the toolchain is enabled.
+ * Use [resolveNodeJsExecutable] to get the executable to run.
+ */
+@Suppress("DEPRECATION")
+internal fun Provider<NodeJsToolchainService<*>>.legacyNodeJsExecutable(
+    objects: ObjectFactory,
+    compilation: KotlinJsIrCompilation,
+): Provider<String> = flatMap {
+    if (it.isNodeJsToolchainDisabled()) {
+        objects.property(compilation.nodeJsEnvSpec).flatMap { it.executable }
+    } else objects.property()
+}
+
+/**
+ * Returns the Node.js executable provisioned by this service, or [legacyNodeExecutable] when the toolchain is disabled.
+ *
+ * Provisions Node.js, so it must only be called at execution time.
+ */
+internal fun NodeJsToolchainService<*>.resolveNodeJsExecutable(
+    legacyNodeExecutable: Provider<String>,
+    nodeJsRequest: Provider<NodeJsRequest>,
+): String = if (this.isNodeJsToolchainDisabled()) {
+    legacyNodeExecutable.get()
+} else {
+    request(nodeJsRequest.get()).get().executable.orNull ?: error("Node js executable should be provisioned")
+}
+
+/**
+ * Returns the Node.js executable provisioned by this service, or provisioned by [npmProject] when the toolchain is disabled.
+ *
+ * Provisions Node.js, so it must only be called at execution time.
+ */
+@Suppress("DEPRECATION")
+internal fun NodeJsToolchainService<*>.resolveNodeJsExecutable(
+    npmProject: NpmProject,
+    nodeJsRequest: Provider<NodeJsRequest>,
+): String = if (isNodeJsToolchainDisabled()) {
+    npmProject.nodeExecutable
+} else {
+    request(nodeJsRequest.get()).get().executable.orNull ?: error("Node js executable should be provisioned")
+}
+
+internal fun NodeJsToolchainService<*>.isNodeJsToolchainDisabled(): Boolean = this is DisabledNodeJsToolchainServiceImpl
+
 internal fun Project.requestDefaultNodeJs(): Provider<NodeJsRequest> = provider {
     objects.newInstance<NodeJsRequest>().also {
-        it.version.convention(NodeJsVersion(DEFAULT_NODE_JS_VERSION))
+        it.version.convention(kotlinPropertiesProvider.nodejsDefaultVersion)
         it.platform.convention(providers.detectBuildPlatform())
     }
 }

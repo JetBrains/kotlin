@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-89040
 
@@ -33,3 +34,6 @@ fun withLocalFunction() {
 fun useTopLevel() {
     <!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+integerLiteral, localFunction, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression */

@@ -1,1 +1,2 @@
-val `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values)
+@Ann(s = "str")
+val a: kotlin.Int

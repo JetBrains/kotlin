@@ -1,12 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTIC_ARGUMENTS
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// ALLOW_KOTLIN_PACKAGE
-// FILE: RichError.kt
-package kotlin
-
-abstract class RichError
-// FILE: test.kt
 error class Foo
 
 fun test(x: String | Foo, y: String? | Foo, z: String?) {
@@ -77,6 +71,11 @@ fun testCallableReference(x: String | Foo, y: String? | Foo, z: String?) {
     y::<!UNSAFE_CALLABLE_REFERENCE("on receiver of nullable union type 'String? | Foo'")!>foo<!>
     z::<!UNSAFE_CALLABLE_REFERENCE("on receiver of nullable type 'String?'")!>length<!>
     z::<!UNSAFE_CALLABLE_REFERENCE("on receiver of nullable type 'String?'")!>foo<!>
+}
+
+fun <T : String | Foo> typeParameter(t: T) {
+    t<!UNSAFE_CALL("on receiver of union type 'T (of fun <T : String | Foo> typeParameter)'. Consider using an error-safe call '|.'")!>.<!>length
+    t.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER("fun String.foo(): Unit; T (of fun <T : String | Foo> typeParameter)")!>foo<!>()
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration,

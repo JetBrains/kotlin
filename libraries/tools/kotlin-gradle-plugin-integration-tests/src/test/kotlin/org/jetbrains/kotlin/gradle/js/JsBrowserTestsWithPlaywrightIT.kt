@@ -173,7 +173,7 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                 assertOutputContains("post-processed test output")
                 // since post process bundle is served via file scheme, instead http.
                 // we shouldn't expect HTTP server to be started
-                assertOutputDoesNotContain("Starting HTTP server")
+                assertOutputDoesNotContain("HTTP server for js tests started at")
             }
         }
     }
@@ -873,7 +873,7 @@ private abstract class PostProcessTestsBundle : DefaultTask() {
 private val MOCHA_ASSET_REFERENCE = Regex("""(?:href|src)="([^"]*mocha\.(?:js|css))"""")
 
 
-private fun nodeJsToolchain(mode: String) = "-Pkotlin.js.nodejs.toolchain=$mode"
+private fun nodeJsToolchain(mode: String) = "-Pkotlin.js.nodeJsToolchainMode=$mode"
 
 /**
  * The directory the Node.js toolchain shares all its installations through.

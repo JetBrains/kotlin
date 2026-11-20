@@ -16,10 +16,10 @@ FILE: replPropertyDelegated.repl.kts
 
             }
 
-            public? final? [ReplSnippetTopLevelDeclaration=true] val foo: <implicit>by REPL_EXPRESSION_REF
+            public? final? [ReplSnippetTopLevelDeclaration=true] val foo: <implicit> by REPL_EXPRESSION_REF
                 public? [ContainingClassKey=ReplPropertyDelegated_repl] get(): <implicit> { LAZY_BLOCK }
 
-            public? final? [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+            public? final? [ReplSnippetTopLevelDeclaration=true] val bar: <implicit> by REPL_EXPRESSION_REF
                 public? [ContainingClassKey=ReplPropertyDelegated_repl] get(): <implicit> { LAZY_BLOCK }
 
         }

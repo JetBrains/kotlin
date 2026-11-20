@@ -1,0 +1,37 @@
+/Mint.kt:13:13: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/Mint.kt:16:21: error: Property delegated to atomic property 'coinsAtomic' must be declared in the same companion object as 'coinsAtomic'.
+
+/Mint.kt:22:21: error: Property delegated to atomic property 'internal' must be declared in the same class as 'internal'.
+
+/Mint.kt:31:17: error: Property delegated to atomic property 'coinsAtomic' must be declared in the same companion object as 'coinsAtomic'.
+
+/Mint.kt:38:18: error: Instance property delegated to atomic property 'coinsAtomic' in the same class can only access the same instance ('this').
+
+/Mint.kt:42:9: error: Property delegated to atomic property 'coinsAtomic' must be declared in the same class as 'coinsAtomic'.
+
+/Mint.kt:50:9: error: Property delegated to atomic property 'coinsAtomic' must be declared in the same object as 'coinsAtomic'.
+
+/Mint.kt:56:21: error: Companion property can only delegate to atomic companion properties in the same class.
+
+/Mint.kt:61:17: error: Property delegated to atomic property 'coinsAtomic' must be declared in the same companion block as 'coinsAtomic'.
+
+/Mint.kt:67:9: error: Instance property delegated to atomic property 'coinsAtomic' in the same class can only access the same instance ('this').
+
+/Mint.kt:82:9: error: Property delegated to atomic property 'coinsAtomic' must be declared in the same enum class as 'coinsAtomic'.
+
+/Mint.kt:87:4: error: Local properties with kotlinx.atomicfu.Atomic* types are unsupported.
+
+/Mint.kt:89:4: error: Local properties delegated to kotlinx.atomicfu.Atomic* values are unsupported.
+
+/Mint.kt:90:4: error: Local properties delegated to kotlinx.atomicfu.Atomic* values are unsupported.
+
+/Mint.kt:91:4: error: Local properties delegated to kotlinx.atomicfu.Atomic* values are unsupported.
+
+/Mint.kt:92:4: error: Local properties delegated to kotlinx.atomicfu.Atomic* values are unsupported.
+
+/Mint.kt:99:35: error: Unresolved reference 'coinsAtomic' on receiver of type 'SameContainer'.
+
+/Mint.kt:100:42: error: Unresolved label.
+/TopLevel.kt:138:9: error: Property delegated to atomic property 'topLevelAtomic' must be declared at the top level of the same file as 'topLevelAtomic'.
+/OtherFile.kt:142:5: error: Property delegated to atomic property 'topLevelAtomic' must be declared at the top level of the same file as 'topLevelAtomic'.

@@ -61,6 +61,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
             If diagnostics differ when the given LanguageFeature is enabled/disabled,
             a separate file with the extension `disabled.kt` is created.
             Otherwise, $LANGUAGE_FEATURE_TOGGLED_IDENTICAL must be declared.
+            The `disabled.kt` file must be identical to the original one except for diagnostics and `RUN_PIPELINE_TILL`.
             """.trimIndent()
     )
 

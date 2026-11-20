@@ -22,8 +22,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-
 /**
  * Returns the type reference written after the `:` of the given callable [declaration] (its explicit return type or property type), or
  * `null` if the type is not written explicitly.
@@ -31,7 +29,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 fun getTypeReference(declaration: KtCallableDeclaration): KtTypeReference? {
     return declaration.firstChild!!.siblings(forward = true)
         .dropWhile { it.node!!.elementType != KtTokens.COLON }
-        .firstIsInstanceOrNull<KtTypeReference>()
+        .filterIsInstance<KtTypeReference>()
+        .firstOrNull()
 }
 
 @Deprecated(
@@ -40,7 +39,7 @@ fun getTypeReference(declaration: KtCallableDeclaration): KtTypeReference? {
         "declaration.setCallableTypeReference(addAfter, typeRef)",
         "org.jetbrains.kotlin.idea.base.psi.setCallableTypeReference",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 fun setTypeReference(declaration: KtCallableDeclaration, addAfter: PsiElement?, typeRef: KtTypeReference?): KtTypeReference? {
     return KtPsiMutationService.getInstance().setCallableTypeReference(declaration, addAfter, typeRef)
@@ -52,7 +51,7 @@ fun setTypeReference(declaration: KtCallableDeclaration, addAfter: PsiElement?, 
         "this.setCallableReceiverTypeReference(typeRef)",
         "org.jetbrains.kotlin.idea.base.psi.setCallableReceiverTypeReference",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 fun KtCallableDeclaration.setReceiverTypeReference(typeRef: KtTypeReference?) =
     KtPsiMutationService.getInstance().setCallableReceiverTypeReference(this, typeRef)
@@ -63,7 +62,7 @@ fun KtCallableDeclaration.setReceiverTypeReference(typeRef: KtTypeReference?) =
         "this.setFunctionTypeReceiverTypeReference(typeRef)",
         "org.jetbrains.kotlin.idea.base.psi.setFunctionTypeReceiverTypeReference",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 fun KtFunctionType.setReceiverTypeReference(typeRef: KtTypeReference?) =
     KtPsiMutationService.getInstance().setFunctionTypeReceiverTypeReference(this, typeRef)

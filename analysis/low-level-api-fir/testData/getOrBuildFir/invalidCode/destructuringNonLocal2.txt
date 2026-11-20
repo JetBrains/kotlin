@@ -17,7 +17,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringNonLocal2.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
+        private final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = ERROR_EXPR(Initializer required for destructuring declaration)
+            private [ResolvedTo(STATUS)] get(): <implicit>
+
+        public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=/C.<destruct>] val e: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): <implicit>
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Nested : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor(): R|C.Nested| {

@@ -93,7 +93,6 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::createSharedVariablesLoweringPhase,
     ::LocalClassesInInlineLambdasLowering,
     ::ArrayConstructorLowering,
-    ::WasmCoroutinesSymbolsResolver,
     ::WasmPrivateFunctionInlining,
     ::OuterThisInInlineFunctionsSpecialAccessorLowering,
     ::createSyntheticAccessorGenerationPhase,
@@ -104,6 +103,8 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::RedundantCastsRemoverLowering,
     ::IrValidationAfterInliningAllFunctionsKlibSecondStagePhase,
     // END: Common Native/JS/Wasm prefix.
+
+    ::WasmCoroutinesSymbolsResolver,
 
     ::createConstEvaluationPhase,
     ::createSpecializeSharedVariableBoxesPhase,
@@ -183,6 +184,12 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::TryCatchCanonicalization,
 
     ::WasmForLoopsLowering,
+
+    ::WasmDefaultArgumentStubGenerator,
+    ::WasmDefaultParameterPatchOverridenSymbolsLowering,
+    ::WasmDefaultParameterInjector,
+    ::createDefaultParameterCleanerPhase,
+
     ::WasmPropertyLazyInitLowering,
     ::RemoveInitializersForLazyProperties,
 
@@ -192,11 +199,6 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::WasmPropertyAccessorInlineLowering,
 
     ::WasmStringConcatenationLowering,
-
-    ::WasmDefaultArgumentStubGenerator,
-    ::WasmDefaultParameterPatchOverridenSymbolsLowering,
-    ::WasmDefaultParameterInjector,
-    ::createDefaultParameterCleanerPhase,
 
 //            TODO:
 //            multipleCatchesLoweringPhase,
@@ -230,7 +232,6 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::BuiltInsLowering,
 
     ::VirtualDispatchReceiverExtraction,
-    ::InvokeStaticInitializersLowering,
     ::StaticMembersLowering,
 
     // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
@@ -239,6 +240,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::WhenBranchOptimiserLowering,
 
+    ::WasmAssociativeReductionLowering,
     ::WasmTailCallLowering,
 
     ::IrValidationAfterLoweringsSecondStagePhase,

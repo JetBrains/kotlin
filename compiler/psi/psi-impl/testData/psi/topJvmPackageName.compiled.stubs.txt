@@ -7,7 +7,7 @@ FILE[kind=Facade[packageFqName=some.other, facadeFqName=some.other.jvm.OtherKt]]
       REFERENCE_EXPRESSION[referencedName=other]
   IMPORT_LIST
   FUNCTION[fqName=some.other.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
-    origin: Facade(className=some/other/OtherKt, jvmClassName=some/other/jvm/OtherKt)
+    origin: Facade(className=some/other/OtherKt, jvmClassName=some/other/jvm/OtherKt, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.2" ]

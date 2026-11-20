@@ -15,7 +15,6 @@ import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.BuildPlatform
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
-import org.jetbrains.kotlin.gradle.internal.unameExecResult
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.OsType
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.computeNodeBinDir
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.computeNpmScriptFile
@@ -39,7 +38,7 @@ internal val BuildPlatform.isWindows: Boolean get() = os == WINDOWS_OS_NAME
 
 /**
  * The name of the Node.js distribution, as used both by the official distribution archives
- * and by the layout of the local installation directory, for example `node-v24.16.0-linux-x64`.
+ * and by the layout of the local installation directory, for example `node-v24.22.1-linux-x64`.
  */
 internal fun nodeJsDistributionName(versionValue: String, osName: String, architecture: String): String =
     "node-v$versionValue-$osName-$architecture"
@@ -55,16 +54,17 @@ internal fun nodeJsArchiveExtension(platform: BuildPlatform): String =
 
 // copy from NodeJsPluginApplier#addPlatform
 internal fun ProviderFactory.detectBuildPlatform(): Provider<BuildPlatform> {
-    val uname = unameExecResult
-    return currentHostPlatform().zip(systemProperty("os.arch")) { osType, osArch ->
-        val platform = parsePlatform(osType, osArch, uname)
+    return currentHostOs().zip(systemProperty("os.arch")) { osType, osArch ->
+        val platform = parsePlatform(osType, osArch)
         BuildPlatform(platform.name, platform.arch)
     }
 }
 
-internal fun ProviderFactory.currentHostPlatform(): Provider<OsType> = systemProperty("os.name").map {
+internal fun ProviderFactory.currentHostOs(): Provider<OsType> = systemProperty("os.name").map {
     parseOsType(it)
 }
+
+internal fun ProviderFactory.isCurrentHostOsWindows(): Provider<Boolean> = currentHostOs().map { it == OsType.WINDOWS }
 
 internal fun ArchiveOperations.extractNodeJs(
     fs: FileSystemOperations,

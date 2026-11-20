@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Con
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.memberDeclarationNameOrNull
@@ -194,8 +195,11 @@ object ContextCollector {
         return null
     }
 
-    private fun isValidTarget(declaration: KtDeclaration): Boolean =
-        declaration.isAutonomousElement
+    /**
+     * Dangling modifier lists are skipped, so the containing declaration is processed for them.
+     */
+    private fun isValidTarget(element: KtElement): Boolean =
+        element is KtDeclaration && element.isAutonomousElement
 
     /**
      * Processes the [FirFile], collecting contexts for elements matching the [filter].
@@ -582,26 +586,6 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitReplSnippet(replSnippet: FirReplSnippet) = withProcessor(replSnippet) {
-        dumpContext(replSnippet, ContextKind.SELF)
-
-        processAnnotations(replSnippet)
-
-        onActive {
-            val holder = getSessionHolder(replSnippet)
-
-            context.withReplSnippet(replSnippet, holder = holder) {
-                dumpContext(replSnippet, ContextKind.BODY)
-
-                onActive {
-                    withInterceptor {
-                        processChildren(replSnippet)
-                    }
-                }
-            }
-        }
-    }
-
     override fun visitFile(file: FirFile) = withProcessor(file) {
         val holder = getSessionHolder(file)
 
@@ -710,6 +694,12 @@ private class ContextCollectorVisitor(
     override fun visitRegularClass(regularClass: FirRegularClass) = withProcessor(regularClass) {
         dumpContext(regularClass, ContextKind.SELF)
 
+        // Like `runAllPhasesForLocalClassLikeDeclarations`, store a local class before its annotations and header,
+        // so that the class is visible in its own annotations, type parameters and supertypes.
+        if (regularClass.isLocal) {
+            context.storeClassOrTypealiasIfNotNested(regularClass, regularClass.moduleData.session)
+        }
+
         context.withClassHeader(regularClass) {
             processRawAnnotations(regularClass)
         }
@@ -735,10 +725,6 @@ private class ContextCollectorVisitor(
                     }
                 }
             }
-        }
-
-        if (regularClass.isLocal) {
-            context.storeClassOrTypealiasIfNotNested(regularClass, regularClass.moduleData.session)
         }
     }
 
@@ -780,6 +766,38 @@ private class ContextCollectorVisitor(
                 }
 
                 processChildren(doWhileLoop)
+            }
+        }
+    }
+
+    override fun visitWhenExpression(whenExpression: FirWhenExpression) {
+        withProcessor(whenExpression) {
+            dumpContext(whenExpression, ContextKind.SELF)
+
+            onActive {
+                processList(whenExpression.annotations)
+
+                // Like `FirControlFlowStatementsResolveTransformer`, keep the subject variable in a separate scope,
+                // so that it isn't visible after the `when`.
+                context.withWhenExpression(whenExpression, bodyHolder.session) {
+                    dumpContext(whenExpression, ContextKind.BODY)
+                    processChildren(whenExpression)
+                }
+            }
+        }
+    }
+
+    override fun visitCatch(catch: FirCatch) {
+        withProcessor(catch) {
+            dumpContext(catch, ContextKind.SELF)
+
+            onActive {
+                // Like `FirControlFlowStatementsResolveTransformer`, keep the parameter in a separate scope,
+                // so that it isn't visible after the `try` expression.
+                context.forBlock(bodyHolder.session) {
+                    dumpContext(catch, ContextKind.BODY)
+                    processChildren(catch)
+                }
             }
         }
     }
@@ -893,19 +911,21 @@ private class ContextCollectorVisitor(
      * the call itself is resolved with the implicit receiver of the containing class (required for super calls to inner classes),
      * while its children (e.g., arguments) are resolved without it.
      */
-    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) = withProcessor(delegatedConstructorCall) {
-        val constructor = context.containerIfAny as? FirConstructor
-            ?: errorWithAttachment("Delegated constructor call is expected to be inside a constructor") {
-                withFirEntry("delegatedConstructorCall", delegatedConstructorCall)
+    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
+        withProcessor(delegatedConstructorCall) {
+            val constructor = context.containerIfAny as? FirConstructor
+                ?: errorWithAttachment("Delegated constructor call is expected to be inside a constructor") {
+                    withFirEntry("delegatedConstructorCall", delegatedConstructorCall)
+                }
+
+            context.forDelegatedConstructorCallResolution {
+                dumpContext(delegatedConstructorCall, ContextKind.SELF, hasBodyContext = false)
             }
 
-        context.forDelegatedConstructorCallResolution {
-            dumpContext(delegatedConstructorCall, ContextKind.SELF, hasBodyContext = false)
-        }
-
-        onActive {
-            context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = getSessionHolder(constructor)) {
-                processChildren(delegatedConstructorCall)
+            onActive {
+                context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = getSessionHolder(constructor)) {
+                    processChildren(delegatedConstructorCall)
+                }
             }
         }
     }
@@ -973,10 +993,13 @@ private class ContextCollectorVisitor(
                             processList(namedFunction.valueParameters)
                             processBody(namedFunction)
                         }
+
+                        // Like `FirContractResolveTransformer`, process the contract in the scope of the function body,
+                        // so that the parameters are visible in a contract that is declared outside the body.
+                        process(namedFunction.contractDescription)
                     }
 
                     process(namedFunction.returnTypeRef)
-                    process(namedFunction.contractDescription)
                 }
             }
         }
@@ -1086,7 +1109,14 @@ private class ContextCollectorVisitor(
         onActive {
             val holder = getSessionHolder(propertyAccessor)
 
-            context.withPropertyAccessor(propertyAccessor.propertySymbol.fir, propertyAccessor, holder = holder) {
+            context.withPropertyAccessor(
+                property = propertyAccessor.propertySymbol.fir,
+                accessor = propertyAccessor,
+                // `FirDeclarationsResolveTransformer` resolves a getter that provides the property type while that
+                // type is still implicit, so without the backing field.
+                hideBackingField = propertyAccessor.providesPropertyType,
+                holder = holder,
+            ) {
                 dumpContext(propertyAccessor, ContextKind.BODY)
                 processChildren(propertyAccessor)
             }
@@ -1170,12 +1200,14 @@ private class ContextCollectorVisitor(
         processAnnotations(anonymousObject)
 
         onActive {
-            processAnonymousObjectHeader(anonymousObject)
+            context.withContainingClass(anonymousObject) {
+                processAnonymousObjectHeader(anonymousObject)
 
-            context.withAnonymousObject(anonymousObject, holder = bodyHolder) {
-                dumpContext(anonymousObject, ContextKind.BODY)
-                withLocalVariableHolder(onEnter = { enterClass(anonymousObject) }, onExit = { exitClass() }) {
-                    processChildren(anonymousObject)
+                context.withAnonymousObject(anonymousObject, holder = bodyHolder) {
+                    dumpContext(anonymousObject, ContextKind.BODY)
+                    withLocalVariableHolder(onEnter = { enterClass(anonymousObject) }, onExit = { exitClass() }) {
+                        processChildren(anonymousObject)
+                    }
                 }
             }
         }
@@ -1383,3 +1415,9 @@ private class ContextCollectorVisitor(
         }
     }
 }
+
+/**
+ * Whether the type of the property is inferred from this accessor.
+ */
+private val FirPropertyAccessor.providesPropertyType: Boolean
+    get() = isGetter && propertySymbol.fir.initializer == null && !propertySymbol.hasExplicitReturnType

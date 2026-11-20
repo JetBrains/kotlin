@@ -1,4 +1,5 @@
-
+// RUN_PIPELINE_TILL: CODEGEN
+// DISABLE_JAVA_FACADE
 // FILE: Some.java
 
 import lombok.experimental.SuperBuilder;
@@ -18,3 +19,6 @@ fun test() {
     val someBuilder: Some.SomeBuilder<*, *> = Some.builder()
     val some: Some = someBuilder.x(42).build()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, integerLiteral, javaFunction, javaType, localProperty,
+propertyDeclaration, starProjection */

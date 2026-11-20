@@ -37,7 +37,7 @@ private fun ObjectFactory.kotlinToolSpec(
     classpath: FileCollection,
     jvmArgs: ListProperty<String>,//nativeProperties.jvmArgs
     environmentBlacklist: Provider<Set<String>>,
-) = KotlinNativeToolRunner.ToolSpec(
+) = ToolSpec(
     displayName = property("generatePlatformLibraries"),
     optionalToolName = property("generatePlatformLibraries"),
     mainClass = nativeMainClass,

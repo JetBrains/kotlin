@@ -13,8 +13,7 @@ plugins {
     kotlin("plugin.serialization")
     alias(libs.plugins.gradle.node)
     id("d8-configuration")
-    // TODO: uncomment this line after bootstrap
-    // id("swc-configuration")
+    id("swc-configuration")
     id("nodejs-configuration")
     id("java-test-fixtures")
     id("test-inputs-check")
@@ -49,11 +48,10 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
+    testFixturesApi(testFixtures(project(":compiler:jvm.tests")))
     testFixturesApi(testFixtures(project(":kotlin-util-klib")))
     testFixturesApi(testFixtures(project(":compiler:ir.backend.common")))
 
-    testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:cli-js"))
     testCompileOnly(project(":compiler:util"))
@@ -64,12 +62,13 @@ dependencies {
     testFixturesApi(project(":js:typescript-export-standalone"))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
+    testFixturesImplementation(project(":compiler:psi:psi-frontend-utils"))
+    testFixturesImplementation(project(":compiler:psi:parser"))
     testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesApi(testFixtures(project(":kotlin-build-common")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))
 
     testFixturesApi(intellijCore())
-    testFixturesApi(project(":compiler:frontend"))
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:util"))
 
@@ -150,15 +149,23 @@ fun Test.forwardProperties() {
 }
 
 projectTests {
+    val swcTag = "swc"
+    val swcEnabledLocally = kotlinBuildProperties.booleanProperty("kotlin.js.enable.swc.tests")
+
     jsTestTask {
+        if (swcEnabledLocally.get()) {
+            with(swcKotlinBuild) { setupSwc() }
+        } else {
+            useJUnitPlatform { excludeTags(swcTag) }
+        }
         setUpJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsTest", tag = "!es6 & !jsNightlyOnly", skipInLocalBuild = true) {
+    jsTestTask(taskName = "jsTest", tag = "!es6 & !jsNightlyOnly & !$swcTag", skipInLocalBuild = true) {
         setUpJsBoxTests()
     }
 
-    jsTestTask(taskName = "jsES6Test", tag = "es6 & !jsNightlyOnly", skipInLocalBuild = true) {
+    jsTestTask(taskName = "jsES6Test", tag = "es6 & !jsNightlyOnly & !$swcTag", skipInLocalBuild = true) {
         setUpJsBoxTests()
     }
 
@@ -167,6 +174,17 @@ projectTests {
     }
 
     jsTestTask(taskName = "jsES6InlineAnonymousFunctionsTest", tag = "es6 & jsInlineAnonymousFunctions", skipInLocalBuild = true) {
+        setUpJsBoxTests()
+    }
+
+    jsTestTask(taskName = "jsES6ConstLetTest", tag = "jsConstLet", skipInLocalBuild = true) {
+        setUpJsBoxTests()
+    }
+
+    jsTestTask(taskName = "jsSwcTest", tag = swcTag) {
+        with(swcKotlinBuild) {
+            setupSwc()
+        }
         setUpJsBoxTests()
     }
 

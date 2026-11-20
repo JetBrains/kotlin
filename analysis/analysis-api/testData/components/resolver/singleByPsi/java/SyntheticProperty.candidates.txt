@@ -1,5 +1,5 @@
 <caret_1>:
-  KtNameReferenceExpression(112,121): 'something'
+  KtNameReferenceExpression(79,88): 'something'
     KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -21,7 +21,7 @@
       isInBestCandidates = true
 
 <caret_2>:
-  KtNameReferenceExpression(137,146): 'something'
+  KtNameReferenceExpression(104,113): 'something'
     KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -44,7 +44,7 @@
       isInBestCandidates = true
 
 <caret_3>:
-  KtNameReferenceExpression(165,174): 'something'
+  KtNameReferenceExpression(132,141): 'something'
     KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -66,7 +66,7 @@
       isInBestCandidates = true
 
 <caret_4>:
-  KtNameReferenceExpression(194,203): 'something'
+  KtNameReferenceExpression(161,170): 'something'
     KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -88,7 +88,7 @@
       isInBestCandidates = true
 
 <caret_5>:
-  KtNameReferenceExpression(222,231): 'something'
+  KtNameReferenceExpression(189,198): 'something'
     KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -111,7 +111,7 @@
       isInBestCandidates = true
 
 <caret_6>:
-  KtNameReferenceExpression(237,246): 'something'
+  KtNameReferenceExpression(204,213): 'something'
     KaApplicableCallCandidate:
       candidate = KaSimpleVariableAccessCall:
         contextArguments = []

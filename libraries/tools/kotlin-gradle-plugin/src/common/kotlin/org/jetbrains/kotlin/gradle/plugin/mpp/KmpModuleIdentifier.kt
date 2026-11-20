@@ -5,29 +5,38 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable as JsonSerializable
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import java.io.Serializable
 
-
+/** Also written to the metadata libraries index file, see [KotlinMetadataLibrariesIndexFile]. */
+@JsonSerializable
 internal data class KmpModuleIdentifier(
     val groupAndName: GradleGroupAndName?,
     val componentId: GradleComponentId,
 ) : Serializable {
 
+    @JsonSerializable
     data class GradleGroupAndName(
         val group: String,
         val name: String,
     ) : Serializable
 
+    @JsonSerializable
     sealed interface GradleComponentId : Serializable
 
+    @JsonSerializable
+    @SerialName("module")
     data class ModuleComponentId(
         val group: String,
         val name: String,
     ) : GradleComponentId
 
+    @JsonSerializable
+    @SerialName("project")
     data class ProjectComponentId(
         val projectPath: String,
         val buildPath: String,

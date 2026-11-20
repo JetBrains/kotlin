@@ -17,9 +17,9 @@ package org.jetbrains.dokka.analysis.kotlin.sample
  *
  * @see SampleAnalysisEnvironment for how to acquire it
  */
-public class SampleSnippet(
-    public val imports: List<String>,
-    public val body: String
+internal class SampleSnippet(
+    val imports: List<String>,
+    val body: String
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

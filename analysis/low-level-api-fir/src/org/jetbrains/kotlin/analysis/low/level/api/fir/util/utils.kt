@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockPro
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.psi
@@ -68,8 +67,8 @@ internal fun KtDeclaration.isNonAnonymousClassOrObject() =
     this is KtClassOrObject
             && !this.isObjectLiteral()
 
-internal val FirDeclaration.isScriptOrReplSnippet: Boolean
-    get() = this is FirScript || this is FirReplSnippet
+internal val FirDeclaration.isScript: Boolean
+    get() = this is FirScript
 
-internal val FirFile.scriptOrReplSnippet: FirDeclaration?
-    get() = declarations.singleOrNull()?.takeIf(FirDeclaration::isScriptOrReplSnippet)
+internal val FirFile.script: FirScript?
+    get() = declarations.singleOrNull() as? FirScript

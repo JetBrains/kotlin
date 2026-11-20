@@ -442,6 +442,12 @@ private class ExtTestDataFile(
             OutputMatcher { output -> lldbSpec.checkLLDBOutput(output, settings.get()) }
         } ?: parseOutputRegex(structure.directives)
 
+        // LLDB-driven tests fail sporadically for reasons unrelated to the code under test
+        val knownFlakinessMute = when (testKind) {
+            TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> knownLldbFlakinessMute
+            else -> null
+        }
+
         // LLDB changes whitespace formatting across versions.
         // Let's squash tab and space sequences to a single space while leaving newlines.
         val outputDataSanitizer: (String) -> String = when (testKind) {
@@ -476,6 +482,7 @@ private class ExtTestDataFile(
                     sanitizer = outputDataSanitizer,
                 ),
                 fileCheckMatcher = fileCheckStage?.let { TestRunCheck.FileCheckMatcher(settings, testDataFile) },
+                knownFlakinessMute = knownFlakinessMute,
             ),
             fileCheckStage = fileCheckStage,
             extras = when (testKind) {

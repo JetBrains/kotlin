@@ -350,6 +350,11 @@ public class LockBasedStorageManager implements StorageManager {
         }
     }
 
+    // Cancellation and VM errors are not a function of the input and are never memoized
+    private static boolean isTransient(@NotNull Throwable throwable) {
+        return throwable instanceof VirtualMachineError || ExceptionUtilsKt.isProcessCanceledException(throwable);
+    }
+
     private enum NotValue {
         NOT_COMPUTED,
         COMPUTING,
@@ -415,10 +420,9 @@ public class LockBasedStorageManager implements StorageManager {
                     return typedValue;
                 }
                 catch (Throwable throwable) {
-                    if (ExceptionUtilsKt.isProcessCanceledException(throwable)) {
+                    if (isTransient(throwable)) {
                         value = NotValue.NOT_COMPUTED;
-                        //noinspection ConstantConditions
-                        throw (RuntimeException)throwable;
+                        throw ExceptionUtilsKt.rethrow(throwable);
                     }
 
                     if (value == NotValue.COMPUTING) {
@@ -590,7 +594,7 @@ public class LockBasedStorageManager implements StorageManager {
                     return typedValue;
                 }
                 catch (Throwable throwable) {
-                    if (ExceptionUtilsKt.isProcessCanceledException(throwable)) {
+                    if (isTransient(throwable)) {
                         Object remove;
                         try {
                             remove = cache.remove(input);
@@ -600,8 +604,7 @@ public class LockBasedStorageManager implements StorageManager {
                         if (remove != NotValue.COMPUTING) {
                             throw inconsistentComputingKey(input, remove);
                         }
-                        //noinspection ConstantConditions
-                        throw (RuntimeException)throwable;
+                        throw ExceptionUtilsKt.rethrow(throwable);
                     }
                     if (throwable == error) {
                         try {

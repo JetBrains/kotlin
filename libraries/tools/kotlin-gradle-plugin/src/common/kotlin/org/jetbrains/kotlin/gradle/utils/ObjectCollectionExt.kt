@@ -12,14 +12,14 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskProvider
 
-internal inline fun <reified S> DomainObjectCollection<in S>.withType(): DomainObjectCollection<S> =
+internal inline fun <reified S : Any> DomainObjectCollection<in S>.withType(): DomainObjectCollection<S> =
     withType(S::class.java)
 
 @Suppress("extension_shadowed_by_member", "UNCHECKED_CAST")
 inline fun <reified T : Task> TaskCollection<out Task>.named(name: String): TaskProvider<T> =
     (this as TaskCollection<T>).named(name, T::class.java)
 
-internal fun <T> NamedDomainObjectContainer<T>.getOrCreate(
+internal fun <T : Any> NamedDomainObjectContainer<T>.getOrCreate(
     name: String,
     invokeWhenCreated: ((T) -> Unit)? = null,
     configure: ((T) -> Unit)? = null

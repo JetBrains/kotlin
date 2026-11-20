@@ -1,0 +1,17 @@
+{
+  "types": [],
+  "lambdaCapturingTypes": [],
+  "proxies": [
+    {
+      "interfaces": [
+        "java.rmi.Remote",
+        "org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase"
+      ]
+    },
+    {
+      "interfaces": [
+        "org.jetbrains.kotlin.daemon.common.CompileService"
+      ]
+    }
+  ]
+}

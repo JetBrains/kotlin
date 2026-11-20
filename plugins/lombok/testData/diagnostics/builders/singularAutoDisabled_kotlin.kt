@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: test.kt
@@ -20,3 +21,5 @@ class BasketWithExplicitName(
 // FILE: lombok.config
 
 lombok.singular.auto=false
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

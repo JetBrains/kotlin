@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.parcelize.test
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeBoxTest
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeBytecodeListingTest
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeDiagnosticTest
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeIncrementalTest
+import org.jetbrains.kotlin.parcelize.test.runners.*
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
@@ -23,8 +19,12 @@ fun main(args: Array<String>) {
                 model("codegen")
             }
 
-            testClass<AbstractParcelizeDiagnosticTest> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            testClass<AbstractParcelizePhasedDiagnosticTest> {
+                model("diagnostics")
+            }
+
+            testClass<AbstractParcelizeLLDiagnosticTest> {
+                model("diagnostics")
             }
 
             testClass<AbstractParcelizeIncrementalTest> {

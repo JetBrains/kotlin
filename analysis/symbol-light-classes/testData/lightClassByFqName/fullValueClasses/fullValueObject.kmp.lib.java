@@ -2,6 +2,8 @@ public final class ValueObject /* pack.ValueObject*/ extends pack.SealedValueCla
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() pack.ValueObject INSTANCE;
 
+  public static final int constant = 43 /* initializer type: int */ /* constant value 43 */;
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 

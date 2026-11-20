@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -50,7 +50,7 @@ abstract class IrFileDeserializer {
      */
     abstract fun deserializeFileImplicitDataIfFirstUse(): Boolean
 
-    abstract fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature>
+    abstract fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature>
 }
 
 class IrFileDeserializerImpl(
@@ -99,16 +99,16 @@ class IrFileDeserializerImpl(
         return false
     }
 
-    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
+    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
         val topLevelCallableSignature = callableIdToSignature[callableId] ?: return emptyList()
         return buildList {
             for (topLevelSignature in topLevelCallableSignature) {
                 val index = reversedSignatureIndex[topLevelSignature] ?: continue
                 val protoKind = libraryFile.declarationKind(index)
                 when (signatureKind) {
-                    IrDeserializer.TopLevelSymbolKind.FUNCTION_SYMBOL ->
+                    BinarySymbolData.SymbolKind.FUNCTION_SYMBOL ->
                         if (protoKind == ProtoDeclaration.DeclaratorCase.IR_FUNCTION) add(topLevelSignature)
-                    IrDeserializer.TopLevelSymbolKind.PROPERTY_SYMBOL ->
+                    BinarySymbolData.SymbolKind.PROPERTY_SYMBOL ->
                         if (protoKind == ProtoDeclaration.DeclaratorCase.IR_PROPERTY) add(topLevelSignature)
                     else -> error("Unexpected signature kind: $signatureKind")
                 }
@@ -154,7 +154,6 @@ class FileDeserializationStateImpl(
         symbolTable = linker.symbolTable,
         libraryFile = fileReader,
         fileSymbol = file.symbol,
-        enqueueLocalTopLevelDeclaration = ::addIdSignature,
         deserializedSymbolPostProcessor = linker.deserializedSymbolPostProcessor,
         irInterner = linker.irInterner,
         deserializePublicSymbolWithOwnerInUnknownFile = { idSignature, symbolKind ->
@@ -178,16 +177,14 @@ class FileDeserializationStateImpl(
         needToDeserializeFakeOverrides = { clazz ->
             !linker.fakeOverrideBuilder.platformSpecificClassFilter.needToConstructFakeOverrides(clazz)
         },
-        specialProcessingForMismatchedSymbolKind = runIf(linker.partialLinkageSupport.isEnabled) {
-            { deserializedSymbol, fallbackSymbolKind ->
-                referenceDeserializedSymbol(
-                    symbolTable = linker.symbolTable,
-                    fileSymbol = null,
-                    symbolKind = fallbackSymbolKind ?: error("No fallback symbol kind specified for symbol $deserializedSymbol"),
-                    idSig = deserializedSymbol.signature?.takeIf { it.isPubliclyVisible }
-                        ?: error("No public signature for symbol $deserializedSymbol")
-                )
-            }
+        specialProcessingForMismatchedSymbolKind = { deserializedSymbol, fallbackSymbolKind ->
+            referenceDeserializedSymbol(
+                symbolTable = linker.symbolTable,
+                fileSymbol = null,
+                symbolKind = fallbackSymbolKind ?: error("No fallback symbol kind specified for symbol $deserializedSymbol"),
+                idSig = deserializedSymbol.signature?.takeIf { it.isPubliclyVisible }
+                    ?: error("No public signature for symbol $deserializedSymbol")
+            )
         },
         irInterner = linker.irInterner,
         fileEntryDeserializer = linker.fileEntryDeserializer,

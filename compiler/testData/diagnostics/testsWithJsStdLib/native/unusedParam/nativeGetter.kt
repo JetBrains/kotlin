@@ -1,6 +1,6 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -DEPRECATION
-@nativeGetter
+<!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeGetter<!>
 fun Int.foo(a: String): Int? = definedExternally
 
 external class Bar(b: Int, c: Char) {

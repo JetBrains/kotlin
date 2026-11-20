@@ -21,7 +21,7 @@ import org.jetbrains.dokka.utilities.parallelForEach
 import org.jetbrains.dokka.utilities.parallelMap
 import org.jetbrains.dokka.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
 
-public class ExtensionExtractorTransformer : DocumentableTransformer {
+internal class ExtensionExtractorTransformer : DocumentableTransformer {
     override fun invoke(original: DModule, context: DokkaContext): DModule = runBlocking(Dispatchers.Default) {
         val classGraph = async {
             if (!context.configuration.suppressInheritedMembers)
@@ -54,8 +54,7 @@ public class ExtensionExtractorTransformer : DocumentableTransformer {
             ?.map { async { it.addExtensionInformation(classGraph, extensionMap) } }
             .orEmpty()
 
-        @Suppress("UNCHECKED_CAST")
-        when (this@addExtensionInformation) {
+        val result = when (this@addExtensionInformation) {
             is DPackage -> copy(
                 classlikes = newClasslikes.awaitAll(),
                 typealiases = newTypealiases.awaitAll(),
@@ -94,7 +93,9 @@ public class ExtensionExtractorTransformer : DocumentableTransformer {
             else -> throw IllegalStateException(
                 "${this@addExtensionInformation::class.simpleName} is not expected to have extensions"
             )
-        } as T
+        }
+        @Suppress("UNCHECKED_CAST")
+        result as T
     }
 
     private suspend fun collectExtensions(
@@ -174,8 +175,8 @@ public class ExtensionExtractorTransformer : DocumentableTransformer {
         groupBy(Pair<T, *>::first, Pair<*, U>::second)
 }
 
-public data class CallableExtensions(val extensions: Set<Callable>) : ExtraProperty<Documentable> {
-    public companion object Key : ExtraProperty.Key<Documentable, CallableExtensions> {
+internal data class CallableExtensions(val extensions: Set<Callable>) : ExtraProperty<Documentable> {
+    companion object Key : ExtraProperty.Key<Documentable, CallableExtensions> {
         override fun mergeStrategyFor(
             left: CallableExtensions,
             right: CallableExtensions

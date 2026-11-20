@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
-import org.gradle.api.InvalidUserDataException
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -103,9 +102,6 @@ internal open class KotlinJsIrLinkConfig(
                                 }
                             }
                         }
-                        else -> throw InvalidUserDataException(
-                            "Unknown KotlinJsBinaryMode to configure the build: $mode"
-                        )
                     }
 
                     if (compilation.isWasm()) return@apply

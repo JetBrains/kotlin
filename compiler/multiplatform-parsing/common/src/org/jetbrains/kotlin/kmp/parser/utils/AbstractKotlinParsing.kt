@@ -10,6 +10,8 @@ import com.intellij.platform.syntax.SyntaxElementTypeSet
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.utils.Stack
+import org.jetbrains.kotlin.syntax.SyntaxId
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 internal abstract class AbstractKotlinParsing(
     protected val builder: SemanticWhitespaceAwareSyntaxBuilder,
@@ -129,7 +131,7 @@ internal abstract class AbstractKotlinParsing(
         }
     }
 
-    protected val tokenId: Int
+    protected val tokenId: SyntaxId
         get() = KtTokens.getElementTypeId(tt())
 
     protected fun tt(): SyntaxElementType? {
@@ -295,23 +297,23 @@ internal abstract class AbstractKotlinParsing(
                 break
             }
             when (this.tokenId) {
-                KtTokens.LPAR_ID -> {
+                KotlinSyntaxTokenIds.LPAR -> {
                     openParentheses++
                     opens.push(KtTokens.LPAR)
                 }
-                KtTokens.LT_ID -> {
+                KotlinSyntaxTokenIds.LT -> {
                     openAngleBrackets++
                     opens.push(KtTokens.LT)
                 }
-                KtTokens.LBRACE_ID -> {
+                KotlinSyntaxTokenIds.LBRACE -> {
                     openBraces++
                     opens.push(KtTokens.LBRACE)
                 }
-                KtTokens.LBRACKET_ID -> {
+                KotlinSyntaxTokenIds.LBRACKET -> {
                     openBrackets++
                     opens.push(KtTokens.LBRACKET)
                 }
-                KtTokens.RPAR_ID -> {
+                KotlinSyntaxTokenIds.RPAR -> {
                     openParentheses--
                     if (opens.isEmpty() || opens.pop() !== KtTokens.LPAR) {
                         if (pattern.handleUnmatchedClosing(KtTokens.RPAR)) {
@@ -319,9 +321,9 @@ internal abstract class AbstractKotlinParsing(
                         }
                     }
                 }
-                KtTokens.GT_ID -> openAngleBrackets--
-                KtTokens.RBRACE_ID -> openBraces--
-                KtTokens.RBRACKET_ID -> openBrackets--
+                KotlinSyntaxTokenIds.GT -> openAngleBrackets--
+                KotlinSyntaxTokenIds.RBRACE -> openBraces--
+                KotlinSyntaxTokenIds.RBRACKET -> openBrackets--
             }
 
             advance() // skip token

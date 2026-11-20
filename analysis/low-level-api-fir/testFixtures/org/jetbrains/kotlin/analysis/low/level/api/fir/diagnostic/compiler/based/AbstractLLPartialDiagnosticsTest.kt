@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.configuration.jvmTestConfigurationWithSingleFrontendFacade
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
@@ -50,7 +50,7 @@ import kotlin.test.assertEquals
 
 abstract class AbstractLLPartialDiagnosticsTest : AbstractLLCompilerBasedTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        baseFirDiagnosticTestConfiguration(
+        jvmTestConfigurationWithSingleFrontendFacade(
             frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirPartialBodyAnalysisAnalyzerFacadeFactory),
             testDataConsistencyHandler = ::ReversedFirIdenticalChecker,
         )

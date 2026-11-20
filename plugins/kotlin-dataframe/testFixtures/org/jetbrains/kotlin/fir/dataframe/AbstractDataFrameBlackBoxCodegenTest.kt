@@ -29,6 +29,7 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
         builder.defaultDirectives {
             JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK
             +JvmEnvironmentConfigurationDirectives.WITH_REFLECT
+            +DataFrameDirectives.ENABLE_DATAFRAME
         }
         builder.forTestsMatching("*/toDataFrame_javarecord.kt") {
             defaultDirectives {

@@ -67,6 +67,24 @@ val ConeKotlinType.classLikeLookupTagIfAny: ConeClassLikeLookupTag?
     get() = (this.lowerBoundIfFlexible() as? ConeClassLikeType)?.lookupTag
 
 /**
+ * Returns this type if it can be the expansion of a type alias: a class-like type or a union type.
+ * Returns `null` for everything else (e.g. a type parameter or `dynamic`), which makes the alias unexpandable.
+ */
+fun ConeKotlinType.asTypeAliasExpansionOrNull(): ConeSimpleKotlinType? = when (this) {
+    is ConeClassLikeType, is ConeUnionType -> this
+    else -> null
+}
+
+fun ConeKotlinType.forEachUnionComponentOrSelf(f: (ConeKotlinType) -> Unit) {
+    if (this is ConeUnionType) {
+        f(primaryType)
+        richErrorTypes.forEach(f)
+    } else {
+        f(this)
+    }
+}
+
+/**
  * Recursively visits each [ConeKotlinType] inside (including itself) and performs the given action.
  * Doesn't give guarantees on the traversal order.
  */
@@ -233,4 +251,8 @@ fun ConeRigidType.getConstructor(): ConeTypeConstructorMarker {
         is ConeIntegerLiteralType -> this
         is ConeUnionType -> this
     }
+}
+
+fun ConeKotlinType.primaryTypeIfUnion(): ConeKotlinType {
+    return if (this is ConeUnionType) this.primaryType else this
 }

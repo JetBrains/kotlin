@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.gradle.targets.web.nodejs
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.internal.unameExecResult
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.isNodeJsToolchainDisabled
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parsePlatform
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.currentHostPlatform
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.currentHostOs
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import kotlin.reflect.KClass
 
@@ -27,6 +32,7 @@ import kotlin.reflect.KClass
  * @param nodeJsEnvSpecName The name of the NodeJs environment specification configuration to be registered.
  * @param nodeJsRootApply A function that provides the root NodeJs environment extension in the project.
  */
+@ObsoleteJsAndWasmToolingProvisioning
 internal class NodeJsPluginApplier(
     private val platformDisambiguate: HasPlatformDisambiguator,
     private val nodeJsEnvSpecKlass: KClass<out BaseNodeJsEnvSpec>,
@@ -49,7 +55,6 @@ internal class NodeJsPluginApplier(
         }
     }
 
-    @Suppress("DEPRECATION_ERROR")
     private fun Project.createNodeJsEnvSpec(
         nodeJsEnvSpecKlass: KClass<out BaseNodeJsEnvSpec>,
         nodeJsEnvSpecName: String,
@@ -69,11 +74,19 @@ internal class NodeJsPluginApplier(
                     }
                 )
             )
-            download.convention(true)
+            // When a Node.js toolchain service provisions Node.js, the old setup must not download anything:
+            // it would add a project repository, which is forbidden by `RepositoriesMode.FAIL_ON_PROJECT_REPOS` (KT-55620).
+            download.convention(
+                @OptIn(ExperimentalNodeJsToolchainDsl::class)
+                registerNodeJsToolchainServiceIfAbsent(this@createNodeJsEnvSpec).map { it.isNodeJsToolchainDisabled() }
+            )
             // set instead of convention because it is possible to have null value https://github.com/gradle/gradle/issues/14768
             downloadBaseUrl.set("https://nodejs.org/dist")
             allowInsecureProtocol.convention(false)
-            version.convention("24.16.0")
+            version.convention(
+                @OptIn(ExperimentalNodeJsToolchainDsl::class)
+                project.kotlinPropertiesProvider.nodejsDefaultVersion.map(NodeJsVersion::version)
+            )
             command.convention("node")
 
             addPlatform(this@createNodeJsEnvSpec, this)
@@ -81,15 +94,12 @@ internal class NodeJsPluginApplier(
     }
 
     private fun addPlatform(project: Project, extension: BaseNodeJsEnvSpec) {
-        val uname = project.providers
-            .unameExecResult
-
         extension.platform.value(
-            project.providers.currentHostPlatform()
+            project.providers.currentHostOs()
                 .zip(
                     project.providers.systemProperty("os.arch")
                 ) { osType, arch ->
-                    parsePlatform(osType, arch, uname)
+                    parsePlatform(osType, arch)
                 }
         ).disallowChanges()
     }

@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copyWithNewDefaults
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.utils.AbstractSimpleClassPredicateMatchingService
@@ -28,7 +28,7 @@ class FirAllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExt
         return when (declaration) {
             is FirRegularClass -> {
                 declaration.classKind == ClassKind.CLASS &&
-                        !declaration.isInlineOrValue &&
+                        !declaration.isValue &&
                         session.allOpenPredicateMatcher.isAnnotated(declaration.symbol) &&
                         !declaration.hasAnnotationSafe(JvmStandardClassIds.JVM_RECORD_ANNOTATION_CLASS_ID, session)
             }

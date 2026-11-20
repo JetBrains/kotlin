@@ -16,10 +16,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirScriptSymbol
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAvailableScopesForPosition
-import org.jetbrains.kotlin.analysis.api.impl.base.components.*
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeTypeScope
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsScopeProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -31,7 +27,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerS
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -47,13 +42,11 @@ import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.types.SmartcastStability
@@ -63,7 +56,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirScopeProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsScopeProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsScopeProvider {
     private fun getScopeSession(): ScopeSession {
         return analysisSession.getScopeSessionFor(analysisSession.firSession)
     }
@@ -242,7 +235,7 @@ internal class KaFirScopeProvider(
         }
 
     private fun createEmptyScope(): KaScope {
-        return KaBaseEmptyScope(token)
+        return KaFirEmptyScope(token)
     }
 
     override fun packageScope(symbol: KaPackageSymbol): KaScope =
@@ -251,7 +244,7 @@ internal class KaFirScopeProvider(
         }
 
     override fun asCompositeScope(scopes: List<KaScope>): KaScope = withValidityAssertion {
-        return KaBaseCompositeScope.create(scopes, token)
+        return KaFirCompositeScope.create(scopes, token)
     }
 
     override fun compositeScope(scopeContext: KaScopeContext, filter: (KaScopeKind) -> Boolean): KaScope =
@@ -272,7 +265,7 @@ internal class KaFirScopeProvider(
         withValidityAssertion {
             return when (typeScope) {
                 is KaFirDelegatingTypeScope -> KaFirDelegatingNamesAwareScope(typeScope.firScope, analysisSession.firSymbolBuilder)
-                is KaBaseCompositeTypeScope -> KaBaseCompositeScope.create(typeScope.subScopes.map { declarationScope(it) }, token)
+                is KaFirCompositeTypeScope -> KaFirCompositeScope.create(typeScope.subScopes.map { declarationScope(it) }, token)
                 else -> unexpectedElementError<KaTypeScope>(typeScope)
             }
         }
@@ -299,7 +292,7 @@ internal class KaFirScopeProvider(
 
             val ktScopesWithKinds = createScopesWithKind(firImportingScopesIndexed)
 
-            return KaBaseScopeContext(
+            return KaFirScopeContext(
                 scopes = ktScopesWithKinds,
                 implicitValues = emptyList(),
                 possibleSmartCasts = emptyList(),
@@ -336,7 +329,7 @@ internal class KaFirScopeProvider(
                     val label = with(towerDataContext.implicitValueStorage) { receiver.label() }
                         ?.asString()
                         ?.takeIf(labelsForShadowing::add)
-                    val receiverValue = KaBaseScopeImplicitReceiverValue(
+                    val receiverValue = KaFirScopeImplicitReceiverValue(
                         backingType = firSymbolBuilder.typeBuilder.buildKtType(receiver.type),
                         ownerSymbol = firSymbolBuilder.buildSymbol(receiver.referencedMemberSymbol),
                         scopeIndexInTower = index,
@@ -348,7 +341,7 @@ internal class KaFirScopeProvider(
 
                 val arguments = towerDataElement.contextParameterGroup.orEmpty()
                 for (argument in arguments) {
-                    val argumentValue = KaBaseScopeImplicitArgumentValue(
+                    val argumentValue = KaFirScopeImplicitArgumentValue(
                         backingType = firSymbolBuilder.typeBuilder.buildKtType(argument.type),
                         symbol = firSymbolBuilder.variableBuilder.buildContextParameterSymbol(argument.boundSymbol),
                         scopeIndexInTower = index,
@@ -366,7 +359,7 @@ internal class KaFirScopeProvider(
             availableScopes.map { IndexedValue(index, it) }
         }
 
-        return KaBaseScopeContext(
+        return KaFirScopeContext(
             scopes = createScopesWithKind(firScopes),
             implicitValues = implicitValues,
             possibleSmartCasts = computeSmartCastPossibilities(context),
@@ -386,7 +379,7 @@ internal class KaFirScopeProvider(
                 return@mapNotNull null
             }
 
-            KaBaseSmartCastPossibility(
+            KaFirSmartCastPossibility(
                 source = source,
                 smartCastTypes = narrowingTypes.map { firSymbolBuilder.typeBuilder.buildKtType(it) },
                 isStable = smartCast.stability == SmartcastStability.STABLE_VALUE
@@ -396,7 +389,7 @@ internal class KaFirScopeProvider(
 
     private fun computeSmartCastSource(realVariable: RealVariable): KaSmartCastSource? {
         val symbol = firSymbolBuilder.buildSymbol(realVariable.symbol) as? KaDeclarationSymbol ?: return null
-        return KaBaseSmartCastSource(
+        return KaFirSmartCastSource(
             symbol = symbol,
             dispatchReceiver = realVariable.dispatchReceiver?.let(::computeSmartCastSource),
             extensionReceiver = realVariable.extensionReceiver?.let(::computeSmartCastSource),
@@ -479,30 +472,6 @@ internal class KaFirScopeProvider(
     private fun FirTypeScope.withSyntheticPropertiesScopeOrSelf(coneType: ConeKotlinType): FirTypeScope {
         val syntheticPropertiesScope = getFirSyntheticPropertiesScope(coneType, this) ?: return this
         return FirTypeScopeWithSyntheticProperties(typeScope = this, syntheticPropertiesScope)
-    }
-}
-
-private class FirTypeScopeWithSyntheticProperties(
-    val typeScope: FirTypeScope,
-    val syntheticPropertiesScope: FirSyntheticPropertiesScope,
-) : FirDelegatingTypeScope(typeScope) {
-    override fun getCallableNames(): Set<Name> = typeScope.getCallableNames() + syntheticPropertiesScope.getCallableNames()
-    override fun mayContainName(name: Name): Boolean = typeScope.mayContainName(name) || syntheticPropertiesScope.mayContainName(name)
-
-    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        typeScope.processPropertiesByName(name, processor)
-        syntheticPropertiesScope.processPropertiesByName(name, processor)
-    }
-
-    @DelicateScopeAPI
-    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirTypeScopeWithSyntheticProperties? {
-        val newTypeScope = typeScope.withReplacedSessionOrNull(newSession, newScopeSession)
-        val newSyntheticPropertiesScope = syntheticPropertiesScope.withReplacedSessionOrNull(newSession, newScopeSession)
-        if (newTypeScope == null && newSyntheticPropertiesScope == null) return null
-        return FirTypeScopeWithSyntheticProperties(
-            newTypeScope ?: typeScope,
-            newSyntheticPropertiesScope ?: syntheticPropertiesScope,
-        )
     }
 }
 

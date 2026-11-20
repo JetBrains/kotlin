@@ -10,18 +10,20 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.getFatalDiagnosticsMessage
+import org.jetbrains.kotlin.cli.common.arguments.hasFatalError
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
+import org.jetbrains.kotlin.cli.common.arguments.reportCliArgumentFatalDiagnostics
 import org.jetbrains.kotlin.cli.common.checkPluginsArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
 import org.jetbrains.kotlin.cli.common.setupCommonArguments
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -31,10 +33,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginR
 import org.jetbrains.kotlin.scripting.compiler.plugin.requiresLegacyScriptRuntime
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
-import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.*
@@ -50,13 +49,23 @@ class SharedScriptCompilationContext(
     val scriptConfigurationsProvider: ScriptConfigurationsProvider?
 )
 
-fun createIsolatedCompilationContext(
+/**
+ * Creates the compiler configuration and the project environment of an isolated K2 compilation and passes them to [createState]
+ * together with the initial script compilation configuration.
+ */
+internal fun <S : AbstractScriptingCompilerState<*>> createIsolatedScriptingState(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     messageCollector: ScriptDiagnosticsMessageCollector,
     parentDisposable: Disposable,
-    configureCompiler: CompilerConfiguration.() -> Unit = {}
-): SharedScriptCompilationContext {
+    configureCompiler: CompilerConfiguration.() -> Unit,
+    createState: (
+        initialConfiguration: ScriptCompilationConfiguration,
+        compilerConfiguration: CompilerConfiguration,
+        projectEnvironment: VfsBasedProjectEnvironment,
+        ignoredOptionsReportingState: IgnoredOptionsReportingState,
+    ) -> S,
+): S {
     val ignoredOptionsReportingState = IgnoredOptionsReportingState()
 
     val [initialScriptCompilationConfiguration, kotlinCompilerConfiguration] =
@@ -74,9 +83,9 @@ fun createIsolatedCompilationContext(
             parentDisposable, kotlinCompilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
 
-    return SharedScriptCompilationContext(
-        parentDisposable, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState,
-        kotlinCompilerConfiguration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
+    return createState(
+        initialScriptCompilationConfiguration, kotlinCompilerConfiguration, environment.toVfsBasedProjectEnvironment(),
+        ignoredOptionsReportingState,
     )
 }
 
@@ -87,17 +96,31 @@ fun createCompilationContextFromEnvironment(
 ): SharedScriptCompilationContext {
     val ignoredOptionsReportingState = IgnoredOptionsReportingState()
 
-    val initialScriptCompilationConfiguration =
-        baseScriptCompilationConfiguration.withUpdatesFromCompilerConfiguration(environment.configuration)
-
-    initialScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]?.let { compilerOptions ->
-        environment.configuration.updateWithCompilerOptions(compilerOptions, messageCollector, ignoredOptionsReportingState, false)
-    }
+    val initialScriptCompilationConfiguration = environment.configuration.applyScriptCompilationConfiguration(
+        baseScriptCompilationConfiguration, messageCollector, ignoredOptionsReportingState
+    )
 
     return SharedScriptCompilationContext(
         null, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState,
         environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
     )
+}
+
+/**
+ * Applies the compiler options of the [baseScriptCompilationConfiguration] to this configuration and returns the initial script
+ * compilation configuration.
+ */
+internal fun CompilerConfiguration.applyScriptCompilationConfiguration(
+    baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
+    messageCollector: ScriptDiagnosticsMessageCollector,
+    ignoredOptionsReportingState: IgnoredOptionsReportingState,
+): ScriptCompilationConfiguration {
+    val initialScriptCompilationConfiguration = baseScriptCompilationConfiguration.withUpdatesFromCompilerConfiguration(this)
+
+    initialScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]?.let { compilerOptions ->
+        updateWithCompilerOptions(compilerOptions, messageCollector, ignoredOptionsReportingState, false)
+    }
+    return initialScriptCompilationConfiguration
 }
 
 internal fun createInitialConfigurations(
@@ -136,13 +159,10 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
     isRefinement: Boolean
 ) {
     updateWithCompilerOptions(compilerOptions) {
-        validateArgumentsAllErrors(it.errors).takeIf { errors -> errors.isNotEmpty() }?.let { errors ->
-            errors.forEach { error ->
-                messageCollector.report(CompilerMessageSeverity.ERROR, error)
-            }
+        if (it.diagnostics.hasFatalError) {
+            messageCollector.reportCliArgumentFatalDiagnostics(it)
             false
-        } ?: run {
-            messageCollector.reportArgumentParseProblems(it)
+        } else {
             val error = reportArgumentsNotAllowed(it, messageCollector, ignoredOptionsReportingState)
             reportArgumentsIgnoredGenerally(it, messageCollector, ignoredOptionsReportingState)
             if (isRefinement) {
@@ -156,7 +176,11 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
 fun CompilerConfiguration.updateWithCompilerOptions(
     compilerOptions: List<String>,
     validate: (K2JVMCompilerArguments) -> Boolean = {
-        validateArguments(it.errors)?.let { throw Exception("Error parsing arguments: $it") } ?: true
+        if (it.diagnostics.hasFatalError) {
+            throw Exception("Error parsing arguments: ${it.getFatalDiagnosticsMessage()}")
+        } else {
+            true
+        }
     }
 ) {
     val compilerArguments = makeScriptCompilerArguments(compilerOptions)
@@ -268,11 +292,6 @@ private fun createInitialCompilerConfiguration(
 
         put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, true)
 
-        add(
-            ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-            ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
-        )
-
         val pluginClasspaths = baseArguments.pluginClasspaths.asList()
         val pluginOptions = baseArguments.pluginOptions.asList()
         val pluginConfigurations = baseArguments.pluginConfigurations.asList()
@@ -314,25 +333,45 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
     sourceFiles.addAll(newSources)
 
     // collectScriptsCompilationDependencies calls resolver for every file, so at this point all updated configurations are collected in the ScriptDependenciesProvider
-    context.environment.configuration.updateWithRefinedConfigurations(context, sourceFiles, messageCollector, getScriptCompilationConfiguration)
+    context.environment.configuration.applyRefinedCompilerOptions(
+        context.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions].orEmpty(),
+        context.ignoredOptionsReportingState,
+        sourceFiles,
+        messageCollector,
+    ) {
+        getScriptCompilationConfiguration(it)?.valueOrNull()?.configuration
+    }
     return sourceFiles to sourceDependencies
 }
 
-private fun CompilerConfiguration.updateWithRefinedConfigurations(
-    context: SharedScriptCompilationContext,
-    sourceFiles: List<SourceCode>,
+/**
+ * Applies the options added by the refinement of each source, without repetitions, together with the [baseCompilerOptions],
+ * since the options are applied as a whole and the reporting of the ignored options compares them with the base ones.
+ */
+internal fun CompilerConfiguration.applyRefinedCompilerOptions(
+    baseCompilerOptions: List<String>,
+    ignoredOptionsReportingState: IgnoredOptionsReportingState,
+    sources: List<SourceCode>,
     messageCollector: ScriptDiagnosticsMessageCollector,
-    @Suppress("DEPRECATION")
-    getScriptCompilationConfiguration: (SourceCode) -> org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult?
+    getRefinedConfiguration: (SourceCode) -> ScriptCompilationConfiguration?,
 ) {
-    val updatedCompilerOptions = sourceFiles.flatMapTo(mutableListOf()) {
-        getScriptCompilationConfiguration(it)?.valueOrNull()?.configuration?.get(
-            ScriptCompilationConfiguration.compilerOptions
-        ) ?: emptyList()
-    }
-    if (updatedCompilerOptions.isNotEmpty() &&
-        updatedCompilerOptions != context.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
-    ) {
-        updateWithCompilerOptions(updatedCompilerOptions, messageCollector, context.ignoredOptionsReportingState, true)
+    val refinedCompilerOptions = sources.mapNotNull { source ->
+        getRefinedConfiguration(source)?.get(ScriptCompilationConfiguration.compilerOptions)
+            ?.let { refinedCompilerOptionsDelta(baseCompilerOptions, it) }
+            ?.takeIf { it.isNotEmpty() }
+    }.distinct().flatten()
+    if (refinedCompilerOptions.isNotEmpty()) {
+        updateWithCompilerOptions(
+            baseCompilerOptions + refinedCompilerOptions, messageCollector, ignoredOptionsReportingState, isRefinement = true
+        )
     }
 }
+
+/**
+ * The lists are compared as token sequences, so reordered base options or partially overlapping deltas may leave duplicates.
+ */
+internal fun refinedCompilerOptionsDelta(baseCompilerOptions: List<String>, refinedCompilerOptions: List<String>): List<String> =
+    if (refinedCompilerOptions.size >= baseCompilerOptions.size &&
+        refinedCompilerOptions.subList(0, baseCompilerOptions.size) == baseCompilerOptions
+    ) refinedCompilerOptions.subList(baseCompilerOptions.size, refinedCompilerOptions.size)
+    else refinedCompilerOptions

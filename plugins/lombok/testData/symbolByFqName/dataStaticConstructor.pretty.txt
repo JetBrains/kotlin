@@ -1,0 +1,2 @@
+@kotlin.jvm.JvmStatic
+fun of(from: kotlin.Int, to: kotlin.Int): Range

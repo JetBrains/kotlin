@@ -1,0 +1,68 @@
+class GenericOuter<T : Any?> {
+  @NoArgsConstructor
+  class Nested<S : Any?> {
+    var param: S
+      field = param
+      get
+      set
+
+    constructor() {
+      super/*Any*/()
+    }
+
+    constructor(param: S) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Outer {
+  @NoArgsConstructor
+  class Nested {
+    var int: Int
+      field = int
+      get
+      set
+
+    var str: String
+      field = str
+      get
+      set
+
+    constructor() {
+      super/*Any*/()
+    }
+
+    constructor(int: Int, str: String) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val nested: Nested = Nested()
+  assertEquals<Int>(expected = 0, actual = nested.<get-int>())
+  assertNull(actual = nested.<get-str>())
+  assertNull(actual = Nested<String>().<get-param>())
+  return "OK"
+}

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.test.framework.base
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.psi.AbstractFileViewProvider
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.stubs.StubElement
@@ -18,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.session.analyzeCopy
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
@@ -215,19 +217,38 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
     /**
      * Runs the given [action] with an assertion that fails the test on any attempt to load the AST of [file].
      *
+     * The assertion throws [AstLoadingAssertionError] itself rather than letting [com.intellij.psi.impl.source.PsiFileImpl] report the
+     * access via `Logger.error`. The logger dumps each error with its stack trace to stderr, even when the test expects the error and
+     * catches it (see `AbstractLLStubBasedTest.computeAstLoadingAware`), which floods the test log.
+     *
      * @see com.intellij.psi.impl.source.PsiFileImpl.loadTreeElement
      * @see com.intellij.psi.impl.PsiManagerEx.isAssertOnFileLoading
      */
     protected fun <T> withAstLoadingAssertion(file: KtFile, action: () -> T): T {
         val virtualFile = file.virtualFile
         val disposable = Disposer.newDisposable("AST loading assertion")
-        (file.manager as PsiManagerEx).setAssertOnFileLoadingFilter({ it == virtualFile }, disposable)
+        val filter = VirtualFileFilter {
+            if (it == virtualFile) {
+                throw AstLoadingAssertionError(it)
+            }
+
+            false
+        }
+
+        (file.manager as PsiManagerEx).setAssertOnFileLoadingFilter(filter, disposable)
         return try {
             action()
         } finally {
             Disposer.dispose(disposable)
         }
     }
+
+    /**
+     * Thrown by [withAstLoadingAssertion] on an attempt to load the AST of [file].
+     */
+    protected class AstLoadingAssertionError(file: VirtualFile) : AssertionError(
+        "AST loading is not allowed for '${file.presentableUrl}' in the stub-based part of the test"
+    )
 
     /**
      * Computes [KtClassOrObject.isLocal] for every class stub of the stub-based [file] without loading its AST.
@@ -364,7 +385,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * Checks whether the [actual] string matches the content of the test output file.
      *
      * If [actual] is `null`, asserts that the corresponding test output file does not exist. If the file exists, it will be deleted
-     * (in UPDATE mode or CHECK mode locally) and an assertion error is raised (in CHECK mode). Only the write-target file is checked —
+     * (in UPDATE mode, or in CHECK mode in a plain local test run) and an assertion error is raised (in CHECK mode).
+     * `checkTestData` and TeamCity runs never modify files. Only the write-target file is checked —
      * fallback files in the variant chain are not affected.
      *
      * If a non-empty [variantChain] is specified, the function will firstly check whether test output files with any of the
@@ -375,7 +397,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * test output file.
      *
      * If none of the test output files exist, the function creates an output file, writes the content of [actual] to it, and throws
-     * an exception.
+     * an exception. In `checkTestData` and on TeamCity, it only throws.
      *
      * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
      * test data. The purpose of this setting is to allow tests to define multiple sets of output files, e.g. for tests that share the same
@@ -407,7 +429,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * Checks whether the [actual] string matches the content of the test output file.
      *
      * If [actual] is `null`, asserts that the corresponding test output file does not exist. If the file exists, it will be deleted
-     * (in UPDATE mode or CHECK mode locally) and an assertion error is raised (in CHECK mode). Only the write-target file is checked —
+     * (in UPDATE mode, or in CHECK mode in a plain local test run) and an assertion error is raised (in CHECK mode).
+     * `checkTestData` and TeamCity runs never modify files. Only the write-target file is checked —
      * fallback files in the variant chain are not affected.
      *
      * If a non-empty [variantChain] is specified, the function will firstly check whether test output files with any of the
@@ -420,7 +443,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * Before comparing [actual] against the content of test files, applies [sanitizer] to [actual] and the text of the output files.
      *
      * If none of the test output files exist, the function creates an output file, writes the sanitized content of [actual] to it,
-     * and throws an exception.
+     * and throws an exception. In `checkTestData` and on TeamCity, it only throws.
      *
      * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
      * test data. The purpose of this setting is to allow tests to define multiple sets of output files, e.g. for tests that share the same

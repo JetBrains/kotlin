@@ -62,7 +62,7 @@ private fun PhaseConfig.list(phases: List<Pair<Int, AnyNamedPhase>>) {
 }
 
 private fun createPhaseSetFromArguments(names: Array<String>?): PhaseSet = when {
-    names == null -> PhaseSet.Empty
+    names.isNullOrEmpty() -> PhaseSet.Empty
     "all" in names.map { it.toLowerCaseAsciiOnly() } -> PhaseSet.All
     else -> PhaseSet.Enum(names.toSet())
 }

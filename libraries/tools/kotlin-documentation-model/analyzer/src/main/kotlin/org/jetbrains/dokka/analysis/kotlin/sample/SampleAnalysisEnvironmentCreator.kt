@@ -12,7 +12,7 @@ import org.jetbrains.dokka.analysis.kotlin.KotlinAnalysisPlugin
  *
  * Can be acquired via [KotlinAnalysisPlugin.sampleAnalysisEnvironmentCreator].
  */
-public interface SampleAnalysisEnvironmentCreator {
+internal interface SampleAnalysisEnvironmentCreator {
 
     /**
      * Creates and configures the sample analysis environment for a limited-time use.
@@ -35,7 +35,7 @@ public interface SampleAnalysisEnvironmentCreator {
      * // ...
      * ```
      */
-    public fun <T> use(block: SampleAnalysisEnvironment.() -> T): T
+    fun <T> use(block: SampleAnalysisEnvironment.() -> T): T
 
     /**
      * Creates a new instance of [SampleAnalysisEnvironment].
@@ -51,5 +51,5 @@ public interface SampleAnalysisEnvironmentCreator {
      * @return a new instance of [SampleAnalysisEnvironment]
      */
     @DelicateDokkaApi
-    public fun create(): SampleAnalysisEnvironment
+    fun create(): SampleAnalysisEnvironment
 }

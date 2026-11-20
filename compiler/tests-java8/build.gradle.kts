@@ -8,10 +8,15 @@ plugins {
 
 dependencies {
     testImplementation(project(":kotlin-scripting-compiler"))
-    testImplementation(project(":core:descriptors"))
-    testImplementation(project(":core:descriptors.jvm"))
     testImplementation(project(":core:compiler.common.jvm"))
-    testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
+    testImplementation(project(":compiler:cli"))
+    testImplementation(project(":compiler:cli-base"))
+    testImplementation(project(":compiler:cli-jvm"))
+    testImplementation(project(":compiler:config"))
+    testImplementation(project(":compiler:fir:entrypoint"))
+    testImplementation(project(":compiler:fir:fir-jvm"))
+    testImplementation(project(":compiler:fir:semantics.api"))
+    testImplementation(project(":compiler:fir:tree"))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(intellijCore())
 
@@ -42,15 +47,8 @@ projectTests {
 
     testTask(
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0),
-        javaLauncher = JdkMajorVersion.JDK_1_8,
         maxHeapSize = testMaxHeapSizeLarge,
-        // Use Parallel GC because this test runs on JDK 8.
-        garbageCollector = GarbageCollector.Parallel,
     ) {
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     }
 }
-
-
-optInToK1Deprecation()
-

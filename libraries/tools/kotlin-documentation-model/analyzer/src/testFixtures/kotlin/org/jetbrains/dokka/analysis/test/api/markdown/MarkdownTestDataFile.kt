@@ -6,7 +6,7 @@ package org.jetbrains.dokka.analysis.test.api.markdown
 
 import org.jetbrains.dokka.analysis.test.api.TestDataFile
 
-class MarkdownTestDataFile(
+internal class MarkdownTestDataFile(
     pathFromProjectRoot: String
 ) : TestDataFile(pathFromProjectRoot = pathFromProjectRoot) {
 

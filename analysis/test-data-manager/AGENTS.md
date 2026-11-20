@@ -12,6 +12,8 @@ This module provides infrastructure for:
 **Structure:**
 - `testFixtures/` — Runtime API for use by other modules
 - `tests/` — Module's own test suite
+- `test-data-manager.py` — the wrapper script aggregating the module reports; after changing it, run `python3 analysis/test-data-manager/test-data-manager-test.py`
+  (not part of the Gradle build)
 
 For conceptual details (variant chains, conflicts, convergence), see [README.md](README.md).
 For running test data management tasks (checking/updating test data via Gradle), see [test-data-manager-convention](../../repo/gradle-build-conventions/test-data-manager-convention/README.md).
@@ -231,15 +233,18 @@ ManagedTestAssertions.assertEqualsToTestDataFile(
 
 ### Behavior Matrix
 
-| Scenario                  | UPDATE mode | CHECK mode (local) | CHECK mode (CI) |
-|---------------------------|-------------|--------------------|-----------------|
-| actual=null, file missing | Pass        | Pass               | Pass            |
-| actual=null, file exists  | Delete      | Delete + throw     | Throw           |
-| File missing (golden)     | Create      | Create + throw     | Throw           |
-| File missing (secondary)  | Create      | Throw              | Throw           |
-| Content matches           | Pass        | Pass               | Pass            |
-| Write-target redundant    | Delete      | Delete + throw     | Throw           |
-| Content mismatch          | Update      | Throw              | Throw           |
+| Scenario                  | UPDATE mode | CHECK mode (local test run) | CHECK mode (`checkTestData`, CI) |
+|---------------------------|-------------|-----------------------------|----------------------------------|
+| actual=null, file missing | Pass        | Pass                        | Pass                             |
+| actual=null, file exists  | Delete      | Delete + throw              | Throw                            |
+| File missing (golden)     | Create      | Create + throw              | Throw                            |
+| File missing (secondary)  | Create      | Throw                       | Throw                            |
+| Content matches           | Pass        | Pass                        | Pass                             |
+| Write-target redundant    | Delete      | Delete + throw              | Throw                            |
+| Content mismatch          | Update      | Throw                       | Throw                            |
+
+A local test run is a test started without the mode set (plain `test` task, IDE gutter): CHECK is its fallback, and it
+still writes files so that a new test gets its golden file. `checkTestData` sets CHECK explicitly and never writes.
 
 ## Key Classes Reference
 

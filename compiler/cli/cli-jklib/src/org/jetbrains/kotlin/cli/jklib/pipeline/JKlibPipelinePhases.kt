@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
-import org.jetbrains.kotlin.cli.jklib.config.jklibCompileIr
+import org.jetbrains.kotlin.cli.jklib.IrCompilationResult
+import org.jetbrains.kotlin.cli.jklib.config.jklibManifestProperties
 import org.jetbrains.kotlin.cli.jklib.config.jklibOutputDestination
 import org.jetbrains.kotlin.cli.jklib.config.klibPaths
 import org.jetbrains.kotlin.cli.jklib.prepareJKlibSessions
@@ -43,8 +44,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrMangler
 import org.jetbrains.kotlin.ir.backend.jklib.JKlibModuleSerializer
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
@@ -97,7 +98,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
             configuration.addKotlinSourceRoot(
                 path = arg,
                 isCommon = arg in commonSources,
-                hmppModuleName = hmppCliModuleStructure?.getModuleNameForSource(arg)
+                hmppModuleName = hmppCliModuleStructure?.getModuleNameForSource(File(arg))
             )
         }
 
@@ -174,7 +175,21 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
         configuration.renderDiagnosticInternalName = arguments.renderInternalDiagnosticNames
 
         arguments.destination?.let { configuration.jklibOutputDestination = it }
-        configuration.jklibCompileIr = arguments.compileIr
+        arguments.klibManifestProperties?.let { properties ->
+            val parsedProperties = LinkedHashMap<String, String>(properties.size)
+            for (property in properties) {
+                val parts = property.split('=', limit = 2)
+                if (parts.size == 2 && parts[0].isNotEmpty()) {
+                    parsedProperties[parts[0]] = parts[1]
+                } else {
+                    configuration.report(
+                        COMPILER_ARGUMENTS_ERROR,
+                        "Invalid -Xklib-manifest-property format: '$property'. Expected '<key=value>'.",
+                    )
+                }
+            }
+            configuration.jklibManifestProperties = parsedProperties
+        }
         arguments.friendModules?.let { configuration.friendPaths = it.split(File.pathSeparator).filterNot(String::isEmpty) }
 
         // TODO(KT-87172): call configuration.setupCommonKlibArguments() instead of manual setup.
@@ -202,7 +217,7 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
         )
         val groupedSources = collectSources(configuration, projectEnvironment)
 
-        if (groupedSources.isEmpty()) {
+        if (groupedSources.isEmpty() && !configuration.allowNoSourceFiles) {
             configuration.report(COMPILER_ARGUMENTS_ERROR, "No source files")
             return null
         }
@@ -262,7 +277,7 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
         outputs.runPlatformCheckers(diagnosticsReporter)
 
         return JKlibFrontendPipelineArtifact(
-            AllModulesFrontendOutput(outputs), configuration, projectEnvironment,
+            AllModulesFrontendOutput(outputs), configuration, resolvedLibraries, projectEnvironment,
             rootDisposable,
         )
     }
@@ -290,6 +305,7 @@ object JKlibFir2IrPipelinePhase : PipelinePhase<JKlibFrontendPipelineArtifact, J
             fir2IrResult,
             configuration,
             input.frontendOutput,
+            input.resolvedLibraries,
             input.projectEnvironment,
             input.rootDisposable,
         )
@@ -308,7 +324,7 @@ private fun AllModulesFrontendOutput.convertToIrAndActualize(
         fir2IrExtensions,
         fir2IrConfiguration,
         irGeneratorExtensions,
-        JKlibIrMangler(),
+        JvmIrMangler,
         FirJvmVisibilityConverter,
         DefaultBuiltIns.Instance,
         ::JvmIrTypeSystemContext,
@@ -319,6 +335,16 @@ private fun AllModulesFrontendOutput.convertToIrAndActualize(
             { listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)) }
         },
     )
+}
+
+/**
+ * Hands the lowered IR produced by FIR2IR over as the result of the IR compilation, instead of serializing the module into a KLIB.
+ */
+object JKlibIrCompilationResultPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, IrCompilationResult>(
+    name = "JKlibIrCompilationResultPhase",
+) {
+    override fun executePhase(input: JKlibFir2IrPipelineArtifact): IrCompilationResult =
+        IrCompilationResult(input.result.irModuleFragment, input.result.pluginContext, input.configuration)
 }
 
 object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, JKlibSerializationArtifact>(
@@ -362,11 +388,18 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
         KlibWriter {
             // Skip ZIP archive creation and write directly to a directory for better performance when the generated Klib is immediately
             // deserialized.
-            format(if (configuration.jklibCompileIr) KlibFormat.Directory else KlibFormat.ZipArchive)
+            format(KlibFormat.ZipArchive)
             manifest {
                 moduleName(configuration.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
                 versions(versions)
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
+                configuration.jklibManifestProperties?.let { properties ->
+                    customProperties {
+                        for ((key, value) in properties) {
+                            setProperty(key, value)
+                        }
+                    }
+                }
                 metadataFlags(configuration.languageVersionSettings)
             }
             includeMetadata(serializerOutput.serializedMetadata)
@@ -427,6 +460,13 @@ object JKlibMetadataSerializationPhase : PipelinePhase<JKlibFrontendPipelineArti
                 moduleName(rawModuleName)
                 versions(versions)
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
+                configuration.jklibManifestProperties?.let { properties ->
+                    customProperties {
+                        for ((key, value) in properties) {
+                            setProperty(key, value)
+                        }
+                    }
+                }
                 metadataFlags(configuration.languageVersionSettings)
             }
             includeMetadata(serializerOutput.serializedMetadata)

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-import org.jetbrains.kotlin.psi.utils.OperatorTokens
 import java.util.*
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
@@ -118,7 +117,9 @@ fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
             }
         }
         parent is KtBinaryExpression && parent.operationReference == this -> {
-            return if (parent.operationToken in OperatorTokens.IN_OPERATIONS) parent.right else parent.left
+            // For `a in b` / `a !in b`, the callee is `contains`, and the receiver is on the right-hand side.
+            val operationToken = parent.operationToken
+            return if (operationToken == KtTokens.IN_KEYWORD || operationToken == KtTokens.NOT_IN) parent.right else parent.left
         }
         parent is KtUnaryExpression && parent.operationReference == this -> {
             return parent.baseExpression
@@ -686,6 +687,8 @@ fun KtStringTemplateExpression.isPlainWithEscapes() =
  */
 val KtDeclaration.containingClassOrObject: KtClassOrObject?
     get() {
+        if (this is KtDestructuringDeclarationEntry) return destructuringDeclaration.containingClassOrObject
+
         // Class bodies and parameter lists are always stubbed, so they cannot be the AST parent of a dangling stub
         if (danglingStubParent != null) return null
 
@@ -693,7 +696,6 @@ val KtDeclaration.containingClassOrObject: KtClassOrObject?
             is KtClassBody -> parent.containingClassOrObject
             is KtClassOrObject -> parent
             is KtParameterList -> (parent.parent as? KtPrimaryConstructor)?.getContainingClassOrObject()
-            is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingClassOrObject
             else -> null
         }
     }
@@ -711,19 +713,28 @@ private val KtDeclaration.danglingStubParent: PsiElement?
     }
 
 /**
- * Whether this declaration is declared inside a companion object block.
+ * Whether this declaration is a direct member of a
+ * [companion block](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md#companion-blocks).
  *
  * ### Example:
  *
  * ```kotlin
  * class Foo {
- *   companion {
- *     fun static1() {} // true
- *   }
+ *     companion {
+ *         fun blockMember() { // true
+ *             val local = 1 // false
+ *         }
+ *     }
  *
- *   fun regular() {} // false
+ *     companion object {
+ *         fun objectMember() {} // false
+ *     }
+ *
+ *     fun instanceMember() {} // false
  * }
  * ```
+ *
+ * @see isCompanion
  */
 @KtExperimentalApi
 val KtDeclaration.isFromCompanionBlock: Boolean
@@ -747,12 +758,13 @@ val KtDeclarationWithReturnType.isCompanion: Boolean
 @KtExperimentalApi
 val KtDeclaration.containingScript: KtScript?
     get() {
+        if (this is KtDestructuringDeclarationEntry) return destructuringDeclaration.containingScript
+
         // The script block is not stubbed, so the parent stub of script declarations is the script itself
         danglingStubParent?.let { return it as? KtScript }
 
         return when (val parent = parent) {
             is KtBlockExpression -> parent.containingScript
-            is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingScript
             else -> null
         }
     }
@@ -777,21 +789,13 @@ val KtBlockExpression.containingScript: KtScript?
     get() = parent as? KtScript
 
 /**
- * The containing [ClassId] for this declaration. REPL [KtScript]s are supported.
+ * The containing [ClassId] for this declaration.
  *
- * @see containingScript
  * @see containingClassOrObject
  */
 @KtExperimentalApi
 val KtDeclaration.containingClassId: ClassId?
-    get() {
-        containingClassOrObject?.let {
-            return it.getClassId()
-        }
-
-        val script = containingScript?.takeIf(KtScript::isReplSnippet) ?: return null
-        return ClassId.topLevel(script.fqName)
-    }
+    get() = containingClassOrObject?.getClassId()
 
 
 /**
@@ -903,7 +907,7 @@ fun isDoubleColonReceiver(expression: KtExpression) =
         "this.getOrCreateFunctionLiteralParameterList()",
         "org.jetbrains.kotlin.idea.base.psi.getOrCreateFunctionLiteralParameterList",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @OptIn(KtIdeApi::class)
 fun KtFunctionLiteral.getOrCreateParameterList(): KtParameterList =
@@ -956,7 +960,7 @@ fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
         "this.getOrCreateCallValueArgumentList()",
         "org.jetbrains.kotlin.idea.base.psi.getOrCreateCallValueArgumentList",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @OptIn(KtIdeApi::class)
 fun KtCallExpression.getOrCreateValueArgumentList(): KtValueArgumentList =
@@ -968,7 +972,7 @@ fun KtCallExpression.getOrCreateValueArgumentList(): KtValueArgumentList =
         "this.appendTypeArgument(typeArgument)",
         "org.jetbrains.kotlin.idea.base.psi.appendTypeArgument",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @OptIn(KtIdeApi::class)
 fun KtCallExpression.addTypeArgument(typeArgument: KtTypeProjection) {
@@ -1006,7 +1010,7 @@ fun KtExpression.getLabeledParent(labelName: String): KtLabeledExpression? {
 @Deprecated(
     message = "Use astReplace(newElement) instead",
     replaceWith = ReplaceWith("this.astReplace(newElement)", "org.jetbrains.kotlin.idea.base.psi.astReplace"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @OptIn(KtIdeApi::class)
 fun PsiElement.astReplace(newElement: PsiElement) {
@@ -1094,13 +1098,14 @@ fun Name?.safeNameForLazyResolve(): Name = this?.takeUnless(Name::isSpecial) ?: 
  * declaration's [ClassId][org.jetbrains.kotlin.name.ClassId], e.g. `Outer.<no name provided>.Inner`.
  *
  * Declarations without a [ClassId][org.jetbrains.kotlin.name.ClassId] are handled differently:
- * - local declarations and everything nested in them have no fully qualified name;
+ * - local declarations, including members of enum entry bodies, and everything nested in them have no fully
+ *   qualified name;
  * - enum entries are named using the real names of their containing classes, e.g. `MyEnum.Entry`, or `null` if
- *   any containing class has no name. Declarations in enum entry bodies are named after the entry.
+ *   any containing class has no name.
  */
 fun KtNamedDeclaration.safeFqNameForLazyResolve(): FqName? {
     val containingClass = (parent as? KtClassBody)?.containingClassOrObject
-    val parentFqName = if (containingClass != null && this !is KtEnumEntry) {
+    val parentFqName = if (containingClass != null && containingClass !is KtEnumEntry && this !is KtEnumEntry) {
         containingClass.safeFqNameForLazyResolve()
     } else {
         KtNamedDeclarationUtil.getParentFqName(this)

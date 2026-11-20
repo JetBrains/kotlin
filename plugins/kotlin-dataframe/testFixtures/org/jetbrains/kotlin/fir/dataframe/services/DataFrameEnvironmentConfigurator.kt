@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.fir.dataframe.services.DataFrameDirectives.ENABLE_DATAFRAME
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -21,6 +22,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.IrBodyFiller
 
 class DataFrameEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        if (ENABLE_DATAFRAME !in module.directives) return
         configuration.addJvmClasspathRoots(DATAFRAME_CLASSPATH)
     }
 
@@ -28,6 +30,7 @@ class DataFrameEnvironmentConfigurator(testServices: TestServices) : Environment
         module: TestModule,
         configuration: CompilerConfiguration,
     ) {
+        if (ENABLE_DATAFRAME !in module.directives) return
         val schema =
             """
             {

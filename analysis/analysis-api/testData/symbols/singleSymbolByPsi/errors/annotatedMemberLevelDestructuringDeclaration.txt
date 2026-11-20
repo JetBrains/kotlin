@@ -5,8 +5,8 @@ KaDestructuringDeclarationSymbol:
       psi: KtAnnotationEntry
   ]
   entries: [
-    KaLocalVariableSymbol(<local>/<error property>)
-    KaLocalVariableSymbol(<local>/<error property>)
+    KaKotlinPropertySymbol(/B.a)
+    KaKotlinPropertySymbol(/B.b)
   ]
   isActual: false
   isExpect: false

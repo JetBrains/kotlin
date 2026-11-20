@@ -9,6 +9,7 @@ This is the Kotlin programming language repository containing:
 - Compiler plugins (compose, serialization, allopen, noarg, etc.)
 - Standard library, kotlin-reflect, kotlin-test
 - Build system support (Gradle, Maven, JPS)
+- Kotlin Build Tools libraries: build tool independent libraries shared by build tool integrations (KGP, Maven, JPS, kotlin-toolchain, Bazel)
 - Kotlin scripting support
 - Analysis API
 
@@ -18,6 +19,8 @@ Note: The IntelliJ Kotlin plugin is in a separate repository (JetBrains/intellij
 
 ```bash
 # Generate test sources (run after adding new test data files)
+# Mostly required for Analysis API, CLI and some other test runners.
+# Most other tests (like diagnostic, box, etc) generate runners on demand.
 ./gradlew generateTests
 ```
  
@@ -42,9 +45,10 @@ follow the [Diagnostic Message Style Guide](../docs/diagnostic_message_style_gui
 | Backend: Native          |                        | kotlin-native/, native/                                   | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | Backend: WASM            |                        | compiler/ir/backend.wasm/                                 | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | Build Tools API          |                        | compiler/build-tools/                                     | [AGENTS.md](../compiler/build-tools/AGENTS.md)                                   |
+| Build Tools Libraries    |                        | build-tools/libraries/                                    | [AGENTS.md](../build-tools/libraries/AGENTS.md)                                  |
 | Compiler plugins         |                        | plugins/                                                  | —                                                                                |
+| Dependency updates       |                        | gradle/                                                   | [ReadMe.md](../ReadMe.md#updating-a-dependency)                                  |
 | FIR (K2 frontend)        | `Fir*`                 | compiler/fir/                                             | [AGENTS.md](../compiler/AGENTS.md)                                               |
-| FIR Analysis Tests       |                        | compiler/fir/analysis-tests/                              | [AGENTS.md](../compiler/fir/analysis-tests/AGENTS.md)                            |
 | IR                       | `Ir*`                  | compiler/ir/                                              | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | K1 (legacy frontend)     |                        | compiler/frontend/                                        | —                                                                                |
 | Kotlin Gradle Plugin     |                        | libraries/tools/kotlin-gradle-plugin/                     | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin/AGENTS.md)                   |
@@ -54,11 +58,15 @@ follow the [Diagnostic Message Style Guide](../docs/diagnostic_message_style_gui
 | Standard library         |                        | libraries/stdlib/                                         | —                                                                                |
 | Test infrastructure      |                        | compiler/test-infrastructure/, compiler/tests-common-new/ | [testing.md](testing.md)                                                         |
 
-> **Adding new area docs:** Create `AGENTS.md` with content and `CLAUDE.md` containing only `@AGENTS.md`
+> **Adding new area docs:** Create `AGENTS.md`
 
 ## Running Individual Tests
 
 **MANDATORY: First check the [Areas](#areas) table above — some areas have specialized test tooling.**
+
+Managed test data (most of `analysis/`, and `compiler/psi/psi-impl`) is checked and updated only with
+`python3 analysis/test-data-manager/test-data-manager.py check|update --path <dir-or-file>`, never with the commands below;
+see [Working with Test Data](../analysis/AGENTS.md#working-with-test-data).
 
 Use `-q` (quiet) flag to reduce output noise. Example of commands for areas WITHOUT specialized tooling:
 

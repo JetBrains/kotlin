@@ -1,4 +1,5 @@
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+@kotlin.jvm.JvmInline()
 public final class IntWrapper /* IntWrapper*/ {
   private final int i;
 
@@ -10,6 +11,15 @@ public final class IntWrapper /* IntWrapper*/ {
   public final int getI();//  getI()
 
   public int hashCode();//  hashCode()
+}
+
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+public final class RegularClassWithDependentDefault /* RegularClassWithDependentDefault*/ {
+  private final int property;
+
+  private  RegularClassWithDependentDefault(int, boolean, boolean);//  .ctor(int, boolean, boolean)
+
+  public  RegularClassWithDependentDefault();//  .ctor()
 }
 
 public final class RegularClassWithValueConstructor /* RegularClassWithValueConstructor*/ {

@@ -73,7 +73,7 @@ FILE[kind=Facade[packageFqName=foo.bar, facadeFqName=foo.bar.CommentsBindingKt]]
       ENUM_ENTRY[classId=null, fqName=foo.bar.E.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
       ENUM_ENTRY[classId=null, fqName=foo.bar.E.X, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=X, superNames=[]]
         CLASS_BODY
-          FUNCTION[fqName=foo.bar.E.X.toString, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+          FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
             STRING_TEMPLATE

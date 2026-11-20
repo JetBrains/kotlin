@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithErasedTypeKt]]
   IMPORT_LIST
   FUNCTION[fqName=testErasedType, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testErasedType]
     contract: [ effect:param(0) is KotlinTypeParameterTypeBean(typeParameterName=T, nullable=false, definitelyNotNull=false) -> Returns(NOT_NULL) ]
-    origin: Facade(className=WithErasedTypeKt, jvmClassName=null)
+    origin: Facade(className=WithErasedTypeKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]

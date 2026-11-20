@@ -5,22 +5,15 @@
 
 package org.jetbrains.kotlin.resolve.jvm.modules
 
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiJavaModule
-import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.load.java.structure.impl.JavaAnnotationImpl
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassIdToJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
-import org.jetbrains.kotlin.load.java.structure.impl.convert
-import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.compact
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.org.objectweb.asm.*
-import java.io.IOException
 
 class JavaModuleInfo(
     val moduleName: String,
@@ -37,31 +30,7 @@ class JavaModuleInfo(
     class FileReadingException(override val message: String, override val cause: Throwable) : IllegalStateException(message, cause)
 
     companion object {
-        fun create(psiJavaModule: PsiJavaModule) = JavaModuleInfo(
-            psiJavaModule.name,
-            psiJavaModule.requires.mapNotNull { statement ->
-                statement.moduleName?.let { moduleName ->
-                    Requires(moduleName, statement.hasModifierProperty(PsiModifier.TRANSITIVE))
-                }
-            },
-            psiJavaModule.exports.mapNotNull { statement ->
-                statement.packageName?.let { packageName ->
-                    Exports(FqName(packageName), statement.moduleNames)
-                }
-            },
-            psiJavaModule.annotations.convert {
-                JavaAnnotationImpl(
-                    JavaElementSourceFactory.getInstance(psiJavaModule.project).createPsiSource(it)
-                )
-            }
-        )
-
-        fun read(file: VirtualFile, classesByClassId: ClassIdToJavaClass): JavaModuleInfo? {
-            val contents = try {
-                file.contentsToByteArray()
-            } catch (e: IOException) {
-                return null
-            }
+        fun read(contents: ByteArray, fileDescription: String?, classesByClassId: ClassIdToJavaClass): JavaModuleInfo? {
             var moduleName: String? = null
             val requires = arrayListOf<Requires>()
             val exports = arrayListOf<Exports>()
@@ -101,8 +70,8 @@ class JavaModuleInfo(
                 }, ClassReader.SKIP_DEBUG or ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES)
             } catch (e: Exception) {
                 rethrowIntellijPlatformExceptionIfNeeded(e)
-                throw FileReadingException (
-                    "Could not load module definition from: ${file.canonicalPath}. The file might be broken " +
+                throw FileReadingException(
+                    "Could not load module definition from: $fileDescription. The file might be broken " +
                             "by incorrect post-processing via bytecode tools. Please remove this file from the classpath.",
                     e
                 )

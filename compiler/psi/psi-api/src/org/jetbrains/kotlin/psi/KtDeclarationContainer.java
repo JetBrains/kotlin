@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi;
 
-import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -30,6 +29,5 @@ import java.util.List;
 public interface KtDeclarationContainer {
     /** Returns the declarations directly contained in this element, in their source order. Returns an empty list if there are none. */
     @NotNull
-    @ReadOnly
     List<KtDeclaration> getDeclarations();
 }

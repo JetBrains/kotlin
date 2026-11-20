@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.JvmInlineAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
@@ -58,12 +59,17 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
      *
      * A [full value class](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)
      * and a value object are compiled as regular classes, so they are not inline value classes even though they have the
-     * `value` modifier. The distinction cannot be made from PSI alone, as it depends on the `@JvmInline` annotation, the
-     * target platform, and the `FullValueClasses` language feature, so the flag is computed from the class symbol.
+     * `value` modifier. The distinction cannot be made from PSI alone: unless the class has the `inline` modifier, it depends on
+     * the `@JvmInline` annotation, the target platform, and the `FullValueClasses` language feature, so the flag is computed
+     * from the class symbol.
      *
      * @see KaNamedClassSymbol.isInline
      */
-    val isInlineClass: Boolean
+    val isInlineClass: Boolean by lazyPub {
+        withClassSymbol { it.isInline }
+    }
+
+    private val classKind: KaClassKind
 
     constructor(
         useSiteModule: KaModule,
@@ -73,20 +79,20 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbol = classSymbol,
     ) {
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
-        isInlineClass = classSymbol.isInline
+        classKind = classSymbol.classKind
     }
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
-        isInlineClass: Boolean,
+        classKind: KaClassKind,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         useSiteModule = useSiteModule,
     ) {
-        this.isInlineClass = isInlineClass
+        this.classKind = classKind
     }
 
     override fun getModifierList(): PsiModifierList = cachedValue {
@@ -95,6 +101,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(useSiteModule, symbolPointer),
+                additionalAnnotationsProvider = JvmInlineAdditionalAnnotationsProvider,
                 annotationFilter = ExcludeAnnotationFilter.JvmExposeBoxed,
             ),
         )
@@ -296,7 +303,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             // First, add static fields: companion object and fields from companion object
             addCompanionObjectFieldIfNeeded(result, classSymbol)
             val nameGenerator = SymbolLightField.FieldNameGenerator()
-            addFieldsFromCompanionIfNeeded(result, classSymbol, nameGenerator)
+            addFieldsFromCompanionObjectIfNeeded(result, classSymbol, nameGenerator)
 
             // Then, add instance fields: properties from parameters, and then member properties
             addPropertyBackingFields(this@SymbolLightClassForClassOrObject, result, classSymbol, nameGenerator)
@@ -332,6 +339,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbol.staticDeclaredMemberScope.callables
             .filterIsInstance<KaEnumEntrySymbol>()
             .mapNotNullTo(result) {
+                // `lightClassForEnumEntryInitializer` and `LightClassMemberUtils.lightMemberKotlinOrigin` rely on this `kotlinOrigin`
                 val enumEntry = it.sourcePsiSafe<KtEnumEntry>()
                 val name = enumEntry?.name ?: return@mapNotNullTo null
                 SymbolLightFieldForEnumEntry(
@@ -345,7 +353,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     override fun isInterface(): Boolean = false
     override fun isAnnotationType(): Boolean = false
-    override fun classKind(): KaClassKind = withClassSymbol { it.classKind }
+    override fun classKind(): KaClassKind = classKind
 
     override fun isRecord(): Boolean {
         return modifierList.hasAnnotation(JvmStandardClassIds.Annotations.JvmRecord.asFqNameString())
@@ -373,6 +381,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = symbolPointer,
         useSiteModule = useSiteModule,
-        isInlineClass = isInlineClass,
+        classKind = classKind,
     )
 }

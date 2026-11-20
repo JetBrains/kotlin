@@ -1,0 +1,52 @@
+/topLevelExternal.kt:19:5: warning: '@JsQualifier' annotation can only be applied to top-level declarations or to files. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/topLevelExternal.kt:22:5: warning: '@JsQualifier' annotation can only be applied to top-level declarations or to files. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/topLevelExternal.kt:25:5: warning: '@JsQualifier' annotation can only be applied to top-level declarations or to files. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/topLevelExternal.kt:28:5: warning: '@JsQualifier' annotation can only be applied to top-level declarations or to files. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/topLevelExternal.kt:29:17: error: Declaration of such kind (inner class) cannot be external.
+
+/topLevelExternal.kt:31:5: warning: '@JsQualifier' annotation can only be applied to top-level declarations or to files. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/topLevelExternal.kt:34:5: warning: '@JsQualifier' annotation can only be applied to top-level declarations or to files. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/topLevelExternal.kt:36:9: warning: '@JsQualifier' annotation can only be applied to top-level declarations or to files. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/topLevelExternal.kt:43:5: warning: '@JsQualifier' annotation can only be applied to top-level declarations or to files. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/topLevelExternal.kt:46:5: warning: '@JsQualifier' annotation can only be applied to top-level declarations or to files. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/topLevelExternal.kt:52:5: warning: '@JsQualifier' annotation can only be applied to top-level declarations or to files. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+/nonExternal.kt:59:1: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/nonExternal.kt:62:1: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/nonExternal.kt:65:1: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/nonExternal.kt:66:9: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/nonExternal.kt:67:5: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/nonExternal.kt:70:5: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/nonExternal.kt:73:5: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/nonExternal.kt:77:1: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/nonExternal.kt:80:1: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/nonExternal.kt:82:5: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/nonExternal.kt:87:5: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/nonExternal.kt:90:5: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+/typealiases.kt:106:6: error: Qualifier contains illegal characters.
+
+/typealiases.kt:110:5: warning: '@JsQualifier' annotation can only be applied to top-level declarations or to files. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/typealiases.kt:114:1: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+
+/typealiases.kt:117:1: warning: '@JsQualifier' annotation can only be applied to external declarations. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-90277
+/typealiasOnFile.kt:126:1: error: Only external declarations are allowed in files marked with 'JsQualifier' annotation.

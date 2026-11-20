@@ -49,12 +49,13 @@ fun box() {
 // test.kt:21 compute: s:java.lang.String="NOPE":java.lang.String
 // test.kt:22 compute: s:java.lang.String="NOPE":java.lang.String
 // test.kt:7 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f\1\22:int=0:int
-// test.kt:23 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f\1\22:int=0:int, $i$a$-f-TestKt$compute$1\2\124\0:int=0:int
+// test.kt:23 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f\1\22:int=0:int, $i$a$-f-TestKt$compute$1\2\126\0:int=0:int
 // test.kt:27 compute:
 // test.kt:28 compute: s2:java.lang.String="NOPE":java.lang.String
 // test.kt:29 compute: s2:java.lang.String="NOPE":java.lang.String, j:int=0:int
 // test.kt:28 compute: s2:java.lang.String="OK":java.lang.String, j:int=0:int
 // test.kt:31 compute: s2:java.lang.String="OK":java.lang.String
+// test.kt:23 compute: s:java.lang.String="NOPE":java.lang.String
 // test.kt:37 box:
 // test.kt:38 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
 // test.kt:39 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
@@ -76,6 +77,7 @@ fun box() {
 // test.kt:29 compute: s2:java.lang.String="NOPE":java.lang.String, j:int=0:int
 // test.kt:28 compute: s2:java.lang.String="OK":java.lang.String, j:int=0:int
 // test.kt:31 compute: s2:java.lang.String="OK":java.lang.String
+// test.kt:23 compute: s:java.lang.String="NOPE":java.lang.String
 // test.kt:37 box:
 // test.kt:38 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
 // test.kt:39 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String

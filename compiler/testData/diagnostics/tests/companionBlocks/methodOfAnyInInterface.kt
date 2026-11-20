@@ -1,10 +1,11 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +CompanionBlocks
 // ISSUE: KT-88007
+// LATEST_LV_DIFFERENCE
 
 interface A {
     companion {
-        fun equals(other: Any?): Boolean = true
+        <!ACCIDENTAL_OVERRIDE!>fun equals(other: Any?): Boolean<!> = true
     }
 }
 
@@ -16,7 +17,7 @@ interface B {
 
 interface C {
     companion {
-        fun hashCode(): Int = 0
+        <!ACCIDENTAL_OVERRIDE!>fun hashCode(): Int<!> = 0
     }
 }
 
@@ -28,7 +29,7 @@ interface D {
 
 interface E {
     companion {
-        fun toString(): String = "E"
+        <!ACCIDENTAL_OVERRIDE!>fun toString(): String<!> = "E"
     }
 }
 

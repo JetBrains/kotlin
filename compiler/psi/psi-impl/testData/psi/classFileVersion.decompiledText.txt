@@ -1,0 +1,59 @@
+Bar.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public interface Bar {
+      public companion object {
+      }
+  }
+
+DeclarationsKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public val topLevelVal: kotlin.Int /* compiled code */
+
+  public fun topLevelFun(): kotlin.Unit { /* compiled code */ }
+
+Foo.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public final class Foo public constructor() {
+      public companion object {
+      }
+
+      public final class Nested public constructor() {
+      }
+  }
+
+Multifile.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public fun partFun(): kotlin.Unit { /* compiled code */ }
+
+Multifile__PartKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public fun partFun(): kotlin.Unit { /* compiled code */ }
+
+Obj.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package test
+
+  public object Obj {
+  }

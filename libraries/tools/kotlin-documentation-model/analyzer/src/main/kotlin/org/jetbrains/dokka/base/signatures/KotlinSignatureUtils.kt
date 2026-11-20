@@ -11,7 +11,7 @@ import org.jetbrains.dokka.links.DriOfUnit
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 
-public object KotlinSignatureUtils : JvmSignatureUtils {
+internal object KotlinSignatureUtils : JvmSignatureUtils {
 
     private val ignoredAnnotations = setOf(
         /**
@@ -37,9 +37,9 @@ public object KotlinSignatureUtils : JvmSignatureUtils {
 
     override fun Annotations.Annotation.isIgnored(): Boolean = this in ignoredAnnotations
 
-    public val PrimitiveJavaType.dri: DRI get() = DRI("kotlin", name.capitalize())
+    val PrimitiveJavaType.dri: DRI get() = DRI("kotlin", name.capitalize())
 
-    public val Bound.driOrNull: DRI?
+    val Bound.driOrNull: DRI?
         get() {
             return when (this) {
                 is TypeParameter -> dri
@@ -55,7 +55,7 @@ public object KotlinSignatureUtils : JvmSignatureUtils {
             }
         }
 
-    public val Projection.drisOfAllNestedBounds: List<DRI> get() = when (this) {
+    val Projection.drisOfAllNestedBounds: List<DRI> get() = when (this) {
         is TypeParameter -> listOf(dri)
         is TypeConstructor -> listOf(dri) + projections.flatMap { it.drisOfAllNestedBounds }
         is Nullable -> inner.drisOfAllNestedBounds

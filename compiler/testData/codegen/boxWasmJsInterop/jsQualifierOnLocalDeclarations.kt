@@ -1,5 +1,6 @@
+// LANGUAGE: -ProhibitJsQualifierOnMembersAndNonExternals
+// ^^^ Pre-KT-82785 behavior is not broken.
 // ES_MODULES
-// Should become red when KT-82785 is fixed
 // FILE: jsQualifierOnLocalDeclarations.mjs
 export class C {
     o() { return "O" }

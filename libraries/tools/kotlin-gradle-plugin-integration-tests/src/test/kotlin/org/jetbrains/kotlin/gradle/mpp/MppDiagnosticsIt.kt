@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.test.TestDataAssertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppDiagnosticsIt : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
@@ -29,6 +31,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
             ignoreWarningModeSeverityOverride = true
         )
 
+    @TestMetadata("diagnosticsRenderingSmoke")
     @GradleTest
     fun testDiagnosticsRenderingSmoke(gradleVersion: GradleVersion) {
         project("diagnosticsRenderingSmoke", gradleVersion) {
@@ -44,6 +47,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mppDeprecatedProperties")
     @GradleTest
     fun testDeprecatedMppProperties(gradleVersion: GradleVersion) {
         for (deprecatedProperty in this.deprecatedFlags) {
@@ -67,6 +71,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("errorDiagnosticBuildFails")
     @GradleTest
     fun testErrorDiagnosticBuildFails(gradleVersion: GradleVersion) {
         project("errorDiagnosticBuildFails", gradleVersion) {
@@ -127,6 +132,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("errorDiagnosticBuildSucceeds")
     @GradleTest
     fun testErrorDiagnosticBuildSucceeds(gradleVersion: GradleVersion) {
         project("errorDiagnosticBuildSucceeds", gradleVersion) {
@@ -139,6 +145,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("suppressGradlePluginErrors")
     @GradleTest
     fun testSuppressGradlePluginErrors(gradleVersion: GradleVersion) {
         project("suppressGradlePluginErrors", gradleVersion) {
@@ -149,6 +156,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt64121")
     @GradleTest
     fun testKt64121(gradleVersion: GradleVersion) {
         project(
@@ -161,6 +169,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("suppressGradlePluginWarnings")
     @GradleTest
     fun testSuppressGradlePluginWarnings(gradleVersion: GradleVersion) {
         project("suppressGradlePluginWarnings", gradleVersion) {
@@ -170,6 +179,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("suppressGradlePluginFatals")
     @GradleTest
     fun testSuppressGradlePluginFatals(gradleVersion: GradleVersion) {
         project("suppressGradlePluginFatals", gradleVersion) {
@@ -179,6 +189,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("errorsFailOnlyRelevantProjects")
     @GradleTest
     fun testErrorsFailOnlyRelevantProjects(gradleVersion: GradleVersion) {
         project(
@@ -213,6 +224,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("earlyTasksMaterializationDoesntBreakReports")
     @GradleTest
     fun testEarlyTasksMaterializationDoesntBreakReports(gradleVersion: GradleVersion) {
         project("earlyTasksMaterializationDoesntBreakReports", gradleVersion) {
@@ -222,6 +234,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("diagnosticsRenderingWithStacktraceOption")
     @GradleTest
     fun testDiagnosticsRenderingWithStacktraceOption(gradleVersion: GradleVersion) {
         project(
@@ -250,6 +263,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("errorDiagnosticUpToDateIfNoErrors")
     @GradleTest
     fun testErrorDiagnosticUpToDateIfNoErrors(gradleVersion: GradleVersion) {
         project("errorDiagnosticUpToDateIfNoErrors", gradleVersion) {
@@ -308,6 +322,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("errorDiagnosticUpToDateIfNoErrors")
     @DisplayName("checkKotlinGradlePluginConfigurationErrors does not cause a false positive configuration cache warning")
     @GradleTest
     fun testKt63165(gradleVersion: GradleVersion) {

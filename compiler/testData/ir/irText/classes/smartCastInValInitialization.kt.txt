@@ -1,7 +1,4 @@
 open class MessageBusImpl {
-  val parentBus: Any?
-    get
-
   init {
     <this> as RootBus /*~> Unit */
     <this>.#parentBus = null
@@ -13,6 +10,9 @@ open class MessageBusImpl {
 
   }
 
+  val parentBus: Any?
+    get
+
 }
 
 class RootBus : MessageBusImpl {
@@ -23,3 +23,4 @@ class RootBus : MessageBusImpl {
   }
 
 }
+

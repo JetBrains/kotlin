@@ -51,6 +51,9 @@ dependencies {
 
     constraints {
         embedded(libs.apache.commons.lang)
+        embedded("org.ow2.asm:asm:9.11.1") {
+            because("CVE-2026-110260, see KT-91295")
+        }
     }
 }
 

@@ -38,12 +38,18 @@ public final class KtNamedDeclarationUtil {
 
     /**
      * Returns the fully qualified name of the element that lexically encloses the given {@code namedDeclaration} — its package for a
-     * top-level declaration, or the containing class, object, or script otherwise — or {@code null} if it cannot be determined.
+     * top-level declaration of a file or a script, or the containing class or object otherwise — or {@code null} if it cannot be
+     * determined or the declaration is local.
      */
     @Nullable
     public static FqName getParentFqName(@NotNull KtNamedDeclaration namedDeclaration) {
         PsiElement parent = namedDeclaration.getParent();
         if (parent instanceof KtClassBody) {
+            // An enum entry body is an anonymous object, so its members are local
+            if (parent.getParent() instanceof KtEnumEntry) {
+                return null;
+            }
+
             // One nesting to KtClassBody doesn't affect the qualified name
             parent = KtPsiUtilKt.getContainingClassOrObject((KtClassBody)parent);
         }
@@ -66,8 +72,8 @@ public final class KtNamedDeclarationUtil {
         else if (parent instanceof KtBlockExpression) {
             PsiElement parentOfParent = parent.getParent();
             if (parentOfParent instanceof KtScript) {
-                return ((KtScript)parentOfParent).getFqName();
-
+                // The script doesn't contribute to the qualified names of its declarations, the same as for their ClassIds and CallableIds
+                return ((KtScript)parentOfParent).getContainingKtFile().getPackageFqName();
             }
         }
 

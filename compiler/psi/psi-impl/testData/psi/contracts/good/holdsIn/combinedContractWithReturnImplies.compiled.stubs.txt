@@ -8,7 +8,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithReturnIm
       effect:param(0) HoldsIn(param(1))
       effect:Returns(WILDCARD) -> param(0)
     ]
-    origin: Facade(className=CombinedContractWithReturnImpliesKt, jvmClassName=null)
+    origin: Facade(className=CombinedContractWithReturnImpliesKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]

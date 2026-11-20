@@ -1,0 +1,31 @@
+FILE: unionTypeWithAnnotation.kt
+    public final error class Foo : R|kotlin/RichError| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun foo(): R|@R|Ann|()  union(primary=kotlin/String, errors=Foo)| {
+        ^foo String()
+    }
+    public final fun foo2(): R|union(primary=@R|Ann|()  kotlin/String, errors=Foo)| {
+        ^foo2 String()
+    }
+    public final fun foo3(): R|@R|Ann|()  union(primary=@R|Ann|()  kotlin/String, errors=Foo)| {
+        ^foo3 String()
+    }
+    public final fun <T> foo4(t: R|T & Any|): R|@R|Ann|()  union(primary=T & Any, errors=Foo)| {
+        ^foo4 R|<local>/t|
+    }
+    public final fun foo5(): R|@R|Ann|()  union(primary=@R|Ann|()  suspend () -> kotlin/Unit, errors=Foo)| {
+        ^foo5 suspend fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+
+    }

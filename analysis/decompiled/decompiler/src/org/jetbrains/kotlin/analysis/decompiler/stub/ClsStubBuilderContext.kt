@@ -26,9 +26,11 @@ class ClsStubBuilderComponents(
     fun createContext(
         nameResolver: NameResolver,
         packageFqName: FqName,
-        typeTable: TypeTable
-    ): ClsStubBuilderContext =
-        ClsStubBuilderContext(this, nameResolver, packageFqName, EmptyTypeParameters, typeTable, protoContainer = null)
+        typeTable: TypeTable,
+        packagePartClassFileMajorVersion: Int?,
+    ): ClsStubBuilderContext = ClsStubBuilderContext(
+        this, nameResolver, packageFqName, EmptyTypeParameters, typeTable, protoContainer = null, packagePartClassFileMajorVersion
+    )
 }
 
 interface TypeParameters {
@@ -60,7 +62,11 @@ class ClsStubBuilderContext(
     val containerFqName: FqName,
     val typeParameters: TypeParameters,
     val typeTable: TypeTable,
-    val protoContainer: ProtoContainer.Class?
+    val protoContainer: ProtoContainer.Class?,
+    /**
+     * The major version of the class file of the package part whose declarations are built, or `null` if it is not a class file.
+     */
+    val packagePartClassFileMajorVersion: Int?,
 )
 
 internal fun ClsStubBuilderContext.child(
@@ -75,5 +81,6 @@ internal fun ClsStubBuilderContext.child(
     if (name != null) this.containerFqName.child(name) else this.containerFqName,
     this.typeParameters.child(nameResolver, typeParameterList),
     typeTable,
-    protoContainer
+    protoContainer,
+    packagePartClassFileMajorVersion,
 )

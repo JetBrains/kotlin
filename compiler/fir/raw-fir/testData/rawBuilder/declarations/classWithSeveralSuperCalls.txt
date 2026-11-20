@@ -1,0 +1,27 @@
+FILE: classWithSeveralSuperCalls.kt
+    public open class A : R|kotlin/Any| {
+        public? [ContainingClassKey=A] constructor(x: Int): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class B : R|kotlin/Any| {
+        public? [ContainingClassKey=B] constructor(y: Int): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final? class WithPrimaryConstructor : A, B {
+        public? [ContainingClassKey=WithPrimaryConstructor] constructor(x: Int): R|WithPrimaryConstructor| {
+            super<A>(x#.plus#(IntegerLiteral(1)))
+            super<B>(x#.plus#(IntegerLiteral(2)))
+        }
+
+    }
+    public final? class WithImplicitConstructor : A, B {
+        public? [ContainingClassKey=WithImplicitConstructor] constructor(): R|WithImplicitConstructor| {
+            super<A>(IntegerLiteral(1).plus#(IntegerLiteral(2)))
+            super<B>(IntegerLiteral(3).plus#(IntegerLiteral(4)))
+        }
+
+    }

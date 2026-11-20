@@ -106,12 +106,12 @@ public interface KaFunctionCall<S : KaFunctionSymbol> : KaSimpleCall<S, KaFuncti
     @Deprecated(
         "Use 'valueArgumentMapping' or 'combinedArgumentMapping' instead",
         ReplaceWith("valueArgumentMapping"),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     public val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
         get() = valueArgumentMapping
 
-    @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead", level = DeprecationLevel.ERROR)
+    @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead", level = DeprecationLevel.HIDDEN)
     override val partiallyAppliedSymbol: KaPartiallyAppliedSymbol<S, KaFunctionSignature<S>>
 }
 
@@ -124,7 +124,7 @@ public interface KaFunctionCall<S : KaFunctionSymbol> : KaSimpleCall<S, KaFuncti
         expression = "KaFunctionCall<*>",
         imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall"],
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSimpleFunctionCall : KaFunctionCall<KaFunctionSymbol> {
@@ -138,7 +138,7 @@ public interface KaSimpleFunctionCall : KaFunctionCall<KaFunctionSymbol> {
             "this is KaImplicitInvokeCall",
             imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaImplicitInvokeCall"]
         ),
-        level = DeprecationLevel.ERROR,
+        level = DeprecationLevel.HIDDEN,
     )
     public val isImplicitInvoke: Boolean
 }
@@ -222,7 +222,7 @@ public interface KaDelegatedConstructorCall : KaFunctionCall<KaConstructorSymbol
 public interface KaVariableAccessCall : KaSimpleCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>,
     KaCallableMemberCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>> {
 
-    @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead", level = DeprecationLevel.ERROR)
+    @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead", level = DeprecationLevel.HIDDEN)
     override val partiallyAppliedSymbol: KaPartiallyAppliedSymbol<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>
 
     /**
@@ -271,14 +271,14 @@ public interface KaVariableAccessCall : KaSimpleCall<KaVariableSymbol, KaVariabl
         expression = "KaVariableAccessCall",
         imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall"],
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSimpleVariableAccessCall : KaVariableAccessCall {
     /**
      * The kind of access to the variable (read or write), alongside additional information.
      */
-    @Deprecated("Use 'kind' instead", ReplaceWith("kind"), level = DeprecationLevel.ERROR)
+    @Deprecated("Use 'kind' instead", ReplaceWith("kind"), level = DeprecationLevel.HIDDEN)
     public val simpleAccess: @Suppress("DEPRECATION_ERROR") KaSimpleVariableAccess
 }
 
@@ -385,7 +385,7 @@ public interface KaCompoundVariableAccessCall : KaMultiCall, KaCall, KaCompoundA
     /**
      * Represents a symbol of the mutated variable.
      */
-    @Deprecated("Use 'variableCall' instead", level = DeprecationLevel.ERROR)
+    @Deprecated("Use 'variableCall' instead", level = DeprecationLevel.HIDDEN)
     public val variablePartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>
 
     /**
@@ -460,7 +460,7 @@ public interface KaCompoundArrayAccessCall : KaMultiCall, KaCall, KaCompoundAcce
     /**
      * The `get` function that's invoked when reading values corresponding to the given [indexArguments].
      */
-    @Deprecated("Use 'getterCall' instead", level = DeprecationLevel.ERROR)
+    @Deprecated("Use 'getterCall' instead", level = DeprecationLevel.HIDDEN)
     public val getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
 
     /**
@@ -472,7 +472,7 @@ public interface KaCompoundArrayAccessCall : KaMultiCall, KaCall, KaCompoundAcce
      * The `set` function that's invoked when writing values corresponding to the given [indexArguments] and the computed value from the
      * operation.
      */
-    @Deprecated("Use 'setterCall' instead", level = DeprecationLevel.ERROR)
+    @Deprecated("Use 'setterCall' instead", level = DeprecationLevel.HIDDEN)
     public val setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
 
     /**

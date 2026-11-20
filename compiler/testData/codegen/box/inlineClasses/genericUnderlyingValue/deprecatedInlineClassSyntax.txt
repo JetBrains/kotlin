@@ -1,0 +1,43 @@
+@kotlin.Metadata
+public final class DeprecatedInlineClassSyntaxKt {
+    // source: 'deprecatedInlineClassSyntax.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class ICAny {
+    // source: 'deprecatedInlineClassSyntax.kt'
+    private final @org.jetbrains.annotations.Nullable field value: java.lang.Object
+    private synthetic method <init>(p0: java.lang.Object): void
+    public synthetic final static method box-impl(p0: java.lang.Object): ICAny
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.Nullable method getValue(): java.lang.Object
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.Object): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.Object): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.Object
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class ICInt {
+    // source: 'deprecatedInlineClassSyntax.kt'
+    private final field value: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): ICInt
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getValue(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}

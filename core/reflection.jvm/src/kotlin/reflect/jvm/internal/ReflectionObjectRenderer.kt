@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.renderer.renderFlexibleMutabilityOrArrayElementVarianceType
 import kotlin.reflect.*
 import kotlin.reflect.full.contextParameters
+import kotlin.reflect.full.createTypeImpl
 import kotlin.reflect.full.extensionReceiverParameter
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.types.AbstractKType
+import kotlin.reflect.jvm.internal.types.allTypeParameters
 import kotlin.reflect.jvm.jvmName
 
 internal object ReflectionObjectRenderer {
@@ -125,7 +127,7 @@ internal object ReflectionObjectRenderer {
         type as AbstractKType
 
         if (type.isRawType) {
-            return renderType(type.lowerBoundIfFlexible()!!, renderRawArgumentPrefix = true)
+            return renderRawType(type.lowerBoundIfFlexible()!!, type.upperBoundIfFlexible()!!)
         }
 
         val lowerBound = type.lowerBoundIfFlexible()
@@ -171,6 +173,40 @@ internal object ReflectionObjectRenderer {
             }
         }
     }
+
+    // See `RawTypeImpl.render`.
+    private fun renderRawType(lowerBound: AbstractKType, upperBound: AbstractKType): String {
+        val lowerRendered = renderType(lowerBound, renderRawArgumentPrefix = true)
+
+        val upperClassifier = upperBound.classifier
+        val typeParameters = (upperClassifier as? KClass<*>)?.allTypeParameters()
+        val argumentsCanBeReplaced = upperClassifier != null && lowerBound.arguments.size == upperBound.arguments.size &&
+                lowerBound.arguments.zip(upperBound.arguments).withIndex().all { [index, arguments] ->
+                    val [lowerArgument, upperArgument] = arguments
+                    upperArgument == KTypeProjection.STAR ||
+                            upperArgument.type == lowerArgument.type && upperArgument.variance != KVariance.IN ||
+                            upperArgument.variance == KVariance.INVARIANT &&
+                            upperArgument.type.isNonNullNothing() &&
+                            typeParameters?.getOrNull(index)?.variance == KVariance.IN
+                }
+        val upperRendered =
+            if (argumentsCanBeReplaced) {
+                renderType(
+                    upperClassifier.createTypeImpl(
+                        lowerBound.arguments, upperBound.isMarkedNullable, upperBound.annotations, upperBound.mutableCollectionClass,
+                    ),
+                    renderRawArgumentPrefix = true,
+                )
+            } else {
+                renderType(upperBound)
+            }
+
+        if (lowerRendered == upperRendered) return lowerRendered
+        return renderFlexibleType(lowerRendered, upperRendered)
+    }
+
+    private fun KType?.isNonNullNothing(): Boolean =
+        this is AbstractKType && isNothingType && !isMarkedNullable
 
     private fun getTypeClassFqName(type: AbstractKType, klass: KClass<*>): FqNameUnsafe? {
         if (type.isNothingType)

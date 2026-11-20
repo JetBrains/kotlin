@@ -1,0 +1,25 @@
+@kotlin.Metadata
+synthetic final class A$$PrivateFields1 {
+    // source: 'jvmDefaultNoCompatibility.kt'
+    final static field companion: int
+    static method <clinit>(): void
+    public synthetic final static method init(): void
+    private synthetic final inner class A$$PrivateFields1
+}
+
+@kotlin.Metadata
+public interface A {
+    // source: 'jvmDefaultNoCompatibility.kt'
+    static method <clinit>(): void
+    public synthetic deprecated static @Ann method getCompanion$annotations(): void
+    public static method getCompanion(): int
+    public synthetic deprecated static @Ann method getMember$annotations(): void
+    public abstract method getMember(): int
+    private synthetic final inner class A$$PrivateFields1
+}
+
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class Ann {
+    // source: 'jvmDefaultNoCompatibility.kt'
+}

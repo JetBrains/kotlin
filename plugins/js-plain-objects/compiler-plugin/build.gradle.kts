@@ -29,12 +29,13 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-compiler-tests")))
 
     testFixturesImplementation(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    testFixturesApi(libs.junit.jupiter.api)
     testImplementation(platform(libs.junit.bom))
+    testRuntimeOnly(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     jsoIrRuntimeForTests(project(":plugins:js-plain-objects:runtime")) { isTransitive = false }

@@ -9,7 +9,9 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
+@ObsoleteNpmDependencyModel
 interface RequiresNpmDependencies {
     @get:Internal
     val compilation: KotlinJsIrCompilation

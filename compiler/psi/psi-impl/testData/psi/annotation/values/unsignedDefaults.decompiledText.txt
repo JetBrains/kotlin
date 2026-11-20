@@ -1,0 +1,13 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public final annotation class Defaults public constructor(
+    public final val ub: kotlin.UByte = 255u,
+
+    public final val us: kotlin.UShort = 65535u,
+
+    public final val ui: kotlin.UInt = 4294967295u,
+
+    public final val ul: kotlin.ULong = 18446744073709551615uL,
+) : kotlin.Annotation {
+}

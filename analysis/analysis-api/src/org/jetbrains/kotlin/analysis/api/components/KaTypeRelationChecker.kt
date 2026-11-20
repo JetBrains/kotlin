@@ -134,7 +134,7 @@ public enum class KaSubtypingErrorTypePolicy {
         "this.semanticallyEquals(other, errorTypePolicy)",
         "org.jetbrains.kotlin.analysis.api.types.semanticallyEquals",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -159,7 +159,7 @@ public fun KaType.semanticallyEquals(
         "this.isSubtypeOf(supertype, errorTypePolicy)",
         "org.jetbrains.kotlin.analysis.api.types.isSubtypeOf",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -205,7 +205,7 @@ public fun KaType.isSubtypeOf(
         "this.isSubtypeOf(classId, errorTypePolicy)",
         "org.jetbrains.kotlin.analysis.api.types.isSubtypeOf",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -245,7 +245,7 @@ public fun KaType.isSubtypeOf(
         "this.isSubtypeOf(symbol, errorTypePolicy)",
         "org.jetbrains.kotlin.analysis.api.types.isSubtypeOf",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)

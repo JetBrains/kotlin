@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 // We're phasing out atomic array types from AFU
@@ -16,3 +17,6 @@ private var AtomicBooleanArray.<!ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN
     set(value) {
         this[0].value = value
     }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, assignment, getter, integerLiteral, propertyDeclaration,
+propertyWithExtensionReceiver, setter, stringLiteral, thisExpression */

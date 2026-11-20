@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: SetterTest.java
 
 import lombok.AccessLevel;
@@ -39,3 +40,6 @@ class OverridenGetterTest : SetterTest() {
         setName("abc")
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaProperty,
+javaType, localProperty, propertyDeclaration, stringLiteral */

@@ -1,9 +1,27 @@
 public abstract class CMap /* test.CMap*/ implements java.util.Map<@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt computeIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() kotlin.UInt put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+
+  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() kotlin.UInt remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public abstract @org.jetbrains.annotations.NotNull() kotlin.UInt get(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  get(@org.jetbrains.annotations.NotNull() kotlin.UInt)
@@ -25,6 +43,12 @@ public abstract class CMap /* test.CMap*/ implements java.util.Map<@org.jetbrain
 
   @java.lang.Override()
   public abstract java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt>> getEntries();//  getEntries()
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
+  @java.lang.Override()
+  public boolean replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public final @org.jetbrains.annotations.NotNull() kotlin.UInt get(java.lang.Object);//  get(java.lang.Object)
@@ -53,6 +77,9 @@ public abstract class CMap /* test.CMap*/ implements java.util.Map<@org.jetbrain
   @java.lang.Override()
   public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
+  @java.lang.Override()
+  public void replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
   public  CMap();//  .ctor()
 }
 
@@ -74,10 +101,28 @@ public abstract class CMap2 /* test.CMap2*/ implements java.util.Map<@org.jetbra
   public final @org.jetbrains.annotations.NotNull() kotlin.UInt get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt computeIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() kotlin.UInt put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+
+  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() kotlin.UInt remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public abstract @org.jetbrains.annotations.NotNull() kotlin.UInt get(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  get(@org.jetbrains.annotations.NotNull() kotlin.UInt)
@@ -90,6 +135,12 @@ public abstract class CMap2 /* test.CMap2*/ implements java.util.Map<@org.jetbra
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
+  @java.lang.Override()
+  public boolean replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -117,6 +168,9 @@ public abstract class CMap2 /* test.CMap2*/ implements java.util.Map<@org.jetbra
 
   @java.lang.Override()
   public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   public  CMap2();//  .ctor()
 }
@@ -143,10 +197,28 @@ public class CMap3 /* test.CMap3*/ implements java.util.Map<@org.jetbrains.annot
   public final @org.jetbrains.annotations.NotNull() kotlin.UInt get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  compute(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt computeIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  merge(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() kotlin.UInt put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  put(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  putIfAbsent(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+
+  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() kotlin.UInt remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public abstract @org.jetbrains.annotations.NotNull() kotlin.UInt get(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  get(@org.jetbrains.annotations.NotNull() kotlin.UInt)
@@ -159,6 +231,12 @@ public class CMap3 /* test.CMap3*/ implements java.util.Map<@org.jetbrains.annot
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
+  @java.lang.Override()
+  public boolean replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  replace(@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -186,6 +264,9 @@ public class CMap3 /* test.CMap3*/ implements java.util.Map<@org.jetbrains.annot
 
   @java.lang.Override()
   public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? super @org.jetbrains.annotations.NotNull() kotlin.UInt, ? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   public  CMap3();//  .ctor()
 }

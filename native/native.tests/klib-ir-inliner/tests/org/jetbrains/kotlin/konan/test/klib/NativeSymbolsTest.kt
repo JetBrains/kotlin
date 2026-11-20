@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
+import org.jetbrains.kotlin.testFederation.HostDependent
 
+@HostDependent
 @Suppress("JUnitTestCaseWithNoTests")
 class NativeSymbolsTest : AbstractSymbolsValidationTest(
     TargetBackend.NATIVE,

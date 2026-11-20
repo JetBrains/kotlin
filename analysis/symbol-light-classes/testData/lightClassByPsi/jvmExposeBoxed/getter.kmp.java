@@ -4,6 +4,7 @@ public final class GetterKt /* GetterKt*/ {
   public static final @org.jetbrains.annotations.NotNull() java.lang.String createWrapper();//  createWrapper()
 }
 
+@kotlin.jvm.JvmInline()
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;
@@ -19,6 +20,7 @@ public final class StringWrapper /* StringWrapper*/ {
   public int hashCode();//  hashCode()
 }
 
+@kotlin.jvm.JvmInline()
 public final class StringWrapper2 /* StringWrapper2*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s1;

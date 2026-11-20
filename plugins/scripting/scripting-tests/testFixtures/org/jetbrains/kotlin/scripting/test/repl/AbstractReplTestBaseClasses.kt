@@ -29,14 +29,12 @@ import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
-import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.configuration.jvmTestConfigurationWithSingleFrontendFacade
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
-import org.jetbrains.kotlin.test.frontend.fir.FirReplFrontendFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
@@ -52,17 +50,13 @@ import java.lang.reflect.InvocationTargetException
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
-import kotlin.script.experimental.jvm.K2ReplEvaluator
-import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
-import kotlin.script.experimental.jvm.baseClassLoader
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.util.LinkedSnippet
 
 open class AbstractReplWithTestExtensionsDiagnosticsTest : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
-            baseFirDiagnosticTestConfiguration(frontendFacade = ::FirReplFrontendFacade)
+            jvmTestConfigurationWithSingleFrontendFacade(frontendFacade = ::FirReplFrontendFacade)
             enableLazyResolvePhaseChecking()
             configureFirParser(FirParser.Psi)
             useConfigurators(

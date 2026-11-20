@@ -19,7 +19,7 @@ FILE: constValWithGetterOrDelegate.kt
         }
 
     }
-    public final const val delegated: R|kotlin/Int|by R|/Test.Test|()
+    public final const val delegated: R|kotlin/Int| by R|/Test.Test|()
         public get(): R|kotlin/Int| {
             ^ D|/delegated|.R|/Test.getValue|(Null(null), ::R|/delegated|)
         }

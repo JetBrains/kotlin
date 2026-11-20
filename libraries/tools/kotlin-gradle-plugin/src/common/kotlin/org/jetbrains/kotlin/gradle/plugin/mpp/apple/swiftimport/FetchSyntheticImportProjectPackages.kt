@@ -25,6 +25,7 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 import org.gradle.workers.WorkerExecutor
@@ -37,6 +38,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
      * Refetch when Package manifests of local SwiftPM dependencies change
      */
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val localPackageManifests: ConfigurableFileCollection
 
@@ -49,6 +51,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     // For some reason FileTree still invalidates on random directories without this annotation even though directories are not tracked...
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val inputManifests
         get() = syntheticImportProjectRoot

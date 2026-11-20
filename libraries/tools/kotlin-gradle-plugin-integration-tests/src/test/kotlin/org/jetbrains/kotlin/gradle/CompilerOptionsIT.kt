@@ -11,16 +11,22 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArguments
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
-import org.jetbrains.kotlin.testFederation.MustRunAlways
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-@MustRunAlways
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCompilerInfrastructure
 internal class CompilerOptionsIT : KGPBaseTest() {
 
+    @TestMetadata("simpleProject")
     @DisplayName("Allow to suppress kotlinOptions.freeCompilerArgs on task execution modification warning")
+    @MustRunOnChangesInGradle
     @JvmGradlePluginTests
     @GradleTest
     internal fun suppressFreeArgsModification(gradleVersion: GradleVersion) {
@@ -49,9 +55,11 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("compiler plugin arguments set via kotlinOptions.freeCompilerArgs on task execution applied properly")
     @JvmGradlePluginTests
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     internal fun freeArgsModifiedAtExecutionTimeCorrectly(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             buildGradle.appendText(
@@ -84,9 +92,11 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-lib-with-tests")
     @DisplayName("compiler plugin arguments set via kotlinOptions.freeCompilerArgs on task execution applied properly in MPP")
     @MppGradlePluginTests
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     internal fun freeArgsModifiedAtExecutionTimeCorrectlyMpp(gradleVersion: GradleVersion) {
         project(
             "new-mpp-lib-with-tests",
@@ -135,6 +145,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-lib-and-app/sample-lib")
     @DisplayName("Should combine -opt-in arguments from languageSettings DSL for Native")
     @MppGradlePluginTests
     @GradleTest
@@ -175,6 +186,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             build("compileNativeMainKotlinMetadata") {
                 assertTasksExecuted(":compileNativeMainKotlinMetadata")
                 val taskOutput = getOutputForTask(":compileNativeMainKotlinMetadata", logLevel = LogLevel.INFO)
+
                 @Suppress("DEPRECATION")
                 val arguments = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
                 assertEquals(
@@ -196,6 +208,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-link-simple")
     @DisplayName("Should pass -opt-in from compiler options DSL in native project")
     @NativeGradlePluginTests
     @GradleTest
@@ -226,6 +239,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Should pass -progressive from compiler options DSL")
     @JvmGradlePluginTests
     @GradleTest
@@ -245,11 +259,12 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             )
 
             build("compileKotlin") {
-                assertCompilerArgument(":compileKotlin", "-progressive", logLevel = LogLevel.INFO)
+                assertCompilerArgument(":compileKotlin", "-progressive")
             }
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Should not pass -progressive by default from compiler options DSL")
     @JvmGradlePluginTests
     @GradleTest
@@ -259,11 +274,12 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
         ) {
             build("compileKotlin") {
-                assertNoCompilerArgument(":compileKotlin", "-progressive", logLevel = LogLevel.INFO)
+                assertNoCompilerArgument(":compileKotlin", "-progressive")
             }
         }
     }
 
+    @TestMetadata("native-link-simple")
     @DisplayName("Should pass -progressive from compiler options DSL in native project")
     @NativeGradlePluginTests
     @GradleTest
@@ -298,6 +314,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-lib-and-app/sample-lib")
     @DisplayName("KT-57823: should be possible to configure native module name via compilation")
     @NativeGradlePluginTests
     @GradleTest
@@ -343,6 +360,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-lib-and-app/sample-lib")
     @DisplayName("KT-57823: uses archivesName value for native compilation module name convention")
     @NativeGradlePluginTests
     @GradleTest

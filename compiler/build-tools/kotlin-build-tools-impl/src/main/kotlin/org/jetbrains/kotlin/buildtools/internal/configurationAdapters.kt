@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 internal fun IncrementalJvmCompilationConfiguration<*>.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
     return IncrementalCompilationFeatures(
         usePreciseJavaTracking = preciseJavaTrackingEnabled,
-        withAbiSnapshot = false,
         preciseCompilationResultsBackup = preciseCompilationResultsBackupEnabled,
         keepIncrementalCompilationCachesInMemory = incrementalCompilationCachesKeptInMemory,
     )

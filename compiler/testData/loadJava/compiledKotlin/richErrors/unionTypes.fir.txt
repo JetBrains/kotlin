@@ -1,0 +1,44 @@
+public final fun foo1(): R|@R|test/Ann|()  union(primary=@R|test/Ann|()  kotlin/String, errors=test/Foo | test/Bar)|
+
+public final fun <X, Y> foo2(): R|@R|test/Ann|()  union(primary=@R|test/Ann|()  test/Outer.Inner<Y, X>?, errors=test/Foo | test/Bar)|
+
+public final fun foo3(): R|@R|test/Ann|()  union(primary=@R|test/Ann|()  suspend () -> kotlin/Unit, errors=test/Foo | test/Bar)|
+
+public final fun <T> foo4(t: R|T & Any|): R|@R|test/Ann|()  union(primary=@R|test/Ann|()  T & Any, errors=test/Foo | test/Bar)|
+
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.TYPE)) public final annotation class Ann : R|kotlin/Annotation| {
+    public constructor(): R|test/Ann|
+
+}
+
+public final error object Bar : R|kotlin/RichError| {
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open fun hashCode(): R|kotlin/Int|
+
+    public open fun toString(): R|kotlin/String|
+
+    private constructor(): R|test/Bar|
+
+}
+
+public final error class Foo : R|kotlin/RichError| {
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open fun hashCode(): R|kotlin/Int|
+
+    public open fun toString(): R|kotlin/String|
+
+    public constructor(): R|test/Foo|
+
+}
+
+public final class Outer<T> : R|kotlin/Any| {
+    public constructor<T>(): R|test/Outer<T>|
+
+    public final inner class Inner<R, Outer(T)> : R|kotlin/Any| {
+        public test/Outer<T>.constructor<R>(): R|test/Outer.Inner<R, T>|
+
+    }
+
+}

@@ -38,4 +38,10 @@ public class StdLibSourcesLazyDeclarationResolveTestGenerated extends AbstractSt
   public void testWrappedInt() {
     run("wrappedInt.kt");
   }
+
+  @Test
+  @TestMetadata("wrappedIntegerOperator.kt")
+  public void testWrappedIntegerOperator() {
+    run("wrappedIntegerOperator.kt");
+  }
 }

@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 
 @MustRunOnChangesInAnalysisApi
 class MultiLanguageInheritanceTest : BaseAbstractTest() {
-    val configuration = dokkaConfiguration {
+    internal val configuration = dokkaConfiguration {
         suppressObviousFunctions = false
         sourceSets {
             sourceSet {

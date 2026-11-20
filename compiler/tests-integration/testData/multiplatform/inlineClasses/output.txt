@@ -7,13 +7,13 @@ compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:1:16: 
 compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:3:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect inline class Foo1(val x: Int)
 ^^^^^^
-compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:3:8: warning: 'inline' modifier is deprecated. Use 'value' instead.
+compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:3:8: warning: standalone 'inline' modifier for classes is deprecated. Use 'inline value' instead. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-89772
 expect inline class Foo1(val x: Int)
        ^^^^^^
 compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:4:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect inline class Foo2(val y: String)
 ^^^^^^
-compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:4:8: warning: 'inline' modifier is deprecated. Use 'value' instead.
+compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:4:8: warning: standalone 'inline' modifier for classes is deprecated. Use 'inline value' instead. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-89772
 expect inline class Foo2(val y: String)
        ^^^^^^
 
@@ -21,9 +21,9 @@ expect inline class Foo2(val y: String)
 Exit code: COMPILATION_ERROR
 Output:
 compiler/tests-integration/testData/multiplatform/inlineClasses/jvm.kt:5:14: error: the 'expect' and the 'actual' declarations are incompatible.
-  expect: public final expect inline class Foo2 : Any
+  expect: public final expect inline value class Foo2 : Any
   actual: public final actual class Foo2 : Any
-  reason: the modifiers are different (companion, inner, inline, value)
+  reason: the modifiers are different (companion, inner, inline, value, error)
 actual class Foo2 actual constructor(actual val y: String)
              ^^^^
 
@@ -32,8 +32,8 @@ Exit code: COMPILATION_ERROR
 Output:
 warning: the argument '-Xir-produce-klib-dir' is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. Use '-nopack' instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
 compiler/tests-integration/testData/multiplatform/inlineClasses/js.kt:5:14: error: the 'expect' and the 'actual' declarations are incompatible.
-  expect: public final expect inline class Foo2 : Any
+  expect: public final expect inline value class Foo2 : Any
   actual: public final actual class Foo2 : Any
-  reason: the modifiers are different (companion, inner, inline, value)
+  reason: the modifiers are different (companion, inner, inline, value, error)
 actual class Foo2 actual constructor(actual val y: String)
              ^^^^

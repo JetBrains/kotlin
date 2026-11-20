@@ -1,13 +1,15 @@
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
@@ -19,16 +21,17 @@ import kotlin.io.path.invariantSeparatorsPathString
 
 @JvmGradlePluginTests
 @DisplayName("KGP simple tests")
-@MustRunAlways
+@MustRunOnChangesInGradle
 class SimpleKotlinGradleIT : KGPBaseTest() {
 
+    @TestMetadata("simpleProject")
     @GradleTest
     @DisplayName("On second run common tasks should be up-to-date")
+    @MustRunOnChangesInBuildToolsApi
     fun testSimpleCompile(gradleVersion: GradleVersion) {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
         ) {
             build("compileDeployKotlin", "build") {
                 assertOutputContains("Finished executing kotlin compiler using ${KotlinCompilerExecutionStrategy.DAEMON} strategy")
@@ -53,8 +56,10 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("suppressWarnings")
     @GradleTest
     @DisplayName("Plugin allows to suppress all warnings")
+    @MustRunOnChangesInFrontend
     fun testSuppressWarnings(gradleVersion: GradleVersion) {
         project("suppressWarnings", gradleVersion) {
             build("build") {
@@ -64,10 +69,16 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("warningLevelUsage")
     @GradleTest
     @DisplayName("Warnings with set warningLevel are reported")
+    @MustRunOnChangesInFrontend
     fun testWarningLevels(gradleVersion: GradleVersion) {
-        project("warningLevelUsage", gradleVersion) {
+        project(
+            "warningLevelUsage",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail),
+        ) {
             build("build") {
                 assertTasksExecuted(":compileKotlin")
                 assertOutputContains("""w:.*NOTHING_TO_INLINE.*""".toRegex())
@@ -75,6 +86,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("customSrcDir")
     @GradleTest
     @DisplayName("Plugin should allow to add custom Kotlin directory")
     fun testKotlinCustomDirectory(gradleVersion: GradleVersion) {
@@ -83,6 +95,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("additionalJavaSrc")
     @GradleTest
     @DisplayName("Plugin should correctly handle additional java source directories")
     fun testKotlinExtraJavaSrc(gradleVersion: GradleVersion) {
@@ -91,8 +104,10 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("languageVersion")
     @GradleTest
     @DisplayName("Using newer language features with older api level should fail the build")
+    @MustRunOnChangesInFrontend
     fun testLanguageVersion(gradleVersion: GradleVersion) {
         project("languageVersion", gradleVersion) {
             buildAndFail("build") {
@@ -101,6 +116,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("jvmTarget")
     @GradleTest
     @DisplayName("Compilation should fail on unknown JVM target")
     fun testJvmTarget(gradleVersion: GradleVersion) {
@@ -111,6 +127,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("moduleName")
     @GradleTest
     @DisplayName("Should produce '.kotlin_module' file with specified name")
     fun testModuleName(gradleVersion: GradleVersion) {
@@ -123,6 +140,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("destinationDirReferencedDuringEvaluation")
     @GradleTest
     @DisplayName("Compile task destination dir should be configured on configuration phase")
     fun testDestinationDirReferencedDuringEvaluation(gradleVersion: GradleVersion) {
@@ -133,6 +151,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @GradleTest
     @DisplayName("Plugin correctly handle redefined build dir location")
     fun testBuildDirLazyEvaluation(gradleVersion: GradleVersion) {
@@ -150,6 +169,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("groovyInterop")
     @GradleTest
     @DisplayName("Should correctly work with Groovy lang modules")
     fun testGroovyInterop(gradleVersion: GradleVersion) {
@@ -185,6 +205,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("scalaInterop")
     @GradleTest
     @DisplayName("Should correctly work with Scala lang modules")
     fun testScalaInterop(gradleVersion: GradleVersion) {
@@ -196,6 +217,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("buildSrcUsingKotlinCompilationAndKotlinPlugin")
     @GradleTest
     @DisplayName("Should not produce kotlin-stdlib version conflict on Kotlin files compilation in 'buildSrc' module")
     internal fun testKotlinDslStdlibVersionConflict(gradleVersion: GradleVersion) {
@@ -224,6 +246,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Changing compile task destination directory does not break test compilation")
     @GradleTest
     internal fun customDestinationDir(gradleVersion: GradleVersion) {
@@ -258,6 +281,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Default jar content should not contain duplicates")
     @GradleTest
     internal fun defaultJarContent(gradleVersion: GradleVersion) {
@@ -274,6 +298,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @Disabled("KT-58223: Currently is not used and we should start using it after working on followup issues")
     @DisplayName("Possible to override kotlin.user.home location")
     @GradleTest
@@ -302,28 +327,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-63499: source sets conventions are not registered since Gradle 8.2")
-    @GradleTest
-    fun sourceSetsConventionsAreNotRegistered(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
-            // project's buildscript has to be in Groovy
-            buildGradle.append(
-                //language=Gradle
-                """
-                sourceSets {
-                    main {
-                        customSourceFilesExtensions // try using a property of KotlinSourceSet through the source set convention
-                    }
-                }
-                """.trimIndent()
-            )
-            @Suppress("UNUSED_EXPRESSION") KotlinSourceSet::customSourceFilesExtensions // ensure the accessed property is available on KotlinSourceSet
-            buildAndFail("help") {
-                assertOutputContains("Could not get unknown property 'customSourceFilesExtensions' for source set 'main' ")
-            }
-        }
-    }
-
+    @TestMetadata("kotlinProjectWithBuildSrc")
     @GradleTest
     fun testKotlinCompilerEmbeddable(gradleVersion: GradleVersion) {
         project("kotlinProjectWithBuildSrc", gradleVersion) {

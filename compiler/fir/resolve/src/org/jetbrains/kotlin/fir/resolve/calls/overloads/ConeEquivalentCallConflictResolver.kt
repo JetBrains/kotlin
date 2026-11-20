@@ -1,15 +1,18 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 
 /**
@@ -112,7 +115,13 @@ class ConeEquivalentCallConflictResolver(private val session: FirSession) : Cone
             // Furthermore, the call resolver also has to filter out duplicate `emptyArray()` candidates coming from the *same* stdlib, as
             // the function is defined both as a builtin in `kotlin.kotlin_builtins` and a regular top-level function in
             // `ArrayIntrinsicsKt.class`. See KT-78882.
-            if (first.moduleData == second.moduleData && !first.moduleData.areRedeclarationsEquivalent) return false
+            if (first.moduleData == second.moduleData) {
+                if (!first.moduleData.areRedeclarationsEquivalent) return false
+
+                // Even where redeclarations are equivalent (e.g., library sources in the Analysis API), a private top-level declaration
+                // is local to its file, so it is never the same declaration as one from another file. See KT-89829.
+                if (isPrivateInDifferentFiles(first, second)) return false
+            }
 
             if (first is FirVariable != second is FirVariable) {
                 return false
@@ -136,6 +145,16 @@ class ConeEquivalentCallConflictResolver(private val session: FirSession) : Cone
 
                 else -> false
             }
+        }
+
+        private fun isPrivateInDifferentFiles(first: FirCallableDeclaration, second: FirCallableDeclaration): Boolean {
+            if (first.symbol.visibility != Visibilities.Private && second.symbol.visibility != Visibilities.Private) return false
+
+            // Binary declarations have no containing file, so they are left to the checks below.
+            val firProvider = first.moduleData.session.firProvider
+            val firstFile = firProvider.getFirCallableContainerFile(first.symbol) ?: return false
+            val secondFile = firProvider.getFirCallableContainerFile(second.symbol) ?: return false
+            return firstFile != secondFile
         }
     }
 }

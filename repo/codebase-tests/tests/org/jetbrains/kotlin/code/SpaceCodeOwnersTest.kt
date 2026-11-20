@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.code
 
 import org.eclipse.jgit.ignore.FastIgnoreRule
-import org.eclipse.jgit.ignore.IgnoreNode
+import org.jetbrains.kotlin.repoTestFixtures.ignoreLevel
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -164,7 +164,7 @@ class SpaceCodeOwnersTest {
 
     private class FileOwnershipChecker(
         owners: CodeOwners,
-        val root: File
+        val root: File,
     ) {
         val matchers =
             owners.patterns
@@ -174,8 +174,6 @@ class SpaceCodeOwnersTest {
         val fallbackMatcher = matchers.last()
 
         val fileMatchers = matchers.filterNot { (val _ = item, val rule) -> rule.dirOnly() }
-
-        val ignoreTracker = GitIgnoreTracker()
 
         val unmatchedFilesTop = mutableListOf<File>()
 
@@ -218,9 +216,8 @@ class SpaceCodeOwnersTest {
         }
 
         fun visitFile(file: File, parentMatch: ItemUse?) {
+            if (file.ignoreLevel != null) return
             val path = file.path.replace(File.separatorChar, '/')
-            if (ignoreTracker.isIgnored(path, isDirectory = false)) return
-
             val matchedItem = findMatchLine(path, isDirectory = false, parentMatch)
             if (matchedItem != fallbackMatcher) return
             if (unmatchedFilesTop.size < 10) {
@@ -229,22 +226,19 @@ class SpaceCodeOwnersTest {
         }
 
         fun visitDirectory(directory: File, parentMatch: ItemUse?, depth: Int) {
+            if (directory.ignoreLevel != null) return
             val path = directory.path.replace(File.separatorChar, '/')
-
-            if (ignoreTracker.isIgnored(path, isDirectory = true)) return
             val directoryMatch = findMatchLine(path, isDirectory = true, parentMatch)
-            ignoreTracker.withDirectory(directory) {
-                for (childName in (directory.list() ?: emptyArray())) {
-                    val child = if (directory == root) {
-                        File(childName)
-                    } else {
-                        File(directory, childName)
-                    }
-                    if (child.isDirectory) {
-                        visitDirectory(child, directoryMatch, depth + 1)
-                    } else {
-                        visitFile(child, directoryMatch)
-                    }
+            for (childName in (directory.list() ?: emptyArray())) {
+                val child = if (directory == root) {
+                    File(childName)
+                } else {
+                    File(directory, childName)
+                }
+                if (child.isDirectory) {
+                    visitDirectory(child, directoryMatch, depth + 1)
+                } else {
+                    visitFile(child, directoryMatch)
                 }
             }
         }
@@ -254,45 +248,28 @@ class SpaceCodeOwnersTest {
         }
 
         fun unusedMatchers(): List<ItemUse> {
-            return matchers.filterNot { it.used }
+            return matchers.filterNot { it.used || isIgnoredPattern(it.item.pattern) }
+        }
+
+        private fun isIgnoredPattern(pattern: String): Boolean {
+            val path = pattern.removePrefix("/").removeSuffix("/")
+            // A name-only rule can match anywhere, including nonignored paths.
+            if (!pattern.startsWith('/') && '/' !in path) return false
+
+            val literalPrefix = path.takeWhile { it !in "*?[\\" }
+            // For globs, only an ignored literal parent directory proves that all matches are ignored.
+            val ignoredPath = if (literalPrefix == path) path else literalPrefix.substringBeforeLast('/', "")
+            return ignoredPath.isNotEmpty() && (File(ignoredPath).ignoreLevel != null)
         }
     }
 }
 
-
-private class GitIgnoreTracker {
-    private val ignoreNodeStack = mutableListOf(
-        IgnoreNode(listOf(FastIgnoreRule("/.git")))
-    )
-    private val reversedIgnoreNodeStack = ignoreNodeStack.asReversed()
-
-    fun isIgnored(path: String, isDirectory: Boolean): Boolean {
-        return reversedIgnoreNodeStack.firstNotNullOfOrNull { ignoreNode -> ignoreNode.checkIgnored(path, isDirectory) } ?: false
-    }
-
-    inline fun withDirectory(directory: File, action: () -> Unit) {
-        val ignoreFile = directory.resolve(".gitignore").takeIf { it.exists() }
-        if (ignoreFile != null) {
-            val ignoreNode = IgnoreNode().apply {
-                ignoreFile.inputStream().use {
-                    parse(ignoreFile.path, ignoreFile.inputStream())
-                }
-            }
-            ignoreNodeStack.add(ignoreNode)
-        }
-        action()
-        if (ignoreFile != null) {
-            ignoreNodeStack.removeAt(ignoreNodeStack.lastIndex)
-        }
-    }
-}
-
-private data class CodeOwners(
+internal data class CodeOwners(
     val permittedOwners: List<OwnerListEntry>,
     val userOwners: List<UserOwnerEntry>,
     val githubOwners: List<GitHubOwnerEntry>,
     val patterns: List<OwnershipPattern>,
-    val branchRules: List<BranchRule> = emptyList()
+    val branchRules: List<BranchRule> = emptyList(),
 ) {
     data class OwnerListEntry(val name: String, val line: Int) {
         override fun toString(): String {
@@ -313,13 +290,13 @@ private data class CodeOwners(
     }
 }
 
-private data class BranchRule(val branchPattern: String, val pathPattern: String, val owners: List<String>, val line: Int) {
+internal data class BranchRule(val branchPattern: String, val pathPattern: String, val owners: List<String>, val line: Int) {
     override fun toString(): String {
         return "line $line |# $BRANCH_RULE_DIRECTIVE: $branchPattern $pathPattern ${owners.joinToString(" ") { it.quoteIfContainsSpaces() }}"
     }
 }
 
-private sealed class OwnershipPattern {
+internal sealed class OwnershipPattern {
     abstract val line: Int
     abstract val pattern: String
 
@@ -344,7 +321,7 @@ private sealed class OwnershipPattern {
 
 private fun String.quoteIfContainsSpaces() = if (contains(' ')) "\"$this\"" else this
 
-private fun parseCodeOwners(file: File): CodeOwners {
+internal fun parseCodeOwners(file: File): CodeOwners {
     fun parseDirective(line: String, directive: String): String? {
         val value = line.substringAfter("# $directive: ")
         if (value != line) return value

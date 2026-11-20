@@ -101,6 +101,7 @@ abstract class KotlinCompile @Inject constructor(
     /** Properties related to the classpath snapshots based incremental compilation feature. */
     abstract class ClasspathSnapshotProperties {
         @get:Classpath
+        @get:NormalizeLineEndings
         @get:Incremental
         @get:Optional // Set if useClasspathSnapshot == true
         abstract val classpathSnapshot: ConfigurableFileCollection
@@ -512,8 +513,6 @@ abstract class KotlinCompile @Inject constructor(
     override fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return super.makeIncrementalCompilationFeatures().copy(
             usePreciseJavaTracking = usePreciseJavaTracking,
-            /* Disabled on JVM in favor of classpath snapshot machinery */
-            withAbiSnapshot = false,
         )
     }
 

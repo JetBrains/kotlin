@@ -15,7 +15,15 @@ data class CompilerInvocationResult(
     val output: String get() = "$stdout\n$stderr"
 }
 
-abstract class CompilerRunner(javaHome: String) {
+interface CompilerRunner {
+    fun run(
+        workingDir: File,
+        arguments: List<String>,
+        classpath: List<File> = emptyList(),
+    ): CompilerInvocationResult
+}
+
+abstract class SubprocessCompilerRunner(javaHome: String) : CompilerRunner {
     protected abstract val executable: String
     protected open val jvmArgs: List<String> get() = DEFAULT_JVM_ARGS
 
@@ -25,10 +33,10 @@ abstract class CompilerRunner(javaHome: String) {
 
     private val cmd: List<String> get() = listOf(executable) + jvmArgs
 
-    fun run(
+    final override fun run(
         workingDir: File,
         arguments: List<String>,
-        classpath: List<File> = emptyList(),
+        classpath: List<File>,
     ): CompilerInvocationResult {
         val stdout = File(workingDir, "compiler.out")
         val stderr = File(workingDir, "compiler.err")

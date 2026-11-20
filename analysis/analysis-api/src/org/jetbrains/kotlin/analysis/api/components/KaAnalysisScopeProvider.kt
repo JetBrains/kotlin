@@ -37,7 +37,7 @@ public interface KaAnalysisScopeProvider : KaSessionComponent {
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.session' endpoint instead.",
     replaceWith = ReplaceWith("analysisScope", "org.jetbrains.kotlin.analysis.api.session.analysisScope"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -52,7 +52,7 @@ public val analysisScope: GlobalSearchScope
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.session' endpoint instead.",
     replaceWith = ReplaceWith("this.canBeAnalysed()", "org.jetbrains.kotlin.analysis.api.session.canBeAnalysed"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)

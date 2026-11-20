@@ -121,6 +121,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.INLINE_OR_VALUE_MODIFIER
     )
 
+    val VALUE_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.VALUE_MODIFIER,
+        PositioningStrategies.VALUE_MODIFIER
+    )
+
     val INNER_MODIFIER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.INNER_MODIFIER,
         PositioningStrategies.INNER_MODIFIER
@@ -472,5 +477,10 @@ object SourceElementPositioningStrategies {
     val OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS,
         PositioningStrategies.OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS,
+    )
+
+    val DESTRUCTURING_DECLARATION_ENTRIES = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DESTRUCTURING_DECLARATION_ENTRIES,
+        PositioningStrategies.DESTRUCTURING_DECLARATION_ENTRIES,
     )
 }

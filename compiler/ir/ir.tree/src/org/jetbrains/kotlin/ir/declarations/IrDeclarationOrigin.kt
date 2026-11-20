@@ -13,6 +13,10 @@ interface IrDeclarationOrigin {
     val isSynthetic: Boolean
         get() = false
 
+    /**
+     * The members are serialized to KLIBs by name, so adding, removing or renaming one affects KLIB compatibility.
+     * Their set is pinned by `IrDeclarationOriginDeserializationTest`; update it only after consulting the Kotlin Common Backend team.
+     */
     companion object {
         val DEFINED by IrDeclarationOriginImpl.Regular
         val FAKE_OVERRIDE by IrDeclarationOriginImpl.Regular

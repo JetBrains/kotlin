@@ -10,6 +10,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -27,15 +29,18 @@ import kotlin.test.assertTrue
 
 @DisplayName("KLibs in K2")
 @MppGradlePluginTests
-open class KlibBasedMppIT : KGPBaseTest() {
+@MustRunOnChangesInGradle
+class KlibBasedMppIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
-        .copyEnsuringK2()
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @TestMetadata("common-klib-lib-and-app")
     @DisplayName("Could be compiled with project dependency")
     @GradleTest
+    @OptIn(ImpactsAggregatePerformance::class)
+    @MustRunOnChangesInAnyCompiler(reason = "This is a smoke test for interproject compilations")
     fun testBuildWithProjectDependency(
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
@@ -52,6 +57,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("common-klib-lib-and-app")
     @DisplayName("KT-36674: Could be compiled with empty source set")
     @GradleTest
     fun testPublishingAndConsumptionWithEmptySourceSet(
@@ -70,6 +76,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("common-klib-lib-and-app")
     @DisplayName("Compiles with common sources in transitive dependencies")
     @GradleTest
     fun testCommonSourceSetsInTransitiveDependencies(
@@ -143,18 +150,18 @@ open class KlibBasedMppIT : KGPBaseTest() {
             )
 
             val commonModules = listOf(
-                "published-producer-1.0-commonMain-[\\w-]+.klib",
-                "published-dependency-1.0-commonMain-[\\w-]+.klib",
+                "published-producer-0P9ZdL-commonMain-[\\w-]+.klib",
+                "published-dependency-0P9ZdL-commonMain-[\\w-]+.klib",
             ).map(::Regex)
 
             val hostSpecificModules = listOf(
-                "published-producer-1.0-iosMain-[\\w-]+.klib",
-                "published-dependency-1.0-iosMain-[\\w-]+.klib",
+                "published-producer-0P9ZdL-iosMain-[\\w-]+.klib",
+                "published-dependency-0P9ZdL-iosMain-[\\w-]+.klib",
             ).map(::Regex)
 
             val windowsAndLinuxModules = listOf(
-                "published-producer-1.0-windowsAndLinuxMain-[\\w-]+.klib",
-                "published-dependency-1.0-windowsAndLinuxMain-[\\w-]+.klib",
+                "published-producer-0P9ZdL-windowsAndLinuxMain-[\\w-]+.klib",
+                "published-dependency-0P9ZdL-windowsAndLinuxMain-[\\w-]+.klib",
             ).map(::Regex)
 
             checkTaskCompileClasspath(
@@ -175,6 +182,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
     }
 
     // Host-specific dependencies are only possible on macOS
+    @TestMetadata("common-klib-lib-and-app")
     @OsCondition(
         supportedOn = [OS.MAC],
         enabledOnCI = [OS.MAC],
@@ -190,6 +198,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("common-klib-lib-and-app")
     @DisplayName("Works with Kotlin native transitive dependencies")
     @GradleTest
     fun testKotlinNativeImplPublishedDeps(
@@ -224,6 +233,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("common-klib-lib-and-app")
     @DisplayName("Works with project dependencies containing Kotlin Native target")
     @GradleTest
     fun testKotlinNativeImplProjectDeps(
@@ -242,6 +252,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("hierarchical-all-native")
     @DisplayName("KT-38746: Should not disable compilation of shared source set")
     @GradleTest
     fun testAvoidSkippingSharedNativeSourceSetKt38746(gradleVersion: GradleVersion) {

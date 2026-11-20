@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.references.AbstractReferenceShortenerTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -234,6 +234,48 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
   @TestMetadata("contextReceiver.kt")
   public void testContextReceiver() {
     run("contextReceiver.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionType.kt")
+  public void testDanglingContextInFunctionType() {
+    run("danglingContextInFunctionType.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionTypeNamed.kt")
+  public void testDanglingContextInFunctionTypeNamed() {
+    run("danglingContextInFunctionTypeNamed.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionTypeNullable.kt")
+  public void testDanglingContextInFunctionTypeNullable() {
+    run("danglingContextInFunctionTypeNullable.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionTypeNullableNested.kt")
+  public void testDanglingContextInFunctionTypeNullableNested() {
+    run("danglingContextInFunctionTypeNullableNested.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionTypeNullableNullableType.kt")
+  public void testDanglingContextInFunctionTypeNullableNullableType() {
+    run("danglingContextInFunctionTypeNullableNullableType.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionTypeWithReceiver.kt")
+  public void testDanglingContextInFunctionTypeWithReceiver() {
+    run("danglingContextInFunctionTypeWithReceiver.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextInFunctionTypeWithType.kt")
+  public void testDanglingContextInFunctionTypeWithType() {
+    run("danglingContextInFunctionTypeWithType.kt");
   }
 
   @Test

@@ -5,18 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageIssueSink
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
-import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
-import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTracker
-import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTrackerImpl
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategyResolver
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializerWithBuiltIns
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.PartialLinkageConfig
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
@@ -32,14 +29,13 @@ import org.jetbrains.kotlin.library.metadata.isForwardDeclarationModule
 class KonanIrLinker(
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
-    friendModules: Map<String, Collection<String>>,
+    friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
     private val cInteropModuleDeserializerFactory: CInteropModuleDeserializerFactory<*>,
-    private val exportedDependencies: Set<KotlinLibrary>,
-    partialLinkageConfig: PartialLinkageConfig,
     irDiagnosticReporter: IrDiagnosticReporter,
-    private val libraryBeingCached: PartialCacheInfo?,
+    private val librariesBeingCached: Map<KotlinLibrary, PartialCacheInfo>,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
-) : KotlinIrLinker(configuration, symbolTable) {
+    partialLinkageIssueSink: PartialLinkageIssueSink? = null,
+) : KotlinIrLinker(configuration, symbolTable, friendModules) {
     override fun isBuiltInModule(module: IrModuleFragment): Boolean {
         val klib = module.kotlinLibrary ?: return false
         return klib.isNativeStdlib
@@ -47,23 +43,20 @@ class KonanIrLinker(
 
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
 
-    override val moduleDependencyTracker: IrModuleDependencyTracker = IrModuleDependencyTrackerImpl()
-
     override val partialLinkageSupport: PartialLinkageSupportForLinker = createPartialLinkageSupportForLinker(
-        partialLinkageConfig = partialLinkageConfig,
         irFactory = symbolTable.irFactory,
         anyClass = anyClass,
         nothingClass = nothingClass,
         diagnosticReporter = irDiagnosticReporter,
+        issueSink = partialLinkageIssueSink,
     )
 
     private val globalDeclarationTable = KonanGlobalDeclarationTable(null)
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
-        linker = this,
+        fileLocalSymbolProvider = fileLocalSymbolProvider,
         symbolTable = symbolTable,
         mangler = irMangler,
-        friendModules = friendModules,
         partialLinkageSupport = partialLinkageSupport,
         platformSpecificClassFilter = K1LazyFakeOverrideClassFilter,
         fakeOverrideDeclarationTable = KonanDeclarationTable(globalDeclarationTable),
@@ -81,7 +74,7 @@ class KonanIrLinker(
     override fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
-        strategyResolver: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
     ) = when {
         moduleFragment.descriptor.isForwardDeclarationModule -> {
             KonanForwardDeclarationModuleDeserializer(moduleFragment, this)
@@ -97,26 +90,11 @@ class KonanIrLinker(
             )
         }
         else -> {
-            val deserializationStrategy = when {
-                klib == libraryBeingCached?.klib -> libraryBeingCached.strategy
-                else -> CacheDeserializationStrategy.WholeModule
-            }
+            val deserializationStrategy = librariesBeingCached[klib]?.strategy ?: CacheDeserializationStrategy.WholeModule
             KonanPartialModuleDeserializer(
                 this, moduleFragment, klib, strategyResolver, deserializationStrategy
             )
         }
-    }
-
-    fun deserializeIrModuleHeader(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment {
-        // TODO: consider skip deserializing explicitly exported declarations for libraries.
-        // Now it's not valid because of all dependencies that must be computed.
-        val deserializationStrategy: (String) -> DeserializationStrategy =
-            if (exportedDependencies.contains(kotlinLibrary)) {
-                { DeserializationStrategy.ALL }
-            } else {
-                { DeserializationStrategy.EXPLICITLY_EXPORTED }
-            }
-        return deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, deserializationStrategy)
     }
 
     fun findKonanModuleDeserializer(library: KotlinLibrary): KonanPartialModuleDeserializer? {

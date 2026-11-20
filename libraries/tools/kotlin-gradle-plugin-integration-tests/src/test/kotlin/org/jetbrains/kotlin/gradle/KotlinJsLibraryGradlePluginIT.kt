@@ -10,16 +10,21 @@ import com.google.gson.JsonObject
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution.Companion.DIST
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.reader
 import kotlin.test.assertNotNull
 
-abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
+@JsGradlePluginTests
+@MustRunOnChangesInJs
+class KotlinJsLibraryGradlePluginIT : KGPBaseTest() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         jsOptions = BuildOptions.JsOptions(),
     ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @TestMetadata("simple-js-library")
     @DisplayName("simple binary library")
     @GradleTest
     fun testSimpleJsBinaryLibrary(gradleVersion: GradleVersion) {
@@ -40,6 +45,7 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-library-with-executable")
     @DisplayName("binary library and executable")
     @GradleTest
     fun testJsBinaryLibraryAndExecutable(gradleVersion: GradleVersion) {
@@ -52,6 +58,7 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("js-library-with-executable-browser-nodejs")
     @DisplayName("binary library and executable both for browser and nodejs")
     @GradleTest
     fun testJsBinaryLibraryAndExecutableForBrowserAndNodejs(gradleVersion: GradleVersion) {
@@ -65,10 +72,4 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
             }
         }
     }
-}
-
-@DisplayName("Kotlin/JS K2 IR library")
-@JsGradlePluginTests
-class KotlinK2JsIrLibraryGradlePluginIT : KotlinJsIrLibraryGradlePluginITBase() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }

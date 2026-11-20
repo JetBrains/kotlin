@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirReceiverParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseReceiverParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -69,13 +69,13 @@ internal class KaFirReceiverParameterSymbol private constructor(
         get() = withValidityAssertion { owningKaSymbol.origin }
 
     override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol> = withValidityAssertion {
-        KaBaseReceiverParameterSymbolPointer(owningKaSymbol.createPointer(), this)
+        KaFirReceiverParameterSymbolPointer(owningKaSymbol.createPointer(), this)
     }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             if (backingPsi?.hasAnnotation(AnnotationUseSiteTarget.RECEIVER) == false)
-                KaBaseEmptyAnnotationList(token)
+                KaFirEmptyAnnotationList(token)
             else
                 KaFirAnnotationListForDeclaration.create(firSymbol = firSymbol, builder = analysisSession.firSymbolBuilder)
         }

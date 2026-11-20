@@ -351,12 +351,12 @@ interface KotlinDependencyHandler : HasProject {
      * Calling [npm] automatically adds the dependency to the enclosing dependency collector:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     npm("is-odd-even", "1.0.0")
+     *     npm("is-odd-even", "^1.0.0")
      * }
      * ```
      *
      * NPM dependencies should not be applied to Gradle dependency scopes such as [api], [implementation], and so on.
-     * Passing the returned dependency to them, as in `implementation(npm("is-odd-even", "1.0.0"))`, is deprecated -
+     * Passing the returned dependency to them, as in `implementation(npm("is-odd-even", "^1.0.0"))`, is deprecated -
      * the returned value is only kept for backward compatibility.
      *
      * The version will be parsed by node-semver.
@@ -463,7 +463,7 @@ interface KotlinDependencyHandler : HasProject {
      *
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     npmDev("is-odd-even", "1.1.0")
+     *     npmDev("is-odd-even", "^1.1.0")
      * }
      * ```
      *
@@ -579,7 +579,7 @@ interface KotlinDependencyHandler : HasProject {
      *
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     npmOptional("is-odd-even", "1.1.0")
+     *     npmOptional("is-odd-even", "^1.1.0")
      * }
      * ```
      *
@@ -695,7 +695,7 @@ interface KotlinDependencyHandler : HasProject {
      *
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     npmPeer("is-odd-even", "1.1.0")
+     *     npmPeer("is-odd-even", "^1.1.0")
      * }
      * ```
      *
@@ -749,7 +749,7 @@ interface KotlinDependencyHandler : HasProject {
      * Declare them with [npmDev] instead, as a standalone statement:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     npmDev("is-odd-even", "1.1.0")
+     *     npmDev("is-odd-even", "^1.1.0")
      * }
      * ```
      *
@@ -821,7 +821,7 @@ interface KotlinDependencyHandler : HasProject {
      * Declare them with [npmOptional] instead, as a standalone statement:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     npmOptional("is-odd-even", "1.1.0")
+     *     npmOptional("is-odd-even", "^1.1.0")
      * }
      * ```
      *
@@ -893,7 +893,7 @@ interface KotlinDependencyHandler : HasProject {
      * Declare them with [npmPeer] instead, as a standalone statement:
      * ```
      * kotlin.sourceSets["jsMain"].dependencies {
-     *     npmPeer("is-odd-even", "1.1.0")
+     *     npmPeer("is-odd-even", "^1.1.0")
      * }
      * ```
      *

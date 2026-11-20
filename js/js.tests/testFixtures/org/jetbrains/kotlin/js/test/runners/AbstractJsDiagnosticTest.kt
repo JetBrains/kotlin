@@ -72,5 +72,4 @@ abstract class AbstractJsDiagnosticWithBackendTestBase(parser: FirParser) : Abst
     }
 }
 
-abstract class AbstractPsiJsDiagnosticWithBackendTest : AbstractJsDiagnosticWithBackendTestBase(FirParser.Psi)
 abstract class AbstractLightTreeJsDiagnosticWithBackendTest : AbstractJsDiagnosticWithBackendTestBase(FirParser.LightTree)

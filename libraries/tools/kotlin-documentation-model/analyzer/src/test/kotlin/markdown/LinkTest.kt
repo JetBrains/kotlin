@@ -22,7 +22,7 @@ import kotlin.test.assertNotNull
 @MustRunOnChangesInAnalysisApi
 class LinkTest : BaseAbstractTest() {
 
-    val configuration = dokkaConfiguration {
+    internal val configuration = dokkaConfiguration {
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/")
@@ -1776,7 +1776,7 @@ class LinkTest : BaseAbstractTest() {
     /**
      * Adapted from [DocTag.text]
      */
-    fun DocTag.textWithCodeInline(): String = when (val t = this) {
+    internal fun DocTag.textWithCodeInline(): String = when (val t = this) {
         is Text -> t.body
         is CodeInline -> "`" + t.children.joinToString("\n") { it.textWithCodeInline() } + "`"
         is Code -> t.children.joinToString("\n") { it.textWithCodeInline() }

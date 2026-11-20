@@ -1,84 +1,6 @@
 FILE fqName:<root> fileName:/LateinitPropertiesTest.kt
   CLASS CLASS name:LateinitPropertiesTest modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.LateinitPropertiesTest
-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
-      FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private
-        annotations:
-          Volatile
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a$volatile> visibility:private modality:FINAL returnType:kotlin.Int
-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LateinitPropertiesTest'
-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-a$volatile>' type=<root>.LateinitPropertiesTest origin=null
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-a$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
-        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LateinitPropertiesTest'
-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
-              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<set-a$volatile>' type=<root>.LateinitPropertiesTest origin=null
-              value: GET_VAR 'value: kotlin.Int declared in <root>.LateinitPropertiesTest.<set-a$volatile>' type=kotlin.Int origin=null
-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile visibility:private modality:FINAL [var]
-      FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private
-        annotations:
-          Volatile
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-head$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile visibility:private modality:FINAL [var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-head$volatile> (): kotlin.Any? declared in <root>.LateinitPropertiesTest'
-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Any? origin=null
-              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-head$volatile>' type=<root>.LateinitPropertiesTest origin=null
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-head$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
-        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile visibility:private modality:FINAL [var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LateinitPropertiesTest'
-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
-              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<set-head$volatile>' type=<root>.LateinitPropertiesTest origin=null
-              value: GET_VAR 'value: kotlin.Any? declared in <root>.LateinitPropertiesTest.<set-head$volatile>' type=kotlin.Any? origin=null
-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:dataRef$volatile visibility:private modality:FINAL [var]
-      FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile type:kotlin.Any? visibility:private
-        annotations:
-          Volatile
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-dataRef$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:dataRef$volatile visibility:private modality:FINAL [var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-dataRef$volatile> (): kotlin.Any? declared in <root>.LateinitPropertiesTest'
-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Any? origin=null
-              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-dataRef$volatile>' type=<root>.LateinitPropertiesTest origin=null
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-dataRef$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
-        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:dataRef$volatile visibility:private modality:FINAL [var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <set-dataRef$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LateinitPropertiesTest'
-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
-              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<set-dataRef$volatile>' type=<root>.LateinitPropertiesTest origin=null
-              value: GET_VAR 'value: kotlin.Any? declared in <root>.LateinitPropertiesTest.<set-dataRef$volatile>' type=kotlin.Any? origin=null
-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateIntArr visibility:private modality:FINAL [val]
-      FIELD ATOMICFU_GENERATED_FIELD name:lateIntArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final]
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-lateIntArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateIntArr visibility:private modality:FINAL [val]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-lateIntArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.LateinitPropertiesTest'
-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateIntArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final] declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
-              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-lateIntArr>' type=<root>.LateinitPropertiesTest origin=null
-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateRefArr visibility:private modality:FINAL [val]
-      FIELD ATOMICFU_GENERATED_FIELD name:lateRefArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final]
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-lateRefArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceArray
-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateRefArr visibility:private modality:FINAL [val]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-lateRefArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.LateinitPropertiesTest'
-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateRefArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final] declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
-              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-lateRefArr>' type=<root>.LateinitPropertiesTest origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
@@ -243,6 +165,84 @@ FILE fqName:<root> fileName:/LateinitPropertiesTest.kt
               ARG <this>: CALL 'private final fun <get-lateRefArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
                 ARG <this>: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.test' type=<root>.LateinitPropertiesTest origin=IMPLICIT_ARGUMENT
               ARG i: CONST Int type=kotlin.Int value=5
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private
+        annotations:
+          Volatile
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a$volatile> visibility:private modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-a$volatile>' type=<root>.LateinitPropertiesTest origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-a$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LateinitPropertiesTest'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<set-a$volatile>' type=<root>.LateinitPropertiesTest origin=null
+              value: GET_VAR 'value: kotlin.Int declared in <root>.LateinitPropertiesTest.<set-a$volatile>' type=kotlin.Int origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:dataRef$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile type:kotlin.Any? visibility:private
+        annotations:
+          Volatile
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-dataRef$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:dataRef$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-dataRef$volatile> (): kotlin.Any? declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-dataRef$volatile>' type=<root>.LateinitPropertiesTest origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-dataRef$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:dataRef$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-dataRef$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LateinitPropertiesTest'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<set-dataRef$volatile>' type=<root>.LateinitPropertiesTest origin=null
+              value: GET_VAR 'value: kotlin.Any? declared in <root>.LateinitPropertiesTest.<set-dataRef$volatile>' type=kotlin.Any? origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile visibility:private modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private
+        annotations:
+          Volatile
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-head$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-head$volatile> (): kotlin.Any? declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-head$volatile>' type=<root>.LateinitPropertiesTest origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-head$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile visibility:private modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LateinitPropertiesTest'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<set-head$volatile>' type=<root>.LateinitPropertiesTest origin=null
+              value: GET_VAR 'value: kotlin.Any? declared in <root>.LateinitPropertiesTest.<set-head$volatile>' type=kotlin.Any? origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateIntArr visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:lateIntArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final]
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-lateIntArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateIntArr visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-lateIntArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateIntArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final] declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-lateIntArr>' type=<root>.LateinitPropertiesTest origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateRefArr visibility:private modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:lateRefArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final]
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-lateRefArr> visibility:private modality:FINAL returnType:java.util.concurrent.atomic.AtomicReferenceArray
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LateinitPropertiesTest
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateRefArr visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-lateRefArr> (): java.util.concurrent.atomic.AtomicReferenceArray declared in <root>.LateinitPropertiesTest'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateRefArr type:java.util.concurrent.atomic.AtomicReferenceArray visibility:private [final] declared in <root>.LateinitPropertiesTest' type=java.util.concurrent.atomic.AtomicReferenceArray origin=null
+              receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<get-lateRefArr>' type=<root>.LateinitPropertiesTest origin=null
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       VAR name:testClass type:<root>.LateinitPropertiesTest [val]

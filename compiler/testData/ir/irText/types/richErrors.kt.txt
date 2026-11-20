@@ -1,0 +1,100 @@
+@Target(allowedTargets = [AnnotationTarget.TYPE])
+open annotation class Ann1 : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Target(allowedTargets = [AnnotationTarget.TYPE])
+open annotation class Ann2 : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Target(allowedTargets = [AnnotationTarget.TYPE])
+open annotation class Ann3 : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+object Err1 : RichError {
+  private constructor() /* primary */ {
+    super/*RichError*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Err1 -> return false
+    }
+    val tmp_0: Err1 = other /*as Err1 */
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return 0
+  }
+
+  override fun toString(): String {
+    return "Err1"
+  }
+
+}
+
+object Err2 : RichError {
+  private constructor() /* primary */ {
+    super/*RichError*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Err2 -> return false
+    }
+    val tmp_1: Err2 = other /*as Err2 */
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return 0
+  }
+
+  override fun toString(): String {
+    return "Err2"
+  }
+
+}
+
+fun <T : Any?> bar(): (T & Any) | Err1 {
+  return TODO()
+}
+
+fun baz(): @Ann1 (Nothing | @Ann2 Err1 | Err2) {
+  return TODO()
+}
+
+fun foo(x: Int | Err1 | Err2) {
+}
+
+fun foobar(): @Ann1 (@Ann2 String | @Ann3 Err1) {
+  return TODO()
+}

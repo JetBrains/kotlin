@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
 class AddId : AbstractSchemaModificationInterpreter() {
@@ -8,7 +9,7 @@ class AddId : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val columns = buildList {
-            add(simpleColumnOf(columnName, session.builtinTypes.intType.coneType))
+            add(simpleColumnOf(columnName, StandardTypes.Int))
             addAll(receiver.columns())
         }
         return PluginDataFrameSchema(columns)

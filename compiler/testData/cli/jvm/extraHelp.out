@@ -37,7 +37,7 @@ where advanced options include:
   -Xignored-annotations-for-bridges=<fq.name>|*
                              Do not copy these annotations to the bridge methods from their targets.
   -Xindy-allow-annotated-lambdas Allow using 'invokedynamic' for lambda expressions with annotations
-  -Xjava-direct              Experimental direct java support.
+  -Xjava-direct              Build the Java model of Java sources directly from their syntax tree.
   -Xjava-package-prefix      Package prefix for Java files.
   -Xjava-source-roots=<path> Paths to directories with Java source files.
   -Xjdk-release=<version>    Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
@@ -140,7 +140,6 @@ where advanced options include:
                              Allow contracts on some operators and accessors, and allow checks for erased types.
   -Xallow-holdsin-contract   Allow contracts that specify a condition that holds true inside a lambda argument.
   -Xallow-kotlin-package     Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.
-  -Xallow-pre-17-runtime-jdk Temporarily allow running Kotlin compiler with JDK older than JDK 17. This option will not work starting Kotlin 2.5.20-Beta1. See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.
   -Xallow-reified-type-in-catch Allow 'catch' parameters to have reified types.
   -Xallow-returns-result-of  Allows to use `returnsResultOf()` in `contract {}` block of function body. This contract provides additional information for return value checker. Enabling this feature will force compiler to produce pre-release binaries, because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.
   -Xannotation-default-target=first-only|first-only-warn|param-property
@@ -266,6 +265,7 @@ where advanced options include:
   -Xreport-perf              Report detailed performance statistics.
   -Xreturn-value-checker={check|full|disable|default}
                              Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.
+  -Xrich-errors              Enable experimental language support for Rich Errors.
   -Xseparate-kmp-compilation Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
@@ -275,8 +275,6 @@ where advanced options include:
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
                              The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases.
-  -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
-                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.
   -Xverbose-phases           Be verbose while performing the given backend phases.
   -Xverify-ir={none|warning|error}
                              IR verification mode (no verification by default).

@@ -5,7 +5,7 @@ IdentifiersWithBackticksKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUNCTION[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
-      origin: Facade(className=IdentifiersWithBackticksKt, jvmClassName=null)
+      origin: Facade(className=IdentifiersWithBackticksKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -15,7 +15,7 @@ IdentifiersWithBackticksKt.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=top level, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=top level]
-      origin: Facade(className=IdentifiersWithBackticksKt, jvmClassName=null)
+      origin: Facade(className=IdentifiersWithBackticksKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -31,6 +31,7 @@ O.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     OBJECT_DECLARATION[classId=/O, fqName=O, isObjectLiteral=false, isTopLevel=true, name=O, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public]
       CLASS_BODY
         FUNCTION[fqName=O.with space, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=with space]

@@ -1,0 +1,41 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public fun inline(s: kotlin.String): kotlin.Nothing { /* compiled code */ }
+
+public fun value(f: () -> kotlin.Unit): kotlin.Unit { /* compiled code */ }
+
+public fun private(s: kotlin.String, f: () -> kotlin.Unit = COMPILED_CODE): kotlin.Unit { /* compiled code */ }
+
+public fun context(s: kotlin.String): kotlin.Unit { /* compiled code */ }
+
+public fun localClass(): kotlin.Int { /* compiled code */ }
+
+public fun localGenericClass(): kotlin.Int { /* compiled code */ }
+
+public fun localAbstractClass(): kotlin.Unit { /* compiled code */ }
+
+public fun localDataClassWithParameters(): kotlin.Unit { /* compiled code */ }
+
+public fun localClassWithSupertype(): kotlin.Unit { /* compiled code */ }
+
+public fun localClassWithBody(): kotlin.Unit { /* compiled code */ }
+
+public fun localClassFollowedByCallNamedContext(): kotlin.Unit { /* compiled code */ }
+
+public fun localClassFollowedByCallWithArgumentsAndTrailingLambda(): kotlin.Unit { /* compiled code */ }
+
+public fun localClassFollowedByAnnotatedCall(): kotlin.Unit { /* compiled code */ }
+
+public fun localClassInLambda(): kotlin.Unit { /* compiled code */ }
+
+public fun localClassWithConstructorOnNextLine(): kotlin.Unit { /* compiled code */ }
+
+public final annotation class Ann public constructor() : kotlin.Annotation {
+}
+
+public final class TopLevel1 private constructor() {
+}
+
+public final class TopLevel2 @Ann internal constructor(x: kotlin.Int) {
+}

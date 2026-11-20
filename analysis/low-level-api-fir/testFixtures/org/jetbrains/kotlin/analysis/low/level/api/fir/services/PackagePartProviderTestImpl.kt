@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.services
 
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
+import org.jetbrains.kotlin.analysis.test.framework.services.AnalysisApiTestCompilerConfiguratorProvider
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
@@ -19,8 +20,10 @@ internal class PackagePartProviderTestImpl(
     private val testServices: TestServices,
 ) : KotlinPackagePartProviderFactory {
     override fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider {
+        val compilerConfigurationProvider = testServices.compilerConfigurationProvider as? AnalysisApiTestCompilerConfiguratorProvider
+            ?: error("${AnalysisApiTestCompilerConfiguratorProvider::class.simpleName} is expected in Analysis API tests")
         val providers = testServices.moduleStructure.modules
-            .map { module -> testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)(scope) }
+            .map { module -> compilerConfigurationProvider.getPackagePartProviderFactoryForScope(module)(scope) }
 
         return when (providers.size) {
             0 -> PackagePartProvider.Empty

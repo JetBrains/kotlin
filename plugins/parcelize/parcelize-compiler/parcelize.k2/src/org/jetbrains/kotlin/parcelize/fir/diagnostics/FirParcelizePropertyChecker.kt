@@ -5,39 +5,35 @@
 
 package org.jetbrains.kotlin.parcelize.fir.diagnostics
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.isEnumClass
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.declaredProperties
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.isVisible
 import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
-import org.jetbrains.kotlin.fir.resolve.fqName
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.parcelize.BuiltinParcelableTypes
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_ID
+import org.jetbrains.kotlin.parcelize.fir.dataClassPrimaryConstructorPropertiesOrNull
 
 object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -83,7 +79,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
         val customParcelerTypes = getCustomParcelerTypes(
             property.annotations + containingClassSymbol.resolvedAnnotationsWithClassIds, session
         )
-        val unsupported = checkParcelableType(type, customParcelerTypes, context)
+        val unsupported = checkParcelableType(type, ParcelizeTypeCheckState(context, customParcelerTypes, property.returnTypeRef.source))
         if (type in unsupported) {
             reporter.reportOn(property.returnTypeRef.source, KtErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED, context)
         } else {
@@ -103,14 +99,18 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
             }
         }
 
+    private data class ParcelizeTypeCheckState(
+        val context: CheckerContext,
+        val customParcelerTypes: Set<ConeKotlinType>,
+        val source: KtSourceElement?,
+        val inDataClass: Boolean = false,
+        val fromDataClassProperty: Boolean = false,
+    )
+
     // Returns the set of types that are *not* supported. This set can include types other than `type`
     // if it is a generally supported container type that contains unsupported elements in this instantiation.
-    private fun checkParcelableType(
-        type: ConeKotlinType,
-        customParcelerTypes: Set<ConeKotlinType>,
-        context: CheckerContext,
-        inDataClass: Boolean = false
-    ): Set<ConeKotlinType> {
+    private fun checkParcelableType(type: ConeKotlinType, state: ParcelizeTypeCheckState): Set<ConeKotlinType> {
+        val (context, customParcelerTypes, inDataClass) = state
         val session = context.session
         if (
             type.hasParcelerAnnotation(session) ||
@@ -124,6 +124,11 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
         val symbol = upperBound?.toRegularClassSymbol(session)
             ?: return setOf(type)
 
+        // The checks below depend on the signature of this class (kind, modifiers, supertypes, constructor).
+        if (state.fromDataClassProperty) {
+            session.lookupTracker?.recordClassLikeLookup(symbol.classId, state.source, context.containingFileSymbol?.source)
+        }
+
         if (symbol.classKind.isSingleton || symbol.classKind.isEnumClass) {
             return emptySet()
         }
@@ -135,8 +140,8 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
 
         if (fqName in BuiltinParcelableTypes.PARCELABLE_CONTAINER_FQNAMES) {
             return upperBound.typeArguments.fold(emptySet()) { acc, arg ->
-                val elementType = arg.type ?: session.builtinTypes.nullableAnyType.coneType
-                acc union checkParcelableType(elementType, customParcelerTypes, context)
+                val elementType = arg.type ?: StandardTypes.NullableAny
+                acc union checkParcelableType(elementType, state.copy(inDataClass = false))
             }
         }
 
@@ -145,7 +150,12 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
         }
 
         if (symbol.isData && (inDataClass || type.customAnnotations.any { it.fqName(session) == ParcelizeNames.DATA_CLASS_ANNOTATION_FQ_NAME })) {
-            val properties = symbol.declaredProperties(context.session).filter { it.fromPrimaryConstructor }
+            val properties = symbol.dataClassPrimaryConstructorPropertiesOrNull(session) ?: return setOf(type)
+
+            // The code generated for a `@DataClass` type calls the property getters of the data class directly,
+            // so it has to be regenerated whenever any of them changes.
+            recordDataClassPropertyLookups(symbol, properties, state)
+
             // Serialization uses the property getters, deserialization uses the constructor.
             if (properties.any { !it.isVisible(context) } || symbol.primaryConstructorIfAny(session)?.isVisible(context) != true) {
                 return setOf(type)
@@ -160,7 +170,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
             val substitutor = substitutorByMap(typeMapping, context.session)
             return properties.fold(emptySet()) { acc, property ->
                 val elementType = substitutor.substituteOrSelf(property.resolvedReturnType)
-                acc union checkParcelableType(elementType, customParcelerTypes, context, inDataClass = true)
+                acc union checkParcelableType(elementType, state.copy(inDataClass = true, fromDataClassProperty = true))
             }
         }
 
@@ -169,6 +179,18 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
         }
 
         return setOf(type)
+    }
+
+    private fun recordDataClassPropertyLookups(
+        symbol: FirRegularClassSymbol,
+        properties: List<FirPropertySymbol>,
+        state: ParcelizeTypeCheckState,
+    ) {
+        val lookupTracker = state.context.session.lookupTracker ?: return
+        val fileSource = state.context.containingFileSymbol?.source
+        for (property in properties) {
+            lookupTracker.recordClassMemberLookup(property.name.asString(), symbol.classId, state.source, fileSource)
+        }
     }
 
     private fun ConeKotlinType.anySuperTypeConstructor(session: FirSession, predicate: (ConeKotlinType) -> Boolean): Boolean =
@@ -187,7 +209,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
     private fun ConeKotlinType.getErasedUpperBound(session: FirSession): ConeClassLikeType? =
         when (this) {
             is ConeClassLikeType ->
-                fullyExpandedType(session)
+                fullyExpandedClassLikeType(session)
 
             is ConeTypeParameterType -> {
                 val bounds = lookupTag.typeParameterSymbol.resolvedBounds

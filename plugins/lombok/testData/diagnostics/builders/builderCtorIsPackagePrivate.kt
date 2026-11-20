@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83336
 
 // FILE: test/TestJava.java
@@ -23,3 +24,5 @@ public class TestJavaUsage {
 fun main() {
     test.<!INVISIBLE_REFERENCE("constructor(name: String!, age: Int): TestJava; package-private; file")!>TestJava<!>("name", 1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, stringLiteral */

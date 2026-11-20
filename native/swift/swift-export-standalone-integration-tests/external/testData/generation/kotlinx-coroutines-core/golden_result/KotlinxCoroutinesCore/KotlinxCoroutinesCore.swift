@@ -6,12 +6,12 @@ import KotlinxAtomicFu
 @_implementationOnly import KotlinBridges_KotlinxCoroutinesCore
 @_spi(kotlin$ExperimentalStdlibApi) import KotlinStdlib
 
-public typealias selects = ExportedKotlinPackages.kotlinx.coroutines.selects
-public typealias intrinsics = ExportedKotlinPackages.kotlinx.coroutines.intrinsics
-public typealias `internal` = ExportedKotlinPackages.kotlinx.coroutines.`internal`
 public typealias channels = ExportedKotlinPackages.kotlinx.coroutines.channels
-public typealias sync = ExportedKotlinPackages.kotlinx.coroutines.sync
 public typealias flow = ExportedKotlinPackages.kotlinx.coroutines.flow
+public typealias `internal` = ExportedKotlinPackages.kotlinx.coroutines.`internal`
+public typealias intrinsics = ExportedKotlinPackages.kotlinx.coroutines.intrinsics
+public typealias selects = ExportedKotlinPackages.kotlinx.coroutines.selects
+public typealias sync = ExportedKotlinPackages.kotlinx.coroutines.sync
 @_spi(kotlinx$coroutines$InternalCoroutinesApi) @available(*, unavailable, message: "Unavailable type(s): ExportedKotlinPackages.kotlinx.coroutines.JobSupport")
 public typealias AbstractCoroutine = ExportedKotlinPackages.kotlinx.coroutines.AbstractCoroutine
 public typealias CancellableContinuation = ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation
@@ -232,7 +232,7 @@ public func supervisorJob(
 public func awaitAll(
     deferreds: any ExportedKotlinPackages.kotlinx.coroutines.Deferred...
 ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
-    try await withKotlinContinuation { continuation, exception, cancellation in
+    return try await withKotlinContinuation { continuation, exception, cancellation in
         let _: Bool = kotlinx_coroutines_awaitAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Deferred__Vararg___(deferreds, Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
@@ -267,7 +267,7 @@ public func handleCoroutineException(
 public func joinAll(
     jobs: any ExportedKotlinPackages.kotlinx.coroutines.Job...
 ) async throws -> Swift.Void {
-    try await withKotlinContinuation { continuation, exception, cancellation in
+    return try await withKotlinContinuation { continuation, exception, cancellation in
         let _: Bool = kotlinx_coroutines_joinAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Job__Vararg___(jobs, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
@@ -336,488 +336,6 @@ public func disposableHandle(
     function: @escaping () -> Swift.Void
 ) -> any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle {
     return ExportedKotlinPackages.kotlinx.coroutines.disposableHandle(function: function)
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.selects {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public enum SelectClause_SealedType: KotlinRuntimeSupport.SealedType {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        case selectClause0(ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0_SealedType)
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        case selectClause1(ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1_SealedType)
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        case selectClause2(ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2_SealedType)
-        public var value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause {
-            get {
-                switch self {
-                case let .selectClause0(type): type.value
-                case let .selectClause1(type): type.value
-                case let .selectClause2(type): type.value
-                }
-            }
-        }
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public enum SelectClause0_SealedType: KotlinRuntimeSupport.SealedType {
-        case unknown(ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0_SealedType.Unknown)
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        public struct Unknown: KotlinRuntimeSupport.SealedType {
-            public let value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0
-            init(
-                _ value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0
-            ) {
-                self.value = value
-            }
-        }
-        public var value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0 {
-            get {
-                switch self {
-                case let .unknown(type): type.value
-                }
-            }
-        }
-    }
-    public protocol SelectBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.selects._SelectBuilder {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func invoke(
-            _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0,
-            block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Void
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func invoke(
-            _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1,
-            block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Void
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func invoke(
-            _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
-            param: (any KotlinRuntimeSupport._KotlinBridgeable)?,
-            block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Void
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func invoke(
-            _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
-            block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Void
-    }
-    @objc(_ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder)
-    public protocol _SelectBuilder {
-    }
-    public protocol __SelectBuilder: KotlinRuntimeSupport._KotlinBridgeable {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol SelectClause: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        var clauseObject: any KotlinRuntimeSupport._KotlinBridgeable {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType
-    }
-    @objc(_ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause)
-    public protocol _SelectClause {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol __SelectClause: KotlinRuntimeSupport._KotlinBridgeable {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol SelectClause0: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause, ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause0 {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0_SealedType
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi) @_disfavoredOverload
-        func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType
-    }
-    @objc(_ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause0)
-    public protocol _SelectClause0: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol __SelectClause0: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol SelectClause1: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause, ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause1 {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType
-    }
-    @objc(_ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause1)
-    public protocol _SelectClause1: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol __SelectClause1: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol SelectClause2: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause, ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause2 {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType
-    }
-    @objc(_ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2)
-    public protocol _SelectClause2: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol __SelectClause2: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol SelectInstance: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.selects._SelectInstance {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        var context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func disposeOnCompletion(
-            disposableHandle: any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
-        ) -> Swift.Void
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func selectInRegistrationPhase(
-            internalResult: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Void
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func trySelect(
-            clauseObject: any KotlinRuntimeSupport._KotlinBridgeable,
-            result: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool
-    }
-    @objc(_ExportedKotlinPackages_kotlinx_coroutines_selects_SelectInstance)
-    public protocol _SelectInstance {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol __SelectInstance: KotlinRuntimeSupport._KotlinBridgeable {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public struct SelectClause1_SealedType: KotlinRuntimeSupport.SealedType {
-        public let value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1
-        init(
-            _ value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1
-        ) {
-            self.value = value
-        }
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public struct SelectClause2_SealedType: KotlinRuntimeSupport.SealedType {
-        public let value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2
-        init(
-            _ value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2
-        ) {
-            self.value = value
-        }
-    }
-    public static func select(
-        builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
-    ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_selects_select__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(Unmanaged.passRetained((builder as (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
-        }
-    }
-    public static func selectUnbiased(
-        builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
-    ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_selects_selectUnbiased__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(Unmanaged.passRetained((builder as (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
-        }
-    }
-    @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
-    public static func whileSelect(
-        builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
-    ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_selects_whileSelect__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(Unmanaged.passRetained((builder as (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
-        }
-    }
-    @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
-    public static func onTimeout(
-        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder,
-        timeMillis: Swift.Int64,
-        block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_onTimeout__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder_Swift_Int64_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), timeMillis, Unmanaged.passRetained((block as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
-    }
-    @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
-    public static func onTimeout(
-        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder,
-        timeout: ExportedKotlinPackages.kotlin.time.Duration,
-        block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_onTimeout__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder_ExportedKotlinPackages_kotlin_time_Duration_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), timeout.__externalRCRef(), Unmanaged.passRetained((block as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
-    }
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.intrinsics {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public static func startCoroutineCancellable(
-        _ receiver: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?,
-        completion: any ExportedKotlinPackages.kotlin.coroutines.Continuation
-    ) -> Swift.Void {
-        return { kotlinx_coroutines_intrinsics_startCoroutineCancellable__TypesOfArgumentsE__U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20ExportedKotlinPackages_kotlin_coroutines_Continuation__(Unmanaged.passRetained((receiver as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), completion.__externalRCRef()); return () }()
-    }
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.`internal` {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public typealias SynchronizedObject = ExportedKotlinPackages.kotlinx.atomicfu.locks.SynchronizedObject
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol MainDispatcherFactory: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.`internal`._MainDispatcherFactory {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        var loadPriority: Swift.Int32 {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func createDispatcher(
-            allFactories: [any ExportedKotlinPackages.kotlinx.coroutines.`internal`.MainDispatcherFactory]
-        ) -> ExportedKotlinPackages.kotlinx.coroutines.MainCoroutineDispatcher
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        func hintOnError() -> Swift.String?
-    }
-    @objc(_ExportedKotlinPackages_kotlinx_coroutines_internal_MainDispatcherFactory)
-    public protocol _MainDispatcherFactory {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol __MainDispatcherFactory: KotlinRuntimeSupport._KotlinBridgeable {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol ThreadSafeHeapNode: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.`internal`._ThreadSafeHeapNode {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        var index: Swift.Int32 {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            set
-        }
-    }
-    @objc(_ExportedKotlinPackages_kotlinx_coroutines_internal_ThreadSafeHeapNode)
-    public protocol _ThreadSafeHeapNode {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public protocol __ThreadSafeHeapNode: KotlinRuntimeSupport._KotlinBridgeable {
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    open class AtomicOp: ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        open override var atomicOp: ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get {
-                if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.self {
-                    return ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.__createClassWrapper(externalRCRef: kotlinx_coroutines_internal_AtomicOp_atomicOp_get(self.__externalRCRef()))
-                } else {
-                    return ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.__createClassWrapper(externalRCRef: kotlinx_coroutines_internal_AtomicOp_atomicOp_get_direct(self.__externalRCRef()))
-                }
-            }
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        open func complete(
-            affected: (any KotlinRuntimeSupport._KotlinBridgeable)?,
-            failure: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Void {
-            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.self {
-                return { kotlinx_coroutines_internal_AtomicOp_complete__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), affected.map { it in it.__externalRCRef() } ?? nil, failure.map { it in it.__externalRCRef() } ?? nil); return () }()
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.complete': a Swift subclass must override it and must not call super.")
-            }
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        public final override func perform(
-            affected: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-            return { switch kotlinx_coroutines_internal_AtomicOp_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), affected.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        open func prepare(
-            affected: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.self {
-                return { switch kotlinx_coroutines_internal_AtomicOp_prepare__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), affected.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.prepare': a Swift subclass must override it and must not call super.")
-            }
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        public override init() {
-            precondition(Self.self != ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.self, "ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp is an abstract class and cannot be instantiated directly")
-            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-            { kotlinx_coroutines_internal_AtomicOp_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    open class LockFreeLinkedListHead: ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListNode {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        public final var isEmpty: Swift.Bool {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get {
-                return kotlinx_coroutines_internal_LockFreeLinkedListHead_isEmpty_get(self.__externalRCRef())
-            }
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        open override var isRemoved: Swift.Bool {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get {
-                if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListHead.self {
-                    return kotlinx_coroutines_internal_LockFreeLinkedListHead_isRemoved_get(self.__externalRCRef())
-                } else {
-                    return kotlinx_coroutines_internal_LockFreeLinkedListHead_isRemoved_get_direct(self.__externalRCRef())
-                }
-            }
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        public final func remove() -> Swift.Never {
-            return { kotlinx_coroutines_internal_LockFreeLinkedListHead_remove(self.__externalRCRef()); fatalError() }()
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        public override init() {
-             let __kt: Swift.UnsafeMutableRawPointer!
-             if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListHead.self {
-                 __kt = kotlinx_coroutines_internal_LockFreeLinkedListHead_init_allocate()
-             } else {
-                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
-             }
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-            { kotlinx_coroutines_internal_LockFreeLinkedListHead_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    open class LockFreeLinkedListNode: KotlinRuntime.KotlinBase {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        open var isRemoved: Swift.Bool {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get {
-                if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListNode.self {
-                    return kotlinx_coroutines_internal_LockFreeLinkedListNode_isRemoved_get(self.__externalRCRef())
-                } else {
-                    return kotlinx_coroutines_internal_LockFreeLinkedListNode_isRemoved_get_direct(self.__externalRCRef())
-                }
-            }
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        public final var next: any KotlinRuntimeSupport._KotlinBridgeable {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get {
-                return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: kotlinx_coroutines_internal_LockFreeLinkedListNode_next_get(self.__externalRCRef()))
-            }
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi) @available(*, unavailable, message: "Declaration uses unsupported types")
-        public final var nextNode: Swift.Never {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get {
-                fatalError()
-            }
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi) @available(*, unavailable, message: "Declaration uses unsupported types")
-        public final var prevNode: Swift.Never {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get {
-                fatalError()
-            }
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi) @available(*, unavailable, message: "Declaration uses unsupported types")
-        public final func addLast(
-            node: Swift.Never
-        ) -> Swift.Void {
-            fatalError()
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi) @available(*, unavailable, message: "Declaration uses unsupported types")
-        public final func addLastIf(
-            node: Swift.Never,
-            condition: @escaping () -> Swift.Bool
-        ) -> Swift.Bool {
-            fatalError()
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi) @available(*, unavailable, message: "Declaration uses unsupported types")
-        public final func addOneIfEmpty(
-            node: Swift.Never
-        ) -> Swift.Bool {
-            fatalError()
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        open func remove() -> Swift.Bool {
-            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListNode.self {
-                return kotlinx_coroutines_internal_LockFreeLinkedListNode_remove(self.__externalRCRef())
-            } else {
-                return kotlinx_coroutines_internal_LockFreeLinkedListNode_remove_direct(self.__externalRCRef())
-            }
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        public override init() {
-             let __kt: Swift.UnsafeMutableRawPointer!
-             if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListNode.self {
-                 __kt = kotlinx_coroutines_internal_LockFreeLinkedListNode_init_allocate()
-             } else {
-                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
-             }
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-            { kotlinx_coroutines_internal_LockFreeLinkedListNode_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-    }
-    open class OpDescriptor: KotlinRuntime.KotlinBase {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        open var atomicOp: ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp? {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get {
-                if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.self {
-                    return { switch kotlinx_coroutines_internal_OpDescriptor_atomicOp_get(self.__externalRCRef()) { case nil: .none; case let res?: ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.__createClassWrapper(externalRCRef: res); } }()
-                } else {
-                    fatalError("Cannot invoke the inherited implementation of abstract property 'ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.atomicOp': a Swift subclass must override it and must not call super.")
-                }
-            }
-        }
-        open func perform(
-            affected: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.self {
-                return { switch kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), affected.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.perform': a Swift subclass must override it and must not call super.")
-            }
-        }
-        public override init() {
-            precondition(Self.self != ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.self, "ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor is an abstract class and cannot be instantiated directly")
-            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-            { kotlinx_coroutines_internal_OpDescriptor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public static func synchronized(
-        lock: ExportedKotlinPackages.kotlinx.coroutines.`internal`.SynchronizedObject,
-        block: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlinx_coroutines_internal_synchronized__TypesOfArguments__ExportedKotlinPackages_kotlinx_atomicfu_locks_SynchronizedObject_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(lock.__externalRCRef(), Unmanaged.passRetained((block as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public static func synchronizedImpl(
-        lock: ExportedKotlinPackages.kotlinx.coroutines.`internal`.SynchronizedObject,
-        block: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlinx_coroutines_internal_synchronizedImpl__TypesOfArguments__ExportedKotlinPackages_kotlinx_atomicfu_locks_SynchronizedObject_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(lock.__externalRCRef(), Unmanaged.passRetained((block as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public static func resumeCancellableWith(
-        _ receiver: any ExportedKotlinPackages.kotlin.coroutines.Continuation,
-        result: ExportedKotlinPackages.kotlin.Result,
-        onCancellation: ((ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void)?
-    ) -> Swift.Void {
-        return { kotlinx_coroutines_internal_resumeCancellableWith__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_coroutines_Continuation_ExportedKotlinPackages_kotlin_Result_Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void___(receiver.__externalRCRef(), result.__externalRCRef(), onCancellation.map { it in Unmanaged.passRetained((it as (ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void) as AnyObject).toOpaque() } ?? nil); return () }()
-    }
 }
 extension ExportedKotlinPackages.kotlinx.coroutines {
     public enum CoroutineStart: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
@@ -1546,7 +1064,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         }
         @_spi(kotlinx$coroutines$InternalCoroutinesApi)
         public final func join() async throws -> Swift.Void {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_JobSupport_join(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
@@ -1693,7 +1211,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         }
         @available(*, deprecated, message: "NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")
         public func join() async throws -> Swift.Void {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_NonCancellable_join(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
@@ -1817,38 +1335,38 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
     public static func awaitAll(
         deferreds: any ExportedKotlinPackages.kotlinx.coroutines.Deferred...
     ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_awaitAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Deferred__Vararg___(deferreds, Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func awaitCancellation() async throws -> Swift.Never {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_awaitCancellation(Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func coroutineScope(
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_coroutineScope__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func currentCoroutineContext() async throws -> any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_currentCoroutineContext(Unmanaged.passRetained((continuation as (any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func delay(
         timeMillis: Swift.Int64
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_delay__TypesOfArguments__Swift_Int64__(timeMillis, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func delay(
         duration: ExportedKotlinPackages.kotlin.time.Duration
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_delay__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(duration.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1862,7 +1380,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
     public static func joinAll(
         jobs: any ExportedKotlinPackages.kotlinx.coroutines.Job...
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_joinAll__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_Job__Vararg___(jobs, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1887,14 +1405,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
     public static func supervisorScope(
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_supervisorScope__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func suspendCancellableCoroutine(
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation) -> Swift.Void
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_suspendCancellableCoroutine__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuationU29202D_U20Swift_Void__(Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1902,7 +1420,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_withContext__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(context.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1910,7 +1428,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         timeMillis: Swift.Int64,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_withTimeout__TypesOfArguments__Swift_Int64_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeMillis, Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1918,7 +1436,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         timeout: ExportedKotlinPackages.kotlin.time.Duration,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_withTimeout__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeout.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1926,7 +1444,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         timeMillis: Swift.Int64,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_withTimeoutOrNull__TypesOfArguments__Swift_Int64_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeMillis, Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1934,12 +1452,12 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         timeout: ExportedKotlinPackages.kotlin.time.Duration,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_withTimeoutOrNull__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(timeout.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func yield() async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_yield(Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -1980,7 +1498,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
     public static func cancelAndJoin(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.Job
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_cancelAndJoin__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_Job__(receiver.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -2028,7 +1546,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
         _ receiver: ExportedKotlinPackages.kotlinx.coroutines.CoroutineDispatcher,
         block: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_invoke__TypesOfArgumentsE__ExportedKotlinPackages_kotlinx_coroutines_CoroutineDispatcher_U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), Unmanaged.passRetained((block as (any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -2388,7 +1906,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         public func send(
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) async throws -> Swift.Void {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_channels_ConflatedBroadcastChannel_send__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
@@ -2436,7 +1954,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.channels.ProducerScope,
         block: @escaping () -> Swift.Void
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_awaitClose__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ProducerScope_U2829202D_U20Swift_Void__(receiver.__externalRCRef(), Unmanaged.passRetained((block as () -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -2483,7 +2001,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel,
         action: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Void
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_consumeEach__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Void__(receiver.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -2534,7 +2052,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
     public static func toList(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
     ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_toList__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel__(receiver.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -2543,75 +2061,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels {
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult {
         return ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult.__createClassWrapper(externalRCRef: kotlinx_coroutines_channels_trySendBlocking__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_SendChannel_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil))
-    }
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.sync {
-    public protocol Mutex: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.sync._Mutex {
-        var isLocked: Swift.Bool {
-            get
-        }
-        @available(*, deprecated, message: "Mutex.onLock deprecated without replacement. For additional details please refer to #2794") @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        var onLock: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2 {
-            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-            get
-        }
-        func holdsLock(
-            owner: any KotlinRuntimeSupport._KotlinBridgeable
-        ) -> Swift.Bool
-        func lock(
-            owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) async throws -> Swift.Void
-        func tryLock(
-            owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool
-        func unlock(
-            owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Void
-    }
-    @objc(_ExportedKotlinPackages_kotlinx_coroutines_sync_Mutex)
-    public protocol _Mutex {
-    }
-    public protocol __Mutex: KotlinRuntimeSupport._KotlinBridgeable {
-    }
-    public protocol Semaphore: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.sync._Semaphore {
-        var availablePermits: Swift.Int32 {
-            get
-        }
-        func acquire() async throws -> Swift.Void
-        func tryAcquire() -> Swift.Bool
-    }
-    @objc(_ExportedKotlinPackages_kotlinx_coroutines_sync_Semaphore)
-    public protocol _Semaphore {
-    }
-    public protocol __Semaphore: KotlinRuntimeSupport._KotlinBridgeable {
-    }
-    public static func mutex(
-        locked: Swift.Bool
-    ) -> any ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_sync_Mutex__TypesOfArguments__Swift_Bool__(locked), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex
-    }
-    public static func semaphore(
-        permits: Swift.Int32,
-        acquiredPermits: Swift.Int32
-    ) -> any ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_sync_Semaphore__TypesOfArguments__Swift_Int32_Swift_Int32__(permits, acquiredPermits), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore
-    }
-    public static func withLock(
-        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex,
-        owner: (any KotlinRuntimeSupport._KotlinBridgeable)?,
-        action: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_sync_withLock__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Mutex_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((action as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
-        }
-    }
-    public static func withPermit(
-        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore,
-        action: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_sync_withPermit__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Semaphore_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), Unmanaged.passRetained((action as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
-        }
     }
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow {
@@ -2767,7 +2216,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         public final func collect(
             collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
         ) async throws -> Swift.Void {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_flow_AbstractFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
@@ -2776,7 +2225,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
             collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
         ) async throws -> Swift.Void {
             if Self.self == ExportedKotlinPackages.kotlinx.coroutines.flow.AbstractFlow.self {
-                try await withKotlinContinuation { continuation, exception, cancellation in
+                return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_flow_AbstractFlow_collectSafely__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
             } else {
@@ -3068,7 +2517,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func collect(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_collect__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_Flow__(receiver.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3076,7 +2525,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         action: @escaping (Swift.Int32, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_collectIndexed__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Int32_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Int32, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3084,7 +2533,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         action: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_collectLatest__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((action as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3173,7 +2622,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func count(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> Swift.Int32 {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_count__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3181,7 +2630,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) async throws -> Swift.Int32 {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_count__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3189,7 +2638,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func count(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> Swift.Int32 {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_count__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3274,7 +2723,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector,
         channel: any ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_emitAll__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel__(receiver.__externalRCRef(), channel.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3282,7 +2731,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector,
         flow: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_emitAll__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector_anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.__externalRCRef(), flow.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3313,7 +2762,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func first(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_first__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3321,14 +2770,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_first__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func firstOrNull(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_firstOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3336,7 +2785,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Bool
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_firstOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Bool__(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Bool) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3406,7 +2855,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         initial: (any KotlinRuntimeSupport._KotlinBridgeable)?,
         operation: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_fold__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), initial.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((operation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3426,14 +2875,14 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     public static func last(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_last__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func lastOrNull(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_lastOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3579,7 +3028,7 @@ publish().refCount() translates to 'started = SharingStared.WhileSubscribed()' a
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         operation: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?, (any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_reduce__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((operation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>, Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3694,14 +3143,14 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
     public static func single(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_single__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public static func singleOrNull(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_singleOrNull__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3730,7 +3179,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         scope: any ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope
     ) async throws -> any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_stateIn__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope__(receiver.wrapped.__externalRCRef(), scope.__externalRCRef(), Unmanaged.passRetained((continuation as (any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3800,7 +3249,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         destination: any ExportedKotlinPackages.kotlin.collections.MutableCollection
     ) async throws -> any ExportedKotlinPackages.kotlin.collections.MutableCollection {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toCollection__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableCollection__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (any ExportedKotlinPackages.kotlin.collections.MutableCollection) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3808,7 +3257,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         destination: any ExportedKotlinPackages.kotlin.collections.MutableList
     ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toList__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableList__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3816,7 +3265,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
     public static func toList(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toList__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3824,7 +3273,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         destination: any ExportedKotlinPackages.kotlin.collections.MutableList
     ) async throws -> Swift.Never {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toList__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableList__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3832,7 +3281,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         destination: any ExportedKotlinPackages.kotlin.collections.MutableSet
     ) async throws -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toSet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableSet__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Set<Swift.Optional<Swift.AnyHashable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3840,7 +3289,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
     public static func toSet(
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
     ) async throws -> Swift.Set<Swift.Optional<Swift.AnyHashable>> {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toSet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(receiver.wrapped.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Set<Swift.Optional<Swift.AnyHashable>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3848,7 +3297,7 @@ replay().refCount() translates to 'started = SharingStared.WhileSubscribed()' ar
         _ receiver: any KotlinCoroutineSupport.KotlinTypedSharedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>,
         destination: any ExportedKotlinPackages.kotlin.collections.MutableSet
     ) async throws -> Swift.Never {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_toSet__TypesOfArgumentsE__anyU20KotlinCoroutineSupport_KotlinTypedSharedFlow_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___anyU20ExportedKotlinPackages_kotlin_collections_MutableSet__(receiver.wrapped.__externalRCRef(), destination.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -3950,11 +3399,11 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.`internal` {
             collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
         ) async throws -> Swift.Void {
             if Self.self == ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.ChannelFlow.self {
-                try await withKotlinContinuation { continuation, exception, cancellation in
+                return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_flow_internal_ChannelFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
             } else {
-                try await withKotlinContinuation { continuation, exception, cancellation in
+                return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_flow_internal_ChannelFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector___direct(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
             }
@@ -4013,7 +3462,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.`internal` {
         public func emit(
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) async throws -> Swift.Void {
-            try await withKotlinContinuation { continuation, exception, cancellation in
+            return try await withKotlinContinuation { continuation, exception, cancellation in
                 let _: Bool = kotlinx_coroutines_flow_internal_SendingCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
             }
         }
@@ -4030,6 +3479,557 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.`internal` {
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.`internal` {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public typealias SynchronizedObject = ExportedKotlinPackages.kotlinx.atomicfu.locks.SynchronizedObject
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol MainDispatcherFactory: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.`internal`._MainDispatcherFactory {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        var loadPriority: Swift.Int32 {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func createDispatcher(
+            allFactories: [any ExportedKotlinPackages.kotlinx.coroutines.`internal`.MainDispatcherFactory]
+        ) -> ExportedKotlinPackages.kotlinx.coroutines.MainCoroutineDispatcher
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func hintOnError() -> Swift.String?
+    }
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_internal_MainDispatcherFactory)
+    public protocol _MainDispatcherFactory {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol __MainDispatcherFactory: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol ThreadSafeHeapNode: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.`internal`._ThreadSafeHeapNode {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        var index: Swift.Int32 {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            set
+        }
+    }
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_internal_ThreadSafeHeapNode)
+    public protocol _ThreadSafeHeapNode {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol __ThreadSafeHeapNode: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    open class AtomicOp: ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        open override var atomicOp: ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get {
+                if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.self {
+                    return ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.__createClassWrapper(externalRCRef: kotlinx_coroutines_internal_AtomicOp_atomicOp_get(self.__externalRCRef()))
+                } else {
+                    return ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.__createClassWrapper(externalRCRef: kotlinx_coroutines_internal_AtomicOp_atomicOp_get_direct(self.__externalRCRef()))
+                }
+            }
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        open func complete(
+            affected: (any KotlinRuntimeSupport._KotlinBridgeable)?,
+            failure: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Void {
+            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.self {
+                return { kotlinx_coroutines_internal_AtomicOp_complete__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), affected.map { it in it.__externalRCRef() } ?? nil, failure.map { it in it.__externalRCRef() } ?? nil); return () }()
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.complete': a Swift subclass must override it and must not call super.")
+            }
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        public final override func perform(
+            affected: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlinx_coroutines_internal_AtomicOp_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), affected.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        open func prepare(
+            affected: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.self {
+                return { switch kotlinx_coroutines_internal_AtomicOp_prepare__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), affected.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.prepare': a Swift subclass must override it and must not call super.")
+            }
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        public override init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.self, "ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlinx_coroutines_internal_AtomicOp_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    open class LockFreeLinkedListHead: ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListNode {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        public final var isEmpty: Swift.Bool {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get {
+                return kotlinx_coroutines_internal_LockFreeLinkedListHead_isEmpty_get(self.__externalRCRef())
+            }
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        open override var isRemoved: Swift.Bool {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get {
+                if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListHead.self {
+                    return kotlinx_coroutines_internal_LockFreeLinkedListHead_isRemoved_get(self.__externalRCRef())
+                } else {
+                    return kotlinx_coroutines_internal_LockFreeLinkedListHead_isRemoved_get_direct(self.__externalRCRef())
+                }
+            }
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        public final func remove() -> Swift.Never {
+            return { kotlinx_coroutines_internal_LockFreeLinkedListHead_remove(self.__externalRCRef()); fatalError() }()
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        public override init() {
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListHead.self {
+                 __kt = kotlinx_coroutines_internal_LockFreeLinkedListHead_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlinx_coroutines_internal_LockFreeLinkedListHead_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    open class LockFreeLinkedListNode: KotlinRuntime.KotlinBase {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        open var isRemoved: Swift.Bool {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get {
+                if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListNode.self {
+                    return kotlinx_coroutines_internal_LockFreeLinkedListNode_isRemoved_get(self.__externalRCRef())
+                } else {
+                    return kotlinx_coroutines_internal_LockFreeLinkedListNode_isRemoved_get_direct(self.__externalRCRef())
+                }
+            }
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        public final var next: any KotlinRuntimeSupport._KotlinBridgeable {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get {
+                return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: kotlinx_coroutines_internal_LockFreeLinkedListNode_next_get(self.__externalRCRef()))
+            }
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi) @available(*, unavailable, message: "Declaration uses unsupported types")
+        public final var nextNode: Swift.Never {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get {
+                fatalError()
+            }
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi) @available(*, unavailable, message: "Declaration uses unsupported types")
+        public final var prevNode: Swift.Never {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get {
+                fatalError()
+            }
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi) @available(*, unavailable, message: "Declaration uses unsupported types")
+        public final func addLast(
+            node: Swift.Never
+        ) -> Swift.Void {
+            fatalError()
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi) @available(*, unavailable, message: "Declaration uses unsupported types")
+        public final func addLastIf(
+            node: Swift.Never,
+            condition: @escaping () -> Swift.Bool
+        ) -> Swift.Bool {
+            fatalError()
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi) @available(*, unavailable, message: "Declaration uses unsupported types")
+        public final func addOneIfEmpty(
+            node: Swift.Never
+        ) -> Swift.Bool {
+            fatalError()
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        open func remove() -> Swift.Bool {
+            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListNode.self {
+                return kotlinx_coroutines_internal_LockFreeLinkedListNode_remove(self.__externalRCRef())
+            } else {
+                return kotlinx_coroutines_internal_LockFreeLinkedListNode_remove_direct(self.__externalRCRef())
+            }
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        public override init() {
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.LockFreeLinkedListNode.self {
+                 __kt = kotlinx_coroutines_internal_LockFreeLinkedListNode_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlinx_coroutines_internal_LockFreeLinkedListNode_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    open class OpDescriptor: KotlinRuntime.KotlinBase {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        open var atomicOp: ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp? {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get {
+                if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.self {
+                    return { switch kotlinx_coroutines_internal_OpDescriptor_atomicOp_get(self.__externalRCRef()) { case nil: .none; case let res?: ExportedKotlinPackages.kotlinx.coroutines.`internal`.AtomicOp.__createClassWrapper(externalRCRef: res); } }()
+                } else {
+                    fatalError("Cannot invoke the inherited implementation of abstract property 'ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.atomicOp': a Swift subclass must override it and must not call super.")
+                }
+            }
+        }
+        open func perform(
+            affected: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            if Self.self == ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.self {
+                return { switch kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), affected.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.perform': a Swift subclass must override it and must not call super.")
+            }
+        }
+        public override init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor.self, "ExportedKotlinPackages.kotlinx.coroutines.`internal`.OpDescriptor is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlinx_coroutines_internal_OpDescriptor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public static func synchronized(
+        lock: ExportedKotlinPackages.kotlinx.coroutines.`internal`.SynchronizedObject,
+        block: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return { switch kotlinx_coroutines_internal_synchronized__TypesOfArguments__ExportedKotlinPackages_kotlinx_atomicfu_locks_SynchronizedObject_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(lock.__externalRCRef(), Unmanaged.passRetained((block as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public static func synchronizedImpl(
+        lock: ExportedKotlinPackages.kotlinx.coroutines.`internal`.SynchronizedObject,
+        block: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return { switch kotlinx_coroutines_internal_synchronizedImpl__TypesOfArguments__ExportedKotlinPackages_kotlinx_atomicfu_locks_SynchronizedObject_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(lock.__externalRCRef(), Unmanaged.passRetained((block as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public static func resumeCancellableWith(
+        _ receiver: any ExportedKotlinPackages.kotlin.coroutines.Continuation,
+        result: ExportedKotlinPackages.kotlin.Result,
+        onCancellation: ((ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void)?
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_internal_resumeCancellableWith__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlin_coroutines_Continuation_ExportedKotlinPackages_kotlin_Result_Swift_Optional_U28ExportedKotlinPackages_kotlin_ThrowableU29202D_U20Swift_Void___(receiver.__externalRCRef(), result.__externalRCRef(), onCancellation.map { it in Unmanaged.passRetained((it as (ExportedKotlinPackages.kotlin.Throwable) -> Swift.Void) as AnyObject).toOpaque() } ?? nil); return () }()
+    }
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.intrinsics {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public static func startCoroutineCancellable(
+        _ receiver: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?,
+        completion: any ExportedKotlinPackages.kotlin.coroutines.Continuation
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_intrinsics_startCoroutineCancellable__TypesOfArgumentsE__U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20ExportedKotlinPackages_kotlin_coroutines_Continuation__(Unmanaged.passRetained((receiver as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), completion.__externalRCRef()); return () }()
+    }
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.selects {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public enum SelectClause_SealedType: KotlinRuntimeSupport.SealedType {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        case selectClause0(ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0_SealedType)
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        case selectClause1(ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1_SealedType)
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        case selectClause2(ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2_SealedType)
+        public var value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause {
+            get {
+                switch self {
+                case let .selectClause0(type): type.value
+                case let .selectClause1(type): type.value
+                case let .selectClause2(type): type.value
+                }
+            }
+        }
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public enum SelectClause0_SealedType: KotlinRuntimeSupport.SealedType {
+        case unknown(ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0_SealedType.Unknown)
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        public struct Unknown: KotlinRuntimeSupport.SealedType {
+            public let value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0
+            init(
+                _ value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0
+            ) {
+                self.value = value
+            }
+        }
+        public var value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0 {
+            get {
+                switch self {
+                case let .unknown(type): type.value
+                }
+            }
+        }
+    }
+    public protocol SelectBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.selects._SelectBuilder {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func invoke(
+            _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0,
+            block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Void
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func invoke(
+            _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1,
+            block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Void
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func invoke(
+            _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
+            param: (any KotlinRuntimeSupport._KotlinBridgeable)?,
+            block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Void
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func invoke(
+            _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
+            block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Void
+    }
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder)
+    public protocol _SelectBuilder {
+    }
+    public protocol __SelectBuilder: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol SelectClause: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        var clauseObject: any KotlinRuntimeSupport._KotlinBridgeable {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType
+    }
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause)
+    public protocol _SelectClause {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol __SelectClause: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol SelectClause0: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause, ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause0 {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0_SealedType
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi) @_disfavoredOverload
+        func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType
+    }
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause0)
+    public protocol _SelectClause0: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol __SelectClause0: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol SelectClause1: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause, ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause1 {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType
+    }
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause1)
+    public protocol _SelectClause1: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol __SelectClause1: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol SelectClause2: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause, ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause2 {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType
+    }
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2)
+    public protocol _SelectClause2: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol __SelectClause2: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol SelectInstance: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.selects._SelectInstance {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        var context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func disposeOnCompletion(
+            disposableHandle: any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
+        ) -> Swift.Void
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func selectInRegistrationPhase(
+            internalResult: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Void
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func trySelect(
+            clauseObject: any KotlinRuntimeSupport._KotlinBridgeable,
+            result: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool
+    }
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_selects_SelectInstance)
+    public protocol _SelectInstance {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public protocol __SelectInstance: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public struct SelectClause1_SealedType: KotlinRuntimeSupport.SealedType {
+        public let value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1
+        init(
+            _ value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1
+        ) {
+            self.value = value
+        }
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public struct SelectClause2_SealedType: KotlinRuntimeSupport.SealedType {
+        public let value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2
+        init(
+            _ value: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2
+        ) {
+            self.value = value
+        }
+    }
+    public static func select(
+        builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
+    ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = kotlinx_coroutines_selects_select__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(Unmanaged.passRetained((builder as (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
+        }
+    }
+    public static func selectUnbiased(
+        builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
+    ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = kotlinx_coroutines_selects_selectUnbiased__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(Unmanaged.passRetained((builder as (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
+        }
+    }
+    @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
+    public static func whileSelect(
+        builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
+    ) async throws -> Swift.Void {
+        return try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = kotlinx_coroutines_selects_whileSelect__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(Unmanaged.passRetained((builder as (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
+        }
+    }
+    @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
+    public static func onTimeout(
+        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder,
+        timeMillis: Swift.Int64,
+        block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_selects_onTimeout__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder_Swift_Int64_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), timeMillis, Unmanaged.passRetained((block as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
+    }
+    @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
+    public static func onTimeout(
+        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder,
+        timeout: ExportedKotlinPackages.kotlin.time.Duration,
+        block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_selects_onTimeout__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilder_ExportedKotlinPackages_kotlin_time_Duration_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), timeout.__externalRCRef(), Unmanaged.passRetained((block as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
+    }
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.sync {
+    public protocol Mutex: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.sync._Mutex {
+        var isLocked: Swift.Bool {
+            get
+        }
+        @available(*, deprecated, message: "Mutex.onLock deprecated without replacement. For additional details please refer to #2794") @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        var onLock: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2 {
+            @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+            get
+        }
+        func holdsLock(
+            owner: any KotlinRuntimeSupport._KotlinBridgeable
+        ) -> Swift.Bool
+        func lock(
+            owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) async throws -> Swift.Void
+        func tryLock(
+            owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool
+        func unlock(
+            owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Void
+    }
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_sync_Mutex)
+    public protocol _Mutex {
+    }
+    public protocol __Mutex: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public protocol Semaphore: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.sync._Semaphore {
+        var availablePermits: Swift.Int32 {
+            get
+        }
+        func acquire() async throws -> Swift.Void
+        func tryAcquire() -> Swift.Bool
+    }
+    @objc(_ExportedKotlinPackages_kotlinx_coroutines_sync_Semaphore)
+    public protocol _Semaphore {
+    }
+    public protocol __Semaphore: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public static func mutex(
+        locked: Swift.Bool
+    ) -> any ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_sync_Mutex__TypesOfArguments__Swift_Bool__(locked), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex
+    }
+    public static func semaphore(
+        permits: Swift.Int32,
+        acquiredPermits: Swift.Int32
+    ) -> any ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_sync_Semaphore__TypesOfArguments__Swift_Int32_Swift_Int32__(permits, acquiredPermits), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore
+    }
+    public static func withLock(
+        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex,
+        owner: (any KotlinRuntimeSupport._KotlinBridgeable)?,
+        action: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = kotlinx_coroutines_sync_withLock__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Mutex_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((action as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
+        }
+    }
+    public static func withPermit(
+        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore,
+        action: @escaping () -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = kotlinx_coroutines_sync_withPermit__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_sync_Semaphore_U2829202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), Unmanaged.passRetained((action as () -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
 }
@@ -4207,244 +4207,6 @@ extension ExportedKotlinPackages.kotlinx.coroutines.CoroutineScope {
         let receiver = self
         return ExportedKotlinPackages.kotlinx.coroutines.plus(receiver, context: context)
     }
-}
-@_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectBuilder {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func invoke(
-        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0,
-        block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause0_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), Unmanaged.passRetained((block as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func invoke(
-        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1,
-        block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause1_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func invoke(
-        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
-        param: (any KotlinRuntimeSupport._KotlinBridgeable)?,
-        block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), param.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func invoke(
-        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
-        block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
-    }
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectBuilder {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectBuilder where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.selects._SelectBuilder {
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func invoke(
-        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0,
-        block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Void {
-        fatalError("'invoke' is an @_spi requirement that must be implemented by Swift conformers")
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func invoke(
-        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1,
-        block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Void {
-        fatalError("'invoke' is an @_spi requirement that must be implemented by Swift conformers")
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func invoke(
-        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
-        param: (any KotlinRuntimeSupport._KotlinBridgeable)?,
-        block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Void {
-        fatalError("'invoke' is an @_spi requirement that must be implemented by Swift conformers")
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func invoke(
-        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
-        block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self.__externalRCRef(), receiver.__externalRCRef(), Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
-    }
-}
-@_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public var clauseObject: any KotlinRuntimeSupport._KotlinBridgeable {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        get {
-            return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: kotlinx_coroutines_selects_SelectClause_clauseObject_get(self.__externalRCRef()))
-        }
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType {
-        switch self {
-        case let value as ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0: .selectClause0(value.sealedType())
-        case let value as ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1: .selectClause1(.init(value))
-        case let value as ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2: .selectClause2(.init(value))
-        default: fatalError("missing sealedType for \(self)")
-        }
-    }
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause {
-}
-@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause {
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause {
-}
-@_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0 where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause0 {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0_SealedType {
-        switch self {
-        default: .unknown(.init(self))
-        }
-    }
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause0 {
-}
-@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause0 where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause0 {
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0 {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi) @_disfavoredOverload
-    public func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType {
-        .selectClause0(sealedType())
-    }
-}
-@_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1 where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause1 {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause1 {
-}
-@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause1 where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause1 {
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1 {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType {
-        .selectClause1(.init(self))
-    }
-}
-@_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2 where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause2 {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause2 {
-}
-@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause2 where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause2 {
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2 {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType {
-        .selectClause2(.init(self))
-    }
-}
-@_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectInstance where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectInstance {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public var context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_selects_SelectInstance_context_get(self.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
-        }
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func disposeOnCompletion(
-        disposableHandle: any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
-    ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_SelectInstance_disposeOnCompletion__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_DisposableHandle__(self.__externalRCRef(), disposableHandle.__externalRCRef()); return () }()
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func selectInRegistrationPhase(
-        internalResult: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Void {
-        return { kotlinx_coroutines_selects_SelectInstance_selectInRegistrationPhase__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), internalResult.map { it in it.__externalRCRef() } ?? nil); return () }()
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func trySelect(
-        clauseObject: any KotlinRuntimeSupport._KotlinBridgeable,
-        result: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        return kotlinx_coroutines_selects_SelectInstance_trySelect__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), clauseObject.__externalRCRef(), result.map { it in it.__externalRCRef() } ?? nil)
-    }
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectInstance {
-}
-@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectInstance, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectInstance where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.selects._SelectInstance {
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectInstance {
-}
-@_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlinx.coroutines.`internal`.MainDispatcherFactory where Self : ExportedKotlinPackages.kotlinx.coroutines.`internal`.__MainDispatcherFactory {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public var loadPriority: Swift.Int32 {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        get {
-            return kotlinx_coroutines_internal_MainDispatcherFactory_loadPriority_get(self.__externalRCRef())
-        }
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func createDispatcher(
-        allFactories: [any ExportedKotlinPackages.kotlinx.coroutines.`internal`.MainDispatcherFactory]
-    ) -> ExportedKotlinPackages.kotlinx.coroutines.MainCoroutineDispatcher {
-        return ExportedKotlinPackages.kotlinx.coroutines.MainCoroutineDispatcher.__createClassWrapper(externalRCRef: kotlinx_coroutines_internal_MainDispatcherFactory_createDispatcher__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_U60internalU60_MainDispatcherFactory___(self.__externalRCRef(), allFactories))
-    }
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func hintOnError() -> Swift.String? {
-        return kotlinx_coroutines_internal_MainDispatcherFactory_hintOnError(self.__externalRCRef())
-    }
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.`internal`._MainDispatcherFactory {
-}
-@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.`internal`.MainDispatcherFactory, ExportedKotlinPackages.kotlinx.coroutines.`internal`.__MainDispatcherFactory where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.`internal`._MainDispatcherFactory {
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.`internal`.MainDispatcherFactory {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func hintOnError() -> Swift.String? {
-        return kotlinx_coroutines_internal_MainDispatcherFactory_hintOnError_direct(self.__externalRCRef())
-    }
-}
-@_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlinx.coroutines.`internal`.ThreadSafeHeapNode where Self : ExportedKotlinPackages.kotlinx.coroutines.`internal`.__ThreadSafeHeapNode {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public var index: Swift.Int32 {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        get {
-            return kotlinx_coroutines_internal_ThreadSafeHeapNode_index_get(self.__externalRCRef())
-        }
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        set {
-            return { kotlinx_coroutines_internal_ThreadSafeHeapNode_index_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue); return () }()
-        }
-    }
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.`internal`._ThreadSafeHeapNode {
-}
-@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.`internal`.ThreadSafeHeapNode, ExportedKotlinPackages.kotlinx.coroutines.`internal`.__ThreadSafeHeapNode where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.`internal`._ThreadSafeHeapNode {
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.`internal`.ThreadSafeHeapNode {
 }
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation where Self : ExportedKotlinPackages.kotlinx.coroutines.__CancellableContinuation {
@@ -4707,7 +4469,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.Deferred where Self : Export
         }
     }
     public func `await`() async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_Deferred_await(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -4850,7 +4612,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.Job where Self : ExportedKot
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_Job_invokeOnCompletion__TypesOfArguments__U28Swift_Optional_ExportedKotlinPackages_kotlin_Throwable_U29202D_U20Swift_Void__(self.__externalRCRef(), Unmanaged.passRetained((handler as (Swift.Optional<ExportedKotlinPackages.kotlin.Throwable>) -> Swift.Void) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
     }
     public func join() async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_Job_join(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -4924,25 +4686,6 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 extension ExportedKotlinPackages.kotlinx.coroutines.Runnable {
 }
 @_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.FusibleFlow where Self : ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.__FusibleFlow {
-    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public func fuse(
-        context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext,
-        capacity: Swift.Int32,
-        onBufferOverflow: ExportedKotlinPackages.kotlinx.coroutines.channels.BufferOverflow
-    ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_internal_FusibleFlow_fuse__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow__(self.__externalRCRef(), context.__externalRCRef(), capacity, onBufferOverflow.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
-    }
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`._FusibleFlow {
-}
-@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.FusibleFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.__FusibleFlow where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`._FusibleFlow {
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.FusibleFlow {
-}
-@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.coroutines.channels.BroadcastChannel where Self : ExportedKotlinPackages.kotlinx.coroutines.channels.__BroadcastChannel {
     @_spi(kotlinx$coroutines$ObsoleteCoroutinesApi)
     public func cancel(
@@ -4978,7 +4721,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels.Channel {
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelIterator where Self : ExportedKotlinPackages.kotlinx.coroutines.channels.__ChannelIterator {
     public func hasNext() async throws -> Swift.Bool {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_ChannelIterator_hasNext(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Bool) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5049,12 +4792,12 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels.ReceiveChannel wher
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_channels_ReceiveChannel_iterator(self.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelIterator.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelIterator
     }
     public func receive() async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_ReceiveChannel_receive(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func receiveCatching() async throws -> ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_ReceiveChannel_receiveCatching(self.__externalRCRef(), Unmanaged.passRetained((continuation as (ExportedKotlinPackages.kotlinx.coroutines.channels.ChannelResult) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5127,7 +4870,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels.SendChannel where S
     public func send(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_channels_SendChannel_send__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5160,87 +4903,11 @@ extension ExportedKotlinPackages.kotlinx.coroutines.channels.SendChannel {
     }
 }
 @_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex where Self : ExportedKotlinPackages.kotlinx.coroutines.sync.__Mutex {
-    public var isLocked: Swift.Bool {
-        get {
-            return kotlinx_coroutines_sync_Mutex_isLocked_get(self.__externalRCRef())
-        }
-    }
-    @available(*, deprecated, message: "Mutex.onLock deprecated without replacement. For additional details please refer to #2794") @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public var onLock: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2 {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_sync_Mutex_onLock_get(self.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2
-        }
-    }
-    public func holdsLock(
-        owner: any KotlinRuntimeSupport._KotlinBridgeable
-    ) -> Swift.Bool {
-        return kotlinx_coroutines_sync_Mutex_holdsLock__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), owner.__externalRCRef())
-    }
-    public func lock(
-        owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_sync_Mutex_lock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
-        }
-    }
-    public func tryLock(
-        owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        return kotlinx_coroutines_sync_Mutex_tryLock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func unlock(
-        owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Void {
-        return { kotlinx_coroutines_sync_Mutex_unlock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil); return () }()
-    }
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.sync._Mutex {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex, ExportedKotlinPackages.kotlinx.coroutines.sync.__Mutex where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.sync._Mutex {
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex {
-    @available(*, deprecated, message: "Mutex.onLock deprecated without replacement. For additional details please refer to #2794") @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-    public var onLock: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2 {
-        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
-        get {
-            fatalError("'onLock' is an @_spi requirement that must be implemented by Swift conformers")
-        }
-    }
-}
-@_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore where Self : ExportedKotlinPackages.kotlinx.coroutines.sync.__Semaphore {
-    public var availablePermits: Swift.Int32 {
-        get {
-            return kotlinx_coroutines_sync_Semaphore_availablePermits_get(self.__externalRCRef())
-        }
-    }
-    public func acquire() async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = kotlinx_coroutines_sync_Semaphore_acquire(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
-        }
-    }
-    public func tryAcquire() -> Swift.Bool {
-        return kotlinx_coroutines_sync_Semaphore_tryAcquire(self.__externalRCRef())
-    }
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.sync._Semaphore {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore, ExportedKotlinPackages.kotlinx.coroutines.sync.__Semaphore where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.sync._Semaphore {
-}
-extension ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore {
-}
-@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.Flow where Self : ExportedKotlinPackages.kotlinx.coroutines.flow.__Flow {
     public func collect(
         collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_Flow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5258,7 +4925,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector where Sel
     public func emit(
         value: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5281,7 +4948,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow where
     public func emit(
         value: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5342,7 +5009,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow where Self :
     public func collect(
         collector: any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
     ) async throws -> Swift.Never {
-        try await withKotlinContinuation { continuation, exception, cancellation in
+        return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = kotlinx_coroutines_flow_SharedFlow_collect__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_flow_FlowCollector__(self.__externalRCRef(), collector.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
@@ -5387,6 +5054,339 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.__StateFlow, KotlinCoroutineSupport.KotlinStateFlow where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._StateFlow {
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow {
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.FusibleFlow where Self : ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.__FusibleFlow {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func fuse(
+        context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext,
+        capacity: Swift.Int32,
+        onBufferOverflow: ExportedKotlinPackages.kotlinx.coroutines.channels.BufferOverflow
+    ) -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
+        return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_flow_internal_FusibleFlow_fuse__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow__(self.__externalRCRef(), context.__externalRCRef(), capacity, onBufferOverflow.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
+    }
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`._FusibleFlow {
+}
+@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.FusibleFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.__FusibleFlow where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`._FusibleFlow {
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.flow.`internal`.FusibleFlow {
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlinx.coroutines.`internal`.MainDispatcherFactory where Self : ExportedKotlinPackages.kotlinx.coroutines.`internal`.__MainDispatcherFactory {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public var loadPriority: Swift.Int32 {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        get {
+            return kotlinx_coroutines_internal_MainDispatcherFactory_loadPriority_get(self.__externalRCRef())
+        }
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func createDispatcher(
+        allFactories: [any ExportedKotlinPackages.kotlinx.coroutines.`internal`.MainDispatcherFactory]
+    ) -> ExportedKotlinPackages.kotlinx.coroutines.MainCoroutineDispatcher {
+        return ExportedKotlinPackages.kotlinx.coroutines.MainCoroutineDispatcher.__createClassWrapper(externalRCRef: kotlinx_coroutines_internal_MainDispatcherFactory_createDispatcher__TypesOfArguments__Swift_Array_anyU20ExportedKotlinPackages_kotlinx_coroutines_U60internalU60_MainDispatcherFactory___(self.__externalRCRef(), allFactories))
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func hintOnError() -> Swift.String? {
+        return kotlinx_coroutines_internal_MainDispatcherFactory_hintOnError(self.__externalRCRef())
+    }
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.`internal`._MainDispatcherFactory {
+}
+@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.`internal`.MainDispatcherFactory, ExportedKotlinPackages.kotlinx.coroutines.`internal`.__MainDispatcherFactory where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.`internal`._MainDispatcherFactory {
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.`internal`.MainDispatcherFactory {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func hintOnError() -> Swift.String? {
+        return kotlinx_coroutines_internal_MainDispatcherFactory_hintOnError_direct(self.__externalRCRef())
+    }
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlinx.coroutines.`internal`.ThreadSafeHeapNode where Self : ExportedKotlinPackages.kotlinx.coroutines.`internal`.__ThreadSafeHeapNode {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public var index: Swift.Int32 {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        get {
+            return kotlinx_coroutines_internal_ThreadSafeHeapNode_index_get(self.__externalRCRef())
+        }
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        set {
+            return { kotlinx_coroutines_internal_ThreadSafeHeapNode_index_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue); return () }()
+        }
+    }
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.`internal`._ThreadSafeHeapNode {
+}
+@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.`internal`.ThreadSafeHeapNode, ExportedKotlinPackages.kotlinx.coroutines.`internal`.__ThreadSafeHeapNode where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.`internal`._ThreadSafeHeapNode {
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.`internal`.ThreadSafeHeapNode {
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectBuilder {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func invoke(
+        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0,
+        block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause0_U282920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), Unmanaged.passRetained((block as () async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func invoke(
+        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1,
+        block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause1_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func invoke(
+        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
+        param: (any KotlinRuntimeSupport._KotlinBridgeable)?,
+        block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), param.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func invoke(
+        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
+        block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), receiver.__externalRCRef(), Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
+    }
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectBuilder {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectBuilder where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.selects._SelectBuilder {
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func invoke(
+        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0,
+        block: @escaping () async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Void {
+        fatalError("'invoke' is an @_spi requirement that must be implemented by Swift conformers")
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func invoke(
+        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1,
+        block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Void {
+        fatalError("'invoke' is an @_spi requirement that must be implemented by Swift conformers")
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func invoke(
+        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
+        param: (any KotlinRuntimeSupport._KotlinBridgeable)?,
+        block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Void {
+        fatalError("'invoke' is an @_spi requirement that must be implemented by Swift conformers")
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func invoke(
+        _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2,
+        block: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectClause2_U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self.__externalRCRef(), receiver.__externalRCRef(), Unmanaged.passRetained((block as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) async throws -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()); return () }()
+    }
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public var clauseObject: any KotlinRuntimeSupport._KotlinBridgeable {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        get {
+            return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: kotlinx_coroutines_selects_SelectClause_clauseObject_get(self.__externalRCRef()))
+        }
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType {
+        switch self {
+        case let value as ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0: .selectClause0(value.sealedType())
+        case let value as ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1: .selectClause1(.init(value))
+        case let value as ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2: .selectClause2(.init(value))
+        default: fatalError("missing sealedType for \(self)")
+        }
+    }
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause {
+}
+@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause {
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause {
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0 where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause0 {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0_SealedType {
+        switch self {
+        default: .unknown(.init(self))
+        }
+    }
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause0 {
+}
+@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause0 where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause0 {
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0 {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi) @_disfavoredOverload
+    public func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType {
+        .selectClause0(sealedType())
+    }
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1 where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause1 {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause1 {
+}
+@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause1 where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause1 {
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1 {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType {
+        .selectClause1(.init(self))
+    }
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2 where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause2 {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause2 {
+}
+@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause2 where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.selects._SelectClause2 {
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2 {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType {
+        .selectClause2(.init(self))
+    }
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectInstance where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectInstance {
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public var context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        get {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_selects_SelectInstance_context_get(self.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
+        }
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func disposeOnCompletion(
+        disposableHandle: any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_selects_SelectInstance_disposeOnCompletion__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_DisposableHandle__(self.__externalRCRef(), disposableHandle.__externalRCRef()); return () }()
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func selectInRegistrationPhase(
+        internalResult: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_selects_SelectInstance_selectInRegistrationPhase__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), internalResult.map { it in it.__externalRCRef() } ?? nil); return () }()
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func trySelect(
+        clauseObject: any KotlinRuntimeSupport._KotlinBridgeable,
+        result: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Bool {
+        return kotlinx_coroutines_selects_SelectInstance_trySelect__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), clauseObject.__externalRCRef(), result.map { it in it.__externalRCRef() } ?? nil)
+    }
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.selects._SelectInstance {
+}
+@_spi(kotlinx$coroutines$InternalCoroutinesApi) @_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectInstance, ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectInstance where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.selects._SelectInstance {
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectInstance {
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex where Self : ExportedKotlinPackages.kotlinx.coroutines.sync.__Mutex {
+    public var isLocked: Swift.Bool {
+        get {
+            return kotlinx_coroutines_sync_Mutex_isLocked_get(self.__externalRCRef())
+        }
+    }
+    @available(*, deprecated, message: "Mutex.onLock deprecated without replacement. For additional details please refer to #2794") @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public var onLock: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2 {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        get {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_sync_Mutex_onLock_get(self.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2
+        }
+    }
+    public func holdsLock(
+        owner: any KotlinRuntimeSupport._KotlinBridgeable
+    ) -> Swift.Bool {
+        return kotlinx_coroutines_sync_Mutex_holdsLock__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), owner.__externalRCRef())
+    }
+    public func lock(
+        owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) async throws -> Swift.Void {
+        return try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = kotlinx_coroutines_sync_Mutex_lock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
+        }
+    }
+    public func tryLock(
+        owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Bool {
+        return kotlinx_coroutines_sync_Mutex_tryLock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil)
+    }
+    public func unlock(
+        owner: (any KotlinRuntimeSupport._KotlinBridgeable)?
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_sync_Mutex_unlock__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), owner.map { it in it.__externalRCRef() } ?? nil); return () }()
+    }
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.sync._Mutex {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex, ExportedKotlinPackages.kotlinx.coroutines.sync.__Mutex where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.sync._Mutex {
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.sync.Mutex {
+    @available(*, deprecated, message: "Mutex.onLock deprecated without replacement. For additional details please refer to #2794") @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public var onLock: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2 {
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        get {
+            fatalError("'onLock' is an @_spi requirement that must be implemented by Swift conformers")
+        }
+    }
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore where Self : ExportedKotlinPackages.kotlinx.coroutines.sync.__Semaphore {
+    public var availablePermits: Swift.Int32 {
+        get {
+            return kotlinx_coroutines_sync_Semaphore_availablePermits_get(self.__externalRCRef())
+        }
+    }
+    public func acquire() async throws -> Swift.Void {
+        return try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = kotlinx_coroutines_sync_Semaphore_acquire(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
+        }
+    }
+    public func tryAcquire() -> Swift.Bool {
+        return kotlinx_coroutines_sync_Semaphore_tryAcquire(self.__externalRCRef())
+    }
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.sync._Semaphore {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore, ExportedKotlinPackages.kotlinx.coroutines.sync.__Semaphore where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.sync._Semaphore {
+}
+extension ExportedKotlinPackages.kotlinx.coroutines.sync.Semaphore {
 }
 @_cdecl("KotlinxCoroutinesCore_internal_functional_type_callee_ExportedKotlinPackagesU2EkotlinU2EtimeU2EDuration__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 package func KotlinxCoroutinesCore_internal_functional_type_callee_ExportedKotlinPackagesU2EkotlinU2EtimeU2EDuration__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.UnsafeMutableRawPointer {
@@ -6789,7 +6789,7 @@ package func kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE_
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
     let _result: Swift.Void = _self.invoke(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0, block: {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: block, options: .asBestFittingWrapper)
-    return { try await withKotlinContinuation { continuation, exception, cancellation in
+    return { return try await withKotlinContinuation { continuation, exception, cancellation in
     let _: Bool = KotlinxCoroutinesCore_internal_functional_type_caller_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
 } }
 }())
@@ -6801,7 +6801,7 @@ package func kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE_
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
     let _result: Swift.Void = _self.invoke(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1, block: {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: block, options: .asBestFittingWrapper)
-    return { _1 in try await withKotlinContinuation { continuation, exception, cancellation in
+    return { _1 in return try await withKotlinContinuation { continuation, exception, cancellation in
     let _: Bool = KotlinxCoroutinesCore_internal_functional_type_caller_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef(), _1.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
 } }
 }())
@@ -6813,7 +6813,7 @@ package func kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE_
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
     let _result: Swift.Void = _self.invoke(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2, param: { switch param { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), block: {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: block, options: .asBestFittingWrapper)
-    return { _1 in try await withKotlinContinuation { continuation, exception, cancellation in
+    return { _1 in return try await withKotlinContinuation { continuation, exception, cancellation in
     let _: Bool = KotlinxCoroutinesCore_internal_functional_type_caller_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef(), _1.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
 } }
 }())
@@ -6825,7 +6825,7 @@ package func kotlinx_coroutines_selects_SelectBuilder_invoke__TypesOfArgumentsE_
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
     let _result: Swift.Void = _self.invoke(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2, block: {
     let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: block, options: .asBestFittingWrapper)
-    return { _1 in try await withKotlinContinuation { continuation, exception, cancellation in
+    return { _1 in return try await withKotlinContinuation { continuation, exception, cancellation in
     let _: Bool = KotlinxCoroutinesCore_internal_functional_type_caller_async_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToBlock.__externalRCRef(), _1.map { it in it.__externalRCRef() } ?? nil, Unmanaged.passRetained((continuation as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
 } }
 }())

@@ -10,7 +10,8 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
@@ -18,8 +19,10 @@ import kotlin.io.path.deleteExisting
 import kotlin.io.path.writeText
 
 @DisplayName("JVM tasks target validation")
+@MustRunOnChangesInGradle
 class JvmTargetValidationTest : KGPBaseTest() {
 
+    @TestMetadata("kotlin-java-toolchain/kotlinJavaProject")
     @JvmGradlePluginTests
     @DisplayName("Should produce error if java and kotlin jvm targets are different")
     @GradleTest
@@ -44,6 +47,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-java-toolchain/kotlinJavaProject")
     @JvmGradlePluginTests
     @DisplayName("Should allow to override validation mode for specific task")
     @GradleTest
@@ -78,6 +82,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-java-toolchain/kotlinJavaProject")
     @JvmGradlePluginTests
     @DisplayName("Should warn in the build log if verification mode is 'warning' and kotlin and java targets are different")
     @GradleTest
@@ -102,6 +107,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-java-toolchain/kotlinJavaProject")
     @JvmGradlePluginTests
     @DisplayName("Should ignore if verification mode is 'ignore' and kotlin and java targets are different")
     @GradleTest
@@ -128,6 +134,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-java-toolchain/kotlinJavaProject")
     @JvmGradlePluginTests
     @DisplayName("Should not produce warning when java and kotlin jvm targets are the same")
     @GradleTest
@@ -150,6 +157,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-java-toolchain/kotlinJavaProject")
     @JvmGradlePluginTests
     @DisplayName("Should produce Java-Kotlin jvm target incompatibility warning only for related tasks")
     @GradleTest
@@ -199,6 +207,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-java-toolchain/kotlinJavaProject")
     @JvmGradlePluginTests
     @DisplayName("Should correctly validate JVM targets in mixed Kotlin/Java projects that are using <JDK1.8")
     @GradleTest
@@ -230,6 +239,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-java-toolchain/kotlinJavaProject")
     @JvmGradlePluginTests
     @DisplayName("Should skip JVM target validation if no Kotlin sources are available")
     @GradleTest
@@ -264,6 +274,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-java-toolchain/simple")
     @JvmGradlePluginTests
     @DisplayName("Should still do JVM target validation if no java sources are available")
     @GradleTest
@@ -294,6 +305,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-java-toolchain/simple")
     @JvmGradlePluginTests
     @DisplayName("Should do JVM target validation if java sources are added and configuration cache is reused")
     @GradleTest
@@ -303,8 +315,8 @@ class JvmTargetValidationTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
-            // Validation mode should be 'warning' because of https://github.com/gradle/gradle/issues/9339
-            // which is fixed in Gradle 7.2
+            // Validation mode should be 'warning' so the build succeeds and the configuration cache
+            // is stored and then reused by the second build below
             //language=properties
             gradleProperties.append(
                 """
@@ -347,6 +359,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @OtherGradlePluginTests
     @DisplayName("Validation should work correctly for KaptGenerateStubs task")
     @GradleTest
@@ -379,6 +392,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-31468-multiple-jvm-targets-with-java")
     @MppGradlePluginTests
     @DisplayName("Validation should show error for MPP JVM target withJava")
     @GradleTest
@@ -409,6 +423,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kt-31468-multiple-jvm-targets-with-java")
     @MppGradlePluginTests
     @DisplayName("Validation should not run MPP JVM target without withJava")
     @GradleTest
@@ -437,6 +452,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-single-jvm-target")
     @MppGradlePluginTests
     @DisplayName("Validation should not run in MPP on empty Java sources")
     @GradleTest

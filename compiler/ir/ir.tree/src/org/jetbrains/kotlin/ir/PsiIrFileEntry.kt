@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.ir
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
-import kotlin.reflect.KClass
 
 class PsiIrFileEntry(val psiFile: PsiFile) : AbstractIrFileEntry() {
     private val psiFileName = psiFile.virtualFile?.path ?: psiFile.name
@@ -38,9 +36,4 @@ class PsiIrFileEntry(val psiFile: PsiFile) : AbstractIrFileEntry() {
         }
         return psiElement
     }
-
-    fun <E : PsiElement> findPsiElement(irElement: IrElement, psiElementClass: KClass<E>): E? =
-        findPsiElement(irElement)?.let {
-            PsiTreeUtil.getParentOfType(it, psiElementClass.java, false)
-        }
 }

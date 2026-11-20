@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmExposeBoxedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.light.classes.symbol.classes.jvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.utils.computeSimpleModality
@@ -21,13 +23,17 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
 /**
  * Computes the JVM modality modifier of the light method for [symbol] in [containingClass], or `null` if it has none.
  *
- * The modifier follows the Kotlin modality of [symbol], with two exceptions:
+ * The modifier follows the Kotlin modality of [symbol], with these exceptions:
  * - An interface member with a body which is not compiled to a JVM `default` method is `abstract`. With `-jvm-default=disable`,
  *   the JVM backend moves such an implementation to the `DefaultImpls` class and leaves an abstract method in the interface, the
  *   same way as for a member without a body. Otherwise, the implementation is compiled to a `default` method, see
  *   [SymbolLightMemberModifierList]. Static members of an interface (`@JvmStatic` members of its companion object and members of
- *   its companion block) keep their implementation in the interface class in any mode, so they are not affected. This mirrors
- *   `org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault`.
+ *   its companion block) keep their implementation in the interface class in any mode, so they are not affected. A private member
+ *   leaves no method in the interface with `-jvm-default=disable`, so [SymbolLightClassForInterface.getOwnMethods] excludes it.
+ *   This mirrors `org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault`.
+ * - A method of [SymbolLightClassForInterfaceDefaultImpls] has no modality modifier, as the JVM backend never generates its static
+ *   methods as `final`, see `org.jetbrains.kotlin.backend.jvm.JvmCachedDeclarations.getDefaultImplsFunction`. Otherwise, a private
+ *   member, which is `final` in Kotlin, would be `final` in `DefaultImpls`.
  * - `final` is suppressed for interface members and generated enum members.
  */
 context(_: KaSession)
@@ -46,6 +52,7 @@ internal fun computeMethodModality(symbol: KaCallableSymbol, containingClass: Sy
             (containingClass.isEnum && symbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED || containingClass.isInterface)
 
     return when {
+        containingClass is SymbolLightClassForInterfaceDefaultImpls -> null
         isMovedToDefaultImpls() -> PsiModifier.ABSTRACT
         else -> symbol.computeSimpleModality()?.takeUnless { it.isSuppressedFinalModifier() }
     }

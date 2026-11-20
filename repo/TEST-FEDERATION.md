@@ -10,6 +10,7 @@ All tests run in master builds, even if they were not required for merging the c
 - [Which tests are required for merging to master?](#which-tests-are-required-for-merging-to-master)
 - [Defining domains](#defining-domains)
     - [Running all tests on changes in another domain](#running-all-tests-on-changes-in-another-domain)
+- [Ignoring files](#ignoring-files)
 - [Running individual tests on changes in another domain](#running-individual-tests-on-changes-in-another-domain)
 - [Always running tests](#always-running-tests)
 - [`^test:` commit command](#test-commit-command)
@@ -54,6 +55,7 @@ Use `include` and `exclude` in [domains.yaml](./domains.yaml) to specify which f
 
 ```yaml
 Js:
+  team: "Kotlin JS"
   include:
     - "js"
     - "compiler/ir/backend.js"
@@ -62,15 +64,74 @@ Js:
 ```
 
 Entries under `include` and `exclude` can be directory paths or glob patterns. A directory path matches the directory and all its
-descendants. When entries overlap, the most specific matching entry takes precedence.
-A domain is changed when any file belonging to it is changed.
+descendants. A domain is changed when any file belonging to it is changed.
+
+Similar to `.gitignore`, the order of entries matters:
+
+- `include` and `exclude` entries are each evaluated in declaration order and the **last matching entry wins**.
+- Entries starting with `!` are negated and must be declared after the entries they negate:
+  `!` under `include` removes a path included by a previous `include` entry,
+  `!` under `exclude` revokes the exclusion of a path by a previous `exclude` entry.
+- `exclude` entries can only **narrow** the paths matched by `include` entries: an `exclude` entry wins over
+  `include` entries matching the same path or its parent directories, but it never adds a path to the domain.
+- Entries matching a path take precedence over entries matching its parent directories.
+  As with `.gitignore`, paths inside an excluded directory cannot be re-included by a `!` entry.
+
+```yaml
+Native:
+  include:
+    - "native"
+  exclude:
+    - "native/swift"       # 'native/swift' and all its descendants do not belong to 'Native'
+    - "native/foo/*"
+    - "!native/foo/bar"    # 'native/foo/bar' belongs to 'Native' again, as it is still included by 'native'
+    - "!native/swift/baz"  # has no effect: 'native/swift/baz' is inside the excluded directory 'native/swift'
+    - "!js"                # has no effect: 'exclude' entries cannot add paths to a domain
+```
+
+Every domain also declares its owners as its first two entries, before `include`:
+
+```yaml
+Jvm:
+  team: "Kotlin JVM"
+```
+
+`team` (required) is the Space team responsible for the domain, named as in `.space/CODEOWNERS`.
 
 ## Running all tests on changes in another domain
 
 Use `mustRunAllTestsOnChangesIn` to require all tests in this domain to run and pass when a listed domain is changed.
-In the example above, all `Js` tests are required for merging to master when `CoreLibs` is changed.
+In the `Js` example above, all `Js` tests are required for merging to master when `CoreLibs` is changed.
 This declaration does not require all `CoreLibs` tests to run when only `Js` is changed.
 List every domain whose changes should require these tests explicitly: the declaration is **not transitive**.
+
+## Ignoring files
+
+Use the top-level `ignore` list in [domains.yaml](./domains.yaml) for files whose changes should not mark any domain as changed:
+
+```yaml
+ignore:
+  - "docs"
+  - "tests/mute-common.csv"
+```
+
+Ignored paths belong to no domain. Ignore rules override all domain `include` and `exclude` rules; `ignore` is not a domain.
+Entries can be directory paths or glob patterns. Directories include all descendants; `*.md` matches only root-level Markdown files.
+
+Similar to `.gitignore`, the order of entries matters: entries are evaluated in declaration order and the **last matching entry wins**.
+Entries starting with `!` re-include paths ignored by a previous entry, so they must be declared after the entries they negate.
+As with `.gitignore`, paths inside an ignored directory cannot be re-included.
+
+```yaml
+ignore:
+  - "**/README.md"
+  - "!license/README.md" # 'license/README.md' is not ignored
+  - "docs"
+  - "!docs/foo.md"       # has no effect: 'docs/foo.md' is inside the ignored directory 'docs'
+```
+
+If all changed files are ignored, no tests (including smoke and `@MustRunAlways` tests) or compilation are required before merging to master.
+Codeowner approval can suffice. Mixed changes follow the normal rules for non-ignored files.
 
 ## Running individual tests on changes in another domain
 
@@ -96,7 +157,7 @@ See [Extra: Contract tests](#extra-contract-tests) for why these tests are usefu
 ## Always running tests
 
 Use `@MustRunAlways` to require a test to run and pass regardless of which domains are changed.
-These tests are required for merging to master. Other test filters, such as `@NightlyTest`, still apply.
+These tests are required for merging to master unless all changed files are ignored. Other test filters, such as `@NightlyTest`, still apply.
 With JUnit 5 (or higher), the annotation can be placed:
 
 - on the test method directly
@@ -278,6 +339,10 @@ This may be useful if your task does not support partial execution
 ### Checking which files belong to each domain
 
 [domains.dump.txt](domains.dump.txt) lists the files belonging to each domain. CI checks that it matches the domain declarations.
+[domains.ignore.dump.txt](domains.ignore.dump.txt) lists globally ignored paths, which take precedence over domain entries.
+CI checks that this dump contains all currently ignored paths. Extra entries are allowed only if the current ignore rules
+still ignore those paths, for example files absent from the current checkout. Entries no longer covered by the rules must be removed.
+Entry order and formatting do not matter for the ignore dump.
 Run the same check locally from the repository root:
 
 ```shell
@@ -286,7 +351,7 @@ Run the same check locally from the repository root:
 
 ### Updating the dump
 
-Changes to `domains.yaml` might require an update of the dump file. Update it from the repository root with:
+Changes to `domains.yaml` might require an update of the dump files. Update both from the repository root with:
 
 ```shell
 ./gradlew :repo:codebase-tests:updateDomainsDump -Pkotlin.native.enabled=true
@@ -335,6 +400,6 @@ merging to master. Both teams must approve changes to these tests because the te
 
 ## Extra: Smoke tests
 
-A smoke test is a quick check of core functionality. `@MustRunAlways` can be used for smoke tests that should run for every change,
+A smoke test is a quick check of core functionality. `@MustRunAlways` can be used for smoke tests that should run for every non-ignored change,
 but not every smoke test needs to run for unrelated changes. Selecting a percentage of fast, stable tests through `testFederation { smokeTests { includeAutoSamples(...) } }` is
 another way to check core functionality for unrelated changes.

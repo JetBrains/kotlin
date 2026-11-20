@@ -1,0 +1,7 @@
+var value: kotlin.String
+  @lib.Retained
+  @kotlin.jvm.Throws(exceptionClasses = [java.io.IOException::class, java.lang.IllegalStateException::class])
+  get()
+  @lib.Retained
+  @kotlin.jvm.Throws(exceptionClasses = [java.io.FileNotFoundException::class])
+  set(value: kotlin.String)

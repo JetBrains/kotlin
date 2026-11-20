@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
-import org.jetbrains.kotlin.light.classes.symbol.utils.withSymbol
 
 internal open class SymbolLightValueParameter(
     parameterSymbol: KaValueParameterSymbol,
     containingMethod: SymbolLightMethodBase,
 ) : SymbolLightParameterCommon(parameterSymbol, containingMethod) {
-    override fun isDeclaredAsVararg(): Boolean = symbolPointer.withSymbol(useSiteModule) {
-        (it as KaValueParameterSymbol).isVararg
-    }
+    private val _isDeclaredAsVararg: Boolean = parameterSymbol.isVararg
+
+    override fun isDeclaredAsVararg(): Boolean = _isDeclaredAsVararg
 
     // true only if this is "last" `vararg`
     override fun isVarArgs() = isDeclaredAsVararg() && method.parameterList.parameters.lastOrNull() == this

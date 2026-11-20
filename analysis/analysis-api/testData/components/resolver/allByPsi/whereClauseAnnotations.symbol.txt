@@ -1,0 +1,1089 @@
+KtFile: 'whereClauseAnnotations.kt'
+  null
+
+KtPackageDirective(0,16): 'package lowlevel'
+  null
+
+KtNameReferenceExpression(8,16): 'lowlevel'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel
+    ]
+
+KtImportList(16,16): ''
+  null
+
+KtClass(18,54): 'annotation class Anno(val s: String)'
+  null
+
+KtDeclarationModifierList(18,28): 'annotation'
+  null
+
+KtPrimaryConstructor(39,54): '(val s: String)'
+  null
+
+KtParameterList(39,54): '(val s: String)'
+  null
+
+KtParameter(40,53): 'val s: String'
+  null
+
+KtTypeReference(47,53): 'String'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtUserType(47,53): 'String'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtNameReferenceExpression(47,53): 'String'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtProperty(56,78): 'const val prop = "str"'
+  null
+
+KtDeclarationModifierList(56,61): 'const'
+  null
+
+KtStringTemplateExpression(73,78): '"str"'
+  null
+
+KtLiteralStringTemplateEntry(74,77): 'str'
+  null
+
+KtNamedFunction(80,182): 'fun <T, U> function(t: T, u: U) where @Anno("declared $prop") U : Any, T : @Anno("bound $prop") Any {}'
+  null
+
+KtTypeParameterList(84,90): '<T, U>'
+  null
+
+KtTypeParameter(85,86): 'T'
+  null
+
+KtTypeParameter(88,89): 'U'
+  null
+
+KtParameterList(99,111): '(t: T, u: U)'
+  null
+
+KtParameter(100,104): 't: T'
+  null
+
+KtTypeReference(103,104): 'T'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtUserType(103,104): 'T'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtNameReferenceExpression(103,104): 'T'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtParameter(106,110): 'u: U'
+  null
+
+KtTypeReference(109,110): 'U'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      U
+    ]
+
+KtUserType(109,110): 'U'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      U
+    ]
+
+KtNameReferenceExpression(109,110): 'U'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      U
+    ]
+
+KtTypeConstraintList(118,179): '@Anno("declared $prop") U : Any, T : @Anno("bound $prop") Any'
+  null
+
+KtTypeConstraint(118,149): '@Anno("declared $prop") U : Any'
+  null
+
+KtAnnotationEntry(118,141): '@Anno("declared $prop")'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtConstructorCalleeExpression(119,123): 'Anno'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtTypeReference(119,123): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtUserType(119,123): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtNameReferenceExpression(119,123): 'Anno'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtValueArgumentList(123,141): '("declared $prop")'
+  null
+
+KtValueArgument(124,140): '"declared $prop"'
+  null
+
+KtStringTemplateExpression(124,140): '"declared $prop"'
+  null
+
+KtLiteralStringTemplateEntry(125,134): 'declared '
+  null
+
+KtSimpleNameStringTemplateEntry(134,139): '$prop'
+  null
+
+KtNameReferenceExpression(135,139): 'prop'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
+
+KtNameReferenceExpression(142,143): 'U'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      U
+    ]
+
+KtTypeReference(146,149): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtUserType(146,149): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtNameReferenceExpression(146,149): 'Any'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtTypeConstraint(151,179): 'T : @Anno("bound $prop") Any'
+  null
+
+KtNameReferenceExpression(151,152): 'T'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtTypeReference(155,179): '@Anno("bound $prop") Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtDeclarationModifierList(155,175): '@Anno("bound $prop")'
+  null
+
+KtAnnotationEntry(155,175): '@Anno("bound $prop")'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(s: kotlin.String): lowlevel.Anno
+    ]
+
+KtConstructorCalleeExpression(156,160): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(s: kotlin.String): lowlevel.Anno
+    ]
+
+KtTypeReference(156,160): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtUserType(156,160): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtNameReferenceExpression(156,160): 'Anno'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtValueArgumentList(160,175): '("bound $prop")'
+  null
+
+KtValueArgument(161,174): '"bound $prop"'
+  null
+
+KtStringTemplateExpression(161,174): '"bound $prop"'
+  null
+
+KtLiteralStringTemplateEntry(162,168): 'bound '
+  null
+
+KtSimpleNameStringTemplateEntry(168,173): '$prop'
+  null
+
+KtNameReferenceExpression(169,173): 'prop'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
+
+KtUserType(176,179): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtNameReferenceExpression(176,179): 'Any'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtBlockExpression(180,182): '{}'
+  null
+
+KtNamedFunction(184,296): 'fun <T> functionWithUndeclared(t: T) where @Anno("undeclared $prop") AA : Any, @Anno("declared $prop") T : AA {}'
+  null
+
+KtTypeParameterList(188,191): '<T>'
+  null
+
+KtTypeParameter(189,190): 'T'
+  null
+
+KtParameterList(214,220): '(t: T)'
+  null
+
+KtParameter(215,219): 't: T'
+  null
+
+KtTypeReference(218,219): 'T'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtUserType(218,219): 'T'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtNameReferenceExpression(218,219): 'T'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtTypeConstraintList(227,293): '@Anno("undeclared $prop") AA : Any, @Anno("declared $prop") T : AA'
+  null
+
+KtTypeConstraint(227,261): '@Anno("undeclared $prop") AA : Any'
+  null
+
+KtAnnotationEntry(227,252): '@Anno("undeclared $prop")'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtConstructorCalleeExpression(228,232): 'Anno'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtTypeReference(228,232): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtUserType(228,232): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtNameReferenceExpression(228,232): 'Anno'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtValueArgumentList(232,252): '("undeclared $prop")'
+  null
+
+KtValueArgument(233,251): '"undeclared $prop"'
+  null
+
+KtStringTemplateExpression(233,251): '"undeclared $prop"'
+  null
+
+KtLiteralStringTemplateEntry(234,245): 'undeclared '
+  null
+
+KtSimpleNameStringTemplateEntry(245,250): '$prop'
+  null
+
+KtNameReferenceExpression(246,250): 'prop'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
+
+KtNameReferenceExpression(253,255): 'AA'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      AA
+    ]
+
+KtTypeReference(258,261): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtUserType(258,261): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtNameReferenceExpression(258,261): 'Any'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtTypeConstraint(263,293): '@Anno("declared $prop") T : AA'
+  null
+
+KtAnnotationEntry(263,286): '@Anno("declared $prop")'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtConstructorCalleeExpression(264,268): 'Anno'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtTypeReference(264,268): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtUserType(264,268): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtNameReferenceExpression(264,268): 'Anno'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtValueArgumentList(268,286): '("declared $prop")'
+  null
+
+KtValueArgument(269,285): '"declared $prop"'
+  null
+
+KtStringTemplateExpression(269,285): '"declared $prop"'
+  null
+
+KtLiteralStringTemplateEntry(270,279): 'declared '
+  null
+
+KtSimpleNameStringTemplateEntry(279,284): '$prop'
+  null
+
+KtNameReferenceExpression(280,284): 'prop'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
+
+KtNameReferenceExpression(287,288): 'T'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtTypeReference(291,293): 'AA'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      AA
+    ]
+
+KtUserType(291,293): 'AA'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      AA
+    ]
+
+KtNameReferenceExpression(291,293): 'AA'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      AA
+    ]
+
+KtBlockExpression(294,296): '{}'
+  null
+
+KtNamedFunction(298,377): 'fun functionWithoutTypeParameters() where @Anno("undeclared $prop") AA : Any {}'
+  null
+
+KtParameterList(331,333): '()'
+  null
+
+KtTypeConstraintList(340,374): '@Anno("undeclared $prop") AA : Any'
+  null
+
+KtTypeConstraint(340,374): '@Anno("undeclared $prop") AA : Any'
+  null
+
+KtAnnotationEntry(340,365): '@Anno("undeclared $prop")'
+  null
+
+KtConstructorCalleeExpression(341,345): 'Anno'
+  null
+
+KtTypeReference(341,345): 'Anno'
+  null
+
+KtUserType(341,345): 'Anno'
+  null
+
+KtNameReferenceExpression(341,345): 'Anno'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  null
+
+KtValueArgumentList(345,365): '("undeclared $prop")'
+  null
+
+KtValueArgument(346,364): '"undeclared $prop"'
+  null
+
+KtStringTemplateExpression(346,364): '"undeclared $prop"'
+  null
+
+KtLiteralStringTemplateEntry(347,358): 'undeclared '
+  null
+
+KtSimpleNameStringTemplateEntry(358,363): '$prop'
+  null
+
+KtNameReferenceExpression(359,363): 'prop'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  null
+
+KtNameReferenceExpression(366,368): 'AA'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  null
+
+KtTypeReference(371,374): 'Any'
+  null
+
+KtUserType(371,374): 'Any'
+  null
+
+KtNameReferenceExpression(371,374): 'Any'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  null
+
+KtBlockExpression(375,377): '{}'
+  null
+
+KtClass(379,470): 'class Klass<T, U> where @Anno("declared $prop") U : Any, @Anno("undeclared $prop") AA : Any'
+  null
+
+KtTypeParameterList(390,396): '<T, U>'
+  null
+
+KtTypeParameter(391,392): 'T'
+  null
+
+KtTypeParameter(394,395): 'U'
+  null
+
+KtTypeConstraintList(403,470): '@Anno("declared $prop") U : Any, @Anno("undeclared $prop") AA : Any'
+  null
+
+KtTypeConstraint(403,434): '@Anno("declared $prop") U : Any'
+  null
+
+KtAnnotationEntry(403,426): '@Anno("declared $prop")'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtConstructorCalleeExpression(404,408): 'Anno'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtTypeReference(404,408): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtUserType(404,408): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtNameReferenceExpression(404,408): 'Anno'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtValueArgumentList(408,426): '("declared $prop")'
+  null
+
+KtValueArgument(409,425): '"declared $prop"'
+  null
+
+KtStringTemplateExpression(409,425): '"declared $prop"'
+  null
+
+KtLiteralStringTemplateEntry(410,419): 'declared '
+  null
+
+KtSimpleNameStringTemplateEntry(419,424): '$prop'
+  null
+
+KtNameReferenceExpression(420,424): 'prop'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
+
+KtNameReferenceExpression(427,428): 'U'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      U
+    ]
+
+KtTypeReference(431,434): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtUserType(431,434): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtNameReferenceExpression(431,434): 'Any'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtTypeConstraint(436,470): '@Anno("undeclared $prop") AA : Any'
+  null
+
+KtAnnotationEntry(436,461): '@Anno("undeclared $prop")'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtConstructorCalleeExpression(437,441): 'Anno'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtTypeReference(437,441): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtUserType(437,441): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtNameReferenceExpression(437,441): 'Anno'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtValueArgumentList(441,461): '("undeclared $prop")'
+  null
+
+KtValueArgument(442,460): '"undeclared $prop"'
+  null
+
+KtStringTemplateExpression(442,460): '"undeclared $prop"'
+  null
+
+KtLiteralStringTemplateEntry(443,454): 'undeclared '
+  null
+
+KtSimpleNameStringTemplateEntry(454,459): '$prop'
+  null
+
+KtNameReferenceExpression(455,459): 'prop'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
+
+KtNameReferenceExpression(462,464): 'AA'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      AA
+    ]
+
+KtTypeReference(467,470): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtUserType(467,470): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtNameReferenceExpression(467,470): 'Any'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtProperty(472,590): 'val <T, U> Map<T, U>.property: Int where @Anno("declared $prop") U : Any, @Anno("undeclared $prop") AA : Any get() = 1'
+  null
+
+KtTypeParameterList(476,482): '<T, U>'
+  null
+
+KtTypeParameter(477,478): 'T'
+  null
+
+KtTypeParameter(480,481): 'U'
+  null
+
+KtTypeReference(483,492): 'Map<T, U>'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/Map
+    ]
+
+KtUserType(483,492): 'Map<T, U>'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/Map
+    ]
+
+KtNameReferenceExpression(483,486): 'Map'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/Map
+    ]
+
+KtTypeArgumentList(486,492): '<T, U>'
+  null
+
+KtTypeProjection(487,488): 'T'
+  null
+
+KtTypeReference(487,488): 'T'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtUserType(487,488): 'T'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtNameReferenceExpression(487,488): 'T'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtTypeProjection(490,491): 'U'
+  null
+
+KtTypeReference(490,491): 'U'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      U
+    ]
+
+KtUserType(490,491): 'U'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      U
+    ]
+
+KtNameReferenceExpression(490,491): 'U'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      U
+    ]
+
+KtTypeReference(503,506): 'Int'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtUserType(503,506): 'Int'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNameReferenceExpression(503,506): 'Int'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtTypeConstraintList(513,580): '@Anno("declared $prop") U : Any, @Anno("undeclared $prop") AA : Any'
+  null
+
+KtTypeConstraint(513,544): '@Anno("declared $prop") U : Any'
+  null
+
+KtAnnotationEntry(513,536): '@Anno("declared $prop")'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtConstructorCalleeExpression(514,518): 'Anno'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtTypeReference(514,518): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtUserType(514,518): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtNameReferenceExpression(514,518): 'Anno'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtValueArgumentList(518,536): '("declared $prop")'
+  null
+
+KtValueArgument(519,535): '"declared $prop"'
+  null
+
+KtStringTemplateExpression(519,535): '"declared $prop"'
+  null
+
+KtLiteralStringTemplateEntry(520,529): 'declared '
+  null
+
+KtSimpleNameStringTemplateEntry(529,534): '$prop'
+  null
+
+KtNameReferenceExpression(530,534): 'prop'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
+
+KtNameReferenceExpression(537,538): 'U'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      U
+    ]
+
+KtTypeReference(541,544): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtUserType(541,544): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtNameReferenceExpression(541,544): 'Any'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtTypeConstraint(546,580): '@Anno("undeclared $prop") AA : Any'
+  null
+
+KtAnnotationEntry(546,571): '@Anno("undeclared $prop")'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtConstructorCalleeExpression(547,551): 'Anno'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<ANNOTATION_IN_WHERE_CLAUSE_ERROR: Type parameter annotations are prohibited inside 'where' clauses. Consider moving the annotations to the type parameter declaration.>
+
+KtTypeReference(547,551): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtUserType(547,551): 'Anno'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtNameReferenceExpression(547,551): 'Anno'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      lowlevel/Anno
+    ]
+
+KtValueArgumentList(551,571): '("undeclared $prop")'
+  null
+
+KtValueArgument(552,570): '"undeclared $prop"'
+  null
+
+KtStringTemplateExpression(552,570): '"undeclared $prop"'
+  null
+
+KtLiteralStringTemplateEntry(553,564): 'undeclared '
+  null
+
+KtSimpleNameStringTemplateEntry(564,569): '$prop'
+  null
+
+KtNameReferenceExpression(565,569): 'prop'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.String
+    ]
+
+KtNameReferenceExpression(572,574): 'AA'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      AA
+    ]
+
+KtTypeReference(577,580): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtUserType(577,580): 'Any'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtNameReferenceExpression(577,580): 'Any'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
+
+KtPropertyAccessor(581,590): 'get() = 1'
+  null
+
+KtParameterList(584,586): '()'
+  null
+
+KtConstantExpression(589,590): '1'
+  null

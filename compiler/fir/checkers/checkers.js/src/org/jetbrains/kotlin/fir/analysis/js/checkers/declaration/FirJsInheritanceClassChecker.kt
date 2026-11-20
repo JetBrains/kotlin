@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.isDisabled
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedClassLikeType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
@@ -55,7 +55,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
 
         if (isEffectivelyExternal && declaration.classKind != ClassKind.ANNOTATION_CLASS) {
             for (superType in declaration.superConeTypes) {
-                val fullyExpandedType = superType.fullyExpandedType()
+                val fullyExpandedType = superType.fullyExpandedClassLikeType() ?: continue
                 if (fullyExpandedType.isAnyOrNullableAny || fullyExpandedType.isThrowableOrNullableThrowable || fullyExpandedType.isEnum) continue
                 val fullyExpandedClass = fullyExpandedType.toSymbol() ?: continue
                 if (fullyExpandedClass.isEffectivelyExternal(session) || fullyExpandedClass.isExpect) continue

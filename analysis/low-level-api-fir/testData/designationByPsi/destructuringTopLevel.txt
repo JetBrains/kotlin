@@ -1,0 +1,5 @@
+KT element: KtDestructuringDeclaration
+Resolve target: destructuringTopLevel.kt -> <destruct>
+FIR:
+  private final val <destruct>: <implicit> = LAZY_EXPRESSION
+      private get(): <implicit>

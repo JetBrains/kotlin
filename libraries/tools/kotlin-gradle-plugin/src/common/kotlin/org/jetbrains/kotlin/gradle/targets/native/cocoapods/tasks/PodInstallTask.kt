@@ -23,7 +23,7 @@ abstract class PodInstallTask : AbstractPodInstallTask() {
 
     @Deprecated("Use PodspecTask#outputFile")
     @get:Internal
-    abstract val podspec: Property<File?>
+    abstract val podspec: Property<File>
 
     @get:Input
     abstract val frameworkName: Property<String>

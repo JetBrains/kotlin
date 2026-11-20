@@ -33,7 +33,7 @@ class FirJvmDelegatedMembersFilter(private val session: FirSession) : FirDelegat
 
     // If java interface method is not abstract, then it's a default method.
     private fun FirCallableSymbol<*>.isNonAbstractJavaMethod(): Boolean {
-        return origin == FirDeclarationOrigin.Enhancement && fir.modality != Modality.ABSTRACT
+        return origin is FirDeclarationOrigin.Enhancement && fir.modality != Modality.ABSTRACT
     }
 
     private fun FirCallableSymbol<*>.hasJvmDefaultAnnotation(): Boolean {

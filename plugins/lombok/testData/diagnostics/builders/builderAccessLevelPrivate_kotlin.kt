@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-89027
 
@@ -25,3 +26,6 @@ class CalledFromClassBody(val x: Int) {
 fun fromOutside() {
     AccessPrivateTarget.<!INVISIBLE_REFERENCE!>builder<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, javaProperty,
+objectDeclaration, primaryConstructor, propertyDeclaration */

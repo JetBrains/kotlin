@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainService
-import org.gradle.internal.jvm.Jvm
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
@@ -24,8 +25,10 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
 @DisplayName("KMP JVM target binaries DSL")
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class JvmBinariesDslIT : KGPBaseTest() {
 
+    @TestMetadata("mppRunJvm")
     @DisplayName("Default binary is runnable")
     @GradleTest
     fun defaultBinaryIsRunnable(gradleVersion: GradleVersion) {
@@ -46,6 +49,7 @@ class JvmBinariesDslIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mppRunJvm")
     @DisplayName("It is possible to change JDK for executable run task")
     @GradleTest
     fun customJdkForExecutableRunTask(gradleVersion: GradleVersion) {
@@ -76,6 +80,7 @@ class JvmBinariesDslIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mppRunJvm")
     @DisplayName("Additional srcDir is included into binary")
     @GradleTest
     fun additionalSrcDir(gradleVersion: GradleVersion) {
@@ -113,6 +118,7 @@ class JvmBinariesDslIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mppRunJvm")
     @DisplayName("Default binary distribution is runnable")
     @GradleTest
     fun defaultBinaryDistributionIsRunnable(gradleVersion: GradleVersion) {
@@ -146,6 +152,7 @@ class JvmBinariesDslIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mppRunJvm")
     @DisplayName("Custom test binary distribution is runnable")
     @GradleTest
     fun customTestBinaryDistributionIsRunnable(gradleVersion: GradleVersion) {
@@ -187,6 +194,7 @@ class JvmBinariesDslIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mppRunJvm")
     @DisplayName("Test binary distribution is runnable")
     @GradleTest
     fun testBinaryDistributionIsRunnable(gradleVersion: GradleVersion) {
@@ -245,6 +253,7 @@ class JvmBinariesDslIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mppRunJvm")
     @DisplayName("Distribution is possible to customize")
     @GradleTest
     fun distributionCustomization(gradleVersion: GradleVersion) {
@@ -285,6 +294,7 @@ class JvmBinariesDslIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mppRunJvm")
     @DisplayName("Default binary with JPMS is runnable")
     @GradleTest
     fun defaultBinaryWithJpmsIsRunnable(gradleVersion: GradleVersion) {

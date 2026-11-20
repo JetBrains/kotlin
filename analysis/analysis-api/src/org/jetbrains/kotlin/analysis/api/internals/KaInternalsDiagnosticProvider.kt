@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.internals
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics
 import org.jetbrains.kotlin.psi.KtElement
 
-@OptIn(KaExperimentalApi::class)
 @KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaInternalsDiagnosticProvider {

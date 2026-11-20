@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
 
 import lombok.Builder
@@ -16,3 +17,6 @@ fun main() {
     val obj = ExplicitBuilderWithTypeParametersLessThanRequired.builder<Int>().<!UNRESOLVED_REFERENCE!>build<!>()
     val obj2 = ExplicitBuilderWithTypeParametersMoreThanRequired.builder<String>().<!UNRESOLVED_REFERENCE!>build<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

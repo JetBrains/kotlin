@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 import lombok.AccessLevel
@@ -135,7 +136,7 @@ fun test() {
     J()
     F()
     K()
-    L()
+    <!INVISIBLE_REFERENCE!>L<!>()
 
     <!NO_VALUE_FOR_PARAMETER!>StaticNameTakenByMember<!>()
     StaticNameTakenByMember.<!UNRESOLVED_REFERENCE!>make<!>()
@@ -143,7 +144,7 @@ fun test() {
     <!NO_VALUE_FOR_PARAMETER!>StaticNameTakenInCompanion<!>()
     StaticNameTakenInCompanion.make()
 
-    StaticNameTakenByExtensionOnly()
+    <!INVISIBLE_REFERENCE!>StaticNameTakenByExtensionOnly<!>()
     StaticNameTakenByExtensionOnly.make()
 
     <!NO_VALUE_FOR_PARAMETER!>OnValueClass<!>() // Nothing is generated, KT-88705
@@ -247,3 +248,8 @@ fun testLocal() {
 class WithNestedCompanionClass(var x: Int) {
     class <!COMPANION_OBJECT_IS_NOT_GENERATED!>Companion<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, collectionLiteral, companionObject, const,
+funWithExtensionReceiver, functionDeclaration, getter, inner, integerLiteral, interfaceDeclaration, javaProperty,
+localClass, localProperty, nestedClass, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral, value */

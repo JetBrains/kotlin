@@ -40,7 +40,7 @@ object GitCLI : LocalGit {
         GitSHA1(gitOutput(gitWorkingTree, "merge-base", "HEAD", revision.rev))
 
     override suspend fun getDiff(from: GitSHA1, to: GitWorkingTree): GitDiff {
-        val diffText = gitOutput(tree = to, "diff", "--default-prefix", from.sha1)
+        val diffText = gitOutput(tree = to, "diff", "--no-color", "--default-prefix", from.sha1)
         val changedFiles = parseGitDiffText(diffText)
 
         return GitDiff(changedFiles, GitDiff.Origin.Local(from, to))

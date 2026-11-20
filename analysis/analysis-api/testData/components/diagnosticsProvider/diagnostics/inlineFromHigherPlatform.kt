@@ -10,6 +10,13 @@ inline fun inlineFunction(block: () -> Unit) {
 
 fun regularFunction() {}
 
+inline val inlineProperty: Int
+    get() = 1
+
+var propertyWithInlineSetter: Int
+    get() = 1
+    inline set(value) {}
+
 // MODULE: main(lib)
 // JVM_TARGET: 1.8
 // FILE: main.kt
@@ -17,8 +24,10 @@ package main
 
 import lib.*
 
-// The check needs the class file version of the library declaration. Stub-based deserialization of libraries doesn't provide it.
 fun usage() {
     inlineFunction {}
     regularFunction()
+    inlineProperty
+    propertyWithInlineSetter
+    propertyWithInlineSetter = 2
 }

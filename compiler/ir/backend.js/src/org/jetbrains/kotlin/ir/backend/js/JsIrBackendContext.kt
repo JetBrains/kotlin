@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
-import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
@@ -159,10 +158,7 @@ class JsIrBackendContext(
         configuration.languageVersionSettings
     )
 
-    override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
-        configuration.partialLinkageConfig,
-        diagnosticReporter
-    )
+    override val partialLinkageSupport = createPartialLinkageSupportForLowerings(diagnosticReporter)
 
     internal var nextAssociatedObjectKey = 0
 

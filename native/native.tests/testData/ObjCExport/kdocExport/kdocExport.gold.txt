@@ -12,3 +12,6 @@
  * @param a keep intact and return // EXPORT_KDOC
  * @return value of [a] // EXPORT_KDOC
  * Check for additional comment (note) below // EXPORT_KDOC
+/** KDoc for an enum entry // EXPORT_KDOC */
+/** KDoc for a getter // EXPORT_KDOC */
+/** KDoc for a setter // EXPORT_KDOC */

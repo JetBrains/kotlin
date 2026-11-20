@@ -26,7 +26,7 @@ public enum class FutureState(public val value: Int) {
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @ObsoleteWorkersApi
-public value class Future<T> @PublishedApi internal constructor(public val id: Int) {
+public inline value class Future<T> @PublishedApi internal constructor(public val id: Int) {
     /**
      * Blocks execution until the future is ready.
      *

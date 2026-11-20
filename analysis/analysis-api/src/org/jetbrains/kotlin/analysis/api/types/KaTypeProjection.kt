@@ -25,6 +25,8 @@ public sealed interface KaTypeProjection : KaLifetimeOwner {
 /**
  * Represents a [star projection](https://kotlinlang.org/docs/generics.html#star-projections) (`*`) used in type arguments. It indicates
  * that the specific type argument is not important or unknown.
+ *
+ * Can be constructed using [KaTypeCreator.starTypeProjection][org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeCreator.starTypeProjection].
  */
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaStarTypeProjection : KaTypeProjection {
@@ -33,6 +35,8 @@ public interface KaStarTypeProjection : KaTypeProjection {
 
 /**
  * Represents a type argument with an explicit type and [variance](https://kotlinlang.org/docs/generics.html#use-site-variance-type-projections).
+ *
+ * Can be constructed using [KaTypeCreator.typeProjection][org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeCreator.typeProjection].
  */
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaTypeArgumentWithVariance : KaTypeProjection {

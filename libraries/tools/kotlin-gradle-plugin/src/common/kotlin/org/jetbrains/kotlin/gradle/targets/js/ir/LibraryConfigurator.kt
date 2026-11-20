@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.DISTRIBUTION_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.web.WebIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.targets.web.webIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 
 class LibraryConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTargetConfigurator<Copy, Nothing> {
@@ -31,26 +33,28 @@ class LibraryConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                         binary.name,
                         DISTRIBUTION_TASK_NAME
                     )
-                ) {
+                ) { copy ->
                     val destinationDir = binary.distribution.outputDirectory
 
-                    if (subTarget is KotlinJsIrNpmBasedSubTarget && target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                    if (
+                        subTarget is KotlinJsIrNpmBasedSubTarget &&
+                        target.wasmTargetType != KotlinWasmTargetType.WASI &&
+                        // The public package.json task is only registered by RootResolver npm dependency management.
+                        project.webIsolatedProjectsSupport == WebIsolatedProjectsSupport.Off
+                    ) {
                         val npmProject = compilation.npmProject
-                        it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
+                        copy.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
                     }
 
                     if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
-                        it.from(binary.linkSyncTask)
+                        copy.from(binary.linkSyncTask)
                     } else {
-                        it.from(binary.linkTask)
-                        it.from(project.tasks.named(compilation.processResourcesTaskName))
+                        copy.from(binary.linkTask)
+                        copy.from(project.tasks.named(compilation.processResourcesTaskName))
                     }
 
-                    it.into(destinationDir)
-
-                    destinationDir.asFile.map { destinationDirFile ->
-                        it.remapJavaScriptSourceMapSourcePaths(destinationDirFile)
-                    }
+                    copy.into(destinationDir)
+                    copy.remapJavaScriptSourceMapSourcePaths(destinationDir.asFile)
                 }
 
                 if (mode == KotlinJsBinaryMode.PRODUCTION) {

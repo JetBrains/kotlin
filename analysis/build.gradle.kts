@@ -13,6 +13,14 @@ val analysisApiTestModules = listOf(
 )
 
 /**
+ * Modules which test the published Analysis API artifacts against the JARs they ship, and nothing else.
+ */
+val analysisApiArtifactSmokeTests = listOf(
+    ":prepare:analysis-api:kotlin-analysis-api-smoke-tests",
+    ":prepare:analysis-api:kotlin-analysis-api-syntax-smoke-tests",
+)
+
+/**
  * Analysis API modules that are only part of the build when Kotlin/Native is enabled.
  */
 val analysisApiNativeModules = listOf(
@@ -54,6 +62,7 @@ val analysisApiArtifactTests = tasks.register("analysisApiArtifactTests") {
     description = "Checks the published Analysis API artifacts"
 
     dependsOn(CompilerModules.analysisApiArtifacts.map { "$it:check" })
+    dependsOn(analysisApiArtifactSmokeTests.map { "$it:check" })
 }
 
 tasks.register("analysisAllTests") {

@@ -1,0 +1,5 @@
+KtCollectionLiteralExpression(38,48): '[1.0, 2.0]'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/DoubleArray.of(vararg elements: kotlin.Double): kotlin.DoubleArray
+    ]

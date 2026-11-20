@@ -18,14 +18,14 @@ private const val ENUM_VALUEOF_TEMPLATE_PATH = "/dokka/docs/javadoc/EnumValueOf.
 private const val ENUM_VALUES_TEMPLATE_PATH = "/dokka/docs/javadoc/EnumValues.java.template"
 
 @InternalDokkaApi
-public class SyntheticElementDocumentationProvider(
+internal class SyntheticElementDocumentationProvider(
     private val javadocParser: JavadocParser,
     private val project: Project
 ) {
-    public fun isDocumented(psiElement: PsiElement): Boolean = psiElement is PsiMethod
+    fun isDocumented(psiElement: PsiElement): Boolean = psiElement is PsiMethod
             && (psiElement.isSyntheticEnumValuesMethod() || psiElement.isSyntheticEnumValueOfMethod())
 
-    public fun getDocumentation(psiElement: PsiElement, sourceSet: DokkaSourceSet): DocumentationNode? {
+    fun getDocumentation(psiElement: PsiElement, sourceSet: DokkaSourceSet): DocumentationNode? {
         val psiMethod = psiElement as? PsiMethod ?: return null
         return when {
             psiMethod.isSyntheticEnumValuesMethod() -> getDocumentationForEnumValuesMethod(sourceSet)
@@ -34,12 +34,12 @@ public class SyntheticElementDocumentationProvider(
         }
     }
 
-    public fun getDocumentationForEnumValuesMethod(sourceSet: DokkaSourceSet): DocumentationNode? {
+    fun getDocumentationForEnumValuesMethod(sourceSet: DokkaSourceSet): DocumentationNode? {
         val someSyntheticMethod = loadSyntheticDoc(ENUM_VALUES_TEMPLATE_PATH) ?: return null
         return javadocParser.parseDocumentation(someSyntheticMethod, sourceSet)
     }
 
-    public fun getDocumentationForEnumValueOfMethod(sourceSet: DokkaSourceSet): DocumentationNode? {
+    fun getDocumentationForEnumValueOfMethod(sourceSet: DokkaSourceSet): DocumentationNode? {
         val someSyntheticMethod = loadSyntheticDoc(ENUM_VALUEOF_TEMPLATE_PATH) ?: return null
         return javadocParser.parseDocumentation(someSyntheticMethod, sourceSet)
     }
@@ -53,4 +53,3 @@ public class SyntheticElementDocumentationProvider(
 private fun PsiMethod.isSyntheticEnumValuesMethod() = this.isSyntheticEnumFunction() && this.name == "values"
 private fun PsiMethod.isSyntheticEnumValueOfMethod() = this.isSyntheticEnumFunction() && this.name == "valueOf"
 private fun PsiMethod.isSyntheticEnumFunction() = this is SyntheticElement && this.containingClass?.isEnum == true
-

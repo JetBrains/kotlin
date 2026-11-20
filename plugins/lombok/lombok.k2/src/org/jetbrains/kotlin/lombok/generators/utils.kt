@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirExtension
+import org.jetbrains.kotlin.fir.extensions.PluginTypeResolver
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
@@ -90,11 +92,12 @@ fun createJavaOrKotlinMemberFunction(
     returnTypeRef: FirTypeRef,
     visibility: Visibility,
     modality: Modality,
-    createKey: () -> GeneratedDeclarationKey,
+    key: GeneratedDeclarationKey,
     isStatic: Boolean = false,
     symbol: FirNamedFunctionSymbol? = null,
     typeParameters: Collection<FirTypeParameter> = emptyList(),
     isOverride: Boolean = false,
+    isOperator: Boolean = false,
     source: KtSourceElement? = null,
 ): FirNamedFunctionSymbol {
     return if (owner.hasJavaOrigin) {
@@ -104,6 +107,7 @@ fun createJavaOrKotlinMemberFunction(
             returnTypeRef = returnTypeRef,
             visibility = visibility,
             modality = modality,
+            key = key,
             isStatic = isStatic,
             methodSymbol = symbol,
             methodTypeParameters = typeParameters,
@@ -113,7 +117,7 @@ fun createJavaOrKotlinMemberFunction(
     } else {
         extension.createMemberFunction(
             owner = owner,
-            key = createKey(),
+            key = key,
             name = name,
             returnType = returnTypeRef.coneType
         ) {
@@ -126,6 +130,7 @@ fun createJavaOrKotlinMemberFunction(
 
             status {
                 this@status.isOverride = isOverride
+                this@status.isOperator = isOperator
             }
 
             // `DeclarationBuildingContext.source` falls back to a fake element over the owner's source only while it
@@ -143,6 +148,7 @@ fun FirClassSymbol<*>.createJavaMethod(
     returnTypeRef: FirTypeRef,
     visibility: Visibility,
     modality: Modality,
+    key: GeneratedDeclarationKey,
     dispatchReceiverType: ConeSimpleKotlinType? = this.defaultType(),
     isStatic: Boolean = false,
     methodSymbol: FirNamedFunctionSymbol? = null,
@@ -150,6 +156,7 @@ fun FirClassSymbol<*>.createJavaMethod(
     isOverride: Boolean = false,
     source: KtSourceElement? = null,
 ): FirJavaMethod {
+    val newOrigin = FirDeclarationOrigin.Java.Plugin(key)
     return buildJavaMethod {
         containingClassSymbol = this@createJavaMethod
         moduleData = this@createJavaMethod.moduleData
@@ -161,7 +168,7 @@ fun FirClassSymbol<*>.createJavaMethod(
             this.isStatic = isStatic
             this.isOverride = isOverride
         }
-        isFromSource = true
+        origin = newOrigin
         typeParameters += methodTypeParameters
         this.source = source
 
@@ -172,7 +179,7 @@ fun FirClassSymbol<*>.createJavaMethod(
                 containingDeclarationSymbol = this@buildJavaMethod.symbol
                 this.name = valueParameter.name
                 isVararg = false
-                isFromSource = true
+                javaOrigin = newOrigin
             }
         }
     }.apply {
@@ -235,7 +242,7 @@ val FirClassSymbol<*>.supportsGeneratedConstructor: Boolean
  *    annotations only ever generated members that repeat what the object already does (KT-88507).
  *
  * A local class is a plain class: `@EqualsAndHashCode` supports one, and `@Builder` is stopped for it in
- * `extractBuilderWithDeclarations` instead, a local class holding neither the companion object a `builder()`
+ * `extractBuilderDescriptions` instead, a local class holding neither the companion object a `builder()`
  * needs nor the builder class itself (KT-88848).
  */
 val FirClassSymbol<*>.isPlainClass: Boolean
@@ -391,7 +398,8 @@ abstract class LombokDeclarationKey : GeneratedDeclarationKey()
 fun remapTypeParameterBounds(
     newTypeParameters: Collection<FirTypeParameter>,
     originalTypeParameters: Collection<FirTypeParameterRef>,
-    session: FirSession
+    typeResolver: PluginTypeResolver?,
+    session: FirSession,
 ) {
     val substitution = buildMap {
         originalTypeParameters.forEachZipped(newTypeParameters) { original, copy -> this[original.symbol] = copy.symbol.toConeType() }
@@ -400,8 +408,20 @@ fun remapTypeParameterBounds(
 
     for (typeParameter in newTypeParameters) {
         val remappedBounds = typeParameter.bounds.map { bound ->
-            bound.withReplacedConeType(substitutor.substituteOrNull(bound.coneType))
+            val type = if (typeResolver != null && bound is FirUserTypeRef) typeResolver.resolveUserType(bound) else bound
+            type.withReplacedConeType(substitutor.substituteOrNull(type.coneType))
         }
         typeParameter.replaceBounds(remappedBounds)
     }
+}
+
+@OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
+internal fun FirClassSymbol<*>.primaryConstructorParameters(): List<FirValueParameter>? {
+    val primaryConstructor = fir.declarations.filterIsInstance<FirConstructor>().firstOrNull { it.isPrimary } ?: return null
+    return primaryConstructor.valueParameters.takeIf { parameters -> parameters.none { it.isVararg } }
+}
+
+@OptIn(DirectDeclarationsAccess::class)
+internal fun containsExplicitConstructor(classSymbol: FirClassSymbol<*>): Boolean {
+    return classSymbol.declarationSymbols.any { it is FirConstructorSymbol && it.source?.kind is KtRealSourceElementKind }
 }

@@ -1,4 +1,5 @@
-// LANGUAGE: +FullValueClasses
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +FullValueClasses +ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // WITH_STDLIB
 // ISSUE: KT-89640
 
@@ -18,7 +19,7 @@ value class OnMultiFieldValueClass(val x: Int, val y: String)
 value class OnInlineClass(val value: Int)
 
 <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@NoArgsConstructor(force = true)<!>
-<!INLINE_CLASS_DEPRECATED!>inline<!> class OnDeprecatedInlineClass(val value: Int)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class OnDeprecatedInlineClass(val value: Int)
 
 <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@NoArgsConstructor<!>
 abstract value class OnAbstractValueClass(x: Int)
@@ -47,3 +48,6 @@ fun test() {
     <!NO_VALUE_FOR_PARAMETER!>OnValueClassExtendingValueClass<!>()
     IdentityClassExtendingValueClass()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration, sealed,
+stringLiteral, value */

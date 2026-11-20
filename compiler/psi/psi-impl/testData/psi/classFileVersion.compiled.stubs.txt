@@ -1,0 +1,115 @@
+Bar.class:
+  FILE[kind=File[packageFqName=test]]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/Bar, fqName=test.Bar, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=Bar, superNames=[]]
+      classFileMajorVersion: 61
+      MODIFIER_LIST[public]
+      CLASS_BODY
+        OBJECT_DECLARATION[classId=test/Bar.Companion, fqName=test.Bar.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+          classFileMajorVersion: 61
+          MODIFIER_LIST[public companion]
+          CLASS_BODY
+
+
+DeclarationsKt.class:
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.DeclarationsKt]]
+    facadeFqName: test.DeclarationsKt
+    partSimpleName: "DeclarationsKt"
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    PROPERTY[fqName=test.topLevelVal, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=topLevelVal]
+      origin: Facade(className=test/DeclarationsKt, jvmClassName=null, classFileMajorVersion=61)
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
+    FUNCTION[fqName=test.topLevelFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=topLevelFun]
+      origin: Facade(className=test/DeclarationsKt, jvmClassName=null, classFileMajorVersion=61)
+      MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
+
+
+Foo.class:
+  FILE[kind=File[packageFqName=test]]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/Foo, fqName=test.Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Foo, superNames=[]]
+      classFileMajorVersion: 61
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+        OBJECT_DECLARATION[classId=test/Foo.Companion, fqName=test.Foo.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+          classFileMajorVersion: 61
+          MODIFIER_LIST[public companion]
+          CLASS_BODY
+        CLASS[classId=test/Foo.Nested, fqName=test.Foo.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
+          classFileMajorVersion: 61
+          MODIFIER_LIST[public final]
+          PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
+            MODIFIER_LIST[public]
+            VALUE_PARAMETER_LIST
+          CLASS_BODY
+
+
+Multifile.class:
+  FILE[kind=MultifileClass[packageFqName=test, facadeFqName=test.Multifile, facadePartSimpleNames=[Multifile__PartKt]]]
+    facadeFqName: test.Multifile
+    facadePartSimpleNames: [ "Multifile__PartKt" ]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    FUNCTION[fqName=test.partFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=partFun]
+      origin: MultiFileFacade(className=test/Multifile__PartKt, facadeClassName=test/Multifile, classFileMajorVersion=61)
+      MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
+
+
+Multifile__PartKt.class:
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.Multifile__PartKt]]
+    facadeFqName: test.Multifile__PartKt
+    partSimpleName: "Multifile__PartKt"
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    FUNCTION[fqName=test.partFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=partFun]
+      origin: Facade(className=test/Multifile__PartKt, jvmClassName=null, classFileMajorVersion=61)
+      MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
+
+
+Obj.class:
+  FILE[kind=File[packageFqName=test]]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    OBJECT_DECLARATION[classId=test/Obj, fqName=test.Obj, isObjectLiteral=false, isTopLevel=true, name=Obj, superNames=[]]
+      classFileMajorVersion: 61
+      MODIFIER_LIST[public]
+      CLASS_BODY

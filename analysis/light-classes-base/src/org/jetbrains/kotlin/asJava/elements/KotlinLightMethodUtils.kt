@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.asJava.elements
 
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -30,8 +31,30 @@ fun KtLightMethod.isTraitFakeOverride(): Boolean {
 fun KtLightMethod.isAccessor(getter: Boolean): Boolean {
     val origin = kotlinOrigin as? KtCallableDeclaration ?: return false
     if (origin !is KtProperty && origin !is KtParameter) return false
-    val expectedParametersCount = (if (getter) 0 else 1) + (if (origin.receiverTypeReference != null) 1 else 0)
+    val expectedParametersCount = (if (getter) 0 else 1) + origin.leadingJvmParameterCount
     return parameterList.parametersCount == expectedParametersCount
+}
+
+/**
+ * The number of parameters before the value parameters in the JVM methods of this callable:
+ * its context parameters, context receivers and extension receiver.
+ */
+internal val KtCallableDeclaration.leadingJvmParameterCount: Int
+    get() = contextParameters.size + contextReceivers.size + (if (hasReceiverParameter()) 1 else 0)
+
+/**
+ * Whether the JVM methods of this callable have a receiver parameter.
+ * A companion extension has a receiver type but no receiver parameter.
+ */
+private fun KtCallableDeclaration.hasReceiverParameter(): Boolean {
+    if (receiverTypeReference == null) return false
+    val isTopLevel = when (this) {
+        is KtProperty -> isTopLevel
+        is KtNamedFunction -> isTopLevel
+        else -> false
+    }
+
+    return !(isTopLevel && hasModifier(KtTokens.COMPANION_KEYWORD))
 }
 
 val KtLightMethod.isGetter: Boolean

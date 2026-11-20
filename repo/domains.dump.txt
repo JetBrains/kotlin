@@ -15,12 +15,10 @@ CompilerInfrastructure:
  - compiler/cli/cli-metadata
  - compiler/cli/cli-native-klib
  - compiler/cli/cli-runner
- - compiler/cli/resources
  - compiler/cli/src
  - compiler/compiler.version
  - compiler/config
  - compiler/config.jvm
- - compiler/container
  - compiler/preloader
  - compiler/test-infrastructure
  - compiler/test-infrastructure-utils
@@ -46,6 +44,7 @@ CompilerInfrastructure:
  - core/deserialization
  - core/deserialization.common
  - core/deserialization.common.jvm
+ - core/error.handling
  - core/language.model
  - core/language.targets
  - core/language.targets.jvm
@@ -57,23 +56,19 @@ CompilerInfrastructure:
 
 Frontend:
  - compiler/fir
- - compiler/frontend
  - compiler/frontend.common
  - compiler/frontend.common-psi
  - compiler/frontend.common.jvm
- - compiler/frontend.java
- - compiler/ir/ir.psi2ir
  - compiler/java-direct
  - compiler/multiplatform-parsing
  - compiler/psi/parser
- - compiler/resolution
  - compiler/resolution.common
  - compiler/resolution.common.js
  - compiler/resolution.common.jvm
- - compiler/serialization
  - compiler/serialization.common
  - compiler/tests-java8
  - compiler/tests-spec
+ - core/language.syntax
 
 CommonBackend:
  - compiler/cli/cli-jklib
@@ -95,6 +90,7 @@ Jvm:
  - compiler/backend.common.jvm
  - compiler/ir/backend.jvm
  - compiler/ir/serialization.jvm
+ - compiler/jvm.tests
  - compiler/tests-different-jdk
 
 Wasm:
@@ -104,9 +100,7 @@ Wasm:
 Js:
  - compiler/ir/backend.js
  - compiler/ir/serialization.js
- - js/ReadMe.md
  - js/js.ast
- - js/js.config/ReadMe.md
  - js/js.config/build.gradle.kts
  - js/js.config/gen
  - js/js.config/src/org/jetbrains/kotlin/incremental
@@ -114,13 +108,11 @@ Js:
  - js/js.config/src/org/jetbrains/kotlin/platform
  - js/js.config/src/org/jetbrains/kotlin/utils
  - js/js.parser
- - js/js.tests/ReadMe.md
  - js/js.tests/build.gradle.kts
  - js/js.tests/klib-compatibility
  - js/js.tests/testFixtures/com
  - js/js.tests/testFixturesResources
  - js/js.tests/tests
- - js/js.translator/ReadMe.md
  - js/js.translator/build.gradle.kts
  - js/js.translator/src
  - js/npm
@@ -162,7 +154,6 @@ CoreLibs:
 AnalysisApi:
  - analysis
  - compiler/psi/AGENTS.md
- - compiler/psi/CLAUDE.md
  - compiler/psi/psi-api
  - compiler/psi/psi-frontend-utils
  - compiler/psi/psi-impl
@@ -171,8 +162,6 @@ AnalysisApi:
 
 BuildToolsApi:
  - compiler/build-tools/AGENTS.md
- - compiler/build-tools/CLAUDE.md
- - compiler/build-tools/README.md
  - compiler/build-tools/kotlin-build-tools-api
  - compiler/build-tools/kotlin-build-tools-api-backports
  - compiler/build-tools/kotlin-build-tools-api-forward-tests
@@ -189,6 +178,9 @@ BuildToolsApi:
  - compiler/compiler-runner-unshaded
  - compiler/daemon
  - compiler/incremental-compilation-impl
+
+BuildToolsLibraries:
+ - build-tools/libraries
 
 SwiftExport:
  - native/swift
@@ -225,6 +217,7 @@ Gradle:
  - libraries/tools/kotlin-gradle-plugin
  - libraries/tools/kotlin-gradle-plugin-annotations
  - libraries/tools/kotlin-gradle-plugin-api
+ - libraries/tools/kotlin-gradle-plugin-arch-test-utils
  - libraries/tools/kotlin-gradle-plugin-dsl-codegen
  - libraries/tools/kotlin-gradle-plugin-idea
  - libraries/tools/kotlin-gradle-plugin-idea-browser-debug
@@ -263,38 +256,27 @@ BuildInfrastructure:
  - settings.gradle.kts
 
 Unknown:
- - .ai
- - .claude
  - .editorconfig
  - .gitattributes
  - .github
  - .gitignore
- - .junie
- - AGENTS.md
- - CLAUDE.md
- - CODE_OF_CONDUCT.md
  - ChangeLog.md
- - ReadMe.md
- - SECURITY.md
  - annotations
  - benchmarks
  - code-rules.md
  - compiler/AGENTS.md
- - compiler/CLAUDE.md
- - compiler/ir/ReadMe.md
  - compiler/ir/code-rules.md
  - compiler/test-coverage
  - dependencies
- - docs
  - generators
  - gradlew
  - gradlew.bat
  - idea
+ - init_v2.gradle
  - intellij.yaml
  - kotlin-js-store
  - libraries/.gitignore
  - libraries/.mvn
- - libraries/ReadMe.md
  - libraries/examples
  - libraries/kotlin-dom-api-compat
  - libraries/lib
@@ -340,6 +322,7 @@ Unknown:
  - prepare/compiler-client-embeddable
  - prepare/compiler-embeddable
  - prepare/compiler-native-image
+ - prepare/compiler-plugin-api
  - prepare/jklib-compiler
  - prepare/kotlin-compiler-internal-test-framework
  - prepare/kotlin-daemon-embeddable

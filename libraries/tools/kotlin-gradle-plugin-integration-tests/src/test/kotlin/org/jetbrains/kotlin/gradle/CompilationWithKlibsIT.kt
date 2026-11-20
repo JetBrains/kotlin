@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCommonBackend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Klib compilation")
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCommonBackend
 class CompilationWithKlibsIT : KGPBaseTest() {
 
     @DisplayName("KT-64115: duplicated klibs are excluded in the JS test compilations")
@@ -32,8 +35,7 @@ class CompilationWithKlibsIT : KGPBaseTest() {
                 assertOutputDoesNotContain("w: KLIB resolver: The same 'unique_name=kt-64115:foo' found in more than one library:")
                 assertNoCompilerArgument(
                     ":foo:compileTestKotlinJs",
-                    "libs/foo-js.klib",
-                    logLevel = LogLevel.INFO
+                    "libs/foo-js.klib"
                 )
             }
         }

@@ -15,6 +15,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
@@ -62,6 +63,7 @@ internal abstract class NativeDistributionCommonizerTask
     }
 
     @get:Classpath
+    @get:NormalizeLineEndings
     internal val commonizerClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
 
     @get:Input

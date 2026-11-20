@@ -1,5 +1,7 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73434, KT-88674
+// RENDER_DIAGNOSTIC_ARGUMENTS
 
 // FILE: JavaHelper.java
 public interface JavaHelper {

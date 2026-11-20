@@ -4,7 +4,7 @@ C@(1,1)
   component1@(2,5) : T
   component2@(3,5) : T
   component3@(4,5) : T
-test@(7,1) : kotlin.Unit
+test@(7,1) : kotlin.Unit (by PSI)
   KtDestructuringDeclaration@(8,5) : C<kotlin.Int>
     a@(8,10) : kotlin.Int
     b@(8,13) : kotlin.Int

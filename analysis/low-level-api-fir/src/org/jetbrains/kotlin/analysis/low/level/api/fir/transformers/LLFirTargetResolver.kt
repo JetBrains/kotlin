@@ -13,22 +13,18 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.isFakeDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.utils.replExpressionReference
-import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
-import org.jetbrains.kotlin.fir.originalIfFakeOverrideOrDelegated
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.hasResolvedType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
@@ -52,6 +48,9 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * dependencies or outer declarations are resolved before the target one.
  * We have [resolveDependencies] method which describes common dependencies between declarations.
  * Also, each [LLFirResolveTarget] can define phase-specific rules.
+ *
+ * [Fake declarations][isFakeDeclaration] are not transformed at all, as they share their content with the original declarations.
+ * Instead, [doLazyResolveFakeDeclarationUnderLock] is executed for them.
  *
  * Implementations:
  * - [COMPILER_REQUIRED_ANNOTATIONS][FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS] – [LLFirCompilerRequiredAnnotationsTargetResolver]
@@ -107,23 +106,6 @@ internal sealed class LLFirTargetResolver(
         return containingDeclaration
     }
 
-    fun containingReplSnippet(context: FirDeclaration): FirReplSnippet {
-        val replSnippet = containingDeclarations.getOrNull(1) as? FirReplSnippet
-            ?: containingDeclarations.firstOrNull() as? FirReplSnippet
-            ?: errorWithAttachment("Containing ${FirReplSnippet::class.simpleName} is not found") {
-                withFirEntry("context", context)
-                withFirDesignationEntry("designation", resolveTarget.designation)
-                context.tryCollectDesignation()?.let { withFirDesignationEntry("calculatedDesignation", it) }
-                withEntryGroup("containingDeclarations") {
-                    containingDeclarations.forEachIndexed { index, declaration ->
-                        withFirEntry("declaration$index", declaration)
-                    }
-                }
-            }
-
-        return replSnippet
-    }
-
     protected inline fun withContainingDeclaration(declaration: FirDeclaration, action: () -> Unit) {
         containingDeclarations += declaration
         try {
@@ -159,11 +141,8 @@ internal sealed class LLFirTargetResolver(
         if (skipDependencyTargetResolutionStep) return
 
         when {
-            // Fake or delegate declaration shared types and annotations from the original one
-            target is FirCallableDeclaration && target.canHaveDeferredReturnTypeCalculation -> {
-                val originalDeclaration = target.originalIfFakeOverrideOrDelegated()
-                originalDeclaration?.lazyResolveToPhase(resolverPhase)
-            }
+            // Fake declarations do not require their original declarations to be resolved, see isFakeDeclaration
+            target is FirCallableDeclaration && target.isFakeDeclaration -> {}
 
             target is FirProperty -> {
                 // We share type references and annotations with the original parameter
@@ -171,17 +150,6 @@ internal sealed class LLFirTargetResolver(
 
                 // Destructuring declaration entries depends on the container property
                 target.destructuringDeclarationContainerVariable?.lazyResolveToPhase(resolverPhase)
-
-                // Initializers and delegates inside repl snippets are moved to the eval function
-                val replReferenceExpression = target.replExpressionReference
-                if (replReferenceExpression != null) {
-                    val expression = replReferenceExpression.expressionRef.value
-                    // TODO(KT-85631): Ideally, lazy resolve has to be called if FirReplExpressionReference is present,
-                    // but with the current compiler implementation it leads to a cyclic dependency
-                    if (expression is FirLazyExpression || !expression.hasResolvedType) {
-                        containingReplSnippet(target).evalFunctionSymbol.lazyResolveToPhase(resolverPhase)
-                    }
-                }
             }
 
             target is FirNamedFunction && target.origin == FirDeclarationOrigin.Synthetic.DataClassMember -> {
@@ -248,18 +216,6 @@ internal sealed class LLFirTargetResolver(
         }
     }
 
-    final override fun withReplSnippet(firReplSnippet: FirReplSnippet, action: () -> Unit) {
-        withContainingDeclaration(firReplSnippet) {
-            @Suppress("DEPRECATION_ERROR")
-            withContainingReplSnippet(firReplSnippet, action)
-        }
-    }
-
-    @Deprecated("Should never be called directly, only for override purposes, please use withScript", level = DeprecationLevel.ERROR)
-    protected open fun withContainingReplSnippet(firReplSnippet: FirReplSnippet, action: () -> Unit) {
-        action()
-    }
-
     @Deprecated("Should never be called directly, only for override purposes, please use withScript", level = DeprecationLevel.ERROR)
     protected open fun withContainingScript(firScript: FirScript, action: () -> Unit) {
         action()
@@ -299,8 +255,27 @@ internal sealed class LLFirTargetResolver(
 
     /**
      * This method executes **under the lock** of [target].
+     *
+     * It is not executed for [fake declarations][isFakeDeclaration].
+     *
+     * @see doLazyResolveFakeDeclarationUnderLock
      */
     protected abstract fun doLazyResolveUnderLock(target: FirElementWithResolveState)
+
+    /**
+     * This method executes **under the lock** of [target] instead of [doLazyResolveUnderLock].
+     *
+     * Only the content of [target] which is not shared with the original declarations has to be computed here.
+     */
+    protected open fun doLazyResolveFakeDeclarationUnderLock(target: FirCallableDeclaration) {}
+
+    private fun doLazyResolveUnderLockWithFakeDeclarations(target: FirElementWithResolveState) {
+        if (target is FirCallableDeclaration && target.isFakeDeclaration) {
+            doLazyResolveFakeDeclarationUnderLock(target)
+        } else {
+            doLazyResolveUnderLock(target)
+        }
+    }
 
     /**
      * Executes the resolution.
@@ -339,7 +314,7 @@ internal sealed class LLFirTargetResolver(
                     target,
                     resolverPhase,
                     actionUnderLock = {
-                        doLazyResolveUnderLock(target)
+                        doLazyResolveUnderLockWithFakeDeclarations(target)
                         updatePhaseForDeclarationInternals(target)
                     },
                     actionOnCycle = {
@@ -348,7 +323,7 @@ internal sealed class LLFirTargetResolver(
                 )
             } else {
                 performCustomResolveUnderLock(target) {
-                    doLazyResolveUnderLock(target)
+                    doLazyResolveUnderLockWithFakeDeclarations(target)
                 }
             }
 

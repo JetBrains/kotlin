@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle.android
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
@@ -16,6 +18,7 @@ import kotlin.io.path.writeText
 @DisplayName("kotlin-android incremental compilation tests")
 @AndroidGradlePluginTests
 open class KotlinAndroidIncrementalIT : KGPBaseTest() {
+    @TestMetadata("AndroidIncrementalSingleModuleProject")
     @DisplayName("incremental compilation works with single-module android projects")
     @GradleAndroidTest
     fun testIncrementalCompilation(
@@ -29,7 +32,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("assembleDebug", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion))
+            build("assembleDebug")
 
             val modifiedSrc = subProject("app").kotlinSourcesDir().resolve("com/example/getSomething.kt")
             modifiedSrc.writeText(
@@ -55,6 +58,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidIncrementalMultiModule")
     @DisplayName("incremental compilation works with multi-module android projects")
     @GradleAndroidTest
     fun testMultiModuleIC(
@@ -65,7 +69,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
         project(
             "AndroidIncrementalMultiModule",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, buildReport = listOf(BuildReportType.FILE)),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug")
@@ -73,14 +77,12 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
             val libAndroidUtilKt = subProject("libAndroid").kotlinSourcesDir().resolve("com/example/libAndroidUtil.kt")
             libAndroidUtilKt.modify { it.replace("fun libAndroidUtil(): String", "fun libAndroidUtil(): CharSequence") }
 
-            val optionsWithDebug = buildOptions.copy(logLevel = LogLevel.DEBUG)
-
-            build("assembleDebug", buildOptions = optionsWithDebug) {
+            build("assembleDebug") {
                 val affectedSources = listOf(
                     libAndroidUtilKt,
                     subProject("app").kotlinSourcesDir().resolve("com/example/useLibAndroidUtil.kt")
                 ).relativizeTo(projectPath)
-                assertCompiledKotlinSources(affectedSources, output)
+                assertCompiledKotlinSourcesInBuildReport(affectedSources)
             }
 
             val libAndroidClassesOnlyUtilKt = subProject("libAndroidClassesOnly").kotlinSourcesDir().resolve("com/example/LibAndroidClassesOnlyUtil.kt")
@@ -91,27 +93,28 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
                 )
             }
 
-            build("assembleDebug", buildOptions = optionsWithDebug) {
+            build("assembleDebug") {
                 val affectedSources = listOf(
                     libAndroidClassesOnlyUtilKt,
                     subProject("app").kotlinSourcesDir().resolve("com/example/useLibAndroidClassesOnlyUtil.kt")
                 ).relativizeTo(projectPath)
-                assertCompiledKotlinSources(affectedSources, output)
+                assertCompiledKotlinSourcesInBuildReport(affectedSources)
             }
 
             val libJvmUtilKt = subProject("libJvmClassesOnly").kotlinSourcesDir().resolve("com/example/LibJvmUtil.kt")
             libJvmUtilKt.modify { it.replace("fun libJvmUtil(): String", "fun libJvmUtil(): CharSequence") }
 
-            build("assembleDebug", buildOptions = optionsWithDebug) {
+            build("assembleDebug") {
                 val affectedSources = listOf(
                     libJvmUtilKt,
                     subProject("app").kotlinSourcesDir().resolve("com/example/useLibJvmUtil.kt")
                 ).relativizeTo(projectPath)
-                assertCompiledKotlinSources(affectedSources, output)
+                assertCompiledKotlinSourcesInBuildReport(affectedSources)
             }
         }
     }
 
+    @TestMetadata("AndroidIncrementalSingleModuleProject")
     @DisplayName("incremental compilation does nothing without changes")
     @GradleAndroidTest
     fun testIncrementalBuildWithNoChanges(
@@ -140,6 +143,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidIncrementalMultiModule")
     @DisplayName("KT-49066: incremental compilation with custom module name")
     @GradleAndroidTest
     fun testCustomModuleName(
@@ -150,7 +154,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
         project(
             "AndroidIncrementalMultiModule",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, buildReport = listOf(BuildReportType.FILE)),
             buildJdk = jdkVersion.location
         ) {
             subProject("libAndroid").buildGradle.appendText(
@@ -163,18 +167,18 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("assembleDebug", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
+            build("assembleDebug") {
                 assertFileInProjectExists("libAndroid/build/tmp/kotlin-classes/debug/META-INF/custom_path_debug.kotlin_module")
             }
 
             val libAndroidUtilKt = subProject("libAndroid").kotlinSourcesDir().resolve("com/example/libAndroidUtil.kt")
             libAndroidUtilKt.modify { it.replace("fun libAndroidUtil(): String", "fun libAndroidUtil(): CharSequence") }
-            build("assembleDebug", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("assembleDebug") {
                 val affectedSources = listOf(
                     libAndroidUtilKt,
                     subProject("app").kotlinSourcesDir().resolve("com/example/useLibAndroidUtil.kt")
                 ).relativizeTo(projectPath)
-                assertCompiledKotlinSources(affectedSources, output)
+                assertCompiledKotlinSourcesInBuildReport(affectedSources)
             }
         }
     }

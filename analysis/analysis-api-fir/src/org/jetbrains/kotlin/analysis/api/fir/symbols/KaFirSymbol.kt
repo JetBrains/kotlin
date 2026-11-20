@@ -124,9 +124,10 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     FirDeclarationOrigin.Library, FirDeclarationOrigin.BuiltIns, FirDeclarationOrigin.BuiltInsFallback -> KaSymbolOrigin.LIBRARY
     is FirDeclarationOrigin.Java.Source -> KaSymbolOrigin.JAVA_SOURCE
     is FirDeclarationOrigin.Java.Library -> KaSymbolOrigin.JAVA_LIBRARY
-    is FirDeclarationOrigin.Java.Plugin -> KaSymbolOrigin.PLUGIN
+    is FirDeclarationOrigin.Java.Plugin -> KaSymbolOrigin.JAVA_PLUGIN
     FirDeclarationOrigin.SamConstructor -> KaSymbolOrigin.SAM_CONSTRUCTOR
-    FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> when (source?.kind) {
+    is FirDeclarationOrigin.Enhancement.Plugin -> KaSymbolOrigin.JAVA_PLUGIN
+    is FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> when (source?.kind) {
         is KtFakeSourceElementKind.EnumGeneratedDeclaration -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
         else -> javaOriginBasedOnSessionKind()
     }
@@ -140,7 +141,8 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
             this is FirValueParameter && this.containingDeclarationSymbol.origin is FirDeclarationOrigin.Synthetic -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
             this is FirSyntheticProperty || this is FirSyntheticPropertyAccessor -> KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
             origin is FirDeclarationOrigin.Synthetic.ForwardDeclaration -> KaSymbolOrigin.NATIVE_FORWARD_DECLARATION
-            origin is FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer -> KaSymbolOrigin.SOURCE
+            origin is FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer -> KaSymbolOrigin.SOURCE
+            origin is FirDeclarationOrigin.Synthetic.DanglingTypeParameter -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
 
             else -> errorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
                 withFirEntry("firToGetOrigin", this@ktSymbolOrigin)

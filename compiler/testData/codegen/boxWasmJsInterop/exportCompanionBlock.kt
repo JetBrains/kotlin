@@ -4,6 +4,8 @@
 // MODULE: main
 // FILE: externals.kt
 
+import kotlin.wasm.WasmExport
+
 class Test {
     companion {
         fun bar(value: String = "O"): String = value
@@ -31,6 +33,12 @@ fun setCompanionMutable(value: String): String {
     return Test.mutable
 }
 
+@JsExport
+companion fun Test.companionExtension(value: String): String = Test.foo + value
+
+@WasmExport
+companion fun Test.companionWasmExtension(value: Int): Int = Test.foo.length + value
+
 fun box(): String = "OK"
 
 // FILE: entry.mjs
@@ -41,6 +49,8 @@ import {
     companionFoo,
     companionMutable,
     setCompanionMutable,
+    companionExtension,
+    companionWasmExtension,
 } from "./index.mjs"
 
 if (companionBarDefault() !== "O") {
@@ -60,4 +70,10 @@ if (setCompanionMutable("CHANGED") !== "CHANGED") {
 }
 if (companionMutable() !== "CHANGED") {
     throw "FAIL: mutable read after write";
+}
+if (companionExtension("O") !== "KO") {
+    throw "FAIL: companion extension";
+}
+if (companionWasmExtension(41) !== 42) {
+    throw "FAIL: companion wasm extension";
 }

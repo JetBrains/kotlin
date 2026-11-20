@@ -192,9 +192,8 @@ class KaptStubJTreeConverter(
         genericType: SignatureParser.ClassGenericSignature<JCExpression, JCTypeParameter>,
         superTypes: ClassSupertypes<JCExpression>,
         enumValues: List<JCVariableDecl>,
-        sortedConvertedFields: List<JCVariableDecl>,
-        sortedConvertedMethods: List<JCMethodDecl>,
-        nestedClasses: List<JCClassDecl>,
+        members: List<ClassMember<JCTree>>,
+        recordComponents: List<JCVariableDecl>?
     ): JCClassDecl {
         return treeMaker.ClassDef(
             modifiers,
@@ -202,10 +201,7 @@ class KaptStubJTreeConverter(
             JavacList.from(genericType.typeParameters),
             superTypes.superClass,
             JavacList.from(superTypes.interfaces),
-            JavacList.from<JCTree>(enumValues) +
-                    JavacList.from(sortedConvertedFields) +
-                    JavacList.from(sortedConvertedMethods) +
-                    JavacList.from(nestedClasses)
+            JavacList.from<JCTree>(enumValues) + JavacList.from(members.map { it.element }),
         ).keepKdocCommentsIfNecessary(clazz)
     }
 

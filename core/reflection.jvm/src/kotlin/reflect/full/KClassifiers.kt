@@ -24,6 +24,7 @@ import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.jvm.internal.KClassImpl
+import kotlin.reflect.jvm.internal.computeArrayClassifier
 import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.internal.types.allTypeParameters
@@ -67,8 +68,11 @@ internal fun KClassifier.createTypeImpl(
         return createK1KType(arguments, nullable, mutableCollectionClass)
     }
 
+    val classifier =
+        if (this is KClass<*> && java.isArray && !java.componentType.isPrimitive) computeArrayClassifier(arguments) else this
+
     return SimpleKType(
-        this,
+        classifier,
         arguments,
         nullable,
         lazyOf(annotations),

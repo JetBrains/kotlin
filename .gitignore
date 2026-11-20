@@ -68,8 +68,11 @@ kotlin-ide/
 **/.junie/memory/
 **/.junie/plans/
 .output
-.claude/local.md
-.claude/CLAUDE.md
+.ai/local.md
 .claude/settings.local.json
+.claude/worktrees
 **/xcuserdata
 .test-federation.*
+gradle-user-home/
+__pycache__/
+*.pyc

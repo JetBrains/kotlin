@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildErrorContractDescription
@@ -134,7 +135,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             if (!propertyAccessor.hasContractToResolve) {
                 return propertyAccessor
             }
-            return context.withPropertyAccessor(owner, propertyAccessor, forContracts = true) {
+            return context.withPropertyAccessor(owner, propertyAccessor, hideBackingField = true) {
                 transformContractDescriptionOwner(propertyAccessor)
             }
         }
@@ -171,7 +172,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             val resolvedContractCall = withContractModeDisabled {
                 contractDescription.contractCall
                     .transformSingle(transformer, ResolutionMode.ContextIndependent)
-                    .apply { replaceConeTypeOrNull(session.builtinTypes.unitType.coneType) }
+                    .apply { replaceConeTypeOrNull(StandardTypes.Unit) }
             }
 
             // We generate a FirContractCallBlock according to a heuristic, which can have false positives,
@@ -298,9 +299,11 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         }
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass {
-            return forRegularClassBody(regularClass) {
-                transformDeclarationContent(regularClass, data)
-                regularClass
+            return context.withContainingClass(regularClass) {
+                forRegularClassBody(regularClass) {
+                    transformDeclarationContent(regularClass, data)
+                    regularClass
+                }
             }
         }
 
@@ -332,8 +335,10 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             anonymousObject: FirAnonymousObject,
             data: ResolutionMode
         ): FirAnonymousObject {
-            context.withAnonymousObject(anonymousObject) {
-                transformDeclarationContent(anonymousObject, data)
+            context.withContainingClass(anonymousObject) {
+                context.withAnonymousObject(anonymousObject) {
+                    transformDeclarationContent(anonymousObject, data)
+                }
             }
             return anonymousObject
         }

@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrLocalDelegatedPropertySymbolImpl
@@ -23,7 +21,6 @@ class IrSymbolDeserializer(
     private val symbolTable: ReferenceSymbolTable,
     private val libraryFile: IrLibraryFile,
     private val fileSymbol: IrFileSymbol,
-    private val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
     irInterner: IrInterningService,
     private val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
     fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
@@ -71,9 +68,6 @@ class IrSymbolDeserializer(
     private fun deserializeSymbolWithOwnerMaybeInOtherFile(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         if (!signature.isPubliclyVisible) {
             return deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
-                if (signature.hasTopLevel) {
-                    enqueueLocalTopLevelDeclaration(signature.topLevelSignature())
-                }
                 referenceDeserializedSymbol(symbolKind, signature)
             }
         }
@@ -86,17 +80,6 @@ class IrSymbolDeserializer(
         val postProcessedSymbol = deserializedSymbolPostProcessor(referencedSymbol, signature, fileSymbol)
         return postProcessedSymbol
     }
-
-    /** Notify [IrSymbolDeserializer] about a known symbol that belongs to the current file, [libraryFile]. */
-    fun referenceLocalIrSymbol(symbol: IrSymbol, signature: IdSignature) {
-        deserializedSymbolsWithOwnersInCurrentFile.put(signature, symbol)
-    }
-
-    fun referenceSimpleFunctionByLocalSignature(signature: IdSignature): IrSimpleFunctionSymbol =
-        deserializeSymbolWithOwnerMaybeInOtherFile(signature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
-
-    fun referencePropertyByLocalSignature(signature: IdSignature): IrPropertySymbol =
-        deserializeSymbolWithOwnerMaybeInOtherFile(signature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol
 
     fun parseSymbolData(code: Long): BinarySymbolData = BinarySymbolData.decode(code)
 

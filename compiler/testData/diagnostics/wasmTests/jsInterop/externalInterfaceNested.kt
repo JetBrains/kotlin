@@ -10,3 +10,7 @@ external interface I {
 
     companion <!COMPANION_OBJECT_IN_EXTERNAL_INTERFACE!>object<!>
 }
+
+external interface NamedCompanion {
+    companion <!COMPANION_OBJECT_IN_EXTERNAL_INTERFACE!>object Named<!>
+}

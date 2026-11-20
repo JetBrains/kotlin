@@ -160,7 +160,7 @@ internal fun List<IrDeclaration>.stableOrdered(): List<IrDeclaration> {
 
     forEach {
         val shouldPreserveRelativeOrder = when (it) {
-            is IrProperty -> it.backingField != null && !it.isConst
+            is IrProperty -> it.backingField?.initializer != null && !it.isConst
             is IrAnonymousInitializer, is IrEnumEntry, is IrField -> true
             else -> false
         }

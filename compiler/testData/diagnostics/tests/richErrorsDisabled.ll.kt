@@ -4,11 +4,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -RichErrors
 // WITH_STDLIB
-// ALLOW_KOTLIN_PACKAGE
-// FILE: RichError.kt
-package kotlin
-
-abstract class RichError
 // FILE: test.kt
 
 <!UNSUPPORTED_FEATURE!>error<!> class Foo

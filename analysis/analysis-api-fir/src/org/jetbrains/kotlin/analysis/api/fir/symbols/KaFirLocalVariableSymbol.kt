@@ -10,10 +10,11 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.entryName
+import org.jetbrains.kotlin.analysis.api.fir.hasNonLocalEntries
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -55,7 +56,7 @@ internal sealed class KaFirLocalOrErrorVariableSymbol(
         get() = withValidityAssertion { emptyList() }
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = withValidityAssertion { createReturnType() }
 
     override val isLateInit: Boolean
         // Note that for loop parameters having the `lateinit` keyword, the NON-PSI version returns `false`.
@@ -96,30 +97,9 @@ internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
     }
 
     constructor(declaration: KtDestructuringDeclarationEntry, session: KaFirSession) : super(declaration, session) {
-        val parent = declaration.parent
-
-        /**
-         *  [KtDestructuringDeclaration] in incorrect positions (like class-level)
-         *  still produce [KtDestructuringDeclarationEntry],
-         *  but their parent is [com.intellij.psi.PsiErrorElement],
-         *  so for them [KaFirErrorVariableSymbol] should be created instead.
-         *
-         *  Otherwise, [KtDestructuringDeclarationEntry.getParentNode] will throw an exception later.
-         */
-        assert(parent is KtDestructuringDeclaration)
-
-        /**
-         * Top-level destructuring declarations inside [KtScript] produce non-local
-         * properties for each corresponding [KtDestructuringDeclarationEntry],
-         * so [KaFirKotlinPropertySymbol.create] should be used in this case.
-         *
-         * This assertion checks that this is not the case here.
-         *
-         * In the case of the script, the first parent for [KtDestructuringDeclarationEntry]
-         * will be [KtDestructuringDeclaration] (previous assertion),
-         * the second one is [KtBlockExpression] and the third one is [KtScript].
-         */
-        assert(parent.parent?.parent !is KtScript)
+        // Entries of top-level, member, and script top-level destructuring declarations are properties,
+        // so [KaFirKotlinPropertySymbol.create] should be used for them instead
+        assert(!declaration.destructuringDeclaration.hasNonLocalEntries)
     }
 
     constructor(symbol: FirPropertySymbol, session: KaFirSession) : super(symbol, session) {
@@ -153,11 +133,6 @@ internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
 
 internal class KaFirErrorVariableSymbol : KaFirLocalOrErrorVariableSymbol {
     constructor(symbol: FirErrorPropertySymbol, session: KaFirSession) : super(symbol, session)
-
-    /**
-     * In inapplicable places FIR creates [FirErrorPropertySymbol] with [KtDestructuringDeclaration] as a source
-     */
-    constructor(declaration: KtDestructuringDeclaration, session: KaFirSession) : super(declaration, session)
 
     override val name: Name
         get() = withValidityAssertion { FirErrorPropertySymbol.NAME }

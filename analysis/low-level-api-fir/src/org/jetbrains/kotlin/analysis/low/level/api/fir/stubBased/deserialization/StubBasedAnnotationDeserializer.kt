@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -106,7 +107,11 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
     }
 
     /**
-     * Builds the expression [constantValue] stands for, as it is written at [sourceElement].
+     * Builds the expression of the declared [type] that [constantValue] stands for, as it is written at [sourceElement].
+     *
+     * The stubs built by the decompiler already hold an unsigned value for an unsigned declaration. The conversion by [type],
+     * as `FirMemberDeserializer` does for constants, is a defensive check: it guards against a binary that still holds
+     * the signed counterpart, e.g., metadata without `IS_UNSIGNED`.
      */
     fun resolveConstant(sourceElement: PsiElement, constantValue: ConstantValue<*>, type: ConeKotlinType): FirExpression {
         val resultValue = when {
@@ -187,7 +192,7 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
                 buildCollectionLiteral {
                     source = KtRealPsiSourceElement(sourceElement)
                     // Not quite precise, yet doesn't require annotation resolution
-                    coneTypeOrNull = (inferArrayValueType(value.value) ?: session.builtinTypes.anyType.coneType).createArrayType()
+                    coneTypeOrNull = (inferArrayValueType(value.value) ?: StandardTypes.Any).createArrayType()
 
                     argumentList = buildArgumentList {
                         value.value.mapTo(arguments) { resolveValue(sourceElement, it) }
@@ -201,20 +206,20 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
                     value.value.argumentsMapping
                 )
             }
-            is BooleanValue -> const(ConstantValueKind.Boolean, value.value, session.builtinTypes.booleanType, sourceElement)
-            is ByteValue -> const(ConstantValueKind.Byte, value.value, session.builtinTypes.byteType, sourceElement)
-            is CharValue -> const(ConstantValueKind.Char, value.value, session.builtinTypes.charType, sourceElement)
-            is ShortValue -> const(ConstantValueKind.Short, value.value, session.builtinTypes.shortType, sourceElement)
-            is LongValue -> const(ConstantValueKind.Long, value.value, session.builtinTypes.longType, sourceElement)
-            is FloatValue -> const(ConstantValueKind.Float, value.value, session.builtinTypes.floatType, sourceElement)
-            is DoubleValue -> const(ConstantValueKind.Double, value.value, session.builtinTypes.doubleType, sourceElement)
-            is UByteValue -> const(ConstantValueKind.UnsignedByte, value.value, session.builtinTypes.uByteType, sourceElement)
-            is UShortValue -> const(ConstantValueKind.UnsignedShort, value.value, session.builtinTypes.uShortType, sourceElement)
-            is UIntValue -> const(ConstantValueKind.UnsignedInt, value.value, session.builtinTypes.uIntType, sourceElement)
-            is ULongValue -> const(ConstantValueKind.UnsignedLong, value.value, session.builtinTypes.uLongType, sourceElement)
-            is IntValue -> const(ConstantValueKind.Int, value.value, session.builtinTypes.intType, sourceElement)
-            NullValue -> const(ConstantValueKind.Null, null, session.builtinTypes.nullableAnyType, sourceElement)
-            is StringValue -> const(ConstantValueKind.String, value.value, session.builtinTypes.stringType, sourceElement)
+            is BooleanValue -> const(ConstantValueKind.Boolean, value.value, sourceElement)
+            is ByteValue -> const(ConstantValueKind.Byte, value.value, sourceElement)
+            is CharValue -> const(ConstantValueKind.Char, value.value, sourceElement)
+            is ShortValue -> const(ConstantValueKind.Short, value.value, sourceElement)
+            is LongValue -> const(ConstantValueKind.Long, value.value, sourceElement)
+            is FloatValue -> const(ConstantValueKind.Float, value.value, sourceElement)
+            is DoubleValue -> const(ConstantValueKind.Double, value.value, sourceElement)
+            is UByteValue -> const(ConstantValueKind.UnsignedByte, value.value, sourceElement)
+            is UShortValue -> const(ConstantValueKind.UnsignedShort, value.value, sourceElement)
+            is UIntValue -> const(ConstantValueKind.UnsignedInt, value.value, sourceElement)
+            is ULongValue -> const(ConstantValueKind.UnsignedLong, value.value, sourceElement)
+            is IntValue -> const(ConstantValueKind.Int, value.value, sourceElement)
+            NullValue -> const(ConstantValueKind.Null, null, sourceElement)
+            is StringValue -> const(ConstantValueKind.String, value.value, sourceElement)
             else -> errorWithAttachment("Unexpected value ${value::class}") {
                 withEntry("value", value.toString())
             }
@@ -232,24 +237,24 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
             }
 
             return when (firstValue) {
-                is BooleanValue -> session.builtinTypes.booleanType.coneType
-                is ByteValue -> session.builtinTypes.byteType.coneType
-                is CharValue -> session.builtinTypes.charType.coneType
-                is ShortValue -> session.builtinTypes.shortType.coneType
-                is IntValue -> session.builtinTypes.intType.coneType
-                is LongValue -> session.builtinTypes.longType.coneType
-                is UByteValue -> session.builtinTypes.byteType.coneType
-                is UShortValue -> session.builtinTypes.shortType.coneType
-                is UIntValue -> session.builtinTypes.intType.coneType
-                is ULongValue -> session.builtinTypes.longType.coneType
-                is DoubleValue -> session.builtinTypes.doubleType.coneType
-                is FloatValue -> session.builtinTypes.floatType.coneType
+                is BooleanValue -> StandardTypes.Boolean
+                is ByteValue -> StandardTypes.Byte
+                is CharValue -> StandardTypes.Char
+                is ShortValue -> StandardTypes.Short
+                is IntValue -> StandardTypes.Int
+                is LongValue -> StandardTypes.Long
+                is UByteValue -> StandardTypes.Byte
+                is UShortValue -> StandardTypes.Short
+                is UIntValue -> StandardTypes.Int
+                is ULongValue -> StandardTypes.Long
+                is DoubleValue -> StandardTypes.Double
+                is FloatValue -> StandardTypes.Float
                 is AnnotationValue -> session.builtinTypes.annotationType.coneType
-                is StringValue -> session.builtinTypes.stringType.coneType
+                is StringValue -> StandardTypes.String
                 is EnumValue -> firstValue.enumClassId.constructClassLikeType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
                 is ArrayValue -> values.firstNotNullOfOrNull { inferArrayValueType((it as ArrayValue).value) }?.createArrayType()
                 is KClassValue -> {
-                    val kClassType = session.builtinTypes.anyType.coneType
+                    val kClassType = StandardTypes.Any
                     StandardClassIds.KClass.constructClassLikeType(arrayOf(kClassType), isMarkedNullable = false)
                 }
                 else -> null
@@ -259,19 +264,8 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
         return null
     }
 
-    private fun const(
-        kind: ConstantValueKind,
-        value: Any?,
-        typeRef: FirResolvedTypeRef,
-        sourceElement: PsiElement
-    ): FirLiteralExpression {
-        return buildLiteralExpression(
-            KtRealPsiSourceElement(sourceElement),
-            kind,
-            value,
-            setType = true
-        ).apply { this.replaceConeTypeOrNull(typeRef.coneType) }
-    }
+    private fun const(kind: ConstantValueKind, value: Any?, sourceElement: PsiElement): FirLiteralExpression =
+        buildLiteralExpression(KtRealPsiSourceElement(sourceElement), kind, value, setType = true)
 
     private fun PsiElement.toEnumEntryReferenceExpression(classId: ClassId, entryName: Name): FirExpression =
         buildEnumEntryDeserializedAccessExpression {

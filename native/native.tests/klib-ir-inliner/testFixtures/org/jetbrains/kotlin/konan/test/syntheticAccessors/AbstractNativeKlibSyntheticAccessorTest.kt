@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.syntheticAccessors
 
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
 import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
 import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
@@ -18,20 +17,16 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerNativeTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
-import org.jetbrains.kotlin.utils.bind
 
 // Base class for IR dump synthetic accessors test, configured with FIR frontend, in Native-specific way.
-open class AbstractNativeKlibSyntheticAccessorTest(
-    // Use the ERROR log level by default to fail any tests where PL detected any incompatibilities.
-    private val partialLinkageLogLevel: PartialLinkageLogLevel = PartialLinkageLogLevel.ERROR
-) : AbstractKotlinCompilerNativeTest() {
+open class AbstractNativeKlibSyntheticAccessorTest : AbstractKotlinCompilerNativeTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForDumpSyntheticAccessorsTest(
             frontendFacade = ::FirCliNativeFacade,
             frontendToIrConverter = ::Fir2IrCliNativeFacade,
             irInliningFacade = ::NativePreSerializationLoweringCliFacade,
             serializerFacade = ::KlibSerializerNativeCliFacade,
-            deserializerFacade = ::NativeDeserializerFacade.bind(partialLinkageLogLevel),
+            deserializerFacade = ::NativeDeserializerFacade,
         )
         globalDefaults {
             targetPlatform = NativePlatforms.unspecifiedNativePlatform

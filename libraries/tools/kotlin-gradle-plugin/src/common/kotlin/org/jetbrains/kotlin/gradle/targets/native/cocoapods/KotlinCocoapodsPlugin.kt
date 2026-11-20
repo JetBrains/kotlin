@@ -684,7 +684,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     }
 
     private fun PodspecTask.configure(cocoapodsExtension: CocoapodsExtension, project: Project) {
-        fun <T> Property<T>.setProvider(provider: () -> T?) = set(project.provider(provider))
+        fun <T : Any> Property<T>.setProvider(provider: () -> T?) = set(project.provider(provider))
 
         pods.set(cocoapodsExtension.pods)
         specName.setProvider { cocoapodsExtension.name }

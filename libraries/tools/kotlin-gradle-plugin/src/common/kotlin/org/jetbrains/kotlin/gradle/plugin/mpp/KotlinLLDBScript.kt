@@ -14,6 +14,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.commonizer.toolsDir
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -37,6 +38,7 @@ internal abstract class LLDBInitTask
     internal val fileName: Property<String> = objects.property(initialValue = "lldbinit")
 
     @get:InputDirectory
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal abstract val konanToolsDir: DirectoryProperty
 

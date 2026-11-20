@@ -1,7 +1,6 @@
 // from https://github.com/node-gradle/gradle-node-plugin
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
-import org.gradle.api.provider.Provider
 import java.nio.file.Path
 
 internal data class Platform(
@@ -20,9 +19,9 @@ internal enum class OsType(val osName: String) {
     FREEBSD("linux"), // https://github.com/node-gradle/gradle-node-plugin/issues/178
 }
 
-internal fun parsePlatform(osType: OsType, arch: String, uname: Provider<String>): Platform {
-    val osArch = if (osType == OsType.WINDOWS) parseWindowsArch(arch.lowercase(), uname)
-    else parseOsArch(arch.lowercase(), uname)
+internal fun parsePlatform(osType: OsType, arch: String): Platform {
+    val osArch = if (osType == OsType.WINDOWS) parseWindowsArch(arch.lowercase())
+    else parseOsArch(arch.lowercase())
 
     return Platform(
         osType.osName,
@@ -41,23 +40,15 @@ internal fun parseOsType(type: String): OsType {
     }
 }
 
-internal fun parseOsArch(arch: String, uname: Provider<String>): String {
+internal fun parseOsArch(arch: String): String {
     return when {
-        /*
-         * As Java just returns "arm" on all ARM variants, we need a system call to determine the exact arch. Unfortunately some JVMs say aarch32/64, so we need an additional
-         * conditional. Additionally, the node binaries for 'armv8l' are called 'arm64', so we need to distinguish here.
-         */
-        arch == "arm" || arch.startsWith("aarch") -> uname.get()
-            .let {
-                if (it == "armv8l" || it == "aarch64") {
-                    "arm64"
-                } else it
-            }
-            .let {
-                if (it == "x86_64") {
-                    "x64"
-                } else it
-            }
+        // Different JVMs name 64-bit ARM "aarch64" or "arm64".
+        arch == "aarch64" || arch == "arm64" -> "arm64"
+        // Java reports just "arm" (or "aarch32") for every 32-bit ARM variant and we no longer exec `uname` to tell
+        // them apart. Node.js ships a single 32-bit ARM distribution, "armv7l", so we always use it. This is also
+        // correct for 32-bit userland on an armv8l kernel (previously mapped to "arm64", which cannot run there).
+        // armv6l is not distinguished: nodejs.org publishes no official armv6l builds.
+        arch == "arm" || arch == "aarch32" -> "armv7l"
         arch == "ppc64le" -> "ppc64le"
         arch == "s390x" -> "s390x"
         arch.contains("64") -> "x64"
@@ -65,26 +56,10 @@ internal fun parseOsArch(arch: String, uname: Provider<String>): String {
     }
 }
 
-internal fun parseWindowsArch(arch: String, uname: Provider<String>): String {
+internal fun parseWindowsArch(arch: String): String {
     return when {
-        arch.startsWith("aarch") || arch.startsWith("arm")
-            -> {
-            val wmiArch = uname.get()
-            return when (wmiArch) {
-                /*
-                 * Parse Win32_Processor.Architectures to real processor type
-                 *
-                 * Table from https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/ns-sysinfoapi-system_info#members
-                 */
-                "12" -> "arm64"
-                "9" -> "x64"
-                // "6" -> "IA64"
-                // "5" -> "arm" // 32-bit
-                "0" -> "x86"
-                // "0xffff" -> "Unknown"
-                else -> error("Unexpected Win32_Processor.Architecture: $arch")
-            }
-        }
+        // Node.js publishes no 32-bit ARM Windows build, so any ARM JVM is mapped to arm64.
+        arch.startsWith("aarch") || arch.startsWith("arm") -> "arm64"
         arch.contains("64") -> "x64"
         else -> "x86"
     }

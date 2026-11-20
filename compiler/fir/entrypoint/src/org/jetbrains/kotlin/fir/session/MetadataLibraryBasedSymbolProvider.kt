@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import java.lang.ref.SoftReference
+import org.jetbrains.kotlin.utils.Cached
+import org.jetbrains.kotlin.utils.softRefCached
 
 abstract class MetadataLibraryBasedSymbolProvider<L>(
     session: FirSession,
@@ -75,26 +76,23 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
     protected val deserializationConfiguration: CommonCompilerDeserializationConfiguration =
         CommonCompilerDeserializationConfiguration(session.languageVersionSettings)
 
-    private val cachedFragments: MutableMap<L, MutableMap<Pair<String, String>, SoftReference<CachedPackageFragment>>> = mutableMapOf()
+    private val cachedFragments: MutableMap<L, MutableMap<Pair<String, String>, Cached<CachedPackageFragment>>> = mutableMapOf()
 
     private fun getPackageFragment(
         resolvedLibrary: L, packageStringName: String, packageMetadataPart: String
     ): CachedPackageFragment {
-        val slice = cachedFragments.getOrPut(resolvedLibrary) { mutableMapOf() }
-        val key = packageStringName to packageMetadataPart
-
-        return slice[key]?.get() ?: run {
-            val packageFragment = CachedPackageFragment(
-                parsePackageFragment(
-                    metadataProvider(resolvedLibrary).getPackageFragment(
-                        packageStringName,
-                        packageMetadataPart
+        return cachedFragments.getOrPut(resolvedLibrary) { mutableMapOf() }.getOrPut(packageStringName to packageMetadataPart) {
+            softRefCached {
+                CachedPackageFragment(
+                    parsePackageFragment(
+                        metadataProvider(resolvedLibrary).getPackageFragment(
+                            packageStringName,
+                            packageMetadataPart
+                        )
                     )
                 )
-            )
-            slice[key] = SoftReference(packageFragment)
-            packageFragment
-        }
+            }
+        }.value
     }
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {

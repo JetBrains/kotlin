@@ -13,6 +13,6 @@ class FirLombokJavaRegistrar : FirExtensionRegistrar() {
         +::AccessorGenerator
         +::WithGenerator
         +::SuperBuilderGenerator
-        +::DeclarationWithValueAnnStatusTransformer
+        +::LombokDeclarationStatusTransformer
     }
 }

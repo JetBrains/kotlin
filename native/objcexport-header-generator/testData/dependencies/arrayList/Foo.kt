@@ -1,1 +1,1 @@
-val a: ArrayList<Int>
+val a: ArrayList<Int> = error("stub")

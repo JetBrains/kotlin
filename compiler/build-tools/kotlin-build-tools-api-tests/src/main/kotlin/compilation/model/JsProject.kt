@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperat
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinJsStdlibKlibLocation
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.nio.file.Path
 
@@ -95,5 +96,11 @@ fun KotlinToolchains.assumeJsIsSupported() {
         if (e.message?.startsWith("Unsupported") == true) {
             assumeTrue(false) { "Kotlin/JS is not supported on this version" }
         } else throw e
+    }
+}
+
+fun KotlinToolchains.assumeJsDtsGenerationIsSupported() {
+    assumeTrue(KotlinToolingVersion(getCompilerVersion()) > KotlinToolingVersion(2, 5, 0, "Beta1")) {
+        "JsDtsGenerationOperation is not supported on Kotlin versions up to 2.5.0-Beta1"
     }
 }

@@ -1,0 +1,178 @@
+KtFile: 'typeParameterAsDelegatedSuperTypeInLocalClass.kt'
+  null
+
+KtPackageDirective(0,11): 'package bar'
+  null
+
+KtNameReferenceExpression(8,11): 'bar'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      bar
+    ]
+
+KtImportList(11,11): ''
+  null
+
+KtClass(13,34): 'interface MyInterface'
+  null
+
+KtNamedFunction(36,120): 'fun <T : MyInterface> foo(i: T) {'
+  null
+
+KtTypeParameterList(40,57): '<T : MyInterface>'
+  null
+
+KtTypeParameter(41,56): 'T : MyInterface'
+  null
+
+KtTypeReference(45,56): 'MyInterface'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      bar/MyInterface
+    ]
+
+KtUserType(45,56): 'MyInterface'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      bar/MyInterface
+    ]
+
+KtNameReferenceExpression(45,56): 'MyInterface'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      bar/MyInterface
+    ]
+
+KtParameterList(61,67): '(i: T)'
+  null
+
+KtParameter(62,66): 'i: T'
+  null
+
+KtTypeReference(65,66): 'T'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtUserType(65,66): 'T'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtNameReferenceExpression(65,66): 'T'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtBlockExpression(68,120): '{'
+  null
+
+KtClass(74,94): 'class Local : T by i'
+  null
+
+KtSuperTypeList(88,94): 'T by i'
+  null
+
+KtDelegatedSuperTypeEntry(88,94): 'T by i'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      T
+    ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+
+KtTypeReference(88,89): 'T'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      T
+    ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+
+KtUserType(88,89): 'T'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      T
+    ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+
+KtNameReferenceExpression(88,89): 'T'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      T
+    ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+
+KtNameReferenceExpression(93,94): 'i'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      i: T
+    ]
+
+KtObjectLiteralExpression(100,118): 'object : T by i {}'
+  null
+
+KtObjectDeclaration(100,118): 'object : T by i {}'
+  null
+
+KtSuperTypeList(109,115): 'T by i'
+  null
+
+KtDelegatedSuperTypeEntry(109,115): 'T by i'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      T
+    ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+
+KtTypeReference(109,110): 'T'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      T
+    ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+
+KtUserType(109,110): 'T'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      T
+    ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+
+KtNameReferenceExpression(109,110): 'T'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      T
+    ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
+
+KtNameReferenceExpression(114,115): 'i'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      i: T
+    ]
+
+KtClassBody(116,118): '{}'
+  null

@@ -1,6 +1,7 @@
 // This file was generated automatically. See the README.md file
 // DO NOT MODIFY IT MANUALLY.
 
+@file:UseSerializers(PathAsStringSerializer::class)
 @file:OptIn(ExperimentalCompilerArgument::class)
 
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
@@ -20,18 +21,16 @@ import kotlin.collections.MutableSet
 import kotlin.collections.Set
 import kotlin.collections.emptyList
 import kotlin.collections.emptySet
+import kotlin.collections.listOf
+import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
-import kotlin.collections.toMutableList
-import kotlin.collections.toMutableSet
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.HELP
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.NOWARN
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.VERSION
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.WERROR
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.WEXTRA
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.X
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments as ArgumentsCommonToolArguments
@@ -39,98 +38,140 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments as CommonTo
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal abstract class CommonToolArgumentsImpl(
-  argumentValidationErrors: Set<String> = emptySet(),
-  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-  internal val argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : ArgumentsCommonToolArguments,
+@Serializable
+internal abstract class CommonToolArgumentsImpl() : ArgumentsCommonToolArguments,
     ArgumentsCommonToolArguments.Builder {
   protected val internalArguments: MutableSet<String> = mutableSetOf()
 
+  @Transient
+  private val defaultArguments: CommonToolArguments = createDefaultArguments()
+
+  @Transient
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
-  protected val _restrictedArgViolations: MutableList<RestrictedArgViolation> =
-      restrictedArgViolations.toMutableList()
+  @SerialName("WERROR")
+  internal var allWarningsAsErrors: Boolean = defaultArguments.allWarningsAsErrors
+
+  @SerialName("WEXTRA")
+  internal var extraWarnings: Boolean = defaultArguments.extraWarnings
+
+  @SerialName("X")
+  internal var extraHelp: Boolean = defaultArguments.extraHelp
+
+  @SerialName("HELP")
+  internal var help: Boolean = defaultArguments.help
+
+  @SerialName("NOWARN")
+  internal var suppressWarnings: Boolean = defaultArguments.suppressWarnings
+
+  @SerialName("VERBOSE")
+  internal var verbose: Boolean = defaultArguments.verbose
+
+  @SerialName("VERSION")
+  internal var version: Boolean = defaultArguments.version
+
+  @Transient
+  protected val _restrictedArgViolations: MutableList<RestrictedArgViolation> = mutableListOf()
 
   internal val restrictedArgViolations: List<RestrictedArgViolation>
     get() = _restrictedArgViolations
 
-  protected val _argumentValidationErrors: MutableSet<String> =
-      argumentValidationErrors.toMutableSet()
+  protected val _argumentValidationErrors: MutableSet<String> = mutableSetOf()
 
   internal val argumentValidationErrors: Set<String>
     get() = _argumentValidationErrors
 
-  @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
+  @Transient
+  internal val argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics()
 
-  public operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+  public constructor(
+    argumentValidationErrors: Set<String> = emptySet(),
+    restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+    argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+  ) : this() {
+    _argumentValidationErrors += argumentValidationErrors
+    _restrictedArgViolations += restrictedArgViolations
+    this.argumentParseDiagnostics += argumentParseDiagnostics
   }
 
-  public operator fun contains(key: CommonToolArgument<*>): Boolean = key.id in optionsMap
-
-  private operator fun `get`(key: String): Any? = CommonToolArgumentValueAdapter.toApi(optionsMap[key])
-
-  private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = CommonToolArgumentValueAdapter.toImpl(`value`)
-  }
+  public abstract fun createDefaultArguments(): CommonToolArguments
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+  override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V = CommonToolArgumentValueAdapter.toApi(when (key.id) {
+    "WERROR" -> allWarningsAsErrors
+    "WEXTRA" -> extraWarnings
+    "X" -> extraHelp
+    "HELP" -> help
+    "NOWARN" -> suppressWarnings
+    "VERBOSE" -> verbose
+    "VERSION" -> version
+    else -> {
+            check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+            optionsMap[key.id]
+        }
   }
+  )
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    when (key.id) {
+      "WERROR" -> allWarningsAsErrors = CommonToolArgumentValueAdapter.toImpl(value)
+      "WEXTRA" -> extraWarnings = CommonToolArgumentValueAdapter.toImpl(value)
+      "X" -> extraHelp = CommonToolArgumentValueAdapter.toImpl(value)
+      "HELP" -> help = CommonToolArgumentValueAdapter.toImpl(value)
+      "NOWARN" -> suppressWarnings = CommonToolArgumentValueAdapter.toImpl(value)
+      "VERBOSE" -> verbose = CommonToolArgumentValueAdapter.toImpl(value)
+      "VERSION" -> version = CommonToolArgumentValueAdapter.toImpl(value)
+      else -> {
+              optionsMap[key.id] = CommonToolArgumentValueAdapter.toImpl(value)
+          }
+    }
   }
 
   @Deprecated(
     message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
     level = DeprecationLevel.ERROR,
   )
-  override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
+  override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in knownOptionIds
 
   abstract override fun build(): CommonToolArgumentsImpl
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonToolArguments): CommonToolArguments {
-    val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
+    val unknownArgs = optionsMap.keys
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (WERROR in this) { arguments.allWarningsAsErrors = get(WERROR)}
-    if (WEXTRA in this) { arguments.extraWarnings = get(WEXTRA)}
-    if (X in this) { arguments.extraHelp = get(X)}
-    if (HELP in this) { arguments.help = get(HELP)}
-    if (NOWARN in this) { arguments.suppressWarnings = get(NOWARN)}
-    if (VERBOSE in this) { arguments.verbose = get(VERBOSE)}
-    if (VERSION in this) { arguments.version = get(VERSION)}
+    arguments.allWarningsAsErrors = allWarningsAsErrors
+    arguments.extraWarnings = extraWarnings
+    arguments.extraHelp = extraHelp
+    arguments.help = help
+    arguments.suppressWarnings = suppressWarnings
+    arguments.verbose = verbose
+    arguments.version = version
     return arguments
   }
 
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: CommonToolArguments) {
-    try { this[WERROR] = arguments.allWarningsAsErrors } catch (_: NoSuchMethodError) {  }
-    try { this[WEXTRA] = arguments.extraWarnings } catch (_: NoSuchMethodError) {  }
-    try { this[X] = arguments.extraHelp } catch (_: NoSuchMethodError) {  }
-    try { this[HELP] = arguments.help } catch (_: NoSuchMethodError) {  }
-    try { this[NOWARN] = arguments.suppressWarnings } catch (_: NoSuchMethodError) {  }
-    try { this[VERBOSE] = arguments.verbose } catch (_: NoSuchMethodError) {  }
-    try { this[VERSION] = arguments.version } catch (_: NoSuchMethodError) {  }
+    allWarningsAsErrors = arguments.allWarningsAsErrors
+    extraWarnings = arguments.extraWarnings
+    extraHelp = arguments.extraHelp
+    help = arguments.help
+    suppressWarnings = arguments.suppressWarnings
+    verbose = arguments.verbose
+    version = arguments.version
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: CommonToolArguments): CommonToolArguments {
-    if (WERROR in this) { arguments.allWarningsAsErrors = get(WERROR)}
-    if (WEXTRA in this) { arguments.extraWarnings = get(WEXTRA)}
+    arguments.allWarningsAsErrors = allWarningsAsErrors
+    arguments.extraWarnings = extraWarnings
     return arguments
   }
 
@@ -138,28 +179,8 @@ internal abstract class CommonToolArgumentsImpl(
     _restrictedArgViolations.clear()
   }
 
-  public class CommonToolArgument<V>(
-    public val id: String,
-  ) {
-    init {
-      knownArguments.add(id)}
-  }
-
   public companion object {
-    private val knownArguments: MutableSet<String> = mutableSetOf()
-
-    public val WERROR: CommonToolArgument<Boolean> = CommonToolArgument("WERROR")
-
-    public val WEXTRA: CommonToolArgument<Boolean> = CommonToolArgument("WEXTRA")
-
-    public val X: CommonToolArgument<Boolean> = CommonToolArgument("X")
-
-    public val HELP: CommonToolArgument<Boolean> = CommonToolArgument("HELP")
-
-    public val NOWARN: CommonToolArgument<Boolean> = CommonToolArgument("NOWARN")
-
-    public val VERBOSE: CommonToolArgument<Boolean> = CommonToolArgument("VERBOSE")
-
-    public val VERSION: CommonToolArgument<Boolean> = CommonToolArgument("VERSION")
+    private val knownOptionIds: List<String> =
+        listOf("WERROR","WEXTRA","X","HELP","NOWARN","VERBOSE","VERSION",)
   }
 }

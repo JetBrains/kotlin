@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
-import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.appendText
 
-@MustRunOnChangesInCompilerInfrastructure
+@MustRunOnChangesInGradle
 @MustRunOnChangesInBuildToolsApi
 abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
 
@@ -46,6 +46,6 @@ abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         incremental = true,
-        logLevel = LogLevel.DEBUG
+        buildReport = listOf(BuildReportType.FILE),
     )
 }

@@ -1,162 +1,365 @@
 fun box(): String {
-  return test1(str = "TEST", default = 0).plus(other = test1(str = null, default = 0)).plus(other = test2(str = "TEST", fallback = null, default = 0)).plus(other = test2(str = null, fallback = "test", default = 0)).plus(other = test2(str = null, fallback = null, default = 0)).plus(other = test3(str = "TEST")).plus(other = test3(str = null))
+  return runAll(tests = [to<String, Function0<Unit>>(/* <this> = "test1(\"TEST\", 0)", */ that = local fun <anonymous>() {
+    test1(str = "TEST", default = 0)
+  }
+), to<String, Function0<Unit>>(/* <this> = "test1(null, 0)", */ that = local fun <anonymous>() {
+    test1(str = null, default = 0)
+  }
+), to<String, Function0<Unit>>(/* <this> = "test2(\"TEST\", null, 0)", */ that = local fun <anonymous>() {
+    test2(str = "TEST", fallback = null, default = 0)
+  }
+), to<String, Function0<Unit>>(/* <this> = "test2(null, \"test\", 0)", */ that = local fun <anonymous>() {
+    test2(str = null, fallback = "test", default = 0)
+  }
+), to<String, Function0<Unit>>(/* <this> = "test2(null, null, 0)", */ that = local fun <anonymous>() {
+    test2(str = null, fallback = null, default = 0)
+  }
+), to<String, Function0<Unit>>(/* <this> = "test3(\"TEST\")", */ that = local fun <anonymous>() {
+    test3(str = "TEST")
+  }
+), to<String, Function0<Unit>>(/* <this> = "test3(null)", */ that = local fun <anonymous>() {
+    test3(str = null)
+  }
+), to<String, Function0<Unit>>(/* <this> = "test4(null, null, null, null)", */ that = local fun <anonymous>() {
+    test4(b1 = null, b2 = null, b3 = null, b4 = null)
+  }
+), to<String, Function0<Unit>>(/* <this> = "test4(null, null, null, false)", */ that = local fun <anonymous>() {
+    test4(b1 = null, b2 = null, b3 = null, b4 = false)
+  }
+), to<String, Function0<Unit>>(/* <this> = "test4(null, null, false, null)", */ that = local fun <anonymous>() {
+    test4(b1 = null, b2 = null, b3 = false, b4 = null)
+  }
+), to<String, Function0<Unit>>(/* <this> = "test4(null, false, null, null)", */ that = local fun <anonymous>() {
+    test4(b1 = null, b2 = false, b3 = null, b4 = null)
+  }
+), to<String, Function0<Unit>>(/* <this> = "test4(false, null, null, null)", */ that = local fun <anonymous>() {
+    test4(b1 = false, b2 = null, b3 = null, b4 = null)
+  }
+)])
 }
 
-fun test1(str: String?, default: Int): String {
-  return expectThrowableMessage(block = local fun <anonymous>() {
-    { // BLOCK
-      val tmp0_Explain: String? = str
-      val tmp1_Explain: String? = { // BLOCK
-        val tmp_0: String? = tmp0_Explain
-        when {
-          EQEQ(arg0 = tmp_0, arg1 = null) -> null
-          else -> lowercase(/* <this> = tmp_0 /*as String */ */)
-        }
-      }
-      val tmp2_Explain: Int? = { // BLOCK
-        val tmp_1: String? = tmp1_Explain
-        when {
-          EQEQ(arg0 = tmp_1, arg1 = null) -> null
-          else -> tmp_1 /*as String */.<get-length>()
-        }
-      }
+fun test1(str: String?, default: Int) {
+  { // BLOCK
+    val tmp0_Explain: String? = str
+    val tmp1_Explain: String? = { // BLOCK
+      val tmp_0: String? = tmp0_Explain
       when {
-        EQEQ(arg0 = tmp2_Explain, arg1 = null) -> { // BLOCK
-          val tmp3_Explain: Int = default
-          val tmp4_Explain: Int = 5
-          val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
-          assert(value = tmp5_Explain, lazyMessage = local fun <anonymous>(): String {
-            return "\nassert((str?.lowercase()?.length ?: default) == 5)" + "\n        |    |            |         |        |" + "\n        |    |            |         |        " + tmp5_Explain + "\n        |    |            |         " + tmp3_Explain + "\n        |    |            " + tmp2_Explain + "\n        |    " + tmp1_Explain + "\n        " + tmp0_Explain + "\n"
-          }
-)
+        EQEQ(arg0 = tmp_0, arg1 = null) -> null
+        else -> lowercase(/* <this> = tmp_0 /*as String */ */)
+      }
+    }
+    val tmp2_Explain: Int? = { // BLOCK
+      val tmp_1: String? = tmp1_Explain
+      when {
+        EQEQ(arg0 = tmp_1, arg1 = null) -> null
+        else -> tmp_1 /*as String */.<get-length>()
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp2_Explain, arg1 = null) -> { // BLOCK
+        val tmp3_Explain: Int = default
+        val tmp4_Explain: Int = 5
+        val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
+        assert(value = tmp5_Explain, lazyMessage = local fun <anonymous>(): String {
+          return "\nassert((str?.lowercase()?.length ?: default) == 5)" + "\n        |    |            |         |        |" + "\n        |    |            |         |        " + tmp5_Explain + "\n        |    |            |         " + tmp3_Explain + "\n        |    |            " + tmp2_Explain + "\n        |    " + tmp1_Explain + "\n        " + tmp0_Explain + "\n"
         }
-        else -> { // BLOCK
-          val tmp6_Explain: Int = 5
-          val tmp7_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp6_Explain)
-          assert(value = tmp7_Explain, lazyMessage = local fun <anonymous>(): String {
-            return "\nassert((str?.lowercase()?.length ?: default) == 5)" + "\n        |    |            |                  |" + "\n        |    |            |                  " + tmp7_Explain + "\n        |    |            " + tmp2_Explain + "\n        |    " + tmp1_Explain + "\n        " + tmp0_Explain + "\n"
-          }
 )
+      }
+      else -> { // BLOCK
+        val tmp6_Explain: Int = 5
+        val tmp7_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp6_Explain)
+        assert(value = tmp7_Explain, lazyMessage = local fun <anonymous>(): String {
+          return "\nassert((str?.lowercase()?.length ?: default) == 5)" + "\n        |    |            |                  |" + "\n        |    |            |                  " + tmp7_Explain + "\n        |    |            " + tmp2_Explain + "\n        |    " + tmp1_Explain + "\n        " + tmp0_Explain + "\n"
         }
+)
       }
     }
   }
-)
 }
 
-fun test2(str: String?, fallback: String?, default: Int): String {
-  return expectThrowableMessage(block = local fun <anonymous>() {
-    { // BLOCK
-      val tmp0_Explain: String? = str
-      val tmp1_Explain: String? = { // BLOCK
-        val tmp_2: String? = tmp0_Explain
-        when {
-          EQEQ(arg0 = tmp_2, arg1 = null) -> null
-          else -> lowercase(/* <this> = tmp_2 /*as String */ */)
-        }
-      }
+fun test2(str: String?, fallback: String?, default: Int) {
+  { // BLOCK
+    val tmp0_Explain: String? = str
+    val tmp1_Explain: String? = { // BLOCK
+      val tmp_2: String? = tmp0_Explain
       when {
-        EQEQ(arg0 = tmp1_Explain, arg1 = null) -> { // BLOCK
-          val tmp2_Explain: String? = fallback
-          val tmp3_Explain: Int? = { // BLOCK
-            val tmp_3: String? = tmp2_Explain
-            when {
-              EQEQ(arg0 = tmp_3, arg1 = null) -> null
-              else -> tmp_3 /*as String */.<get-length>()
-            }
-          }
+        EQEQ(arg0 = tmp_2, arg1 = null) -> null
+        else -> lowercase(/* <this> = tmp_2 /*as String */ */)
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp1_Explain, arg1 = null) -> { // BLOCK
+        val tmp2_Explain: String? = fallback
+        val tmp3_Explain: Int? = { // BLOCK
+          val tmp_3: String? = tmp2_Explain
           when {
-            EQEQ(arg0 = tmp3_Explain, arg1 = null) -> { // BLOCK
-              val tmp4_Explain: Int = default
-              val tmp5_Explain: Int = 5
-              val tmp6_Explain: Boolean = EQEQ(arg0 = tmp4_Explain, arg1 = tmp5_Explain)
-              assert(value = tmp6_Explain, lazyMessage = local fun <anonymous>(): String {
-                return "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)" + "\n         |    |              |          |         |        |" + "\n         |    |              |          |         |        " + tmp6_Explain + "\n         |    |              |          |         " + tmp4_Explain + "\n         |    |              |          " + tmp3_Explain + "\n         |    |              " + tmp2_Explain + "\n         |    " + tmp1_Explain + "\n         " + tmp0_Explain + "\n"
-              }
-)
-            }
-            else -> { // BLOCK
-              val tmp7_Explain: Int = 5
-              val tmp8_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp7_Explain)
-              assert(value = tmp8_Explain, lazyMessage = local fun <anonymous>(): String {
-                return "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)" + "\n         |    |              |          |                  |" + "\n         |    |              |          |                  " + tmp8_Explain + "\n         |    |              |          " + tmp3_Explain + "\n         |    |              " + tmp2_Explain + "\n         |    " + tmp1_Explain + "\n         " + tmp0_Explain + "\n"
-              }
-)
-            }
+            EQEQ(arg0 = tmp_3, arg1 = null) -> null
+            else -> tmp_3 /*as String */.<get-length>()
           }
         }
-        else -> { // BLOCK
-          val tmp9_Explain: Int? = { // BLOCK
-            val tmp_4: String? = tmp1_Explain
-            when {
-              EQEQ(arg0 = tmp_4, arg1 = null) -> null
-              else -> tmp_4 /*as String */.<get-length>()
+        when {
+          EQEQ(arg0 = tmp3_Explain, arg1 = null) -> { // BLOCK
+            val tmp4_Explain: Int = default
+            val tmp5_Explain: Int = 5
+            val tmp6_Explain: Boolean = EQEQ(arg0 = tmp4_Explain, arg1 = tmp5_Explain)
+            assert(value = tmp6_Explain, lazyMessage = local fun <anonymous>(): String {
+              return "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)" + "\n         |    |              |          |         |        |" + "\n         |    |              |          |         |        " + tmp6_Explain + "\n         |    |              |          |         " + tmp4_Explain + "\n         |    |              |          " + tmp3_Explain + "\n         |    |              " + tmp2_Explain + "\n         |    " + tmp1_Explain + "\n         " + tmp0_Explain + "\n"
             }
+)
           }
+          else -> { // BLOCK
+            val tmp7_Explain: Int = 5
+            val tmp8_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp7_Explain)
+            assert(value = tmp8_Explain, lazyMessage = local fun <anonymous>(): String {
+              return "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)" + "\n         |    |              |          |                  |" + "\n         |    |              |          |                  " + tmp8_Explain + "\n         |    |              |          " + tmp3_Explain + "\n         |    |              " + tmp2_Explain + "\n         |    " + tmp1_Explain + "\n         " + tmp0_Explain + "\n"
+            }
+)
+          }
+        }
+      }
+      else -> { // BLOCK
+        val tmp9_Explain: Int? = { // BLOCK
+          val tmp_4: String? = tmp1_Explain
           when {
-            EQEQ(arg0 = tmp9_Explain, arg1 = null) -> { // BLOCK
-              val tmp10_Explain: Int = default
-              val tmp11_Explain: Int = 5
-              val tmp12_Explain: Boolean = EQEQ(arg0 = tmp10_Explain, arg1 = tmp11_Explain)
-              assert(value = tmp12_Explain, lazyMessage = local fun <anonymous>(): String {
-                return "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)" + "\n         |    |                         |         |        |" + "\n         |    |                         |         |        " + tmp12_Explain + "\n         |    |                         |         " + tmp10_Explain + "\n         |    |                         " + tmp9_Explain + "\n         |    " + tmp1_Explain + "\n         " + tmp0_Explain + "\n"
-              }
-)
+            EQEQ(arg0 = tmp_4, arg1 = null) -> null
+            else -> tmp_4 /*as String */.<get-length>()
+          }
+        }
+        when {
+          EQEQ(arg0 = tmp9_Explain, arg1 = null) -> { // BLOCK
+            val tmp10_Explain: Int = default
+            val tmp11_Explain: Int = 5
+            val tmp12_Explain: Boolean = EQEQ(arg0 = tmp10_Explain, arg1 = tmp11_Explain)
+            assert(value = tmp12_Explain, lazyMessage = local fun <anonymous>(): String {
+              return "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)" + "\n         |    |                         |         |        |" + "\n         |    |                         |         |        " + tmp12_Explain + "\n         |    |                         |         " + tmp10_Explain + "\n         |    |                         " + tmp9_Explain + "\n         |    " + tmp1_Explain + "\n         " + tmp0_Explain + "\n"
             }
-            else -> { // BLOCK
-              val tmp13_Explain: Int = 5
-              val tmp14_Explain: Boolean = EQEQ(arg0 = tmp9_Explain, arg1 = tmp13_Explain)
-              assert(value = tmp14_Explain, lazyMessage = local fun <anonymous>(): String {
-                return "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)" + "\n         |    |                         |                  |" + "\n         |    |                         |                  " + tmp14_Explain + "\n         |    |                         " + tmp9_Explain + "\n         |    " + tmp1_Explain + "\n         " + tmp0_Explain + "\n"
-              }
 )
+          }
+          else -> { // BLOCK
+            val tmp13_Explain: Int = 5
+            val tmp14_Explain: Boolean = EQEQ(arg0 = tmp9_Explain, arg1 = tmp13_Explain)
+            assert(value = tmp14_Explain, lazyMessage = local fun <anonymous>(): String {
+              return "\nassert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)" + "\n         |    |                         |                  |" + "\n         |    |                         |                  " + tmp14_Explain + "\n         |    |                         " + tmp9_Explain + "\n         |    " + tmp1_Explain + "\n         " + tmp0_Explain + "\n"
             }
+)
           }
         }
       }
     }
   }
-)
 }
 
-fun test3(str: String?): String {
-  return expectThrowableMessage(block = local fun <anonymous>() {
-    { // BLOCK
-      val tmp0_Explain: String? = str
-      val tmp1_Explain: String? = { // BLOCK
-        val tmp_5: String? = tmp0_Explain
-        when {
-          EQEQ(arg0 = tmp_5, arg1 = null) -> null
-          else -> lowercase(/* <this> = tmp_5 /*as String */ */)
-        }
-      }
-      val tmp2_Explain: Int? = { // BLOCK
-        val tmp_6: String? = tmp1_Explain
-        when {
-          EQEQ(arg0 = tmp_6, arg1 = null) -> null
-          else -> tmp_6 /*as String */.<get-length>()
-        }
-      }
+fun test3(str: String?) {
+  { // BLOCK
+    val tmp0_Explain: String? = str
+    val tmp1_Explain: String? = { // BLOCK
+      val tmp_5: String? = tmp0_Explain
       when {
-        EQEQ(arg0 = tmp2_Explain, arg1 = null) -> { // BLOCK
-          val tmp3_Explain: Int = 0
-          val tmp4_Explain: Int = 5
-          val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
-          assert(value = tmp5_Explain, lazyMessage = local fun <anonymous>(): String {
-            return "\nassert((str?.lowercase()?.length ?: 0) == 5)" + "\n        |    |            |            |" + "\n        |    |            |            " + tmp5_Explain + "\n        |    |            " + tmp2_Explain + "\n        |    " + tmp1_Explain + "\n        " + tmp0_Explain + "\n"
-          }
-)
+        EQEQ(arg0 = tmp_5, arg1 = null) -> null
+        else -> lowercase(/* <this> = tmp_5 /*as String */ */)
+      }
+    }
+    val tmp2_Explain: Int? = { // BLOCK
+      val tmp_6: String? = tmp1_Explain
+      when {
+        EQEQ(arg0 = tmp_6, arg1 = null) -> null
+        else -> tmp_6 /*as String */.<get-length>()
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp2_Explain, arg1 = null) -> { // BLOCK
+        val tmp3_Explain: Int = 0
+        val tmp4_Explain: Int = 5
+        val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
+        assert(value = tmp5_Explain, lazyMessage = local fun <anonymous>(): String {
+          return "\nassert((str?.lowercase()?.length ?: 0) == 5)" + "\n        |    |            |            |" + "\n        |    |            |            " + tmp5_Explain + "\n        |    |            " + tmp2_Explain + "\n        |    " + tmp1_Explain + "\n        " + tmp0_Explain + "\n"
         }
-        else -> { // BLOCK
-          val tmp6_Explain: Int = 5
-          val tmp7_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp6_Explain)
-          assert(value = tmp7_Explain, lazyMessage = local fun <anonymous>(): String {
-            return "\nassert((str?.lowercase()?.length ?: 0) == 5)" + "\n        |    |            |            |" + "\n        |    |            |            " + tmp7_Explain + "\n        |    |            " + tmp2_Explain + "\n        |    " + tmp1_Explain + "\n        " + tmp0_Explain + "\n"
-          }
 )
+      }
+      else -> { // BLOCK
+        val tmp6_Explain: Int = 5
+        val tmp7_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp6_Explain)
+        assert(value = tmp7_Explain, lazyMessage = local fun <anonymous>(): String {
+          return "\nassert((str?.lowercase()?.length ?: 0) == 5)" + "\n        |    |            |            |" + "\n        |    |            |            " + tmp7_Explain + "\n        |    |            " + tmp2_Explain + "\n        |    " + tmp1_Explain + "\n        " + tmp0_Explain + "\n"
+        }
+)
+      }
+    }
+  }
+}
+
+fun test4(b1: Boolean?, b2: Boolean?, b3: Boolean?, b4: Boolean?) {
+  { // BLOCK
+    val tmp0_Explain: Boolean? = b1
+    when {
+      EQEQ(arg0 = tmp0_Explain, arg1 = null) -> { // BLOCK
+        val tmp1_Explain: Boolean? = b2
+        when {
+          EQEQ(arg0 = tmp1_Explain, arg1 = null) -> { // BLOCK
+            val tmp2_Explain: Boolean? = b3
+            when {
+              EQEQ(arg0 = tmp2_Explain, arg1 = null) -> { // BLOCK
+                val tmp3_Explain: Boolean? = b4
+                when {
+                  EQEQ(arg0 = tmp3_Explain, arg1 = null) -> { // BLOCK
+                    val tmp4_Explain: Boolean = false
+                    assert(value = tmp4_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |     |     |     |" + "\n       |     |     |     " + tmp3_Explain + "\n       |     |     " + tmp2_Explain + "\n       |     " + tmp1_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                  else -> { // BLOCK
+                    assert(value = tmp3_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |     |     |     |" + "\n       |     |     |     " + tmp3_Explain + "\n       |     |     " + tmp2_Explain + "\n       |     " + tmp1_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                }
+              }
+              else -> { // BLOCK
+                when {
+                  EQEQ(arg0 = tmp2_Explain, arg1 = null) -> { // BLOCK
+                    val tmp5_Explain: Boolean = false
+                    assert(value = tmp5_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |     |     |" + "\n       |     |     " + tmp2_Explain + "\n       |     " + tmp1_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                  else -> { // BLOCK
+                    assert(value = tmp2_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |     |     |" + "\n       |     |     " + tmp2_Explain + "\n       |     " + tmp1_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                }
+              }
+            }
+          }
+          else -> { // BLOCK
+            when {
+              EQEQ(arg0 = tmp1_Explain, arg1 = null) -> { // BLOCK
+                val tmp6_Explain: Boolean? = b4
+                when {
+                  EQEQ(arg0 = tmp6_Explain, arg1 = null) -> { // BLOCK
+                    val tmp7_Explain: Boolean = false
+                    assert(value = tmp7_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |     |           |" + "\n       |     |           " + tmp6_Explain + "\n       |     " + tmp1_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                  else -> { // BLOCK
+                    assert(value = tmp6_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |     |           |" + "\n       |     |           " + tmp6_Explain + "\n       |     " + tmp1_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                }
+              }
+              else -> { // BLOCK
+                when {
+                  EQEQ(arg0 = tmp1_Explain, arg1 = null) -> { // BLOCK
+                    val tmp8_Explain: Boolean = false
+                    assert(value = tmp8_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |     |" + "\n       |     " + tmp1_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                  else -> { // BLOCK
+                    assert(value = tmp1_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |     |" + "\n       |     " + tmp1_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      else -> { // BLOCK
+        when {
+          EQEQ(arg0 = tmp0_Explain, arg1 = null) -> { // BLOCK
+            val tmp9_Explain: Boolean? = b3
+            when {
+              EQEQ(arg0 = tmp9_Explain, arg1 = null) -> { // BLOCK
+                val tmp10_Explain: Boolean? = b4
+                when {
+                  EQEQ(arg0 = tmp10_Explain, arg1 = null) -> { // BLOCK
+                    val tmp11_Explain: Boolean = false
+                    assert(value = tmp11_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |           |     |" + "\n       |           |     " + tmp10_Explain + "\n       |           " + tmp9_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                  else -> { // BLOCK
+                    assert(value = tmp10_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |           |     |" + "\n       |           |     " + tmp10_Explain + "\n       |           " + tmp9_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                }
+              }
+              else -> { // BLOCK
+                when {
+                  EQEQ(arg0 = tmp9_Explain, arg1 = null) -> { // BLOCK
+                    val tmp12_Explain: Boolean = false
+                    assert(value = tmp12_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |           |" + "\n       |           " + tmp9_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                  else -> { // BLOCK
+                    assert(value = tmp9_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |           |" + "\n       |           " + tmp9_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                }
+              }
+            }
+          }
+          else -> { // BLOCK
+            when {
+              EQEQ(arg0 = tmp0_Explain, arg1 = null) -> { // BLOCK
+                val tmp13_Explain: Boolean? = b4
+                when {
+                  EQEQ(arg0 = tmp13_Explain, arg1 = null) -> { // BLOCK
+                    val tmp14_Explain: Boolean = false
+                    assert(value = tmp14_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |                 |" + "\n       |                 " + tmp13_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                  else -> { // BLOCK
+                    assert(value = tmp13_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |                 |" + "\n       |                 " + tmp13_Explain + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                }
+              }
+              else -> { // BLOCK
+                when {
+                  EQEQ(arg0 = tmp0_Explain, arg1 = null) -> { // BLOCK
+                    val tmp15_Explain: Boolean = false
+                    assert(value = tmp15_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |" + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                  else -> { // BLOCK
+                    assert(value = tmp0_Explain, lazyMessage = local fun <anonymous>(): String {
+                      return "\nassert(b1 ?: b2 ?: b3 ?: b4 ?: false)" + "\n       |" + "\n       " + tmp0_Explain + "\n"
+                    }
+)
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
   }
-)
 }
+

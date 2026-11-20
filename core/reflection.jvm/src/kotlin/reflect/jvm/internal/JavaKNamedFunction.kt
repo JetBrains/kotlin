@@ -34,8 +34,8 @@ internal class JavaKNamedFunction(
 
     override val originalReturnType: AbstractKType by lazy(PUBLICATION) {
         val unsubstitutedReturnType =
-            if (overriddenStorage.isFakeOverride && overriddenStorage.overridden.size == 1) {
-                overriddenStorage.overridden.single().returnType
+            if (overriddenStorage.isFakeOverride) {
+                overriddenStorage.overridden.first().returnType
             } else {
                 jMethod.genericReturnType.toKType(
                     javaTypeParameters.zip(typeParameters).toMap(),
@@ -52,15 +52,13 @@ internal class JavaKNamedFunction(
     // `SignatureEnhancement.enhanceSignature` in the compiler.
     override val predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?
         get() = PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[
-            SignatureBuildingComponents.signature(jMethod.declaringClass.classId.internalName, jMethod.jvmSignature)
+            SignatureBuildingComponents.signature(container.methodOwner.classId.internalName, jMethod.jvmSignature)
         ]?.takeIf { it.errorsSinceLanguageVersion == null }
 
-    override fun computeOverriddenFunctionsForEnhancement(): Collection<ReflectKFunction>? {
+    override fun computeOverriddenFunctionsForEnhancement(): Collection<ReflectKFunction> {
         if (Modifier.isStatic(jMethod.modifiers)) return emptyList()
         val signature = toEquatableCallableSignature(EqualityMode.KotlinSignature)
-        val overridden = computeOverriddenFunctions(container as KClassImpl<*>, signature)
-        if (overriddenStorage.isFakeOverride && overridden.size == 1) return null
-        return overridden
+        return computeOverriddenCallables(container as MemberContainer<*>, signature, true)
     }
 
     val jMethod: Method get() = member as Method
@@ -92,7 +90,7 @@ internal class JavaKNamedFunction(
     override val isPrimaryConstructor: Boolean get() = false
 
     override val overridden: Collection<ReflectKFunction> by lazy(PUBLICATION) {
-        computeOverriddenFunctions(this)
+        computeOverriddenCallables(this)
     }
 
     override val allParameters: List<KParameter>

@@ -96,11 +96,28 @@ class IrBodyDeserializer(
     private val libraryFile: IrLibraryFile,
     private val declarationDeserializer: IrDeclarationDeserializer,
     private val settings: IrDeserializationSettings,
-    private val irInterner: IrInterningService,
     private val fileEntryDeserializer: FileEntryDeserializer,
 ) {
 
     private val fileLoops = hashMapOf<Int, IrLoop>()
+
+    /**
+     * Whether annotation arguments are being deserialized now.
+     *
+     * Annotation arguments that represent nested annotations are serialized as ordinary constructor calls: [IrConstructorCall].
+     * But they need to be deserialized back as [IrAnnotation]s.
+     */
+    private var isInsideAnnotationArguments = false
+
+    internal inline fun <T> withinAnnotationArguments(block: () -> T): T {
+        val oldValue = isInsideAnnotationArguments
+        isInsideAnnotationArguments = true
+        try {
+            return block()
+        } finally {
+            isInsideAnnotationArguments = oldValue
+        }
+    }
 
     private fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoop): IrLoop =
         fileLoops.getOrPut(loopIndex, loopBuilder)
@@ -325,21 +342,23 @@ class IrBodyDeserializer(
             deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName },
             SourceElement.NO_SOURCE,
         ).also {
-            deserializeMemberAccessCommonPre_2_4_0(it, proto.memberAccessPre240)
-            it.arguments.addAll(deserializeArguments(proto.argumentList, coords.startOffset))
-            it.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))
+            withinAnnotationArguments {
+                deserializeMemberAccessCommonPre_2_4_0(it, proto.memberAccessPre240)
+                it.arguments.addAll(deserializeArguments(proto.argumentList, coords.startOffset))
+                it.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))
+            }
         }
     }
 
     private fun deserializeConstructorCall(proto: ProtoConstructorCall, start: Int, end: Int, type: IrType): IrConstructorCall {
         val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
-        return IrConstructorCallImplRaw(
-            start, end, type,
-            symbol,
-            proto.constructorTypeArgumentsCount,
-            deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName },
-            SourceElement.NO_SOURCE,
-        ).also {
+        val constructorTypeArgumentsCount = proto.constructorTypeArgumentsCount
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
+        val constructorCall = if (isInsideAnnotationArguments)
+            IrAnnotationImplRaw(start, end, type, symbol, constructorTypeArgumentsCount, origin, SourceElement.NO_SOURCE)
+        else
+            IrConstructorCallImplRaw(start, end, type, symbol, constructorTypeArgumentsCount, origin, SourceElement.NO_SOURCE)
+        return constructorCall.also {
             deserializeMemberAccessCommonPre_2_4_0(it, proto.memberAccessPre240)
             it.arguments.addAll(deserializeArguments(proto.argumentList, start))
             it.typeArguments.addAll(deserializeTypeArguments(proto.typeArgumentList))
@@ -1032,15 +1051,8 @@ class IrBodyDeserializer(
     fun deserializeExpression(proto: ProtoExpression, parentStart: Int?): IrExpression =
         deserializeNullableExpression(proto, parentStart) ?: error("Expected non-null expression, got: ${proto.operationCase}")
 
-    private fun deserializeIrStatementOrigin(protoName: Int): IrStatementOrigin {
-        val originName = libraryFile.string(protoName)
-        val componentPrefix = "COMPONENT_"
-
-        return if (originName.startsWith(componentPrefix))
-            IrStatementOrigin.COMPONENT_N.withIndex(originName.removePrefix(componentPrefix).toInt())
-        else
-            statementOriginIndex[originName] ?: unknownStatementOriginCache.getOrPut(originName) { IrStatementOriginImpl(originName) }
-    }
+    private fun deserializeIrStatementOrigin(protoName: Int): IrStatementOrigin =
+        resolveStatementOrigin(libraryFile.string(protoName))
 
     /**
      * This is more compact form of deserializeIrStatementOrigin() that allows writing
@@ -1077,11 +1089,57 @@ class IrBodyDeserializer(
         code: () -> Long
     ): S? = if (condition) deserializeTypedSymbol(code(), fallbackSymbolKind) else null
 
-    private companion object {
-        private val statementOriginIndex = IrStatementOrigin.Companion::class
-            .declaredMemberProperties
-            .mapNotNull { it.get(IrStatementOrigin.Companion) as? IrStatementOrigin }
-            .associateBy { it.debugName }
+    internal companion object {
+        /**
+         * Legacy names of renamed statement origins. KLIBs store origins by name, so a renamed origin must keep
+         * resolving under its old name.
+         *
+         * FUNCTION_TYPE_EXPRESSION_CONVERSION was named SUSPEND_CONVERSION before 2.4.20. Compilers up to 2.4.10 which
+         * do not write rich callable references to KLIBs serialize a suspend conversion of a function-typed expression
+         * as a block with the old name. Not writing them is the default up to 2.2.21; from 2.3.0 on it takes
+         * -language-version 2.2 or older, or -XXLanguage:-IrRichCallableReferencesInKlibs. `UpgradeCallableReferences`
+         * recognizes the block by its origin, so the old name must resolve to the renamed origin (KT-91139).
+         * With rich callable references, compilers 2.3.0 to 2.4.10 write the old name as well, as the origin of a
+         * rich function reference; no JS, Wasm or Native lowering reads it.
+         *
+         * Keys must not collide with [currentStatementOriginNames]: a current origin takes precedence, so the alias
+         * would be silently lost and legacy KLIBs would resolve to the wrong origin. This is verified by
+         * `IrStatementOriginDeserializationTest`.
+         */
+        val legacyStatementOriginNames: Map<String, IrStatementOrigin> = mapOf(
+            "SUSPEND_CONVERSION" to IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION,
+        )
+
+        /**
+         * All [IrStatementOrigin]s declared in [IrStatementOrigin.Companion], indexed by [IrStatementOrigin.debugName],
+         * which is the name written to KLIBs.
+         */
+        val currentStatementOriginNames: Map<String, IrStatementOrigin> by lazy {
+            IrStatementOrigin.Companion::class
+                .declaredMemberProperties
+                .mapNotNull { it.get(IrStatementOrigin.Companion) as? IrStatementOrigin }
+                .associateBy { it.debugName }
+        }
+
+        private val statementOriginIndex: Map<String, IrStatementOrigin> by lazy {
+            legacyStatementOriginNames + currentStatementOriginNames
+        }
+
         private val unknownStatementOriginCache = mutableMapOf<String, IrStatementOrigin>()
+
+        /**
+         * Resolves the name of a statement origin read from a KLIB: a current or a legacy name to the origin declared
+         * in [IrStatementOrigin.Companion], `COMPONENT_<index>` to [IrStatementOrigin.COMPONENT_N], and a name unknown
+         * to this compiler to an origin which only carries that name. Any name which starts with `COMPONENT_` is taken
+         * for the second kind, and fails unless a positive index follows.
+         */
+        fun resolveStatementOrigin(originName: String): IrStatementOrigin {
+            val componentPrefix = "COMPONENT_"
+
+            return if (originName.startsWith(componentPrefix))
+                IrStatementOrigin.COMPONENT_N.withIndex(originName.removePrefix(componentPrefix).toInt())
+            else
+                statementOriginIndex[originName] ?: unknownStatementOriginCache.getOrPut(originName) { IrStatementOriginImpl(originName) }
+        }
     }
 }

@@ -80,13 +80,19 @@ tasks.withType<Test>().configureEach {
             environment(TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY, percentage)
         }
 
+        for (domain in domains.get()) {
+            println("##teamcity[addBuildTag 'Domain: $domain']")
+        }
+
         for (testSubset in subsets.get()) {
             println("##teamcity[addBuildTag '$testSubset']")
         }
 
-        // Exclude nightly tests if not specifically running in 'nightly' mode
+        // Exclude nightly tests if not specifically running in 'nightly' mode.
+        // Like any tag filter, this also makes Gradle skip its check that the task discovers tests ('failOnNoDiscoveredTests'),
+        // so that check only applies to nightly builds and local runs.
         if (!areNightlyTestsEnabled.get()) {
-            testFramework.options.excludeTags("nightly", "org.jetbrains.kotlin.testFederation.NightlyTest")
+            testFramework.options.excludeTags("nightly")
         }
 
         // Check if classpath contains vintage engine and report it as unsupported

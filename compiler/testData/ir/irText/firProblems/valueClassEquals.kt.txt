@@ -8,7 +8,6 @@ val equals: KFunction2<Z, @ParameterName(name = "other") Any?, Boolean>
 
   get
 
-@JvmInline
 value class Z {
   val s: String
     field = s

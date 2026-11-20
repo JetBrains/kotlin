@@ -1,18 +1,23 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResourceTransformer
+import org.gradle.kotlin.dsl.support.serviceOf
+import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 
 plugins {
     id("common-configuration")
     kotlin("jvm")
     id("generated-sources")
     id("test-inputs-check")
+    kotlin("plugin.serialization")
     id("project-tests-convention")
+    id("native-bootstrap-distribution-provisioner")
 }
 
 dependencies {
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api-jps"))
     implementation(kotlinStdlib())
+    compileOnly(libs.kotlinx.serialization.protobuf)
     compileOnly(libs.guava)
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-jvm"))
@@ -29,7 +34,6 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation(project(":kotlin-tooling-core"))
 
-    runtimeOnly(project(":kotlin-compiler-embeddable"))
     runtimeOnly(project(":kotlin-compiler-runner"))
 
     compileOnly(project(":js:typescript-export-standalone"))
@@ -48,6 +52,24 @@ dependencies {
     embedded(project(":kotlin-metadata-jvm")) { isTransitive = false }
     embedded(libs.diff.utils) { isTransitive = false }
 
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+        compileOnly(project(":native:cli-native"))
+        runtimeOnly(project(":kotlin-native:prepare:kotlin-native-compiler-embeddable"))
+    } else {
+        runtimeOnly(project(":kotlin-compiler-embeddable"))
+        // when K/N is not available, depend on the required for compilation CLI part from bootstrap K/N distribution
+        val bootstrapNativeCompiler = files(registerNativeBootstrapDistribution().map { it.compilerClasspath })
+        val archiveOperations = serviceOf<ArchiveOperations>()
+        val bootstrapK2NativeStub = tasks.register<Jar>("bootstrapKotlinNativeCompilerStub") {
+            description = "Extracts the Kotlin/Native CLI entry point classes from the bootstrap Kotlin/Native compiler for compilation"
+            archiveClassifier.set("bootstrap-k2native-stub")
+            destinationDirectory.set(layout.buildDirectory.dir("bootstrapKotlinNative"))
+            from(bootstrapNativeCompiler.elements.map { jars -> jars.map { archiveOperations.zipTree(it) } }) {
+                include("org/jetbrains/kotlin/cli/bc/**")
+            }
+        }
+        compileOnly(files(bootstrapK2NativeStub))
+    }
 
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(intellijPlatformUtil())
@@ -56,6 +78,7 @@ dependencies {
     testImplementation(project(":daemon-common"))
     testImplementation(project(":kotlin-daemon-client"))
     testImplementation(kotlinTest("junit5"))
+    testImplementation(libs.kotlinx.serialization.protobuf)
 }
 
 publish()
@@ -74,6 +97,7 @@ tasks.named<ShadowJar>(EMBEDDABLE_COMPILER_TASK_NAME) {
     transform(DontIncludeResourceTransformer::class.java) {
         resource = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"
     }
+    relocate("kotlinx.serialization", "org.jetbrains.kotlin.buildtools.internal.serialization")
 }
 
 projectTests {
@@ -104,4 +128,11 @@ generatedSourcesTask(
             "jvmCompilerArguments,wasmArguments,jsArguments,metadataArguments",
         )
     },
+    versionDependent = true,
 )
+
+testing {
+    suites.withType<JvmTestSuite> {
+        useJUnitJupiter(libs.versions.junit5.get())
+    }
+}

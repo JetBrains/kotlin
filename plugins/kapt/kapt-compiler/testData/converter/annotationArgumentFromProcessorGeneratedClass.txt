@@ -1,0 +1,117 @@
+package test;
+
+/**
+ * package {
+ *
+ *   // signature: main()V
+ *   public final fun main(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class MainKt {
+
+    public static final void main() {
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/MyEntity : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: second:Ljava/util/List;
+ *   // getter: getSecond()Ljava/util/List;
+ *   @field:test/Related
+ *   public final val second: kotlin/collections/MutableList<test/SecondEntity>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class MyEntity {
+    @Related(mappedBy = SecondEntity_.FIRST)
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<test.SecondEntity> second = null;
+
+    public MyEntity() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<test.SecondEntity> getSecond() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.FIELD])
+ * public final annotation class test/Related : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(mappedBy: kotlin/String = "")
+ *
+ *   // getter: mappedBy()Ljava/lang/String;
+ *   public final val mappedBy: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Related {
+
+    public abstract java.lang.String mappedBy() default "";
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/SecondEntity : kotlin/Any {
+ *
+ *   // signature: <init>(Ltest/MyEntity;)V
+ *   public constructor(first: test/MyEntity? (* = ... *))
+ *
+ *   // field: first:Ltest/MyEntity;
+ *   // getter: getFirst()Ltest/MyEntity;
+ *   public final val first: test/MyEntity?
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class SecondEntity {
+    @org.jetbrains.annotations.Nullable()
+    private final test.MyEntity first = null;
+
+    public SecondEntity(@org.jetbrains.annotations.Nullable()
+    test.MyEntity first) {
+        super();
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final test.MyEntity getFirst() {
+        return null;
+    }
+
+    public SecondEntity() {
+        super();
+    }
+}

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.types.qualifiers
 
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -90,7 +90,7 @@ internal object UsualClassTypeQualifierBuilder {
         }
 
         return designation.mapIndexed { index, currentClass ->
-            KaBaseResolvedClassTypeQualifier(
+            KaFirResolvedClassTypeQualifier(
                 builder.classifierBuilder.buildClassifierSymbol(currentClass.symbol),
                 takeTypeArguments(ownTypeParametersCountsByDesignation[index]),
             )

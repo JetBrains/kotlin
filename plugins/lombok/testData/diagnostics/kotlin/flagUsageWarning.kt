@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // FULL_JDK
 // WITH_ADVANCED_LOGGERS
@@ -58,6 +59,10 @@ class BuilderExampleWarning(val x: Int)
 <!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_WARNING!>@SuperBuilder<!>
 class SuperBuilderExampleWarning
 
+// The same for `@SuperBuilder` from the main package (since Lombok 1.18.48).
+<!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_WARNING!>@lombok.SuperBuilder<!>
+class SuperBuilderFromMainPackageExampleWarning
+
 <!FLAG_USAGE_WARNING!>@NoArgsConstructor<!>
 class NoArgsConstructorExampleWarning
 
@@ -81,3 +86,5 @@ lombok.superBuilder.flagUsage=warning
 lombok.noArgsConstructor.flagUsage=warning
 lombok.allArgsConstructor.flagUsage=warning
 lombok.requiredArgsConstructor.flagUsage=warning
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration */

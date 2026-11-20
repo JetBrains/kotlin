@@ -20,11 +20,13 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
 import org.jetbrains.kotlin.gradle.uklibs.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.test.assertEquals
 
 // Used AGP 9.0 as the minimal stable version supported for the android library
 @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_90)
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
 @OptIn(ExperimentalSerializationApi::class)
 class AndroidJvmLibDependencyResolutionIT : KGPBaseTest() {
 

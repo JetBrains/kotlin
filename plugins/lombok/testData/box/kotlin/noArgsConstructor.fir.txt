@@ -51,7 +51,7 @@ FILE: ConstructorExample.kt
                 ^ String(y)
             }
 
-        public final val z: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        public final val z: R|kotlin/String| by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ String(TEST)
         }
         )

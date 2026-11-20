@@ -33,6 +33,10 @@ internal object CheckArguments : ResolutionStage() {
         val argumentMapping = candidate.argumentMapping
         val isInvokeFromExtensionFunctionType = candidate.isInvokeFromExtensionFunctionType
 
+        // A contradiction which appeared before the arguments are checked (e.g., because of explicit type arguments)
+        // has already been reported by an earlier stage with a more precise diagnostic, see KT-76718
+        val contradictionIsAlreadyReported = candidate.system.hasContradiction && candidate.diagnostics.anyUnsuccessful
+
         val contextArgumentsOfInvoke = candidate.expectedContextParameterCountForInvoke ?: 0
         for ([index, argument] in candidate.arguments.withIndex()) {
             if (index < contextArgumentsOfInvoke) continue
@@ -53,7 +57,9 @@ internal object CheckArguments : ResolutionStage() {
 
         when {
             candidate.system.hasContradiction && candidate.callInfo.arguments.isNotEmpty() -> {
-                sink.yieldDiagnostic(InapplicableCandidate)
+                if (!contradictionIsAlreadyReported) {
+                    sink.yieldDiagnostic(InapplicableCandidate)
+                }
             }
 
             // Logic description: only candidates from Kotlin, but using Java SAM types, are discriminated

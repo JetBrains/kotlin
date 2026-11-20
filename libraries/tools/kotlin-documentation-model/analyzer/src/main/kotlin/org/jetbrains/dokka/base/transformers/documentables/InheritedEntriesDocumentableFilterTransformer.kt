@@ -9,7 +9,7 @@ import org.jetbrains.dokka.model.InheritedMember
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.plugability.DokkaContext
 
-public class InheritedEntriesDocumentableFilterTransformer(
+internal class InheritedEntriesDocumentableFilterTransformer(
     context: DokkaContext
 ) : SuppressedByConditionDocumentableFilterTransformer(context) {
 

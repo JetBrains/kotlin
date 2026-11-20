@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractDeclarationReturnTypeTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionTypeProvider.AbstractDeclarationReturnTypeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -47,6 +47,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclarationReturnTypeTestGenera
   @Test
   public void testAllFilesPresentInDeclarationReturnType() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("anonymousFunctionWithExpectedType.kt")
+  public void testAnonymousFunctionWithExpectedType() {
+    run("anonymousFunctionWithExpectedType.kt");
   }
 
   @Test
@@ -140,6 +146,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclarationReturnTypeTestGenera
   }
 
   @Test
+  @TestMetadata("illegalInitializersAndBodies.kt")
+  public void testIllegalInitializersAndBodies() {
+    run("illegalInitializersAndBodies.kt");
+  }
+
+  @Test
   @TestMetadata("implicitTypeErrors.kt")
   public void testImplicitTypeErrors() {
     run("implicitTypeErrors.kt");
@@ -149,6 +161,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclarationReturnTypeTestGenera
   @TestMetadata("implicitTypeFromTypealiasedConstructorCallWithImplicitTypeArguments.kt")
   public void testImplicitTypeFromTypealiasedConstructorCallWithImplicitTypeArguments() {
     run("implicitTypeFromTypealiasedConstructorCallWithImplicitTypeArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("initializerAndGetter.kt")
+  public void testInitializerAndGetter() {
+    run("initializerAndGetter.kt");
   }
 
   @Test
@@ -170,9 +188,21 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclarationReturnTypeTestGenera
   }
 
   @Test
+  @TestMetadata("malformedConstants.kt")
+  public void testMalformedConstants() {
+    run("malformedConstants.kt");
+  }
+
+  @Test
   @TestMetadata("overriddenMember.kt")
   public void testOverriddenMember() {
     run("overriddenMember.kt");
+  }
+
+  @Test
+  @TestMetadata("overrideWithConstantInitializer.kt")
+  public void testOverrideWithConstantInitializer() {
+    run("overrideWithConstantInitializer.kt");
   }
 
   @Test
@@ -194,9 +224,21 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclarationReturnTypeTestGenera
   }
 
   @Test
+  @TestMetadata("simpleExpressionBodies.kt")
+  public void testSimpleExpressionBodies() {
+    run("simpleExpressionBodies.kt");
+  }
+
+  @Test
   @TestMetadata("typeParameters.kt")
   public void testTypeParameters() {
     run("typeParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("unsignedConstantsWithoutStdlib.kt")
+  public void testUnsignedConstantsWithoutStdlib() {
+    run("unsignedConstantsWithoutStdlib.kt");
   }
 
   @Test

@@ -1,5 +1,5 @@
 <caret_1>:
-  KtNameReferenceExpression(265,274): 'something'
+  KtNameReferenceExpression(232,241): 'something'
     KaSimpleCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -20,7 +20,7 @@
         typeArgumentsMapping = {}
 
 <caret_2>:
-  KtNameReferenceExpression(292,301): 'something'
+  KtNameReferenceExpression(259,268): 'something'
     KaSimpleCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -42,7 +42,7 @@
         typeArgumentsMapping = {}
 
 <caret_3>:
-  KtNameReferenceExpression(322,331): 'something'
+  KtNameReferenceExpression(289,298): 'something'
     KaSimpleCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -63,7 +63,7 @@
         typeArgumentsMapping = {}
 
 <caret_4>:
-  KtNameReferenceExpression(353,362): 'something'
+  KtNameReferenceExpression(320,329): 'something'
     KaSimpleCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -84,7 +84,7 @@
         typeArgumentsMapping = {}
 
 <caret_5>:
-  KtNameReferenceExpression(383,392): 'something'
+  KtNameReferenceExpression(350,359): 'something'
     KaSimpleCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -106,7 +106,7 @@
         typeArgumentsMapping = {}
 
 <caret_6>:
-  KtNameReferenceExpression(397,406): 'something'
+  KtNameReferenceExpression(364,373): 'something'
     KaSimpleCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -152,7 +152,7 @@
         typeArgumentsMapping = {}
 
 <caret_7>:
-  KtNameReferenceExpression(504,513): 'something'
+  KtNameReferenceExpression(471,480): 'something'
     KaSimpleCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -175,7 +175,7 @@
         typeArgumentsMapping = {}
 
 <caret_8>:
-  KtNameReferenceExpression(533,542): 'something'
+  KtNameReferenceExpression(500,509): 'something'
     KaSimpleCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -199,7 +199,7 @@
         typeArgumentsMapping = {}
 
 <caret_9>:
-  KtNameReferenceExpression(565,574): 'something'
+  KtNameReferenceExpression(532,541): 'something'
     KaSimpleCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -220,7 +220,7 @@
         typeArgumentsMapping = {}
 
 <caret_10>:
-  KtNameReferenceExpression(598,607): 'something'
+  KtNameReferenceExpression(565,574): 'something'
     KaSimpleCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []
@@ -241,7 +241,7 @@
         typeArgumentsMapping = {}
 
 <caret_11>:
-  KtNameReferenceExpression(630,639): 'something'
+  KtNameReferenceExpression(597,606): 'something'
     KaSimpleCallResolutionSuccess:
       call = KaSimpleVariableAccessCall:
         contextArguments = []

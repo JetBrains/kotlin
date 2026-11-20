@@ -148,7 +148,7 @@ open class FirDeclarationsResolveTransformer(
 
         // script top level destructuring declaration container variables should be treated as properties here
         // to avoid CFG/DFA complications
-        if (property.symbol is FirLocalPropertySymbol && property.origin != FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer) {
+        if (property.symbol is FirLocalPropertySymbol && property.origin != FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer) {
             // approximation is required for properties in snippets because they may "leak" to the next snippet
             // it is also reflects the current script behavior (in contrast to a local context), i.e. the code
             // `val x = object { val v = 42 }; x.v`
@@ -278,14 +278,6 @@ open class FirDeclarationsResolveTransformer(
                         // we still need to resolve types in accessors (as per IMPLICIT_TYPES_BODY_RESOLVE contract).
                         property.getter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
                         property.setter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
-                        property.setter?.transformReturnTypeRef(
-                            transformer,
-                            ResolutionMode.UpdateImplicitTypeRef(
-                                buildResolvedTypeRef {
-                                    coneType = session.builtinTypes.unitType.coneType
-                                }
-                            )
-                        )
                     }
                 }
 
@@ -302,6 +294,7 @@ open class FirDeclarationsResolveTransformer(
                 }
             }
             if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
+                !session.languageVersionSettings.getFlag(AnalysisFlags.headerModeKeepPropertyBodies) &&
                 !property.isConst &&
                 property.returnTypeRef !is FirImplicitTypeRef &&
                 !property.hasAnonymousReturnType(session)
@@ -904,7 +897,7 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
-    open fun withReplSnippet(
+    fun withReplSnippet(
         snippet: FirReplSnippet,
         action: () -> FirReplSnippet,
     ): FirReplSnippet = context.withReplSnippet(snippet) {
@@ -1559,7 +1552,7 @@ open class FirDeclarationsResolveTransformer(
         if (expectedType == null) return lambda.valueParameters
         if (!expectedType.isNonReflectFunctionType(session)) return lambda.valueParameters
         val parameterTypes = expectedType.typeArguments
-            .mapTo(mutableListOf()) { it.type ?: session.builtinTypes.nullableAnyType.coneType }
+            .mapTo(mutableListOf()) { it.type ?: StandardTypes.NullableAny }
             .also { it.removeLastOrNull() }
         if (expectedType.isExtensionFunctionType) {
             parameterTypes.removeFirstOrNull()

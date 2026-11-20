@@ -1,0 +1,94 @@
+EXTERNAL_PACKAGE_FRAGMENT fqName:just_cinterop_c
+  FUN IR_EXTERNAL_DECLARATION_STUB name:do_signed_char signature:just_cinterop_c/do_signed_char|do_signed_char(kotlin.Byte){}[100] visibility:public modality:FINAL returnType:kotlin.Byte [external]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:x index:0 type:kotlin.Byte
+    annotations:
+      CCall(id = "knifunptr_just_cinterop_c_do_signed_char_0")
+      ExperimentalForeignApi
+  FUN IR_EXTERNAL_DECLARATION_STUB name:do_short signature:just_cinterop_c/do_short|do_short(kotlin.Short){}[100] visibility:public modality:FINAL returnType:kotlin.Short [external]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:x index:0 type:kotlin.Short
+    annotations:
+      CCall(id = "knifunptr_just_cinterop_c_do_short_0")
+      ExperimentalForeignApi
+  FUN IR_EXTERNAL_DECLARATION_STUB name:do_int signature:just_cinterop_c/do_int|do_int(kotlin.Int){}[100] visibility:public modality:FINAL returnType:kotlin.Int [external]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:x index:0 type:kotlin.Int
+    annotations:
+      CCall(id = "knifunptr_just_cinterop_c_do_int_0")
+      ExperimentalForeignApi
+  FUN IR_EXTERNAL_DECLARATION_STUB name:do_void_ptr signature:just_cinterop_c/do_void_ptr|do_void_ptr(kotlinx.cinterop.CValuesRef<*>?){}[100] visibility:public modality:FINAL returnType:kotlinx.cinterop.CPointer<out kotlinx.cinterop.CPointed>? [external]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:x index:0 type:kotlinx.cinterop.CValuesRef<*>?
+    annotations:
+      CCall(id = "knifunptr_just_cinterop_c_do_void_ptr_0")
+      ExperimentalForeignApi
+  FUN IR_EXTERNAL_DECLARATION_STUB name:do_my_struct_t signature:just_cinterop_c/do_my_struct_t|do_my_struct_t(kotlinx.cinterop.CValue<just_cinterop_c.my_struct>){}[100] visibility:public modality:FINAL returnType:kotlinx.cinterop.CValue<just_cinterop_c.my_struct> [external]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:x index:0 type:kotlinx.cinterop.CValue<just_cinterop_c.my_struct>
+    annotations:
+      CCall(id = "knifunptr_just_cinterop_c_do_my_struct_t_0")
+      ExperimentalForeignApi
+  FUN IR_EXTERNAL_DECLARATION_STUB name:do_my_struct_t_ptr signature:just_cinterop_c/do_my_struct_t_ptr|do_my_struct_t_ptr(kotlinx.cinterop.CValuesRef<just_cinterop_c.my_struct>?){}[100] visibility:public modality:FINAL returnType:kotlinx.cinterop.CPointer<just_cinterop_c.my_struct>? [external]
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:x index:0 type:kotlinx.cinterop.CValuesRef<just_cinterop_c.my_struct>?
+    annotations:
+      CCall(id = "knifunptr_just_cinterop_c_do_my_struct_t_ptr_0")
+      ExperimentalForeignApi
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:my_int_var signature:just_cinterop_c/my_int_var|{}my_int_var[100] visibility:public modality:FINAL [var]
+    annotations:
+      ExperimentalForeignApi
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-my_int_var> signature:just_cinterop_c/my_int_var.<get-my_int_var>|<get-my_int_var>(){}[100] visibility:public modality:FINAL returnType:kotlin.Int [external]
+      annotations:
+        CCall(id = "knifunptr_just_cinterop_c_my_int_var_getter_0")
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:my_int_var signature:just_cinterop_c/my_int_var|{}my_int_var[100] visibility:public modality:FINAL [var]
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<set-my_int_var> signature:just_cinterop_c/my_int_var.<set-my_int_var>|<set-my_int_var>(kotlin.Int){}[100] visibility:public modality:FINAL returnType:kotlin.Unit [external]
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:value index:0 type:kotlin.Int
+      annotations:
+        CCall(id = "knifunptr_just_cinterop_c_my_int_var_setter_0")
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:my_int_var signature:just_cinterop_c/my_int_var|{}my_int_var[100] visibility:public modality:FINAL [var]
+MODULE_FRAGMENT name:<just_cinterop_c>
+  FILE fqName:just_cinterop_c fileName:CTypeDefinitions
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:my_struct signature:just_cinterop_c/my_struct|null[100] modality:FINAL visibility:public superTypes:[kotlinx.cinterop.CStructVar]
+      annotations:
+        CStruct(spelling = "struct  { signed char c; int i; short s; }")
+        ExperimentalForeignApi
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:just_cinterop_c.my_struct
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB signature:just_cinterop_c/my_struct.<init>|<init>(kotlin.native.internal.NativePtr){}[100] visibility:public returnType:just_cinterop_c.my_struct [primary]
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:rawPtr index:0 type:kotlin.native.internal.NativePtr
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:c signature:just_cinterop_c/my_struct.c|{}c[100] visibility:public modality:FINAL [var]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-c> signature:just_cinterop_c/my_struct.c.<get-c>|<get-c>(){}[100] visibility:public modality:FINAL returnType:kotlin.Byte [external]
+          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.my_struct
+          annotations:
+            MemberAt(offset = 0)
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:c signature:just_cinterop_c/my_struct.c|{}c[100] visibility:public modality:FINAL [var]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<set-c> signature:just_cinterop_c/my_struct.c.<set-c>|<set-c>(kotlin.Byte){}[100] visibility:public modality:FINAL returnType:kotlin.Unit [external]
+          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.my_struct
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:value index:1 type:kotlin.Byte
+          annotations:
+            MemberAt(offset = 0)
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:c signature:just_cinterop_c/my_struct.c|{}c[100] visibility:public modality:FINAL [var]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:i signature:just_cinterop_c/my_struct.i|{}i[100] visibility:public modality:FINAL [var]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-i> signature:just_cinterop_c/my_struct.i.<get-i>|<get-i>(){}[100] visibility:public modality:FINAL returnType:kotlin.Int [external]
+          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.my_struct
+          annotations:
+            MemberAt(offset = 4)
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:i signature:just_cinterop_c/my_struct.i|{}i[100] visibility:public modality:FINAL [var]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<set-i> signature:just_cinterop_c/my_struct.i.<set-i>|<set-i>(kotlin.Int){}[100] visibility:public modality:FINAL returnType:kotlin.Unit [external]
+          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.my_struct
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:value index:1 type:kotlin.Int
+          annotations:
+            MemberAt(offset = 4)
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:i signature:just_cinterop_c/my_struct.i|{}i[100] visibility:public modality:FINAL [var]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:s signature:just_cinterop_c/my_struct.s|{}s[100] visibility:public modality:FINAL [var]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-s> signature:just_cinterop_c/my_struct.s.<get-s>|<get-s>(){}[100] visibility:public modality:FINAL returnType:kotlin.Short [external]
+          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.my_struct
+          annotations:
+            MemberAt(offset = 8)
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:s signature:just_cinterop_c/my_struct.s|{}s[100] visibility:public modality:FINAL [var]
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<set-s> signature:just_cinterop_c/my_struct.s.<set-s>|<set-s>(kotlin.Short){}[100] visibility:public modality:FINAL returnType:kotlin.Unit [external]
+          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:just_cinterop_c.my_struct
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:value index:1 type:kotlin.Short
+          annotations:
+            MemberAt(offset = 8)
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:s signature:just_cinterop_c/my_struct.s|{}s[100] visibility:public modality:FINAL [var]
+      CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion signature:just_cinterop_c/my_struct.Companion|null[100] modality:FINAL visibility:public [companion] superTypes:[kotlinx.cinterop.CStructVar.Type]
+        annotations:
+          VarType(size = 12, align = 4)
+          Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(imports = [] type=kotlin.Array<kotlin.Any> varargElementType=kotlin.Any, expression = ""), level = DeprecationLevel.ERROR)
+        thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:just_cinterop_c.my_struct.Companion
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB signature:just_cinterop_c/my_struct.Companion.<init>|<init>(){}[100] visibility:private returnType:just_cinterop_c.my_struct.Companion [primary]

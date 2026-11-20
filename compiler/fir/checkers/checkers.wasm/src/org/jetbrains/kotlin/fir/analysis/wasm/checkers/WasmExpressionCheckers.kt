@@ -11,33 +11,24 @@ import org.jetbrains.kotlin.fir.analysis.wasm.checkers.expression.FirWasmExterna
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.expression.FirWasmJsCodeCallChecker
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.expression.FirWasmReifiedExternalChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsCodeConstantArgumentChecker
-import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsQualifierChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirWebReflectionAPICallChecker
 
 object WasmBaseExpressionCheckers : ExpressionCheckers() {
-    override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
-        get() = setOf(
-            FirWasmDefinedExternallyCallChecker,
-            FirWasmExternalRttiChecker,
-            FirWebReflectionAPICallChecker(isWasm = true),
-        )
+    override val basicExpressionCheckers: Set<FirBasicExpressionChecker> = setOf(
+        FirWasmDefinedExternallyCallChecker,
+        FirWasmExternalRttiChecker,
+        FirWebReflectionAPICallChecker(isWasm = true),
+    )
 
-    override val functionCallCheckers: Set<FirFunctionCallChecker>
-        get() = setOf(
-            FirSuperCallWithDefaultsChecker,
-            FirWasmReifiedExternalChecker
-        )
+    override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
+        FirSuperCallWithDefaultsChecker,
+        FirWasmReifiedExternalChecker
+    )
 }
 
 object WasmJsExpressionCheckers : ExpressionCheckers() {
-    override val annotationCallCheckers: Set<FirAnnotationCallChecker>
-        get() = setOf(
-            FirJsQualifierChecker,
-        )
-
-    override val functionCallCheckers: Set<FirFunctionCallChecker>
-        get() = setOf(
-            FirJsCodeConstantArgumentChecker,
-            FirWasmJsCodeCallChecker,
-        )
+    override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
+        FirJsCodeConstantArgumentChecker,
+        FirWasmJsCodeCallChecker,
+    )
 }

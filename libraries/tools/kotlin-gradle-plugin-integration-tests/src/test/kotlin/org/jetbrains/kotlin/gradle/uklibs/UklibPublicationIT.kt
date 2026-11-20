@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.MavenModule
 import org.jetbrains.kotlin.gradle.util.parsePom
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.Serializable
 import java.nio.file.Path
@@ -36,6 +37,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalSerializationApi::class, ExperimentalWasmDsl::class)
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib artifact publication")
+@MustRunOnChangesInGradle
 class UklibPublicationIT : KGPBaseTest() {
 
     @GradleTest
@@ -49,7 +51,7 @@ class UklibPublicationIT : KGPBaseTest() {
             linuxArm64()
             linuxX64()
             iosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             iosX64()
             jvm()
             js()
@@ -117,7 +119,7 @@ class UklibPublicationIT : KGPBaseTest() {
                 project.setUklibPublicationStrategy()
                 project.applyMultiplatform {
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
                     sourceSets.commonMain.get().compileSource("class Common")
                 }
@@ -152,7 +154,7 @@ class UklibPublicationIT : KGPBaseTest() {
                 project.setUklibPublicationStrategy()
                 project.applyMultiplatform {
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
 
                     if (project.hasProperty(compileAppleMain)) {
@@ -282,7 +284,7 @@ class UklibPublicationIT : KGPBaseTest() {
                 project.setupMavenPublication("Stub", PublisherConfiguration())
                 project.applyMultiplatform {
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
 
                     sourceSets.all {
@@ -517,7 +519,7 @@ class UklibPublicationIT : KGPBaseTest() {
             publisherConfig = PublisherConfiguration(group = "dependency")
         ) {
             iosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             iosX64()
             sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
         }.publishedProject
@@ -528,7 +530,7 @@ class UklibPublicationIT : KGPBaseTest() {
         ) {
             // FIXME: Enable uklib consumption?
             iosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             iosX64()
             sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
             sourceSets.commonMain.dependencies {
@@ -655,7 +657,7 @@ class UklibPublicationIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     jvm()
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
                 }
             }

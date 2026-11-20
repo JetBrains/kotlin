@@ -2,6 +2,11 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+public func consume_block_with_Unit_id(
+    block: @escaping (Swift.Void) -> Swift.Int8
+) -> Swift.Int8 {
+    return __root___consume_block_with_Unit_id__TypesOfArguments__U28Swift_VoidU29202D_U20Swift_Int8__(Unmanaged.passRetained((block as (Swift.Void) -> Swift.Int8) as AnyObject).toOpaque())
+}
 public func consume_block_with_byte_id(
     block: @escaping (Swift.Int8) -> Swift.Int8
 ) -> Swift.Int8 {
@@ -21,6 +26,12 @@ public func produce_block_with_byte_byte() -> (Swift.Int8, Swift.Int8, Swift.Int
 @_cdecl("primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int8__")
 package func primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int8__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Int8) -> Swift.Int8 {
     let _result: Swift.Int8 = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Int8) -> Swift.Int8)(_1)
+    return _result
+}
+
+@_cdecl("primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__")
+package func primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Bool) -> Swift.Int8 {
+    let _result: Swift.Int8 = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Void) -> Swift.Int8)({ _1; return () }())
     return _result
 }
 

@@ -1,0 +1,2 @@
+warning: <user> @
+Function 'gone' can not be called

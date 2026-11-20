@@ -17,4 +17,4 @@ package org.jetbrains.dokka
             " Make sure you fully read and understand documentation of the declaration that is marked as a delicate API."
 )
 @Retention(AnnotationRetention.BINARY)
-public annotation class DelicateDokkaApi
+internal annotation class DelicateDokkaApi

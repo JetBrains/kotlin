@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
+object LombokWithGeneratorKey : LombokDeclarationKey()
+
 @OptIn(DirectDeclarationsAccess::class)
 class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     private val lombokService: LombokService
@@ -62,8 +64,8 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
                 },
                 visibility = visibility,
                 modality = Modality.OPEN,
+                key = LombokWithGeneratorKey,
             )
-
             withName to function
         }.toMap()
     }

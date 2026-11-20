@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationType
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.plugin.createTopLevelFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -18,13 +20,15 @@ import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
 
 /*
  * Generates `private suspend fun testFun_generated() {}` function
- * for each package containing function annotated with `org.jetbrains.kotlin.plugin.sandbox.fir.TestTopLevelPrivateSuspendFun`.
+ * for each package containing a top-level function annotated with `org.jetbrains.kotlin.plugin.sandbox.TestTopLevelPrivateSuspendFun`.
  */
 @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
 internal class TopLevelPrivateSuspendFunctionGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     private companion object {
-        private val PREDICATE = LookupPredicate.create { annotated("TestTopLevelPrivateSuspendFun".fqn()) }
         private val TEST_FUN_NAME = Name.identifier("testFun_generated")
+        private val PREDICATE = LookupPredicate.create {
+            annotated("TestTopLevelPrivateSuspendFun".fqn()).matching(DeclarationType.TOP_LEVEL_FUNCTION)
+        }
     }
 
     private val predicateBasedProvider = session.predicateBasedProvider
@@ -41,7 +45,7 @@ internal class TopLevelPrivateSuspendFunctionGenerator(session: FirSession) : Fi
         if (context != null) return emptyList()
         if (callableId.callableName != TEST_FUN_NAME) return emptyList()
         val function = createTopLevelFunction(
-            TopLevelPrivateSuspendFunctionGeneratorKey, callableId, session.builtinTypes.unitType.coneType,
+            TopLevelPrivateSuspendFunctionGeneratorKey, callableId, StandardTypes.Unit,
         ) {
             visibility = Visibilities.Private
             status { isSuspend = true }

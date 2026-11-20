@@ -8,28 +8,24 @@ package org.jetbrains.kotlin.noarg
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.psi.KtModifierListOwner
 
 class NoArgConstructorBodyIrGenerationExtension(
-    private val annotations: List<String>,
     private val invokeInitializers: Boolean,
 ) : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-        moduleFragment.acceptVoid(NoArgConstructorBodyIrGenerationTransformer(pluginContext, annotations, invokeInitializers))
+        moduleFragment.acceptVoid(NoArgConstructorBodyIrGenerationTransformer(pluginContext, invokeInitializers))
     }
 }
 
@@ -37,11 +33,8 @@ private val NO_ARG_CONSTRUCTOR_ORIGIN: IrDeclarationOrigin.GeneratedByPlugin = I
 
 private class NoArgConstructorBodyIrGenerationTransformer(
     private val context: IrPluginContext,
-    private val annotations: List<String>,
     private val invokeInitializers: Boolean,
-) : IrVisitorVoid(), AnnotationBasedExtension {
-
-    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> = annotations
+) : IrVisitorVoid() {
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -52,14 +45,13 @@ private class NoArgConstructorBodyIrGenerationTransformer(
 
         val klass = declaration.parent as? IrClass ?: return
 
-        val superClass =
-            klass.superTypes.mapNotNull(IrType::getClass).singleOrNull { it.kind == ClassKind.CLASS }
-                ?: context.irBuiltIns.anyClass.owner
+        val superType = klass.superTypes.singleOrNull { it.getClass()?.kind == ClassKind.CLASS }
+        val superClass = superType?.getClass() ?: context.irBuiltIns.anyClass.owner
 
         val superConstructor = superClass.constructors.singleOrNull { it.isZeroParameterConstructor() }
             ?: error("No noarg super constructor for ${klass.render()}:\n" + superClass.constructors.joinToString("\n") { it.render() })
 
-        context.generateNoArgConstructorBody(declaration, klass, superConstructor, invokeInitializers)
+        context.generateNoArgConstructorBody(declaration, klass, superType, superConstructor, invokeInitializers)
     }
 
     override fun visitBody(body: IrBody) {

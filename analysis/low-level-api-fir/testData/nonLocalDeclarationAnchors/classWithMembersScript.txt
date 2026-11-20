@@ -1,4 +1,4 @@
-/* anchor (KtScript) --> *//* anchor (KtClass) --> */class A /* anchor (KtPrimaryConstructor) --> */constructor(/* anchor (KtParameter) --> */a: Int/* <-- */)/* <-- */ {
+/* anchor (KtFile) --> *//* anchor (KtScript) --> *//* anchor (KtClass) --> */class A /* anchor (KtPrimaryConstructor) --> */constructor(/* anchor (KtParameter) --> */a: Int/* <-- */)/* <-- */ {
     /* anchor (KtNamedFunction) --> */fun boo() {
         fun bar() {
 
@@ -13,4 +13,4 @@
         }
     }/* <-- */
 }/* <-- */
-/* <-- */
+/* <-- *//* <-- */

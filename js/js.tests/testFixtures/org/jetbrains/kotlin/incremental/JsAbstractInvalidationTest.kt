@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.js.test.runners.JsCompilerInvocationTestConfiguratio
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.js.tsexport.TypeScriptModuleConfig
 import org.jetbrains.kotlin.js.tsexport.createTypeScriptExportInputModule
-import org.jetbrains.kotlin.js.tsexport.runTypeScriptExport
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
 import org.jetbrains.kotlin.name.FqName
@@ -205,7 +204,7 @@ abstract class JsAbstractInvalidationTest(
                         allLibraries.mapTo(this, ::createTypeScriptExportInputModule)
                     }
 
-                    runTypeScriptExport(tsExportModules, tsExportConfig)
+                    AnalysisApiBasedDtsGeneratorFacade.runTypeScriptExportOrFail(tsExportModules, tsExportConfig)
 
                     // Verify TypeScript generated from IR (legacy)
                     verifyDTS(projStep.id, testInfo, jsDir)

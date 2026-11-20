@@ -31,17 +31,15 @@ abstract class AbstractNativeObjCExportHeaderTest : AbstractNativeSimpleTest() {
 
         val path = File(ForTestCompileRuntime.transformTestDataPath(testFile).path)
         val testName = path.nameWithoutExtension
-        val lines = path.readLines()
 
-        require(HeaderTestModuleMarkers.hasModuleMarkers(lines)) {
+        val test = HeaderTestModuleMarkers.parse(path)
+        require(test is HeaderTestModuleMarkers.HeaderTest.MultiModule) {
             "$testName has no `// MODULE:` markers. These tests exist to pin the order in which declarations from " +
                     "several included libraries reach the header, which a single-module fixture cannot express."
         }
 
         val sourcesDir = testRunSettings.get<Binaries>().testBinariesDir.resolve("$testName-sources")
-        val orderedModules = HeaderTestModuleMarkers.createOrderedTestModules(
-            HeaderTestModuleMarkers.parseHeaderTestModules(lines), sourcesDir
-        )
+        val orderedModules = HeaderTestModuleMarkers.toTestModules(test, testName, sourcesDir)
 
         val testCase = HeaderTestModuleMarkers.createInitializedHeaderTestCase(
             testName,

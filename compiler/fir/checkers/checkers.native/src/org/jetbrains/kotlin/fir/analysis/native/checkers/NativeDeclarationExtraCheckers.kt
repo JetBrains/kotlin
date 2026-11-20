@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 
 object NativeDeclarationExtraCheckers : DeclarationCheckers() {
-    override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>
-        get() = setOf(
-            FirNativeSpecificAtomicChecker,
-        )
+    override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker> = setOf(
+        FirNativeSpecificAtomicChecker,
+    )
 }

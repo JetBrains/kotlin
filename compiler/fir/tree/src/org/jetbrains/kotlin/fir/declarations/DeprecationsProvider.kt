@@ -67,6 +67,13 @@ abstract class FirDeprecationInfo : Comparable<FirDeprecationInfo> {
      */
     abstract fun getMessage(session: FirSession): String?
 
+    /**
+     * Returns the contents of the `replaceWith` argument of the deprecation annotation, if any.
+     *
+     * This function mustn't be called before the ANNOTATION_ARGUMENTS phase is finished.
+     */
+    open fun getReplaceWith(session: FirSession): FirDeprecationReplaceWith? = null
+
     override fun compareTo(other: FirDeprecationInfo): Int {
         val lr = deprecationLevel.compareTo(other.deprecationLevel)
         //to prefer inheritable deprecation
@@ -74,3 +81,8 @@ abstract class FirDeprecationInfo : Comparable<FirDeprecationInfo> {
         else lr
     }
 }
+
+/**
+ * Represents the arguments of `kotlin.ReplaceWith`.
+ */
+data class FirDeprecationReplaceWith(val expression: String, val imports: List<String>)

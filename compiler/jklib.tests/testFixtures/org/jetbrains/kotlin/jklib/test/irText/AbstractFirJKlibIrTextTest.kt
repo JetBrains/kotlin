@@ -10,10 +10,11 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.IrPreprocessedInlineFunctionDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -49,7 +50,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerJKlibTest() {
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        useMetaTestConfigurators(::FirSpecificParserSuppressor, ::WithStdlibSkipper, ::WithReflectSkipper)
+        useMetaTestConfigurators(::FirSpecificParserSuppressor, ::WithReflectSkipper)
 
         facadeStep(::FirCliJKlibFacade)
         firHandlersStep {
@@ -58,18 +59,29 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerJKlibTest() {
 
         facadeStep(::Fir2IrCliJKlibFacade)
         irHandlersStep {
-            useHandlers({ JKlibSerializedIrDumpHandler(it, isAfterDeserialization = false) })
             commonIrHandlersForCodegenTest()
             setupIrTextDumpHandlers()
         }
 
+        facadeStep(::PreSerializationLoweringCliJKlibFacade)
+        loweredIrHandlersStep {
+            useHandlers(
+                { testServices, artifactKind ->
+                    IrTextDumpHandler(
+                        testServices = testServices,
+                        artifactKind = artifactKind,
+                        customExtension = "inlined.ir",
+                        directive = CodegenTestDirectives.DUMP_IR_AFTER_INLINE,
+                        directiveForIrDifference = CodegenTestDirectives.DUMP_IR_AFTER_INLINE_DIFFERENCE,
+                        showOffsets = true,
+                    )
+                },
+                ::IrPreprocessedInlineFunctionDumpHandler,
+            )
+        }
+
         facadeStep(::SerializationCliJKlibFacade)
         klibArtifactsHandlersStep()
-
-        facadeStep(::JKlibIrCompilationCliFacade)
-        deserializedIrHandlersStep {
-            useHandlers({ JKlibSerializedIrDumpHandler(it, isAfterDeserialization = true) })
-        }
 
         setupDefaultDirectivesForIrTextTest()
         defaultDirectives {
@@ -83,15 +95,6 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerJKlibTest() {
         )
         enableMetaInfoHandler()
         additionalK2ConfigurationForIrTextTest(FirParser.LightTree)
-    }
-}
-
-class WithStdlibSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
-    override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(ConfigurationDirectives)
-
-    override fun shouldSkipTest(): Boolean {
-        return testServices.moduleStructure.allDirectives.contains(ConfigurationDirectives.WITH_STDLIB)
     }
 }
 

@@ -35,7 +35,7 @@ class CompilerOptionsIT : KotlinMavenTestBase() {
             ) {
                 assertCompilationFailed()
                 assertBuildLogContains(
-                    "The feature \"break continue in inline lambdas\" is only available since language version 2.2"
+                    "The feature \"unnamed local variables\" is only available since language version 2.5"
                 )
             }
         }

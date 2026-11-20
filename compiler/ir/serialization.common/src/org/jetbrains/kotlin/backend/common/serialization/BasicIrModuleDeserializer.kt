@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettin
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -34,28 +32,25 @@ abstract class BasicIrModuleDeserializer(
     val linker: KotlinIrLinker,
     moduleFragment: IrModuleFragment,
     override val klib: KotlinLibrary,
-    override val strategyResolver: (String) -> DeserializationStrategy,
+    override val strategyResolver: DeserializationStrategyResolver,
     libraryAbiVersion: KotlinAbiVersion,
     private val allowErrorNodes: Boolean = false,
     private val deserializeTypeAliases: Boolean = false,
 ) : IrModuleDeserializer(moduleFragment, libraryAbiVersion) {
 
-    private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
+    final override val fileDeserializers: Map<IrFile, IrFileDeserializer>
+        field = mutableMapOf<IrFile, IrFileDeserializer>()
 
     private val moduleDeserializationState = ModuleDeserializationState()
 
     protected val fileDeserializationStates: List<FileDeserializationState>
 
-    private val _definedPackageNames = mutableSetOf<FqName>()
-    override fun getDefinedPackageNames(): Set<FqName>? = _definedPackageNames
+    final override val contributedPackageNames: Set<FqName>
+        field = mutableSetOf<FqName>()
 
     protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
 
     protected val ir: KlibIrComponent get() = klib.irOrFail
-
-    override fun fileDeserializers(): Collection<IrFileDeserializer> {
-        return fileToDeserializerMap.values.filterNot { strategyResolver(it.file.fileEntry.name).onDemand }
-    }
 
     init {
         val fileCount = ir.irFileCount
@@ -66,7 +61,7 @@ abstract class BasicIrModuleDeserializer(
                 val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, i))
                 val file = fileReader.createFile(moduleFragment, fileProto, linker.fileEntryDeserializer)
 
-                _definedPackageNames += file.packageFqName
+                contributedPackageNames += file.packageFqName
                 this += deserializeIrFile(
                     fileProto,
                     file,
@@ -82,14 +77,6 @@ abstract class BasicIrModuleDeserializer(
             }
         }
     }
-
-    override fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature): IrSimpleFunctionSymbol =
-        fileToDeserializerMap[file]?.symbolDeserializer?.referenceSimpleFunctionByLocalSignature(idSignature)
-            ?: error("No deserializer for file $file in module ${moduleFragment.name}")
-
-    override fun referencePropertyByLocalSignature(file: IrFile, idSignature: IdSignature): IrPropertySymbol =
-        fileToDeserializerMap[file]?.symbolDeserializer?.referencePropertyByLocalSignature(idSignature)
-            ?: error("No deserializer for file $file in module ${moduleFragment.name}")
 
     // TODO: fix to topLevel checker
     override fun contains(idSig: IdSignature): Boolean = idSig.topLevelSignature() in moduleReversedFileIndex
@@ -124,7 +111,7 @@ abstract class BasicIrModuleDeserializer(
                 allowErrorNodes = allowErrorNodes,
                 deserializeFunctionBodies = when {
                     fileStrategy.needBodies -> DeserializeFunctionBodies.ALL
-                    fileStrategy.inlineBodies -> DeserializeFunctionBodies.ONLY_INLINE
+                    fileStrategy.needOnlyInlineBodies -> DeserializeFunctionBodies.ONLY_INLINE
                     else -> DeserializeFunctionBodies.NONE
                 },
                 fixSwappedKProperty2TypeParameterOrder = moduleDeserializer.compatibilityMode.swappedKProperty2TypeParameterOrder,
@@ -133,11 +120,11 @@ abstract class BasicIrModuleDeserializer(
             moduleDeserializer,
         )
 
-        fileToDeserializerMap[file] = fileDeserializationState.fileDeserializer
+        fileDeserializers[file] = fileDeserializationState.fileDeserializer
 
         val topLevelDeclarations = fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys
         topLevelDeclarations.forEach {
-            moduleReversedFileIndex.putIfAbsent(it, fileDeserializationState) // TODO Why not simple put?
+            moduleReversedFileIndex[it] = fileDeserializationState
         }
 
         if (fileStrategy.theWholeWorld) {

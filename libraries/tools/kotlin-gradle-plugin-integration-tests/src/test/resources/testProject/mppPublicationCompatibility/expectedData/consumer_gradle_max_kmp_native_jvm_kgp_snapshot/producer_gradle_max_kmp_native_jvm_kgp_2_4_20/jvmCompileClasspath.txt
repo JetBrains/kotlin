@@ -1,0 +1,4 @@
+org.jetbrains:annotations:13.0 => [compile]
+root project 'kmp' => [jvmCompileClasspath]
+sample.gradle_max:kmp_native_jvm_kgp_2_4_20-jvm:1.0 => [jvmApiElements-published]
+sample.gradle_max:kmp_native_jvm_kgp_2_4_20:1.0 => [jvmApiElements-published]

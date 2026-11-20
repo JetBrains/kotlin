@@ -82,7 +82,7 @@ public interface KaUseSiteVisibilityChecker : org.jetbrains.kotlin.analysis.api.
         "symbol.isPublicApi",
         "org.jetbrains.kotlin.analysis.api.visibility.isPublicApi",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)

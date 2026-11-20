@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -66,7 +67,6 @@ internal sealed class FileStructureElement(
         fun recorderFor(fir: FirDeclaration): FirElementsRecorder = when (fir) {
             is FirFile -> RootStructureElement.Recorder(fir)
             is FirScript -> RootScriptStructureElement.Recorder(fir)
-            is FirReplSnippet -> RootReplSnippetStructureElement.Recorder(fir)
             is FirRegularClass -> ClassDeclarationStructureElement.Recorder(fir)
             else -> DeclarationStructureElement.Recorder
         }
@@ -80,22 +80,35 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
 
     companion object {
         context(session: FirSession)
-        private fun findIntMember(name: Name): FirNamedFunctionSymbol? {
-            return session.builtinTypes.intType.toRegularClassSymbol(session)?.fir?.declarations?.singleOrNull {
+        private fun findUnaryOperator(receiver: FirExpression, name: Name): FirNamedFunctionSymbol? {
+            // A literal keeps the integer literal type in some red code, such as the receiver of an unresolved call.
+            // That type has no class, so the literal gets the operator of `Int`
+            val receiverClass = receiver.resolvedType.toRegularClassSymbol(session)
+                ?: session.builtinTypes.intType.toRegularClassSymbol(session)
+
+            return receiverClass?.fir?.declarations?.singleOrNull {
                 it is FirNamedFunction && it.name == name
             }?.symbol as? FirNamedFunctionSymbol
         }
 
         /**
-         * Int literals desugars their unary operators right away, so the mapper has to restore them manually.
+         * Returns a fake `unaryMinus()` or `unaryPlus()` call for [expression], a prefix expression of an integer literal folded with
+         * unary signs, or `null` for any other prefix expression.
          *
-         * Details: [FirElementsRecorder.visitLiteralExpression], KT-70774.
+         * Raw FIR folds an integer literal and the unary signs around it into one literal, so the prefix expressions have no FIR of
+         * their own (KT-70774). The call takes the type of the literal that [FirElementsRecorder] maps [expression] to. For example,
+         * `val b: Byte = -(+128)` has the folded literal `-128` of type `Byte`, and:
+         *
+         * - `-(+128)` becomes `(+128).unaryMinus()` of type `Byte`, the type that the compiler reports for the folded literal, though
+         *   both its receiver and `Int.unaryMinus` have the type `Int`;
+         * - `+128` becomes `128.unaryPlus()` of type `Int`, the type of its own value, as `128` doesn't fit into `Byte`.
          */
         context(session: FirSession)
         private fun fakeCallForIntLiteralWithUnaryExpression(
             expression: KtPrefixExpression,
             mapping: Map<KtElement, FirElement>,
         ): FirElement? {
+            val literal = mapping[expression] as? FirLiteralExpression ?: return null
             val operatorExpression = expression.operationReference
             val operatorName = when (operatorExpression.getReferencedNameElementType()) {
                 KtTokens.PLUS -> OperatorNameConventions.UNARY_PLUS
@@ -105,7 +118,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
 
             val baseExpression = expression.baseExpression?.unwrapParenthesesLabelsAndAnnotations() as? KtElement ?: return null
             val firReceiver = firReceiverForUnaryIntLiteral(baseExpression, mapping) ?: return null
-            val operatorSymbol = findIntMember(operatorName) ?: return null
+            val operatorSymbol = findUnaryOperator(firReceiver, operatorName) ?: return null
             return buildFunctionCall {
                 source = expression.toKtPsiSourceElement()
                 origin = FirFunctionCallOrigin.Operator
@@ -118,26 +131,28 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 dispatchReceiver = firReceiver
                 explicitReceiver = firReceiver
 
-                coneTypeOrNull = firReceiver.resolvedType
+                coneTypeOrNull = literal.resolvedType
             }
         }
 
         /**
          * Resolves the FIR receiver for [fakeCallForIntLiteralWithUnaryExpression] strictly downwards.
          *
-         * The operand of a desugared unary integer literal is either the recorded (folded) literal itself,
-         * or another desugared `+`/`-` unary prefix. Resolving it via the general parent-walking [getFir]
-         * would climb back up to the enclosing prefix expression and recurse infinitely (KT-87131), since
-         * the folded prefix has no FIR mapping of its own. Descending into [operand] is guaranteed to
-         * terminate because the PSI tree is finite.
+         * The operand of a desugared unary integer literal is either another desugared `+`/`-` unary prefix,
+         * or the recorded integer literal itself. Resolving it via the general parent-walking [getFir]
+         * could climb back up to the enclosing prefix expression and recurse infinitely (KT-87131).
+         * Descending into [operand] is guaranteed to terminate because the PSI tree is finite.
          */
         context(session: FirSession)
         private fun firReceiverForUnaryIntLiteral(
             operand: KtElement,
             mapping: Map<KtElement, FirElement>,
         ): FirExpression? {
-            val fir = mapping[operand]
-                ?: (operand as? KtPrefixExpression)?.let { fakeCallForIntLiteralWithUnaryExpression(it, mapping) }
+            val fir = if (operand is KtPrefixExpression) {
+                fakeCallForIntLiteralWithUnaryExpression(operand, mapping)
+            } else {
+                mapping[operand]
+            }
 
             return fir as? FirExpression
         }
@@ -231,6 +246,15 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
         }
 
         fun getFir(element: KtElement, session: FirSession, mapping: Map<KtElement, FirElement>): FirElement? {
+            // The prefix expressions of a folded integer literal are mapped to literals, so the fake call goes first
+            if (element is KtPrefixExpression) {
+                fakeCallForIntLiteralWithUnaryExpression(
+                    expression = element,
+                    mapping = mapping,
+                    session = session,
+                )?.let { return it }
+            }
+
             var current: PsiElement? = element
             while (
                 current == element ||
@@ -242,19 +266,9 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 // We are still referring to the same element with possible type parameter/name qualification/nullability,
                 // hence it is always correct to return a corresponding element if present
                 if (current is KtElement) mapping[current]?.let { return it }
-                when (current) {
-                    is KtCallExpression -> {
-                        fakeCallToBuiltInSuspendOrNull(current, mapping, session)?.let {
-                            return it
-                        }
-                    }
-
-                    is KtPrefixExpression -> {
-                        fakeCallForIntLiteralWithUnaryExpression(
-                            expression = current,
-                            mapping = mapping,
-                            session = session,
-                        )?.let { return it }
+                if (current is KtCallExpression) {
+                    fakeCallToBuiltInSuspendOrNull(current, mapping, session)?.let {
+                        return it
                     }
                 }
 
@@ -275,8 +289,6 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 is KtAnnotationEntry,
                     // We replace a source for selector with the whole expression
                 is KtSafeQualifiedExpression,
-                    // Top level destructuring declarations do not have FIR for r-value at the moment, would probably be changed later
-                is KtDestructuringDeclaration,
                     // There is no separate FIR node for this in this@foo expressions, same for super@Foo
                 is KtThisExpression,
                 is KtSuperExpression,
@@ -307,13 +319,11 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                         mapping[current] ?: fakeReferenceToBuiltInSuspendOrNull(element, session)
                     }
                 }
-                is KtParenthesizedExpression -> checkStringLiteralFolderExpression(element, session, mapping)
                 is KtBinaryExpression -> checkStringLiteralFolderExpression(element, session, mapping)
                 // Here there is no separate FIR node for partial operator calls (like for a[i] = 1, there is no separate node for a[i])
                     ?: if (element is KtArrayAccessExpression || element is KtOperationReferenceExpression) mapping[current] else null
-                is KtBlockExpression ->
-                    // For script initializers, we need to return FIR element for script itself
-                    if (element is KtScriptInitializer) mapping[current.parent as KtScript] else null
+                // Syntax not allowed on a destructuring declaration is wrapped in an error element,
+                // as a receiver in `val Int.(a, b) = ...` or a type annotation in `val (a, b): Int = ...`
                 is PsiErrorElement -> {
                     val parent = current.parent
                     if (parent is KtDestructuringDeclaration) mapping[parent] else null
@@ -358,37 +368,6 @@ internal class RootScriptStructureElement(
 /** @see RootScriptStructureElement */
 internal val FirScript.declarationsToIgnore: Set<FirDeclaration>
     get() = parameters.plus(declarations).toSet()
-
-/**
- * The [FirReplSnippet] itself and the generated [FirReplSnippet.snippetClass]
- * with its generated members is a part of this [FileStructureElement].
- *
- * **Note**: moved initializers and delegates are not part of it.
- * They are treated as a part of the original property.
- */
-internal class RootReplSnippetStructureElement(
-    file: FirFile,
-    replSnippet: FirReplSnippet,
-    moduleComponents: LLFirModuleResolveComponents,
-) : FileStructureElement(
-    declaration = replSnippet,
-    diagnostics = FileStructureElementDiagnostics(
-        ReplSnippetDiagnosticRetriever(
-            declaration = replSnippet,
-            file = file,
-            moduleComponents = moduleComponents,
-        )
-    ),
-) {
-    class Recorder(replSnippet: FirReplSnippet) : FirElementContainerRecorder(
-        container = replSnippet,
-        declarationsToIgnore = replSnippet.declarationsToIgnore,
-    )
-}
-
-/** @see RootReplSnippetStructureElement */
-internal val FirReplSnippet.declarationsToIgnore: Set<FirDeclaration>
-    get() = snippetClass.declarationsToIgnore
 
 internal class ClassDeclarationStructureElement(
     file: FirFile,
@@ -439,16 +418,10 @@ internal abstract class FirElementContainerRecorder(
             return
         }
 
-        if (element is FirRegularClass) {
-            // Classes might have ignored elements somewhere inside
-            // The only known use case is REPL snippets: it starts from the snippet, not from the snippet's class
-            super.visitElement(element, data)
-        } else {
-            // A separate recorder is called here as we don't have to check
-            // conditions for nested elements – they should be recorded deeply.
-            // Technically, this is just an optimization
-            element.accept(DeclarationStructureElement.Recorder, data)
-        }
+        // A separate recorder is called here as we don't have to check
+        // conditions for nested elements – they should be recorded deeply.
+        // Technically, this is just an optimization
+        element.accept(DeclarationStructureElement.Recorder, data)
     }
 }
 
@@ -468,7 +441,6 @@ internal val FirDeclaration.isPartOfClassStructureElement: Boolean
         is KtFakeSourceElementKind.DataClassGeneratedMembers,
         is KtFakeSourceElementKind.EnumGeneratedDeclaration,
         KtFakeSourceElementKind.ClassDelegationField,
-        KtFakeSourceElementKind.ReplEvalFunction,
             -> true
 
         else -> false

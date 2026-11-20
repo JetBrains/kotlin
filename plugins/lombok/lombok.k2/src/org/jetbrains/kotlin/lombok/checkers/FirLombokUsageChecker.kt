@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
-import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeAnnotationCompanion
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.FlagUsageValue
@@ -55,8 +54,9 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
                 }
             }
             lombokService.config.superBuilderFlagUsage?.let { superBuilderFlagUsage ->
-                declaration.symbol.getCompilerRequiredAnnotationByClassId(LombokNames.SUPER_BUILDER_ID)?.let { rawAnnotation ->
-                    val superBuilder = ConeLombokAnnotations.SuperBuilder.extract(rawAnnotation, context.session)
+                // TODO KT-86149: after implementation of @SuperBuilder in Kotlin, replace with lombokService.getSuperBuilder
+                // At the moment it does not work because @SuperBuilder is not resolved during compiler-required stage
+                ConeLombokAnnotations.SuperBuilder.getOrNull(declaration.symbol, context.session)?.let { superBuilder ->
                     add(superBuilder to superBuilderFlagUsage)
                 }
             }

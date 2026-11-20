@@ -49,14 +49,6 @@ internal sealed class LLFirAbstractBodyTargetResolver(
         }
     }
 
-    @Deprecated("Should never be called directly, only for override purposes, please use withScript", level = DeprecationLevel.ERROR)
-    override fun withContainingReplSnippet(firReplSnippet: FirReplSnippet, action: () -> Unit) {
-        transformer.declarationsTransformer?.withReplSnippet(firReplSnippet) {
-            action()
-            firReplSnippet
-        }
-    }
-
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withContainingRegularClass(firClass: FirRegularClass, action: () -> Unit) {
         transformer.declarationsTransformer?.context?.withContainingClass(firClass) {

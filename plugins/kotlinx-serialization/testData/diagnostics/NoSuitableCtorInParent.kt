@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FILE: test.kt
 
@@ -28,3 +29,6 @@ class DerivedKeptSerializer(val serializer: KSerializer<*>)
 <!NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR!>@Serializable(DerivedKeptSerializer::class)<!>
 @KeepGeneratedSerializer
 class DerivedKept(val someData: String): NonSerializableParent(42)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, integerLiteral, primaryConstructor,
+propertyDeclaration, starProjection */

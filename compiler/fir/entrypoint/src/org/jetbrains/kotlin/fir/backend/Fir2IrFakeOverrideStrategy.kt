@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.backend.common.actualizer.ClassActualizationInfo
 import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbolsResolver
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
@@ -47,7 +46,6 @@ class Fir2IrFakeOverrideStrategy(
     override val isGenericClashFromSameSupertypeAllowed: Boolean,
     override val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean,
     private val delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
-    private val leafModuleDescriptor: ModuleDescriptor,
 ) : FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
     private val fieldOnlyProperties: MutableList<IrPropertyWithLateBinding> = mutableListOf()
 
@@ -66,35 +64,6 @@ class Fir2IrFakeOverrideStrategy(
         if (property.getter == null) {
             fieldOnlyProperties.add(property)
         }
-    }
-
-    override fun shouldSeeInternals(
-        thisModule: ModuleDescriptor,
-        memberModule: ModuleDescriptor,
-    ): Boolean {
-        require(thisModule is FirModuleDescriptor && memberModule is FirModuleDescriptor)
-        if (thisModule.shouldSeeInternalsOf(memberModule)) return true
-        /*
-         * There could be a case when one declaration is located in common sources and another is located in
-         * platform dependencies. For the frontend these two module data don't see each other, but from the
-         * backend point of view all sources belong to the same module. So in this situation we also should
-         * consider if the other declaration is visible from the leaf source module.
-         */
-
-        if (thisModule.session.kind == FirSession.Kind.Source && thisModule != leafModuleDescriptor) {
-            return leafModuleDescriptor.shouldSeeInternalsOf(memberModule)
-        }
-
-        /*
-         * This branch could be useful for the case with classpath substitution, if we would make a fake-override
-         * for a library class if it has a supertype from source. But at the moment of writing this code it's
-         * effectively unreachable, as fake overrides for library classes are built in the `Fir2IrLazyClass.declarations`
-         * which doesn't invoke this code. But it was decided to keep it for symmetry.
-         */
-        if (memberModule.session.kind == FirSession.Kind.Source && memberModule != leafModuleDescriptor) {
-            return thisModule.shouldSeeInternalsOf(leafModuleDescriptor)
-        }
-        return false
     }
 
     fun clearFakeOverrideFields() {
@@ -497,4 +466,3 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         }
     }
 }
-

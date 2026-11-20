@@ -60,7 +60,7 @@ FILE: unsafeAssignmentExtra.kt
                 }
             }
 
-            lval x: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/getValue, kotlin/getValue, kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>by this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|kotlin/Int|>|
+            lval x: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/getValue, kotlin/getValue, kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]> by this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|kotlin/Int|>|
                 local get(): <ERROR TYPE REF: Ambiguity: getValue, [kotlin/getValue, kotlin/getValue, kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]> {
                     ^ D|<local>/x|.<Ambiguity: getValue, [kotlin/getValue, kotlin/getValue, kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#(Null(null), ::R|<local>/x|)
                 }

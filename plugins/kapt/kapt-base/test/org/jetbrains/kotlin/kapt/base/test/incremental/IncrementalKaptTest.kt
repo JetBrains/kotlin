@@ -9,12 +9,17 @@ import org.jetbrains.kotlin.kapt.base.*
 import org.jetbrains.kotlin.kapt.base.incremental.RuntimeProcType
 import org.jetbrains.kotlin.kapt.base.incremental.SourcesToReprocess
 import org.jetbrains.kotlin.kapt.base.util.WriterBackedKaptLogger
+import org.jetbrains.kotlin.kapt.base.util.doOpenInternalPackagesIfRequired
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 class IncrementalKaptTest {
+    init {
+        doOpenInternalPackagesIfRequired()
+    }
+
     @Test
     fun testIncrementalRun(
         @TempDir baseSourcesDir: File,
@@ -222,5 +227,67 @@ class IncrementalKaptTest {
         }
 
         assertTrue(outputDir.resolve("test/UserGenerated.java").exists())
+    }
+
+    @Test
+    fun testFullRebuildKeepsOutputSharedWithCompiledSources(
+        @TempDir sourcesOutput: File,
+        @TempDir sharedClassesOutput: File,
+        @TempDir stubsOutput: File,
+        @TempDir projectBaseDir: File
+    ) {
+        val compiledClass = sharedClassesOutput.resolve("test/User.class").apply {
+            parentFile.mkdirs()
+            writeText("")
+        }
+        val staleSource = sourcesOutput.resolve("test/UserGenerated.java").apply {
+            parentFile.mkdirs()
+            writeText("")
+        }
+
+        val options = KaptOptions.Builder().apply {
+            this.projectBaseDir = projectBaseDir
+
+            sourcesOutputDir = sourcesOutput
+            classesOutputDir = sharedClassesOutput
+            stubsOutputDir = stubsOutput
+
+            compiledSources.add(sharedClassesOutput)
+            flags.add(KaptFlag.INCREMENTAL_APT)
+        }.build()
+
+        KaptContext(options, true, WriterBackedKaptLogger(isVerbose = true)).use {
+            assertEquals(SourcesToReprocess.FullRebuild, it.sourcesToReprocess)
+        }
+
+        assertTrue(compiledClass.exists())
+        assertFalse(staleSource.exists())
+        assertTrue(sourcesOutput.isDirectory)
+    }
+
+    @Test
+    fun testFullRebuildRecreatesNestedOutputDirs(
+        @TempDir outputDir: File,
+        @TempDir projectBaseDir: File
+    ) {
+        val sourcesOutput = outputDir.resolve("nested/sources")
+        val classesOutput = outputDir.resolve("nested/classes")
+
+        val options = KaptOptions.Builder().apply {
+            this.projectBaseDir = projectBaseDir
+
+            sourcesOutputDir = sourcesOutput
+            classesOutputDir = classesOutput
+            stubsOutputDir = outputDir
+
+            flags.add(KaptFlag.INCREMENTAL_APT)
+        }.build()
+
+        KaptContext(options, true, WriterBackedKaptLogger(isVerbose = true)).use {
+            assertEquals(SourcesToReprocess.FullRebuild, it.sourcesToReprocess)
+        }
+
+        assertTrue(sourcesOutput.isDirectory)
+        assertTrue(classesOutput.isDirectory)
     }
 }

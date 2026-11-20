@@ -17,7 +17,6 @@ dependencies {
     val analysisApiFir = ":analysis:analysis-api-fir"
     embedded(project(":analysis:analysis-api")) { isTransitive = false }
     embedded(project(analysisApiFir)) { isTransitive = false }
-    embedded(project(":analysis:analysis-api-impl-base")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-platform-interface")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-standalone")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir")) { isTransitive = false }

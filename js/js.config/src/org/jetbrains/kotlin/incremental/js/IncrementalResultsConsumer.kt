@@ -68,7 +68,7 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
         packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata))
     }
 
-//    class IrFileData(fileData: ByteArray, symbols: ByteArray, types: ByteArray, strings: ByteArray, bodies: ByteArray, declarations: ByteArray)
+    //    class IrFileData(fileData: ByteArray, symbols: ByteArray, types: ByteArray, strings: ByteArray, bodies: ByteArray, declarations: ByteArray)
     val irFileData: Map<File, IrTranslationResultValue>
         field = hashMapOf<File, IrTranslationResultValue>()
 
@@ -136,5 +136,17 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
             this.fileEntries?.contentHashCode()?.toLong(),
         )
         return hashCodes.reduce { acc, hashCode -> acc * 31 + hashCode }
+    }
+}
+
+class KmpIncrementalResultsConsumer : IncrementalResultsConsumerImpl() {
+    /**
+     * Serialized metadata of common (non-leaf) fragment files, keyed by fragment name and then by source file.
+     */
+    val commonMetadata: Map<String, Map<File, ByteArray>>
+        field = hashMapOf<String, MutableMap<File, ByteArray>>()
+
+    fun processCommonMetadata(fragmentName: String, sourceFile: File, metadata: ByteArray) {
+        commonMetadata.getOrPut(fragmentName) { hashMapOf() }[sourceFile] = metadata
     }
 }

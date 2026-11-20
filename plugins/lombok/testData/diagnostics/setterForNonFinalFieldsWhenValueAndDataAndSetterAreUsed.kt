@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83256
 
 // FILE: ValuePlusDataBasic.java
@@ -46,3 +47,6 @@ fun usage() {
     val valueSetterFinalField = ValueSetterFinalField(1)
     valueSetterFinalField.<!UNRESOLVED_REFERENCE!>setX<!>(1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, localProperty, propertyDeclaration,
+stringLiteral */

@@ -2,6 +2,7 @@ The following packages are (non-transitively) deprecated by the `asm-deprecating
 package org.jetbrains.kotlin
 package org.jetbrains.kotlin.arguments
 package org.jetbrains.kotlin.build.report
+package org.jetbrains.kotlin.build.report.events
 package org.jetbrains.kotlin.build.report.metrics
 package org.jetbrains.kotlin.cli
 package org.jetbrains.kotlin.cli.common

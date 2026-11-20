@@ -11,9 +11,10 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxShellScriptBuildPhase
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodeProject
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializeXcodeProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializePbxprojJson
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -34,6 +35,26 @@ import kotlin.test.assertTrue
 @SwiftPMImportGradlePluginTests
 class IntegrateEmbedAndSignIntoXcodeProjectIT : KGPBaseTest() {
 
+    @TestMetadata("emptyxcproj")
+    @GradleTest
+    @RequiredXCodeVersion(minSupportedMajor = 27, minSupportedMinor = 2)
+    fun `xcproj integrateEmbedAndSign and integrateLinkagePackage are idempotent`(version: GradleVersion) {
+        project("emptyxcproj", version) {
+            initDefaultKmpWithLocalSPM()
+            val xcproj = projectPath.resolve("iosApp/iosApp.xcodeproj/project.xcproj")
+            val environment = EnvironmentalVariables(
+                "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                "GRADLEW_PATH" to projectPath.resolve("gradlew").absolutePathString(),
+                "GRADLE_PROJECT_PATH" to ":",
+            )
+            build(":integrateEmbedAndSign", ":integrateLinkagePackage", "--rerun-tasks", environmentVariables = environment)
+            val initial = xcproj.readText()
+            build(":integrateEmbedAndSign", ":integrateLinkagePackage", "--rerun-tasks", environmentVariables = environment)
+            assertEquals(initial, xcproj.readText())
+        }
+    }
+
+    @TestMetadata("emptyxcode-no-embedandsign")
     @GradleTest
     fun `integrateEmbedAndSign uses root project task path without duplicate separators`(version: GradleVersion) {
         project("emptyxcode-no-embedandsign", version) {
@@ -69,6 +90,7 @@ class IntegrateEmbedAndSignIntoXcodeProjectIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode-no-embedandsign")
     @GradleTest
     fun `integrateEmbedAndSign injects gradle invocation into pbxproj when absent`(version: GradleVersion) {
         project("emptyxcode-no-embedandsign", version) {
@@ -95,6 +117,7 @@ class IntegrateEmbedAndSignIntoXcodeProjectIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `integrateEmbedAndSign is idempotent when a gradle script phase already exists`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -121,6 +144,7 @@ class IntegrateEmbedAndSignIntoXcodeProjectIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode-no-embedandsign")
     @GradleTest
     fun `integrateEmbedAndSign fails when pbxproj has no native targets`(version: GradleVersion) {
         project("emptyxcode-no-embedandsign", version) {
@@ -145,6 +169,7 @@ class IntegrateEmbedAndSignIntoXcodeProjectIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode-no-embedandsign")
     @GradleTest
     fun `integrateEmbedAndSign adds a script phase to every native target when there are multiple`(version: GradleVersion) {
         project("emptyxcode-no-embedandsign", version) {
@@ -186,6 +211,7 @@ class IntegrateEmbedAndSignIntoXcodeProjectIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode-no-embedandsign")
     @GradleTest
     fun `integrateEmbedAndSign fails when GRADLE_PROJECT_PATH env var is missing`(version: GradleVersion) {
         project("emptyxcode-no-embedandsign", version) {
@@ -203,6 +229,7 @@ class IntegrateEmbedAndSignIntoXcodeProjectIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode-no-embedandsign")
     @GradleTest
     fun `integrateEmbedAndSign disables ENABLE_USER_SCRIPT_SANDBOXING in all build configurations`(version: GradleVersion) {
         project("emptyxcode-no-embedandsign", version) {
@@ -254,7 +281,7 @@ private fun Path.readPbxprojAsXcodeProject(): XcodeProject {
     check(result.isSuccessful) {
         "plutil failed (exit=${result.exitCode}) on $this: ${result.stdErr}"
     }
-    return deserializeXcodeProject(result.output.toByteArray())
+    return deserializePbxprojJson(result.output.toByteArray())
 }
 
 private fun Path.kotlinPhaseShellScripts(): List<String> {

@@ -2,7 +2,7 @@
 // Implementation of methods is not available
 
 @kotlin.jvm.JvmInline
-public final value class PublicValue public constructor(value: kotlin.String) {
+public final inline value class PublicValue public constructor(value: kotlin.String) {
     public final val value: kotlin.String /* compiled code */
 
     public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }

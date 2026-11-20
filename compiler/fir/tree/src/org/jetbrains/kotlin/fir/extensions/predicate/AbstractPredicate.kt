@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.extensions.predicate
 
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 
@@ -54,6 +55,24 @@ sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
 
         override fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R {
             return visitor.visitAnd(this, data)
+        }
+    }
+
+    /**
+     * Filters the declarations matched by [predicate] to that of [type].
+     * The type applies to the [accepted][accept] declaration, even when [predicate] checks its parents or children.
+     * Nested matching predicates require the declaration to match each wrapper's type.
+     */
+    sealed interface MatchingType<P : AbstractPredicate<P>> : AbstractPredicate<P> {
+        val predicate: P
+
+        /**
+         * Kind of declaration this predicate matches.
+         */
+        val type: DeclarationType
+
+        override fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R {
+            return visitor.visitMatchingType(this, data)
         }
     }
 
@@ -242,5 +261,16 @@ sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
         abstract fun hasAnnotated(annotations: Collection<AnnotationFqn>): P
 
         abstract fun annotatedOrUnder(annotations: Collection<AnnotationFqn>): P
+
+        // ------------------- targets -------------------
+        /**
+         * Restricts the declarations matched by this predicate to the given [type].
+         *
+         * [FirPredicateBasedProvider.getSymbolsByPredicate] checks the type before recording a symbol for incremental compilation.
+         * Declarations of other types aren't recorded.
+         * Adding a matching predicate can improve incremental compilation performance if it produces a smaller set of declarations,
+         * thus causing a smaller set of files to be recompiled.
+         */
+        abstract fun P.matching(type: DeclarationType): P
     }
 }

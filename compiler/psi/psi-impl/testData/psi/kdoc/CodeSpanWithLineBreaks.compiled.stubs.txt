@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CodeSpanWithLineBreaksKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
-    origin: Facade(className=CodeSpanWithLineBreaksKt, jvmClassName=null)
+    origin: Facade(className=CodeSpanWithLineBreaksKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -14,7 +14,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CodeSpanWithLineBreaksKt]]
         REFERENCE_EXPRESSION[referencedName=Unit]
           isClassRef: true
   FUNCTION[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
-    origin: Facade(className=CodeSpanWithLineBreaksKt, jvmClassName=null)
+    origin: Facade(className=CodeSpanWithLineBreaksKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -24,7 +24,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CodeSpanWithLineBreaksKt]]
         REFERENCE_EXPRESSION[referencedName=Unit]
           isClassRef: true
   FUNCTION[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
-    origin: Facade(className=CodeSpanWithLineBreaksKt, jvmClassName=null)
+    origin: Facade(className=CodeSpanWithLineBreaksKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE

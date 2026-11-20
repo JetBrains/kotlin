@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.createDirectories
 
@@ -21,6 +22,7 @@ import kotlin.io.path.createDirectories
     enabledOnCI = [OS.MAC],
 )
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class SwiftPMImportKotlinNativeTestTask : KGPBaseTest() {
 
     @GradleTest
@@ -30,7 +32,7 @@ class SwiftPMImportKotlinNativeTestTask : KGPBaseTest() {
             runProcess(listOf("swift", "package", "init", "--type", "library"), dynamicProduct)
             dynamicProduct.resolve("Package.swift").writeText(
                 """
-                    // swift-tools-version: 5.9
+                    // swift-tools-version: 6.1
                     import PackageDescription
 
                     let package = Package(

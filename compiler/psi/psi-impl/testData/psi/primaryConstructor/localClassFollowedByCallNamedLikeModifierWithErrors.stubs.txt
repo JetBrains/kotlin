@@ -1,0 +1,111 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=LocalClassFollowedByCallNamedLikeModifierWithErrorsKt]]
+  facadeFqName: LocalClassFollowedByCallNamedLikeModifierWithErrorsKt
+  partSimpleName: "LocalClassFollowedByCallNamedLikeModifierWithErrorsKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUNCTION[fqName=localObject, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localObject]
+    VALUE_PARAMETER_LIST
+    OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=false, isTopLevel=false, name=O, superNames=[]]
+  FUNCTION[fqName=localInterface, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localInterface]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=false, name=I, superNames=[]]
+  FUNCTION[fqName=localEnumClass, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localEnumClass]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=E, superNames=[]]
+      MODIFIER_LIST[enum]
+  FUNCTION[fqName=localClassFollowedByMultipleModifierLikeTokens, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localClassFollowedByMultipleModifierLikeTokens]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+  FUNCTION[fqName=localClassFollowedByAnnotationAndModifierLikeCall, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localClassFollowedByAnnotationAndModifierLikeCall]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+  FUNCTION[fqName=localClassFollowedByParenthesizedParametersOnNextLine, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localClassFollowedByParenthesizedParametersOnNextLine]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+  FUNCTION[fqName=localClassFollowedByBlockOnNextLine, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localClassFollowedByBlockOnNextLine]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+  FUNCTION[fqName=localClassWithModifiersOnSameLine, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localClassWithModifiersOnSameLine]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C1, superNames=[]]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C1]
+        MODIFIER_LIST[private]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C2, superNames=[]]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C2]
+        MODIFIER_LIST[private]
+      CLASS_BODY
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C3, superNames=[]]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C3]
+        MODIFIER_LIST[inline]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C4, superNames=[]]
+  CLASS[classId=/TopLevelSameLine1, fqName=TopLevelSameLine1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=TopLevelSameLine1, superNames=[]]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TopLevelSameLine1]
+      MODIFIER_LIST[private]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=/TopLevelSameLine2, fqName=TopLevelSameLine2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=TopLevelSameLine2, superNames=[]]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TopLevelSameLine2]
+      MODIFIER_LIST[private]
+    CLASS_BODY
+  CLASS[classId=/TopLevelNextLine1, fqName=TopLevelNextLine1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=TopLevelNextLine1, superNames=[]]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TopLevelNextLine1]
+      MODIFIER_LIST[private]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=/TopLevelNextLine2, fqName=TopLevelNextLine2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=TopLevelNextLine2, superNames=[]]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TopLevelNextLine2]
+      MODIFIER_LIST[private]
+    CLASS_BODY
+  CLASS[classId=/TopLevelNextLine3, fqName=TopLevelNextLine3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=TopLevelNextLine3, superNames=[]]
+  CLASS[classId=/Outer, fqName=Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Outer, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Ann]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Ann]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            REFERENCE_EXPRESSION[referencedName=x]
+    CLASS_BODY
+      CLASS[classId=/Outer.NestedNextLine1, fqName=Outer.NestedNextLine1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=NestedNextLine1, superNames=[]]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NestedNextLine1]
+          MODIFIER_LIST[private]
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Int]
+      CLASS[classId=/Outer.NestedNextLine2, fqName=Outer.NestedNextLine2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=NestedNextLine2, superNames=[]]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NestedNextLine2]
+          MODIFIER_LIST[inline]
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+      FUNCTION[fqName=Outer.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        VALUE_PARAMETER_LIST
+        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=LocalInsideMember, superNames=[]]
+  FUNCTION[fqName=localClassWithNestedClass, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=localClassWithNestedClass]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Local, superNames=[]]
+      CLASS_BODY
+        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=NestedInsideLocal, superNames=[]]
+          PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NestedInsideLocal]
+            MODIFIER_LIST[private]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Int]

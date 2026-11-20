@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.icMetadataTracker
+import org.jetbrains.kotlin.config.icCommonMetadataTracker
 import org.jetbrains.kotlin.config.useMetadataOnIncrementalClasspath
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
-import org.jetbrains.kotlin.incremental.components.ICJvmMetadataTracker
+import org.jetbrains.kotlin.incremental.components.ICJvmCommonMetadataTracker
 import org.jetbrains.kotlin.util.metadataVersion
 import java.io.File
 
@@ -40,7 +40,7 @@ internal object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFront
         val commonFragmentOutputs = input.frontendOutput.outputs.dropLast(1)
         if (commonFragmentOutputs.isEmpty()) return
 
-        val icMetadataTracker = configuration.requireIcMetadataTracker()
+        val icCommonMetadataTracker = configuration.requireIcCommonMetadataTracker()
         val metadataVersion = configuration.metadataVersion()
         val languageVersionSettings = configuration.languageVersionSettings
         val exportKDoc = languageVersionSettings.supportsFeature(LanguageFeature.ExportKDocDocumentationToKlib)
@@ -77,14 +77,14 @@ internal object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFront
                         languageVersionSettings,
                     )
 
-                    icMetadataTracker.report(moduleName, sourceFile, packageFragment.toByteArray())
+                    icCommonMetadataTracker.report(moduleName, sourceFile, packageFragment.toByteArray())
                 }
             }
         }
     }
 
-    private fun CompilerConfiguration.requireIcMetadataTracker(): ICJvmMetadataTracker =
-        requireNotNull(icMetadataTracker) {
-            "Misconfiguration: `icMetadataTracker` must be registered for KMP projects when `useMetadataOnIncrementalClasspath` is enabled."
+    private fun CompilerConfiguration.requireIcCommonMetadataTracker(): ICJvmCommonMetadataTracker =
+        requireNotNull(icCommonMetadataTracker) {
+            "Misconfiguration: `icCommonMetadataTracker` must be registered for KMP projects when `useMetadataOnIncrementalClasspath` is enabled."
         }
 }

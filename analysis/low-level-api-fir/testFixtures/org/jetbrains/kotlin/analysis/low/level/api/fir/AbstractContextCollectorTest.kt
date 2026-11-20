@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCustomScriptDefinitionTestConfigurator
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithSpecificAttributes
@@ -35,13 +37,30 @@ import org.jetbrains.kotlin.types.SmartcastStability
 
 abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        performTestByMainFile(mainFile, mainModule, testServices, testPrefixes = emptyList(), useBodyElement = false)
-        performTestByMainFile(mainFile, mainModule, testServices, testPrefixes = listOf("body"), useBodyElement = true)
+        // In `IGNORE_SELF` mode, the copy passes see the original file's declarations as the first two passes left them.
+        // Sessions aren't cached strongly, so hold the original FIR file, and with it its session, until the copy passes are done.
+        // Otherwise, a GC in between could collect them, and the copy passes would see the original file rebuilt and unresolved.
+        val resolutionFacade = mainModule.ktModule.getResolutionFacade(mainFile.project)
+        val originalFirFile = mainFile.getOrBuildFirFile(resolutionFacade)
+
+        performTestByMainFile(
+            mainFile, originalFirFile, resolutionFacade, testServices, testPrefixes = emptyList(), useBodyElement = false,
+        )
+        performTestByMainFile(
+            mainFile, originalFirFile, resolutionFacade, testServices, testPrefixes = listOf("body"), useBodyElement = true,
+        )
 
         val fakeFile = createFileCopy(mainFile)
+        val fakeFirFile = fakeFile.getOrBuildFirFile(resolutionFacade)
 
-        performTestByMainFile(fakeFile, mainModule, testServices, testPrefixes = listOf("copy"), useBodyElement = false)
-        performTestByMainFile(fakeFile, mainModule, testServices, testPrefixes = listOf("copy", "body.copy"), useBodyElement = true)
+        performTestByMainFile(
+            fakeFile, fakeFirFile, resolutionFacade, testServices, testPrefixes = listOf("copy"), useBodyElement = false,
+        )
+        performTestByMainFile(
+            fakeFile, fakeFirFile, resolutionFacade, testServices, testPrefixes = listOf("copy", "body.copy"), useBodyElement = true,
+        )
+
+        check(mainFile.getOrBuildFirFile(resolutionFacade) === originalFirFile) { "The original FIR file must not be rebuilt" }
     }
 
     private fun createFileCopy(file: KtFile): KtFile {
@@ -56,13 +75,12 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
 
     private fun performTestByMainFile(
         mainFile: KtFile,
-        mainModule: KtTestModule,
+        firFile: FirFile,
+        resolutionFacade: LLResolutionFacade,
         testServices: TestServices,
         testPrefixes: List<String>,
         useBodyElement: Boolean
     ) {
-        val resolutionFacade = mainModule.ktModule.getResolutionFacade(mainFile.project)
-        val firFile = mainFile.getOrBuildFirFile(resolutionFacade)
         val targetElement = testServices.expressionMarkerProvider
             .getBottommostSelectedElementOfType(mainFile, KtElement::class)
 

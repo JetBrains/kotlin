@@ -13,12 +13,16 @@ import org.jetbrains.kotlin.gradle.abi.utils.referenceJvmDumpFile
 import org.jetbrains.kotlin.gradle.dsl.abi.BinariesSource
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import kotlin.test.assertContains
 import kotlin.test.assertFalse
 
 @JvmGradlePluginTests
+@MustRunOnChangesInBuildToolsApi
 class AbiValidationJvmNonTestCompilationsIT : KGPBaseTest() {
 
+    @TestMetadata("base-kotlin-jvm-library")
     @GradleTest
     fun testNonTestCompilationsExcludesTestCompilation(
         gradleVersion: GradleVersion,

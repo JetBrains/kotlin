@@ -15,6 +15,7 @@ dependencies {
     compileOnly(kotlinStdlib())
 
     implementation(project(":native:native.config"))
+    implementation(project(":compiler:util"))
     implementation(project(":native:swift:sir"))
     implementation(project(":native:swift:sir-providers"))
     implementation(project(":native:swift:sir-light-classes"))
@@ -22,6 +23,7 @@ dependencies {
 
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-api-standalone"))
+    runtimeOnly(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
 
     implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
     implementation(project(":kotlin-util-klib"))

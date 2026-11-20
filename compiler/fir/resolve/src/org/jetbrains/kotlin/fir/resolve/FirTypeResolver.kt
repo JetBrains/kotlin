@@ -51,14 +51,24 @@ class TypeResolutionConfiguration private constructor(
     // For `x: MySealed` and `x is MySubClass` instead of `x is MySealed.MySubClass`
     // the class symbol would point to MySealed.
     // It's guaranteed to be sealed.
-    val sealedClassForContextSensitiveResolution: FirRegularClassSymbol? = null,
+    val sealedClassForContextSensitiveResolution: FirRegularClassSymbol?,
+    val lastCompanionBlockOwner: FirClass?,
 ) {
+    @OptIn(ExperimentalVersionOverloading::class)
     constructor(
         scopes: Iterable<FirScope>,
         containingClassDeclarations: List<FirClass>,
         useSiteFile: FirFile?,
         topContainer: FirDeclaration? = null,
-    ) : this(scopes, containingClassDeclarations, useSiteFile, topContainer, sealedClassForContextSensitiveResolution = null)
+        @IntroducedAt("2.5.20") lastCompanionBlockOwner: FirClass? = null,
+    ) : this(
+        scopes,
+        containingClassDeclarations,
+        useSiteFile,
+        topContainer,
+        sealedClassForContextSensitiveResolution = null,
+        lastCompanionBlockOwner = lastCompanionBlockOwner
+    )
 
     companion object {
         fun createForContextSensitiveResolution(
@@ -72,6 +82,7 @@ class TypeResolutionConfiguration private constructor(
                 scopes = emptyList(),
                 containingClassDeclarations, useSiteFile, topContainer,
                 sealedClassForContextSensitiveResolution,
+                lastCompanionBlockOwner = null,
             )
         }
     }

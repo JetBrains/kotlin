@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinTransformedMetadataLibraryDi
 import org.jetbrains.kotlin.gradle.plugin.mpp.read
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.metadataTransformation
+import org.jetbrains.kotlin.gradle.utils.resolveInside
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver {
@@ -39,7 +40,7 @@ internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver
                 val sourceSetMetadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
 
                 val metadataLibraryOutputFile = sourceSet.internal.project.kotlinTransformedMetadataLibraryDirectoryForIde
-                    .resolve(sourceSetMetadataBinary.relativeFile)
+                    .resolveInside(sourceSetMetadataBinary.relativeFile)
 
                 metadataLibraryOutputFile.parentFile.mkdirs()
                 if (!metadataLibraryOutputFile.exists()) {

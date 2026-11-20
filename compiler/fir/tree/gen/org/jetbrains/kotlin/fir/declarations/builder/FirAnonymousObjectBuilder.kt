@@ -55,7 +55,7 @@ class FirAnonymousObjectBuilder : FirDeclarationBuilder, FirClassBuilder, FirAnn
             deprecationsProvider,
             scopeProvider,
             classKind,
-            superTypeRefs,
+            superTypeRefs.toMutableOrEmpty(),
             declarations,
             annotations.toMutableOrEmpty(),
             staticControlFlowGraphReference,

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.test.configuration.additionalK2ConfigurationForIrTex
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractNonJvmIrTextTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
@@ -70,6 +69,3 @@ abstract class AbstractJsIrTextTestBase(
 }
 
 abstract class AbstractLightTreeJsIrTextTest : AbstractJsIrTextTestBase(FirParser.LightTree)
-
-@FirPsiCodegenTest
-abstract class AbstractPsiJsIrTextTest : AbstractJsIrTextTestBase(FirParser.Psi)

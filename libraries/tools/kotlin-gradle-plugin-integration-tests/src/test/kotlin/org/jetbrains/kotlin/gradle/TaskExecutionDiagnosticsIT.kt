@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSe
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
 import org.jetbrains.kotlin.gradle.util.useCompilerVersion
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
@@ -25,6 +28,7 @@ import kotlin.io.path.createFile
 import kotlin.io.path.pathString
 
 @DisplayName("Execution time diagnostics")
+@MustRunOnChangesInGradle
 class TaskExecutionDiagnosticsIT : KGPBaseTest() {
 
     @JvmGradlePluginTests
@@ -104,8 +108,8 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
             gradleVersion,
             btaVersion = null,
-            expectedSeverity = KotlinToolingDiagnosticsSeverity.ERROR, // it's rendered as ERROR because of warning-mode=fail
-            customizedKotlinVersion = KotlinVersion.firstSupported, // FIXME(KT-69597): Previously hardcoded to language version 2.0.
+            expectedSeverity = KotlinToolingDiagnosticsSeverity.WARNING,
+            customizedKotlinVersion = KotlinVersion.firstDeprecatedSupported,
         )
 
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, custom compiler via BTA with deprecation")
@@ -114,11 +118,12 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
     @GradleTestVersions(
         maxVersion = TestVersions.Gradle.G_9_6 // Gradle 9.7+ brings Kotlin runtime 2.4.0 which metadata is not compatible with Kotlin compiler 2.2.10
     )
+    @MustRunOnChangesInBuildToolsApi
     fun emitDiagnosticOnUnsupportedVersionAlongKotlinDslCustomVersionDeprecation(gradleVersion: GradleVersion) =
         emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
             gradleVersion,
             btaVersion = "2.2.10",
-            expectedSeverity = KotlinToolingDiagnosticsSeverity.ERROR, // it's rendered as ERROR because of warning-mode=fail
+            expectedSeverity = KotlinToolingDiagnosticsSeverity.WARNING,
         )
 
     // Gradle 9.4.0 brings it Kotlin runtime 2.3.0 which metadata is not compatible with Kotlin compiler 2.1.20
@@ -126,6 +131,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, custom compiler via BTA without deprecation")
     @JvmGradlePluginTests
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun emitDiagnosticOnUnsupportedVersionAlongKotlinDslCustomVersion(gradleVersion: GradleVersion) =
         emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(gradleVersion, btaVersion = "2.1.20", expectedSeverity = null)
 
@@ -167,7 +173,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
             }
 
         val expectFail = when (expectedSeverity) {
-            KotlinToolingDiagnosticsSeverity.ERROR -> false // ERROR == WARNING because of warning-mode=fail
+            KotlinToolingDiagnosticsSeverity.WARNING -> false
             KotlinToolingDiagnosticsSeverity.STRONG_WARNING -> true
             null -> false
             else -> error("Impossible expected severity: $expectedSeverity")
@@ -190,6 +196,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @GradleTest
     @OtherGradlePluginTests
     fun `karOrKarXZFilesInCompileClasspathAreReported - native`(gradleVersion: GradleVersion) {
@@ -215,6 +222,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-plugin-project")
     @GradleTest
     @OtherGradlePluginTests
     fun `karOrKarXZFilesInCompileClasspathAreReported - js`(gradleVersion: GradleVersion) {
@@ -239,6 +247,32 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
                 unsupportedLibraryPaths.forEach { libraryPath ->
                     assertOutputContains(libraryPath)
                 }
+            }
+        }
+    }
+
+    @DisplayName("KT-69682: blank free compiler arguments are reported")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun blankFreeCompilerArgsAreReported(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            plugins {
+                kotlin("jvm")
+            }
+            buildScriptInjection {
+                project.applyJvm {
+                    compilerOptions.freeCompilerArgs.add("")
+                }
+            }
+
+            kotlinSourcesDir().source("main.kt") {
+                """
+                |fun main() {}
+                """.trimMargin()
+            }
+
+            build("compileKotlin") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.BlankFreeCompilerArgs)
             }
         }
     }

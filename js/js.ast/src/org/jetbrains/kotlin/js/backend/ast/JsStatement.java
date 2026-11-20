@@ -5,8 +5,9 @@
 package org.jetbrains.kotlin.js.backend.ast;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata;
 
-public interface JsStatement extends JsNode {
+public interface JsStatement extends JsNode, HasMetadata {
     @NotNull
     @Override
     JsStatement deepCopy();

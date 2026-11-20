@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ConditionWithDefaultValueKt]
   IMPORT_LIST
   FUNCTION[fqName=testDefaultArguments, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=testDefaultArguments]
     contract: [ effect:param(1) HoldsIn(param(2)) ]
-    origin: Facade(className=ConditionWithDefaultValueKt, jvmClassName=null)
+    origin: Facade(className=ConditionWithDefaultValueKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]

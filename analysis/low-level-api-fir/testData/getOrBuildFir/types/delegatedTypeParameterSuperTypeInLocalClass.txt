@@ -1,0 +1,22 @@
+KT element: KtTypeReference
+FIR element: FirErrorTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<ERROR TYPE REF: Type parameter T cannot be a supertype>
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] delegatedTypeParameterSuperTypeInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] interface MyInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|MyInterface|> foo([ResolvedTo(BODY_RESOLVE)] i: R|T|): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=<local>/Local.$$delegate_0}] class Local<[ResolvedTo(BODY_RESOLVE)] Outer(T) : R|MyInterface|> : <ERROR TYPE REF: Type parameter T cannot be a supertype> {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor(): R|<local>/Local<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|T| = R|<local>/i|
+
+        }
+
+    }

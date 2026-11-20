@@ -1,0 +1,3 @@
+@Anno()
+owner -> FirRegularPropertySymbol /A.b
+context -> FirRegularPropertySymbol /A.b

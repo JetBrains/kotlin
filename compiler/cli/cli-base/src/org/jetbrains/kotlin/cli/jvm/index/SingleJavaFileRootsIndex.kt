@@ -24,9 +24,12 @@ import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.syntaxElementTypeSetOf
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiPackage
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 
 class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
     init {
@@ -35,28 +38,48 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
         }
     }
 
-    private val classIdsInRoots = ArrayList<List<ClassId>>(roots.size)
+    private var nextRootIndex = 0
+    private val classes: MutableMap<ClassId, VirtualFile> = Object2ObjectOpenHashMap()
+    private val classesByPackage: MutableMap<FqName, MutableList<ClassId>> = Object2ObjectOpenHashMap()
+    private val allPackages: MutableSet<FqName> = ObjectOpenHashSet()
 
-    fun findJavaSourceClass(classId: ClassId): VirtualFile? =
-        roots.indices
-            .find { index -> classId in getClassIdsForRootAt(index) }
-            ?.let { index -> roots[index].file }
+    fun findJavaSourceClass(classId: ClassId): VirtualFile? {
+        if (classId.isNestedClass) return null
+        classes[classId]?.let { return it }
+        while (nextRootIndex < roots.size) {
+            indexNextRoot()
+            classes[classId]?.let { return it }
+        }
+        return null
+    }
 
     fun hasPackage(packageFqName: FqName): Boolean {
-        for (i in roots.indices) {
-            if (getClassIdsForRootAt(i).any { it.packageFqName.startsWith(packageFqName) }) return true
+        if (packageFqName.isRoot) return false
+        if (packageFqName in allPackages) return true
+        while (nextRootIndex < roots.size) {
+            indexNextRoot()
+            if (packageFqName in allPackages) return true
         }
         return false
     }
 
-    fun findJavaSourceClasses(packageFqName: FqName): List<ClassId> =
-        roots.indices.flatMap(this::getClassIdsForRootAt).filter { root -> root.packageFqName == packageFqName }
-
-    private fun getClassIdsForRootAt(index: Int): List<ClassId> {
-        for (i in classIdsInRoots.size..index) {
-            classIdsInRoots.add(JavaSourceClassIdReader(roots[i].file).readClassIds())
+    fun findJavaSourceClasses(packageFqName: FqName): List<ClassId> {
+        while (nextRootIndex < roots.size) {
+            indexNextRoot()
         }
-        return classIdsInRoots[index]
+        return classesByPackage[packageFqName] ?: emptyList()
+    }
+
+    private fun indexNextRoot() {
+        val root = roots[nextRootIndex++]
+        for (classId in JavaSourceClassIdReader(root.file).readClassIds()) {
+            classes.putIfAbsent(classId, root.file)
+            classesByPackage.getOrPut(classId.packageFqName) { SmartList() }.add(classId)
+            var pkg = classId.packageFqName
+            while (!pkg.isRoot && allPackages.add(pkg)) {
+                pkg = pkg.parent()
+            }
+        }
     }
 
     /**

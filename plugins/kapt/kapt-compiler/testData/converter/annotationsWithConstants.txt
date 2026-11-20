@@ -162,14 +162,12 @@ package app;
  */
 @kotlin.Metadata()
 public final class JJ {
-    @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String b = null;
-    @org.jetbrains.annotations.NotNull()
-    public static final app.JJ INSTANCE = null;
 
     private JJ() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String b = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getB() {
@@ -180,6 +178,8 @@ public final class JJ {
     public final java.lang.String c() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    public static final app.JJ INSTANCE = null;
 }
 
 ////////////////////
@@ -436,28 +436,6 @@ package app;
  */
 @kotlin.Metadata()
 public final class MyActivity {
-    private final int param1 = 0;
-    private int param2;
-    @BindField(id = lib.R.id.textView)
-    private final int a = 0;
-    @BindField(id = lib.R.id.textView)
-    private final int b = 0;
-    @BindField(id = app.R.layout.mainActivity)
-    private final int c = 0;
-    @BindField(id = app.R.layout.mainActivity)
-    private final int d = 0;
-    @BindField(id = app.R2.layout.mainActivity)
-    private final int e = 0;
-    @BindField(id = app.B.id.textView)
-    private final int f = 0;
-    public final int propA = app.B.id.textView;
-    private final int propB = app.B.id.textView;
-    private int propC = app.B.id.textView;
-    @kotlin.jvm.JvmField()
-    public final int propD = app.B.id.textView;
-    @kotlin.jvm.JvmField()
-    public int propE = app.B.id.textView;
-    private final int propF = 0;
 
     public MyActivity(int param1, int param2) {
         super();
@@ -466,13 +444,17 @@ public final class MyActivity {
     public final int getParam1() {
         return 0;
     }
+    private final int param1 = 0;
 
     public final int getParam2() {
         return 0;
     }
+    private int param2;
 
     public final void setParam2(int p0) {
     }
+    @BindField(id = lib.R.id.textView)
+    private final int a = 0;
 
     public final int getA() {
         return 0;
@@ -482,6 +464,8 @@ public final class MyActivity {
     @java.lang.Deprecated()
     public static void getA$annotations() {
     }
+    @BindField(id = lib.R.id.textView)
+    private final int b = 0;
 
     public final int getB() {
         return 0;
@@ -491,6 +475,8 @@ public final class MyActivity {
     @java.lang.Deprecated()
     public static void getB$annotations() {
     }
+    @BindField(id = app.R.layout.mainActivity)
+    private final int c = 0;
 
     public final int getC() {
         return 0;
@@ -500,6 +486,8 @@ public final class MyActivity {
     @java.lang.Deprecated()
     public static void getC$annotations() {
     }
+    @BindField(id = app.R.layout.mainActivity)
+    private final int d = 0;
 
     public final int getD() {
         return 0;
@@ -509,6 +497,8 @@ public final class MyActivity {
     @java.lang.Deprecated()
     public static void getD$annotations() {
     }
+    @BindField(id = app.R2.layout.mainActivity)
+    private final int e = 0;
 
     public final int getE() {
         return 0;
@@ -519,6 +509,8 @@ public final class MyActivity {
     @java.lang.Deprecated()
     public static void getE$annotations() {
     }
+    @BindField(id = app.B.id.textView)
+    private final int f = 0;
 
     public final int getF() {
         return 0;
@@ -602,21 +594,29 @@ public final class MyActivity {
     @lib.OnClick(value = {app.B.id.textView, app.R.layout.mainActivity})
     public final void multiJava2() {
     }
+    public final int propA = app.B.id.textView;
 
     public final int getPropB() {
         return 0;
     }
+    private final int propB = app.B.id.textView;
 
     public final int getPropC() {
         return 0;
     }
+    private int propC = app.B.id.textView;
 
     public final void setPropC(int p0) {
     }
+    @kotlin.jvm.JvmField()
+    public final int propD = app.B.id.textView;
+    @kotlin.jvm.JvmField()
+    public int propE = app.B.id.textView;
 
     public final int getPropF() {
         return 0;
     }
+    private final int propF = 0;
 
     public MyActivity() {
         super();

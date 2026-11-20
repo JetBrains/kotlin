@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("EnumValuesSoftDeprecate")
+
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
@@ -17,17 +19,24 @@ import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
+import org.jetbrains.kotlin.buildtools.internal.DefaultCompilerMessageRenderer
+import org.jetbrains.kotlin.buildtools.internal.DefaultKotlinLogger
 import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
+import org.jetbrains.kotlin.buildtools.internal.KotlinLoggerMessageCollectorAdapter
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentValueAdapter
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
 import org.jetbrains.kotlin.buildtools.internal.initializeOptions
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.TsCompilationStrategy
@@ -67,13 +76,23 @@ internal class JsDtsGenerationOperationImpl private constructor(
         // The main KLIB is the last one in the list; its manifest drives the merged artifact naming.
         // If there is no klib provided, there is nothing to generate
         val mainModule = inputModules.lastOrNull() ?: return CompilationResult.COMPILATION_SUCCESS
+        val diagnosticsCollector = DiagnosticsCollectorImpl()
+        val messageCollector =
+            KotlinLoggerMessageCollectorAdapter(logger ?: DefaultKotlinLogger, DefaultCompilerMessageRenderer, warningsAsErrors = false)
+
+        // Resolve the names the same way the compiler does during linking:
+        // the output name comes from `-ir-output-name` (falling back to the main KLIB manifest),
+        // and the module name comes from `-Xir-module-name` (falling back to `-ir-output-name`)
+        val outputName = this[OUTPUT_NAME] ?: mainModule.config.outputName ?: mainModule.name
+        val moduleName = this[MAIN_MODULE_NAME] ?: this[OUTPUT_NAME] ?: mainModule.name
+
         val typeScriptExportConfig = TypeScriptExportConfig(
             targetPlatform = JsPlatforms.defaultJsPlatform,
             artifactConfiguration = WebArtifactConfiguration(
                 moduleKind = ModuleKind.fromType(this[MODULE_KIND].stringValue),
-                moduleName = mainModule.name,
+                moduleName = moduleName,
                 outputDirectory = outputDirectory.toFile(),
-                outputName = mainModule.config.outputName ?: mainModule.name,
+                outputName = outputName,
                 granularity = JsGenerationGranularity.valueOf(this[GRANULARITY].name),
                 tsCompilationStrategy = TsCompilationStrategy.valueOf(this[TS_COMPILATION_STRATEGY].name),
                 production = false,
@@ -82,11 +101,15 @@ internal class JsDtsGenerationOperationImpl private constructor(
             compileLongAsBigInt = this[COMPILE_LONG_AS_BIG_INT],
             implementableInterfaces = this[IMPLEMENT_INTERFACES],
             exportableSuspendLambdas = this[EXPORT_SUSPEND_LAMBDAS],
+            compileSuspendAsJsGenerator = this[COMPILE_SUSPEND_AS_JS_GENERATOR],
             dataClassCopyRespectsConstructorVisibility = this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY],
             useUnknownInsteadAny = this[USE_UNKNOWN_INSTEAD_ANY],
         )
-        runTypeScriptExport(inputModules, typeScriptExportConfig)
-        return CompilationResult.COMPILATION_SUCCESS
+
+        runTypeScriptExport(inputModules, typeScriptExportConfig, diagnosticsCollector)
+        diagnosticsCollector.reportToMessageCollector(messageCollector, renderDiagnosticName = false)
+
+        return if (messageCollector.hasErrors()) CompilationResult.COMPILATION_ERROR else CompilationResult.COMPILATION_SUCCESS
     }
 
     override val usesApplicationEnvironment: Boolean
@@ -101,27 +124,38 @@ internal class JsDtsGenerationOperationImpl private constructor(
     @Suppress("EnumValuesSoftDeprecate")
     override fun configureFrom(linkingOperation: JsLinkingOperation) {
         check(linkingOperation is JsLinkingOperationImpl) { "Unexpected linking operation: ${linkingOperation::class}." }
+        val compilerArguments = linkingOperation.compilerArguments.toCompilerArguments()
+        // Resolve the language features the same way the compiler does, so that features enabled via
+        // dedicated arguments, `-XXLanguage:` or `-language-version` are all taken into account
+        val languageVersionSettings = compilerArguments
+            .toLanguageVersionSettings(CommonCompilerArgumentsConfigurator.Reporter.DoNothing)
 
-        this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ES_LONG_AS_BIGINT] ?: false
-        this[IMPLEMENT_INTERFACES] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT]
-        this[EXPORT_SUSPEND_LAMBDAS] = linkingOperation.compilerArguments[JsArgumentsImpl.X_SUSPEND_LAMBDA_EXPORTING]
+        val target = compilerArguments.target
+            ?.let { from -> JsEcmaVersion.values().firstOrNull { it.stringValue == from } }
+
+        this[COMPILE_LONG_AS_BIG_INT] = compilerArguments.compileLongAsBigInt
+            ?: (target != null && target >= JsEcmaVersion.ES2020)
+
+        this[COMPILE_SUSPEND_AS_JS_GENERATOR] = linkingOperation.compilerArguments.useEsGenerators
+            ?: (target != null && target >= JsEcmaVersion.ES2015)
+
+        this[IMPLEMENT_INTERFACES] = languageVersionSettings.supportsFeature(LanguageFeature.JsExportInterfacesInImplementableWay)
+        this[EXPORT_SUSPEND_LAMBDAS] = languageVersionSettings.supportsFeature(LanguageFeature.JsExportingSuspendLambdas)
         this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
-            linkingOperation.compilerArguments[CommonCompilerArgumentsImpl.X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY]
-        this[USE_UNKNOWN_INSTEAD_ANY] =
-            linkingOperation.compilerArguments[JsArgumentsImpl.X_DTS_USE_UNKNOWN_INSTEAD_ANY]
+            languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
 
-        this[MODULE_KIND] = linkingOperation.compilerArguments[JsArgumentsImpl.MODULE_KIND]
-            ?: JsModuleKind.ES.takeIf {
-                val target = linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]
-                    ?.let { from -> JsEcmaVersion.values().first { it.name == from.name } }
-                target != null && target >= JsEcmaVersion.ES2015
-            }
+        this[OUTPUT_NAME] = compilerArguments.moduleName
+        this[MAIN_MODULE_NAME] = compilerArguments.irModuleName
+        this[USE_UNKNOWN_INSTEAD_ANY] = compilerArguments.useUnknownInsteadAny
+
+        this[MODULE_KIND] = linkingOperation.compilerArguments.moduleKind
+            ?: JsModuleKind.ES.takeIf { target != null && target >= JsEcmaVersion.ES2015 }
             ?: JsModuleKind.UMD
 
         this[GRANULARITY] = when {
-            linkingOperation.compilerArguments[JsArgumentsImpl.X_IR_PER_FILE] -> JsDtsGranularity.PER_FILE
+            compilerArguments.irPerFile -> JsDtsGranularity.PER_FILE
             // Right now, we don't support per-module d.ts generation for IR. So for the backward compatibility, we use whole-program granularity.
-            linkingOperation.compilerArguments[JsArgumentsImpl.X_IR_PER_MODULE] -> JsDtsGranularity.WHOLE_PROGRAM
+            compilerArguments.irPerModule -> JsDtsGranularity.WHOLE_PROGRAM
             else -> JsDtsGranularity.WHOLE_PROGRAM
         }
     }
@@ -174,8 +208,12 @@ internal class JsDtsGenerationOperationImpl private constructor(
         val IMPLEMENT_INTERFACES: Option<Boolean> =
             Option("IMPLEMENT_INTERFACES", defaultArgsReference.allowImplementableInterfacesExporting)
         val EXPORT_SUSPEND_LAMBDAS: Option<Boolean> = Option("EXPORT_SUSPEND_LAMBDAS", defaultArgsReference.allowExportingSuspendLambdas)
+        val COMPILE_SUSPEND_AS_JS_GENERATOR: Option<Boolean> =
+            Option("COMPILE_SUSPEND_AS_JS_GENERATOR", defaultArgsReference.useEsGenerators ?: false)
         val USE_UNKNOWN_INSTEAD_ANY: Option<Boolean> = Option("USE_UNKNOWN_INSTEAD_ANY", defaultArgsReference.useUnknownInsteadAny)
         val DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY: Option<Boolean> =
             Option("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY", defaultArgsReference.consistentDataClassCopyVisibility)
+        val OUTPUT_NAME: Option<String?> = Option("OUTPUT_NAME", defaultArgsReference.moduleName)
+        val MAIN_MODULE_NAME: Option<String?> = Option("MAIN_MODULE_NAME", defaultArgsReference.irModuleName)
     }
 }

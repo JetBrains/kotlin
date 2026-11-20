@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.*
@@ -61,13 +59,17 @@ private fun deserializeDependencies(
 ): IrModuleDependencies {
     val dependencies = klibs.all.map { klib: KotlinLibrary ->
         val descriptor: ModuleDescriptor = mapping(klib)
-        when {
-            klibs.included == null -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
-            filesToLoad != null && klib == klibs.included -> irLinker.deserializeDirtyFiles(descriptor, klib, filesToLoad)
-            filesToLoad != null && klib != klibs.included -> irLinker.deserializeHeadersWithInlineBodies(descriptor, klib)
-            klib == klibs.included -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
-            else -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
+        val deserializationStrategy: DeserializationStrategyResolver = when {
+            klibs.included == null -> DeserializationStrategy.EXPLICITLY_EXPORTED
+            filesToLoad != null && klib == klibs.included -> { filePath: String ->
+                if (filePath in filesToLoad) DeserializationStrategy.ALL else DeserializationStrategy.WITH_INLINE_BODIES
+            }
+            filesToLoad != null && klib != klibs.included -> DeserializationStrategy.WITH_INLINE_BODIES
+            klib == klibs.included -> DeserializationStrategy.ALL
+            else -> DeserializationStrategy.EXPLICITLY_EXPORTED
         }
+
+        irLinker.createAndRegisterModuleDeserializer(descriptor, klib, deserializationStrategy).moduleFragment
     }
 
     return IrModuleDependencies(
@@ -86,7 +88,7 @@ fun loadIr(
 
     val mainModuleLib = modulesStructure.klibs.included
         ?: error("No module with ${modulesStructure.mainModulePath} found")
-    val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
+    val friendModules = mapOf(mainModuleLib to modulesStructure.klibs.friends)
 
     return getIrModuleInfoForKlib(
         klibs = modulesStructure.klibs,
@@ -106,7 +108,7 @@ fun loadIrForSingleModule(
 
     val mainModuleLib = modulesStructure.klibs.included
         ?: error("No module with ${modulesStructure.mainModulePath} found")
-    val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
+    val friendModules = mapOf(mainModuleLib to modulesStructure.klibs.friends)
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         configuration.diagnosticsCollector,
         configuration.languageVersionSettings,
@@ -115,7 +117,6 @@ fun loadIrForSingleModule(
     val irLinker = JsIrLinker(
         configuration = configuration,
         symbolTable = symbolTable,
-        partialLinkageConfig = configuration.partialLinkageConfig,
         irDiagnosticReporter = irDiagnosticReporter,
         friendModules = friendModules
     )
@@ -124,11 +125,10 @@ fun loadIrForSingleModule(
     var mainFragment: IrModuleFragment? = null
     val deserializedFragments = modulesStructure.klibs.all.map { klib ->
         val moduleDescriptor = modulesStructure.getModuleDescriptor(klib)
-        val fragment = if (klib == modulesStructure.klibs.included) {
-            irLinker.deserializeFullModule(moduleDescriptor, klib)
-        } else {
-            irLinker.deserializeHeadersWithInlineBodies(moduleDescriptor, klib)
-        }
+        val deserializationStrategy =
+            if (klib == modulesStructure.klibs.included) DeserializationStrategy.ALL else DeserializationStrategy.WITH_INLINE_BODIES
+
+        val fragment = irLinker.createAndRegisterModuleDeserializer(moduleDescriptor, klib, deserializationStrategy).moduleFragment
 
         if (klib == modulesStructure.klibs.included) {
             mainFragment = fragment
@@ -146,8 +146,8 @@ fun loadIrForSingleModule(
     @OptIn(InternalSymbolFinderAPI::class)
     val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
 
-    ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-    irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
+    irLinker.drainDeserializationQueue()
+    irLinker.finalizeIrLinkage(irBuiltIns)
 
     val isStdlibCompilation = mainFragment == stdlibFragment
 
@@ -185,7 +185,7 @@ fun loadIrForSingleModule(
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun getIrModuleInfoForKlib(
     klibs: LoadedKlibs,
-    friendModules: Map<String, List<String>>,
+    friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
     mapping: (KotlinLibrary) -> ModuleDescriptor,
@@ -198,7 +198,6 @@ private fun getIrModuleInfoForKlib(
     val irLinker = JsIrLinker(
         configuration = configuration,
         symbolTable = symbolTable,
-        partialLinkageConfig = configuration.partialLinkageConfig,
         irDiagnosticReporter = irDiagnosticReporter,
         friendModules = friendModules
     )
@@ -214,8 +213,8 @@ private fun getIrModuleInfoForKlib(
     @OptIn(InternalSymbolFinderAPI::class)
     val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
 
-    ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-    irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
+    irLinker.drainDeserializationQueue()
+    irLinker.finalizeIrLinkage(irBuiltIns)
 
     return IrModuleInfo(
         module = moduleDependencies.allDependencies.single { it.kotlinLibrary == klibs.included },

@@ -21,6 +21,9 @@ public abstract class CCollection /* test.CCollection*/<Elem>  implements java.u
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
 
   @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super Elem>);//  removeIf(java.util.function.Predicate<? super Elem>)
+
+  @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
@@ -28,6 +31,9 @@ public abstract class CCollection /* test.CCollection*/<Elem>  implements java.u
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public java.util.Iterator<Elem> iterator();//  iterator()
 
   @java.lang.Override()
   public void clear();//  clear()

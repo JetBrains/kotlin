@@ -12,16 +12,15 @@ val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
 }
 
 dependencies {
-    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     api(project(":compiler:psi:psi-api"))
     api(project(":compiler:fir:fir2ir"))
     api(project(":compiler:fir:fir2ir:jvm-backend"))
     implementation(project(":compiler:ir.serialization.common"))
     api(project(":compiler:fir:resolve"))
-    api(project(":compiler:fir:providers"))
-    api(project(":compiler:fir:semantics"))
-    api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:semantics.api"))
+    api(project(":compiler:fir:checkers:checkers.common"))
     api(project(":compiler:fir:checkers:checkers.jvm"))
     api(project(":compiler:fir:checkers:checkers.js"))
     api(project(":compiler:fir:checkers:checkers.native"))
@@ -32,11 +31,9 @@ dependencies {
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:cli-base"))
     implementation(project(":compiler:frontend.common.jvm"))
-    implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:psi:psi-impl"))
     implementation(project(":js:js.config"))
     implementation(project(":kotlin-util-klib-metadata"))
-    implementation(project(":native:frontend.native"))
     implementation(project(":native:native.config"))
     implementation(project(":wasm:wasm.config"))
     testFixturesApi(project(":analysis:analysis-api-fir"))
@@ -47,6 +44,7 @@ dependencies {
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-internal-utils"))
+    implementation(project(":analysis:stubs"))
     implementation(project(":kotlin-scripting-compiler"))
     implementation(project(":kotlin-scripting-common"))
     implementation(project(":kotlin-assignment-compiler-plugin.k2"))
@@ -64,9 +62,7 @@ dependencies {
     testFixturesApi(libs.opentest4j)
     testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
-    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testFixturesApi(kotlinTest("junit5"))
     testFixturesApi(platform(libs.junit.bom))
@@ -130,7 +126,6 @@ projectTests {
 
     val analysisApiProject = project(":analysis:analysis-api").isolated
     testData(analysisApiProject, "testData/components/compilerFacility/compilation/codeFragments/capturing")
-    testData(analysisApiProject, "testData/components/resolver")
     testData(analysisApiProject, "testData/sessions/sessionInvalidation")
 
     withJvmStdlibAndReflect()

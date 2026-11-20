@@ -7,21 +7,15 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:fir:checkers"))
     api(project(":compiler:fir:checkers:checkers.web.common"))
-    implementation(project(":compiler:fir:diagnostic-renderers"))
     implementation(project(":core:compiler.common.wasm"))
     implementation(project(":core:compiler.common.js"))
     implementation(project(":core:compiler.common.web"))
+    implementation(project(":core:error.handling"))
 
     // Needed for JS identifier utils
     implementation(project(":js:js.ast"))
-
-    /*
-     * We can't remove this dependency until we use
-     *   diagnostics framework from FE 1.0
-     */
-    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))
 
     compileOnly(intellijCore())

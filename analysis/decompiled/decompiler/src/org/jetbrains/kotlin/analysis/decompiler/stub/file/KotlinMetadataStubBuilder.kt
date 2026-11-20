@@ -85,7 +85,12 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
                     virtualFileForDebug = virtualFile,
                 )
 
-                val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
+                val context = components.createContext(
+                    nameResolver,
+                    packageFqName,
+                    TypeTable(packageProto.typeTable),
+                    packagePartClassFileMajorVersion = null,
+                )
 
                 val fileStub = createFileStub(packageFqName, isScript = false)
                 createPackageDeclarationsStubs(

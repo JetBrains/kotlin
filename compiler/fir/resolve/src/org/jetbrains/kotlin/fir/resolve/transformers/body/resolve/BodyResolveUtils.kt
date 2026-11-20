@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceElementOffsetStrategy
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -120,12 +121,12 @@ internal fun remapArgumentsWithVararg(
     return newArgumentMapping
 }
 
-fun FirBlock.writeResultType(session: FirSession) {
+fun FirBlock.writeResultType() {
     val resultExpression = statements.lastOrNull() as? FirExpression
 
     @OptIn(UnresolvedExpressionTypeAccess::class)
     resultType = if (resultExpression == null) {
-        session.builtinTypes.unitType.coneType
+        StandardTypes.Unit
     } else {
         // If a lambda contains another lambda as the result expression, it won't be resolved at this point.
         // Set the block return type to an error so it is rewritten during call completion.
@@ -140,8 +141,8 @@ fun ConstantValueKind.expectedConeType(session: FirSession): ConeKotlinType {
         return symbol.toLookupTag().constructClassType()
     }
     return when (this) {
-        ConstantValueKind.Null -> session.builtinTypes.nullableNothingType.coneType
-        ConstantValueKind.Boolean -> session.builtinTypes.booleanType.coneType
+        ConstantValueKind.Null -> StandardTypes.NullableNothing
+        ConstantValueKind.Boolean -> StandardTypes.Boolean
         ConstantValueKind.Char -> constructLiteralType(StandardClassIds.Char)
         ConstantValueKind.Byte -> constructLiteralType(StandardClassIds.Byte)
         ConstantValueKind.Short -> constructLiteralType(StandardClassIds.Short)
@@ -162,8 +163,8 @@ fun ConstantValueKind.expectedConeType(session: FirSession): ConeKotlinType {
     }
 }
 
-fun FirWhenExpression.replaceReturnTypeIfNotExhaustive(session: FirSession) {
+fun FirWhenExpression.replaceReturnTypeIfNotExhaustive() {
     if (!isProperlyExhaustive && !usedAsExpression) {
-        resultType = session.builtinTypes.unitType.coneType
+        resultType = StandardTypes.Unit
     }
 }

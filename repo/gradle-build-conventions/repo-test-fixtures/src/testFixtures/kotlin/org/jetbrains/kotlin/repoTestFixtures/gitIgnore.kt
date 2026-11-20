@@ -6,33 +6,22 @@
 package org.jetbrains.kotlin.repoTestFixtures
 
 import org.eclipse.jgit.ignore.IgnoreNode
+import org.jetbrains.kotlin.testFederation.RepositoryPath
 import java.nio.channels.Channels
 import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
-import kotlin.io.path.Path
 import kotlin.io.path.absolute
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.isDirectory
 
-private val repositoryRoot by lazy {
-    findRepositoryRoot(Path("").absolute())
-        ?: error("Cannot find the repository root from the current working directory")
-}
-
-/**
- * Returns true if the path is ignored (as in listed in any '.gitignore').
- * @throws IllegalArgumentException if the path is not within the repository root.
- */
-fun Path.isGitIgnored(): Boolean = (if (isAbsolute) this else repositoryRoot.resolve(this)).isGitIgnored(repositoryRoot)
-
-internal fun Path.isGitIgnored(repositoryRoot: Path): Boolean {
-    val absoluteRepositoryRoot = repositoryRoot.absolute().normalize()
-    val absolutePath = (if (isAbsolute) this else absoluteRepositoryRoot.resolve(this)).absolute().normalize()
+internal fun RepositoryPath.isGitIgnored(): Boolean {
+    val absoluteRepositoryRoot = root.absolute().normalize()
+    val absolutePath = resolve().absolute().normalize()
 
     require(absolutePath.startsWith(absoluteRepositoryRoot)) {
-        "Path '$this' is not within the repository root '$repositoryRoot'"
+        "Path '$this' is not within the repository root '$root'"
     }
 
     val relativePath = absoluteRepositoryRoot.relativize(absolutePath)
@@ -41,7 +30,7 @@ internal fun Path.isGitIgnored(repositoryRoot: Path): Boolean {
     val ignoreNodes = buildList {
         var currentDirectory = if (absolutePath.isDirectory()) absolutePath else absolutePath.parent
         while (currentDirectory != null) {
-            val node = currentDirectory.resolve(".gitignore").getOrParseGitIgnoreNode(repositoryRoot)
+            val node = currentDirectory.resolve(".gitignore").getOrParseGitIgnoreNode(absoluteRepositoryRoot)
             if (node != null) add(IgnoreNodeInDirectory(currentDirectory, node))
 
             if (currentDirectory == absoluteRepositoryRoot) break

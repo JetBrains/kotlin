@@ -4,6 +4,15 @@ plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
     id("gradle-plugin-common-configuration")
+    id("test-inputs-check")
+}
+
+dependencies {
+    testImplementation(kotlinTest("junit5"))
+}
+
+projectTests {
+    testTask()
 }
 
 gradlePlugin {

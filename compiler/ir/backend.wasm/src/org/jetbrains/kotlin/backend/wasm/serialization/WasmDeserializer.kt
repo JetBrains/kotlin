@@ -238,6 +238,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 HeapTypeTags.NO_EXTERN -> WasmHeapType.Simple.NoExtern
                 HeapTypeTags.NONE -> WasmHeapType.Simple.None
                 HeapTypeTags.NO_FUNC -> WasmHeapType.Simple.NoFunc
+                HeapTypeTags.NO_CONT -> WasmHeapType.Simple.NoCont
                 HeapTypeTags.STRUCT -> WasmHeapType.Simple.Struct
                 HeapTypeTags.HEAP_GC_TYPE -> GcHeapTypeSymbol(deserializeIdSignature())
                 HeapTypeTags.HEAP_VT_TYPE -> VTableHeapTypeSymbol(deserializeIdSignature())

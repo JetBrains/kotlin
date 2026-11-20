@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -42,11 +43,16 @@ class AnalysisApiTestCompilerConfiguratorProvider(
         }
     }
 
-    override fun getPackagePartProviderFactory(module: TestModule): (GlobalSearchScope) -> JvmPackagePartProvider {
+    /**
+     * Scope-based factory for the Analysis API `KotlinPackagePartProviderFactory` test implementation.
+     * Analysis API scopes are IDE-style scopes that cannot be expressed as a [JvmClasspath], so the scope adapter lives here
+     * rather than in the compiler test infrastructure.
+     */
+    fun getPackagePartProviderFactoryForScope(module: TestModule): (GlobalSearchScope) -> JvmPackagePartProvider {
         val configuration = getCompilerConfiguration(module, CompilationStage.FIRST)
 
         return { scope ->
-            JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
+            JvmPackagePartProvider(configuration.languageVersionSettings) { it in scope }.apply {
                 addRoots(allProjectBinaryRoots, configuration)
             }
         }

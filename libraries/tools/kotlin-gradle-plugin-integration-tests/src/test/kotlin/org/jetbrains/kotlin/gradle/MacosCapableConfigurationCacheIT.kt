@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -18,6 +19,7 @@ import java.nio.file.Path
 @OsCondition(supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
+    @TestMetadata("native-configuration-cache")
     @DisplayName("works with native tasks in complex project")
     @GradleTest
     fun testNativeTasks(gradleVersion: GradleVersion) {
@@ -57,6 +59,7 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("sharedAppleFramework")
     @OptIn(EnvironmentalVariablesOverride::class)
     @DisplayName("works with apple framework embedding and signing")
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -67,7 +70,7 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
             gradleVersion = gradleVersion,
             environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "Debug",
-                "SDK_NAME" to "iphoneos",
+                "PLATFORM_NAME" to "iphoneos",
                 "ARCHS" to "arm64",
                 "EXPANDED_CODE_SIGN_IDENTITY" to "-",
                 "TARGET_BUILD_DIR" to targetBuildDir.toString(),

@@ -39,7 +39,7 @@ public interface KaEvaluator : KaSessionComponent {
         "this.evaluate()",
         "org.jetbrains.kotlin.analysis.api.evaluation.evaluate",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)

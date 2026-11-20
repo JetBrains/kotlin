@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.js.test.utils
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.resolve.calls.util.isFakePsiElement
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.doNotAnalyze
 
 class LineCollector : RecursiveJsVisitor() {
     val lines = mutableListOf<Int?>()
@@ -176,4 +178,14 @@ class LineCollector : RecursiveJsVisitor() {
         }
         currentStatement = oldStatement
     }
+
+    private val KtElement.isFakeElement: Boolean
+        get() {
+            // Don't use getContainingKtFile() because in IDE we can get an element with JavaDummyHolder as containing file
+            val file = containingFile
+            return file is KtFile && file.doNotAnalyze != null
+        }
+
+    private val PsiElement.isFakePsiElement: Boolean
+        get() = this is KtElement && isFakeElement
 }

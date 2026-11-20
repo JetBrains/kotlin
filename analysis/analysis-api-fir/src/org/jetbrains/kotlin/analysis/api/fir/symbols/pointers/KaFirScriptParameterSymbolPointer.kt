@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -21,7 +20,7 @@ internal class KaFirScriptParameterSymbolPointer(
     private val parameterName: Name,
     private val scriptPointer: KaSymbolPointer<KaScriptSymbol>,
     originalSymbol: KaLocalVariableSymbol?,
-) : KaBaseCachedSymbolPointer<KaLocalVariableSymbol>(originalSymbol) {
+) : KaFirCachedSymbolPointer<KaLocalVariableSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaLocalVariableSymbol? {
         require(analysisSession is KaFirSession)

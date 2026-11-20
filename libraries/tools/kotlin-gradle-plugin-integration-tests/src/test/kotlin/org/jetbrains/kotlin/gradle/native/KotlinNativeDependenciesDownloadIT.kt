@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
@@ -41,6 +43,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
             konanDataDir = konanDataTempDir
         )
 
+    @TestMetadata("mpp-default-hierarchy")
     @DisplayName("Gradle should download dependencies before compile execution")
     @GradleTest
     fun shouldDownloadDependenciesBeforeCompilerExecution(gradleVersion: GradleVersion) {
@@ -52,6 +55,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("mpp-default-hierarchy")
     @DisplayName("Compiler should download dependencies when Kotlin Native Toolchain disabled ")
     @GradleTest
     fun checkCompilerDownloadsDependenciesWhenToochainDisabled(gradleVersion: GradleVersion) {
@@ -71,6 +75,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
 
     // testNativeDependencies and testMacosNativeDependencies use internal server for native dependencies
     // We temporarily disable both tests on intel macOS until networking issues are resolved: KT-68762
+    @TestMetadata("native-simple-project")
     @DisplayName("checks that native dependencies are not corrupted")
     @GradleTest
     @Timeout(value = 25, unit = TimeUnit.MINUTES)
@@ -79,6 +84,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
         testNativeDependencies("native-simple-project", "assemble", gradleVersion)
     }
 
+    @TestMetadata("KT-66982-macos-target")
     @DisplayName("checks that macos dependencies are not corrupted")
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -105,7 +111,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
                 assertTrue(dependencies.listFiles() != null, "Dependencies were not downloaded")
                 dependencies.listFiles()?.filter { it.name != "cache" }?.forEach {
                     val processRunResult =
-                        runProcess(listOf("clang", "-Werror", "-c", file.path, "-isysroot", it.absolutePath), workingDir.toFile())
+                        runProcess(listOf("clang", "-Werror", "-c", file.path, "-isysroot", it.normalizedAbsolutePath().toString()), workingDir.toFile())
                     processRunResult.assertProcessRunResult {
                         assertTrue(isSuccessful)
                     }
@@ -114,6 +120,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @DisplayName("Test kotlin native prebuilt should not override `kotlin.native.version` property")
     @GradleTest
     fun kotlinNativePrebuiltShouldNotOverrideNativeVersion(gradleVersion: GradleVersion) {

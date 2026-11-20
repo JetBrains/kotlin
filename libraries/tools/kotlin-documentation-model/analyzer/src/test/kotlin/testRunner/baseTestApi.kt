@@ -21,7 +21,7 @@ import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.dokka.utilities.LoggingLevel
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 
-public class BaseDokkaTestGenerator(
+ class BaseDokkaTestGenerator internal constructor(
     configuration: DokkaConfiguration,
     logger: DokkaLogger,
     testMethods: BaseTestMethods,
@@ -67,11 +67,12 @@ public class BaseDokkaTestGenerator(
     }
 }
 
-public data class BaseTestMethods(
+@ConsistentCopyVisibility
+data class BaseTestMethods internal constructor(
     override val pluginsSetupStage: (DokkaContext) -> Unit,
     override val verificationStage: (() -> Unit) -> Unit,
     override val documentablesCreationStage: (List<DModule>) -> Unit,
-    val documentablesFirstTransformationStep: (List<DModule>) -> Unit,
+    internal val documentablesFirstTransformationStep: (List<DModule>) -> Unit,
     override val documentablesMergingStage: (DModule) -> Unit,
     override val documentablesTransformationStage: (DModule) -> Unit,
  ) : CoreTestMethods(
@@ -83,12 +84,12 @@ public data class BaseTestMethods(
   )
 
 public class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
-    public var pluginsSetupStage: (DokkaContext) -> Unit = {}
-    public var verificationStage: (() -> Unit) -> Unit = { it() }
-    public var documentablesCreationStage: (List<DModule>) -> Unit = {}
-    public var preMergeDocumentablesTransformationStage: (List<DModule>) -> Unit = {}
-    public var documentablesMergingStage: (DModule) -> Unit = {}
-    public var documentablesTransformationStage: (DModule) -> Unit = {}
+    internal var pluginsSetupStage: (DokkaContext) -> Unit = {}
+    internal var verificationStage: (() -> Unit) -> Unit = { it() }
+    internal var documentablesCreationStage: (List<DModule>) -> Unit = {}
+    internal var preMergeDocumentablesTransformationStage: (List<DModule>) -> Unit = {}
+    internal var documentablesMergingStage: (DModule) -> Unit = {}
+    internal var documentablesTransformationStage: (DModule) -> Unit = {}
 
     override fun build(): BaseTestMethods {
         return BaseTestMethods(

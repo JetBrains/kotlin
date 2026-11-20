@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // FULL_JDK
 
 // FILE: test.kt
@@ -39,3 +40,5 @@ class ExcludedWithArgumentOverridingConfig(@ToString.Exclude val excluded: Strin
 lombok.toString.callSuper=warn
 lombok.toString.doNotUseGetters=true
 lombok.toString.onlyExplicitlyIncluded=true
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

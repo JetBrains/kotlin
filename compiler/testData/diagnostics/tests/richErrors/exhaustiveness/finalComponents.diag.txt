@@ -1,0 +1,13 @@
+/finalComponents.kt:14:48: error: 'when' expression must be exhaustive. Add the 'is Bar' branch or an 'else' branch.
+
+/finalComponents.kt:19:50: error: 'when' expression must be exhaustive. Add the 'is String' branch or an 'else' branch.
+
+/finalComponents.kt:24:53: error: 'when' expression must be exhaustive. Add the 'is String', 'is Foo', 'is Bar' branches or an 'else' branch.
+
+/finalComponents.kt:38:49: error: 'when' expression must be exhaustive. Add the 'is String' branch or an 'else' branch.
+
+/finalComponents.kt:40:5: warning: Check for instance is always 'true'.
+
+/finalComponents.kt:46:5: warning: 'when' is exhaustive so 'else' is redundant here.
+
+/finalComponents.kt:65:48: error: 'when' expression must be exhaustive. Add the 'Baz' branch or an 'else' branch.

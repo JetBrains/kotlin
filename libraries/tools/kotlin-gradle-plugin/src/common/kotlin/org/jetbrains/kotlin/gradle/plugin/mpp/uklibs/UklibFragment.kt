@@ -11,6 +11,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import java.io.File
+import org.gradle.work.NormalizeLineEndings
 
 internal data class UklibFragment(
     @get:Input
@@ -19,6 +20,7 @@ internal data class UklibFragment(
     val attributes: Set<String>,
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
+    @get:NormalizeLineEndings
     val files: List<File>,
 ) {
     constructor(

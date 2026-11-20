@@ -1,5 +1,5 @@
 ERR:
-hello.kt:5:7: warning: unused return value of 'size'.
+hello.kt:5:7: warning: unused return value of 'size'. If this is intentional, use 'val _ = ' to ignore the value explicitly.
     c.size
       ^^^^
 

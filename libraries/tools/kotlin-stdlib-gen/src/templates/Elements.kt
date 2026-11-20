@@ -43,6 +43,7 @@ object Elements : TemplateGroupBase() {
         operator(true)
 
         doc { "Returns `true` if [element] is found in the ${f.collection}." }
+        sample("${f.sampleClass}.contains")
         typeParam("@kotlin.internal.OnlyInputTypes T")
         val isDeprecated = f == ArraysOfPrimitives && primitive!!.isFloatingPoint()
         if (isDeprecated) {
@@ -643,6 +644,9 @@ object Elements : TemplateGroupBase() {
         inline(Inline.Only)
         doc { "Returns the first ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
         sample("samples.collections.Collections.Elements.find")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.find")
+        }
         returns("T?")
         body { "return firstOrNull(predicate)"}
     }

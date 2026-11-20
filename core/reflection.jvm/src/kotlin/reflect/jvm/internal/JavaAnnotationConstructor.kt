@@ -7,17 +7,13 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.runtime.structure.desc
 import java.lang.reflect.Method
+import java.lang.reflect.Type
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
 import kotlin.metadata.Modality
-import kotlin.reflect.ExperimentalCompanionExtensions
-import kotlin.reflect.KClass
-import kotlin.reflect.KParameter
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeParameter
-import kotlin.reflect.KVisibility
+import kotlin.reflect.*
 import kotlin.reflect.full.createDefaultType
+import kotlin.reflect.full.createTypeImpl
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.CallMode.CALL_BY_NAME
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.CallMode.POSITIONAL_CALL
@@ -105,7 +101,9 @@ internal class JavaAnnotationConstructorParameter(
 ) : ReflectKParameter() {
     override val name: String get() = method.name
     override val type: KType by lazy(PUBLICATION) {
-        method.genericReturnType.toKType(emptyMap(), TypeNullability.NOT_NULL, isForAnnotationParameter = true)
+        val javaType = method.genericReturnType
+        val type = javaType.toKType(emptyMap(), TypeNullability.NOT_NULL, isForAnnotationParameter = true)
+        if (isVararg) type.toVarargArrayType(javaType) else type
     }
     override val kind: KParameter.Kind get() = KParameter.Kind.VALUE
     override val isVararg: Boolean get() = name == "value" && method.returnType.isArray
@@ -114,4 +112,9 @@ internal class JavaAnnotationConstructorParameter(
     override val declaresDefaultValue: Boolean get() = isOptional
 
     override val isOptional: Boolean get() = method.defaultValue != null
+}
+
+private fun KType.toVarargArrayType(javaType: Type): KType {
+    val elementType = arguments.singleOrNull()?.type ?: return this
+    return classifier!!.createTypeImpl(listOf(KTypeProjection.covariant(elementType)), computeJavaType = lazyOf(javaType))
 }

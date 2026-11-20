@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.kapt.stubs
 
 import com.sun.tools.javac.code.Flags
+import com.sun.tools.javac.code.Source
 import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
@@ -31,7 +32,10 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.isJvmTargetValhallaCompatible
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -82,6 +86,7 @@ import org.jetbrains.kotlin.kapt.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt.stubs.SignatureParser.ClassGenericSignature
 import org.jetbrains.kotlin.kapt.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.ACC_IDENTITY
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -192,6 +197,43 @@ abstract class ParameterizedKaptStubConverter<
     private val correctErrorTypes = kaptContext.options[KaptFlag.CORRECT_ERROR_TYPES]
     private val strictMode = kaptContext.options[KaptFlag.STRICT]
     private val stripMetadata = kaptContext.options[KaptFlag.STRIP_METADATA]
+
+    /**
+     * The javac flag of a value class (JEP 401), or `0` if no stub declares a value class: see [computeValueClassFlag].
+     */
+    protected val valueClassFlag: Long = computeValueClassFlag()
+
+    /**
+     * Value classes are declared in the stubs only if both sides have them:
+     * - the class files of the module, so the class files of the JVM target of the compilation with its JVM preview features. In other
+     *   class files, `ACC_IDENTITY` is `ACC_SUPER`, which means nothing;
+     * - javac, with its source level and with preview features enabled while they're a preview feature (as in JDK 28). javac is asked
+     *   instead of checking the JDK version or the `--enable-preview` option, which won't be needed once they're a final feature.
+     *
+     * `Flags.VALUE_CLASS`, `Source.Feature` and `Preview` are absent from the JDK 8 API kapt is compiled against, so they're used
+     * reflectively; the bit of `Flags.VALUE_CLASS` means another flag in older javac versions. If the flag is present, javac has
+     * `Source.Feature` and `Preview`.
+     */
+    private fun computeValueClassFlag(): Long {
+        val configuration = kaptContext.configuration
+        val jvmTarget = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
+        if (!isJvmTargetValhallaCompatible(jvmTarget, configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW))) return 0L
+
+        val flag = try {
+            Flags::class.java.getField("VALUE_CLASS").getInt(null).toLong()
+        } catch (_: NoSuchFieldException) {
+            return 0L
+        }
+        val context = kaptContext.context
+        val featureClass = Class.forName("com.sun.tools.javac.code.Source\$Feature")
+        val feature = featureClass.enumConstants.find { (it as Enum<*>).name == "VALUE_CLASSES" } ?: return 0L
+        if (featureClass.getMethod("allowedInSource", Source::class.java).invoke(feature, Source.instance(context)) != true) return 0L
+
+        val previewClass = Class.forName("com.sun.tools.javac.code.Preview")
+        val preview = previewClass.getMethod("instance", Context::class.java).invoke(null, context)
+        val isPreview = previewClass.getMethod("isPreview", featureClass).invoke(preview, feature) == true
+        return if (!isPreview || previewClass.getMethod("isEnabled").invoke(preview) == true) flag else 0L
+    }
 
     private val typeMapper = KaptTypeMapper
 
@@ -350,6 +392,11 @@ abstract class ParameterizedKaptStubConverter<
         }
     }
 
+    protected data class ClassMember<E>(
+        val element: E,
+        val data: MemberData,
+    )
+
     protected fun convertClass(clazz: ClassNode, lineMappings: KaptLineMappingCollector, packageFqName: String): Pair<String, ClassDecl>? {
         if (isSynthetic(clazz.access)) return null
         if (!checkIfValidTypeName(clazz, Type.getObjectType(clazz.name))) return null
@@ -363,13 +410,15 @@ abstract class ParameterizedKaptStubConverter<
 
         val modifiers = convertModifiers(
             clazz,
-            flags.toLong(),
+            flags.toLong() or getValueClassFlag(clazz),
             if (isEnum) ElementKind.ENUM else ElementKind.CLASS,
             packageFqName, clazz.visibleAnnotations, clazz.invisibleAnnotations, declaration.annotations
         )
 
         val simpleName = declaration.name.asString()
         if (!isValidIdentifier(simpleName)) return null
+
+        val recordInfo = if (supportsRecords && clazz.isRecord()) convertRecord(clazz, flags, lineMappings, packageFqName) else null
 
         val rawSuperClass = makeQualifiedName(clazz.superName)
         val rawInterfaces = clazz.interfaces.mapNotNull {
@@ -425,37 +474,64 @@ abstract class ParameterizedKaptStubConverter<
             )
         }
 
-        val convertedFieldsWithNode: List<Pair<FieldNode, VariableDecl>> =
-            clazz.fields.filter { !it.isEnumValue() }.mapNotNull { fieldNode ->
-                convertField(fieldNode, clazz, lineMappings, packageFqName)?.let { fieldNode to it }
-            }
-        val sortedConvertedFields: List<VariableDecl> = sortClassMembers(convertedFieldsWithNode, classPosition) {
-            val fieldNode = it.first
-            MemberData(fieldNode.name, fieldNode.desc, lineMappings.getPosition(clazz, fieldNode))
-        }.map { it.second }
+        val classMembers = mutableListOf<ClassMember<Element>>()
+        // Instance fields of a record are its components
+        clazz.fields.filter { !it.isEnumValue() && (recordInfo == null || isStatic(it.access)) }.forEach { fieldNode ->
+            val convertedField = convertField(fieldNode, clazz, lineMappings, packageFqName) ?: return@forEach
+            classMembers.add(
+                ClassMember(
+                    convertedField,
+                    MemberData(
+                        fieldNode.name,
+                        fieldNode.desc,
+                        lineMappings.getPosition(clazz, fieldNode),
+                    ),
+                )
+            )
+        }
 
         fun MethodNode.isImplicitEnumMethod() = isEnum && (
                 name == "values" && desc == "()[L${clazz.name};" ||
                         name == "valueOf" && desc == "(Ljava/lang/String;)L${clazz.name};")
 
-        val convertedMethodsWithNode: List<Pair<MethodNode, MethodDecl>> =
-            clazz.methods.filter { !it.isImplicitEnumMethod() }.mapNotNull { methodNode ->
-                convertMethod(methodNode, clazz, lineMappings, packageFqName, declaration)?.let { methodNode to it }
-            }
-        val sortedConvertedMethods: List<MethodDecl> = sortClassMembers(convertedMethodsWithNode, classPosition) {
-            val methodNode = it.first
-            MemberData(methodNode.name, methodNode.desc, lineMappings.getPosition(clazz, methodNode))
-        }.map { it.second }
-
-        val nestedClasses: List<ClassDecl> = clazz.innerClasses.mapNotNull { innerClass ->
-            if (enumValuesData.any { it.innerClass == innerClass }) return@mapNotNull null
-            if (innerClass.outerName != clazz.name) return@mapNotNull null
-            val innerClassNode = compiledClassByName[innerClass.name] ?: return@mapNotNull null
-            convertClass(innerClassNode, lineMappings, packageFqName)?.second
+        clazz.methods.filter { !it.isImplicitEnumMethod() }.forEach { methodNode ->
+            val convertedMethod =
+                convertMethod(methodNode, clazz, lineMappings, packageFqName, declaration, recordInfo)
+                    ?: return@forEach
+            classMembers.add(
+                ClassMember(
+                    convertedMethod,
+                    MemberData(
+                        methodNode.name,
+                        methodNode.desc,
+                        lineMappings.getPosition(clazz, methodNode),
+                    ),
+                )
+            )
         }
 
-        val superTypes = calculateSuperTypes(clazz, genericType, declaration)
-
+        clazz.innerClasses.forEach { innerClass ->
+            if (enumValuesData.any { it.innerClass == innerClass }) return@forEach
+            if (innerClass.outerName != clazz.name) return@forEach
+            val innerClassNode = compiledClassByName[innerClass.name] ?: return@forEach
+            val convertedClass = convertClass(innerClassNode, lineMappings, packageFqName)?.second ?: return@forEach
+            classMembers.add(
+                ClassMember(
+                    convertedClass,
+                    MemberData(
+                        innerClass.name,
+                        Type.getObjectType(innerClassNode.name).descriptor,
+                        lineMappings.getPosition(innerClassNode),
+                    ),
+                )
+            )
+        }
+        val sortedMembers =
+            sortClassMembers(classMembers, classPosition) { it.data }
+        val superTypes = calculateSuperTypes(clazz, genericType, declaration).let {
+            // A record that cannot be written as one becomes a plain class, which cannot extend java.lang.Record
+            if (supportsRecords && clazz.isRecord()) ClassSupertypes(null, it.interfaces) else it
+        }
         return simpleName to makeClassDecl(
             clazz,
             simpleName,
@@ -463,10 +539,80 @@ abstract class ParameterizedKaptStubConverter<
             genericType,
             superTypes,
             enumValues,
-            sortedConvertedFields,
-            sortedConvertedMethods,
-            nestedClasses
+            sortedMembers,
+            recordInfo?.components,
         )
+    }
+
+    private inner class RecordInfo(
+        val components: List<VariableDecl>,
+        val componentNames: List<String>,
+        val canonicalConstructorDesc: String,
+        // Java requires the canonical constructor parameters to have exactly these types
+        val componentTypes: List<Expression>,
+        // `name + desc` of the component accessors
+        val accessorSignatures: Set<String>,
+        // Arguments of `this(...)` in non-canonical constructors
+        val delegationArguments: List<Expression>,
+    )
+
+    /** Returns `null` if the class cannot be written as a record, so it falls back to a class. */
+    private fun convertRecord(
+        clazz: ClassNode,
+        classFlags: Int,
+        lineMappings: KaptLineMappingCollector,
+        packageFqName: String,
+    ): RecordInfo? {
+        val recordComponents = clazz.recordComponents ?: return null
+        val canonicalConstructorDesc = recordComponents.joinToString("", "(", ")V") { it.descriptor }
+        val canonicalConstructor = clazz.methods.find { it.name == "<init>" && it.desc == canonicalConstructorDesc } ?: return null
+
+        // A Java record would expose more API than the class has: a canonical constructor at least as accessible as the record
+        // and a public accessor per component (Kotlin omits it for a private component)
+        if (accessRank(canonicalConstructor.access) < accessRank(classFlags)) return null
+        val accessorSignatures = recordComponents.mapTo(hashSetOf()) { it.name + "()" + it.descriptor }
+        val publicAccessors = clazz.methods.filter { isPublic(it.access) && !isStatic(it.access) }.mapTo(hashSetOf()) { it.name + it.desc }
+        if (!publicAccessors.containsAll(accessorSignatures)) return null
+
+        val fields = recordComponents.map { component ->
+            clazz.fields.find { it.name == component.name && !isStatic(it.access) } ?: return null
+        }
+
+        val components = recordComponents.zip(fields).mapIndexed { index, [component, field] ->
+            val isVararg = index == recordComponents.lastIndex && canonicalConstructor.isVarargs()
+            convertField(field, clazz, lineMappings, packageFqName, asRecordComponent = true, isVarargRecordComponent = isVararg)
+                ?: return null
+        }
+
+        val componentTypes = fields.map { convertFieldType(it, clazz) }
+
+        val delegationArguments = recordComponents.mapIndexed { index, component ->
+            val type = Type.getType(component.descriptor)
+            val defaultValue = convertLiteral(clazz, getDefaultValue(type))
+            when (type.sort) {
+                // Cast `null` to avoid ambiguity between constructors
+                Type.OBJECT, Type.ARRAY -> makeCast(componentTypes[index], defaultValue)
+                // The default is the int `0`, and invocation arguments are not narrowed
+                Type.BYTE, Type.SHORT -> makeCast(makeType(type), defaultValue)
+                else -> defaultValue
+            }
+        }
+
+        return RecordInfo(
+            components,
+            recordComponents.map { it.name },
+            canonicalConstructorDesc,
+            componentTypes,
+            accessorSignatures,
+            delegationArguments,
+        )
+    }
+
+    private fun accessRank(access: Int): Int = when {
+        access and Opcodes.ACC_PUBLIC != 0 -> 3
+        access and Opcodes.ACC_PROTECTED != 0 -> 2
+        access and Opcodes.ACC_PRIVATE != 0 -> 0
+        else -> 1
     }
 
     private inline fun <T> sortClassMembers(
@@ -645,6 +791,12 @@ abstract class ParameterizedKaptStubConverter<
         return doesInnerClassNameConflictWithOuter(clazz, containingClassForOuterClass)
     }
 
+    // A Valhalla value class (JEP 401) is a class without ACC_IDENTITY, if the class files of the module can have value classes, which
+    // [valueClassFlag] accounts for. The class file is checked instead of the declaration, as a Kotlin value class can be compiled as an
+    // identity class, e.g., without Valhalla value classes or because of its superclass.
+    private fun getValueClassFlag(clazz: ClassNode): Long =
+        if (clazz.access and (Opcodes.ACC_INTERFACE or ACC_IDENTITY) == 0) valueClassFlag else 0L
+
     private fun getClassAccessFlags(clazz: ClassNode, irClass: IrClass): Int {
         var access = clazz.access
         if (irClass.isEnumClass) {
@@ -669,13 +821,17 @@ abstract class ParameterizedKaptStubConverter<
         lineMappings: KaptLineMappingCollector,
         packageFqName: String,
         explicitInitializer: Expression? = null,
+        asRecordComponent: Boolean = false,
+        isVarargRecordComponent: Boolean = false,
     ): VariableDecl? {
         if (isSynthetic(field.access) || isIgnored(field.invisibleAnnotations)) return null
         val declaration = kaptContext.origins[field]?.declaration
 
         val modifiers = convertModifiers(
             containingClass,
-            field.access.toLong(), ElementKind.FIELD, packageFqName,
+            // Record components take no modifiers, only annotations
+            if (asRecordComponent) field.access.toLong() and FIELD_MODIFIERS.inv() else field.access.toLong(),
+            ElementKind.FIELD, packageFqName,
             field.visibleAnnotations, field.invisibleAnnotations,
             declaration?.annotations.orEmpty()
         )
@@ -685,11 +841,30 @@ abstract class ParameterizedKaptStubConverter<
         if (!isValidIdentifier(name)) return null
 
         val asmType = Type.getType(field.desc)
-        val irField = declaration as? IrField
 
         if (!checkIfValidTypeName(containingClass, asmType)) {
             return null
         }
+
+        // Enum type must be an identifier (Javac requirement)
+        val convertedType = if (isEnumField) {
+            val name = treeMaker.getQualifiedName(asmType).substringAfterLast('.')
+            makeSimpleName(name)
+        } else {
+            convertFieldType(field, containingClass)
+        }
+
+        lineMappings.registerField(containingClass, field)
+
+        if (asRecordComponent) return makeRecordComponent(field, modifiers, convertedType, isVarargRecordComponent)
+
+        val initializer = explicitInitializer ?: convertPropertyInitializer(containingClass, field)
+
+        return makeField(field, modifiers, initializer, convertedType)
+    }
+
+    private fun convertFieldType(field: FieldNode, containingClass: ClassNode): Expression {
+        val irField = kaptContext.origins[field]?.declaration as? IrField
 
         val fieldTypeReference =
             when (val metadata = kaptContext.origins[field]?.let { kaptContext.firMetadataOf(it.declaration) }) {
@@ -706,28 +881,16 @@ abstract class ParameterizedKaptStubConverter<
             }
         }
 
-        // Enum type must be an identifier (Javac requirement)
-        val convertedType = if (isEnumField) {
-            val name = treeMaker.getQualifiedName(asmType).substringAfterLast('.')
-            makeSimpleName(name)
-        } else {
-            getNonErrorType(
-                irField?.type?.containsErrorTypes() == true,
-                RETURN_TYPE,
-                getFileForClass(containingClass),
-                typeRefProvider = { fieldTypeReference },
-                ifNonError = {
-                    fieldTypeMappingMode?.let { projectLegacyFunctionTypeKindsIfNeeded(fieldTypeReference, it) }
-                        ?: parseFieldSignatureOrUseAsmType(field.signature, asmType)
-                }
-            )
-        }
-
-        lineMappings.registerField(containingClass, field)
-
-        val initializer = explicitInitializer ?: convertPropertyInitializer(containingClass, field)
-
-        return makeField(field, modifiers, initializer, convertedType)
+        return getNonErrorType(
+            irField?.type?.containsErrorTypes() == true,
+            RETURN_TYPE,
+            getFileForClass(containingClass),
+            typeRefProvider = { fieldTypeReference },
+            ifNonError = {
+                fieldTypeMappingMode?.let { projectLegacyFunctionTypeKindsIfNeeded(fieldTypeReference, it) }
+                    ?: parseFieldSignatureOrUseAsmType(field.signature, Type.getType(field.desc))
+            }
+        )
     }
 
     private fun convertPropertyInitializer(containingClass: ClassNode, field: FieldNode): Expression? {
@@ -831,6 +994,7 @@ abstract class ParameterizedKaptStubConverter<
         lineMappings: KaptLineMappingCollector,
         packageFqName: String,
         irClass: IrClass,
+        recordInfo: RecordInfo?,
     ): MethodDecl? {
         if (isIgnored(method.invisibleAnnotations)) return null
         val declaration = kaptContext.origins[method]?.declaration as? IrFunction ?: return null
@@ -848,6 +1012,7 @@ abstract class ParameterizedKaptStubConverter<
         }
 
         val isConstructor = method.name == "<init>"
+        val isRecordCanonicalConstructor = recordInfo != null && isConstructor && method.desc == recordInfo.canonicalConstructorDesc
 
         val name = method.name
         if (!isValidIdentifier(name, canBeConstructor = isConstructor)) return null
@@ -874,10 +1039,28 @@ abstract class ParameterizedKaptStubConverter<
 
         val parameterTypes = parametersInfo.map { info -> makeType(info.type) }
 
+        val isRecordCanonicalMember = isRecordCanonicalConstructor ||
+                recordInfo != null && !isStatic(method.access) && method.name + method.desc in recordInfo.accessorSignatures
+
+        // No exceptions are emitted for record's canonical constructor or accessors, Java forbids them.
         // Kotlin @Throws arguments are class literals, so cannot be generic and do not need refinement from the generic signature.
-        val exceptionTypes = method.exceptions.map { makeQualifiedName(it) }
+        val exceptionTypes = if (isRecordCanonicalMember) emptyList() else method.exceptions.map { makeQualifiedName(it) }
 
         val genericSignature = extractMethodSignatureTypes(declaration, exceptionTypes, returnType, method, parameterTypes)
+        // Java requires the canonical constructor parameters to have exactly the component types, but Kotlin maps declaration-site
+        // variance differently for them. Per https://kotlinlang.org/docs/java-to-kotlin-interop.html#variant-generics, wildcards are
+        // generated for parameters but not for return values, and a component is typed like its field and accessor, i.e. a return value.
+        // E.g. a `Map<String, List<Number>>` component is `Map<String, ? extends List<? extends Number>>` in the bytecode constructor.
+        // Final type arguments (`List<String>`) get no wildcard, and `@JvmWildcard`/`@JvmSuppressWildcards` can make the two agree.
+        val stubParameterTypes = if (isRecordCanonicalConstructor) recordInfo.componentTypes else genericSignature.parameterTypes
+
+        val parameterNames = parametersInfo.mapIndexed { index, info ->
+            when {
+                info.name == "_" -> "p$index"
+                isValidIdentifier(info.name) -> info.name
+                else -> "p" + index + "_" + info.name.hashCode().ushr(1)
+            }
+        }
 
         val parameters: List<VariableDecl> = parametersInfo.mapIndexed { index, info ->
             val lastParameter = index == parametersInfo.lastIndex
@@ -894,14 +1077,9 @@ abstract class ParameterizedKaptStubConverter<
                 emptyList() /* TODO */
             )
 
-            val name = when {
-                info.name == "_" -> "p$index"
-                isValidIdentifier(info.name) -> info.name
-                else -> "p" + index + "_" + info.name.hashCode().ushr(1)
-            }
-            val type = genericSignature.parameterTypes[index]
+            val type = stubParameterTypes[index]
 
-            makeParameter(name, type, modifiers, varargs != 0L)
+            makeParameter(parameterNames[index], type, modifiers, varargs != 0L)
         }
 
         val defaultValue = method.annotationDefault?.let { convertLiteral(containingClass, it) }
@@ -912,6 +1090,10 @@ abstract class ParameterizedKaptStubConverter<
             null
         } else if (isConstructor && containingClass.isEnum()) {
             makeBlock(emptyList())
+        } else if (isRecordCanonicalConstructor) {
+            makeBlock(recordInfo.componentNames.zip(parameterNames, ::makeFieldAssignmentStatement))
+        } else if (isConstructor && recordInfo != null) {
+            makeBlock(listOf(makeSimpleCallStatement("this", recordInfo.delegationArguments)))
         } else if (isConstructor) {
             val superClass = declaration.parentAsClass.getNonErrorSuperClassNotAny()
             val superClassConstructor =
@@ -942,7 +1124,7 @@ abstract class ParameterizedKaptStubConverter<
         lineMappings.registerMethod(containingClass, method)
 
         val paramSignatureTypes = List(parametersInfo.size) { index ->
-            genericSignature.parameterTypes[index].toString()
+            stubParameterTypes[index].toString()
         }
         val signature = buildString {
             append(name)
@@ -1216,7 +1398,7 @@ abstract class ParameterizedKaptStubConverter<
 
         val flags = when (kind) {
             ElementKind.ENUM -> access and CLASS_MODIFIERS and Opcodes.ACC_ABSTRACT.inv().toLong()
-            ElementKind.CLASS -> access and CLASS_MODIFIERS
+            ElementKind.CLASS -> access and (CLASS_MODIFIERS or valueClassFlag)
             ElementKind.METHOD if isDefaultInterfaceMethod(containingClass, access.toInt()) ->
                 (access and METHOD_MODIFIERS) or Flags.DEFAULT
             ElementKind.METHOD -> access and METHOD_MODIFIERS
@@ -1621,10 +1803,26 @@ abstract class ParameterizedKaptStubConverter<
         genericType: ClassGenericSignature<Expression, TypeParameter>,
         superTypes: ClassSupertypes<Expression>,
         enumValues: List<VariableDecl>,
-        sortedConvertedFields: List<VariableDecl>,
-        sortedConvertedMethods: List<MethodDecl>,
-        nestedClasses: List<ClassDecl>,
+        members: List<ClassMember<Element>>,
+        recordComponents: List<VariableDecl>?,
     ): ClassDecl
+
+    /** Whether [makeClassDecl] can write a record, i.e. the three hooks below are implemented. */
+    protected open val supportsRecords: Boolean get() = false
+
+    protected open fun makeRecordComponent(
+        field: FieldNode,
+        modifiers: Modifiers,
+        convertedType: Expression,
+        isVararg: Boolean,
+    ): VariableDecl = throw UnsupportedOperationException("Records are not supported")
+
+    /** `this.[fieldName] = [parameterName];` */
+    protected open fun makeFieldAssignmentStatement(fieldName: String, parameterName: String): Statement =
+        throw UnsupportedOperationException("Records are not supported")
+
+    protected open fun makeCast(type: Expression, expression: Expression): Expression =
+        throw UnsupportedOperationException("Records are not supported")
 
     protected abstract fun makeValueOfPrimitiveTypeOrString(value: Any?): Expression?
 

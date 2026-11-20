@@ -1,0 +1,128 @@
+KtFile: 'typeParameterAsDelegatedSuperTypeInLocalClass.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,11): 'package bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,11): 'bar'
+  NO_CANDIDATES
+
+KtImportList(11,11): ''
+  NO_CANDIDATES
+
+KtClass(13,34): 'interface MyInterface'
+  NO_CANDIDATES
+
+KtNamedFunction(36,120): 'fun <T : MyInterface> foo(i: T) {'
+  NO_CANDIDATES
+
+KtTypeParameterList(40,57): '<T : MyInterface>'
+  NO_CANDIDATES
+
+KtTypeParameter(41,56): 'T : MyInterface'
+  NO_CANDIDATES
+
+KtTypeReference(45,56): 'MyInterface'
+  NO_CANDIDATES
+
+KtUserType(45,56): 'MyInterface'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(45,56): 'MyInterface'
+  NO_CANDIDATES
+
+KtParameterList(61,67): '(i: T)'
+  NO_CANDIDATES
+
+KtParameter(62,66): 'i: T'
+  NO_CANDIDATES
+
+KtTypeReference(65,66): 'T'
+  NO_CANDIDATES
+
+KtUserType(65,66): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(65,66): 'T'
+  NO_CANDIDATES
+
+KtBlockExpression(68,120): '{'
+  NO_CANDIDATES
+
+KtClass(74,94): 'class Local : T by i'
+  NO_CANDIDATES
+
+KtSuperTypeList(88,94): 'T by i'
+  NO_CANDIDATES
+
+KtDelegatedSuperTypeEntry(88,94): 'T by i'
+  NO_CANDIDATES
+
+KtTypeReference(88,89): 'T'
+  NO_CANDIDATES
+
+KtUserType(88,89): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(88,89): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(93,94): 'i'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = T
+        symbol = i: T
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtObjectLiteralExpression(100,118): 'object : T by i {}'
+  NO_CANDIDATES
+
+KtObjectDeclaration(100,118): 'object : T by i {}'
+  NO_CANDIDATES
+
+KtSuperTypeList(109,115): 'T by i'
+  NO_CANDIDATES
+
+KtDelegatedSuperTypeEntry(109,115): 'T by i'
+  NO_CANDIDATES
+
+KtTypeReference(109,110): 'T'
+  NO_CANDIDATES
+
+KtUserType(109,110): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(109,110): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(114,115): 'i'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = T
+        symbol = i: T
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtClassBody(116,118): '{}'
+  NO_CANDIDATES

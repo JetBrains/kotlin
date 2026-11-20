@@ -6,16 +6,22 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.Action
+import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.PreInstalledNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class NodeJsGradlePluginIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
@@ -97,15 +103,48 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Node.js setup test with downloadBaseUrl = null")
     @GradleTest
-    @TestMetadata("subprojects-nodejs-setup")
+    @TestMetadata("nodejs-setup-with-user-repositories")
     fun testSetupWithoutDownloadBaseUrl(gradleVersion: GradleVersion) {
-        project(
-            "nodejs-setup-with-user-repositories",
-            gradleVersion,
-            // we can remove this line, when the min version of Gradle be at least 8.1
-            dependencyManagement = DependencyManagement.DisabledDependencyManagement
-        ) {
+        project("nodejs-setup-with-user-repositories", gradleVersion) {
             build(":kotlinNodeJsSetup")
+        }
+    }
+
+    @DisplayName("KT-55620: Node.js toolchain with FAIL_ON_PROJECT_REPOS")
+    @GradleTest
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
+    fun testNodeToolchainWithFailOnProjectRepos(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            addEcosystemPluginToBuildScriptCompilationClasspath()
+            settingsBuildScriptInjection {
+                settings.dependencyResolutionManagement {
+                    it.repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+                }
+            }
+            settingsBuildScriptInjection {
+                settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+                settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                    nodeJs {
+                        toolchainService(PreInstalledNodeJsToolchainService::class) {
+                            nodeJsExecutable.set("node")
+                        }
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js {
+                        browser()
+                        nodejs()
+                    }
+                }
+            }
+
+            // The old setup must not add a project repository when a toolchain service provisions Node.js
+            build(":kotlinNodeJsSetup") {
+                assertTasksSkipped(":kotlinNodeJsSetup")
+            }
         }
     }
 }

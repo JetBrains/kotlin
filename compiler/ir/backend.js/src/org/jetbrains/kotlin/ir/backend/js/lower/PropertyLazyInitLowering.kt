@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isPure
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.suspendFunction
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.name.Name
@@ -119,6 +121,7 @@ abstract class PropertyLazyInitLowering(
     }
 }
 
+@PhasePrerequisites(JsDefaultArgumentStubGenerator::class)
 class JsPropertyLazyInitLowering(context: JsIrBackendContext) : PropertyLazyInitLowering(context) {
     override val initializationGenerator = JsLazyGlobalInitializationGenerator(context)
 }
@@ -211,12 +214,8 @@ private val IrDeclaration.correspondingProperty: IrProperty?
 
         return when (this) {
             is IrProperty -> this
-            is IrSimpleFunction -> propertyWithPersistentSafe {
-                correspondingPropertySymbol?.owner
-            }
-            is IrField -> propertyWithPersistentSafe {
-                correspondingPropertySymbol?.owner
-            }
+            is IrSimpleFunction -> correspondingPropertySymbol?.owner
+            is IrField -> correspondingPropertySymbol?.owner
             else -> compilationException(
                 "Can be only IrProperty, IrSimpleFunction or IrField",
                 this
@@ -224,16 +223,23 @@ private val IrDeclaration.correspondingProperty: IrProperty?
         }
     }
 
-private fun IrDeclaration.propertyWithPersistentSafe(transform: IrDeclaration.() -> IrProperty?): IrProperty? =
-    withPersistentSafe(transform)
+private fun IrDeclaration.isCompatibleDeclaration(context: JsCommonBackendContext): Boolean {
+    val effectiveOrigin = when (this) {
+        // Functions with continuation inherit compatibility from their original suspend function,
+        // e.g. lifted suspend lambdas in Wasm (LIFTED_CALLABLE_REFERENCE_FUNCTION) must not trigger file initialization.
+        is IrSimpleFunction if origin == IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION ->
+            suspendFunction?.origin
+        else -> origin
+    }
+    if (effectiveOrigin !in compatibleOrigins) return false
 
-private fun <T> IrDeclaration.withPersistentSafe(transform: IrDeclaration.() -> T?): T? =
-    transform()
+    val property = correspondingProperty ?: return true
+    if (property.isExternal) return false
+    if (!property.isForLazyInit()) return false
+    if (property.hasAnnotation(context.propertyLazyInitialization.eagerInitialization)) return false
 
-private fun IrDeclaration.isCompatibleDeclaration(context: JsCommonBackendContext) =
-    correspondingProperty?.let {
-        !it.isExternal && it.isForLazyInit() && !it.hasAnnotation(context.propertyLazyInitialization.eagerInitialization)
-    } ?: true && withPersistentSafe { origin in compatibleOrigins } == true
+    return true
+}
 
 private val compatibleOrigins = listOf(
     IrDeclarationOrigin.DEFINED,
@@ -241,4 +247,6 @@ private val compatibleOrigins = listOf(
     IrDeclarationOrigin.PROPERTY_DELEGATE,
     IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR,
     IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
+    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+    IrDeclarationOrigin.SYNTHETIC_ACCESSOR,
 )

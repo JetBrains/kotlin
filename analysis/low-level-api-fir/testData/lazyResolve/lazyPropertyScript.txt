@@ -27,7 +27,7 @@ FILE: [ResolvedTo(RAW_FIR)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val resolveMe: Stringby LAZY_EXPRESSION
+            public? final? [ResolvedTo(RAW_FIR)] val resolveMe: String by LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] get(): <implicit> { LAZY_BLOCK }
 
         }
@@ -62,7 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val resolveMe: Stringby LAZY_EXPRESSION
+            public? final? [ResolvedTo(RAW_FIR)] val resolveMe: String by LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] get(): <implicit> { LAZY_BLOCK }
 
         }
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val resolveMe: Stringby LAZY_EXPRESSION
+            public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val resolveMe: String by LAZY_EXPRESSION
                 public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Test] get(): <implicit> { LAZY_BLOCK }
 
         }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(COMPANION_GENERATION)] val resolveMe: Stringby LAZY_EXPRESSION
+            public? final? [ResolvedTo(COMPANION_GENERATION)] val resolveMe: String by LAZY_EXPRESSION
                 public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Test] get(): <implicit> { LAZY_BLOCK }
 
         }
@@ -167,7 +167,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(SUPER_TYPES)] val resolveMe: Stringby LAZY_EXPRESSION
+            public? final? [ResolvedTo(SUPER_TYPES)] val resolveMe: String by LAZY_EXPRESSION
                 public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Test] get(): <implicit> { LAZY_BLOCK }
 
         }
@@ -202,7 +202,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(TYPES)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
+            public? final? [ResolvedTo(TYPES)] val resolveMe: R|kotlin/String| by LAZY_EXPRESSION
                 public? [ResolvedTo(TYPES)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
@@ -237,7 +237,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
+            public final [ResolvedTo(STATUS)] val resolveMe: R|kotlin/String| by LAZY_EXPRESSION
                 public [ResolvedTo(STATUS)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
@@ -272,7 +272,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val resolveMe: R|kotlin/String| by LAZY_EXPRESSION
                 public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
@@ -307,7 +307,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
+            public final [ResolvedTo(CONTRACTS)] val resolveMe: R|kotlin/String| by LAZY_EXPRESSION
                 public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
@@ -342,7 +342,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val resolveMe: R|kotlin/String| by LAZY_EXPRESSION
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
@@ -377,7 +377,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONSTANT_EVALUATION)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
+            public final [ResolvedTo(CONSTANT_EVALUATION)] val resolveMe: R|kotlin/String| by LAZY_EXPRESSION
                 public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
@@ -412,7 +412,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val resolveMe: R|kotlin/String| by LAZY_EXPRESSION
                 public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
@@ -447,7 +447,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String| by R|/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
                 ^ R|/materialize|<R|kotlin/String|>()
             }
             )
@@ -495,7 +495,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lazyPropertyScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String| by R|/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
                 ^ R|/materialize|<R|kotlin/String|>()
             }
             )

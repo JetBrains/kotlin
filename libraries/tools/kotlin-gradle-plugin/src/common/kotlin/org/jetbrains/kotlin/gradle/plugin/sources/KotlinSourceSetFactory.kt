@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
-import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
-import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import java.io.File
 
 internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal constructor(

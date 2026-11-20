@@ -1,5 +1,6 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE_FEATURE_TOGGLED: ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 
-<!INLINE_CLASS_DEPRECATED!>inline<!> class IC(val i: Int)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class IC(val i: Int)
 
 /* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration */

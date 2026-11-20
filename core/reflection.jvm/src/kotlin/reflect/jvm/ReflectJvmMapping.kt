@@ -19,6 +19,7 @@
 package kotlin.reflect.jvm
 
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import java.lang.reflect.*
 import kotlin.reflect.*
@@ -93,24 +94,32 @@ val Field.kotlinProperty: KProperty<*>?
     get() {
         if (isSynthetic) return null
 
+        val declaringKClass by lazy(LazyThreadSafetyMode.NONE) { declaringClass.kotlin }
+
         if (Modifier.isStatic(modifiers)) {
             val kotlinPackage = getKPackage()
             if (kotlinPackage != null) {
                 return kotlinPackage.members.findKProperty(this)
             }
 
-            val companionKClass = declaringClass.kotlin.companionObject
+            val companionKClass = declaringKClass.companionObject
             if (companionKClass != null) {
-                val companionField = declaringClass.getDeclaredFieldOrNull(name)
+                val companionField = declaringClass.getDeclaredFieldOrNull(name, false)
                 if (companionField != null) {
                     companionKClass.memberProperties.findKProperty(companionField)?.let { return it }
                 }
             }
 
-            declaringClass.kotlin.staticProperties.findKProperty(this)?.let { return it }
+            if (declaringClass.simpleName == JvmAbi.INTERFACE_PRIVATE_FIELDS1_CLASS_NAME || declaringClass.simpleName == JvmAbi.INTERFACE_PRIVATE_FIELDS2_CLASS_NAME) {
+                val interfaceClass = declaringClass.enclosingClass
+                    ?: throw KotlinReflectionInternalError("${declaringClass.simpleName} must have enclosing class")
+                interfaceClass.kotlin.staticProperties.findKProperty(this)?.let { return it }
+            }
+
+            declaringKClass.staticProperties.findKProperty(this)?.let { return it }
         }
 
-        return declaringClass.kotlin.memberProperties.findKProperty(this)
+        return declaringKClass.memberProperties.findKProperty(this)
     }
 
 

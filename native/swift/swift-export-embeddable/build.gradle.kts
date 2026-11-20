@@ -30,7 +30,6 @@ dependencies {
     val analysisApiFir = ":analysis:analysis-api-fir"
     embedded(project(":analysis:analysis-api")) { isTransitive = false }
     embedded(project(analysisApiFir)) { isTransitive = false }
-    embedded(project(":analysis:analysis-api-impl-base")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-platform-interface")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-standalone")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir")) { isTransitive = false }
@@ -133,8 +132,8 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testImplementation(testFixtures(project(":native:swift:swift-export-standalone-integration-tests")))
     testImplementation(testFixtures(project(":native:swift:swift-export-standalone-integration-tests:external")))
-    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(testFixtures(project(":compiler:jvm.tests")))
 }
 
 sourceSets {
@@ -159,6 +158,7 @@ val intransitiveTestDependenciesJars = configurations.detachedConfiguration().ap
 
     dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":native:native.tests")))
     dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":compiler:tests-compiler-utils")))
+    dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":compiler:jvm.tests")))
     dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":compiler:tests-common")))
     dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":compiler:tests-common-new")))
     dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":compiler:test-infrastructure")))

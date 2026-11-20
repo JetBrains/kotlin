@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializ
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedFileReference
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedTrivialGetter
 import org.jetbrains.kotlin.backend.konan.serialization.buildSerializedClassFields
-import org.jetbrains.kotlin.ir.IrAbstractFunctionFactory
+import org.jetbrains.kotlin.ir.IrBasedFunctionFactory
 import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -48,7 +48,7 @@ internal class CacheInfoBuilder(
                     declaration.acceptChildrenVoid(this)
 
                     if (!declaration.isInterface && !declaration.isOriginallyLocal
-                            && declaration.isExported && declaration.origin != IrAbstractFunctionFactory.classOrigin
+                            && declaration.isExported && declaration.origin != IrBasedFunctionFactory.classOrigin
                     ) {
                         val declaredFields = generationState.context.getLayoutBuilder(declaration).getDeclaredFields(generationState.llvm)
                         generationState.classFields.add(buildSerializedClassFields(declaration, declaredFields, moduleDeserializer))

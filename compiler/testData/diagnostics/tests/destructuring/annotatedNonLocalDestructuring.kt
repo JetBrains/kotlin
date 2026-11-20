@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 // FIR_DUMP
 // ISSUE: KT-74654
 
@@ -12,23 +13,23 @@ const val x = "str"
 data class X(val a: Int, val b: Int)
 
 @Ann(x)
-val <!SYNTAX!>(a, b)<!> = X(1, 2)
+val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(a, b)<!> = X(1, 2)
 
 @Ann(<!UNRESOLVED_REFERENCE!>y<!>)
 @<!UNRESOLVED_REFERENCE!>Unresolved<!>
 <!WRONG_ANNOTATION_TARGET!>@ClassOnly<!>
 <!REPEATED_ANNOTATION!>@property:Ann(x)<!>
-val <!SYNTAX!>(c, d)<!> = X(1, 2)
+val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(c, d)<!> = X(1, 2)
 
 class C {
     @Ann(x)
-    val <!SYNTAX!>(a, b)<!> = X(1, 2)
+    val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(a, b)<!> = X(1, 2)
 
     @Ann(<!UNRESOLVED_REFERENCE!>y<!>)
     @<!UNRESOLVED_REFERENCE!>Unresolved<!>
     <!WRONG_ANNOTATION_TARGET!>@ClassOnly<!>
     <!REPEATED_ANNOTATION!>@property:Ann(x)<!>
-    val <!SYNTAX!>(c, d)<!> = X(1, 2)
+    val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(c, d)<!> = X(1, 2)
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, data, integerLiteral, primaryConstructor,

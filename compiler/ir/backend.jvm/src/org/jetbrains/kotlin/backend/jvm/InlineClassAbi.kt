@@ -131,10 +131,19 @@ fun IrFunction.hasMangledParameters(): Boolean =
 val IrFunction.hasMangledReturnType: Boolean
     get() = returnType.isInlineClassType() && parentClassOrNull?.isFileClass != true
 
-val IrClass.inlineClassFieldName: Name
+val IrClass.inlineClassPropertyName: Name
     get() = (inlineClassRepresentation ?: error("Not an inline class: ${render()}")).underlyingPropertyName
+
+val IrClass.inlineClassField: IrField
+    get() = fields.singleOrNull { it.isInlineClassField } ?: error("Not an inline class: ${render()}")
 
 val IrFunction.isInlineClassFieldGetter: Boolean
     get() = (parent as? IrClass)?.isInlineClass == true && this is IrSimpleFunction &&
             hasShape(dispatchReceiver = true) &&
-            correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.name == parentAsClass.inlineClassFieldName } == true
+            correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.name == parentAsClass.inlineClassPropertyName } == true
+
+val IrField.isInlineClassField: Boolean
+    get() = (parent as? IrClass)?.isInlineClass == true &&
+            origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
+            correspondingPropertySymbol?.owner?.name == parentAsClass.inlineClassPropertyName &&
+            !isStatic

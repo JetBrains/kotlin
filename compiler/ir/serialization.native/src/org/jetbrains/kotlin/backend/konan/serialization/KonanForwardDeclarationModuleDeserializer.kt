@@ -48,8 +48,7 @@ internal class KonanForwardDeclarationModuleDeserializer(
     override fun contains(idSig: IdSignature): Boolean =
         idSig is IdSignature.CommonSignature && idSig.packageFqName() in NativeForwardDeclarationKind.packageFqNameToKind
 
-    override fun getDefinedPackageNames(): Set<FqName> =
-        NativeForwardDeclarationKind.entries.map { it.packageFqName }.toSet()
+    override val contributedPackageNames: Set<FqName> = NativeForwardDeclarationKind.entries.map { it.packageFqName }.toSet()
 
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
         require(symbolKind == BinarySymbolData.SymbolKind.CLASS_SYMBOL) {

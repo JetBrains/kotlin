@@ -1,18 +1,19 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
+// RENDER_DIAGNOSTICS_FULL_TEXT
 @file:JsModule("foo")
 package foo
 
-@JsModule("A")
-external class <!NESTED_JS_MODULE_PROHIBITED!>A<!> {
+<!NESTED_JS_MODULE_PROHIBITED!>@JsModule("A")<!>
+external class A {
     class Nested
 }
 
-@JsModule("B")
-external <!NESTED_JS_MODULE_PROHIBITED!>object B<!>
+<!NESTED_JS_MODULE_PROHIBITED!>@JsModule("B")<!>
+external object B
 
-<!NESTED_JS_MODULE_PROHIBITED!>@JsModule("foo")
-external fun foo(): Int<!>
+<!NESTED_JS_MODULE_PROHIBITED!>@JsModule("foo")<!>
+external fun foo(): Int
 
-<!NESTED_JS_MODULE_PROHIBITED!>@JsModule("bar")
-external val bar: Int<!>
+<!NESTED_JS_MODULE_PROHIBITED!>@JsModule("bar")<!>
+external val bar: Int

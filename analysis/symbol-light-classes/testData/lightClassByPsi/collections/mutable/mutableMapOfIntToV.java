@@ -150,7 +150,7 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
   public final VElem remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
-  public VElem getOrDefault(java.lang.Object, VElem);//  getOrDefault(java.lang.Object, VElem)
+  public VElem getOrDefault(int, VElem);//  getOrDefault(int, VElem)
 
   @java.lang.Override()
   public boolean containsKey(int);//  containsKey(int)
@@ -160,6 +160,9 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public final VElem getOrDefault(java.lang.Object, VElem);//  getOrDefault(java.lang.Object, VElem)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)

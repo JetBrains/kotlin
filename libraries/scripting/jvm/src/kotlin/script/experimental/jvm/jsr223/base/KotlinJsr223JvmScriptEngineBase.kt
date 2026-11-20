@@ -15,11 +15,15 @@ import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.impl._isSyntheticSnippet
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jsr223.getScriptContext
 import kotlin.script.experimental.jvm.jsr223.jsr223
+import kotlin.script.experimental.jvm.jsr223.isSyntheticJsr223SnippetDiagnostic
+import kotlin.script.experimental.jvm.jsr223.jsr223EvaluatedWithCompilationContext
+import kotlin.script.experimental.jvm.jsr223.jsr223UntypedNewBindings
 import kotlin.script.experimental.jvm.util.isIncomplete
 import kotlin.script.experimental.util.LinkedSnippet
 
@@ -64,12 +68,13 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
     protected abstract val replEvaluator: ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet>
 
     /**
-     * The compilation configuration every snippet is compiled with. It is a `var` because each
-     * compile's resulting configuration is threaded forward into the next (see [compileSnippet]).
-     * A synthetic-snippet-generating refinement hook (for example `generateBindingSnippetIfNeeded`)
-     * records which bindings are already exposed as typed properties, and with which types, in it.
+     * The compilation configuration the first snippet of every [replCompiler] is compiled with. Each
+     * further snippet is compiled with the configuration of the compiler's last compiled snippet
+     * instead (see [compileSnippet]). A synthetic-snippet-generating refinement hook (for example
+     * `generateBindingSnippetIfNeeded`) records which bindings are already exposed as typed
+     * properties, and with which types, in it.
      */
-    protected abstract var compilationConfiguration: ScriptCompilationConfiguration
+    protected abstract val compilationConfiguration: ScriptCompilationConfiguration
 
     protected abstract val evaluationConfiguration: ScriptEvaluationConfiguration
 
@@ -131,7 +136,7 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
         lastScriptContext = context
         @Suppress("DEPRECATION_ERROR")
         val result = internalScriptingRunSuspend {
-            compileSnippet(script, nextSnippetNo())
+            compileSnippet(script, nextSnippetNo(), isEvaluatedWithCompilationContext = false)
         }
         return when (result) {
             is ResultWithDiagnostics.Success -> CompiledKotlinSnippet(this, result.value)
@@ -144,7 +149,7 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
         return asJsr223EvalResult {
             @Suppress("DEPRECATION_ERROR")
             internalScriptingRunSuspend {
-                compileSnippet(script, nextSnippetNo()).onSuccess {
+                compileSnippet(script, nextSnippetNo(), isEvaluatedWithCompilationContext = true).onSuccess {
                     replEvaluator.eval(it, evaluationConfiguration)
                 }
             }
@@ -153,23 +158,45 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
 
     /**
      * Hook for a compiler-specific per-snippet configuration tweak (for example setting
-     * `repl.currentSnippetNo`). Called for every snippet, with the already threaded-forward
-     * [compilationConfiguration] as the base.
+     * `repl.currentSnippetNo`). Called for every snippet, with the configuration threaded forward
+     * in the compiling [replCompiler] as the [baseConfiguration].
      */
-    protected open fun snippetCompilationConfiguration(snippet: SourceCode, snippetNo: Int): ScriptCompilationConfiguration =
-        compilationConfiguration
+    protected open fun snippetCompilationConfiguration(
+        baseConfiguration: ScriptCompilationConfiguration,
+        snippet: SourceCode,
+        snippetNo: Int,
+    ): ScriptCompilationConfiguration =
+        baseConfiguration
 
-    private suspend fun compileSnippet(script: String, snippetNo: Int): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
+    private suspend fun compileSnippet(
+        script: String,
+        snippetNo: Int,
+        isEvaluatedWithCompilationContext: Boolean,
+    ): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
+        val compiler = replCompiler
+        val baseConfiguration =
+            generateSequence(compiler.lastCompiledSnippet) { it.previous }
+                .map { it.get().compilationConfiguration }
+                .firstOrNull { it[ScriptCompilationConfiguration.repl._isSyntheticSnippet] != true }
+                ?: compilationConfiguration
         // Suffixed onto the host template's own fileExtension (for example `main.kts`) rather than
         // hard-coded to `.kts`, so the synthetic snippet name still matches the host's own script
         // definition.
-        val fileExtension = compilationConfiguration[ScriptCompilationConfiguration.fileExtension]
+        val fileExtension = baseConfiguration[ScriptCompilationConfiguration.fileExtension]
         val snippet = script.toScriptSource("snippet_$snippetNo.repl.$fileExtension")
-        return replCompiler.compile(snippet, snippetCompilationConfiguration(snippet, snippetNo)).also {
-            if (it is ResultWithDiagnostics.Success) {
-                compilationConfiguration = it.value.get().compilationConfiguration
-            }
+        val configuration = snippetCompilationConfiguration(baseConfiguration, snippet, snippetNo).with {
+            jsr223EvaluatedWithCompilationContext(isEvaluatedWithCompilationContext)
+            jsr223UntypedNewBindings(false)
         }
+        val result = compiler.compile(snippet, configuration)
+        // A binding value's type can be inaccessible from the snippet in a way that can't be detected beforehand (e.g. it
+        // requires an opt-in). Instead of failing every eval, retry with the bindings exposed with new types typed as `Any?`.
+        if (result is ResultWithDiagnostics.Failure &&
+            result.reports.any { it.severity >= ScriptDiagnostic.Severity.ERROR && it.isSyntheticJsr223SnippetDiagnostic() }
+        ) {
+            return compiler.compile(snippet, configuration.with { jsr223UntypedNewBindings(true) })
+        }
+        return result
     }
 
     private fun evalCompiledSnippet(

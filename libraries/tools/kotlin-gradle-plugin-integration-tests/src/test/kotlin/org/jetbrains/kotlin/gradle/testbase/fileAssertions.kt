@@ -13,6 +13,7 @@ import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.test.*
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 
 /**
  * Asserts file under [file] path exists and is a regular file.
@@ -117,7 +118,7 @@ fun assertFileNotExistsInTree(
         }
 
     assert(foundFile == null) {
-        "File exists: ${foundFile!!.absolutePath}"
+        "File exists: ${foundFile!!.normalizedAbsolutePath().toString()}"
     }
 }
 

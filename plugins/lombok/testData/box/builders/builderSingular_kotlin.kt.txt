@@ -5,10 +5,6 @@ class BoundedTypeParameterSingular<T : CharSequence> {
     get
 
   open class BoundedTypeParameterSingularBuilder<T : CharSequence> {
-    private var items: MutableList<T>?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -59,6 +55,10 @@ class BoundedTypeParameterSingular<T : CharSequence> {
       return <this>
     }
 
+    private var items: MutableList<T>?
+      private get
+      private set
+
   }
 
   companion object Companion {
@@ -94,14 +94,6 @@ class GenericSingular<K : Any?, V : Any?> {
     get
 
   open class GenericSingularBuilder<K : Any?, V : Any?> {
-    private var items: MutableList<V>?
-      private get
-      private set
-
-    private var pairs: MutableMap<K, V>?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -191,6 +183,14 @@ class GenericSingular<K : Any?, V : Any?> {
       return <this>
     }
 
+    private var items: MutableList<V>?
+      private get
+      private set
+
+    private var pairs: MutableMap<K, V>?
+      private get
+      private set
+
   }
 
   companion object Companion {
@@ -222,10 +222,6 @@ class IgnoreNullCollections {
     get
 
   open class IgnoreNullCollectionsBuilder {
-    private var items: MutableList<Int>?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -278,6 +274,10 @@ class IgnoreNullCollections {
       return <this>
     }
 
+    private var items: MutableList<Int>?
+      private get
+      private set
+
   }
 
   companion object Companion {
@@ -309,10 +309,6 @@ class IgnoreNullCollectionsWithNullableCollections {
     get
 
   open class IgnoreNullCollectionsWithNullableCollectionsBuilder {
-    private var items: MutableList<Int>?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -365,6 +361,10 @@ class IgnoreNullCollectionsWithNullableCollections {
       return <this>
     }
 
+    private var items: MutableList<Int>?
+      private get
+      private set
+
   }
 
   companion object Companion {
@@ -396,10 +396,6 @@ class NullableCollection {
     get
 
   open class NullableCollectionBuilder {
-    private var items: MutableList<Int>?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -450,6 +446,10 @@ class NullableCollection {
       return <this>
     }
 
+    private var items: MutableList<Int>?
+      private get
+      private set
+
   }
 
   companion object Companion {
@@ -481,10 +481,6 @@ class NullableElements {
     get
 
   open class NullableElementsBuilder {
-    private var items: MutableList<Int?>?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -535,6 +531,10 @@ class NullableElements {
       return <this>
     }
 
+    private var items: MutableList<Int?>?
+      private get
+      private set
+
   }
 
   companion object Companion {
@@ -566,10 +566,6 @@ class NullableTypeParameterSingular<T : Any?> {
     get
 
   open class NullableTypeParameterSingularBuilder<T : Any?> {
-    private var items: MutableList<T?>?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -620,6 +616,10 @@ class NullableTypeParameterSingular<T : Any?> {
       return <this>
     }
 
+    private var items: MutableList<T?>?
+      private get
+      private set
+
   }
 
   companion object Companion {
@@ -655,14 +655,6 @@ class Other {
     get
 
   open class OtherBuilder {
-    private var some: MutableList<Int>?
-      private get
-      private set
-
-    private var names: MutableList<String>?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -753,6 +745,14 @@ class Other {
       return <this>
     }
 
+    private var names: MutableList<String>?
+      private get
+      private set
+
+    private var some: MutableList<Int>?
+      private get
+      private set
+
   }
 
   companion object Companion {
@@ -792,18 +792,6 @@ class SingularCollections {
     get
 
   open class SingularCollectionsBuilder {
-    private var items: MutableList<String>?
-      private get
-      private set
-
-    private var tags: MutableSet<String>?
-      private get
-      private set
-
-    private var pairs: MutableMap<String, Int>?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -933,6 +921,18 @@ class SingularCollections {
       return <this>
     }
 
+    private var items: MutableList<String>?
+      private get
+      private set
+
+    private var pairs: MutableMap<String, Int>?
+      private get
+      private set
+
+    private var tags: MutableSet<String>?
+      private get
+      private set
+
   }
 
   companion object Companion {
@@ -972,18 +972,6 @@ class User {
     get
 
   open class UserBuilder {
-    private var numbers: MutableMap<String, Int>?
-      private get
-      private set
-
-    private var statuses: MutableList<String>?
-      private get
-      private set
-
-    private var tags: MutableSet<String>?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -1112,6 +1100,18 @@ class User {
       // }
       return <this>
     }
+
+    private var numbers: MutableMap<String, Int>?
+      private get
+      private set
+
+    private var statuses: MutableList<String>?
+      private get
+      private set
+
+    private var tags: MutableSet<String>?
+      private get
+      private set
 
   }
 

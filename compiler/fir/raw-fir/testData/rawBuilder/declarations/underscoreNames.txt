@@ -1,0 +1,53 @@
+FILE: underscoreNames.kt
+    public? final? fun foo(): R|kotlin/Unit| {
+        lval <unused var>: <implicit> = IntegerLiteral(1)
+        lval _: <implicit> = IntegerLiteral(2)
+        when (lval <unused var>: <implicit> = IntegerLiteral(3)) {
+            else ->  {
+            }
+        }
+
+        when (lval _: <implicit> = IntegerLiteral(4)) {
+            else ->  {
+            }
+        }
+
+         {
+            lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(2)).iterator#()
+            while(R|<local>/<iterator>|.hasNext#()) {
+                [IsForLoopParameterProperty=true] lval <unused var>: <implicit> = R|<local>/<iterator>|.next#()
+                 {
+                }
+
+            }
+
+        }
+
+         {
+            lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(2)).iterator#()
+            while(R|<local>/<iterator>|.hasNext#()) {
+                [IsForLoopParameterProperty=true] lval _: <implicit> = R|<local>/<iterator>|.next#()
+                 {
+                }
+
+            }
+
+        }
+
+        lval <destruct>: <implicit> = IntegerLiteral(1).to#(IntegerLiteral(2))
+        lval <unused var>: <implicit> = R|<local>/<destruct>|.component1#()
+        lval _: <implicit> = R|<local>/<destruct>|.component2#()
+         {
+            lval <iterator>: <implicit> = listOf#(IntegerLiteral(1).to#(IntegerLiteral(2))).iterator#()
+            while(R|<local>/<iterator>|.hasNext#()) {
+                [IsForLoopParameterProperty=true] lval <destruct>: <implicit> = R|<local>/<iterator>|.next#()
+                lval <unused var>: <implicit> = R|<local>/<destruct>|.component1#()
+                lval _: <implicit> = R|<local>/<destruct>|.component2#()
+                 {
+                }
+
+            }
+
+        }
+
+    }

@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.findSingleFunction
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 internal fun ModuleDescriptor.getTopLevelFunExtensionType(name: String): ClassDescriptor {
     return getTopLevelFun(name).extensionReceiverParameter?.type?.getErasedTypeClass()
@@ -37,3 +37,7 @@ internal fun ModuleDescriptor.getTopLevelProp(name: String): PropertyDescriptor 
 internal fun ModuleDescriptor.getClass(name: String): ClassDescriptor {
     return findClassAcrossModuleDependencies(ClassId.fromString(name)) ?: error("Failed to find `$name` class")
 }
+
+@K1Deprecation
+fun MemberScope.findSingleFunction(name: Name): FunctionDescriptor =
+    getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).single()

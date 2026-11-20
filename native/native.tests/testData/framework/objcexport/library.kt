@@ -16,3 +16,5 @@ fun readDataFromLibraryInterface(input: I): String {
 fun readDataFromLibraryEnum(input: E): String {
     return input.data
 }
+
+fun createKotlinSubclassOfNSObject(): KotlinSubclassOfNSObject = KotlinSubclassOfNSObject()

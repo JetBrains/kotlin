@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // FULL_JDK
@@ -57,6 +56,10 @@ abstract class F(override val length: Int) : java.lang.CharSequence, CharSequenc
     override fun get(index: Int): Char {
         return '1'
     }
+
+    override fun isEmpty(): Boolean {
+        return null!!
+    }
 }
 
 abstract class G : Java1(), KotlinInterface // Kotlin ← Java, Kotlin2 ← Kotlin3
@@ -87,6 +90,10 @@ abstract class I(override val length: Int) : java.lang.CharSequence, CharSequenc
 
     override fun get(index: Int): Char {
         return 'a'
+    }
+
+    override fun isEmpty(): Boolean {
+        return null!!
     }
 }
 

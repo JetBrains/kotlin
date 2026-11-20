@@ -11,9 +11,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 
-private const val BCV_PLUGIN_ID = "org.jetbrains.kotlinx.binary-compatibility-validator"
-private const val BCV_PLUGIN_LATEST_VERSION = "0.18.0"
-
 /**
  * Creates a test project with Kotlin Android Gradle Plugin.
  */
@@ -21,7 +18,6 @@ internal fun KGPBaseTest.androidProject(
     gradleVersion: GradleVersion,
     agpVersion: String,
     jdkVersion: JdkVersions.ProvidedJdk,
-    applyBcvPlugin: Boolean = false,
     buildCache: Boolean = false,
     configuration: TestProject.() -> Unit
 ) {
@@ -32,9 +28,6 @@ internal fun KGPBaseTest.androidProject(
         buildOptions = buildOptions,
         buildJdk = jdkVersion.location
     ) {
-        if (applyBcvPlugin) {
-            plugins { id(BCV_PLUGIN_ID).version(BCV_PLUGIN_LATEST_VERSION) }
-        }
         addKgpToBuildScriptCompilationClasspath()
     }
 
@@ -81,7 +74,6 @@ internal fun KGPBaseTest.kmpWithAndroidProject(
     gradleVersion: GradleVersion,
     agpVersion: String,
     jdkVersion: JdkVersions.ProvidedJdk,
-    applyBcvPlugin: Boolean = false,
     buildCache: Boolean = false,
     configuration: TestProject.() -> Unit
 ) {
@@ -91,10 +83,6 @@ internal fun KGPBaseTest.kmpWithAndroidProject(
         buildJdk = jdkVersion.location,
         buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, buildCacheEnabled = buildCache)
     ) {
-        if (applyBcvPlugin) {
-            plugins { id(BCV_PLUGIN_ID).version(BCV_PLUGIN_LATEST_VERSION) }
-        }
-
         buildScriptInjection {
             applyDefaultAndroidLibraryConfiguration()
 

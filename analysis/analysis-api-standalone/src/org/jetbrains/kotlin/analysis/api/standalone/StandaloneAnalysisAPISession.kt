@@ -9,19 +9,38 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 
-public class StandaloneAnalysisAPISession internal constructor(
-    kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
-    modulesWithFilesProvider: () -> Map<KaSourceModule, List<PsiFile>>
-) {
-    // TODO: better to limit exposure? Current usages are: addExtension, jarFileSystem
-    public val coreApplicationEnvironment: CoreApplicationEnvironment = kotlinCoreProjectEnvironment.environment
+/**
+ * Standalone Analysis API environment.
+ *
+ * [StandaloneAnalysisAPISession] is the main entity of the standalone Analysis API.
+ * Users are expected to set it up through [buildStandaloneAnalysisAPISession] and
+ * then use [modulesWithFiles] or [allModules] as anchors for calling the
+ * [analyze][org.jetbrains.kotlin.analysis.api.session.analyze] entrypoint.
+ *
+ * Each analyzed project is supposed to have a single [StandaloneAnalysisAPISession] instance
+ * that represents the given project structure.
+ */
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface StandaloneAnalysisAPISession {
+    public val application: Application
 
-    public val application: Application = kotlinCoreProjectEnvironment.environment.application
+    public val project: Project
 
-    public val project: Project = kotlinCoreProjectEnvironment.project
+    /**
+     * Maps [KaSourceModule] subset of [allModules] to the represented [PsiFile]s.
+     */
+    public val modulesWithFiles: Map<KaSourceModule, List<PsiFile>>
 
-    public val modulesWithFiles: Map<KaSourceModule, List<PsiFile>> by lazy(modulesWithFilesProvider)
+    /**
+     * All [KaModule]s registered by the user, excluding [KaNotUnderContentRootModule]s and the built-ins module.
+     */
+    public val allModules: List<KaModule>
+
+    @KaImplementationDetail
+    public val coreApplicationEnvironment: CoreApplicationEnvironment
 }

@@ -17,6 +17,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
@@ -33,8 +34,11 @@ internal class KotlinArchiveEntry(
     @get:Input
     val pathPrefix: Provider<String>,
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val files: FileCollection,
+    @get:Input
+    val filesRequireUnpacking: Boolean = false,
 )
 
 internal class KotlinArchiveTargetCrossCompilationCheckData(
@@ -49,6 +53,7 @@ internal class KotlinArchiveTargetCrossCompilationCheckData(
      * from [crossCompilationData].
      */
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.NONE)
     val crossCompilationMetadata: FileCollection = crossCompilationData.files
 }
@@ -60,14 +65,17 @@ internal fun KotlinArchiveTargetCrossCompilationCheckData.isSupported(): Boolean
 @DisableCachingByDefault(because = "Assembling a Kotlin Archive is not worth caching, as it's only built for publishing, which is a rare operation")
 internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     private val fileOperations: FileOperations,
+    private val archiveOperations: ArchiveOperations,
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
     @get:Nested
     abstract val archiveContents: ListProperty<KotlinArchiveEntry>
 
     private fun kotlinArchiveEntryOf(path: String, files: FileCollection) = KotlinArchiveEntry(project.provider { path }, files)
 
-    fun addPlatformKlib(path: String, files: FileCollection) {
-        archiveContents.add(kotlinArchiveEntryOf("${KarLayout.PLATFORM_KLIBS_DIRECTORY_NAME}/$path", files))
+    fun addPlatformKlib(path: String, files: FileCollection, packed: Boolean = false) {
+        archiveContents.add(
+            KotlinArchiveEntry(project.provider { "${KarLayout.PLATFORM_KLIBS_DIRECTORY_NAME}/$path" }, files, packed)
+        )
     }
 
     fun addCInterop(pathProvider: Provider<String>, files: FileCollection) {
@@ -83,6 +91,7 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     }
 
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val projectStructureMetadataFile: RegularFileProperty
 
@@ -93,6 +102,7 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
      */
     @get:Optional
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val swiftExportMetadataFile: RegularFileProperty
 
@@ -174,7 +184,12 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
         fileOperations.sync { spec ->
             spec.into(targetDir)
             for (input in archiveContents.get()) {
-                spec.from(input.files) { inputSpec ->
+                val content = if (input.filesRequireUnpacking) {
+                    input.files.files.filter { it.exists() }.map { archiveOperations.zipTree(it) }
+                } else {
+                    listOf(input.files)
+                }
+                spec.from(content) { inputSpec ->
                     inputSpec.into(input.pathPrefix)
                 }
             }
@@ -218,6 +233,7 @@ internal abstract class PackKotlinArchiveTask @Inject constructor(
     private val fileOperations: FileOperations,
 ) : DefaultTask() {
     @get:InputDirectory
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val assembledKarDirectory: DirectoryProperty
 

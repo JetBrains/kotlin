@@ -31,11 +31,8 @@ internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageC
  * order.
  */
 internal fun ModuleDescriptor.getExportedDependenciesInCanonicalRTO(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> {
-    val libraryReverseTopoRank: Map<KotlinLibrary, Int> = config.cacheSupport.klibDag.librariesReverseTopoSorted
-            .mapIndexed { index, library -> library to index }
-            .toMap()
     return getExportedDependencies(config).sortedBy { module ->
-        libraryReverseTopoRank.getValue((module.klibModuleOrigin as DeserializedKlibModuleOrigin).library)
+        config.klibDag.libraryReverseTopoRank.getValue((module.klibModuleOrigin as DeserializedKlibModuleOrigin).library)
     }
 }
 

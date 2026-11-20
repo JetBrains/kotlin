@@ -104,7 +104,7 @@ class FirSessionConfigurator(private val session: FirSession) {
     fun configure() {
         var extensions = registeredExtensions.reduce(BunchOfRegisteredExtensions::plus)
         if (session.kind == FirSession.Kind.Library) {
-            val filteredExtensions = extensions.extensions.filterKeys { it in FirExtensionRegistrar.ALLOWED_EXTENSIONS_FOR_LIBRARY_SESSION }
+            val filteredExtensions = extensions.extensions.filterKeys { FirExtensionRegistrar.isLibrarySessionAllowedExtension(it) }
             extensions = BunchOfRegisteredExtensions(filteredExtensions, diagnosticsContainers = emptyList())
         }
         session.extensionService.registerExtensions(extensions)

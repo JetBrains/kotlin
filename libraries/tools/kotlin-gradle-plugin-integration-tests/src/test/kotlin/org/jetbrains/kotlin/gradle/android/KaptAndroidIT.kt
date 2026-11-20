@@ -13,6 +13,9 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KaptBaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
@@ -20,7 +23,10 @@ import kotlin.io.path.writeText
 
 @DisplayName("Android with kapt tests")
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCompilerPlugins
 class KaptAndroidIT : KaptBaseIT() {
+    @TestMetadata("kapt/kt15001")
     @DisplayName("KT-15001")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -32,7 +38,7 @@ class KaptAndroidIT : KaptBaseIT() {
         project(
             "kt15001".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug") {
@@ -41,6 +47,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/icAnonymousTypes")
     @DisplayName("KT-25374: kapt doesn't fail with anonymous classes with IC")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -61,7 +68,7 @@ class KaptAndroidIT : KaptBaseIT() {
                 """.trimMargin()
             )
 
-            build("assembleDebug", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
+            build("assembleDebug") {
                 assertKaptSuccessful()
             }
 
@@ -75,6 +82,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/android-dagger")
     @DisplayName("static dsl options are passed to kapt")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -86,7 +94,7 @@ class KaptAndroidIT : KaptBaseIT() {
         project(
             "android-dagger".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             subProject("app").buildGradle.appendText(
@@ -112,8 +120,10 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/android-dagger")
     @DisplayName("KT-45532: kapt tasks shouldn't create outputs at configuration time")
     @GradleAndroidTest
+    @MustRunOnChangesInGradle
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun kaptTasksShouldNotCreateOutputsOnConfigurationPhase(
         gradleVersion: GradleVersion,
@@ -123,7 +133,7 @@ class KaptAndroidIT : KaptBaseIT() {
         project(
             "android-dagger".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             build("--dry-run", "assembleDebug") {
@@ -133,6 +143,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("AndroidLibraryKotlinProject")
     @DisplayName("KT-31127: kapt doesn't break JavaCompile when using Filer API")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -144,7 +155,7 @@ class KaptAndroidIT : KaptBaseIT() {
         project(
             "AndroidLibraryKotlinProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             // Remove the once minimal supported AGP version will be 8.1.0: https://issuetracker.google.com/issues/260059413
@@ -191,6 +202,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("AndroidProject")
     @DisplayName("kapt uses AGP annotation processor option providers as nested inputs")
     @GradleAndroidTest
     fun testKaptUsingApOptionProvidersAsNestedInputOutput(
@@ -259,6 +271,8 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("AndroidProject")
+    @MustRunOnChangesInGradle
     @DisplayName("agp annotation processor nested arguments are not evaluated at configuration time")
     @GradleAndroidTest
     fun testAgpNestedArgsNotEvaluatedDuringConfiguration(
@@ -295,7 +309,6 @@ class KaptAndroidIT : KaptBaseIT() {
 
             build(
                 ":Android:kaptFlavor1DebugKotlin", "--dry-run",
-                buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion),
             )
 
             build(
@@ -305,6 +318,8 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/android-dagger")
+    @MustRunOnChangesInGradle
     @DisplayName("KT-55334: Kapt generate stubs and related KotlinCompile tasks are using similar -module-name value")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -316,7 +331,7 @@ class KaptAndroidIT : KaptBaseIT() {
         project(
             "kapt/android-dagger",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             build(":app:compileDebugAndroidTestKotlin") {
@@ -342,6 +357,8 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @TestMetadata("kapt/noProcessors")
+    @MustRunOnChangesInGradle
     @DisplayName("KT-71233 Kapt does not cause build to fail if no annotation processors are defined")
     @GradleAndroidTest
     fun testNoProcessors(
@@ -358,8 +375,7 @@ class KaptAndroidIT : KaptBaseIT() {
                         includeCompileClasspath = true,
                     ),
                     androidVersion = agpVersion,
-                )
-                .suppressAgpWarningIsProperty(gradleVersion),
+                ),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug") {

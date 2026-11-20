@@ -27,7 +27,26 @@ KaFunctionType:
       hasFlexibleNullability: false
   ]
   parameters: [
-    KaBaseFunctionValueParameter [name: xx, type: kotlin/IntArray]
+    KaFunctionValueParameter:
+      name: xx
+      type: KaUsualClassType:
+        abbreviation: null
+        annotations: [
+          kotlin/ParameterName(name = "xx")
+            psi: null
+        ]
+        classId: kotlin/IntArray
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: IntArray
+            symbol: KaNamedClassSymbol(kotlin/IntArray)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(kotlin/IntArray)
+        typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
   ]
   qualifiers: [
     KaResolvedClassTypeQualifier:

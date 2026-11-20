@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.lookupTracker
+import org.jetbrains.kotlin.fir.recordClassLikeLookup
 import org.jetbrains.kotlin.fir.recordNameLookup
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNestedClassAccessedViaInstanceReference
@@ -186,6 +187,7 @@ private fun BodyResolveComponents.continueQualifierInPackage(
 
     val classId = ClassId.topLevel(childFqName)
     val symbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
+    session.lookupTracker?.recordClassLikeLookup(classId, qualifiedAccess.source, file.source)
     val collector = FirTypeCandidateCollector(session, file, containingDeclarations)
     collector.processCandidate(
         symbol,

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.kapt.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt.base.incremental.INCREMENTAL_ANNOTATION_MARKERS_FILE
 import org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt.base.incremental.parseIncrementalProcessorDeclarations
+import org.jetbrains.kotlin.kapt.base.util.ClassTrackingURLClassLoader
 import org.jetbrains.kotlin.kapt.base.util.JdkOnlyParentClassLoader
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.base.util.findClassLoaderWithJavac
@@ -46,7 +47,7 @@ class ProcessorLoaderImpl(private val options: KaptOptions, private val logger: 
         } else {
             parentClassLoader
         }
-        val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), effectiveParentClassLoader)
+        val classLoader = ClassTrackingURLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), effectiveParentClassLoader)
         this.annotationProcessingClassLoader = classLoader
 
         val classpathScan = scanClasspath(classpath)

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue.ENABLED
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
@@ -27,9 +29,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @DisplayName("Compose compiler Gradle plugin")
+@MustRunOnChangesInCompilerPlugins
 class ComposeIT : KGPBaseTest() {
 
     @DisplayName("Should work correctly when compose in Android is enabled")
+    @MustRunOnChangesInGradle
     @AndroidGradlePluginTests
     @GradleAndroidTest
     @TestMetadata("AndroidSimpleComposeApp")
@@ -43,8 +47,7 @@ class ComposeIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
         ) {
             build("assembleDebug") {
                 assertOutputContains("Detected Android Gradle Plugin compose compiler configuration")
@@ -53,6 +56,7 @@ class ComposeIT : KGPBaseTest() {
     }
 
     @DisplayName("Should not break build cache relocation")
+    @MustRunOnChangesInGradle
     @AndroidGradlePluginTests
     @GradleAndroidTest
     @TestMetadata("AndroidSimpleComposeApp")
@@ -77,8 +81,7 @@ class ComposeIT : KGPBaseTest() {
         )
 
         project1.build(
-            "assembleDebug",
-            buildOptions = project1.buildOptions.suppressAgpWarningIsProperty(gradleVersion)
+            "assembleDebug"
         ) {
             assertTasksExecuted(":compileDebugKotlin")
         }
@@ -120,6 +123,7 @@ class ComposeIT : KGPBaseTest() {
     }
 
     @DisplayName("Should not suggest apply Kotlin compose plugin in JB Compose plugin")
+    @MustRunOnChangesInGradle
     @AndroidGradlePluginTests
     @GradleAndroidTest
     @TestMetadata("JBComposeApp")
@@ -195,8 +199,7 @@ class ComposeIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
         ) {
             buildGradle.modify { originalBuildScript ->
                 """
@@ -312,11 +315,7 @@ class ComposeIT : KGPBaseTest() {
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion, kotlinVersion = "1.9.21")
-                .suppressDeprecationWarningsSinceGradleVersion(
-                    TestVersions.Gradle.G_8_14,
-                    gradleVersion,
-                    "Old Kotlin release produces deprecation warning"
-                )
+                .suppressDeprecationWarnings("Old Kotlin release produces deprecation warning")
         ) {
             val composeBase = projectPath.resolve("src/main/kotlin/com/example/Compose.kt").createFile()
             composeBase.writeText(
@@ -552,7 +551,7 @@ class ComposeIT : KGPBaseTest() {
                 androidVersion = agpVersion,
                 buildCacheEnabled = true,
                 configurationCache = ENABLED
-            ).suppressAgpWarningIsProperty(gradleVersion)
+            )
         ) {
             buildScriptInjection {
                 val appExtension = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
@@ -640,6 +639,7 @@ class ComposeIT : KGPBaseTest() {
     @DisplayName("Minified app with disabled mapping does not run Compose tasks.")
     @AndroidGradlePluginTests
     @GradleAndroidTest
+    @MustRunOnChangesInGradle
     @DisabledOnOs(
         OS.WINDOWS, disabledReason = "AGP contains a bug that prevents test output files from being cleaned up on Windows. " +
                 "See: https://issuetracker.google.com/issues/445967244"
@@ -655,8 +655,7 @@ class ComposeIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
         ) {
             buildScriptInjection {
                 val appExtension = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
@@ -764,7 +763,8 @@ class ComposeIT : KGPBaseTest() {
     @DisplayName($$"Ensure that older versions of the compiler can access the backing field of a $stable property")
     @GradleAndroidTest
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_813, maxVersion = TestVersions.AGP.AGP_813)
-    @GradleTestVersions(minVersion = GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST, maxVersion = GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST)
+    // Gradle version known to be compatible with Kotlin 2.3.10
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_9_3, maxVersion = TestVersions.Gradle.G_9_3)
     @OtherGradlePluginTests
     @TestMetadata("composeMultiModule")
     fun testOlderCompilerCanAccessBackingFieldOfStableProperty(
@@ -854,8 +854,5 @@ class ComposeIT : KGPBaseTest() {
         private const val LEGACY_OPEN_FUNCTION_WARNING =
             "Detected a @Composable function that overrides an open function compiled with older compiler that is known to crash " +
                     "at runtime."
-
-        // Gradle version known to be compatible with Kotlin 2.3.10
-        private const val GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST = TestVersions.Gradle.G_9_3
     }
 }

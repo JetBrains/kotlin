@@ -49,9 +49,6 @@ internal class JvmDefaultParameterInjector(context: JvmBackendContext) : Default
         function is IrConstructor ||
                 function.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
 
-    override fun isStatic(function: IrFunction): Boolean =
-        function.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
-
     override fun IrBlockBuilder.argumentsForCall(
         expression: IrFunctionAccessExpression, stubFunction: IrFunction
     ): Map<IrValueParameter, IrExpression?> {

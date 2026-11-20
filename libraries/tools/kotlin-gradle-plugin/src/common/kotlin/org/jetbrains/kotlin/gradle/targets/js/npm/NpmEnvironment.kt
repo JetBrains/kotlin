@@ -6,14 +6,17 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
+@ObsoleteNpmDependencyModel
 data class NpmEnvironment(
     val executable: String,
     val ignoreScripts: Boolean,
     val standalone: Boolean,
-    val overrides: List<NpmOverride>
+    val overrides: List<NpmOverride>,
 ) : PackageManagerEnvironment
 
+@get:ObsoleteNpmDependencyModel
 internal val NpmEnv.asNpmEnvironment
     get() = NpmEnvironment(
         executable,

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
@@ -17,8 +19,10 @@ import kotlin.test.fail
 
 @MppGradlePluginTests
 @DisplayName("Multiplatform Build Reproducibility")
+@MustRunOnChangesInGradle
 class MPPBuildReproducibilityIT : KGPBaseTest() {
 
+    @TestMetadata("MPPBuildReproducibility/simpleMultiplatformProject")
     @GradleTest
     @DisplayName("Check if consecutive builds produce same binaries: Simple Multiplatform project")
     fun `test simpleMultiplatformProject`(gradleVersion: GradleVersion) {

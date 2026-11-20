@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import lombok.extern.java.Log
 import lombok.extern.slf4j.Slf4j
 import lombok.NoArgsConstructor
@@ -22,3 +23,5 @@ class NoArgsConstructorExample(var x: Int) {
         make()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

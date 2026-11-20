@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -19,8 +20,10 @@ import kotlin.io.path.appendText
 import kotlin.test.assertEquals
 
 @DisplayName("Tasks configuration avoidance")
+@MustRunOnChangesInGradle
 class ConfigurationAvoidanceIT : KGPBaseTest() {
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("JVM unrelated tasks are not configured")
     @GradleTest
@@ -41,6 +44,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("KGP/Jvm does not eagerly configure any tasks")
     @GradleTest
@@ -53,6 +57,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kapt/simple")
     @OtherGradlePluginTests
     @DisplayName("KGP/Kapt does not eagerly configure any tasks")
     @GradleTest
@@ -65,6 +70,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidProject")
     @AndroidGradlePluginTests
     @DisplayName("Android unrelated tasks are not configured")
     @GradleAndroidTest
@@ -94,17 +100,13 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
                     ":Test" to setOf("clean"),
                 ),
                 configuredTasks()
-                    .buildAndReturn(
-                        "--dry-run",
-                        deriveBuildOptions = {
-                            buildOptions.suppressAgpWarningIsProperty(gradleVersion)
-                        }
-                    ),
+                    .buildAndReturn("--dry-run"),
             )
             build("help")
         }
     }
 
+    @TestMetadata("kotlin-js-plugin-project")
     @JsGradlePluginTests
     @DisplayName("JS unrelated tasks are not configured")
     @GradleTest
@@ -117,6 +119,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-lib-and-app/sample-app")
     @MppGradlePluginTests
     @DisplayName("MPP unrelated tasks are not configured")
     @GradleTest
@@ -184,6 +187,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         return@buildScriptReturn configuredTasks
     }
 
+    @TestMetadata("kotlinProject")
     @JvmGradlePluginTests
     @DisplayName("JVM early configuration resolution")
     @GradleTest

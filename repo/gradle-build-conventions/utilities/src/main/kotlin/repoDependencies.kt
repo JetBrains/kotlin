@@ -88,83 +88,11 @@ fun Project.kotlinTest(suffix: String? = null, classifier: String? = null): Any 
     return dependencies.project(":kotlin-test", configuration)
 }
 
-enum class JpsDepScope {
-    COMPILE, TEST, RUNTIME, PROVIDED
-}
-
 @Suppress("unused") // Used in cooperative mode with IDEA Kotlin plugin
 fun Project.disableDependencyVerification() {
     configurations.all {
         resolutionStrategy {
             disableDependencyVerification()
-        }
-    }
-}
-
-fun DependencyHandler.jpsLikeJarDependency(
-    dependencyNotation: Any,
-    scope: JpsDepScope,
-    dependencyConfiguration: (ModuleDependency.() -> Unit)? = null,
-    exported: Boolean = false
-) {
-    when (scope) {
-        JpsDepScope.COMPILE -> {
-            if (exported) {
-                add("api", dependencyNotation, dependencyConfiguration)
-                add("testApi", dependencyNotation, dependencyConfiguration)
-            } else {
-                add("implementation", dependencyNotation, dependencyConfiguration)
-            }
-        }
-        JpsDepScope.TEST -> {
-            if (exported) {
-                add("testApi", dependencyNotation, dependencyConfiguration)
-            } else {
-                add("testImplementation", dependencyNotation, dependencyConfiguration)
-            }
-        }
-        JpsDepScope.RUNTIME -> {
-            add("testRuntimeOnly", dependencyNotation, dependencyConfiguration)
-        }
-        JpsDepScope.PROVIDED -> {
-            if (exported) {
-                add("compileOnlyApi", dependencyNotation, dependencyConfiguration)
-                add("testApi", dependencyNotation, dependencyConfiguration)
-            } else {
-                add("compileOnly", dependencyNotation, dependencyConfiguration)
-                add("testImplementation", dependencyNotation, dependencyConfiguration)
-            }
-        }
-    }
-}
-
-@Suppress("unused") // Used in cooperative mode with IDEA Kotlin plugin
-fun DependencyHandler.jpsLikeModuleDependency(moduleName: String, scope: JpsDepScope, exported: Boolean = false) {
-    jpsLikeJarDependency(project(moduleName), scope, exported = exported)
-    when (scope) {
-        JpsDepScope.COMPILE -> {
-            if (exported) {
-                add("testApi", testFixtures(project(moduleName)))
-            } else {
-                add("testImplementation", testFixtures(project(moduleName)))
-            }
-        }
-        JpsDepScope.TEST -> {
-            if (exported) {
-                add("testApi", testFixtures(project(moduleName)))
-            } else {
-                add("testImplementation", testFixtures(project(moduleName)))
-            }
-        }
-        JpsDepScope.RUNTIME -> {
-            add("runtimeOnly", testFixtures(project(moduleName)))
-        }
-        JpsDepScope.PROVIDED -> {
-            if (exported) {
-                add("testApi", testFixtures(project(moduleName)))
-            } else {
-                add("testImplementation", testFixtures(project(moduleName)))
-            }
         }
     }
 }

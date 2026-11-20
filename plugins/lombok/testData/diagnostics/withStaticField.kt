@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83217
 
 // FILE: TestJava.java
@@ -26,3 +27,5 @@ public class TestJavaUsage {
 fun main() {
     TestJava("a").<!UNRESOLVED_REFERENCE!>withStaticField<!>("")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

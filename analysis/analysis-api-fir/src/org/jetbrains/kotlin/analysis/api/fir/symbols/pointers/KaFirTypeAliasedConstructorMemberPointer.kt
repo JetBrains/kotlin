@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
@@ -36,7 +35,7 @@ internal class KaFirTypeAliasedConstructorMemberPointer(
     private val ownerPointer: KaSymbolPointer<KaTypeAliasSymbol>,
     private val signature: FirCallableSignature,
     originalSymbol: KaConstructorSymbol?,
-) : KaBaseCachedSymbolPointer<KaConstructorSymbol>(originalSymbol) {
+) : KaFirCachedSymbolPointer<KaConstructorSymbol>(originalSymbol) {
     override fun restoreIfNotCached(analysisSession: KaSession): KaConstructorSymbol? {
         require(analysisSession is KaFirSession)
         val scope = with(analysisSession) {

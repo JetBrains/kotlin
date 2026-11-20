@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DevelocitySettings">
+    <option name="version" value="4" />
     <option name="buildScanIntegration" value="DEVELOCITY" />
-    <option name="develocityUrl" value="https://ge.jetbrains.com" />
+    <option name="develocityUrl" value="https://develocity.jetbrains.com" />
   </component>
 </project>

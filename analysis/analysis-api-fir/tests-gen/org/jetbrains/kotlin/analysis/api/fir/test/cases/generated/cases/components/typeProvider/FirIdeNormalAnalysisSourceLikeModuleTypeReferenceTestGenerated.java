@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeProvider.AbstractTypeReferenceTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -137,6 +137,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeReferenceTestGenerated exte
   @TestMetadata("danglingAnnotationInsideEnumEntry.kt")
   public void testDanglingAnnotationInsideEnumEntry() {
     run("danglingAnnotationInsideEnumEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingTypeConstraintBound.kt")
+  public void testDanglingTypeConstraintBound() {
+    run("danglingTypeConstraintBound.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingTypeConstraintBoundTypeArgument.kt")
+  public void testDanglingTypeConstraintBoundTypeArgument() {
+    run("danglingTypeConstraintBoundTypeArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingTypeConstraintUsage.kt")
+  public void testDanglingTypeConstraintUsage() {
+    run("danglingTypeConstraintUsage.kt");
   }
 
   @Test

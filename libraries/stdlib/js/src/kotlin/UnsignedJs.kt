@@ -100,43 +100,28 @@ internal actual inline fun ulongToString(value: Long): String = ulongToString(va
 // The function call will be replaced by the compiler depends on the Long representation (bigint vs boxed)
 @UsedFromCompilerGeneratedCode
 internal fun ulongFromUnsignedSafeDouble(value: Double): ULong =
-// TODO: Throw an exception after the bootstrap update
-//    throw IllegalStateException("Should be replaced by compiler")
-    @OptIn(BoxedLongApi::class)
-    kotlin.js.internal.boxedLong.ulongFromUnsignedSafeDouble(value)
+    throw IllegalStateException("Should be replaced by compiler")
 
 @PublishedApi
 @UsedFromCompilerGeneratedCode
 // The function call will be replaced by the compiler depends on the Long representation (bigint vs boxed)
 internal actual fun ulongDivide(v1: ULong, v2: ULong): ULong =
-// TODO(KT-88679): Throw an exception after the bootstrap update
-//    throw IllegalStateException("Should be replaced by compiler")
-    @OptIn(BoxedLongApi::class)
-    kotlin.js.internal.boxedLong.ulongDivide(v1, v2)
+    throw IllegalStateException("Should be replaced by compiler")
 
 @PublishedApi
 @UsedFromCompilerGeneratedCode
 // The function call will be replaced by the compiler depends on the Long representation (bigint vs boxed)
 internal actual fun ulongRemainder(v1: ULong, v2: ULong): ULong =
-// TODO(KT-88679): Throw an exception after the bootstrap update
-//    throw IllegalStateException("Should be replaced by compiler")
-    @OptIn(BoxedLongApi::class)
-    kotlin.js.internal.boxedLong.ulongRemainder(v1, v2)
+    throw IllegalStateException("Should be replaced by compiler")
 
 @PublishedApi
 @UsedFromCompilerGeneratedCode
 // The function call will be replaced by the compiler depends on the Long representation (bigint vs boxed)
 internal actual fun ulongToDouble(value: Long): Double =
-// TODO(KT-88679): Throw an exception after the bootstrap update
-//    throw IllegalStateException("Should be replaced by compiler")
-    @OptIn(BoxedLongApi::class)
-    kotlin.js.internal.boxedLong.ulongToDouble(value)
+    throw IllegalStateException("Should be replaced by compiler")
 
 @UsedFromCompilerGeneratedCode
 // The function call will be replaced by the compiler depends on the Long representation (bigint vs boxed)
 internal actual fun ulongToString(value: Long, base: Int): String =
-// TODO(KT-88679): Throw an exception after the bootstrap update
-//    throw IllegalStateException("Should be replaced by compiler")
-    @OptIn(BoxedLongApi::class)
-    kotlin.js.internal.boxedLong.ulongToString(value, base)
+    throw IllegalStateException("Should be replaced by compiler")
 

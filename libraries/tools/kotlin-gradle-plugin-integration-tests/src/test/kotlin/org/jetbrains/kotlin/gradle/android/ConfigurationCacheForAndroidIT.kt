@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.gradle.android
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.AbstractConfigurationCacheIT
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Configuration cache in Android project")
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
 class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
 
+    @TestMetadata("kapt/android-dagger")
     @DisplayName("works in android plus kapt project")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -67,6 +71,7 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("AndroidProject")
     @DisplayName("works in android project")
     @GradleAndroidTest
     fun testKotlinAndroidProject(
@@ -88,6 +93,7 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("AndroidIncrementalMultiModule")
     @DisplayName("works with android tests")
     @GradleAndroidTest
     fun testKotlinAndroidProjectTests(

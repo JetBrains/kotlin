@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import java.io.File
 
 class ProcessRunResult(
@@ -21,7 +22,7 @@ class ProcessRunResult(
         """
         |Executing process was ${if (isSuccessful) "successful" else "unsuccessful"}
         |    Command: ${cmd.joinToString()}
-        |    Working directory: ${workingDir.absolutePath}
+        |    Working directory: ${workingDir.normalizedAbsolutePath().toString()}
         |    Exit code: $exitCode
         """.trimMargin()
 }

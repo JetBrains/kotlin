@@ -20,11 +20,8 @@ sealed class FirDeclarationOrigin(
     object Precompiled : FirDeclarationOrigin() // currently used for incremental compilation
     object BuiltIns : FirDeclarationOrigin()
     object BuiltInsFallback : FirDeclarationOrigin()
-    sealed class Java(
-        displayName: String,
-        fromSource: Boolean = false,
-        generated: Boolean = false,
-    ) : FirDeclarationOrigin(displayName, fromSource = fromSource, generated = generated) {
+    sealed class Java(displayName: String, fromSource: Boolean = false, generated: Boolean = false) :
+        FirDeclarationOrigin(displayName, fromSource = fromSource, generated = generated) {
         object Source : Java("Java(Source)", fromSource = true)
         object Library : Java("Java(Library)")
         class Plugin(val key: GeneratedDeclarationKey) : Java(displayName = "Java(Plugin[$key])", generated = true) {
@@ -36,6 +33,8 @@ sealed class FirDeclarationOrigin(
 
             override fun hashCode(): Int = key.hashCode()
         }
+
+        val sourceOrGenerated: Boolean get() = fromSource || generated
     }
 
     val isBuiltIns: Boolean get() = this == BuiltIns || this == BuiltInsFallback
@@ -44,6 +43,7 @@ sealed class FirDeclarationOrigin(
         object DataClassMember : Synthetic(generatedAnyMethod = true)
         object InlineClassMember : Synthetic(generatedAnyMethod = true)
         object FullValueClassMember : Synthetic(generatedAnyMethod = true)
+        object RichErrorClassMember : Synthetic(generatedAnyMethod = true)
         object JavaProperty : Synthetic()
         object DelegateField : Synthetic()
         object PluginFile : Synthetic()
@@ -52,9 +52,29 @@ sealed class FirDeclarationOrigin(
         object TypeAliasConstructor : Synthetic()
         object FakeFunction : Synthetic()
         object ForwardDeclaration : Synthetic()
-        object ScriptTopLevelDestructuringDeclarationContainer : Synthetic()
+
+        /**
+         * The container of a destructuring declaration that is not a statement of a body: a script top-level one, or a top-level or
+         * member one outside of scripts. It holds the initializer and the annotations of the declaration, and the entries are
+         * initialized from it.
+         *
+         * A script top-level container is a local variable of the script. A container outside of scripts is a private property: such
+         * declarations are not allowed (`NON_LOCAL_DESTRUCTURING_DECLARATION`), but their entries are still desugared into properties.
+         * Containers of local destructuring declarations have the [Source] origin.
+         */
+        object DestructuringDeclarationContainer : Synthetic()
         object FakeHiddenInPreparationForNewJdk : Synthetic()
         object ImplicitWhenSubject : Synthetic()
+
+        /**
+         * A type parameter created for a `where` constraint whose subject is not a declared type parameter of the declaration,
+         * as if it were declared. It follows the declared type parameters, its source is a
+         * [KtFakeSourceElementKind.DanglingTypeParameter][org.jetbrains.kotlin.KtFakeSourceElementKind.DanglingTypeParameter] one on
+         * the first constraint subject with its name, and its bounds and annotations come from all constraints with this subject.
+         *
+         * Such type parameters are reported as `NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER`.
+         */
+        object DanglingTypeParameter : Synthetic()
 
         // REPL synthetic constructs.
         object ReplContainerClass : Synthetic()
@@ -63,7 +83,30 @@ sealed class FirDeclarationOrigin(
 
     object DynamicScope : FirDeclarationOrigin()
     object SamConstructor : FirDeclarationOrigin()
-    object Enhancement : FirDeclarationOrigin()
+    sealed class Enhancement(displayName: String, generated: Boolean) : FirDeclarationOrigin(displayName, generated = generated) {
+        class Plugin(val key: GeneratedDeclarationKey) : Enhancement(displayName = "Enhancement(Plugin[$key])", generated = true) {
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (other !is Java.Plugin) return false
+                return key == other.key
+            }
+
+            override fun hashCode(): Int = key.hashCode()
+        }
+
+        companion object : Enhancement(displayName = "Enhancement", generated = false)
+    }
+
+    companion object {
+        private fun Enhancement(key: GeneratedDeclarationKey? = null): Enhancement = key?.let { Enhancement.Plugin(key) } ?: Enhancement
+
+        fun Enhancement(origin: FirDeclarationOrigin): Enhancement = when (origin) {
+            is Plugin -> Enhancement(origin.key)
+            is Java.Plugin -> Enhancement(origin.key)
+            else -> Enhancement
+        }
+    }
+
     object ImportedFromObjectOrStatic : FirDeclarationOrigin()
     sealed class SubstitutionOverride(displayName: String) : FirDeclarationOrigin(displayName, fromSupertypes = true) {
         object DeclarationSite : SubstitutionOverride("SubstitutionOverride(DeclarationSite)")

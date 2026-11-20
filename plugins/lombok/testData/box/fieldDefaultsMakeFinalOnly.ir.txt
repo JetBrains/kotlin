@@ -1,0 +1,25 @@
+FILE fqName:<root> fileName:/main.kt
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:example type:<root>.MakeFinalExample [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.MakeFinalExample' type=<root>.MakeFinalExample origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=1
+        ARG actual: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:defaultField type:kotlin.Int visibility:public/*package*/ declared in <root>.MakeFinalExample' type=kotlin.Int superQualifierSymbol=<root>.MakeFinalExample origin=null
+          receiver: GET_VAR 'val example: <root>.MakeFinalExample declared in <root>.box' type=<root>.MakeFinalExample origin=null
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nonFinalField type:kotlin.Int visibility:public/*package*/ declared in <root>.MakeFinalExample' type=kotlin.Unit superQualifierSymbol=<root>.MakeFinalExample origin=EQ
+        receiver: GET_VAR 'val example: <root>.MakeFinalExample declared in <root>.box' type=<root>.MakeFinalExample origin=null
+        value: CONST Int type=kotlin.Int value=20
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=20
+        ARG actual: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nonFinalField type:kotlin.Int visibility:public/*package*/ declared in <root>.MakeFinalExample' type=kotlin.Int superQualifierSymbol=<root>.MakeFinalExample origin=null
+          receiver: GET_VAR 'val example: <root>.MakeFinalExample declared in <root>.box' type=<root>.MakeFinalExample origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=3
+        ARG actual: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:publicField type:kotlin.Int visibility:public declared in <root>.MakeFinalExample' type=kotlin.Int superQualifierSymbol=<root>.MakeFinalExample origin=null
+          receiver: GET_VAR 'val example: <root>.MakeFinalExample declared in <root>.box' type=<root>.MakeFinalExample origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

@@ -141,11 +141,6 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsVars newVar(@NotNull JsName name, @Nullable JsExpression expr) {
-        return new JsVars(JsVars.Variant.Var, new JsVars.JsVar(name, expr));
-    }
-
-    @NotNull
     public static JsExpression newSequence(@NotNull List<JsExpression> expressions) {
         assert !expressions.isEmpty();
         if (expressions.size() == 1) {

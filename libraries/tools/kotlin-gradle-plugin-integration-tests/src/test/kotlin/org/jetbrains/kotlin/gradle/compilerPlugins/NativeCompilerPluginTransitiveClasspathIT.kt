@@ -13,17 +13,23 @@ import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.project
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
 @DisplayName("Native compiler plugin transitive classpath")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCompilerInfrastructure
 @OsCondition(
     supportedOn = [OS.MAC, OS.LINUX],
     enabledOnCI = [OS.MAC, OS.LINUX],
 )
 class NativeCompilerPluginTransitiveClasspathIT : KGPBaseTest() {
 
+    @TestMetadata("nativeCompilerPluginTransitiveClassPath")
     @DisplayName("Native compiler plugin classpath includes transitive dependencies")
     @GradleTest
     fun testNativeCompilerPluginTransitiveClasspath(

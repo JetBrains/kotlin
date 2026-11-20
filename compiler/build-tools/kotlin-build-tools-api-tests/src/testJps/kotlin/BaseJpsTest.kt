@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrementalCache
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrementalCompilationComponents
-import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerPackagePartData
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerTargetId
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.operations.jpsManagedIcConfigurationBuilder
@@ -42,13 +41,7 @@ internal fun Path.relativeToModule(fixtureName: String): String = toString().rel
 /** A cache that records nothing and knows nothing; the default for tracker-only tests. */
 internal open class EmptyIncrementalCache : CompilerIncrementalCache {
     override fun getObsoletePackageParts(): Collection<String> = emptyList()
-    override fun getObsoleteMultifileClasses(): Collection<String> = emptyList()
-    override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>? = null
-    override fun getPackagePartData(partInternalName: String): CompilerPackagePartData? = null
     override fun getModuleMappingData(): ByteArray? = null
-    override fun getMetadata(fragmentName: String): Map<String, ByteArray> = emptyMap()
-    override fun getClassFilePath(internalClassName: String): String = "$internalClassName.class"
-    override fun close() {}
 }
 
 internal open class SingleCacheComponents(private val cache: CompilerIncrementalCache = EmptyIncrementalCache()) :
@@ -94,19 +87,6 @@ internal class RecordingInlineConstTracker : CompilerInlineConstTracker {
 
     override fun report(filePath: Path, owner: String, name: String, constType: String) {
         reports += Report(filePath, owner, name, constType)
-    }
-}
-
-internal class RecordingExpectActualTracker : CompilerExpectActualTracker {
-    val matched: MutableList<Pair<Path, Path>> = mutableListOf()
-    val lenientStubs: MutableList<Path> = mutableListOf()
-
-    override fun report(expectFilePath: Path, actualFilePath: Path) {
-        matched += expectFilePath to actualFilePath
-    }
-
-    override fun reportExpectOfLenientStub(expectFilePath: Path) {
-        lenientStubs.add(expectFilePath)
     }
 }
 

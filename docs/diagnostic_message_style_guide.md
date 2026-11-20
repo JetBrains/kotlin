@@ -51,6 +51,6 @@ When generating a new diagnostic message or proofreading an existing one:
 4. When suggesting a fix, prefer instructive phrasing ("To do 'goal', use 'solution'.")
    over corrective phrasing ("If you are attempting to do 'goal', use 'solution'.").
 5. Changing a message affects `.fir.diag.txt` test data (tests with the `RENDER_DIAGNOSTICS_FULL_TEXT` directive).
-   Regenerate it with `-Pkotlin.test.update.test.data=true`, see [analysis-tests/AGENTS.md](../compiler/fir/analysis-tests/AGENTS.md).
+   Regenerate it with `-Pkotlin.test.update.test.data=true`, see [compiler/testData/diagnostics/AGENTS.md](../compiler/testData/diagnostics/AGENTS.md).
 6. Do not reword unrelated existing messages unless asked: it might cause test data churn across the repository.
    When proofreading, report violations of this guide instead.

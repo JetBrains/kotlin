@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProvider
 import org.jetbrains.kotlin.name.CallableId
@@ -51,12 +52,58 @@ public interface KotlinDeclarationProvider : KotlinComposableProvider {
 
     public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name>
 
+    /**
+     * A native check of whether the declaration provider may contain a top-level Kotlin class-like declaration with the given class ID.
+     * The check may produce false positives, but not false negatives.
+     *
+     * `null` if the declaration provider has no such native check. In this case, [getTopLevelKotlinClassLikeDeclarationNamesInPackage] is
+     * used instead.
+     *
+     * The property is experimental. It was introduced because building "names in package" sets can be too slow for large projects in the
+     * Kotlin LSP server, see https://youtrack.jetbrains.com/issue/LSP-1689.
+     */
+    @KaExperimentalApi
+    public val mayHaveTopLevelKotlinClassLikeDeclaration: ((classId: ClassId) -> Boolean)?
+        get() = null
+
     public fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty>
     public fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction>
 
+    /**
+     * Returns the files which may contain top-level functions or properties with the given [callableId].
+     */
     public fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile>
 
+    /**
+     * Returns the files which may contain top-level functions with the given [callableId].
+     *
+     * The result may be a superset of the files which contain such functions. The default implementation returns
+     * [getTopLevelCallableFiles], which also includes the files with top-level properties.
+     */
+    public fun getTopLevelFunctionFiles(callableId: CallableId): Collection<KtFile> = getTopLevelCallableFiles(callableId)
+
+    /**
+     * Returns the files which may contain top-level properties with the given [callableId].
+     *
+     * The result may be a superset of the files which contain such properties. The default implementation returns
+     * [getTopLevelCallableFiles], which also includes the files with top-level functions.
+     */
+    public fun getTopLevelPropertyFiles(callableId: CallableId): Collection<KtFile> = getTopLevelCallableFiles(callableId)
+
     public fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>
+
+    /**
+     * A native check of whether the declaration provider may contain a top-level callable with the given name in the given package. The
+     * check may produce false positives, but not false negatives.
+     *
+     * `null` if the declaration provider has no such native check. In this case, [getTopLevelCallableNamesInPackage] is used instead.
+     *
+     * The property is experimental. It was introduced because building "names in package" sets can be too slow for large projects in the
+     * Kotlin LSP server, see https://youtrack.jetbrains.com/issue/LSP-1689.
+     */
+    @KaExperimentalApi
+    public val mayHaveTopLevelCallable: ((packageFqName: FqName, name: Name) -> Boolean)?
+        get() = null
 
     public fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile>
 

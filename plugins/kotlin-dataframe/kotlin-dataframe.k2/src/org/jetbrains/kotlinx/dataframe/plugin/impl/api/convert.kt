@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getKClassArgument
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -188,7 +189,7 @@ internal abstract class AbstractToSpecificType : AbstractInterpreter<PluginDataF
                 val targetType = if (it is SimpleDataColumn) {
                     to.withNullabilityOf(it.type.coneType, session.typeContext)
                 } else {
-                    session.builtinTypes.nothingType.coneType
+                    StandardTypes.Nothing
                 }
                 simpleColumnOf("", targetType)
             }

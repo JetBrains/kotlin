@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.config
 
-class HmppCliModule(val name: String, val sources: Set<String>) {
+import java.io.File
+
+class HmppCliModule(val name: String, val sources: Set<File>) {
+
     override fun toString(): String {
         return "Module $name"
     }
@@ -22,10 +25,10 @@ class HmppCliModuleStructure(
     val friendDependencies: Map<HmppCliModule, List<String>>
 )
 
-fun HmppCliModuleStructure.getModuleNameForSource(source: String): String? {
+fun HmppCliModuleStructure.getModuleNameForSource(source: File): String? {
     return modules.firstOrNull { source in it.sources }?.name
 }
 
-fun HmppCliModuleStructure.isFromCommonModule(source: String): Boolean {
+fun HmppCliModuleStructure.isFromCommonModule(source: File): Boolean {
     return modules.indexOfFirst { source in it.sources }.let { it >= 0 && it < modules.size - 1 }
 }

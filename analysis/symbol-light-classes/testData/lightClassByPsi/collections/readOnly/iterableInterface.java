@@ -1,4 +1,7 @@
 public abstract class CIterable /* test.CIterable*/<Elem>  implements test.IIterable<Elem> {
+  @java.lang.Override()
+  public java.util.Iterator<Elem> iterator();//  iterator()
+
   public  CIterable();//  .ctor()
 }
 

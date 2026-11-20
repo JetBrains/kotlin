@@ -9,7 +9,7 @@ FILE[kind=File[packageFqName=<root>]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
           isClassRef: true
-    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, kdocText=/** Top-level property getter documentation. */, mayHaveContract=false]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
   FUNCTION[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, kdocText=/** Top-level function documentation. */, mayHaveContract=false, name=bar]
@@ -28,7 +28,7 @@ FILE[kind=File[packageFqName=<root>]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
           isClassRef: true
-  TYPEALIAS[classId=/MyString, fqName=MyString, isTopLevel=true, name=MyString]
+  TYPEALIAS[classId=/MyString, fqName=MyString, isTopLevel=true, kdocText=/** Type alias documentation. */, name=MyString]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
@@ -121,7 +121,7 @@ FILE[kind=File[packageFqName=<root>]]
                     REFERENCE_EXPRESSION[referencedName=Direction]
                       isClassRef: true
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=Direction.SOUTH, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=SOUTH, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=Direction.SOUTH, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, kdocText=/** Enum value documentation. */, name=SOUTH, superNames=[]]
   OBJECT_DECLARATION[classId=/Obj, fqName=Obj, isObjectLiteral=false, isTopLevel=true, kdocText=/** Top-level object documentation. */, name=Obj, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY

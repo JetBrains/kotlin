@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.binaryen
 
 import org.jetbrains.kotlin.gradle.targets.js.AbstractEnv
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import java.io.File
 
+@ObsoleteJsAndWasmToolingProvisioning
 data class BinaryenEnv(
     override val download: Boolean,
     override val downloadBaseUrl: String?,

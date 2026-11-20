@@ -6,29 +6,29 @@ package org.jetbrains.dokka.plugability
 
 import org.jetbrains.dokka.DokkaConfiguration
 
-public data class ExtensionPoint<T : Any> internal constructor(
+internal data class ExtensionPoint<T : Any> internal constructor(
     internal val pluginClass: String,
     internal val pointName: String
 ) {
     override fun toString(): String = "ExtensionPoint: $pluginClass/$pointName"
 }
 
-public sealed class OrderingKind {
-    public object None : OrderingKind()
+internal sealed class OrderingKind {
+    object None : OrderingKind()
 
-    public class ByDsl(
-        public val block: (OrderDsl.() -> Unit)
+    class ByDsl(
+        val block: (OrderDsl.() -> Unit)
     ) : OrderingKind()
 }
 
-public sealed class OverrideKind {
-    public object None : OverrideKind()
-    public class Present(
-        public val overriden: List<Extension<*, *, *>>
+internal sealed class OverrideKind {
+    object None : OverrideKind()
+    class Present(
+        val overriden: List<Extension<*, *, *>>
     ) : OverrideKind()
 }
 
-public class Extension<T : Any, Ordering : OrderingKind, Override : OverrideKind> internal constructor(
+internal class Extension<T : Any, Ordering : OrderingKind, Override : OverrideKind> internal constructor(
     internal val extensionPoint: ExtensionPoint<T>,
     internal val pluginClass: String,
     internal val extensionName: String,
@@ -45,7 +45,7 @@ public class Extension<T : Any, Ordering : OrderingKind, Override : OverrideKind
 
     override fun hashCode(): Int = listOf(pluginClass, extensionName).hashCode()
 
-    public val condition: DokkaConfiguration.() -> Boolean
+    val condition: DokkaConfiguration.() -> Boolean
         get() = { conditions.all { it(this) } }
 }
 
@@ -57,38 +57,38 @@ internal fun <T : Any> Extension(
 ) = Extension(extensionPoint, pluginClass, extensionName, action, OrderingKind.None, OverrideKind.None, emptyList())
 
 @DslMarker
-public annotation class ExtensionsDsl
+internal annotation class ExtensionsDsl
 
 @ExtensionsDsl
-public class ExtendingDSL(private val pluginClass: String, private val extensionName: String) {
+internal class ExtendingDSL(private val pluginClass: String, private val extensionName: String) {
 
-    public infix fun <T : Any> ExtensionPoint<T>.with(action: T): Extension<T, OrderingKind.None, OverrideKind.None> {
+    infix fun <T : Any> ExtensionPoint<T>.with(action: T): Extension<T, OrderingKind.None, OverrideKind.None> {
         return Extension(this, this@ExtendingDSL.pluginClass, extensionName, LazyEvaluated.fromInstance(action))
     }
 
-    public infix fun <T : Any> ExtensionPoint<T>.providing(action: (DokkaContext) -> T): Extension<T, OrderingKind.None, OverrideKind.None> {
+    infix fun <T : Any> ExtensionPoint<T>.providing(action: (DokkaContext) -> T): Extension<T, OrderingKind.None, OverrideKind.None> {
         return Extension(this, this@ExtendingDSL.pluginClass, extensionName, LazyEvaluated.fromRecipe(action))
     }
 
-    public infix fun <T : Any, Override : OverrideKind> Extension<T, OrderingKind.None, Override>.order(
+    infix fun <T : Any, Override : OverrideKind> Extension<T, OrderingKind.None, Override>.order(
         block: OrderDsl.() -> Unit
     ): Extension<T, OrderingKind.ByDsl, Override> {
         return Extension(extensionPoint, pluginClass, extensionName, action, OrderingKind.ByDsl(block), override, conditions)
     }
 
-    public infix fun <T : Any, Override : OverrideKind, Ordering: OrderingKind> Extension<T, Ordering, Override>.applyIf(
+    infix fun <T : Any, Override : OverrideKind, Ordering: OrderingKind> Extension<T, Ordering, Override>.applyIf(
         condition: DokkaConfiguration.() -> Boolean
     ): Extension<T, Ordering, Override> {
         return Extension(extensionPoint, pluginClass, extensionName, action, ordering, override, conditions + condition)
     }
 
-    public infix fun <T : Any, Override : OverrideKind, Ordering: OrderingKind> Extension<T, Ordering, Override>.override(
+    infix fun <T : Any, Override : OverrideKind, Ordering: OrderingKind> Extension<T, Ordering, Override>.override(
         overriden: List<Extension<T, *, *>>
     ): Extension<T, Ordering, OverrideKind.Present> {
         return Extension(extensionPoint, pluginClass, extensionName, action, ordering, OverrideKind.Present(overriden), conditions)
     }
 
-    public infix fun <T : Any, Override : OverrideKind, Ordering: OrderingKind> Extension<T, Ordering, Override>.override(
+    infix fun <T : Any, Override : OverrideKind, Ordering: OrderingKind> Extension<T, Ordering, Override>.override(
         overriden: Extension<T, *, *>
     ): Extension<T, Ordering, OverrideKind.Present> {
         return this.override(listOf(overriden))
@@ -96,15 +96,15 @@ public class ExtendingDSL(private val pluginClass: String, private val extension
 }
 
 @ExtensionsDsl
-public class OrderDsl {
+internal class OrderDsl {
     internal val previous = mutableSetOf<Extension<*, *, *>>()
     internal val following = mutableSetOf<Extension<*, *, *>>()
 
-    public fun after(vararg extensions: Extension<*, *, *>) {
+    fun after(vararg extensions: Extension<*, *, *>) {
         previous += extensions
     }
 
-    public fun before(vararg extensions: Extension<*, *, *>) {
+    fun before(vararg extensions: Extension<*, *, *>) {
         following += extensions
     }
 }

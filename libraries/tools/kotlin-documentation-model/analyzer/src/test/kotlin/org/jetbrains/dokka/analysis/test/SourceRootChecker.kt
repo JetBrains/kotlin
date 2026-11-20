@@ -20,7 +20,7 @@ import kotlin.test.assertTrue
 
 class SourceRootChecker {
 
-    val dokkaConfiguration = DokkaConfigurationImpl(
+    internal val dokkaConfiguration = DokkaConfigurationImpl(
         sourceSets = listOf(
             DokkaSourceSetImpl(
                 analysisPlatform = Platform.jvm,
@@ -43,7 +43,7 @@ class SourceRootChecker {
         )
     )
 
-    val dokkaSampleConfiguration = DokkaConfigurationImpl(
+    internal val dokkaSampleConfiguration = DokkaConfigurationImpl(
         sourceSets = listOf(
             DokkaSourceSetImpl(
                 analysisPlatform = Platform.jvm,

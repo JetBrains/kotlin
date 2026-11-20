@@ -1,1 +1,1 @@
-val flag = kotlinx.atomicfu.AtomicBoolean()
+val flag: kotlinx.atomicfu.AtomicBoolean = error("stub")

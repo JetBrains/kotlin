@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByPsiTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByPsiTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -173,6 +173,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleContainingDeclarationProviderBy
   @TestMetadata("scriptWithResultProperty.kts")
   public void testScriptWithResultProperty() {
     run("scriptWithResultProperty.kts");
+  }
+
+  @Test
+  @TestMetadata("setterParameter.kt")
+  public void testSetterParameter() {
+    run("setterParameter.kt");
   }
 
   @Test

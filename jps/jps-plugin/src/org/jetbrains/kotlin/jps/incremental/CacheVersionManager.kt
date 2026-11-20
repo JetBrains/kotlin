@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
 import java.io.IOException

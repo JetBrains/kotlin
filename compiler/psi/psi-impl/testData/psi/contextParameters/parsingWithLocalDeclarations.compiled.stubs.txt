@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUNCTION[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
-    origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
+    origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -14,7 +14,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
         REFERENCE_EXPRESSION[referencedName=Unit]
           isClassRef: true
   FUNCTION[fqName=contextFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun]
-    origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
+    origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -32,7 +32,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
         REFERENCE_EXPRESSION[referencedName=Unit]
           isClassRef: true
   FUNCTION[fqName=contextFun2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun2]
-    origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
+    origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -60,7 +60,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
         REFERENCE_EXPRESSION[referencedName=Unit]
           isClassRef: true
   FUNCTION[fqName=contextFun3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun3]
-    origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
+    origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -88,7 +88,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
         REFERENCE_EXPRESSION[referencedName=Unit]
           isClassRef: true
   FUNCTION[fqName=contextFun4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun4]
-    origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
+    origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]

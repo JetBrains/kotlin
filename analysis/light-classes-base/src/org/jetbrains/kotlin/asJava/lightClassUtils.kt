@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
+import org.jetbrains.kotlin.asJava.elements.leadingJvmParameterCount
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.name.tail
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 
@@ -48,6 +50,21 @@ fun KtClassOrObject.toLightClassWithBuiltinMapping(): PsiClass? {
 @Deprecated("Replace with a direct call to `KotlinAsJavaSupport`. See KT-85385")
 fun KtClassOrObject.toFakeLightClass(): KtFakeLightClass = KotlinAsJavaSupport.getInstance(project).getFakeLightClass(this)
 
+/**
+ * The qualified name of the light class for this class or object, or `null` if it has no [fqName][KtClassOrObject.getFqName].
+ *
+ * Classes declared in a script are nested in the script class on the JVM, so the name includes the script name,
+ * unlike [fqName][KtClassOrObject.getFqName].
+ */
+@KtImplementationDetail
+@OptIn(KtExperimentalApi::class)
+fun KtClassOrObject.getLightClassQualifiedName(): String? {
+    val fqName = fqName ?: return null
+    val script = KtPsiUtil.getOutermostClassOrObject(this).containingScript ?: return fqName.asString()
+    val scriptFqName = script.fqName
+    return "${scriptFqName.asString()}.${fqName.tail(scriptFqName.parent()).asString()}"
+}
+
 @Deprecated("Use `asFacadePsiClass` from Analysis API or replace with a direct call to `JavaPsiFacade`. See KT-85385")
 fun KtFile.findFacadeClass(): KtLightClass? = KotlinAsJavaSupport.getInstance(project).getLightFacade(this)
 
@@ -63,8 +80,8 @@ fun KtElement.toLightElements(): List<PsiNamedElement> = when (this) {
     is KtPropertyAccessor -> listOfNotNull(LightClassUtil.getLightClassAccessorMethod(this))
     is KtParameter -> mutableListOf<PsiNamedElement>().also { elements ->
         toPsiParameters().toCollection(elements)
+        // Includes the method of an annotation class parameter
         LightClassUtil.getLightClassPropertyMethods(this).toCollection(elements)
-        toAnnotationLightMethod()?.let(elements::add)
     }
 
     is KtTypeParameter -> toPsiTypeParameters()
@@ -100,7 +117,13 @@ fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
     val paramIndex = paramList.parameters.indexOf(this)
     if (paramIndex < 0) return emptyList()
     val owner = paramList.parent
-    val lightParamIndex = if (owner is KtDeclaration && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
+    val callable = when (owner) {
+        is KtPropertyAccessor -> owner.property
+        is KtCallableDeclaration -> owner
+        else -> null
+    }
+
+    val lightParamIndex = paramIndex + (callable?.leadingJvmParameterCount ?: 0)
 
     val methods: Collection<PsiMethod> = when (owner) {
         is KtFunction -> LightClassUtil.getLightClassMethods(owner)
@@ -109,14 +132,6 @@ fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
     } ?: return emptyList()
 
     return methods.mapNotNull { it.parameterList.parameters.getOrNull(lightParamIndex) }
-}
-
-private fun KtParameter.toAnnotationLightMethod(): PsiMethod? {
-    val parent = ownerFunction as? KtPrimaryConstructor ?: return null
-    val containingClass = parent.getContainingClassOrObject()
-    if (!containingClass.isAnnotation()) return null
-
-    return LightClassUtil.getLightClassMethod(this)
 }
 
 @Deprecated("Use `asPsiMethods` from Analysis API or replace with a custom implementation. See KT-85385")
@@ -151,10 +166,6 @@ val PsiElement.unwrapped: PsiElement?
 val PsiElement.namedUnwrappedElement: PsiNamedElement?
     get() = unwrapped?.getNonStrictParentOfType()
 
-
-val KtClassOrObject.hasInterfaceDefaultImpls: Boolean
-    get() = this is KtClass && isInterface() && hasNonAbstractMembers(this)
-
 val KtClassOrObject.hasRepeatableAnnotationContainer: Boolean
     get() = this is KtClass &&
             isAnnotation() &&
@@ -170,12 +181,6 @@ val KtClassOrObject.hasRepeatableAnnotationContainer: Boolean
 
                 return hasRepeatableAnnotation
             }
-
-private fun hasNonAbstractMembers(ktInterface: KtClass): Boolean = ktInterface.declarations.any(::isNonAbstractMember)
-
-private fun isNonAbstractMember(member: KtDeclaration?): Boolean =
-    (member is KtNamedFunction && member.hasBody()) ||
-            (member is KtProperty && (member.hasDelegateExpressionOrInitializer() || member.getter?.hasBody() ?: false || member.setter?.hasBody() ?: false))
 
 private val DEFAULT_IMPLS_CLASS_NAME = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
 fun FqName.defaultImplsChild() = child(DEFAULT_IMPLS_CLASS_NAME)

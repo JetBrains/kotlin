@@ -38,9 +38,10 @@ abstract class WasmDebugRunnerBase(testServices: TestServices, includeLocalVaria
     override val htmlCodeToIncludeBinaryArtifact = ""
 
     // language=js
-    override val jsCodeToGetModuleWithBoxFunction = """
-        const jsModule = await import('./index.mjs')
+    override val jsBindingsForRunningBox = """
+        const jsModule = await import('./index.mjs');
         const box = jsModule.box;
+        const makeEmptyContinuation = jsModule.makeEmptyContinuation;
     """.trimIndent()
 
     override val debugMode: DebugMode get() = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")

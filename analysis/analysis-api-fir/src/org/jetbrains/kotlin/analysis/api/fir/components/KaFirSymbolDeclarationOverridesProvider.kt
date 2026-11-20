@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.isSubclassOf
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
-import org.jetbrains.kotlin.analysis.api.impl.base.components.analysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -222,7 +221,7 @@ private fun isSubClassOf(subClass: KaClassSymbol, superClass: KaClassSymbol, all
     return isSubclassOf(
         subclass = subClass.firSymbol.fir as FirClass,
         superclass = superClass.firSymbol.fir as FirClass,
-        relationProvider.rootModuleSession,
+        rootModuleSession,
         allowIndirectSubtyping,
     )
 }

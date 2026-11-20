@@ -1,0 +1,83 @@
+Module: lib
+FILE fqName:<root> fileName:/lib.kt
+  CLASS ANNOTATION_CLASS name:Anno modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Anno
+    PROPERTY name:b visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.UByte visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'b: kotlin.UByte declared in <root>.Anno.<init>' type=kotlin.UByte origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:FINAL returnType:kotlin.UByte
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Anno
+        correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.UByte declared in <root>.Anno'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.UByte visibility:private [final]' type=kotlin.UByte origin=null
+              receiver: GET_VAR '<this>: <root>.Anno declared in <root>.Anno.<get-b>' type=<root>.Anno origin=null
+    PROPERTY name:s visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.UShort visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 's: kotlin.UShort declared in <root>.Anno.<init>' type=kotlin.UShort origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL returnType:kotlin.UShort
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Anno
+        correspondingProperty: PROPERTY name:s visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-s> (): kotlin.UShort declared in <root>.Anno'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.UShort visibility:private [final]' type=kotlin.UShort origin=null
+              receiver: GET_VAR '<this>: <root>.Anno declared in <root>.Anno.<get-s>' type=<root>.Anno origin=null
+    PROPERTY name:i visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.UInt visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'i: kotlin.UInt declared in <root>.Anno.<init>' type=kotlin.UInt origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> visibility:public modality:FINAL returnType:kotlin.UInt
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Anno
+        correspondingProperty: PROPERTY name:i visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-i> (): kotlin.UInt declared in <root>.Anno'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.UInt visibility:private [final]' type=kotlin.UInt origin=null
+              receiver: GET_VAR '<this>: <root>.Anno declared in <root>.Anno.<get-i>' type=<root>.Anno origin=null
+    PROPERTY name:l visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:l type:kotlin.ULong visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'l: kotlin.ULong declared in <root>.Anno.<init>' type=kotlin.ULong origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-l> visibility:public modality:FINAL returnType:kotlin.ULong
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Anno
+        correspondingProperty: PROPERTY name:l visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-l> (): kotlin.ULong declared in <root>.Anno'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:l type:kotlin.ULong visibility:private [final]' type=kotlin.ULong origin=null
+              receiver: GET_VAR '<this>: <root>.Anno declared in <root>.Anno.<get-l>' type=<root>.Anno origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.Anno [primary]
+      VALUE_PARAMETER kind:Regular name:b index:0 type:kotlin.UByte
+        EXPRESSION_BODY
+          CONST Byte type=kotlin.UByte value=-1
+      VALUE_PARAMETER kind:Regular name:s index:1 type:kotlin.UShort
+        EXPRESSION_BODY
+          CONST Short type=kotlin.UShort value=-1
+      VALUE_PARAMETER kind:Regular name:i index:2 type:kotlin.UInt
+        EXPRESSION_BODY
+          CONST Int type=kotlin.UInt value=-1
+      VALUE_PARAMETER kind:Regular name:l index:3 type:kotlin.ULong
+        EXPRESSION_BODY
+          CONST Long type=kotlin.ULong value=-1
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Anno modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+Module: main
+FILE fqName:<root> fileName:/main.kt
+  FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+    annotations:
+      Anno(b = <null>, s = <null>, i = <null>, l = <null>)
+    BLOCK_BODY

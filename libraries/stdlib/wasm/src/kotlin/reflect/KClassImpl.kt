@@ -30,7 +30,7 @@ internal class KClassImpl<T : Any> @WasmPrimitiveConstructor constructor(interna
     override fun equals(other: Any?): Boolean =
         (other !== null) && ((this === other) || (other is KClassImpl<*> && wasm_ref_eq(rtti, other.rtti)))
 
-    override fun hashCode(): Int = getQualifiedName(rtti).hashCode()
+    override fun hashCode(): Int = getTypeId(rtti).hashCode()
 
     override fun toString(): String = "class ${getQualifiedName(rtti)}"
 }

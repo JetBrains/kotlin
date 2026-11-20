@@ -86,8 +86,6 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
             disableDefaultScriptingPlugin = true
             buildFile = moduleFile.canonicalPath
             reportOutputFiles = true
-            @Suppress("DEPRECATION")
-            useFirLT = false
         }
         val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
 
@@ -249,6 +247,12 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
     private fun checkLookupsInFile(step: String, expectedFile: File, lookupsFromFile: List<LookupInfo>) {
         val text = expectedFile.readText().replace(COMMENT_WITH_LOOKUP_INFO, "")
         val lines = text.lines().toMutableList()
+
+        val lookupsWithoutPosition = lookupsFromFile.filter { it.position.line <= 0 }
+        assert(lookupsWithoutPosition.isEmpty()) {
+            "Lookups without position after $step in ${expectedFile.name}:\n" +
+                    lookupsWithoutPosition.joinToString("\n") { "  lookup without position: ${it.scopeFqName.ifEmpty { "<root>" }}/${it.name}" }
+        }
 
         for ([line, lookupsFromLine] in lookupsFromFile.groupBy { it.position.line }) {
             val columnToLookups = lookupsFromLine.groupBy { it.position.column }.toList().sortedBy { it.first }

@@ -72,7 +72,7 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
                     expression = "this.removeAnnotationEntry(entry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeAnnotationEntry"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public void removeEntry(@NotNull KtAnnotationEntry entry) {

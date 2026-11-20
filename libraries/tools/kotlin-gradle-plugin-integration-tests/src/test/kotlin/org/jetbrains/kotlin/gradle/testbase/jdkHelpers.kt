@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.internal.jvm.JavaInfo
 import org.gradle.internal.jvm.Jvm
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import java.io.File
 
 // Prop names are defined in 'build.gradle.kts'
@@ -30,7 +31,7 @@ internal val jdk17Info: JavaInfo = Jvm.forHome(File(System.getProperty(JDK_17_PR
 internal val jdk21Info: JavaInfo = Jvm.forHome(File(System.getProperty(JDK_21_PROP_NAME)))
 
 // replace required for windows paths so Groovy will not complain about unexpected char '\'
-internal val JavaInfo.jdkPath get() = javaHome.absolutePath.replace("\\", "\\\\")
+internal val JavaInfo.jdkPath get() = javaHome.normalizedAbsolutePath().toString().replace("\\", "\\\\")
 
 internal val JavaInfo.jdkRealPath
     get() = javaHome

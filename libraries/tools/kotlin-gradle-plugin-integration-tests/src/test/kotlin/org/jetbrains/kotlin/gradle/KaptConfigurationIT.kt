@@ -10,11 +10,15 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
 @DisplayName("Generic Kapt configuration")
 @OtherGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCompilerPlugins
 class KaptConfigurationIT : KGPBaseTest() {
 
     @DisplayName("KT-58009: both deprecated and the new API may populate kapt options")

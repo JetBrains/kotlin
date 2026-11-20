@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.*
@@ -84,17 +83,13 @@ abstract class IrModuleDeserializer(
      * Null value means that the set of packages is unknown (or not feasible to be provided).
      * In that case the module may be probed for every sought signature, just in case.
      */
-    abstract fun getDefinedPackageNames(): Set<FqName>?
+    abstract val contributedPackageNames: Set<FqName>?
+
+    open val preferLinkingToTheCurrentModule: Boolean get() = true
 
     abstract operator fun contains(idSig: IdSignature): Boolean
     abstract fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol?
     abstract fun deserializedSymbolNotFound(idSig: IdSignature): Nothing
-
-    open fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature): IrSimpleFunctionSymbol =
-        error("Unsupported operation")
-
-    open fun referencePropertyByLocalSignature(file: IrFile, idSignature: IdSignature): IrPropertySymbol =
-        error("Unsupported operation")
 
     open fun declareIrSymbol(symbol: IrSymbol) {
         val signature = symbol.signature
@@ -118,15 +113,15 @@ abstract class IrModuleDeserializer(
      */
     open fun deserializeReachableDeclarations() { error("Unsupported Operation") }
 
-    open val strategyResolver: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_DECLARATION_HEADERS }
+    open val strategyResolver: DeserializationStrategyResolver = DeserializationStrategy.ONLY_REFERENCED_DECLARATION_HEADERS
 
-    open fun fileDeserializers(): Collection<IrFileDeserializer> = emptyList()
+    open val fileDeserializers: Map<IrFile, IrFileDeserializer> get() = emptyMap()
 
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 
-    open fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
-        return this.fileDeserializers().flatMap {
-            it.getAllMatchingSignatures(callableId, signatureKind)
+    open fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
+        return fileDeserializers.flatMap { [_, fileDeserializer] ->
+            fileDeserializer.getAllMatchingSignatures(callableId, signatureKind)
         }
     }
 }
@@ -167,12 +162,10 @@ class IrModuleDeserializerWithBuiltIns(
         symbol.signature to symbol
     }
 
-    private val builtinPackageNames: Set<FqName> =
-        syntheticProvider.operatorsPackageFragment.declarations
-            .map { it.getPackageFragment().packageFqName }
-            .toSet()
-
-    override fun getDefinedPackageNames() = delegate.getDefinedPackageNames()?.plus(builtinPackageNames)
+    override val contributedPackageNames: Set<FqName> = buildSet {
+        this += syntheticProvider.operatorsPackageFragment.packageFqName
+        delegate.contributedPackageNames?.let { addAll(it) }
+    }
 
     private val irBuiltInsCallableIdMap: Map<CallableId, MutableList<IdSignature>> by lazy {
         buildMap {
@@ -190,12 +183,6 @@ class IrModuleDeserializerWithBuiltIns(
 
         return checkIsFunctionInterface(topLevel) || idSig in delegate
     }
-
-    override fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature) : IrSimpleFunctionSymbol =
-        delegate.referenceSimpleFunctionByLocalSignature(file, idSignature)
-
-    override fun referencePropertyByLocalSignature(file: IrFile, idSignature: IdSignature): IrPropertySymbol =
-        delegate.referencePropertyByLocalSignature(file, idSignature)
 
     override fun deserializeReachableDeclarations() {
         delegate.deserializeReachableDeclarations()
@@ -243,16 +230,14 @@ class IrModuleDeserializerWithBuiltIns(
     override val klib: KotlinLibrary
         get() = delegate.klib
 
-    override val strategyResolver: (String) -> DeserializationStrategy
-        get() = delegate.strategyResolver
+    override val strategyResolver get() = delegate.strategyResolver
 
     override fun addModuleReachableTopLevel(topLevelDeclarationSignature: IdSignature) {
         delegate.addModuleReachableTopLevel(topLevelDeclarationSignature)
     }
 
-    override fun fileDeserializers(): Collection<IrFileDeserializer> {
-        return delegate.fileDeserializers()
-    }
+    override val fileDeserializers: Map<IrFile, IrFileDeserializer>
+        get() = delegate.fileDeserializers
 
     override fun postProcess() {
         delegate.postProcess()
@@ -265,7 +250,7 @@ class IrModuleDeserializerWithBuiltIns(
         irBuiltIns.functionFactory = syntheticFunctionClassGenerator
     }
 
-    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
+    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
         irBuiltInsCallableIdMap[callableId]?.let { return it }
         return super.getAllMatchingSignatures(callableId, signatureKind)
     }

@@ -8,7 +8,7 @@ FILE: lightMember.kt
             super<R|kotlin/Any|>()
         }
 
-        public open val delegate: R|D|by R|kotlin/lazy|<R|D|>(R|<local>/computeRealDelegate|)
+        public open val delegate: R|D| by R|kotlin/lazy|<R|D|>(R|<local>/computeRealDelegate|)
             public get(): R|D| {
                 ^ this@R|/LightMemberImpl|.D|/LightMemberImpl.delegate|.R|kotlin/getValue|<R|D|>(this@R|/LightMemberImpl|, ::R|/LightMemberImpl.delegate|)
             }

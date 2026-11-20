@@ -1,3 +1,11 @@
 @Destructuring(<strcat>(String(destr ), prop#))
-owner -> FirErrorPropertySymbol /<error property>
-context -> FirErrorPropertySymbol /<error property>
+owner -> FirRegularPropertySymbol util/<destruct>
+context -> FirRegularPropertySymbol util/<destruct>
+
+@LeftAnno(<strcat>(String(a ), prop#))
+owner -> FirRegularPropertySymbol util/a
+context -> FirRegularPropertySymbol util/a
+
+@RightAnno(<strcat>(String(b ), prop#))
+owner -> FirRegularPropertySymbol util/b
+context -> FirRegularPropertySymbol util/b

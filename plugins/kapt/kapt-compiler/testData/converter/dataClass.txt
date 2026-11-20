@@ -51,17 +51,14 @@
  */
 @kotlin.Metadata()
 public final class User {
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String firstName = null;
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String secondName = null;
-    private final int age = 0;
 
     public User(@org.jetbrains.annotations.NotNull()
     java.lang.String firstName, @org.jetbrains.annotations.NotNull()
     java.lang.String secondName, int age) {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String firstName = null;
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getFirstName() {
@@ -72,6 +69,9 @@ public final class User {
     public final java.lang.String getSecondName() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String secondName = null;
+    private final int age = 0;
 
     public final int getAge() {
         return 0;

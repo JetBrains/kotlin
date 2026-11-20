@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirEnumEntryInitializerSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntryInitializerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -26,13 +26,13 @@ internal class KaFirEnumEntryInitializerSymbol(
     }
 
     /**
-     * [KaFirEnumEntryInitializerSymbol] is the required return type instead of [KaEnumEntryInitializerSymbol] to fulfill return type
-     * subtyping requirements, as [KaEnumEntryInitializerSymbol] is not a subtype of
+     * [KaFirEnumEntryInitializerSymbol] is the required return type instead of `KaEnumEntryInitializerSymbol` to fulfill return type
+     * subtyping requirements, as `KaEnumEntryInitializerSymbol` is not a subtype of
      * [org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol]. (It cannot be a subtype in the general Analysis API because enum
      * entry initializers are classes in FE10.)
      */
     override fun createPointer(): KaSymbolPointer<KaFirEnumEntryInitializerSymbol> = withValidityAssertion {
-        KaBasePsiSymbolPointer.createForSymbolFromSource<KaFirEnumEntryInitializerSymbol>(this)
+        KaFirPsiSymbolPointer.createForSymbolFromSource<KaFirEnumEntryInitializerSymbol>(this)
             ?: KaFirEnumEntryInitializerSymbolPointer(createOwnerPointer(), this)
     }
 }

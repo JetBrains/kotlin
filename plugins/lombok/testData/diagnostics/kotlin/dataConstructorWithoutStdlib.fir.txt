@@ -1,0 +1,50 @@
+FILE: dataConstructorWithoutStdlib.kt
+    @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final class DataWithStatic : R|kotlin/Any| {
+        private constructor(name: R|kotlin/String|): R|DataWithStatic| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public open override fun toString(): R|kotlin/String|
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public open override fun hashCode(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun of(name: R|kotlin/String|): R|DataWithStatic|
+
+            private constructor(): R|DataWithStatic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final object DataObjectWithStatic : R|kotlin/Any| {
+        private constructor(): R|DataObjectWithStatic| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun toString(): R|kotlin/String|
+
+    }
+    @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) @R|lombok/NoArgsConstructor|() public final class DataWithNoArgsConstructor : R|kotlin/Any| {
+        public constructor(name: R|kotlin/String|): R|DataWithNoArgsConstructor| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public open override fun toString(): R|kotlin/String|
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public open override fun hashCode(): R|kotlin/Int|
+
+        public constructor(): R|DataWithNoArgsConstructor|
+
+    }

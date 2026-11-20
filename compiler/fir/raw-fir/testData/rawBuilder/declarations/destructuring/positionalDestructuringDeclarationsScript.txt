@@ -1,0 +1,37 @@
+FILE: positionalDestructuringDeclarationsScript.kts
+    SCRIPT: <script-positionalDestructuringDeclarationsScript.kts>
+
+        public final? [ContainingScriptKey=FirScriptSymbol <script-positionalDestructuringDeclarationsScript.kts>, ScriptTopLevelDeclaration=true] class Tuple : R|kotlin/Any| {
+            public? [ContainingClassKey=Tuple] constructor([CorrespondingProperty=/Tuple.first] first: String, [CorrespondingProperty=/Tuple.second] second: Int): R|Tuple| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+                public? [ContainingClassKey=Tuple] get(): String
+
+            public? final? [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+                public? [ContainingClassKey=Tuple] get(): Int
+
+        }
+
+        [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = x#
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: <implicit> = R|<local>/<destruct>|.component1#()
+            public get(): <implicit>
+
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] var b: <implicit> = R|<local>/<destruct>|.component2#()
+            public get(): <implicit>
+            public set(value: <implicit>): R|kotlin/Unit|
+
+        [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = x#
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val c: <implicit> = R|<local>/<destruct>|.component1#()
+            public get(): <implicit>
+
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val d: <implicit> = R|<local>/<destruct>|.component2#()
+            public get(): <implicit>
+
+        [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = x#
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val <unused var>: <implicit> = R|<local>/<destruct>|.component1#()
+            public get(): <implicit>
+
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val e: <implicit> = R|<local>/<destruct>|.component2#()
+            public get(): <implicit>

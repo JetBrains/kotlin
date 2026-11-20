@@ -1,0 +1,21 @@
+<caret_type>:
+  KtNameReferenceExpression(240,243): 'Foo'
+    isImplicitReferenceToCompanion: false
+    contextSensitiveResolutionStatus: NotAvailable
+    lookupLocally: false
+    KaSimpleSymbolResolutionSuccess:
+      symbols = [
+        test/Foo
+      ]
+    additional: [jvm.kt]
+
+<caret>:
+  KtNameReferenceExpression(251,259): 'hashCode'
+    isImplicitReferenceToCompanion: false
+    contextSensitiveResolutionStatus: NotAvailable
+    lookupLocally: false
+    KaSimpleSymbolResolutionSuccess:
+      symbols = [
+        kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+      ]
+    additional: [kotlin.kotlin_builtins]

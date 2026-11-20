@@ -32,8 +32,6 @@
 public final class PropertyContextParamsKt {
     @org.jetbrains.annotations.NotNull()
     private static U3 s;
-    @org.jetbrains.annotations.NotNull()
-    private static java.lang.String s1;
 
     public static final void setS(@org.jetbrains.annotations.NotNull()
     U1 t, @org.jetbrains.annotations.NotNull()
@@ -47,6 +45,8 @@ public final class PropertyContextParamsKt {
     U2 $this$s) {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private static java.lang.String s1;
 
     public static final void setS1(@org.jetbrains.annotations.NotNull()
     U1 t, @org.jetbrains.annotations.NotNull()

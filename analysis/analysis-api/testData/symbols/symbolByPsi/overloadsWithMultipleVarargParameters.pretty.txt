@@ -1,0 +1,3 @@
+fun foo(vararg x: kotlin.Int, y: kotlin.IntArray)
+
+fun foo(vararg x: kotlin.Int, vararg y: kotlin.Int)

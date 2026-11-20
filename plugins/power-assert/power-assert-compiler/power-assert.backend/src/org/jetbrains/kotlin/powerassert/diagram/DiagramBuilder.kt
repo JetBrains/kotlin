@@ -347,7 +347,9 @@ private fun IrBlockBuilder.nest(
 ): IrExpression {
     class ElvisOptimizer : IrElementTransformerVoid() {
         private val transformer = IrTemporaryExtractionTransformer(this@nest, variables)
-        private val initializer = node.variable.initializer?.transform(transformer, null)
+        private val initializer = node.variable.initializer
+            ?.deepCopyWithSymbols(scope.getLocalDeclarationParent())
+            ?.transform(transformer, null)
 
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             if (initializer != null && expression.symbol == node.variable.symbol) {

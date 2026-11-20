@@ -1,0 +1,15 @@
+Compiled: true
+Decompiled text loaded by type computation: false
+
+public fun <X, Y> foo(p: lib.Outer<X>.Inner<Y>, q: kotlin.collections.List<lib.Outer<kotlin.collections.List<X>>.Inner<kotlin.collections.Map<X, Y>>>): kotlin.Unit { /* compiled code */ }
+//                       ^Outer<X>.Inner<Y>(use)
+//                                 ^X(use)
+//                                          ^Y(use)
+//                                                 ^List<Outer<List<X>>.Inner<Map<X, Y>>>(use)
+//                                                                         ^Outer<List<X>>.Inner<Map<X, Y>>(use)
+//                                                                                   ^List<X>(use)
+//                                                                                                           ^X(use)
+//                                                                                                                     ^Map<X, Y>(use)
+//                                                                                                                                            ^X(use)
+//                                                                                                                                               ^Y(use)
+//                                                                                                                                                      ^Unit(use)

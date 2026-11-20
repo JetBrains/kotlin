@@ -170,6 +170,17 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
         val LAMBDA_IMPL by IrDeclarationOriginImpl.Regular
         val FUNCTION_REFERENCE_IMPL by IrDeclarationOriginImpl.Regular
         val GENERATED_MEMBER_IN_CALLABLE_REFERENCE by IrDeclarationOriginImpl.Regular
+
+        /**
+         * A top-level function that holds the body of a lowered lambda or callable reference:
+         * a lambda lifted to a free function by [InteropCallableReferenceLowering] (JS),
+         * or a bridged function created by `WasmCallableReferenceLowering` (Wasm).
+         *
+         * Such a function belongs to the callable object rather than to the file it's placed in,
+         * so it's intentionally absent from `compatibleOrigins` in [PropertyLazyInitLowering]
+         * (calling it must not initialize the file's properties) and must be present in `debugFriendlyOrigins`.
+         */
+        val LIFTED_CALLABLE_REFERENCE_FUNCTION by IrDeclarationOriginImpl.Regular
     }
 }
 

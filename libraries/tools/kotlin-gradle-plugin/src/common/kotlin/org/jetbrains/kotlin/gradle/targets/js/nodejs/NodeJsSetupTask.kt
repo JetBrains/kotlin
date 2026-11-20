@@ -4,6 +4,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.extractNodeJs
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.setUpNodeJs
@@ -12,6 +13,7 @@ import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class NodeJsSetupTask @Inject constructor(
     settings: BaseNodeJsEnvSpec,
 ) : AbstractSetupTask<NodeJsEnv, BaseNodeJsEnvSpec>(settings) {
@@ -37,6 +39,7 @@ abstract class NodeJsSetupTask @Inject constructor(
         setUpNodeJs(logger, archive, destinationProvider.getFile(), isWindows.get(), executable.get())
     }
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object {
         @InternalKotlinGradlePluginApi
         const val BASE_NAME: String = "nodeJsSetup"

@@ -1,0 +1,1817 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "org.jetbrains.kotlin.documentation.KdBundle",
+    "type": "object",
+    "properties": {
+        "schemaVersion": {
+            "type": "string"
+        },
+        "fragments": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdFragment"
+            }
+        },
+        "expectActualMappings": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdExpectActualMapping"
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "schemaVersion",
+        "fragments",
+        "expectActualMappings"
+    ],
+    "$defs": {
+        "org.jetbrains.kotlin.documentation.KdFragment": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "elements": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdElement"
+                    }
+                },
+                "embeddedElements": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdElement"
+                    }
+                }
+            },
+            "required": [
+                "name",
+                "elements",
+                "embeddedElements"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdElement": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/class"
+                },
+                {
+                    "$ref": "#/$defs/constructor"
+                },
+                {
+                    "$ref": "#/$defs/function"
+                },
+                {
+                    "$ref": "#/$defs/inheritedMember"
+                },
+                {
+                    "$ref": "#/$defs/module"
+                },
+                {
+                    "$ref": "#/$defs/package"
+                },
+                {
+                    "$ref": "#/$defs/property"
+                },
+                {
+                    "$ref": "#/$defs/refinedElement"
+                },
+                {
+                    "$ref": "#/$defs/typealias"
+                }
+            ]
+        },
+        "class": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "class"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "classKind": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdClassKind"
+                },
+                "isCompanion": {
+                    "type": "boolean"
+                },
+                "isData": {
+                    "type": "boolean"
+                },
+                "isValue": {
+                    "type": "boolean"
+                },
+                "isFun": {
+                    "type": "boolean"
+                },
+                "isInner": {
+                    "type": "boolean"
+                },
+                "isExternal": {
+                    "type": "boolean"
+                },
+                "isError": {
+                    "type": "boolean"
+                },
+                "mappedTo": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "typeParameters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeParameter"
+                    }
+                },
+                "superTypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                    }
+                },
+                "declarations": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "visibility": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdVisibility"
+                },
+                "modality": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdModality"
+                },
+                "since": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "deprecated": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDeprecated"
+                        }
+                    ]
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                },
+                "documentation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                }
+            },
+            "required": [
+                "type",
+                "name",
+                "classKind",
+                "isCompanion",
+                "isData",
+                "isValue",
+                "isFun",
+                "isInner",
+                "isExternal",
+                "isError",
+                "mappedTo",
+                "typeParameters",
+                "superTypes",
+                "declarations",
+                "visibility",
+                "modality",
+                "since",
+                "deprecated",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdClassKind": {
+            "type": "string",
+            "enum": [
+                "CLASS",
+                "INTERFACE",
+                "OBJECT",
+                "ENUM_CLASS",
+                "ANNOTATION_CLASS",
+                "RECORD"
+            ]
+        },
+        "org.jetbrains.kotlin.documentation.KdTypeParameter": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "isReified": {
+                    "type": "boolean"
+                },
+                "upperBounds": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                    }
+                },
+                "variance": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeVariance"
+                        }
+                    ]
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                },
+                "documentation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                }
+            },
+            "required": [
+                "name",
+                "isReified",
+                "upperBounds",
+                "variance",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdType": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/classLike"
+                },
+                {
+                    "$ref": "#/$defs/definitelyNotNull"
+                },
+                {
+                    "$ref": "#/$defs/dynamic"
+                },
+                {
+                    "$ref": "#/$defs/errorUnion"
+                },
+                {
+                    "$ref": "#/$defs/flexible"
+                },
+                {
+                    "$ref": "#/$defs/functional"
+                },
+                {
+                    "$ref": "#/$defs/typeParameter"
+                }
+            ]
+        },
+        "classLike": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "classLike"
+                },
+                "qualifiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdClassTypeQualifier"
+                    }
+                },
+                "classLikeId": {
+                    "type": "string"
+                },
+                "isMarkedNullable": {
+                    "type": "boolean"
+                },
+                "isEnhancedNullability": {
+                    "type": "boolean"
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                }
+            },
+            "required": [
+                "type",
+                "qualifiers",
+                "classLikeId",
+                "isMarkedNullable",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdClassTypeQualifier": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "typeArguments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeProjection"
+                    }
+                }
+            },
+            "required": [
+                "name",
+                "typeArguments"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdTypeProjection": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/in"
+                },
+                {
+                    "$ref": "#/$defs/invariant"
+                },
+                {
+                    "$ref": "#/$defs/out"
+                },
+                {
+                    "$ref": "#/$defs/star"
+                }
+            ]
+        },
+        "in": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "additionalProperties": false
+        },
+        "invariant": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "additionalProperties": false
+        },
+        "out": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "additionalProperties": false
+        },
+        "star": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "star"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdAnnotation": {
+            "type": "object",
+            "properties": {
+                "classLikeId": {
+                    "type": "string"
+                },
+                "arguments": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotationArgumentValue"
+                    }
+                }
+            },
+            "required": [
+                "classLikeId",
+                "arguments"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdAnnotationArgumentValue": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/annotation"
+                },
+                {
+                    "$ref": "#/$defs/array"
+                },
+                {
+                    "$ref": "#/$defs/classLikeValue"
+                },
+                {
+                    "$ref": "#/$defs/const"
+                },
+                {
+                    "$ref": "#/$defs/enumEntry"
+                }
+            ]
+        },
+        "annotation": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "annotation"
+                },
+                "annotation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                }
+            },
+            "required": [
+                "type",
+                "annotation"
+            ],
+            "additionalProperties": false
+        },
+        "array": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "array"
+                },
+                "elements": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotationArgumentValue"
+                    }
+                }
+            },
+            "required": [
+                "type",
+                "elements"
+            ],
+            "additionalProperties": false
+        },
+        "classLikeValue": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "classLikeValue"
+                },
+                "classLikeId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "classLikeId"
+            ],
+            "additionalProperties": false
+        },
+        "const": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "const"
+                },
+                "expression": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdConstExpression"
+                }
+            },
+            "required": [
+                "type",
+                "expression"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdConstExpression": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdConstValue"
+                },
+                "expression": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdExpression"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "value",
+                "expression"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdConstValue": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/boolean"
+                },
+                {
+                    "$ref": "#/$defs/byte"
+                },
+                {
+                    "$ref": "#/$defs/char"
+                },
+                {
+                    "$ref": "#/$defs/double"
+                },
+                {
+                    "$ref": "#/$defs/float"
+                },
+                {
+                    "$ref": "#/$defs/int"
+                },
+                {
+                    "$ref": "#/$defs/long"
+                },
+                {
+                    "$ref": "#/$defs/null"
+                },
+                {
+                    "$ref": "#/$defs/short"
+                },
+                {
+                    "$ref": "#/$defs/string"
+                },
+                {
+                    "$ref": "#/$defs/ubyte"
+                },
+                {
+                    "$ref": "#/$defs/uint"
+                },
+                {
+                    "$ref": "#/$defs/ulong"
+                },
+                {
+                    "$ref": "#/$defs/ushort"
+                }
+            ]
+        },
+        "boolean": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "boolean"
+                },
+                "value": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "byte": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "byte"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "char": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "char"
+                },
+                "value": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "double": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "double"
+                },
+                "value": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "float": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "float"
+                },
+                "value": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "int": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "int"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "long": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "long"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "null": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "null"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "additionalProperties": false
+        },
+        "short": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "short"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "string": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "ubyte": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "ubyte"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "uint": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "uint"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "ulong": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "ulong"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "ushort": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "ushort"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "type",
+                "value"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdExpression": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                },
+                "links": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdExpressionLink"
+                    }
+                }
+            },
+            "required": [
+                "text",
+                "links"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdExpressionLink": {
+            "type": "object",
+            "properties": {
+                "start": {
+                    "type": "integer"
+                },
+                "end": {
+                    "type": "integer"
+                },
+                "elementId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "start",
+                "end",
+                "elementId"
+            ],
+            "additionalProperties": false
+        },
+        "enumEntry": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "enumEntry"
+                },
+                "enumEntryId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "enumEntryId"
+            ],
+            "additionalProperties": false
+        },
+        "definitelyNotNull": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "definitelyNotNull"
+                },
+                "original": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                }
+            },
+            "required": [
+                "type",
+                "original"
+            ],
+            "additionalProperties": false
+        },
+        "dynamic": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "dynamic"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "additionalProperties": false
+        },
+        "errorUnion": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "errorUnion"
+                },
+                "primaryType": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                },
+                "errorTypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                    }
+                }
+            },
+            "required": [
+                "type",
+                "primaryType",
+                "errorTypes"
+            ],
+            "additionalProperties": false
+        },
+        "flexible": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "flexible"
+                },
+                "lowerBound": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                },
+                "upperBound": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                }
+            },
+            "required": [
+                "type",
+                "lowerBound",
+                "upperBound"
+            ],
+            "additionalProperties": false
+        },
+        "functional": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "functional"
+                },
+                "returnType": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeProjection"
+                },
+                "receiverType": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeProjection"
+                },
+                "valueParameterTypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeProjection"
+                    }
+                },
+                "contextParameterTypes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeProjection"
+                    }
+                },
+                "isSuspend": {
+                    "type": "boolean"
+                },
+                "isMarkedNullable": {
+                    "type": "boolean"
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                }
+            },
+            "required": [
+                "type",
+                "returnType",
+                "receiverType",
+                "valueParameterTypes",
+                "contextParameterTypes",
+                "isSuspend",
+                "isMarkedNullable",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "typeParameter": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "typeParameter"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "containerElementId": {
+                    "type": "string"
+                },
+                "isMarkedNullable": {
+                    "type": "boolean"
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                }
+            },
+            "required": [
+                "type",
+                "name",
+                "containerElementId",
+                "isMarkedNullable",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdTypeVariance": {
+            "type": "string",
+            "enum": [
+                "IN",
+                "OUT"
+            ]
+        },
+        "org.jetbrains.kotlin.documentation.KdDocumentation": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdVisibility": {
+            "type": "string",
+            "enum": [
+                "PUBLIC",
+                "PROTECTED",
+                "INTERNAL",
+                "PRIVATE",
+                "PACKAGE_PROTECTED",
+                "PACKAGE_PRIVATE"
+            ]
+        },
+        "org.jetbrains.kotlin.documentation.KdModality": {
+            "type": "string",
+            "enum": [
+                "FINAL",
+                "SEALED",
+                "OPEN",
+                "ABSTRACT"
+            ]
+        },
+        "org.jetbrains.kotlin.documentation.KdDeprecated": {
+            "type": "object",
+            "properties": {
+                "since": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "message": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                },
+                "level": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDeprecationLevel"
+                },
+                "replaceWith": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdReplaceWith"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "since",
+                "level",
+                "replaceWith"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdDeprecationLevel": {
+            "type": "string",
+            "enum": [
+                "WARNING",
+                "ERROR"
+            ]
+        },
+        "org.jetbrains.kotlin.documentation.KdReplaceWith": {
+            "type": "object",
+            "properties": {
+                "imports": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "expression": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdExpression"
+                }
+            },
+            "required": [
+                "imports",
+                "expression"
+            ],
+            "additionalProperties": false
+        },
+        "constructor": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "constructor"
+                },
+                "isPrimary": {
+                    "type": "boolean"
+                },
+                "isExternal": {
+                    "type": "boolean"
+                },
+                "mappedTo": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "typeParameters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeParameter"
+                    }
+                },
+                "valueParameters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdValueParameter"
+                    }
+                },
+                "visibility": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdVisibility"
+                },
+                "since": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "deprecated": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDeprecated"
+                        }
+                    ]
+                },
+                "throws": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdThrows"
+                    }
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                },
+                "documentation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                }
+            },
+            "required": [
+                "type",
+                "isPrimary",
+                "isExternal",
+                "mappedTo",
+                "typeParameters",
+                "valueParameters",
+                "visibility",
+                "since",
+                "deprecated",
+                "throws",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdValueParameter": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                },
+                "isNoinline": {
+                    "type": "boolean"
+                },
+                "isCrossinline": {
+                    "type": "boolean"
+                },
+                "isVararg": {
+                    "type": "boolean"
+                },
+                "defaultValueExpression": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDefaultValueExpression"
+                        }
+                    ]
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                },
+                "documentation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                }
+            },
+            "required": [
+                "name",
+                "type",
+                "isNoinline",
+                "isCrossinline",
+                "isVararg",
+                "defaultValueExpression",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdDefaultValueExpression": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/defined"
+                },
+                {
+                    "$ref": "#/$defs/inherited"
+                }
+            ]
+        },
+        "defined": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "defined"
+                },
+                "expression": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdExpression"
+                }
+            },
+            "required": [
+                "type",
+                "expression"
+            ],
+            "additionalProperties": false
+        },
+        "inherited": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "inherited"
+                },
+                "elementId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "elementId"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdThrows": {
+            "type": "object",
+            "properties": {
+                "classLikeId": {
+                    "type": "string"
+                },
+                "documentation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                }
+            },
+            "required": [
+                "classLikeId"
+            ],
+            "additionalProperties": false
+        },
+        "function": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "function"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "isCompanion": {
+                    "type": "boolean"
+                },
+                "isExternal": {
+                    "type": "boolean"
+                },
+                "isSuspend": {
+                    "type": "boolean"
+                },
+                "isOperator": {
+                    "type": "boolean"
+                },
+                "isInfix": {
+                    "type": "boolean"
+                },
+                "isInline": {
+                    "type": "boolean"
+                },
+                "isTailRec": {
+                    "type": "boolean"
+                },
+                "mappedTo": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "returnType": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                },
+                "typeParameters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeParameter"
+                    }
+                },
+                "valueParameters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdValueParameter"
+                    }
+                },
+                "extensionReceiverParameter": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdExtensionReceiverParameter"
+                        }
+                    ]
+                },
+                "contextParameters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdContextParameter"
+                    }
+                },
+                "overridens": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "visibility": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdVisibility"
+                },
+                "modality": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdModality"
+                },
+                "since": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "deprecated": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDeprecated"
+                        }
+                    ]
+                },
+                "throws": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdThrows"
+                    }
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                },
+                "documentation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                }
+            },
+            "required": [
+                "type",
+                "name",
+                "isCompanion",
+                "isExternal",
+                "isSuspend",
+                "isOperator",
+                "isInfix",
+                "isInline",
+                "isTailRec",
+                "mappedTo",
+                "returnType",
+                "typeParameters",
+                "valueParameters",
+                "extensionReceiverParameter",
+                "contextParameters",
+                "overridens",
+                "visibility",
+                "modality",
+                "since",
+                "deprecated",
+                "throws",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdExtensionReceiverParameter": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                },
+                "documentation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                }
+            },
+            "required": [
+                "type",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdContextParameter": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "type": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                },
+                "documentation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                }
+            },
+            "required": [
+                "name",
+                "type",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "inheritedMember": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "inheritedMember"
+                },
+                "originalId": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "originalId"
+            ],
+            "additionalProperties": false
+        },
+        "module": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "module"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "packages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                },
+                "documentation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                }
+            },
+            "required": [
+                "type",
+                "name",
+                "packages",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "package": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "package"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "declarations": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                },
+                "documentation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                }
+            },
+            "required": [
+                "type",
+                "name",
+                "declarations",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "property": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "isInline": {
+                    "type": "boolean"
+                },
+                "isCompanion": {
+                    "type": "boolean"
+                },
+                "isExternal": {
+                    "type": "boolean"
+                },
+                "isSuspend": {
+                    "type": "boolean"
+                },
+                "isMutable": {
+                    "type": "boolean"
+                },
+                "isFromPrimaryConstructor": {
+                    "type": "boolean"
+                },
+                "constExpression": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdConstExpression"
+                        }
+                    ]
+                },
+                "getter": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "setter": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "mappedTo": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "type": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                },
+                "typeParameters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeParameter"
+                    }
+                },
+                "extensionReceiverParameter": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdExtensionReceiverParameter"
+                        }
+                    ]
+                },
+                "contextParameters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdContextParameter"
+                    }
+                },
+                "overridens": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "visibility": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdVisibility"
+                },
+                "modality": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdModality"
+                },
+                "throws": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdThrows"
+                    }
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                },
+                "documentation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                }
+            },
+            "required": [
+                "name",
+                "isInline",
+                "isCompanion",
+                "isExternal",
+                "isSuspend",
+                "isMutable",
+                "isFromPrimaryConstructor",
+                "constExpression",
+                "getter",
+                "setter",
+                "mappedTo",
+                "type",
+                "typeParameters",
+                "extensionReceiverParameter",
+                "contextParameters",
+                "overridens",
+                "visibility",
+                "modality",
+                "throws",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "refinedElement": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "refinedElement"
+                },
+                "fragmentName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "fragmentName"
+            ],
+            "additionalProperties": false
+        },
+        "typealias": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "const": "typealias"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "typeParameters": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdTypeParameter"
+                    }
+                },
+                "underlyingType": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdType"
+                },
+                "declarations": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "visibility": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdVisibility"
+                },
+                "since": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "deprecated": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDeprecated"
+                        }
+                    ]
+                },
+                "annotations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
+                    }
+                },
+                "documentation": {
+                    "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdDocumentation"
+                }
+            },
+            "required": [
+                "type",
+                "name",
+                "typeParameters",
+                "underlyingType",
+                "declarations",
+                "visibility",
+                "since",
+                "deprecated",
+                "annotations"
+            ],
+            "additionalProperties": false
+        },
+        "org.jetbrains.kotlin.documentation.KdExpectActualMapping": {
+            "type": "object",
+            "properties": {
+                "expectIds": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "actualIds": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "expectIds",
+                "actualIds"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

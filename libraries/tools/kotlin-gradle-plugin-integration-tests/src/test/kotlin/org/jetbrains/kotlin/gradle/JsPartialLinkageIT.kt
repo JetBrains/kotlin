@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @JsGradlePluginTests
+@MustRunOnChangesInGradle
 class JsPartialLinkageIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
@@ -26,11 +28,7 @@ class JsPartialLinkageIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions
                 .copy(kotlinVersion = KOTLIN_VERSION_WITH_OLD_SHAPE_OF_SUBCLASS_OPT_IN_REQUIRED)
-                .suppressDeprecationWarningsSinceGradleVersion(
-                    gradleVersion = TestVersions.Gradle.G_8_14,
-                    currentGradleVersion = gradleVersion,
-                    reason = "Kotlin versions before 2.1.21 produces 'is*' property deprecation warning"
-                ),
+                .suppressDeprecationWarnings("Kotlin versions before 2.1.21 produces 'is*' property deprecation warning"),
         ) {
             build("publish") {
                 assertTasksExecuted(":publish")
@@ -58,11 +56,7 @@ class JsPartialLinkageIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions
                 .copy(kotlinVersion = KOTLIN_VERSION_WITH_OLD_SHAPE_OF_SUBCLASS_OPT_IN_REQUIRED)
-                .suppressDeprecationWarningsSinceGradleVersion(
-                    gradleVersion = TestVersions.Gradle.G_8_14,
-                    currentGradleVersion = gradleVersion,
-                    reason = "Kotlin versions before 2.1.21 produces 'is*' property deprecation warning"
-                ),
+                .suppressDeprecationWarnings("Kotlin versions before 2.1.21 produces 'is*' property deprecation warning"),
         ) {
             build("publish") {
                 assertTasksExecuted(":publish")

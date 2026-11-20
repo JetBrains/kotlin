@@ -10,7 +10,9 @@ import com.github.gundy.hidden.antlr.v4.runtime.CommonTokenStream
 import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionLexer
 import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionParser
 import org.gradle.api.InvalidUserDataException
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
+@ObsoleteNpmDependencyModel
 fun versionToNpmRanges(version: String): Set<NpmRange> {
     val lexer = NodeSemverExpressionLexer(ANTLRInputStream(version))
     val tokens = CommonTokenStream(lexer)
@@ -19,6 +21,7 @@ fun versionToNpmRanges(version: String): Set<NpmRange> {
         .visit(parser.rangeSet())!!
 }
 
+@ObsoleteNpmDependencyModel
 fun includedRange(
     includedVersion: String,
     includedWithCaret: Boolean = false,
@@ -28,6 +31,7 @@ fun includedRange(
         includedWithCaret
     )
 
+@ObsoleteNpmDependencyModel
 fun includedRange(
     includedVersions: List<String>,
     includedWithCaret: Boolean = false,
@@ -47,6 +51,7 @@ fun includedRange(
         throw InvalidUserDataException("No ranges for included versions $includedVersions")
     }
 
+@ObsoleteNpmDependencyModel
 fun buildNpmVersion(
     includedVersions: List<String>,
     excludedVersions: List<String>,
@@ -74,6 +79,7 @@ fun buildNpmVersion(
             .joinToString(" || ")
 }
 
+@ObsoleteNpmDependencyModel
 private fun NpmRange.caretizeSingleVersion(): NpmRange {
     if (startVersion?.toVersion() == endVersion?.toVersion() && (startInclusive || endInclusive)) {
         return NpmRange(

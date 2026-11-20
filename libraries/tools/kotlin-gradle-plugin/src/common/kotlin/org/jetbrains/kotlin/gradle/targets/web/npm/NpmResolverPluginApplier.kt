@@ -3,18 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION") // file-based npm dependencies are still modelled by the deprecated NpmDependency
-
 package org.jetbrains.kotlin.gradle.targets.web.npm
 
 import org.gradle.api.Project
-import org.gradle.api.provider.Property
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.*
+import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.hasSharedNpmToolingDir
+import org.jetbrains.kotlin.gradle.targets.js.ir.npmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NpmApiExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NPM_DEP_FILE_VERSION_PREFIX
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.withType
+import java.util.*
 
 /**
  * A utility class that applies the configuration for resolving NPM dependencies
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.gradle.utils.withType
  * for the root Node.js project configuration.
  * @property singleNodeJsApply A function to apply per-project Node.js-specific configurations.
  */
+@ObsoleteNpmDependencyModel
 internal class NpmResolverPluginApplier(
     private val nodeJsRootApply: (Project) -> BaseNodeJsRootExtension,
     private val singleNodeJsApply: (Project) -> Unit,
@@ -148,20 +150,49 @@ internal class NpmResolverPluginApplier(
             task.compilation.npmProject.nodeJsRoot.npmInstallTaskProvider
         )
 
-        val allNpmDeps =
+        registerNpmFileDepsAsTaskInput(task)
+        disableCachingForLegacyNpmFileDeps(task, compilationResolver)
+    }
+
+    private fun registerNpmFileDepsAsTaskInput(task: RequiresNpmDependenciesTask) {
+        val npmDepsFromCollector: Provider<List<Provider<Directory>>> =
+            task.compilation.npmDependencies()
+                .map {
+                    it.filterIsInstance<KotlinNpmDependency.LocalPath>()
+                        .map(KotlinNpmDependency.LocalPath::directory)
+                }
+
+        task.fileBasedDependencyDirectories.from(npmDepsFromCollector)
+    }
+
+    private fun disableCachingForLegacyNpmFileDeps(task: RequiresNpmDependenciesTask, compilationResolver: KotlinCompilationNpmResolver) {
+        //region legacy configuration-based npm deps
+        val npmDepsFromConfigurations =
             compilationResolver
                 .aggregatedConfiguration
                 .allDependencies
-                .withType<NpmDependency>()
+                .withType<@Suppress("DEPRECATION") org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency>()
 
-        task.fileBasedNpmDependencyLocations.convention(
+        // Use `providers.provider {}`, not `npmDepsFromConfigurations.elements`:
+        // the configuration cache cannot encode the `elements` provider of a Configuration's dependencies.
+        val fileBasedDependenciesFromConfigurations: Provider<List<String>> =
             task.project.providers.provider {
-                allNpmDeps
+                npmDepsFromConfigurations
                     .map { it.version }
                     .filter { it.startsWith(NPM_DEP_FILE_VERSION_PREFIX) }
                     .map { it.removePrefix(NPM_DEP_FILE_VERSION_PREFIX) }
+                    .distinct()
             }
+
+        task.fileBasedNpmDependencyLocations.convention(
+            fileBasedDependenciesFromConfigurations
         )
+
+        task.inputs.property(
+            "fileBasedNpmDependencyLocationsRerunToken",
+            task.project.providers.of(FileBasedNpmDependencyLocationsRerunTokenSource::class.java) { spec ->
+                spec.parameters.fileBasedNpmDependencyLocations.set(task.fileBasedNpmDependencyLocations)
+            })
 
         task.outputs.doNotCacheIf("there are file-based NPM dependencies") { _ ->
             val fileBasedNpmDependencyLocations = task.fileBasedNpmDependencyLocations.getOrElse(emptyList())
@@ -177,6 +208,32 @@ internal class NpmResolverPluginApplier(
         }
     }
 
+    /**
+     * Changes on every call if there are any [RequiresNpmDependenciesTask.fileBasedNpmDependencyLocations], so that the task always re-runs.
+     *
+     * Avoid using [org.gradle.api.tasks.TaskOutputs.upToDateWhen] because if
+     * [RequiresNpmDependenciesTask.fileBasedNpmDependencyLocations] is empty then the task will be marked as up-to-date,
+     * even if the task has no outputs and should always rerun.
+     *
+     * This is a temporary workaround that should be removed when [RequiresNpmDependenciesTask] is removed.
+     */
+    internal abstract class FileBasedNpmDependencyLocationsRerunTokenSource :
+        ValueSource<String, FileBasedNpmDependencyLocationsRerunTokenSource.Parameters> {
+
+        interface Parameters : ValueSourceParameters {
+            val fileBasedNpmDependencyLocations: ListProperty<String>
+        }
+
+        override fun obtain(): String =
+            if (parameters.fileBasedNpmDependencyLocations.getOrElse(emptyList()).isEmpty()) {
+                ""
+            } else {
+                // just return something random with high entropy, so the task is never up-to-date
+                UUID.randomUUID().toString()
+            }
+    }
+
+    @ObsoleteNpmDependencyModel
     companion object {
         private fun KotlinJsIrCompilation.getCompilationResolver(): KotlinCompilationNpmResolver? =
             npmProject.nodeJsRoot.resolver.getOrNull(project.path)?.getOrNull(disambiguatedName)

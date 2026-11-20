@@ -19,13 +19,13 @@ class KonanPartialModuleDeserializer(
     kotlinIrLinker: KotlinIrLinker,
     moduleFragment: IrModuleFragment,
     klib: KotlinLibrary,
-    strategyResolver: (String) -> DeserializationStrategy,
+    strategyResolver: DeserializationStrategyResolver,
     private val cacheDeserializationStrategy: CacheDeserializationStrategy,
 ) : BasicIrModuleDeserializer(
     linker = kotlinIrLinker,
     moduleFragment = moduleFragment,
     klib = klib,
-    strategyResolver = { fileName -> if (cacheDeserializationStrategy.contains(fileName)) strategyResolver(fileName) else DeserializationStrategy.ON_DEMAND },
+    strategyResolver = { filePath -> if (cacheDeserializationStrategy.contains(filePath)) strategyResolver(filePath) else DeserializationStrategy.ON_DEMAND },
     libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
 ) {
     val files by lazy { fileDeserializationStates.map { it.file } }

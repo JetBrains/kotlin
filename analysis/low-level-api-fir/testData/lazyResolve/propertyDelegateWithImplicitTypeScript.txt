@@ -75,9 +75,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
-            @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var resolveMe: <implicit> = LAZY_EXPRESSION
-                @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Interface] get(): <implicit>
-                @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Interface] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit|
+            @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(STATUS)] var resolveMe: <implicit> = LAZY_EXPRESSION
+                @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=Interface] get(): <implicit>
+                @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=Interface] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit|
 
         }
 
@@ -88,9 +88,9 @@ TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public open override [R
     @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Aaa] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
-    SCRIPT: [ResolvedTo(TYPES)] <script-propertyDelegateWithImplicitTypeScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
-        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-propertyDelegateWithImplicitTypeScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.PROPERTY#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.FIELD#, AnnotationTarget#.PROPERTY_SETTER#, AnnotationTarget#.PROPERTY_GETTER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.FIELD|, R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
@@ -117,9 +117,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
-            @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(CONTRACTS)] var resolveMe: <implicit> = LAZY_EXPRESSION
-                @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Interface] get(): <implicit>
-                @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Interface] set([ResolvedTo(CONTRACTS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit|
+            @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(STATUS)] var resolveMe: <implicit> = LAZY_EXPRESSION
+                @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=Interface] get(): <implicit>
+                @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=Interface] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit|
 
         }
 
@@ -201,9 +201,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
-            @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(CONSTANT_EVALUATION)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
-                @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
-                @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Interface] set([ResolvedTo(CONSTANT_EVALUATION)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|kotlin/String?|): R|kotlin/Unit|
+            @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
+                @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
+                @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Interface] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|kotlin/String?|): R|kotlin/Unit|
 
         }
 

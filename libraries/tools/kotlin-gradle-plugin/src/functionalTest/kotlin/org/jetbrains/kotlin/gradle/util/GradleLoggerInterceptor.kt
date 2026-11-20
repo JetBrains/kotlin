@@ -10,6 +10,7 @@ import org.gradle.internal.logging.events.OutputEvent
 import org.gradle.internal.logging.events.OutputEventListener
 import org.gradle.internal.logging.slf4j.OutputEventListenerBackedLoggerContext
 import org.slf4j.LoggerFactory
+import java.util.*
 import kotlin.test.fail
 
 private class KotlinFunctionalTestLogEventListener(
@@ -34,7 +35,7 @@ private class KotlinFunctionalTestLogEventListener(
         suppressOriginalLogger: Boolean,
         code: () -> T,
     ): Pair<T, List<OutputEvent>> {
-        val collector = mutableListOf<OutputEvent>()
+        val collector = Collections.synchronizedList(mutableListOf<OutputEvent>())
         this.collector = collector
 
         val suppressOriginalLoggerOld = this.suppressOriginalLogger

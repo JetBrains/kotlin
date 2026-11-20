@@ -1,0 +1,94 @@
+FILE: nonLocalDestructuringInLocalContexts.kt
+    public final data class X : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|, b: R|kotlin/String|): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+
+        public final val b: R|kotlin/String| = R|<local>/b|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final operator fun component2(): R|kotlin/String|
+
+        public final fun copy(a: R|kotlin/Int| = this@R|/X|.R|/X.a|, b: R|kotlin/String| = this@R|/X|.R|/X.b|): R|X|
+
+    }
+    public final enum class E : R|kotlin/Enum<E>| {
+        private constructor(): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final static enum entry ENTRY: R|E| = object : R|E| {
+            private constructor(): R|<anonymous>| {
+                super<R|E|>()
+            }
+
+            private final val <destruct>: R|X| = R|/X.X|(Int(1), String())
+                private get(): R|X|
+
+            public final val a: R|kotlin/Int| = R|/<anonymous>.<destruct>|.R|/X.component1|()
+                public get(): R|kotlin/Int|
+
+            public final val b: R|kotlin/String| = R|/<anonymous>.<destruct>|.R|/X.component2|()
+                public get(): R|kotlin/String|
+
+            public final fun use(): R|kotlin/Int| {
+                ^use this@R|/<anonymous>|.R|/<anonymous>.b|.R|kotlin/String.length|
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E>|
+            public static get(): R|kotlin/enums/EnumEntries<E>|
+
+    }
+    public final fun local(): R|kotlin/Unit| {
+        local final class Local : R|kotlin/Any| {
+            public constructor(): R|<local>/Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final val <destruct>: R|X| = R|/X.X|(Int(1), String())
+                private get(): R|X|
+
+            public final val a: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component1|()
+                public get(): R|kotlin/Int|
+
+            public final val b: R|kotlin/String| = R|<local>/<destruct>|.R|/X.component2|()
+                public get(): R|kotlin/String|
+
+            public final fun use(): R|kotlin/Int| {
+                ^use this@R|<local>/Local|.R|<local>/b|.R|kotlin/String.length|
+            }
+
+        }
+
+        R|<local>/Local.Local|().R|<local>/b|.R|kotlin/String.length|
+        lval o: R|<anonymous>| = object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final val <destruct>: R|X| = R|/X.X|(Int(1), String())
+                private get(): R|X|
+
+            public final val a: R|kotlin/Int| = R|/<anonymous>.<destruct>|.R|/X.component1|()
+                public get(): R|kotlin/Int|
+
+            public final val b: R|kotlin/String| = R|/<anonymous>.<destruct>|.R|/X.component2|()
+                public get(): R|kotlin/String|
+
+        }
+
+        R|<local>/o|.R|/<anonymous>.b|.R|kotlin/String.length|
+    }

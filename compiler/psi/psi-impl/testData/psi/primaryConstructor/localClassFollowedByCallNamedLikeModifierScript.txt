@@ -1,0 +1,138 @@
+KtFile: localClassFollowedByCallNamedLikeModifierScript.kts
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  SCRIPT
+    BLOCK
+      PsiComment(EOL_COMMENT)('// ISSUE: KT-90782')
+      PsiWhiteSpace('\n\n')
+      CLASS
+        PsiComment(EOL_COMMENT)('// Top-level script classes are in statement position just like local classes')
+        PsiWhiteSpace('\n')
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('TopLevel')
+      PsiWhiteSpace('\n')
+      SCRIPT_INITIALIZER
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('error')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              STRING_TEMPLATE
+                PsiElement(OPEN_QUOTE)('"')
+                LITERAL_STRING_TEMPLATE_ENTRY
+                  PsiElement(REGULAR_STRING_PART)('boom')
+                PsiElement(CLOSING_QUOTE)('"')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n')
+      CLASS
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('TopLevelWithConstructorOnNextLine')
+        PsiWhiteSpace('\n')
+        PRIMARY_CONSTRUCTOR
+          MODIFIER_LIST
+            PsiElement(private)('private')
+          PsiWhiteSpace(' ')
+          PsiElement(constructor)('constructor')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n')
+      FUNCTION
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          CLASS
+            PsiElement(class)('class')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('Local')
+          PsiWhiteSpace('\n    ')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('error')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                STRING_TEMPLATE
+                  PsiElement(OPEN_QUOTE)('"')
+                  LITERAL_STRING_TEMPLATE_ENTRY
+                    PsiElement(REGULAR_STRING_PART)('boom')
+                  PsiElement(CLOSING_QUOTE)('"')
+              PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n')
+      SCRIPT_INITIALIZER
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('run')
+          PsiWhiteSpace(' ')
+          LAMBDA_ARGUMENT
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace('\n    ')
+                BLOCK
+                  CLASS
+                    PsiElement(class)('class')
+                    PsiWhiteSpace(' ')
+                    PsiElement(IDENTIFIER)('LocalInLambda')
+                  PsiWhiteSpace('\n    ')
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('error')
+                    VALUE_ARGUMENT_LIST
+                      PsiElement(LPAR)('(')
+                      VALUE_ARGUMENT
+                        STRING_TEMPLATE
+                          PsiElement(OPEN_QUOTE)('"')
+                          LITERAL_STRING_TEMPLATE_ENTRY
+                            PsiElement(REGULAR_STRING_PART)('boom')
+                          PsiElement(CLOSING_QUOTE)('"')
+                      PsiElement(RPAR)(')')
+                PsiWhiteSpace('\n')
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n')
+      CLASS
+        PsiComment(EOL_COMMENT)('// Member classes are not affected')
+        PsiWhiteSpace('\n')
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('Outer')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          CLASS
+            PsiElement(class)('class')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('Nested')
+            PsiWhiteSpace('\n    ')
+            PRIMARY_CONSTRUCTOR
+              MODIFIER_LIST
+                PsiElement(private)('private')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER_LIST
+                PsiElement(LPAR)('(')
+                VALUE_PARAMETER
+                  PsiElement(IDENTIFIER)('x')
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Int')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n')
+          PsiElement(RBRACE)('}')

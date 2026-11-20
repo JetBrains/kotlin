@@ -147,11 +147,13 @@ extension ExportedKotlinPackages.kotlin.collections.ListIterator {
 }
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.MutableCollection where Self : ExportedKotlinPackages.kotlin.collections.__MutableCollection {
+    @discardableResult
     public func add(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
         return kotlin_collections_MutableCollection_add__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
     }
+    @discardableResult
     public func addAll(
         elements: any ExportedKotlinPackages.kotlin.collections.Collection
     ) -> Swift.Bool {
@@ -163,16 +165,19 @@ extension ExportedKotlinPackages.kotlin.collections.MutableCollection where Self
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableCollection_iterator(self.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableIterator.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableIterator
     }
+    @discardableResult
     public func remove(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
         return kotlin_collections_MutableCollection_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
     }
+    @discardableResult
     public func removeAll(
         elements: any ExportedKotlinPackages.kotlin.collections.Collection
     ) -> Swift.Bool {
         return kotlin_collections_MutableCollection_removeAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
     }
+    @discardableResult
     public func retainAll(
         elements: any ExportedKotlinPackages.kotlin.collections.Collection
     ) -> Swift.Bool {
@@ -199,12 +204,14 @@ extension ExportedKotlinPackages.kotlin.collections.MutableIterator {
 }
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.MutableList where Self : ExportedKotlinPackages.kotlin.collections.__MutableList {
+    @discardableResult
     public func _set(
         index: Swift.Int32,
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch kotlin_collections_MutableList_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, element.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
+    @discardableResult
     public func add(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
@@ -216,11 +223,13 @@ extension ExportedKotlinPackages.kotlin.collections.MutableList where Self : Exp
     ) -> Swift.Void {
         return { kotlin_collections_MutableList_add__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, element.map { it in it.__externalRCRef() } ?? nil); return () }()
     }
+    @discardableResult
     public func addAll(
         elements: any ExportedKotlinPackages.kotlin.collections.Collection
     ) -> Swift.Bool {
         return kotlin_collections_MutableList_addAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
     }
+    @discardableResult
     public func addAll(
         index: Swift.Int32,
         elements: any ExportedKotlinPackages.kotlin.collections.Collection
@@ -238,21 +247,25 @@ extension ExportedKotlinPackages.kotlin.collections.MutableList where Self : Exp
     ) -> any ExportedKotlinPackages.kotlin.collections.MutableListIterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableList_listIterator__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableListIterator.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableListIterator
     }
+    @discardableResult
     public func remove(
         element: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
         return kotlin_collections_MutableList_remove__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
     }
+    @discardableResult
     public func removeAll(
         elements: any ExportedKotlinPackages.kotlin.collections.Collection
     ) -> Swift.Bool {
         return kotlin_collections_MutableList_removeAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
     }
+    @discardableResult
     public func removeAt(
         index: Swift.Int32
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch kotlin_collections_MutableList_removeAt__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
+    @discardableResult
     public func retainAll(
         elements: any ExportedKotlinPackages.kotlin.collections.Collection
     ) -> Swift.Bool {
@@ -411,20 +424,25 @@ extension ExportedKotlinPackages.kotlin.collections {
         func previousIndex() -> Swift.Int32
     }
     public protocol MutableCollection: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Collection, ExportedKotlinPackages.kotlin.collections.MutableIterable, ExportedKotlinPackages.kotlin.collections._MutableCollection {
+        @discardableResult
         func add(
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool
+        @discardableResult
         func addAll(
             elements: any ExportedKotlinPackages.kotlin.collections.Collection
         ) -> Swift.Bool
         func clear() -> Swift.Void
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator
+        @discardableResult
         func remove(
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool
+        @discardableResult
         func removeAll(
             elements: any ExportedKotlinPackages.kotlin.collections.Collection
         ) -> Swift.Bool
+        @discardableResult
         func retainAll(
             elements: any ExportedKotlinPackages.kotlin.collections.Collection
         ) -> Swift.Bool
@@ -436,10 +454,12 @@ extension ExportedKotlinPackages.kotlin.collections {
         func remove() -> Swift.Void
     }
     public protocol MutableList: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.List, ExportedKotlinPackages.kotlin.collections.MutableCollection, ExportedKotlinPackages.kotlin.collections._MutableList {
+        @discardableResult
         func _set(
             index: Swift.Int32,
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        @discardableResult
         func add(
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool
@@ -447,9 +467,11 @@ extension ExportedKotlinPackages.kotlin.collections {
             index: Swift.Int32,
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Void
+        @discardableResult
         func addAll(
             elements: any ExportedKotlinPackages.kotlin.collections.Collection
         ) -> Swift.Bool
+        @discardableResult
         func addAll(
             index: Swift.Int32,
             elements: any ExportedKotlinPackages.kotlin.collections.Collection
@@ -459,15 +481,19 @@ extension ExportedKotlinPackages.kotlin.collections {
         func listIterator(
             index: Swift.Int32
         ) -> any ExportedKotlinPackages.kotlin.collections.MutableListIterator
+        @discardableResult
         func remove(
             element: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool
+        @discardableResult
         func removeAll(
             elements: any ExportedKotlinPackages.kotlin.collections.Collection
         ) -> Swift.Bool
+        @discardableResult
         func removeAt(
             index: Swift.Int32
         ) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        @discardableResult
         func retainAll(
             elements: any ExportedKotlinPackages.kotlin.collections.Collection
         ) -> Swift.Bool

@@ -76,6 +76,15 @@ class SwiftExportMetadataPublishingUnitTests {
     }
 
     @Test
+    fun `swift export metadata omits an absent module name from the json`() {
+        val serialized = ByteArrayOutputStream()
+        SwiftExportMetadata(moduleName = null, rootPackage = "org.bar.foo").serializeSwiftExportMetadata(serialized)
+
+        val json = Json.parseToJsonElement(serialized.toString(Charsets.UTF_8.name())).jsonObject
+        assertEquals(setOf("schemaVersion", "rootPackage"), json.keys)
+    }
+
+    @Test
     fun `deserialization reports the schema version written by the producer`() {
         val foreignVersion = SWIFT_EXPORT_METADATA_SCHEMA_VERSION + 1
         val payload = """{"schemaVersion":$foreignVersion,"moduleName":"Foo","rootPackage":"org.bar.foo"}"""

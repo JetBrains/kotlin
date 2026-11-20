@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.testInfraError
 
 class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationResolver() {
     private var currentTransformerPhase: FirResolvePhase? = null
+    private var lastPhaseFinished: Boolean = false
 
     private val exceptions = mutableListOf<FirLazyResolveContractViolationException>()
 
@@ -58,10 +59,13 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
     override fun finishResolvingPhase(phase: FirResolvePhase) {
         checkTestInfrastructure(currentTransformerPhase == phase)  { "currentTransformerPhase must be $phase"}
         currentTransformerPhase = null
+        if (phase == FirResolvePhase.entries.last()) {
+            lastPhaseFinished = true
+        }
     }
 
     private fun checkIfCanLazyResolveToPhase(requestedPhase: FirResolvePhase, elementPhase: FirResolvePhase) {
-        if (!lazyResolveContractChecksEnabled || elementPhase >= requestedPhase) return
+        if (!lazyResolveContractChecksEnabled || elementPhase >= requestedPhase || lastPhaseFinished) return
 
         val currentPhase = currentTransformerPhase
             ?: testInfraError("Current phase is not set, please call ${this::startResolvingPhase.name} before starting transforming the file")

@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.useArrayLiteralResolution
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractResolveTransformerSubclassing
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -357,7 +358,8 @@ class FirPCLAInferenceSession(
     }
 }
 
-class FirTypeVariablesAfterPCLATransformer(private val substitutor: ConeSubstitutor) : FirDefaultTransformer<Nothing?>() {
+@OptIn(FirAbstractResolveTransformerSubclassing::class)
+class FirTypeVariablesAfterPCLATransformer(private val substitutor: ConeSubstitutor) : FirAbstractResolveTransformer<Nothing?>() {
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
         // All resolvable nodes should be implemented separately to cover substitution of receivers in the candidate

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.SubclassOptInRequired;
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
@@ -59,22 +58,9 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
      */
     @NotNull
     public List<KtDestructuringDeclarationEntry> getEntries() {
-        List<KtDestructuringDeclarationEntry> result = new ArrayList<>();
-        for (ASTNode child = getNode().getFirstChildNode(); child != null; child = child.getTreeNext()) {
-            if (child.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
-                result.add((KtDestructuringDeclarationEntry) child.getPsi());
-            } else if (child.getElementType() == TokenType.ERROR_ELEMENT) {
-                // Entries may be wrapped in ERROR_ELEMENTs (e.g., for top-level destructuring declarations
-                // where the parser reports an error).
-                // TODO(KT-58563): After the reporting is moved out of the parser, this workaround can be removed.
-                for (ASTNode errorChild = child.getFirstChildNode(); errorChild != null; errorChild = errorChild.getTreeNext()) {
-                    if (errorChild.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
-                        result.add((KtDestructuringDeclarationEntry) errorChild.getPsi());
-                    }
-                }
-            }
-        }
-        return result;
+        KtDestructuringDeclarationEntry[] entries =
+                getStubOrPsiChildren(KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY, KtDestructuringDeclarationEntry.EMPTY_ARRAY);
+        return Arrays.asList(entries);
     }
 
     @Nullable
@@ -138,6 +124,11 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
      * See <a href="https://kotl.in/name-based-destructuring">KEEP</a>.
      */
     public boolean isFullForm() {
+        KotlinDestructuringDeclarationStub stub = getGreenStub();
+        if (stub != null) {
+            return stub.isFullForm();
+        }
+
         List<KtDestructuringDeclarationEntry> entries = getEntries();
         return !entries.isEmpty() && entries.get(0).getOwnValOrVarKeyword() != null;
     }
@@ -161,6 +152,11 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
      * @return true when this destructuring declaration uses square brackets.
      */
     public boolean hasSquareBrackets() {
+        KotlinDestructuringDeclarationStub stub = getGreenStub();
+        if (stub != null) {
+            return stub.getHasSquareBrackets();
+        }
+
         return getNode().findChildByType(LBRACKET) != null;
     }
 

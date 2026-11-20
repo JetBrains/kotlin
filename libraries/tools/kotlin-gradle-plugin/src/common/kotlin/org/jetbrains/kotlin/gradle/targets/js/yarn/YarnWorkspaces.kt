@@ -10,9 +10,11 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 
+@ObsoleteNpmDependencyModel
 class YarnWorkspaces internal constructor(
     execOps: ExecOperations,
     objects: ObjectFactory,

@@ -1,0 +1,2 @@
+// EXISTS: simple.klib!default/manifest
+// CONTAINS: simple.klib!default/manifest, unique_name=test_module

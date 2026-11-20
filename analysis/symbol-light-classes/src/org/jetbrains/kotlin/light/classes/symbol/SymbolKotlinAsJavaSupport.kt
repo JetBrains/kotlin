@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.time.Duration
 import java.util.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName as computeJavaMethodNameImpl
+import org.jetbrains.kotlin.light.classes.symbol.classes.hasPrefixlessAccessorNames as hasPrefixlessAccessorNamesImpl
 
 private val KMP_CACHE: ThreadLocal<WeakHashMap<KaSymbol, KtLightClass?>> = ThreadLocal.withInitial { null }
 
@@ -131,10 +133,10 @@ private fun KaModule.isValidContextModule(): Boolean {
 }
 
 @OptIn(KaImplementationDetail::class)
-internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport(), KaInternalsLightClassBridge {
+internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport(), KaInternalsLightClassBridge, Disposable {
 
     init {
-        project.analysisMessageBus.connect(project).subscribe(
+        project.analysisMessageBus.connect(this).subscribe(
             KotlinModificationEvent.TOPIC,
             KotlinModificationEventListener { event ->
                 when (event) {
@@ -157,6 +159,8 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
             }
         )
     }
+
+    override fun dispose() {}
 
     // ============ LIGHT FACADES ============
     //region Light Facades
@@ -441,8 +445,8 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
                 val javaClsClass = DecompiledLightClassesFactory.createClsJavaClassFromVirtualFile(
                     mirrorFile = psiFile,
                     classFile = partClassFile,
-                    correspondingClassOrObject = null,
                     project = project,
+                    correspondingClassOrObject = { null },
                 ) ?: return@mapNotNull null
 
                 KtLightClassForDecompiledDeclaration(javaClsClass, javaClsClass.parent, psiFile, null)
@@ -588,6 +592,9 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
      *   In this case, [getResolutionScope] just provides an identical scope.
      * - If the original declaration was in a common module, the first found JVM implementation module is passed as a context.
      *   In this case, [getResolutionScope] returns the scope of this implementation module.
+     *
+     * The only exception is when [isMultiplatformSupportAvailable] is `true`.
+     * Then, the declaration-site module is used as a context, so [getResolutionScope] returns the scope of that (possibly non-JVM) module.
      */
     override fun getResolutionScope(file: FakeFileForLightClass): GlobalSearchScope {
         val analysisScopesForContextModules = file.classes.mapNotNullTo(mutableSetOf()) { lightClass ->
@@ -638,12 +645,19 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
      * [moduleFilter] is called on the containing module to ensure that this module is allowed for the light class creation.
      * If [moduleFilter] returns `false` on the containing module, returns `null`.
      * If [scope] is `null`, the containing module is returned.
+     *
+     * When [isMultiplatformSupportAvailable] is `true`, [scope] is ignored and the containing module is always returned.
+     * The [calculatedContextModuleCache] is bypassed in this case, so results computed in one mode never leak into the other.
      */
     private fun KtElement.findContextModule(
         scope: GlobalSearchScope? = null,
         moduleFilter: (KaModule) -> Boolean = { true }
     ): KaModule? {
         val declarationModule = getContainingModule().takeIf(moduleFilter) ?: return null
+        if (isMultiplatformSupportAvailable) {
+            return declarationModule
+        }
+
         return calculatedContextModuleCache
             .getOrPut(moduleKeyInterner.intern(declarationModule), scope) { declarationModule, scope ->
                 findContextModuleNonCached(declarationModule, scope)
@@ -731,6 +745,10 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     context(_: KaSession)
     override fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String, ignoreInlineClassMangling: Boolean): String? =
         computeJavaMethodNameImpl(symbol, defaultName, ignoreInlineClassMangling)
+
+    context(_: KaSession)
+    override val KaPropertySymbol.hasPrefixlessAccessorNames: Boolean
+        get() = hasPrefixlessAccessorNamesImpl
 
     //endregion
 

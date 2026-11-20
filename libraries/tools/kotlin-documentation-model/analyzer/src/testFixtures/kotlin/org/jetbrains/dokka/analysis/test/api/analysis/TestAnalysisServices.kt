@@ -15,7 +15,7 @@ import org.jetbrains.dokka.analysis.kotlin.sample.SampleAnalysisEnvironmentCreat
  * This class exists purely for convenience and to reduce boilerplate in tests.
  * It is analogous to calling `context.plugin<KotlinAnalysisPlugin>().querySingle { serviceName }`.
  */
-class TestAnalysisServices(
+internal class TestAnalysisServices(
     val sampleAnalysisEnvironmentCreator: SampleAnalysisEnvironmentCreator,
     val externalDocumentableProvider: ExternalDocumentableProvider,
     val moduleAndPackageDocumentationReader: ModuleAndPackageDocumentationReader

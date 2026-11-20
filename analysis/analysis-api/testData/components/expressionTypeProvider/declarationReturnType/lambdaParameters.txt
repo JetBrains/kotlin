@@ -1,7 +1,7 @@
-consume@(1,1) : kotlin.Unit
+consume@(1,1) : kotlin.Unit (by PSI)
   action@(2,17) : (T) -> kotlin.Unit
     KtParameter@(2,26) : T
-test@(4,1) : kotlin.Unit
+test@(4,1) : kotlin.Unit (by PSI)
   explicit@(5,5) : (kotlin.Int, kotlin.String) -> kotlin.Int
     <anonymous>@(5,20) : kotlin.Int
       x@(5,22) : kotlin.Int

@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
 
 fun createPartialLinkageSupportForLowerings(
-    partialLinkageConfig: PartialLinkageConfig,
     diagnosticReporter: IrDiagnosticReporter,
+    issueSink: PartialLinkageIssueSink? = null,
 ): PartialLinkageSupportForLowerings = PartialLinkageSupportForLoweringsImpl(
-    PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel)
+    PartialLinkageLogger(diagnosticReporter, issueSink)
 )
 
 internal class PartialLinkageSupportForLoweringsImpl(
@@ -34,20 +34,6 @@ internal class PartialLinkageSupportForLoweringsImpl(
     var linkageIssuesRendered = 0
         private set
 
-    /**
-     * To track the amount of logged linkage issues.
-     * Note that the following condition is always true: [linkageIssuesLogged] <= [linkageIssuesRendered].
-     */
-    var linkageIssuesLogged = 0
-        private set
-
-    /**
-     * To track the amount of generated `throw` expressions.
-     * Note that the following condition is always true: [throwExpressionsGenerated] <= [linkageIssuesRendered].
-     */
-    var throwExpressionsGenerated = 0
-        private set
-
     context(irBuiltIns: IrBuiltIns)
     override fun throwLinkageError(
         partialLinkageCase: PartialLinkageCase,
@@ -56,8 +42,6 @@ internal class PartialLinkageSupportForLoweringsImpl(
         significance: PartialLinkageIssueSignificance,
     ): IrCall {
         val errorMessage = renderAndLogLinkageError(partialLinkageCase, element, file, significance)
-
-        throwExpressionsGenerated++ // Track each generated `throw` expression.
 
         return IrCallImpl(
             startOffset = element.startOffset,
@@ -80,7 +64,6 @@ internal class PartialLinkageSupportForLoweringsImpl(
         val errorMessage = renderLinkageError(partialLinkageCase)
         val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
 
-        linkageIssuesLogged++ // Track each logged linkage issue.
         logger.log(errorMessage, locationInSourceCode, significance)
 
         return errorMessage

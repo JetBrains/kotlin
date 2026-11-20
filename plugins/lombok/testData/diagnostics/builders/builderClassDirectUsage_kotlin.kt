@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-83273
 // FIR_DUMP
 
@@ -14,3 +15,6 @@ fun usage() {
     val justBuilder: Owner.OwnerBuilder? = null
     justBuilder?.a(2)?.build()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, safeCall */

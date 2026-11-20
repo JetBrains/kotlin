@@ -64,8 +64,18 @@ FILE: conflictingOverloads.kt
         public get(): R|kotlin/Int|
     public final val u: R|kotlin/Int| = Int(20)
         public get(): R|kotlin/Int|
-    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(30).<Unresolved name: to>#(Int(40))
-    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(50).<Unresolved name: to>#(Int(60))
+    private final val <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(30).<Unresolved name: to>#(Int(40))
+        private get(): <ERROR TYPE REF: Unresolved name: to>
+    public final val a: <ERROR TYPE REF: Unresolved name: component1> = R|/<destruct>|.<Unresolved name: component1>#()
+        public get(): <ERROR TYPE REF: Unresolved name: component1>
+    public final val b: <ERROR TYPE REF: Unresolved name: component2> = R|/<destruct>|.<Unresolved name: component2>#()
+        public get(): <ERROR TYPE REF: Unresolved name: component2>
+    private final val <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(50).<Unresolved name: to>#(Int(60))
+        private get(): <ERROR TYPE REF: Unresolved name: to>
+    public final val c: <ERROR TYPE REF: Unresolved name: component1> = R|/<destruct>|.<Unresolved name: component1>#()
+        public get(): <ERROR TYPE REF: Unresolved name: component1>
+    public final val d: <ERROR TYPE REF: Unresolved name: component2> = R|/<destruct>|.<Unresolved name: component2>#()
+        public get(): <ERROR TYPE REF: Unresolved name: component2>
     public final typealias TA = R|A|
     public final typealias TA = R|B|
     public final typealias BA = R|A|
@@ -133,8 +143,22 @@ FILE: conflictingOverloads.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+        private final val <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+            private get(): <ERROR TYPE REF: Unresolved name: to>
 
-        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+        public final val a: <ERROR TYPE REF: Unresolved name: component1> = R|/ErrorDestructuring.<destruct>|.<Unresolved name: component1>#()
+            public get(): <ERROR TYPE REF: Unresolved name: component1>
+
+        public final val b: <ERROR TYPE REF: Unresolved name: component2> = R|/ErrorDestructuring.<destruct>|.<Unresolved name: component2>#()
+            public get(): <ERROR TYPE REF: Unresolved name: component2>
+
+        private final val <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+            private get(): <ERROR TYPE REF: Unresolved name: to>
+
+        public final val c: <ERROR TYPE REF: Unresolved name: component1> = R|/ErrorDestructuring.<destruct>|.<Unresolved name: component1>#()
+            public get(): <ERROR TYPE REF: Unresolved name: component1>
+
+        public final val d: <ERROR TYPE REF: Unresolved name: component2> = R|/ErrorDestructuring.<destruct>|.<Unresolved name: component2>#()
+            public get(): <ERROR TYPE REF: Unresolved name: component2>
 
     }

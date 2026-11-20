@@ -59,7 +59,7 @@ internal fun resolveInheritedInnerClassToClassId(simpleName: String, containingC
     val initialAncestorIds = containingClass.supertypes.mapNotNull { st ->
         val segments = st.presentableText.splitCanonicalFqName().map { it.substringBefore('<').trim() }
         if (segments.isEmpty() || segments.any { it.isEmpty() }) null
-        else with(supertypeContext) { resolveWithoutInheritance(segments.joinToString(".")) }
+        else resolveWithoutInheritance(segments.joinToString("."), c = supertypeContext)
     }
 
     return walkSupertypeClassIds(simpleName, initialAncestorIds)

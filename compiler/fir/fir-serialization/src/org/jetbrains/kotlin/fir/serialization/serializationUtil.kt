@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
@@ -48,7 +49,7 @@ fun ConeKotlinType.suspendFunctionTypeToFunctionTypeWithContinuation(session: Fi
         functionTypeId.toLookupTag(),
         typeArguments = (typeArguments.dropLast(1) + continuationClassId.toLookupTag().constructClassType(
             arrayOf(lastTypeArgument),
-        ) + session.builtinTypes.nullableAnyType.coneType).toTypedArray(),
+        ) + StandardTypes.NullableAny).toTypedArray(),
         isMarkedNullable = fullyExpandedType.isMarkedNullable,
         attributes = fullyExpandedType.attributes
     )

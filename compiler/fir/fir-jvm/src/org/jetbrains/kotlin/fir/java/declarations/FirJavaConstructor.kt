@@ -195,7 +195,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 @FirBuilderDsl
 class FirJavaConstructorBuilder : FirConstructorBuilder() {
     var isPrimary: Boolean by Delegates.notNull()
-    var isFromSource: Boolean by Delegates.notNull()
+    var javaOrigin: FirDeclarationOrigin.Java by Delegates.notNull()
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     lateinit var containingClassSymbol: FirClassSymbol<*>
 
@@ -205,7 +205,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
             source,
             moduleData,
             symbol,
-            origin = javaOrigin(isFromSource),
+            javaOrigin,
             isPrimary,
             returnTypeRef,
             valueParameters,
@@ -245,11 +245,10 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
             throw IllegalStateException()
         }
 
-    @Deprecated("Modification of 'origin' has no impact for FirJavaConstructorBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirDeclarationOrigin
-        get() = throw IllegalStateException()
-        set(@Suppress("UNUSED_PARAMETER") value) {
-            throw IllegalStateException()
+        get() = javaOrigin
+        set(value) {
+            javaOrigin = value as FirDeclarationOrigin.Java
         }
 }
 

@@ -6,15 +6,22 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.supportedAppleTargets
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.configuration
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.AssembleSwiftPackageBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSPMPackageFromSwiftExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTargetOutput
@@ -64,6 +71,14 @@ internal fun swiftPackagePlatforms(families: Iterable<Family>): List<SwiftPackag
  */
 internal fun Project.registerSwiftPackageExportPipeline(exportExtension: ExportExtension) {
     val integration = exportExtension.swiftExportConfiguration.activatedSwiftPackageIntegration ?: return
+    // The tasks are still registered but get skipped here, and Gradle only says why at --info.
+    if (!HostManager.hostIsMac && kotlinPropertiesProvider.ignoreDisabledNativeTargets != true) {
+        reportDiagnostic(KotlinToolingDiagnostics.SwiftPackageExportUnsupportedHost(HostManager.platformName()))
+    }
+    // Swift Package Manager only refuses an empty product name. A blank one is no better.
+    if (integration.productName.get().isBlank()) {
+        reportDiagnostic(KotlinToolingDiagnostics.SwiftPackageBlankProductName(path))
+    }
     // The setup action doesn't get here without Apple targets.
     val appleTargets = multiplatformExtension.supportedAppleTargets().toList()
 
@@ -76,23 +91,34 @@ internal fun Project.registerSwiftPackageExportPipeline(exportExtension: ExportE
         )
     }
 
+    val swiftApiModuleName = swiftApiModuleName(
+        exportExtension.swiftExportConfiguration.moduleName, SwiftExportConfigurationCompat.EXPORT_DSL_MODULE_NAME
+    )
+
+    val swiftPMDependencies = directlyImportedSwiftPMDependencies()
+    val transitiveSwiftPMDependencies = transitivelyImportedSwiftPMDependencies()
     NativeBuildType.entries.forEach { buildType ->
         val outputs = appleTargets.map { target ->
             target to registerSwiftExportRunAndBinary(
-                configurations.getValue(target), SwiftExportDSLConstants.TASK_GROUP, buildType, target, SwiftExportNames.SWIFT_PACKAGE
+                configurations.getValue(target), SwiftExportDSLConstants.TASK_GROUP, buildType, target, SwiftExportNames.SWIFT_PACKAGE,
+                swiftApiModuleName,
             )
         }
-        registerSwiftPackageExport(integration, buildType, outputs)
+        registerSwiftPackageExport(
+            integration, buildType, swiftApiModuleName, outputs, swiftPMDependencies, transitiveSwiftPMDependencies
+        )
     }
 }
 
 private fun Project.registerSwiftPackageExport(
     integration: SwiftExportSwiftPackageIntegrationConfiguration,
     buildType: NativeBuildType,
+    swiftApiModuleName: Provider<String>,
     outputs: List<Pair<KotlinNativeTarget, SwiftExportBuildOutputs>>,
+    swiftPMDependencies: Provider<Set<SwiftPMDependency>>,
+    transitiveSwiftPMDependencies: Provider<Map<String, Set<SwiftPMDependency>>>,
 ) {
     val configuration = buildType.configuration
-    val swiftApiModuleName = outputs.first().second.swiftApiModuleName
     val kotlinBinaryTargetName = swiftApiModuleName.map { "${it}Kotlin" }
     val packageDirectory = layout.buildDirectory.dir("SwiftPackage/$configuration")
 
@@ -104,9 +130,12 @@ private fun Project.registerSwiftPackageExport(
 
         task.kotlinRuntime.set(swiftExportKotlinRuntime)
         task.swiftApiModuleName.set(swiftApiModuleName)
-        task.swiftLibraryName.set(swiftApiModuleName.map { it + "Library" })
+        task.swiftLibraryName.set(integration.productName)
         task.kotlinBinaryTargetName.set(kotlinBinaryTargetName)
         task.platforms.set(swiftPackagePlatforms(outputs.map { it.first.konanTarget.family }))
+        task.swiftPMDependencies.set(swiftPMDependencies)
+        task.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependencies)
+        task.exportDirectoryPath.set(integration.outputDirectory.map { it.dir(configuration).asFile.absolutePath })
         outputs.forEach { (target, output) ->
             task.targetOutputs.add(objects.SwiftExportTargetOutput(target, output.swiftExportTask))
         }
@@ -146,7 +175,7 @@ private fun Project.registerSwiftPackageSync(
         task.description = "Exports the $configuration Swift package into swiftPackageIntegration.outputDirectory/$configuration"
         task.group = SwiftExportDSLConstants.TASK_GROUP
         // On other hosts there is nothing to copy, and a Sync of nothing empties its destination.
-        task.onlyIf { HostManager.hostIsMac }
+        task.onlyIf(SwiftExportConstants.MACOS_HOST_REQUIRED) { HostManager.hostIsMac }
 
         task.from(generateTask.flatMap { it.packagePath })
         task.from(assembleTask.flatMap { it.binaryDirectory })
@@ -157,5 +186,27 @@ private fun Project.registerSwiftPackageSync(
         task.doLast { export ->
             export.logger.lifecycle("Exported the $configuration Swift package into ${(export as Sync).destinationDir}")
         }
+    }
+}
+
+/**
+ * The SwiftPM packages the project itself imports, as declared.
+ */
+private fun Project.directlyImportedSwiftPMDependencies(): Provider<Set<SwiftPMDependency>> {
+    if (kotlinPropertiesProvider.disableSwiftPMImport) return provider { emptySet() }
+    val direct = locateOrRegisterSwiftPMDependenciesExtension().swiftPMDependencies
+    return provider { direct.toSet() }
+}
+
+/**
+ * The SwiftPM packages each Kotlin dependency imports, by dependency identifier.
+ */
+private fun Project.transitivelyImportedSwiftPMDependencies(): Provider<Map<String, Set<SwiftPMDependency>>> {
+    if (kotlinPropertiesProvider.disableSwiftPMImport) return provider { emptyMap() }
+    return transitiveSwiftPMMetadataProvider().map { transitive ->
+        transitive.metadataByDependencyIdentifier
+            .filterValues { it.dependencies.isNotEmpty() }
+            .entries
+            .associate { (identifier, metadata) -> identifier.identifier to metadata.dependencies }
     }
 }

@@ -52,12 +52,14 @@ import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildServic
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CInteropWorkAction
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.tasks.SharedCompilationData
+import org.jetbrains.kotlin.gradle.targets.native.tasks.readHeaderHashes
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.UsesKotlinNativeToolParallelismProbe
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -164,6 +166,7 @@ abstract class AbstractKotlinNativeCompile<
     internal val konanDistribution = project.nativeProperties.actualNativeHomeDirectory
 
     @get:Classpath
+    @get:NormalizeLineEndings
     override val libraries: ConfigurableFileCollection by providerFactory.provider {
         val nativeCompilation = compilation.tcs.compilation as AbstractKotlinNativeCompilation
         if (nativeCompilation.crossCompilationOnCurrentHostSupported) {
@@ -174,9 +177,11 @@ abstract class AbstractKotlinNativeCompile<
     }
 
     @get:Classpath
+    @get:NormalizeLineEndings
     internal val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
     @get:Classpath
+    @get:NormalizeLineEndings
     internal val refinesModule: FileCollection = objectFactory.fileCollection().from({ compilation.refinesPaths })
 
     @get:Input
@@ -224,6 +229,7 @@ abstract class AbstractKotlinNativeCompile<
 
     @Optional
     @Classpath
+    @NormalizeLineEndings
     open var compilerPluginClasspath: FileCollection? = null
 
     /**
@@ -257,6 +263,7 @@ internal constructor(
     UsesBuildMetricsService,
     UsesBuildFusService,
     UsesKotlinNativeBundleBuildService,
+    UsesKotlinNativeToolParallelismProbe,
     UsesClassLoadersCachingBuildService,
     UsesKonanPropertiesBuildService,
     UsesKotlinToolingDiagnostics {
@@ -491,12 +498,14 @@ internal constructor(
                 buildArguments
             }
 
-            nativeCompilerRunner.runTool(
+            nativeCompilerRunner.runToolWithWorkers(
                 KotlinNativeToolRunner.ToolArguments(
                     shouldRunInProcessMode = !forceDisableRunningInProcess.get(),
                     compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
                     arguments = buildArguments,
-                )
+                ),
+                taskPath = path,
+                parallelismProbe = kotlinNativeToolParallelismProbe,
             )
         }
 
@@ -721,7 +730,8 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     val konanTarget: KonanTarget = params.konanTarget
 
     @Suppress("unused")
-    @get:Input
+    @get:Internal
+    @Deprecated("Unused property. Scheduled for removal in Kotlin 2.7.0.")
     val libraryVersion = project.version.toString()
 
     @Suppress("unused")
@@ -803,11 +813,13 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val allHeadersDirs: Set<File> get() = settings.includeDirs.allHeadersDirs.files
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val headerFilterDirs: Set<File> get() = settings.includeDirs.headerFilterDirs.files
 
@@ -819,6 +831,18 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
     @get:Input
     val extraOpts: List<String> get() = settings.extraOpts
+
+    /**
+     * Static libraries that cinterop embeds into the klib: `staticLibraries` resolved against `libraryPaths`
+     * from the .def file, plus `-staticLibrary` and `-libraryPath` from [extraOpts].
+     * Tracked so that rebuilding a library reruns cinterop (KT-89558).
+     */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal val staticLibraryFiles: ConfigurableFileCollection = objectFactory.fileCollection().from({ resolveStaticLibraries() })
+
+    // The cinterop tool runs with the project directory as its working directory.
+    private val projectDirectory: Directory = project.layout.projectDirectory
 
     internal enum class MacroNamesCollectingMode {
         LEGACY,
@@ -927,7 +951,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
         if (!allHeadersHashesFile.get().asFile.exists()) {
             return false
         }
-        val previousBuildHeaders = JsonUtils.toMap<String, String>(allHeadersHashesFile.get().asFile.readText())
+        val previousBuildHeaders = allHeadersHashesFile.get().asFile.readHeaderHashes()
 
         val currentBuildHeaders = createHeadersHashByPathMap()
 
@@ -975,5 +999,30 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
                 .flatMap { header -> includedDirectories.map { dir -> dir + File.separator + header } }
                 .toTypedArray())
         .filter { file -> file.exists() }
+
+    // Mirrors the cinterop tool (main.kt and resolveLibraries): relative library paths are based on -Xproject-dir
+    // when it is passed, the first `<libraryPath>/<library>` that exists wins, and a path that is still relative is
+    // based on the tool's working directory. Only a regular file is tracked, so an empty segment never adds a directory.
+    private fun resolveStaticLibraries(): List<File> {
+        val defFileConfig = definitionFile.orNull?.asFile?.takeIf { it.exists() }?.let { DefFile(it, konanTarget).config }
+        val staticLibraries = defFileConfig?.staticLibraries.orEmpty() + extraOpts.listOptionValues("-staticLibrary")
+        // The tool rejects a repeated -Xproject-dir, so a successful run has at most one.
+        val projectDir = extraOpts.optionValues("-Xproject-dir").singleOrNull()
+        val libraryPaths = (defFileConfig?.libraryPaths.orEmpty() + extraOpts.listOptionValues("-libraryPath")).map { path ->
+            if (projectDir == null || File(path).isAbsolute) path else File(projectDir, path).path
+        }
+        val workingDir = projectDirectory.asFile
+        return staticLibraries.mapNotNull { library ->
+            libraryPaths.map { workingDir.resolve("$it/$library") }.firstOrNull { it.exists() }?.takeIf { it.isFile }
+        }
+    }
+
+    private fun List<String>.optionValues(option: String): List<String> =
+        zipWithNext().filter { (name, _) -> name == option }.map { (_, value) -> value }
+
+    // The tool accepts both repeated options and comma-separated values for -staticLibrary and -libraryPath,
+    // and keeps empty segments.
+    private fun List<String>.listOptionValues(option: String): List<String> =
+        optionValues(option).flatMap { it.split(',') }
 
 }

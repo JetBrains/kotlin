@@ -21,7 +21,7 @@ class ConstructorExampleStaticWithGenerics<T>(val param: T)
 @NoArgsConstructor(staticName = "make", force = true)
 class ConstructorExampleStaticWithBoundedGenerics<T : Comparable<T>>(val param: T)
 
-@NoArgsConstructor(staticName = "make", force = true)
+<!STATIC_CONSTRUCTOR_ALREADY_EXISTS!>@NoArgsConstructor(staticName = "make", force = true)<!>
 class ConstructorExampleStaticWithMemberOfTheSameName(val any: Any) {
     // Nothing is generated: this function would shadow the `make` factory at every unqualified call site, so neither
     // the factory, nor the companion object holding it, nor the no-args constructor it would have called appear.

@@ -56,6 +56,12 @@ public final class Array<T> {
     public final operator fun set(index: kotlin.Int, value: T): kotlin.Unit { /* compiled code */ }
 
     public final operator fun iterator(): kotlin.collections.Iterator<T> { /* compiled code */ }
+
+    companion {
+        @kotlin.SinceKotlin(version = "2.5")
+        @kotlin.ExperimentalCollectionLiteralsApi
+        public final inline operator fun <reified T> of(vararg elements: T): kotlin.Array<T> { /* compiled code */ }
+    }
 }
 
 public final class Boolean private constructor() : kotlin.Comparable<kotlin.Boolean> {
@@ -97,6 +103,12 @@ public final class BooleanArray public constructor(size: kotlin.Int) {
     public final operator fun set(index: kotlin.Int, value: kotlin.Boolean): kotlin.Unit { /* compiled code */ }
 
     public final operator fun iterator(): kotlin.collections.BooleanIterator { /* compiled code */ }
+
+    companion {
+        @kotlin.SinceKotlin(version = "2.5")
+        @kotlin.ExperimentalCollectionLiteralsApi
+        public final operator fun of(vararg elements: kotlin.Boolean): kotlin.BooleanArray { /* compiled code */ }
+    }
 }
 
 public final class Byte private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
@@ -300,6 +312,12 @@ public final class ByteArray public constructor(size: kotlin.Int) {
     public final operator fun set(index: kotlin.Int, value: kotlin.Byte): kotlin.Unit { /* compiled code */ }
 
     public final operator fun iterator(): kotlin.collections.ByteIterator { /* compiled code */ }
+
+    companion {
+        @kotlin.SinceKotlin(version = "2.5")
+        @kotlin.ExperimentalCollectionLiteralsApi
+        public final operator fun of(vararg elements: kotlin.Byte): kotlin.ByteArray { /* compiled code */ }
+    }
 }
 
 public final class Char private constructor() : kotlin.Comparable<kotlin.Char> {
@@ -403,6 +421,12 @@ public final class CharArray public constructor(size: kotlin.Int) {
     public final operator fun set(index: kotlin.Int, value: kotlin.Char): kotlin.Unit { /* compiled code */ }
 
     public final operator fun iterator(): kotlin.collections.CharIterator { /* compiled code */ }
+
+    companion {
+        @kotlin.SinceKotlin(version = "2.5")
+        @kotlin.ExperimentalCollectionLiteralsApi
+        public final operator fun of(vararg elements: kotlin.Char): kotlin.CharArray { /* compiled code */ }
+    }
 }
 
 public interface CharSequence {
@@ -643,6 +667,12 @@ public final class DoubleArray public constructor(size: kotlin.Int) {
     public final operator fun set(index: kotlin.Int, value: kotlin.Double): kotlin.Unit { /* compiled code */ }
 
     public final operator fun iterator(): kotlin.collections.DoubleIterator { /* compiled code */ }
+
+    companion {
+        @kotlin.SinceKotlin(version = "2.5")
+        @kotlin.ExperimentalCollectionLiteralsApi
+        public final operator fun of(vararg elements: kotlin.Double): kotlin.DoubleArray { /* compiled code */ }
+    }
 }
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS])
@@ -896,6 +926,12 @@ public final class FloatArray public constructor(size: kotlin.Int) {
     public final operator fun set(index: kotlin.Int, value: kotlin.Float): kotlin.Unit { /* compiled code */ }
 
     public final operator fun iterator(): kotlin.collections.FloatIterator { /* compiled code */ }
+
+    companion {
+        @kotlin.SinceKotlin(version = "2.5")
+        @kotlin.ExperimentalCollectionLiteralsApi
+        public final operator fun of(vararg elements: kotlin.Float): kotlin.FloatArray { /* compiled code */ }
+    }
 }
 
 public interface Function<out R> {
@@ -1127,6 +1163,12 @@ public final class IntArray public constructor(size: kotlin.Int) {
     public final operator fun set(index: kotlin.Int, value: kotlin.Int): kotlin.Unit { /* compiled code */ }
 
     public final operator fun iterator(): kotlin.collections.IntIterator { /* compiled code */ }
+
+    companion {
+        @kotlin.SinceKotlin(version = "2.5")
+        @kotlin.ExperimentalCollectionLiteralsApi
+        public final operator fun of(vararg elements: kotlin.Int): kotlin.IntArray { /* compiled code */ }
+    }
 }
 
 public final class Long private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Long> {
@@ -1351,6 +1393,12 @@ public final class LongArray public constructor(size: kotlin.Int) {
     public final operator fun set(index: kotlin.Int, value: kotlin.Long): kotlin.Unit { /* compiled code */ }
 
     public final operator fun iterator(): kotlin.collections.LongIterator { /* compiled code */ }
+
+    companion {
+        @kotlin.SinceKotlin(version = "2.5")
+        @kotlin.ExperimentalCollectionLiteralsApi
+        public final operator fun of(vararg elements: kotlin.Long): kotlin.LongArray { /* compiled code */ }
+    }
 }
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.CLASS])
@@ -1426,6 +1474,10 @@ public final annotation class RequiresOptIn public constructor(
 
         ERROR;
     }
+}
+
+@kotlin.SinceKotlin(version = "2.5")
+public abstract class RichError public constructor() {
 }
 
 public final class Short private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Short> {
@@ -1629,6 +1681,12 @@ public final class ShortArray public constructor(size: kotlin.Int) {
     public final operator fun set(index: kotlin.Int, value: kotlin.Short): kotlin.Unit { /* compiled code */ }
 
     public final operator fun iterator(): kotlin.collections.ShortIterator { /* compiled code */ }
+
+    companion {
+        @kotlin.SinceKotlin(version = "2.5")
+        @kotlin.ExperimentalCollectionLiteralsApi
+        public final operator fun of(vararg elements: kotlin.Short): kotlin.ShortArray { /* compiled code */ }
+    }
 }
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.CONSTRUCTOR, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.PROPERTY_SETTER, kotlin.annotation.AnnotationTarget.TYPEALIAS])

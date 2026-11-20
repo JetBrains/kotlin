@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 
 // FILE: MethodPreserving.java
 
@@ -31,3 +32,6 @@ fun test() {
 
     val builder2: MethodPreserving.MethodPreservingBuilder = builder.character('c'); // No error: call a generated method
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, localProperty, propertyDeclaration,
+stringLiteral */

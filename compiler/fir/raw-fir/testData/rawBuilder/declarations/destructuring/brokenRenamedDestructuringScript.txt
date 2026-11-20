@@ -1,0 +1,30 @@
+FILE: brokenRenamedDestructuringScript.kts
+    SCRIPT: <script-brokenRenamedDestructuringScript.kts>
+
+        public final? [ContainingScriptKey=FirScriptSymbol <script-brokenRenamedDestructuringScript.kts>, ScriptTopLevelDeclaration=true] class Tuple : R|kotlin/Any| {
+            public? [ContainingClassKey=Tuple] constructor([CorrespondingProperty=/Tuple.first] first: String, [CorrespondingProperty=/Tuple.second] second: Int): R|Tuple| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+                public? [ContainingClassKey=Tuple] get(): String
+
+            public? final? [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+                public? [ContainingClassKey=Tuple] get(): Int
+
+        }
+
+        [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = ERROR_EXPR(Initializer required for destructuring declaration)
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val m: <implicit> = R|<local>/<destruct>|.m#
+            public get(): <implicit>
+
+        [ScriptTopLevelDeclaration=true] init {
+            x#
+        }
+
+        [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = x#
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val n: <implicit> = R|<local>/<destruct>|.#
+            public get(): <implicit>
+
+        public? final? [ScriptTopLevelDeclaration=true] val o: <implicit> = x#
+            public? get(): <implicit>

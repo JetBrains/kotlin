@@ -15,19 +15,19 @@ import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
  * external plugins. If you need any of the given API stabilized, please create an issue describing your use case.
  */
 @InternalDokkaApi
-public class InternalKotlinAnalysisPlugin : DokkaPlugin() {
+internal class InternalKotlinAnalysisPlugin : DokkaPlugin() {
 
-    public val fullClassHierarchyBuilder: ExtensionPoint<FullClassHierarchyBuilder> by extensionPoint()
+    val fullClassHierarchyBuilder: ExtensionPoint<FullClassHierarchyBuilder> by extensionPoint()
 
-    public val syntheticDocumentableDetector: ExtensionPoint<SyntheticDocumentableDetector> by extensionPoint()
+    val syntheticDocumentableDetector: ExtensionPoint<SyntheticDocumentableDetector> by extensionPoint()
 
-    public val moduleAndPackageDocumentationReader: ExtensionPoint<ModuleAndPackageDocumentationReader> by extensionPoint()
+    val moduleAndPackageDocumentationReader: ExtensionPoint<ModuleAndPackageDocumentationReader> by extensionPoint()
 
-    public val kotlinToJavaService: ExtensionPoint<KotlinToJavaService> by extensionPoint()
+    val kotlinToJavaService: ExtensionPoint<KotlinToJavaService> by extensionPoint()
 
-    public val inheritanceBuilder: ExtensionPoint<InheritanceBuilder> by extensionPoint()
+    val inheritanceBuilder: ExtensionPoint<InheritanceBuilder> by extensionPoint()
 
-    public val documentableSourceLanguageParser: ExtensionPoint<DocumentableSourceLanguageParser> by extensionPoint()
+    val documentableSourceLanguageParser: ExtensionPoint<DocumentableSourceLanguageParser> by extensionPoint()
 
     @OptIn(DokkaPluginApiPreview::class)
     override fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement = PluginApiPreviewAcknowledgement

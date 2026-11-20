@@ -217,7 +217,7 @@ class FirTypeDeserializer(
                     ConeDefinitelyNotNullType.create(it, moduleData.session.typeContext, avoidComprehensiveCheck = true) ?: it
                 else
                     it
-            }
+            }.toUnionIfNecessary(proto)
         }
         if (constructor !is ConeClassLikeLookupTag) return null
 
@@ -249,10 +249,34 @@ class FirTypeDeserializer(
             else -> ConeClassLikeTypeImpl(constructor, arguments, isMarkedNullable = proto.nullable, attributes)
         }
 
-        val abbreviatedType = proto.abbreviatedType(typeTable)?.let { rigidType(it, attributes) }
-            ?: return classLikeType
+        return classLikeType
+            .withAbbreviationFrom(proto, attributes, Type::abbreviatedType)
+            .toUnionIfNecessary(proto)
+            .withAbbreviationFrom(proto, attributes, Type::unionAbbreviatedType)
+    }
 
-        return classLikeType.withAttributes(classLikeType.attributes.add(AbbreviatedTypeAttribute(abbreviatedType)))
+    private inline fun ConeRigidType.withAbbreviationFrom(
+        proto: Type,
+        attributes: ConeAttributes,
+        abbreviationFun: (Type, TypeTable) -> Type?
+    ): ConeRigidType {
+        val abbreviatedType = abbreviationFun(proto, typeTable)?.let { rigidType(it, attributes) } ?: return this
+        return withAttributes(this.attributes.add(AbbreviatedTypeAttribute(abbreviatedType)))
+    }
+
+    private fun ConeRigidType.toUnionIfNecessary(proto: Type): ConeRigidType {
+        val richErrors = proto.richErrors(typeTable)
+        return if (richErrors.isNotEmpty()) {
+            @OptIn(DelicateUnionConstructor::class)
+            ConeUnionType(
+                primaryType = this,
+                richErrorTypes = richErrors.map { type(it) },
+                attributes = loadAnnotationsFromMetadata(moduleData.session, proto.unionTypeAnnotationList, nameResolver)
+                    .computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false)
+            )
+        } else {
+            this
+        }
     }
 
     private fun createSuspendFunctionTypeForBasicCase(

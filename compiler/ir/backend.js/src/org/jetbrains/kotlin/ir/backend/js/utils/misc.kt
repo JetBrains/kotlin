@@ -57,11 +57,6 @@ fun IrFunction.hasStableJsName(context: JsIrBackendContext): Boolean {
     return (isEffectivelyExternal() || getJsName() != null || getJsSymbol() != null || isExported(context)) && namedOrMissingGetter
 }
 
-fun IrFunction.isEqualsInheritedFromAny(): Boolean =
-    name == OperatorNameConventions.EQUALS &&
-            hasShape(dispatchReceiver = true, regularParameters = 1) &&
-            parameters[1].type.isNullableAny()
-
 val IrValueDeclaration.isDispatchReceiver: Boolean
     get() = this is IrValueParameter && kind == IrParameterKind.DispatchReceiver
 

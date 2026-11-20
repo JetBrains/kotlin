@@ -8,15 +8,19 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
 @DisplayName("KotlinNative isolated class loader test")
+@MustRunOnChangesInGradle
 @NativeGradlePluginTests
 internal class KotlinNativeIsolatedClassloaderIT : KGPBaseTest() {
 
+    @TestMetadata("compilerPlugins/pluginUsesJdkClass")
     @DisplayName("KT-65761: K2Native isolated class loader should be able to load platform classes")
-    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_21])
+    @JdkVersions(versions = [JavaVersion.VERSION_21])
     @GradleWithJdkTest
     @OsCondition(
         supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],

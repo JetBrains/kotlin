@@ -1,4 +1,0 @@
-KT element: KtScriptInitializer
-Resolve target: null
-FIR:
-  null

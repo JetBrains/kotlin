@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.common
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.cli.CliDiagnostics
@@ -111,8 +110,12 @@ fun createPerformanceManagerFor(platform: TargetPlatform) =
     PerformanceManagerImpl(platform, "Kotlin to ${if (platform.isCommon()) "Metadata" else platform.first().platformName} compiler")
 
 fun disposeRootInWriteAction(disposable: Disposable) {
-    if (ApplicationManager.getApplication() != null) {
-        runWriteAction {
+    // Capture the application once: another thread may dispose the shared application environment between the check and
+    // the call, which resets `ApplicationManager.getApplication()` to null,
+    // see `KotlinCoreEnvironment.disposeApplicationEnvironment` and `KotlinCoreEnvironment.resetApplicationManager`.
+    val application = ApplicationManager.getApplication()
+    if (application != null) {
+        application.runWriteAction {
             Disposer.dispose(disposable)
         }
     } else {

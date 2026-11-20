@@ -31,16 +31,21 @@ internal abstract class CreateBuildSystemDirectory @Inject constructor(
     @TaskAction
     fun create() {
         val buildSystemDirectory = this.buildSystemDirectory.orNull ?: return
-        if (buildSystemDirectory.exists()) return
-
-        buildSystemDirectory.createDirectory()
-
-        // Mark the directory with this attribute to allow Xcode build system to remove it
-        execOperations.exec {
-            it.commandLine(
-                "/usr/bin/xattr", "-w", "com.apple.xcode.CreatedByBuildSystem", "true", buildSystemDirectory,
-            )
-        }.assertNormalExitValue()
+        createXcodeBuildSystemDirectory(buildSystemDirectory, execOperations)
     }
 
+}
+
+/** Creates [directory] marked as Xcode's own, so Xcode is allowed to remove it. */
+internal fun createXcodeBuildSystemDirectory(directory: File, execOperations: ExecOperations) {
+    if (directory.exists()) return
+
+    directory.createDirectory()
+
+    // Mark the directory with this attribute to allow Xcode build system to remove it
+    execOperations.exec {
+        it.commandLine(
+            "/usr/bin/xattr", "-w", "com.apple.xcode.CreatedByBuildSystem", "true", directory,
+        )
+    }.assertNormalExitValue()
 }

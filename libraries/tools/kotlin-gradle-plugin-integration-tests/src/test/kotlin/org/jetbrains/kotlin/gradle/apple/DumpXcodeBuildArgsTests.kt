@@ -346,7 +346,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                         fileByTag = mapOf(
                             "1.0.0" to mapOf(
                                 "Package.swift" to """
-                                    // swift-tools-version: 5.9
+                                    // swift-tools-version: 6.1
                                     import PackageDescription
 
                                     let package = Package(
@@ -487,6 +487,10 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
         }
     }
 
+    @GradleTestVersions(
+        // KT-90453: This regression was caused primarily by a Swift Build bug - https://github.com/swiftlang/swift-package-manager/issues/10429
+        minVersion = TestVersions.Gradle.MAX_SUPPORTED
+    )
     @GradleTest
     fun `KT-88106 - Firebase dump task does not fail when version key changes from exact to from`(version: GradleVersion) {
         val useNewerFirebaseVersion = "useNewerFirebaseVersion"

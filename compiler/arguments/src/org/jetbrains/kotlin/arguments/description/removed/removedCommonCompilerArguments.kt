@@ -222,6 +222,19 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
     }
 
     compilerArgument {
+        name = "Xallow-pre-17-runtime-jdk"
+        description = ("Temporarily allow running Kotlin compiler with JDK older than JDK 17. " +
+                "This option will not work starting Kotlin 2.5.20-Beta1. " +
+                "See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.").asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+            removedVersion = KotlinReleaseVersion.v2_5_20,
+        )
+    }
+
+    compilerArgument {
         name = "Xrepl"
         compilerName = "repl"
         val introducedVersion = KotlinReleaseVersion.v2_2_0
@@ -237,5 +250,21 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
             deprecatedVersion = introducedVersion, // According to https://github.com/JetBrains/kotlin/commit/79a2a82637064e19f81e1d837b5b7f6ff20988be
             removedVersion = KotlinReleaseVersion.v2_5_0,
         )
+    }
+
+    compilerArgument {
+        name = "Xuse-fir-lt"
+        compilerName = "useFirLT"
+        description = "Compile using the LightTree parser with the frontend IR.".asReleaseDependent()
+        valueType = BooleanType.defaultTrue
+        deprecatedMessage =
+            "The light tree mode is enabled by default, and it will become the only available mode in one of the future releases."
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_7_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
+            removedVersion = KotlinReleaseVersion.v2_5_20,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 }

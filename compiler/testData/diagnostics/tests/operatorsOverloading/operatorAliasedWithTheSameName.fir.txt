@@ -47,7 +47,7 @@ FILE: file2.kt
 
     public final fun test(): R|kotlin/Unit| {
         Q|f1/A|.R|f1/plusAssign|(Q|f1/A|)
-        lval p: R|kotlin/Int|by Q|f1|.R|f1/B.B|()
+        lval p: R|kotlin/Int| by Q|f1|.R|f1/B.B|()
             local get(): R|kotlin/Int| {
                 ^ D|<local>/p|.R|f1/getValue|(Null(null), ::R|<local>/p|)
             }

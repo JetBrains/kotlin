@@ -1,0 +1,18 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] scriptLevelDestructuringWithAnnotation.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-scriptLevelDestructuringWithAnnotation.kts>
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @<ERROR TYPE REF: Symbol not found for DestrAnno>[Types]() [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(0).<Unresolved name: to>#(Int(1))
+        @<ERROR TYPE REF: Symbol not found for LeftAnno>[Types]() public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: <ERROR TYPE REF: Unresolved name: component1> = R|<local>/<destruct>|.<Unresolved name: component1>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component1>
+
+        @<ERROR TYPE REF: Symbol not found for RightAnno>[Types]() public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val b: <ERROR TYPE REF: Unresolved name: component2> = R|<local>/<destruct>|.<Unresolved name: component2>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component2>
+
+        @<ERROR TYPE REF: Symbol not found for Destr2Anno>[Types]() [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(2).<Unresolved name: to>#(Int(3))
+        @<ERROR TYPE REF: Symbol not found for SecondLeftAnno>[Types]() public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val c: <ERROR TYPE REF: Unresolved name: component1> = R|<local>/<destruct>|.<Unresolved name: component1>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component1>
+
+        @<ERROR TYPE REF: Symbol not found for SecondRightAnno>[Types]() public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val d: <ERROR TYPE REF: Unresolved name: component2> = R|<local>/<destruct>|.<Unresolved name: component2>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component2>

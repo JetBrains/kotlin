@@ -64,10 +64,7 @@ internal abstract class NativeVersionValueSource :
         kotlinNativeVersion: String,
         kotlinNativeBundleConfiguration: ConfigurableFileCollection,
     ) {
-        val lock =
-            KotlinInterprocessDirectoryLock(bundleDir) { message -> logger.info("Kotlin Native Bundle: $message") }
-
-        lock.withLock {
+        bundleLock(bundleDir).withLock {
             val needToReinstall = isSnapshotVersion(parameters.simpleKotlinNativeVersion.get())
             if (needToReinstall) {
                 logger.debug("Snapshot version could be changed, to be sure that up-to-date version is used, Kotlin/Native should be reinstalled")
@@ -75,7 +72,7 @@ internal abstract class NativeVersionValueSource :
 
             removeBundleIfNeeded(reinstallFlag || needToReinstall, bundleDir)
 
-            if (!provisionedMarkerFile(bundleDir).exists()) {
+            if (!isProvisioned(bundleDir)) {
                 val gradleCachesKotlinNativeDir =
                     resolveKotlinNativeConfiguration(kotlinNativeVersion, kotlinNativeBundleConfiguration)
 
@@ -145,6 +142,17 @@ internal abstract class NativeVersionValueSource :
         }
 
         private fun provisionedMarkerFile(bundleDir: File): File = bundleDir.resolve(MARKER_FILE)
+
+        /** Whether [bundleDir] holds a complete distribution. The marker is the last thing an installation writes. */
+        internal fun isProvisioned(bundleDir: File): Boolean = provisionedMarkerFile(bundleDir).exists()
+
+        // The toolchain unpacks in place, so its lock lives inside the distribution directory.
+        private fun bundleLock(bundleDir: File) =
+            KotlinInterprocessDirectoryLock(bundleDir) { message -> logger.info("Kotlin Native Bundle: $message") }
+
+        /** Waits for a toolchain installation of [bundleDir] that may be running, then tells whether it is complete. */
+        internal fun isProvisionedOnceToolchainIsDone(bundleDir: File): Boolean =
+            bundleLock(bundleDir).withLock { isProvisioned(bundleDir) }
 
         // both provisioners have to agree on what a finished installation looks like, see KT-86251
         internal fun markAsProvisioned(bundleDir: File) {

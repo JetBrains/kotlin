@@ -9,7 +9,6 @@ processor/InfoAsWarningsProcessor.kt
 
 # kapt
 source.kt
--Xallow-pre-17-runtime-jdk
 -Kapt-classpath=processor.jar:%KOTLIN_STDLIB%
 -Kapt-classpath=output/ap
 -Kapt-processors=apt.InfoAsWarningsProcessor
@@ -19,10 +18,10 @@ source.kt
 
 # output
 info: note: info-as-warnings test message
+warning: warning: Supported source version 'RELEASE_8' from annotation processor 'org.jetbrains.kotlin.kapt.base.ProcessorWrapper' less than -source '17'
 
 # kapt
 source.kt
--Xallow-pre-17-runtime-jdk
 -Kapt-classpath=processor.jar:%KOTLIN_STDLIB%
 -Kapt-classpath=output/ap
 -Kapt-processors=apt.InfoAsWarningsProcessor
@@ -32,6 +31,7 @@ source.kt
 -Kapt-info-as-warnings=true
 
 # output
+warning: warning: Supported source version 'RELEASE_8' from annotation processor 'org.jetbrains.kotlin.kapt.base.ProcessorWrapper' less than -source '17'
 warning: note: info-as-warnings test message
 
 # after

@@ -23,28 +23,18 @@ internal fun elementCanBeLazilyResolved(element: KtElement?): Boolean = when (el
     is KtScript -> elementCanBeLazilyResolved(element.parent as? KtFile)
     is KtFile -> element !is KtCodeFragment
     is KtParameter -> elementCanBeLazilyResolved(element.ownerDeclaration)
-    is KtScriptInitializer -> {
-        val script = element.containingDeclaration
-
-        @OptIn(KtExperimentalApi::class)
-        // Script initializers inside repl snippets are flattened into the eval function,
-        // so they are not present in the FIR tree at all and can't be resolved autonomously.
-        !script.isReplSnippet && elementCanBeLazilyResolved(script)
-    }
-
+    is KtScriptInitializer -> elementCanBeLazilyResolved(element.containingDeclaration)
+    is KtDestructuringDeclarationEntry -> elementCanBeLazilyResolved(element.destructuringDeclaration)
     is KtCallableDeclaration, is KtEnumEntry, is KtDestructuringDeclaration, is KtClassInitializer -> {
         val parentToCheck = when (val parent = element.parent) {
             is KtClassOrObject, is KtFile -> parent
             is KtClassBody -> parent.containingClassOrObject
             is KtBlockExpression -> parent.containingScript
-            is KtDestructuringDeclaration -> parent.containingScript
             else -> null
         }
 
         when (parentToCheck) {
             is KtEnumEntry -> false
-            // Destructuring declarations are embedded into the eval function inside repl snippets
-            is KtScript if element is KtDestructuringDeclaration && parentToCheck.isReplSnippet -> false
             else -> elementCanBeLazilyResolved(parentToCheck)
         }
     }

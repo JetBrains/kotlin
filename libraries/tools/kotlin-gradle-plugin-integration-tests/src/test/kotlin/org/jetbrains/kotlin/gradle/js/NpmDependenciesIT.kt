@@ -11,10 +11,12 @@ import org.gradle.util.GradleVersion
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
 @JsGradlePluginTests
+@MustRunOnChangesInGradle
 class NpmDependenciesIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions

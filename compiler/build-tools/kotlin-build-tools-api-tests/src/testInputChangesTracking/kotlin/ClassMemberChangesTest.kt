@@ -60,6 +60,47 @@ class ClassMemberChangesTest : BaseCompilationTest() {
         }
     }
 
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-91153: Removing a companion object whose member was imported directly should compile incrementally once the import is gone")
+    @TestMetadata("ic-scenarios/companion-member-import")
+    fun testRemovingCompanionAfterDirectMemberImportIsRemoved(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val lib = module("ic-scenarios/companion-member-import/lib")
+            val app = module("ic-scenarios/companion-member-import/app", listOf(lib))
+
+            lib.replaceFileWithVersion("Outer.kt", "remove-companion")
+            app.replaceFileWithVersion("usage.kt", "remove-import")
+
+            lib.compile()
+            app.compile {
+                assertCompiledSources("usage.kt")
+                assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-91153: Removing a companion object should recompile the module importing its member via an alias")
+    @TestMetadata("ic-scenarios/companion-member-import")
+    fun testRemovingCompanionRecompilesAliasedMemberImporter(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val lib = module("ic-scenarios/companion-member-import/lib")
+            val app = module("ic-scenarios/companion-member-import/app-aliased", listOf(lib))
+
+            lib.replaceFileWithVersion("Outer.kt", "remove-companion")
+
+            lib.compile()
+            app.compile {
+                expectFailWithError(
+                    ".*aliasedUsage\\.kt:3:\\d+ Unresolved reference 'Outer'.*".toRegex(),
+                    ".*aliasedUsage\\.kt:5:\\d+ Unresolved reference 'make'.*".toRegex(),
+                )
+                assertCompiledSources("aliasedUsage.kt")
+                assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
+            }
+        }
+    }
+
     @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("KT-59509: Renaming a method should recompile call sites that reach it through a chain")
     @TestMetadata("ic-scenarios/kt-59509")

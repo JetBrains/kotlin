@@ -23,8 +23,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings
+import org.jetbrains.kotlin.backend.konan.objcexport.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
@@ -44,7 +43,7 @@ class ObjCExportMapper(
     internal val deprecationResolver: DeprecationResolver = DeprecationResolver(
         storageManager = LockBasedStorageManager.NO_LOCKS,
         languageVersionSettings = languageVersionSettings,
-        deprecationSettings = DeprecationSettings.Default,
+        deprecationSettings = Default,
     )
 
     fun getCustomTypeMapper(descriptor: ClassDescriptor): CustomTypeMapper? = CustomTypeMappers.getMapper(descriptor)

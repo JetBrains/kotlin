@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
@@ -99,20 +102,23 @@ class IntegerLiteralAndOperatorApproximationTransformer(
             }
 
             call.replaceCalleeReference(newCalleeReference)
+
+            // The wrapped function has its own value parameters, so the arguments have to be mapped to the original ones.
+            call.replaceArgumentMappingWithOriginalParameters(wrappedFunctionSymbol, originalFunctionSymbol)
         }
 
         if (approximatedType.isInt || approximatedType.isUInt) return call
         val typeBeforeConversion = if (operatorType.isUnsigned) {
             session.builtinTypes.uIntType.coneType
         } else {
-            session.builtinTypes.intType.coneType
+            StandardTypes.Int
         }
         call.replaceConeTypeOrNull(typeBeforeConversion)
 
         return buildFunctionCall {
             val fakeSource = call.source?.fakeElement(KtFakeSourceElementKind.IntToLongConversion)
             source = fakeSource
-            coneTypeOrNull = session.builtinTypes.longType.coneType
+            coneTypeOrNull = StandardTypes.Long
             explicitReceiver = call
             dispatchReceiver = call
             this.calleeReference = buildResolvedNamedReference {
@@ -126,5 +132,19 @@ class IntegerLiteralAndOperatorApproximationTransformer(
                 }
             }
         }
+    }
+
+    private fun FirIntegerLiteralOperatorCall.replaceArgumentMappingWithOriginalParameters(
+        wrappedFunctionSymbol: FirNamedFunctionSymbol,
+        originalFunctionSymbol: FirNamedFunctionSymbol,
+    ) {
+        val argumentList = argumentList as? FirResolvedArgumentList ?: return
+        val wrappedParameters = wrappedFunctionSymbol.fir.valueParameters
+        val originalParameters = originalFunctionSymbol.fir.valueParameters
+        val mapping = argumentList.mapping.mapValuesTo(LinkedHashMap()) { [_, parameter] ->
+            originalParameters[wrappedParameters.indexOf(parameter)]
+        }
+
+        replaceArgumentList(buildResolvedArgumentList(argumentList.originalArgumentList, mapping))
     }
 }

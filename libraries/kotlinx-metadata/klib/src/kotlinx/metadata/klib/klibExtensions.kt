@@ -15,10 +15,22 @@ var KmFunction.file: KlibSourceFile?
         klibExtensions.file = value
     }
 
+var KmFunction.kdoc: String?
+    get() = klibExtensions.kdoc
+    set(value) {
+        klibExtensions.kdoc = value
+    }
+
 var KmClass.file: KlibSourceFile?
     get() = klibExtensions.file
     set(value) {
         klibExtensions.file = value
+    }
+
+var KmClass.kdoc: String?
+    get() = klibExtensions.kdoc
+    set(value) {
+        klibExtensions.kdoc = value
     }
 
 var KmProperty.file: KlibSourceFile?
@@ -31,6 +43,24 @@ var KmProperty.compileTimeValue: KmAnnotationArgument?
     get() = klibExtensions.compileTimeValue
     set(value) {
         klibExtensions.compileTimeValue = value
+    }
+
+var KmProperty.kdoc: String?
+    get() = klibExtensions.kdoc
+    set(value) {
+        klibExtensions.kdoc = value
+    }
+
+var KmProperty.getterKdoc: String?
+    get() = klibExtensions.getterKdoc
+    set(value) {
+        klibExtensions.getterKdoc = value
+    }
+
+var KmProperty.setterKdoc: String?
+    get() = klibExtensions.setterKdoc
+    set(value) {
+        klibExtensions.setterKdoc = value
     }
 
 val KmType.annotations: MutableList<KmAnnotation>
@@ -58,4 +88,22 @@ var KmEnumEntry.ordinal: Int?
     get() = klibExtensions.ordinal
     set(value) {
         klibExtensions.ordinal = value
+    }
+
+var KmEnumEntry.kdoc: String?
+    get() = klibExtensions.kdoc
+    set(value) {
+        klibExtensions.kdoc = value
+    }
+
+var KmTypeAlias.kdoc: String?
+    get() = klibExtensions.kdoc
+    set(value) {
+        klibExtensions.kdoc = value
+    }
+
+var KmConstructor.kdoc: String?
+    get() = klibExtensions.kdoc
+    set(value) {
+        klibExtensions.kdoc = value
     }

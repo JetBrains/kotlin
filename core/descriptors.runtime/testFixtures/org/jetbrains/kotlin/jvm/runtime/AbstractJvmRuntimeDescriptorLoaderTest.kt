@@ -39,11 +39,8 @@ import org.jetbrains.kotlin.test.model.TestFailureSuppressorBySingleDirective
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
-import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.isJavaFile
-import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
-import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.jvm.compileKotlinToDiskAndGetOutputDir
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration

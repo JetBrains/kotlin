@@ -50,3 +50,16 @@ public abstract class SomeClassWithProperty
      */
     public abstract val heavyFormattedKDocFoo: SomeClassWithProperty
 }
+
+enum class KDocEnum {
+    /** KDoc for an enum entry // EXPORT_KDOC */
+    ENTRY
+}
+
+interface KDocInterface
+
+var KDocInterface.extensionProperty: Int
+    /** KDoc for a getter // EXPORT_KDOC */
+    get() = 0
+    /** KDoc for a setter // EXPORT_KDOC */
+    set(value) {}

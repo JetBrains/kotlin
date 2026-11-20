@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ResolvedCallArgument.VarargArgument
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
@@ -56,7 +57,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.sourceKindForIncOrDec
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
-import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
+import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -591,8 +592,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     superReference.transformChildren(transformer, ContextIndependent)
                 }
 
-                val actualSuperType = (superReference.superTypeRef.coneType as? ConeClassLikeType)
-                    ?.fullyExpandedType()?.let { superType ->
+                val actualSuperType =
+                    (superReference.superTypeRef.coneType as? ConeClassLikeType)?.fullyExpandedClassLikeType()?.let { superType ->
                         val classId = superType.lookupTag.classId
                         val correspondingDeclaredSuperType = superTypeRefs.firstOrNull {
                             it.coneType.fullyExpandedType().classId == classId
@@ -687,10 +688,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
                 val receiver = safeCallExpression.receiver
 
-                // TODO(KT-89100) support error safe calls in DFA
-                if (safeCallExpression.kind == NullSafe) {
-                    dataFlowAnalyzer.enterSafeCallAfterNullCheck(safeCallExpression)
-                }
+                dataFlowAnalyzer.enterSafeCallAfterNullCheck(safeCallExpression)
 
                 safeCallExpression.apply {
                     checkedSubjectRef.value.propagateTypeFromOriginalReceiver(receiver, kind, components.session, components.file)
@@ -698,10 +696,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     propagateTypeFromQualifiedAccessAfterNullCheck(session, context.file)
                 }
 
-                // TODO(KT-89100) support error safe calls in DFA
-                if (safeCallExpression.kind == NullSafe) {
-                    dataFlowAnalyzer.exitSafeCall(safeCallExpression)
-                }
+                dataFlowAnalyzer.exitSafeCall(safeCallExpression)
 
                 return safeCallExpression
             }
@@ -744,10 +739,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         componentCall.transformExplicitReceiver(this, data)
         val initializerType = componentCall.explicitReceiver.resolvedType
 
-        // We just use anySuperTypeConstructor to handle flexible types, DNNs, type variables with value bounds, captured types,
-        // and intersections types.
-        val shouldUseNbd = context(session.typeContext) {
-            initializerType.anySuperTypeConstructor { it.asCone().toRegularClassSymbol()?.isFullValueClass == true }
+        // Flexible types, DNNs, intersection types and type parameters, type variables and captured types bounded by a full value class are
+        // destructured by name, but not the types of classes that only extend an abstract value class.
+        val shouldUseNbd = with(session.typeContext) {
+            newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true).anySupertype(
+                initializerType.lowerBoundIfFlexible(),
+                { it.asCone().toRegularClassSymbol()?.isFullValueClass == true },
+                { if (it is ConeClassLikeType) SupertypesPolicy.None else SupertypesPolicy.LowerIfFlexible },
+            )
         }
 
         if (!shouldUseNbd) return super.transformComponentCall(componentCall, data)
@@ -1040,7 +1039,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             block.replaceIsUnitCoerced(true)
         } else {
             // Bottom-up propagation: from the return type of the last expression in the block to the block type
-            block.writeResultType(session)
+            block.writeResultType()
         }
 
         dataFlowAnalyzer.exitBlock(block)
@@ -1367,7 +1366,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression, operation: FirOperation): FirTypeRef {
-        val type = coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() ?: return this
+        val type = coneTypeSafe<ConeClassLikeType>()?.fullyExpandedClassLikeType() ?: return this
         if (type.typeArguments.isNotEmpty()) return this // TODO: Incorrect for local classes, KT-59686
         // TODO: Check equality of size of arguments and parameters?
 
@@ -1414,23 +1413,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument, typeOperatorCall.operation)
-        resolved.transformChildren(object : FirDefaultTransformer<Any?>() {
-            override fun <E : FirElement> transformElement(element: E, data: Any?): E {
-                return element
-            }
-
-            override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirTypeRef {
-                return if (typeRef === resolved.conversionTypeRef) {
-                    conversionTypeRef
-                } else {
-                    typeRef
-                }
-            }
-        }, null)
+        resolved.replaceConversionTypeRef(conversionTypeRef)
 
         when (resolved.operation) {
             IS, NOT_IS -> {
-                resolved.resultType = session.builtinTypes.booleanType.coneType
+                resolved.resultType = StandardTypes.Boolean
             }
             AS -> {
                 resolved.resultType = conversionTypeRef.coneType
@@ -1537,6 +1524,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                             context.containingClassDeclarations,
                             context.file,
                             context.topContainerForTypeResolution,
+                            lastCompanionBlockOwner = context.lastCompanionBlockOwner,
                         )
                     )
                 }
@@ -2075,7 +2063,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             is FirSuperReference -> reference.superTypeRef
                 .coneTypeSafe<ConeClassLikeType>()
                 ?.takeIf { it !is ConeErrorType }
-                ?.fullyExpandedType()
+                ?.fullyExpandedClassLikeType()
             else -> null
         }
 
@@ -2331,7 +2319,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     indexedAccessAugmentedAssignment.operation.toAugmentedAssignSourceKind()
                 )
             }.also {
-                it.replaceConeTypeOrNull(session.builtinTypes.unitType.coneType)
+                it.replaceConeTypeOrNull(StandardTypes.Unit)
             }
         }
     }

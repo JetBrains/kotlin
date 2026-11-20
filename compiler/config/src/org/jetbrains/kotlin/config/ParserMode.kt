@@ -11,10 +11,6 @@ enum class ParserMode(val treeBased: Boolean) {
     KmpTree(treeBased = true);
 
     companion object {
-        // TODO: change to LightTree (KT-89663)
-        // Immediate change causes a bunch of failures in
-        // JsInvalidationPerFileTestGenerated, KaptStubConverterJTreeTestGenerated
-        // and some more tests
-        val Default = Psi
+        val Default = LightTree
     }
 }

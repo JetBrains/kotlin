@@ -18,7 +18,7 @@ import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
 import org.jetbrains.dokka.utilities.associateWithNotNull
 
-public class SinceKotlinVersion(str: String) : Comparable<SinceKotlinVersion> {
+internal class SinceKotlinVersion(str: String) : Comparable<SinceKotlinVersion> {
     private val parts: List<Int> = str.split(".").map { it.toInt() }
 
     /**
@@ -89,8 +89,8 @@ public class SinceKotlinVersion(str: String) : Comparable<SinceKotlinVersion> {
     }
 }
 
-public class SinceKotlinTransformer(
-    public val context: DokkaContext
+internal class SinceKotlinTransformer(
+    val context: DokkaContext
 ) : DocumentableTransformer {
 
     override fun invoke(original: DModule, context: DokkaContext): DModule = original.transform() as DModule

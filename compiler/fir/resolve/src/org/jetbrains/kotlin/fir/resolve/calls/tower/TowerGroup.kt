@@ -31,6 +31,8 @@ sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
 
     data object QualifierOrClassifier : TowerGroupKind(1)
 
+    data object QualifierAsTypeLhsForCallableReference : TowerGroupKind(2)
+
     class TopPrioritized(depth: Int) : WithDepth(3, depth)
 
     data object Member : TowerGroupKind(4)
@@ -173,6 +175,8 @@ private constructor(
         val Start: TowerGroup = kindOf(TowerGroupKind.Start)
 
         val QualifierOrClassifier: TowerGroup = kindOf(TowerGroupKind.QualifierOrClassifier)
+
+        val QualifierAsTypeLhsForCallableReference: TowerGroup = kindOf(TowerGroupKind.QualifierAsTypeLhsForCallableReference)
 
         val QualifierValue: TowerGroup = kindOf(TowerGroupKind.QualifierValue)
 

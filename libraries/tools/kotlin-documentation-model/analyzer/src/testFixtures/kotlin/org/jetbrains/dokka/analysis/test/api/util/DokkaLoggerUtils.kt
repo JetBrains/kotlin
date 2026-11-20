@@ -18,7 +18,7 @@ import org.jetbrains.dokka.utilities.LoggingLevel
  *
  * The collected messages can be retrieved by invoking [collectedLogMessages].
  */
-class CollectingDokkaConsoleLogger(
+internal class CollectingDokkaConsoleLogger(
     consoleMinLoggingLevel: LoggingLevel = LoggingLevel.INFO
 ) : DokkaLogger {
 

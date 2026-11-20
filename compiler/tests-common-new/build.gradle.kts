@@ -15,6 +15,10 @@ dependencies {
     testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:ir.backend.native"))
+
+    testFixturesImplementation(project(":core:language.targets.jvm"))
+    testFixturesImplementation(project(":compiler:config.jvm"))
+    testFixturesImplementation(project(":compiler:frontend.common-psi"))
     testFixturesImplementation(project(":compiler:ir.tree"))
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
     testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
@@ -24,6 +28,8 @@ dependencies {
     testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesImplementation(project(":kotlin-tooling-core"))
     testFixturesImplementation(project(":compiler:ir.backend.native"))
+    testFixturesImplementation(project(":compiler:fir:fir2ir"))
+    testFixturesImplementation(project(":core:error.handling"))
     testFixturesImplementation(intellijCore())
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
@@ -54,6 +60,8 @@ dependencies {
     testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
 
+    testImplementation(project(":compiler:config.jvm"))
+
     thirdPartyAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
     thirdPartyAnnotationsClasspath(commonDependency("io.vertx", "vertx-codegen"))
 }
@@ -67,6 +75,7 @@ tasks.processTestFixturesResources.configure {
         include("/diagnostics/helpers/**")
         include("/codegen/helpers/**")
         include("/ir/interpreter/helpers/**")
+        include("/klib/klib-compatibility/helpers/**")
     }
     into("stdlib") {
         from(project(":kotlin-stdlib").isolated.projectDirectory.dir("src/kotlin")) {
@@ -107,12 +116,7 @@ sourceSets {
 }
 
 projectTests {
-    testData(project(":compiler").isolated, "testData/diagnostics")
-    testData(project(":compiler").isolated, "testData/codegen")
-    testData(project(":compiler").isolated, "testData/compileJavaAgainstKotlin")
-    testData(project(":compiler").isolated, "testData/debug")
-    testData(project(":compiler").isolated, "testData/ir")
-    testData(project(":compiler").isolated, "testData/klib")
+    testData(project(":compiler").isolated, "testData/diagnostics/metadataDiagnosticTests")
 
     withJvmStdlibAndReflect()
     withStdlibCommon()
@@ -120,14 +124,7 @@ projectTests {
     withAnnotations()
     withScriptingPlugin()
     withJsRuntime()
-
-    withMockJdkRuntime()
-    withMockJDKModifiedRuntime()
-    withMockJdkAnnotationsJar()
-    withThirdPartyAnnotations()
-    withThirdPartyJava8Annotations()
-    withThirdPartyJava9Annotations()
-    withThirdPartyJsr305()
+    withStdlibWeb()
 
     testTask(
         defineJDKEnvVariables = listOf(

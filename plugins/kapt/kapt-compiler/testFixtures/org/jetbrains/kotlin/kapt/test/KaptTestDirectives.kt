@@ -20,10 +20,12 @@ object KaptTestDirectives : SimpleDirectivesContainer() {
     val INCLUDE_COMPILE_CLASSPATH by directive("Enables INCLUDE_COMPILE_CLASSPATH flag")
     val INCREMENTAL_APT by directive("Enables INCREMENTAL_APT flag")
     val STRIP_METADATA by directive("Enables STRIP_METADATA flag")
+    val HEADER_MODE by directive("Enables HEADER_MODE flag")
 
     val NON_EXISTENT_CLASS by directive("Generate stub for class error.NonExistentClass")
     val EXPECTED_ERROR by stringDirective("The following error is expected in this test", multiLine = true)
     val STUB_GENERATION_SCHEME by stringDirective("Sets stub generation scheme: direct or jtree")
+    val MIN_JAVA_VERSION by valueDirective("Skips the test on an older JVM, e.g. one whose javac cannot parse the stubs", parser = String::toIntOrNull)
 
     val IGNORE_COLLECTION_LITERALS_RESOLUTION by directive(
         "Suppresses failures in the runner which enables '${LanguageFeature.CollectionLiteralsBasedAnnotationResolution.name}'"
@@ -32,6 +34,6 @@ object KaptTestDirectives : SimpleDirectivesContainer() {
     val flagDirectives = listOf(
         SHOW_PROCESSOR_STATS, VERBOSE, INFO_AS_WARNINGS, USE_LIGHT_ANALYSIS, CORRECT_ERROR_TYPES,
         DUMP_DEFAULT_PARAMETER_VALUES, MAP_DIAGNOSTIC_LOCATIONS, STRICT, INCLUDE_COMPILE_CLASSPATH,
-        INCREMENTAL_APT, STRIP_METADATA,
+        INCREMENTAL_APT, STRIP_METADATA, HEADER_MODE,
     )
 }

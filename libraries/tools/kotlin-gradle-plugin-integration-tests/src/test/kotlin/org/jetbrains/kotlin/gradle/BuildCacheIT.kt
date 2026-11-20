@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -35,6 +38,7 @@ import kotlin.io.path.writeText
 @ExperimentalPathApi
 @DisplayName("Local build cache")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class BuildCacheIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions =
@@ -42,6 +46,7 @@ class BuildCacheIT : KGPBaseTest() {
 
     private val localBuildCacheDir get() = workingDir.resolve("custom-jdk-build-cache")
 
+    @TestMetadata("simpleProject")
     @DisplayName("kotlin.caching.enabled flag should enable caching for Kotlin tasks")
     @GradleTest
     fun testKotlinCachingEnabledFlag(gradleVersion: GradleVersion) {
@@ -58,6 +63,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Kotlin JVM task should be taken from cache")
     @GradleTest
     fun testCacheHitAfterClean(gradleVersion: GradleVersion) {
@@ -74,6 +80,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Should correctly handle modification/restoration of source file")
     @GradleTest
     fun testCacheHitAfterCacheHit(gradleVersion: GradleVersion) {
@@ -110,6 +117,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Debug log level should not break build cache")
     @GradleTest
     fun testDebugLogLevelCaching(gradleVersion: GradleVersion) {
@@ -129,6 +137,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("Enabled statistic should not break build cache")
     @GradleTest
     fun testCacheWithStatistic(gradleVersion: GradleVersion) {
@@ -150,6 +159,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @DisplayName("Changing native toolchain location should not break build cache")
     @GradleTest
     fun testNativeToolchainWithBuildCache(gradleVersion: GradleVersion, @TempDir customNativeHomePath: Path) {
@@ -177,13 +187,15 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Restore from build cache should not break incremental compilation")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testIncrementalCompilationAfterCacheHit(gradleVersion: GradleVersion) {
         project(
             "incrementalMultiproject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
+            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE)),
         ) {
             enableLocalBuildCache(localBuildCacheDir)
             build("assemble")
@@ -197,20 +209,22 @@ class BuildCacheIT : KGPBaseTest() {
             val affectedAppSourceFile = projectPath.resolve("app/src/main/kotlin/foo/BB.kt")
 
             build("assemble") {
-                assertIncrementalCompilation(
+                assertIncrementalCompilationInBuildReport(
                     expectedCompiledKotlinFiles = relativeToProject(listOf(bKtSourceFile, affectedAppSourceFile))
                 )
             }
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("Restore from build cache and consequent compilation error should not break incremental compilation")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testIncrementalCompilationAfterCacheHitAndCompilationError(gradleVersion: GradleVersion) {
         project(
             "incrementalMultiproject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
+            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE)),
         ) {
             enableLocalBuildCache(localBuildCacheDir)
             build("assemble")
@@ -228,7 +242,7 @@ class BuildCacheIT : KGPBaseTest() {
                 val affectedFiles = setOf(
                     bKtSourceFile,
                 )
-                assertCompiledKotlinSources(affectedFiles.relativizeTo(projectPath), output)
+                assertCompiledKotlinSourcesInBuildReport(affectedFiles.relativizeTo(projectPath))
             }
 
             bKtSourceFile.modify { it.replace("fun b2) {}", "fun b2() {}") }
@@ -238,13 +252,15 @@ class BuildCacheIT : KGPBaseTest() {
                     bKtSourceFile,
                     subProject("app").kotlinSourcesDir().resolve("foo/BB.kt"),
                 )
-                assertIncrementalCompilation(expectedCompiledKotlinFiles = affectedFiles.relativizeTo(projectPath))
+                assertIncrementalCompilationInBuildReport(expectedCompiledKotlinFiles = affectedFiles.relativizeTo(projectPath))
             }
         }
     }
 
+    @TestMetadata("kapt/kaptAvoidance")
     @DisplayName("A compilation error doesn't break kapt incremental compilation after restoring from build cache")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testKaptIncrementalCompilationAfterCacheHitAndCompilationError(gradleVersion: GradleVersion) {
         project(
             "kapt/kaptAvoidance",
@@ -295,8 +311,10 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kapt/kaptAvoidance")
     @DisplayName("A compilation error doesn't break kapt incremental compilation in test sources after restoring from build cache")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testKaptIncrementalCompilationInTestSourcesAfterCacheHit(gradleVersion: GradleVersion) {
         project("kapt/kaptAvoidance", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)
@@ -336,6 +354,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("GRADLE_BUILD_CACHE_USED fus metric should be reported when build cache is enabled")
     @GradleTest
     fun testFusMetricForBuildCache(gradleVersion: GradleVersion) {
@@ -352,6 +371,7 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("GRADLE_BUILD_CACHE_USED fus metric should not be reported when build cache is disabled")
     @GradleTest
     fun testFusMetricForDisabledBuildCache(gradleVersion: GradleVersion) {

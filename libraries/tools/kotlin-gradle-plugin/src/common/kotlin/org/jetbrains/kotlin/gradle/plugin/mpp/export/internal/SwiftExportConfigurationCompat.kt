@@ -32,6 +32,11 @@ internal interface SwiftExportConfigurationCompat {
     val moduleName: Property<String>
 
     /**
+     * The DSL snippet that sets [moduleName], for diagnostics.
+     */
+    val moduleNameDsl: String
+
+    /**
      * This module's root package.
      */
     val rootPackage: Property<String>
@@ -40,7 +45,7 @@ internal interface SwiftExportConfigurationCompat {
      * Provider for a resolvable api configuration from which dependencies will be fully exported. Implementations that don't export direct
      * api dependencies should return an empty provider.
      */
-    val apiConfiguration: Provider<Configuration?>
+    val apiConfiguration: Provider<Configuration>
 
     /**
      * Provider for a resolvable configuration from which dependencies will be transitively exported.
@@ -75,6 +80,8 @@ internal interface SwiftExportConfigurationCompat {
     fun addBinary(binary: AbstractNativeLibrary)
 
     companion object {
+        const val EXPORT_DSL_MODULE_NAME = "export { swift { moduleName = ... } }"
+
         /**
          * The configuration of the module as [integration] sees it. The settings and the dependency overrides
          * come from the integration, so every integration runs Swift Export with its own.
@@ -87,9 +94,10 @@ internal interface SwiftExportConfigurationCompat {
         ): SwiftExportConfigurationCompat =
             object : SwiftExportConfigurationCompat {
                 override val moduleName: Property<String> get() = configuration.moduleName
+                override val moduleNameDsl: String get() = EXPORT_DSL_MODULE_NAME
                 override val rootPackage: Property<String> get() = configuration.rootPackage
 
-                override val apiConfiguration: Provider<Configuration?>
+                override val apiConfiguration: Provider<Configuration>
                     get() = providers.provider { kotlinNativeCompilation.resolvableApiConfiguration() }
                         .zip(exportConfiguration) { apiConfiguration, exportConfiguration ->
                             // Make sure direct api dependencies and the rest of the compile dependency graph are resolved consistently.
@@ -128,10 +136,11 @@ internal interface SwiftExportConfigurationCompat {
         ): SwiftExportConfigurationCompat =
             object : SwiftExportConfigurationCompat {
                 override val moduleName: Property<String> get() = extension.moduleName
+                override val moduleNameDsl: String get() = "swiftExport { moduleName = ... }"
                 override val rootPackage: Property<String> get() = extension.flattenPackage
                 override val exportedModules: Provider<Set<SwiftExportedDependency>> get() = extension.exportedModules
 
-                override val apiConfiguration: Provider<Configuration?>
+                override val apiConfiguration: Provider<Configuration>
                     get() = providers.provider { null }
 
                 override val exportConfiguration: Provider<Configuration>

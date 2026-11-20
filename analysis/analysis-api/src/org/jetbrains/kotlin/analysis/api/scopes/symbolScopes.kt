@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.scopes
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
@@ -34,9 +35,9 @@ public val KaDeclarationContainerSymbol.memberScope: KaScope
  *
  * The behavior of the scope differs based on whether the given [KaDeclarationContainerSymbol] is a Kotlin or Java class:
  *
- * - **Kotlin class:** The scope contains static callables (functions and properties) and classifiers (classes and objects) declared
- *   directly in the [KaDeclarationContainerSymbol]. Hence, the static member scope for Kotlin classes is equivalent to
- *   [staticDeclaredMemberScope].
+ * - **Kotlin class:** The scope contains companion members (functions and properties, see [KaCallableSymbol.isCompanion]) and
+ *   classifiers (classes and objects) declared directly in the [KaDeclarationContainerSymbol]. Hence, the static member scope for Kotlin
+ *   classes is equivalent to [staticDeclaredMemberScope].
  * - **Java class:** The scope contains static callables (functions and properties) declared in the [KaDeclarationContainerSymbol] or
  *   any of its superclasses (excluding static callables from super-interfaces), and classes declared directly in the
  *   [KaDeclarationContainerSymbol]. This follows Kotlin's rules about static inheritance in Java classes, where static callables are
@@ -50,7 +51,9 @@ public val KaDeclarationContainerSymbol.memberScope: KaScope
  *     inner class D1
  *     object O1
  *
- *     // There is no way to declare a static callable in an abstract class, as only enum classes define additional static callables.
+ *     companion {
+ *         fun fromA() {}
+ *     }
  * }
  *
  * class B : A() {
@@ -60,12 +63,17 @@ public val KaDeclarationContainerSymbol.memberScope: KaScope
  *     companion object {
  *         val baz: String = ""
  *     }
+ *
+ *     companion {
+ *         fun fromB() {}
+ *     }
  * }
  * ```
  *
  * The static member scope of `B` contains the following symbols:
  *
  * ```
+ * fun fromB()
  * class C2
  * inner class D2
  * object O2
@@ -144,9 +152,51 @@ public val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
  * A [KaScope] containing the *static* callables (functions and properties) and all classifiers (classes and objects) explicitly
  * declared in the given [KaDeclarationContainerSymbol].
  *
- * It is worth noting that, while Java classes may contain declarations of static callables freely, in Kotlin only enum classes define
- * static callables. Hence, for non-enum Kotlin classes, it is not expected that the static declared member scope will contain any
- * callables.
+ * While Java classes may declare static callables freely, Kotlin has no static declarations: for a Kotlin class, the scope contains its
+ * companion members instead (see [KaCallableSymbol.isCompanion]). These are the members of its
+ * [companion blocks](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md#companion-blocks) and,
+ * for an enum class, its entries and the `values()`, `valueOf()` and `entries` members. The members of a companion object belong to the
+ * scopes of the companion object instead.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * class C {
+ *     fun foo() {}
+ *     class Nested
+ *     companion object {
+ *         val baz: String = ""
+ *     }
+ *
+ *     companion {
+ *         fun fromCompanionBlock() {}
+ *         val companionBlockProperty: Int = 0
+ *     }
+ * }
+ *
+ * enum class E {
+ *     A, B
+ * }
+ * ```
+ *
+ * The static declared member scope of `C` contains the following symbols:
+ *
+ * ```
+ * fun fromCompanionBlock()
+ * val companionBlockProperty: Int
+ * class Nested
+ * companion object
+ * ```
+ *
+ * The static declared member scope of `E` contains the following symbols:
+ *
+ * ```
+ * A
+ * B
+ * fun values(): Array<E>
+ * fun valueOf(value: String): E
+ * val entries: EnumEntries<E>
+ * ```
  *
  * @see declaredMemberScope
  */

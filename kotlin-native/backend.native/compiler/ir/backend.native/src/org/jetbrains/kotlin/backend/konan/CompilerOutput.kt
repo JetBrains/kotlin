@@ -68,15 +68,6 @@ internal val CacheDeserializationStrategy?.containsRuntime: Boolean
 internal val NativeGenerationState.shouldLinkRuntimeNativeLibraries: Boolean
     get() = producedLlvmModuleContainsStdlib && cacheDeserializationStrategy.containsRuntime
 
-val CompilerOutputKind.isFullCache: Boolean
-    get() = this == CompilerOutputKind.STATIC_CACHE || this == CompilerOutputKind.DYNAMIC_CACHE
-
-val CompilerOutputKind.isHeaderCache: Boolean
-    get() = this == CompilerOutputKind.HEADER_CACHE
-
-val CompilerOutputKind.isCache: Boolean
-    get() = this.isFullCache || this.isHeaderCache
-
 internal fun produceCStubs(generationState: NativeGenerationState) {
     generationState.cStubsManager.compile(
             generationState.config.clang,

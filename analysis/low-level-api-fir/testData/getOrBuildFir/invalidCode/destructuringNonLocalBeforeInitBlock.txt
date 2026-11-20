@@ -9,14 +9,18 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructuringNonLocalBeforeInitBlock.kt
-    public final? [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
+    public final [ResolvedTo(STATUS)] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = <Unresolved name: init>#(<L> = [ResolvedTo(BODY_RESOLVE)] init@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Unresolved name: init> = <Unresolved name: init>#(<L> = [ResolvedTo(BODY_RESOLVE)] init@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^@init Unit
         }
         )
+            private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: init>
+
+        public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=/C.<destruct>] val e: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): <implicit>
 
     }

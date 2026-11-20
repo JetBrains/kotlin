@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
 import org.junit.jupiter.api.DisplayName
-import org.jetbrains.kotlin.gradle.testbase.assertProblemsReportContainsDiagnostic
-import kotlin.io.path.writeText
 
 @DisplayName("Compiler Diagnostics Problems API tests")
 @GradleTestVersions(
@@ -19,7 +21,12 @@ import kotlin.io.path.writeText
     ]
 )
 @OtherGradlePluginTests
+@MustRunOnChangesInBuildToolsApi
+@MustRunOnChangesInCompilerInfrastructure
+@MustRunOnChangesInFrontend
 class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(warningMode = WarningMode.Fail)
 
     @GradleTest
     @DisplayName("Test compiler warning appears in build output via Problems API renderer")

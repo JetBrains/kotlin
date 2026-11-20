@@ -9,9 +9,10 @@ package org.jetbrains.kotlin.kapt.cli
 
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseDiagnostic
+import org.jetbrains.kotlin.cli.common.arguments.hasFatalError
 import org.jetbrains.kotlin.cli.common.arguments.preprocessCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
+import org.jetbrains.kotlin.cli.common.arguments.reportCliArgumentFatalDiagnostics
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -40,12 +41,11 @@ fun main(args: Array<String>) {
 }
 
 internal fun transformArgs(args: List<String>, messageCollector: MessageCollector, isTest: Boolean): List<String> {
-    val parseErrors = ArgumentParseErrors()
-    val kotlincTransformed = preprocessCommandLineArguments(args, lazy { parseErrors })
+    val cliDiagnostics = mutableListOf<ArgumentParseDiagnostic>()
+    val kotlincTransformed = preprocessCommandLineArguments(args, cliDiagnostics)
 
-    val errorMessages = validateArgumentsAllErrors(parseErrors)
-    if (errorMessages.isNotEmpty()) {
-        errorMessages.forEach { messageCollector.report(CompilerMessageSeverity.ERROR, it) }
+    if (cliDiagnostics.hasFatalError) {
+        messageCollector.reportCliArgumentFatalDiagnostics(cliDiagnostics)
         return emptyList()
     }
 
@@ -56,6 +56,9 @@ internal fun transformArgs(args: List<String>, messageCollector: MessageCollecto
         emptyList()
     }
 }
+
+// Repeatable options that also accept a comma-separated list.
+private val LIST_OPTIONS = setOf(KaptCliOption.CLASSPATH_CHANGES, KaptCliOption.ANNOTATION_PROCESSORS_OPTION)
 
 private const val KAPT_COMPILER_PLUGIN_JAR_NAME = "kotlin-annotation-processing.jar"
 
@@ -97,6 +100,16 @@ private fun transformKaptToolArgs(args: List<String>, messageCollector: MessageC
         }
 
         val transformedOption = option.cliToolOption.transform(arg)
+
+        // kotlinc splits `-P` and `-Xplugin` values on ',', so such a value cannot reach the plugin as is.
+        if (',' in transformedOption) {
+            if (option.pluginOption !in LIST_OPTIONS) {
+                argError("$arg: values containing ',' are not supported by ${option.cliToolOption.name}")
+            }
+            transformedOption.split(',').map { it.trim() }.filter { it.isNotEmpty() }
+                .forEach { transformed += kaptArg(option.pluginOption, it) }
+            continue
+        }
 
         when (option.pluginOption) {
             KaptCliOption.TOOLS_JAR_OPTION -> {

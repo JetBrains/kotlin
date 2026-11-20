@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.irRichErrorType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -419,10 +420,10 @@ fun IrFunction.isExternalOrInheritedFromExternal(): Boolean {
 inline fun <reified T : IrDeclaration> IrDeclarationContainer.findDeclaration(predicate: (T) -> Boolean): T? =
     declarations.find { it is T && predicate(it) } as? T
 
-fun IrValueParameter.hasDefaultValue(): Boolean = DFS.ifAny(
+fun IrValueParameter.hasDefaultValue(predicate: (IrValueParameter) -> Boolean = { it.defaultValue != null }): Boolean = DFS.ifAny(
     listOf(this),
     { current -> (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { it.owner.parameters[current.indexInParameters] } ?: listOf() },
-    { current -> current.defaultValue != null }
+    predicate,
 )
 
 @ObsoleteDescriptorBasedAPI
@@ -975,39 +976,49 @@ fun IrType.remapTypeParameters(
     srcToDstParameterMap: Map<IrTypeParameter, IrTypeParameter>? = null
 ): IrType =
     when (this) {
-        is IrSimpleType -> {
-            val classifier = classifier.owner
-            when {
-                classifier is IrTypeParameter -> {
-                    val newClassifier =
-                        srcToDstParameterMap?.get(classifier) ?: if (classifier.parent == source)
-                            target.typeParameters[classifier.index]
-                        else
-                            classifier
-                    IrSimpleTypeImpl(newClassifier.symbol, nullability, arguments, annotations)
-                }
-
-                classifier is IrClass ->
-                    IrSimpleTypeImpl(
-                        classifier.symbol,
-                        nullability,
-                        arguments.memoryOptimizedMap {
-                            when (it) {
-                                is IrTypeProjection -> makeTypeProjection(
-                                    it.type.remapTypeParameters(source, target, srcToDstParameterMap),
-                                    it.variance
-                                )
-                                is IrStarProjection -> it
-                            }
-                        },
-                        annotations
-                    )
-
-                else -> this
-            }
-        }
+        is IrSimpleType -> this.remapTypeParameters(source, target, srcToDstParameterMap)
         else -> this
     }
+
+private fun IrSimpleType.remapTypeParameters(
+    source: IrTypeParametersContainer,
+    target: IrTypeParametersContainer,
+    srcToDstParameterMap: Map<IrTypeParameter, IrTypeParameter>? = null
+): IrSimpleType {
+    if (errorUnionElements.isNotEmpty()) {
+        return irRichErrorType(
+            anyClassifier = classifier,
+            nullability = nullability,
+            errorUnionElements = errorUnionElements.map { it.remapTypeParameters(source, target, srcToDstParameterMap) },
+            annotations = annotations,
+        )
+    }
+    return when (val classifier = classifier.owner) {
+        is IrTypeParameter -> {
+            val newClassifier =
+                srcToDstParameterMap?.get(classifier) ?: if (classifier.parent == source)
+                    target.typeParameters[classifier.index]
+                else
+                    classifier
+            IrSimpleTypeImpl(newClassifier.symbol, nullability, arguments, annotations)
+        }
+        is IrClass -> IrSimpleTypeImpl(
+            classifier.symbol,
+            nullability,
+            arguments.memoryOptimizedMap {
+                when (it) {
+                    is IrTypeProjection -> makeTypeProjection(
+                        it.type.remapTypeParameters(source, target, srcToDstParameterMap),
+                        it.variance
+                    )
+                    is IrStarProjection -> it
+                }
+            },
+            annotations
+        )
+        else -> this
+    }
+}
 
 fun IrDeclarationContainer.addChild(declaration: IrDeclaration) {
     this.declarations += declaration
@@ -1144,13 +1155,6 @@ val IrFunction.allParameters: List<IrValueParameter>
 
 private object LoweringsFakeOverrideBuilderStrategy : FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
     override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {
-    }
-
-    // TODO(KT-62534) use ModuleDescriptor.shouldSeeInternalsOf when it's fixed
-    override fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean {
-        val fromModuleName = thisModule.name.asStringStripSpecialMarkers()
-        val toModuleName = memberModule.name.asStringStripSpecialMarkers()
-        return fromModuleName == toModuleName
     }
 }
 
@@ -1411,13 +1415,17 @@ fun IrFunction.hasShape(
 }
 
 fun IrFunction.isToString(): Boolean =
-    name == OperatorNameConventions.TO_STRING && nonDispatchParameters.isEmpty()
+    name == OperatorNameConventions.TO_STRING &&
+            hasShape(dispatchReceiver = true, regularParameters = 0)
 
 fun IrFunction.isHashCode() =
-    name == OperatorNameConventions.HASH_CODE && nonDispatchParameters.isEmpty()
+    name == OperatorNameConventions.HASH_CODE &&
+            hasShape(dispatchReceiver = true, regularParameters = 0)
 
-fun IrFunction.isEquals() =
-    name == OperatorNameConventions.EQUALS && nonDispatchParameters.singleOrNull()?.type?.isNullableAny() == true
+fun IrFunction.isEquals(): Boolean =
+    name == OperatorNameConventions.EQUALS &&
+            hasShape(dispatchReceiver = true, regularParameters = 1) &&
+            parameters[1].type.isNullableAny()
 
 val IrFunction.isValueClassTypedEquals: Boolean
     get() {

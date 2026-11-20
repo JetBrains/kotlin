@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 
 abstract class TypeApproximatorConfiguration {
     enum class IntersectionStrategy {
@@ -30,6 +31,12 @@ abstract class TypeApproximatorConfiguration {
     val approximateRawTypes: Boolean get() = approximateAllFlexible
 
     open val approximateErrorTypes: Boolean get() = true
+
+    /**
+     * Whether stub types are considered equal to any type when the approximator checks
+     * if an argument may be left unprojected under an invariant parameter.
+     */
+    open val stubTypesEqualToAnything: Boolean get() = true
 
     open val approximateIntegerLiteralConstantTypes: Boolean get() = false // IntegerLiteralTypeConstructor
     open val approximateIntegerConstantOperatorTypes: Boolean get() = false
@@ -124,7 +131,7 @@ abstract class TypeApproximatorConfiguration {
         override fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = false
     }
 
-    object IncorporationConfiguration : AbstractCapturedTypesAndILTApproximation(CaptureStatus.FOR_INCORPORATION) {
+    abstract class AbstractIncorporationConfiguration : AbstractCapturedTypesAndILTApproximation(CaptureStatus.FOR_INCORPORATION) {
         context(ctx: TypeSystemInferenceExtensionContext)
         override fun shouldApproximateCapturedType(type: CapturedTypeMarker): Boolean {
             if (super.shouldApproximateCapturedType(type)) return true
@@ -134,6 +141,9 @@ abstract class TypeApproximatorConfiguration {
             return type.contains { nested -> nested is CapturedTypeMarker && super.shouldApproximateCapturedType(nested) }
         }
     }
+
+    @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EliminateSecondKindIncorporation)
+    object IncorporationConfiguration : AbstractIncorporationConfiguration()
 
     object SubtypeCapturedTypesApproximation : AbstractCapturedTypesAndILTApproximation(CaptureStatus.FOR_SUBTYPING)
 

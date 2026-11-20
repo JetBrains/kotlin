@@ -13,15 +13,18 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarations
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModulePlatformKind
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.platformKind
 import org.jetbrains.kotlin.analysis.api.platform.utils.mergeInto
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirConflictsFromDifferentModuleExtension
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdeRegisteredPluginAnnotations
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirLibrarySessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
@@ -46,6 +49,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.checkers.FirConflictsFromDifferentModuleExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.deserialization.FirKDocDeserializer
 import org.jetbrains.kotlin.fir.extensions.*
@@ -103,7 +107,7 @@ internal class LLFirSessionFactory(
     fun createSourcesSession(module: KaSourceModule): LLFirSourcesSession {
         val platform = module.targetPlatform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
-        val languageVersionSettings = wrapLanguageVersionSettings(module.languageVersionSettings)
+        val languageVersionSettings = wrapLanguageVersionSettings(module.languageVersionSettings, module)
 
         val scopeProvider = platformConfiguration.createSourceScopeProvider()
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
@@ -351,7 +355,7 @@ internal class LLFirSessionFactory(
     fun createScriptSession(module: KaScriptModule): LLFirScriptSession {
         val platform = module.targetPlatform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
-        val languageVersionSettings = wrapLanguageVersionSettings(module.languageVersionSettings)
+        val languageVersionSettings = wrapLanguageVersionSettings(module.languageVersionSettings, module)
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
@@ -426,7 +430,6 @@ internal class LLFirSessionFactory(
         }
 
         val hostConfiguration = scriptDefinition.hostConfiguration
-        registerExtensions(FirReplCompilerExtensionIdeRegistrar(hostConfiguration).configure())
 
         val compilerArguments = makeScriptCompilerArguments(scriptDefinition.compilerOptions.toList())
         val commandLineProcessors = listOf(AssignmentCommandLineProcessor())
@@ -517,7 +520,7 @@ internal class LLFirSessionFactory(
         val platform = module.targetPlatform
 
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
-        val languageVersionSettings = wrapLanguageVersionSettings(contextSession.languageVersionSettings)
+        val languageVersionSettings = wrapLanguageVersionSettings(contextSession.languageVersionSettings, module)
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
@@ -533,7 +536,9 @@ internal class LLFirSessionFactory(
             register(FirKotlinScopeProvider::class, scopeProvider)
 
             registerAllCommonComponents(languageVersionSettings, resolutionScope)
-            registerSourceLikeComponents()
+            val conflictsExtension = LLFirConflictsFromDifferentModuleExtension(module, contextSession)
+            registerSourceLikeComponents(conflictsExtension)
+            register(FirConflictsFromDifferentModuleExtension::class, conflictsExtension)
 
             val firProvider = LLFirProvider(
                 this,
@@ -639,13 +644,17 @@ internal class LLFirSessionFactory(
         }
     }
 
-    private fun wrapLanguageVersionSettings(original: LanguageVersionSettings): LanguageVersionSettings {
+    private fun wrapLanguageVersionSettings(original: LanguageVersionSettings, module: KaModule): LanguageVersionSettings {
+        // Aligned with `FirSession.isMetadataCompilation`, which is registered for the session in `registerAllCommonComponents`
+        val isMetadataModule = module.platformKind == KaModulePlatformKind.METADATA
+
         return object : LanguageVersionSettings by original {
 
-            override fun <T> getFlag(flag: AnalysisFlag<T>): T {
-                @Suppress("UNCHECKED_CAST")
-                if (flag == JvmAnalysisFlags.suppressMissingBuiltinsError) return true as T
-                return original.getFlag(flag)
+            @Suppress("UNCHECKED_CAST")
+            override fun <T> getFlag(flag: AnalysisFlag<T>): T = when (flag) {
+                JvmAnalysisFlags.suppressMissingBuiltinsError -> true as T
+                AnalysisFlags.metadataCompilation if isMetadataModule -> true as T
+                else -> original.getFlag(flag)
             }
 
             override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State {
@@ -748,8 +757,8 @@ internal class LLFirSessionFactory(
         registerResolveComponents()
     }
 
-    private fun LLFirSession.registerSourceLikeComponents() {
-        register(FirNameConflictsTracker::class, LLNameConflictsTracker(this))
+    private fun LLFirSession.registerSourceLikeComponents(conflictsExtension: LLFirConflictsFromDifferentModuleExtension? = null) {
+        register(FirNameConflictsTracker::class, LLNameConflictsTracker(this, conflictsExtension))
     }
 
     private inline fun LLFirSession.registerPlatformSpecificComponents(

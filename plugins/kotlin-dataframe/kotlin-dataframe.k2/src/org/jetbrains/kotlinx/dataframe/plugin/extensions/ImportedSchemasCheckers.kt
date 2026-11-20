@@ -26,10 +26,9 @@ class ImportedSchemasCheckers(
     session: FirSession,
 ) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val regularClassCheckers: Set<FirRegularClassChecker>
-            get() = setOfNotNull(
-                ImportedSchemaCompanionObjectChecker,
-            )
+        override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
+            ImportedSchemaCompanionObjectChecker,
+        )
     }
 }
 

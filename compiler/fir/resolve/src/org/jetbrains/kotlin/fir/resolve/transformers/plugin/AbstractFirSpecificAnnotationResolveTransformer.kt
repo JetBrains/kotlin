@@ -39,7 +39,8 @@ import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractResolveTransformerSubclassing
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -47,13 +48,13 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.PrivateForInline
 
-@OptIn(PrivateForInline::class)
+@OptIn(PrivateForInline::class, FirAbstractResolveTransformerSubclassing::class)
 abstract class AbstractFirSpecificAnnotationResolveTransformer(
     @property:PrivateForInline override val session: FirSession,
     @property:PrivateForInline override val scopeSession: ScopeSession,
     @property:PrivateForInline val computationSession: CompilerRequiredAnnotationsComputationSession,
     containingDeclarations: List<FirDeclaration> = emptyList(),
-) : FirDefaultTransformer<Nothing?>(), SessionAndScopeSessionHolder {
+) : FirAbstractResolveTransformer<Nothing?>(), SessionAndScopeSessionHolder {
 
     private fun resolveCompilerRequiredArguments(
         annotationCall: FirAnnotationCall,
@@ -235,7 +236,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         if (propertyAccess.explicitReceiver != null) return guessEnumEntryByName()
 
         @OptIn(FirImplementationDetail::class)
-        val fromImports = scopes.firstNotNullOfOrNull { scope ->
+        val fromImports = scopes.asReversed().firstNotNullOfOrNull { scope ->
             (scope as? FirAbstractImportingScope)?.findEnumEntryWithoutResolution(name)
                 ?.takeIf { it.containingClassLookupTag()?.classId == expectedEnumClassId }
         }
@@ -252,7 +253,8 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         // the first segment as a classifier or by appending the pre-imported paths as package segments,
         // but it's non-trivial and we don't have enough motivation for it.
         return when {
-            segments.isEmpty() -> scopes.firstNotNullOfOrNull { it.getSingleClassifier(receiver.calleeReference.name) as? FirClassLikeSymbol<*> }
+            segments.isEmpty() ->
+                scopes.asReversed().firstNotNullOfOrNull { it.getSingleClassifier(receiver.calleeReference.name) as? FirClassLikeSymbol<*> }
             else -> ClassId(FqName.fromSegments(segments.asReversed()), receiver.calleeReference.name).toSymbol() as? FirClassLikeSymbol<*>
         }
     }

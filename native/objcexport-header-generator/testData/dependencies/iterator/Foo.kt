@@ -1,1 +1,1 @@
-val a: Iterator<Int>
+val a: Iterator<Int> = error("stub")

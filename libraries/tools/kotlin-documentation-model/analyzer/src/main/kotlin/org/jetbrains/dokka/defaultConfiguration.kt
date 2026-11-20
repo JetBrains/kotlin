@@ -7,7 +7,7 @@ package org.jetbrains.dokka
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import java.io.File
 
-public data class DokkaConfigurationImpl(
+internal data class DokkaConfigurationImpl(
     override val moduleName: String = DokkaDefaults.moduleName,
     override val moduleVersion: String? = DokkaDefaults.moduleVersion,
     override val outputDir: File = DokkaDefaults.outputDir,
@@ -22,14 +22,14 @@ public data class DokkaConfigurationImpl(
     override val finalizeCoroutines: Boolean = true,
 ) : DokkaConfiguration
 
-public data class PluginConfigurationImpl(
+internal data class PluginConfigurationImpl(
     override val fqPluginName: String,
     override val serializationFormat: DokkaConfiguration.SerializationFormat,
     override val values: String
 ) : DokkaConfiguration.PluginConfiguration
 
 
-public data class DokkaSourceSetImpl(
+internal data class DokkaSourceSetImpl(
     override val displayName: String = DokkaDefaults.sourceSetDisplayName,
     override val sourceSetID: DokkaSourceSetID,
     override val classpath: List<File> = emptyList(),
@@ -59,14 +59,14 @@ public data class DokkaSourceSetImpl(
     }
 }
 
-public data class DokkaModuleDescriptionImpl(
+internal data class DokkaModuleDescriptionImpl(
     override val name: String,
     override val relativePathToOutputDirectory: File,
     override val includes: Set<File>,
     override val sourceOutputDirectory: File
 ) : DokkaConfiguration.DokkaModuleDescription
 
-public data class PackageOptionsImpl(
+internal data class PackageOptionsImpl(
     override val matchingRegex: String,
     override val reportUndocumented: Boolean?,
     override val skipDeprecated: Boolean,

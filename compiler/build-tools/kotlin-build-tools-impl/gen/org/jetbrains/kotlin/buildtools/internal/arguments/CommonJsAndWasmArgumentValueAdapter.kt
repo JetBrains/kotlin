@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import kotlin.Any
-import kotlin.Enum
 import kotlin.OptIn
+import kotlin.Suppress
 import kotlin.collections.List
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnosticMode as InternalArgumentsEnumsJsIrDiagnosticMode
@@ -25,21 +25,25 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.SourceMapNamesPolicy 
  * A value needs converting whenever the two sides declare its type separately, as they do for the mirrored argument enums.
  */
 internal object CommonJsAndWasmArgumentValueAdapter {
-  public fun toApi(`value`: Any?): Any? = when (value) {
-    is List<*> if value.firstOrNull() is Enum<*> -> value.map { toApi(it) }
+  @Suppress("UNCHECKED_CAST")
+  public fun <T> toApi(`value`: Any?): T = when (value) {
+    is List<*> -> value.map { toApi<T>(it) }
     is InternalArgumentsEnumsJsIrDiagnosticMode -> value.toApiEnum<ApiArgumentsEnumsJsIrDiagnosticMode>()
     is InternalArgumentsEnumsJsMainCallMode -> value.toApiEnum<ApiArgumentsEnumsJsMainCallMode>()
     is InternalArgumentsEnumsSourceMapEmbedSources -> value.toApiEnum<ApiArgumentsEnumsSourceMapEmbedSources>()
     is InternalArgumentsEnumsSourceMapNamesPolicy -> value.toApiEnum<ApiArgumentsEnumsSourceMapNamesPolicy>()
     else -> value
   }
+  as T
 
-  public fun toImpl(`value`: Any?): Any? = when (value) {
-    is List<*> if value.firstOrNull() is Enum<*> -> value.map { toImpl(it) }
+  @Suppress("UNCHECKED_CAST")
+  public fun <T> toImpl(`value`: Any?): T = when (value) {
+    is List<*> -> value.map { toImpl<T>(it) }
     is ApiArgumentsEnumsJsIrDiagnosticMode -> value.toImplEnum<InternalArgumentsEnumsJsIrDiagnosticMode>()
     is ApiArgumentsEnumsJsMainCallMode -> value.toImplEnum<InternalArgumentsEnumsJsMainCallMode>()
     is ApiArgumentsEnumsSourceMapEmbedSources -> value.toImplEnum<InternalArgumentsEnumsSourceMapEmbedSources>()
     is ApiArgumentsEnumsSourceMapNamesPolicy -> value.toImplEnum<InternalArgumentsEnumsSourceMapNamesPolicy>()
     else -> value
   }
+  as T
 }

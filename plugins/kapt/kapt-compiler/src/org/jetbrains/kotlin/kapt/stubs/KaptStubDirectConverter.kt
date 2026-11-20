@@ -87,6 +87,9 @@ class KaptStubDirectConverter(
         appendModifierIfPresent(Opcodes.ACC_STATIC, "static")
         appendModifierIfPresent(Opcodes.ACC_ABSTRACT, "abstract")
         appendModifierIfPresent(Opcodes.ACC_FINAL, "final")
+        if (kind == ElementKind.CLASS) {
+            appendModifierIfPresent(valueClassFlag, "value")
+        }
         appendModifierIfPresent(Opcodes.ACC_NATIVE, "native")
         appendModifierIfPresent(Opcodes.ACC_SYNCHRONIZED, "synchronized")
         if (kind == ElementKind.FIELD) {
@@ -101,7 +104,7 @@ class KaptStubDirectConverter(
         val origin = kaptContext.origins[node] ?: return
         val source = kaptContext.firSourceOf(origin.declaration) ?: return
 
-        if (origin.declaration is IrConstructor && source.elementType in CLASS_LIKE_ELEMENT_TYPES) {
+        if (origin.declaration is IrConstructor && source.syntaxId in CLASS_LIKE_ELEMENT_TYPES) {
             // Do not copy class KDoc to an implicit constructor.
             return
         }
@@ -210,17 +213,18 @@ class KaptStubDirectConverter(
         genericType: SignatureParser.ClassGenericSignature<String, String>,
         superTypes: ClassSupertypes<String>,
         enumValues: List<String>,
-        sortedConvertedFields: List<String>,
-        sortedConvertedMethods: List<String>,
-        nestedClasses: List<String>,
+        members: List<ClassMember<String>>,
+        recordComponents: List<String>?
     ): String {
         val isEnum = clazz.isEnum()
         val isAnnotation = clazz.isAnnotation()
+        val isRecord = recordComponents != null
 
         val text = buildString {
             appendKDocCommentIfNecessary(clazz)
             append(modifiers)
             val classKindText = when {
+                isRecord -> "record"
                 isEnum -> "enum"
                 isAnnotation -> "@interface"
                 clazz.isInterface() -> "interface"
@@ -231,7 +235,10 @@ class KaptStubDirectConverter(
                 // interface cannot have type parameters or extends clause, but they are allowed (not reported)
                 // during the annotations processing
                 appendTypeArguments(genericType.typeParameters)
-                if (clazz.isInterface()) {
+                if (isRecord) {
+                    appendList(recordComponents, "(", ")")
+                    appendListIfNonEmpty(superTypes.interfaces, " implements ", "") { it }
+                } else if (clazz.isInterface()) {
                     require(superTypes.superClass == null) {
                         "Interface ${clazz.name} has an unexpected superclass in Java text generation"
                     }
@@ -249,17 +256,27 @@ class KaptStubDirectConverter(
                     append(enumValue)
                 append(";\n")
             }
-            for (field in sortedConvertedFields)
-                append(field).append("\n")
-            for (method in sortedConvertedMethods)
-                append(method).append("\n")
-            for (nestedClass in nestedClasses)
-                append(nestedClass).append("\n")
+            for (member in members)
+                append(member.element).append("\n")
             append("}\n")
         }
 
         return text
     }
+
+    override val supportsRecords: Boolean get() = true
+
+    override fun makeRecordComponent(field: FieldNode, modifiers: String, convertedType: String, isVararg: Boolean): String =
+        buildString {
+            append(modifiers)
+            append(if (isVararg) convertedType.removeSuffix("[]") + "..." else convertedType)
+            append(' ')
+            append(field.name)
+        }
+
+    override fun makeFieldAssignmentStatement(fieldName: String, parameterName: String): String = "this.$fieldName = $parameterName;"
+
+    override fun makeCast(type: String, expression: String): String = "($type) $expression"
 
     override fun makeSingleImport(fqName: FqName): String = "import ${fqName.asString()};\n"
 

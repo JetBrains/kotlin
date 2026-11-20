@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.kdoc.psi.api.KDocCommentDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -73,8 +72,9 @@ public interface KaKDocProvider : KaSessionComponent {
      *
      * 1. Try resolving the KDoc of the symbol's PSI navigation element via [KaKDocProvider.findKDoc].
      *
-     * 2. If the symbol is a callable, walk its [KaCallableSymbol.allOverriddenSymbols] in order and
-     * recursively call [findKDoc] on each of them. Return the first non-null result.
+     * 2. If the symbol is a callable, walk its
+     * [allOverriddenSymbols][org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols] in order and recursively call
+     * [findKDoc] on each of them. Return the first non-null result.
      *
      * 3. Resolve the symbol's `expect` declarations via
      * [getExpectsForActual][org.jetbrains.kotlin.analysis.api.symbols.getExpectsForActual]. Recursively call [findKDoc]

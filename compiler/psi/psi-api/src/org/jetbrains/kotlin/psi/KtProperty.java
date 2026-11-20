@@ -181,7 +181,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
                     expression = "this.setPropertyTypeReference(typeRef)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.setPropertyTypeReference"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {
@@ -323,7 +323,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
                     expression = "this.setPropertyInitializer(initializer)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.setPropertyInitializer"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public KtExpression setInitializer(@Nullable KtExpression initializer) {

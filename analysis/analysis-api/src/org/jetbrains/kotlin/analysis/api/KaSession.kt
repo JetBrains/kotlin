@@ -178,7 +178,7 @@ public interface KaSession : KaLifetimeOwner,
         "element.kaModule",
         imports = ["org.jetbrains.kotlin.analysis.api.projectStructure.kaModule"],
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 public fun KaSession.getModule(element: PsiElement): KaModule = element.kaModule
 
@@ -190,7 +190,7 @@ public fun KaSession.getModule(element: PsiElement): KaModule = element.kaModule
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.session' endpoint instead.",
     replaceWith = ReplaceWith("useSiteModule", "org.jetbrains.kotlin.analysis.api.session.useSiteModule"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -203,7 +203,7 @@ public val useSiteModule: KaModule
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.session' endpoint instead.",
     replaceWith = ReplaceWith("useSiteSession", "org.jetbrains.kotlin.analysis.api.session.useSiteSession"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -216,7 +216,7 @@ public val useSiteSession: KaSession
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols.pointers' endpoint instead.",
     replaceWith = ReplaceWith("this.restoreSymbol()", "org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol"),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)

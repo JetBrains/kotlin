@@ -30,19 +30,24 @@ internal sealed interface AdditionalAnnotationsProvider {
     fun addAllAnnotations(currentRawAnnotations: MutableList<in PsiAnnotation>, foundQualifiers: MutableSet<String>, owner: PsiElement)
 
     /**
-     * @return **true** if this qualifier should be treated as a **special** in [GranularAnnotationsBox.findAnnotation]
-     * (should be processed without [GranularAnnotationsBox.getOrComputeCachedAnnotations] call)
+     * Returns `true` if [findSpecialAnnotation] can look up an annotation with [qualifiedName].
+     *
+     * For such a name, [GranularAnnotationsBox.findAnnotation] and [GranularAnnotationsBox.hasAnnotation] call [findSpecialAnnotation]
+     * instead of computing all annotations of the owner, which resolves the declaration further and runs every provider.
      */
     fun isSpecialQualifier(qualifiedName: String): Boolean
 
     /**
-     * The resulted annotation must be presented among all annotations after [addAllAnnotations]
+     * Returns the annotation of [owner] with [qualifiedName], or `null` if there is none, without computing all annotations of [owner].
      *
-     * @param annotationsBox an owner of [AdditionalAnnotationsProvider]
-     * @param qualifiedName a **special** ([isSpecialQualifier] must be **true** for it) qualified name for a new annotation
-     * @param owner an owner for a new annotation
+     * [GranularAnnotationsBox] calls this function only if [isSpecialQualifier] returns `true` for [qualifiedName]. If the box can check
+     * the declared annotations for [qualifiedName] itself, as for `@JvmInline`, it does so first and calls this function only if none
+     * matches. Otherwise, it returns the result as is, so this function has to take the declared annotations into account.
      *
-     * @return a new annotation with [qualifiedName]
+     * The result must agree with the full list of annotations, which includes the ones from [addAllAnnotations]: return an annotation
+     * if and only if the list has one with [qualifiedName].
+     *
+     * [annotationsBox] is the box which owns this provider. A provider can use it to look up the declared annotations.
      */
     fun findSpecialAnnotation(annotationsBox: GranularAnnotationsBox, qualifiedName: String, owner: PsiElement): PsiAnnotation?
 

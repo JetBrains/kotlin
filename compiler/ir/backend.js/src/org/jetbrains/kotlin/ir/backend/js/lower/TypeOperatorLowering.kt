@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,24 +10,23 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.AbstractValueUsageLowering.Companion.getActualType
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
@@ -120,16 +119,19 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 return expression.run { IrCompositeImpl(startOffset, endOffset, typeOperand, null, newStatements) }
             }
 
-            private fun needBoxingOrUnboxing(fromType: IrType, toType: IrType): Boolean {
-                return ((icUtils.getInlinedClass(fromType) != null) xor (icUtils.getInlinedClass(toType) != null)) || (fromType.isUnit() && !toType.isUnit())
+            private fun IrTypeOperatorCall.needBoxingOrUnboxing(arg: IrExpression): Boolean {
+                val fromType = arg.getActualType(context)
+                return ((icUtils.getInlinedClass(fromType) != null) xor (icUtils.getInlinedClass(typeOperand) != null)) || (fromType.isUnit() && !typeOperand.isUnit())
             }
 
             private fun IrTypeOperatorCall.wrapWithUnsafeCast(arg: IrExpression): IrExpression {
                 // TODO: there is possible some situation which could be visible for AutoboxingLowering
                 // They are: 1. Inline classes, 2. Unit materialization. Using unsafe cast makes lowering work wrong.
-                return if (!needBoxingOrUnboxing(arg.getActualType(context), typeOperand)) {
+                return if (needBoxingOrUnboxing(arg)) {
+                    arg
+                } else {
                     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.REINTERPRET_CAST, typeOperand, arg)
-                } else arg
+                }
             }
 
             private fun lowerCast(
@@ -152,10 +154,16 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     newStatements,
                     declaration
                 )
-                val check = generateTypeCheck(argument, toType, isNotNullAssertionRequired)
+                val check = generateTypeCheck(argument, toType, isNotNullAssertionRequired, isSafe)
 
                 val isConditionRequired = !check.isTrueConst()
-                if (!isConditionRequired && !isNotNullAssertionRequired) return expression.argument
+                if (!isConditionRequired && !isNotNullAssertionRequired) {
+                    return if (expression.needBoxingOrUnboxing(expression.argument)) {
+                        IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type, null, listOf(expression.argument))
+                    } else {
+                        expression.argument
+                    }
+                }
 
                 newStatements += if (isConditionRequired) {
                     val castedValue = expression.wrapWithUnsafeCast(argument())
@@ -258,17 +266,47 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
              * └─────────────┻─────────────────────────────┴───────────────────────────────┘
              * ```
              * Note: advanced check is performed when casting to primitive types, array types, function types, or interfaces.
+             *
+             * If we statically know that this is an upcast, we try to generate no checks.
+             * In this case, the following logic is applied:
+             * ```
+             *               ┌─────────────┬─────────────┐
+             *               │ to non-null │ to nullable │
+             * ┌─────────────╋━━━━━━━━━━━━━┻━━━━━━━━━━━━━┫
+             * │from non-null┃           true            │
+             * ├─────────────╋─────────────┬─────────────┤
+             * │from nullable┃ null check  │    true     │
+             * └─────────────┻─────────────┴─────────────┘
+             * ```
              */
             private fun generateTypeCheck(
                 argument: () -> IrExpression,
                 toType: IrType,
-                isDefinitelyNotNull: Boolean = false
+                isDefinitelyNotNull: Boolean = false,
+                isSafeCast: Boolean = false,
             ): IrExpression {
                 val toNotNullable = toType.makeNotNull()
                 val argumentInstance = argument()
-                val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable, isDefinitelyNotNull)
-                val isFromNullable = argumentInstance.type.isNullable()
+                val fromType = argumentInstance.type
+                val fromNotNullable = fromType.makeNotNull()
+
+                val isFromNullable = fromType.isNullable()
                 val isToNullable = toType.isNullable()
+
+                val c = container
+                if (fromNotNullable !is IrDynamicType &&
+                    !toNotNullable.isThrowable() && // This is not to break kotlinx.coroutines, see test compiler/testData/codegen/boxWasmJsInterop/jsPromiseErrorCastToThrowable.kt
+                    fromNotNullable.isSubtypeOf(toNotNullable, context.typeSystem)
+                ) {
+                    // This is an upcast
+                    return when {
+                        isFromNullable && isSafeCast -> litTrue
+                        isFromNullable && !isToNullable -> calculator.run { not(nullCheck(argument())) }
+                        else -> litTrue
+                    }
+                }
+
+                val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable, isDefinitelyNotNull)
                 val isNativeCheck = !advancedCheckRequired(toNotNullable)
 
                 return when {

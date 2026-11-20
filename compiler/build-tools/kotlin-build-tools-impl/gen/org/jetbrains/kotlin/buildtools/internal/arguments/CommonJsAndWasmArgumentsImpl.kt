@@ -1,6 +1,7 @@
 // This file was generated automatically. See the README.md file
 // DO NOT MODIFY IT MANUALLY.
 
+@file:UseSerializers(PathAsStringSerializer::class)
 @file:OptIn(ExperimentalCompilerArgument::class)
 @file:Suppress("EnumValuesSoftDeprecate")
 
@@ -8,6 +9,7 @@ package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import java.io.File
 import java.lang.IllegalStateException
+import java.nio.`file`.Path
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.OptIn
@@ -15,47 +17,24 @@ import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
-import kotlin.collections.MutableSet
 import kotlin.collections.Set
 import kotlin.collections.emptyList
 import kotlin.collections.emptySet
 import kotlin.collections.joinToString
+import kotlin.collections.listOf
 import kotlin.collections.map
 import kotlin.collections.mutableMapOf
-import kotlin.collections.mutableSetOf
-import kotlin.io.path.Path
 import kotlin.text.split
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.IR_OUTPUT_DIR
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.IR_OUTPUT_NAME
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.LIBRARIES
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.MAIN
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.NOPACK
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.SOURCE_MAP
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.SOURCE_MAP_BASE_DIRS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.SOURCE_MAP_EMBED_SOURCES
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.SOURCE_MAP_NAMES_POLICY
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.SOURCE_MAP_PREFIX
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_CACHE_DIRECTORY
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_ENABLE_ADVANCED_OPTIMIZATIONS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_FRIEND_MODULES
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_FRIEND_MODULES_DISABLED
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_GENERATE_DTS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_INCLUDE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_IR_DCE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_IR_DCE_PRINT_REACHABILITY_INFO
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_IR_DCE_RUNTIME_DIAGNOSTIC
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_IR_MODULE_NAME
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_IR_PER_MODULE_OUTPUT_NAME
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_IR_PRODUCE_JS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_IR_PRODUCE_KLIB_DIR
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_IR_PRODUCE_KLIB_FILE
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_IR_PROPERTY_LAZY_INITIALIZATION
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_STRICT_IMPLICIT_EXPORT_TYPES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsMainCallMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SourceMapEmbedSources
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SourceMapNamesPolicy
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
@@ -67,77 +46,337 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
-internal abstract class CommonJsAndWasmArgumentsImpl(
-  argumentValidationErrors: Set<String> = emptySet(),
-  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-  argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
-) : CommonKlibBasedArgumentsImpl(argumentValidationErrors, restrictedArgViolations, argumentParseDiagnostics),
-    CommonJsAndWasmArguments,
-    CommonJsAndWasmArguments.Builder,
-    CommonJsAndWasmCompilerKlibArguments,
-    CommonJsAndWasmCompilerKlibArguments.Builder,
-    CommonJsAndWasmCompilerLinkingArguments,
-    CommonJsAndWasmCompilerLinkingArguments.Builder {
+@Serializable
+internal abstract class CommonJsAndWasmArgumentsImpl() : CommonKlibBasedArgumentsImpl(),
+    CommonJsAndWasmArguments, CommonJsAndWasmArguments.Builder,
+    CommonJsAndWasmCompilerKlibArguments, CommonJsAndWasmCompilerKlibArguments.Builder,
+    CommonJsAndWasmCompilerLinkingArguments, CommonJsAndWasmCompilerLinkingArguments.Builder {
+  @Transient
+  private val defaultArguments: CommonJsAndWasmCompilerArguments = createDefaultArguments()
+
+  @Transient
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
-  @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonJsAndWasmArgument<V>): V = optionsMap[key.id] as V
+  @SerialName("X_CACHE_DIRECTORY")
+  internal var cacheDirectory: Path? =
+      defaultArguments.cacheDirectory?.let { kotlin.io.path.Path(it) }
 
-  public operator fun <V> `set`(key: CommonJsAndWasmArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+  @SerialName("X_ENABLE_ADVANCED_OPTIMIZATIONS")
+  internal var enableAdvancedOptimizations: Boolean = defaultArguments.enableAdvancedOptimizations
+
+  @SerialName("X_FRIEND_MODULES")
+  internal var friendModules: List<Path>? =
+      defaultArguments.friendModules?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
+
+  @SerialName("X_FRIEND_MODULES_DISABLED")
+  internal var friendModulesDisabled: Boolean = defaultArguments.friendModulesDisabled
+
+  @SerialName("X_GENERATE_DTS")
+  internal var generateDts: Boolean = defaultArguments.generateDts
+
+  @SerialName("X_INCLUDE")
+  internal var includes: Path? = defaultArguments.includes?.let { kotlin.io.path.Path(it) }
+
+  @SerialName("X_IR_DCE")
+  internal var irDce: Boolean = defaultArguments.irDce
+
+  @SerialName("X_IR_DCE_PRINT_REACHABILITY_INFO")
+  internal var irDcePrintReachabilityInfo: Boolean = defaultArguments.irDcePrintReachabilityInfo
+
+  @SerialName("X_IR_DCE_RUNTIME_DIAGNOSTIC")
+  internal var irDceRuntimeDiagnostic: JsIrDiagnosticMode? =
+      defaultArguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") }
+
+  @SerialName("X_IR_MODULE_NAME")
+  internal var irModuleName: String? = defaultArguments.irModuleName
+
+  @SerialName("X_IR_PER_MODULE_OUTPUT_NAME")
+  internal var irPerModuleOutputName: String? = defaultArguments.irPerModuleOutputName
+
+  @SerialName("X_IR_PRODUCE_JS")
+  internal var irProduceJs: Boolean = defaultArguments.irProduceJs
+
+  @SerialName("X_IR_PRODUCE_KLIB_DIR")
+  @Suppress("DEPRECATION")
+  internal var irProduceKlibDir: Boolean? = defaultArguments.irProduceKlibDir
+
+  @SerialName("X_IR_PRODUCE_KLIB_FILE")
+  @Suppress("DEPRECATION")
+  internal var irProduceKlibFile: Boolean? = defaultArguments.irProduceKlibFile
+
+  @SerialName("X_IR_PROPERTY_LAZY_INITIALIZATION")
+  internal var irPropertyLazyInitialization: Boolean = defaultArguments.irPropertyLazyInitialization
+
+  @SerialName("X_STRICT_IMPLICIT_EXPORT_TYPES")
+  internal var strictImplicitExportType: Boolean = defaultArguments.strictImplicitExportType
+
+  @SerialName("IR_OUTPUT_DIR")
+  internal var outputDir: Path? = defaultArguments.outputDir?.let { kotlin.io.path.Path(it) }
+
+  @SerialName("IR_OUTPUT_NAME")
+  internal var moduleName: String? = defaultArguments.moduleName
+
+  @SerialName("LIBRARIES")
+  internal var libraries: List<Path>? =
+      defaultArguments.libraries?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
+
+  @SerialName("MAIN")
+  internal var main: JsMainCallMode? =
+      defaultArguments.main?.let { JsMainCallMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::main, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") }
+
+  @SerialName("NOPACK")
+  internal var nopack: Boolean = defaultArguments.nopack
+
+  @SerialName("SOURCE_MAP")
+  internal var sourceMap: Boolean = defaultArguments.sourceMap
+
+  @SerialName("SOURCE_MAP_BASE_DIRS")
+  internal var sourceMapBaseDirs: List<Path>? =
+      defaultArguments.sourceMapBaseDirs?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
+
+  @SerialName("SOURCE_MAP_EMBED_SOURCES")
+  internal var sourceMapEmbedSources: SourceMapEmbedSources? =
+      defaultArguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::sourceMapEmbedSources, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") }
+
+  @SerialName("SOURCE_MAP_NAMES_POLICY")
+  internal var sourceMapNamesPolicy: SourceMapNamesPolicy? =
+      defaultArguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::sourceMapNamesPolicy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") }
+
+  @SerialName("SOURCE_MAP_PREFIX")
+  internal var sourceMapPrefix: String? = defaultArguments.sourceMapPrefix
+
+  public constructor(
+    argumentValidationErrors: Set<String> = emptySet(),
+    restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+    argumentParseDiagnostics: ArgumentParseDiagnostics = ArgumentParseDiagnostics(),
+  ) : this() {
+    _argumentValidationErrors += argumentValidationErrors
+    _restrictedArgViolations += restrictedArgViolations
+    this.argumentParseDiagnostics += argumentParseDiagnostics
   }
 
-  public operator fun contains(key: CommonJsAndWasmArgument<*>): Boolean = key.id in optionsMap
-
-  private operator fun `get`(key: String): Any? = CommonJsAndWasmArgumentValueAdapter.toApi(optionsMap[key])
-
-  private operator fun `set`(key: String, `value`: Any?) {
-    optionsMap[key] = CommonJsAndWasmArgumentValueAdapter.toImpl(`value`)
-  }
+  abstract override fun createDefaultArguments(): CommonJsAndWasmCompilerArguments
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonJsAndWasmArguments.CommonJsAndWasmArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+  override operator fun <V> `get`(key: CommonJsAndWasmArguments.CommonJsAndWasmArgument<V>): V = CommonJsAndWasmArgumentValueAdapter.toApi(when (key.id) {
+    "X_CACHE_DIRECTORY" -> cacheDirectory
+    "X_ENABLE_ADVANCED_OPTIMIZATIONS" -> enableAdvancedOptimizations
+    "X_FRIEND_MODULES" -> friendModules
+    "X_FRIEND_MODULES_DISABLED" -> friendModulesDisabled
+    "X_GENERATE_DTS" -> generateDts
+    "X_INCLUDE" -> includes
+    "X_IR_DCE" -> irDce
+    "X_IR_DCE_PRINT_REACHABILITY_INFO" -> irDcePrintReachabilityInfo
+    "X_IR_DCE_RUNTIME_DIAGNOSTIC" -> irDceRuntimeDiagnostic
+    "X_IR_MODULE_NAME" -> irModuleName
+    "X_IR_PER_MODULE_OUTPUT_NAME" -> irPerModuleOutputName
+    "X_IR_PRODUCE_JS" -> irProduceJs
+    "X_IR_PRODUCE_KLIB_DIR" -> irProduceKlibDir
+    "X_IR_PRODUCE_KLIB_FILE" -> irProduceKlibFile
+    "X_IR_PROPERTY_LAZY_INITIALIZATION" -> irPropertyLazyInitialization
+    "X_STRICT_IMPLICIT_EXPORT_TYPES" -> strictImplicitExportType
+    "IR_OUTPUT_DIR" -> outputDir
+    "IR_OUTPUT_NAME" -> moduleName
+    "LIBRARIES" -> libraries
+    "MAIN" -> main
+    "NOPACK" -> nopack
+    "SOURCE_MAP" -> sourceMap
+    "SOURCE_MAP_BASE_DIRS" -> sourceMapBaseDirs
+    "SOURCE_MAP_EMBED_SOURCES" -> sourceMapEmbedSources
+    "SOURCE_MAP_NAMES_POLICY" -> sourceMapNamesPolicy
+    "SOURCE_MAP_PREFIX" -> sourceMapPrefix
+    else -> {
+            check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+            optionsMap[key.id]
+        }
   }
+  )
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonJsAndWasmArguments.CommonJsAndWasmArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    when (key.id) {
+      "X_CACHE_DIRECTORY" -> cacheDirectory = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_ENABLE_ADVANCED_OPTIMIZATIONS" -> enableAdvancedOptimizations = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_FRIEND_MODULES" -> friendModules = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_FRIEND_MODULES_DISABLED" -> friendModulesDisabled = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_GENERATE_DTS" -> generateDts = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_INCLUDE" -> includes = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_DCE" -> irDce = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_DCE_PRINT_REACHABILITY_INFO" -> irDcePrintReachabilityInfo = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_DCE_RUNTIME_DIAGNOSTIC" -> irDceRuntimeDiagnostic = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_MODULE_NAME" -> irModuleName = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PER_MODULE_OUTPUT_NAME" -> irPerModuleOutputName = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PRODUCE_JS" -> irProduceJs = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PRODUCE_KLIB_DIR" -> irProduceKlibDir = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PRODUCE_KLIB_FILE" -> irProduceKlibFile = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PROPERTY_LAZY_INITIALIZATION" -> irPropertyLazyInitialization = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_STRICT_IMPLICIT_EXPORT_TYPES" -> strictImplicitExportType = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "IR_OUTPUT_DIR" -> outputDir = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "IR_OUTPUT_NAME" -> moduleName = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "LIBRARIES" -> libraries = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "MAIN" -> main = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "NOPACK" -> nopack = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP" -> sourceMap = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP_BASE_DIRS" -> sourceMapBaseDirs = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP_EMBED_SOURCES" -> sourceMapEmbedSources = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP_NAMES_POLICY" -> sourceMapNamesPolicy = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP_PREFIX" -> sourceMapPrefix = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      else -> {
+              optionsMap[key.id] = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+          }
+    }
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+  override operator fun <V> `get`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>): V = CommonJsAndWasmArgumentValueAdapter.toApi(when (key.id) {
+    "X_CACHE_DIRECTORY" -> cacheDirectory
+    "X_ENABLE_ADVANCED_OPTIMIZATIONS" -> enableAdvancedOptimizations
+    "X_FRIEND_MODULES" -> friendModules
+    "X_FRIEND_MODULES_DISABLED" -> friendModulesDisabled
+    "X_GENERATE_DTS" -> generateDts
+    "X_INCLUDE" -> includes
+    "X_IR_DCE" -> irDce
+    "X_IR_DCE_PRINT_REACHABILITY_INFO" -> irDcePrintReachabilityInfo
+    "X_IR_DCE_RUNTIME_DIAGNOSTIC" -> irDceRuntimeDiagnostic
+    "X_IR_MODULE_NAME" -> irModuleName
+    "X_IR_PER_MODULE_OUTPUT_NAME" -> irPerModuleOutputName
+    "X_IR_PRODUCE_JS" -> irProduceJs
+    "X_IR_PRODUCE_KLIB_DIR" -> irProduceKlibDir
+    "X_IR_PRODUCE_KLIB_FILE" -> irProduceKlibFile
+    "X_IR_PROPERTY_LAZY_INITIALIZATION" -> irPropertyLazyInitialization
+    "X_STRICT_IMPLICIT_EXPORT_TYPES" -> strictImplicitExportType
+    "IR_OUTPUT_DIR" -> outputDir
+    "IR_OUTPUT_NAME" -> moduleName
+    "LIBRARIES" -> libraries
+    "MAIN" -> main
+    "NOPACK" -> nopack
+    "SOURCE_MAP" -> sourceMap
+    "SOURCE_MAP_BASE_DIRS" -> sourceMapBaseDirs
+    "SOURCE_MAP_EMBED_SOURCES" -> sourceMapEmbedSources
+    "SOURCE_MAP_NAMES_POLICY" -> sourceMapNamesPolicy
+    "SOURCE_MAP_PREFIX" -> sourceMapPrefix
+    else -> {
+            check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+            optionsMap[key.id]
+        }
   }
+  )
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    when (key.id) {
+      "X_CACHE_DIRECTORY" -> cacheDirectory = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_ENABLE_ADVANCED_OPTIMIZATIONS" -> enableAdvancedOptimizations = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_FRIEND_MODULES" -> friendModules = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_FRIEND_MODULES_DISABLED" -> friendModulesDisabled = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_GENERATE_DTS" -> generateDts = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_INCLUDE" -> includes = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_DCE" -> irDce = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_DCE_PRINT_REACHABILITY_INFO" -> irDcePrintReachabilityInfo = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_DCE_RUNTIME_DIAGNOSTIC" -> irDceRuntimeDiagnostic = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_MODULE_NAME" -> irModuleName = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PER_MODULE_OUTPUT_NAME" -> irPerModuleOutputName = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PRODUCE_JS" -> irProduceJs = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PRODUCE_KLIB_DIR" -> irProduceKlibDir = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PRODUCE_KLIB_FILE" -> irProduceKlibFile = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PROPERTY_LAZY_INITIALIZATION" -> irPropertyLazyInitialization = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_STRICT_IMPLICIT_EXPORT_TYPES" -> strictImplicitExportType = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "IR_OUTPUT_DIR" -> outputDir = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "IR_OUTPUT_NAME" -> moduleName = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "LIBRARIES" -> libraries = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "MAIN" -> main = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "NOPACK" -> nopack = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP" -> sourceMap = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP_BASE_DIRS" -> sourceMapBaseDirs = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP_EMBED_SOURCES" -> sourceMapEmbedSources = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP_NAMES_POLICY" -> sourceMapNamesPolicy = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP_PREFIX" -> sourceMapPrefix = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      else -> {
+              optionsMap[key.id] = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+          }
+    }
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+  override operator fun <V> `get`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>): V = CommonJsAndWasmArgumentValueAdapter.toApi(when (key.id) {
+    "X_CACHE_DIRECTORY" -> cacheDirectory
+    "X_ENABLE_ADVANCED_OPTIMIZATIONS" -> enableAdvancedOptimizations
+    "X_FRIEND_MODULES" -> friendModules
+    "X_FRIEND_MODULES_DISABLED" -> friendModulesDisabled
+    "X_GENERATE_DTS" -> generateDts
+    "X_INCLUDE" -> includes
+    "X_IR_DCE" -> irDce
+    "X_IR_DCE_PRINT_REACHABILITY_INFO" -> irDcePrintReachabilityInfo
+    "X_IR_DCE_RUNTIME_DIAGNOSTIC" -> irDceRuntimeDiagnostic
+    "X_IR_MODULE_NAME" -> irModuleName
+    "X_IR_PER_MODULE_OUTPUT_NAME" -> irPerModuleOutputName
+    "X_IR_PRODUCE_JS" -> irProduceJs
+    "X_IR_PRODUCE_KLIB_DIR" -> irProduceKlibDir
+    "X_IR_PRODUCE_KLIB_FILE" -> irProduceKlibFile
+    "X_IR_PROPERTY_LAZY_INITIALIZATION" -> irPropertyLazyInitialization
+    "X_STRICT_IMPLICIT_EXPORT_TYPES" -> strictImplicitExportType
+    "IR_OUTPUT_DIR" -> outputDir
+    "IR_OUTPUT_NAME" -> moduleName
+    "LIBRARIES" -> libraries
+    "MAIN" -> main
+    "NOPACK" -> nopack
+    "SOURCE_MAP" -> sourceMap
+    "SOURCE_MAP_BASE_DIRS" -> sourceMapBaseDirs
+    "SOURCE_MAP_EMBED_SOURCES" -> sourceMapEmbedSources
+    "SOURCE_MAP_NAMES_POLICY" -> sourceMapNamesPolicy
+    "SOURCE_MAP_PREFIX" -> sourceMapPrefix
+    else -> {
+            check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+            optionsMap[key.id]
+        }
   }
+  )
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    when (key.id) {
+      "X_CACHE_DIRECTORY" -> cacheDirectory = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_ENABLE_ADVANCED_OPTIMIZATIONS" -> enableAdvancedOptimizations = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_FRIEND_MODULES" -> friendModules = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_FRIEND_MODULES_DISABLED" -> friendModulesDisabled = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_GENERATE_DTS" -> generateDts = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_INCLUDE" -> includes = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_DCE" -> irDce = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_DCE_PRINT_REACHABILITY_INFO" -> irDcePrintReachabilityInfo = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_DCE_RUNTIME_DIAGNOSTIC" -> irDceRuntimeDiagnostic = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_MODULE_NAME" -> irModuleName = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PER_MODULE_OUTPUT_NAME" -> irPerModuleOutputName = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PRODUCE_JS" -> irProduceJs = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PRODUCE_KLIB_DIR" -> irProduceKlibDir = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PRODUCE_KLIB_FILE" -> irProduceKlibFile = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_IR_PROPERTY_LAZY_INITIALIZATION" -> irPropertyLazyInitialization = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "X_STRICT_IMPLICIT_EXPORT_TYPES" -> strictImplicitExportType = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "IR_OUTPUT_DIR" -> outputDir = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "IR_OUTPUT_NAME" -> moduleName = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "LIBRARIES" -> libraries = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "MAIN" -> main = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "NOPACK" -> nopack = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP" -> sourceMap = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP_BASE_DIRS" -> sourceMapBaseDirs = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP_EMBED_SOURCES" -> sourceMapEmbedSources = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP_NAMES_POLICY" -> sourceMapNamesPolicy = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      "SOURCE_MAP_PREFIX" -> sourceMapPrefix = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+      else -> {
+              optionsMap[key.id] = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
+          }
+    }
   }
 
   abstract override fun build(): CommonJsAndWasmArgumentsImpl
@@ -145,99 +384,99 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonJsAndWasmCompilerArguments): CommonJsAndWasmCompilerArguments {
     super.toCompilerArguments(arguments)
-    val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
+    val unknownArgs = optionsMap.keys
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (X_CACHE_DIRECTORY in this) { arguments.cacheDirectory = get(X_CACHE_DIRECTORY)?.absolutePathStringOrThrow()}
-    if (X_ENABLE_ADVANCED_OPTIMIZATIONS in this) { arguments.enableAdvancedOptimizations = get(X_ENABLE_ADVANCED_OPTIMIZATIONS)}
-    if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
-    if (X_FRIEND_MODULES_DISABLED in this) { arguments.friendModulesDisabled = get(X_FRIEND_MODULES_DISABLED)}
-    if (X_GENERATE_DTS in this) { arguments.generateDts = get(X_GENERATE_DTS)}
-    if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE)?.absolutePathStringOrThrow()}
-    if (X_IR_DCE in this) { arguments.irDce = get(X_IR_DCE)}
-    if (X_IR_DCE_PRINT_REACHABILITY_INFO in this) { arguments.irDcePrintReachabilityInfo = get(X_IR_DCE_PRINT_REACHABILITY_INFO)}
-    if (X_IR_DCE_RUNTIME_DIAGNOSTIC in this) { arguments.irDceRuntimeDiagnostic = get(X_IR_DCE_RUNTIME_DIAGNOSTIC)?.stringValue}
-    if (X_IR_MODULE_NAME in this) { arguments.irModuleName = get(X_IR_MODULE_NAME)}
-    if (X_IR_PER_MODULE_OUTPUT_NAME in this) { arguments.irPerModuleOutputName = get(X_IR_PER_MODULE_OUTPUT_NAME)}
-    if (X_IR_PRODUCE_JS in this) { arguments.irProduceJs = get(X_IR_PRODUCE_JS)}
-    if (X_IR_PRODUCE_KLIB_DIR in this) { arguments.irProduceKlibDir = get(X_IR_PRODUCE_KLIB_DIR)}
-    if (X_IR_PRODUCE_KLIB_FILE in this) { arguments.irProduceKlibFile = get(X_IR_PRODUCE_KLIB_FILE)}
-    if (X_IR_PROPERTY_LAZY_INITIALIZATION in this) { arguments.irPropertyLazyInitialization = get(X_IR_PROPERTY_LAZY_INITIALIZATION)}
-    if (X_STRICT_IMPLICIT_EXPORT_TYPES in this) { arguments.strictImplicitExportType = get(X_STRICT_IMPLICIT_EXPORT_TYPES)}
-    if (IR_OUTPUT_DIR in this) { arguments.outputDir = get(IR_OUTPUT_DIR)?.absolutePathStringOrThrow()}
-    if (IR_OUTPUT_NAME in this) { arguments.moduleName = get(IR_OUTPUT_NAME)}
-    if (LIBRARIES in this) { arguments.libraries = get(LIBRARIES)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
-    if (MAIN in this) { arguments.main = get(MAIN)?.stringValue}
-    if (NOPACK in this) { arguments.nopack = get(NOPACK)}
-    if (SOURCE_MAP in this) { arguments.sourceMap = get(SOURCE_MAP)}
-    if (SOURCE_MAP_BASE_DIRS in this) { arguments.sourceMapBaseDirs = get(SOURCE_MAP_BASE_DIRS)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
-    if (SOURCE_MAP_EMBED_SOURCES in this) { arguments.sourceMapEmbedSources = get(SOURCE_MAP_EMBED_SOURCES)?.stringValue}
-    if (SOURCE_MAP_NAMES_POLICY in this) { arguments.sourceMapNamesPolicy = get(SOURCE_MAP_NAMES_POLICY)?.stringValue}
-    if (SOURCE_MAP_PREFIX in this) { arguments.sourceMapPrefix = get(SOURCE_MAP_PREFIX)}
+    arguments.cacheDirectory = cacheDirectory?.absolutePathStringOrThrow()
+    arguments.enableAdvancedOptimizations = enableAdvancedOptimizations
+    arguments.friendModules = friendModules?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)
+    arguments.friendModulesDisabled = friendModulesDisabled
+    arguments.generateDts = generateDts
+    arguments.includes = includes?.absolutePathStringOrThrow()
+    arguments.irDce = irDce
+    arguments.irDcePrintReachabilityInfo = irDcePrintReachabilityInfo
+    arguments.irDceRuntimeDiagnostic = irDceRuntimeDiagnostic?.stringValue
+    arguments.irModuleName = irModuleName
+    arguments.irPerModuleOutputName = irPerModuleOutputName
+    arguments.irProduceJs = irProduceJs
+    arguments.irProduceKlibDir = irProduceKlibDir
+    arguments.irProduceKlibFile = irProduceKlibFile
+    arguments.irPropertyLazyInitialization = irPropertyLazyInitialization
+    arguments.strictImplicitExportType = strictImplicitExportType
+    arguments.outputDir = outputDir?.absolutePathStringOrThrow()
+    arguments.moduleName = moduleName
+    arguments.libraries = libraries?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)
+    arguments.main = main?.stringValue
+    arguments.nopack = nopack
+    arguments.sourceMap = sourceMap
+    arguments.sourceMapBaseDirs = sourceMapBaseDirs?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)
+    arguments.sourceMapEmbedSources = sourceMapEmbedSources?.stringValue
+    arguments.sourceMapNamesPolicy = sourceMapNamesPolicy?.stringValue
+    arguments.sourceMapPrefix = sourceMapPrefix
     return arguments
   }
 
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: CommonJsAndWasmCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[X_CACHE_DIRECTORY] = arguments.cacheDirectory?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_ENABLE_ADVANCED_OPTIMIZATIONS] = arguments.enableAdvancedOptimizations } catch (_: NoSuchMethodError) {  }
-    try { this[X_FRIEND_MODULES] = arguments.friendModules?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_FRIEND_MODULES_DISABLED] = arguments.friendModulesDisabled } catch (_: NoSuchMethodError) {  }
-    try { this[X_GENERATE_DTS] = arguments.generateDts } catch (_: NoSuchMethodError) {  }
-    try { this[X_INCLUDE] = arguments.includes?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_DCE] = arguments.irDce } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_DCE_PRINT_REACHABILITY_INFO] = arguments.irDcePrintReachabilityInfo } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_DCE_RUNTIME_DIAGNOSTIC] = arguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_MODULE_NAME] = arguments.irModuleName } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_PER_MODULE_OUTPUT_NAME] = arguments.irPerModuleOutputName } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_PRODUCE_JS] = arguments.irProduceJs } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_PRODUCE_KLIB_DIR] = arguments.irProduceKlibDir } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_PRODUCE_KLIB_FILE] = arguments.irProduceKlibFile } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_PROPERTY_LAZY_INITIALIZATION] = arguments.irPropertyLazyInitialization } catch (_: NoSuchMethodError) {  }
-    try { this[X_STRICT_IMPLICIT_EXPORT_TYPES] = arguments.strictImplicitExportType } catch (_: NoSuchMethodError) {  }
-    try { this[IR_OUTPUT_DIR] = arguments.outputDir?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[IR_OUTPUT_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
-    try { this[LIBRARIES] = arguments.libraries?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[MAIN] = arguments.main?.let { JsMainCallMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::main, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[NOPACK] = arguments.nopack } catch (_: NoSuchMethodError) {  }
-    try { this[SOURCE_MAP] = arguments.sourceMap } catch (_: NoSuchMethodError) {  }
-    try { this[SOURCE_MAP_BASE_DIRS] = arguments.sourceMapBaseDirs?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[SOURCE_MAP_EMBED_SOURCES] = arguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapEmbedSources, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[SOURCE_MAP_NAMES_POLICY] = arguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapNamesPolicy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[SOURCE_MAP_PREFIX] = arguments.sourceMapPrefix } catch (_: NoSuchMethodError) {  }
+    cacheDirectory = arguments.cacheDirectory?.let { kotlin.io.path.Path(it) }
+    enableAdvancedOptimizations = arguments.enableAdvancedOptimizations
+    friendModules = arguments.friendModules?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
+    friendModulesDisabled = arguments.friendModulesDisabled
+    generateDts = arguments.generateDts
+    includes = arguments.includes?.let { kotlin.io.path.Path(it) }
+    irDce = arguments.irDce
+    irDcePrintReachabilityInfo = arguments.irDcePrintReachabilityInfo
+    try { irDceRuntimeDiagnostic = arguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    irModuleName = arguments.irModuleName
+    irPerModuleOutputName = arguments.irPerModuleOutputName
+    irProduceJs = arguments.irProduceJs
+    irProduceKlibDir = arguments.irProduceKlibDir
+    irProduceKlibFile = arguments.irProduceKlibFile
+    irPropertyLazyInitialization = arguments.irPropertyLazyInitialization
+    strictImplicitExportType = arguments.strictImplicitExportType
+    outputDir = arguments.outputDir?.let { kotlin.io.path.Path(it) }
+    moduleName = arguments.moduleName
+    libraries = arguments.libraries?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
+    try { main = arguments.main?.let { JsMainCallMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::main, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    nopack = arguments.nopack
+    sourceMap = arguments.sourceMap
+    sourceMapBaseDirs = arguments.sourceMapBaseDirs?.split(File.pathSeparator)?.map { kotlin.io.path.Path(it) }
+    try { sourceMapEmbedSources = arguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapEmbedSources, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    try { sourceMapNamesPolicy = arguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapNamesPolicy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    sourceMapPrefix = arguments.sourceMapPrefix
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: CommonJsAndWasmCompilerArguments): CommonJsAndWasmCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
-    if (X_CACHE_DIRECTORY in this) { arguments.cacheDirectory = get(X_CACHE_DIRECTORY)?.absolutePathStringOrThrow()}
-    if (X_ENABLE_ADVANCED_OPTIMIZATIONS in this) { arguments.enableAdvancedOptimizations = get(X_ENABLE_ADVANCED_OPTIMIZATIONS)}
-    if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
-    if (X_FRIEND_MODULES_DISABLED in this) { arguments.friendModulesDisabled = get(X_FRIEND_MODULES_DISABLED)}
-    if (X_GENERATE_DTS in this) { arguments.generateDts = get(X_GENERATE_DTS)}
-    if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE)?.absolutePathStringOrThrow()}
-    if (X_IR_DCE in this) { arguments.irDce = get(X_IR_DCE)}
-    if (X_IR_DCE_RUNTIME_DIAGNOSTIC in this) { arguments.irDceRuntimeDiagnostic = get(X_IR_DCE_RUNTIME_DIAGNOSTIC)?.stringValue}
-    if (X_IR_MODULE_NAME in this) { arguments.irModuleName = get(X_IR_MODULE_NAME)}
-    if (X_IR_PER_MODULE_OUTPUT_NAME in this) { arguments.irPerModuleOutputName = get(X_IR_PER_MODULE_OUTPUT_NAME)}
-    if (X_IR_PRODUCE_JS in this) { arguments.irProduceJs = get(X_IR_PRODUCE_JS)}
-    if (X_IR_PRODUCE_KLIB_DIR in this) { arguments.irProduceKlibDir = get(X_IR_PRODUCE_KLIB_DIR)}
-    if (X_IR_PRODUCE_KLIB_FILE in this) { arguments.irProduceKlibFile = get(X_IR_PRODUCE_KLIB_FILE)}
-    if (X_IR_PROPERTY_LAZY_INITIALIZATION in this) { arguments.irPropertyLazyInitialization = get(X_IR_PROPERTY_LAZY_INITIALIZATION)}
-    if (X_STRICT_IMPLICIT_EXPORT_TYPES in this) { arguments.strictImplicitExportType = get(X_STRICT_IMPLICIT_EXPORT_TYPES)}
-    if (IR_OUTPUT_DIR in this) { arguments.outputDir = get(IR_OUTPUT_DIR)?.absolutePathStringOrThrow()}
-    if (IR_OUTPUT_NAME in this) { arguments.moduleName = get(IR_OUTPUT_NAME)}
-    if (LIBRARIES in this) { arguments.libraries = get(LIBRARIES)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
-    if (MAIN in this) { arguments.main = get(MAIN)?.stringValue}
-    if (NOPACK in this) { arguments.nopack = get(NOPACK)}
-    if (SOURCE_MAP in this) { arguments.sourceMap = get(SOURCE_MAP)}
-    if (SOURCE_MAP_BASE_DIRS in this) { arguments.sourceMapBaseDirs = get(SOURCE_MAP_BASE_DIRS)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
-    if (SOURCE_MAP_EMBED_SOURCES in this) { arguments.sourceMapEmbedSources = get(SOURCE_MAP_EMBED_SOURCES)?.stringValue}
-    if (SOURCE_MAP_NAMES_POLICY in this) { arguments.sourceMapNamesPolicy = get(SOURCE_MAP_NAMES_POLICY)?.stringValue}
-    if (SOURCE_MAP_PREFIX in this) { arguments.sourceMapPrefix = get(SOURCE_MAP_PREFIX)}
+    arguments.cacheDirectory = cacheDirectory?.absolutePathStringOrThrow()
+    arguments.enableAdvancedOptimizations = enableAdvancedOptimizations
+    arguments.friendModules = friendModules?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)
+    arguments.friendModulesDisabled = friendModulesDisabled
+    arguments.generateDts = generateDts
+    arguments.includes = includes?.absolutePathStringOrThrow()
+    arguments.irDce = irDce
+    arguments.irDceRuntimeDiagnostic = irDceRuntimeDiagnostic?.stringValue
+    arguments.irModuleName = irModuleName
+    arguments.irPerModuleOutputName = irPerModuleOutputName
+    arguments.irProduceJs = irProduceJs
+    arguments.irProduceKlibDir = irProduceKlibDir
+    arguments.irProduceKlibFile = irProduceKlibFile
+    arguments.irPropertyLazyInitialization = irPropertyLazyInitialization
+    arguments.strictImplicitExportType = strictImplicitExportType
+    arguments.outputDir = outputDir?.absolutePathStringOrThrow()
+    arguments.moduleName = moduleName
+    arguments.libraries = libraries?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)
+    arguments.main = main?.stringValue
+    arguments.nopack = nopack
+    arguments.sourceMap = sourceMap
+    arguments.sourceMapBaseDirs = sourceMapBaseDirs?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)
+    arguments.sourceMapEmbedSources = sourceMapEmbedSources?.stringValue
+    arguments.sourceMapNamesPolicy = sourceMapNamesPolicy?.stringValue
+    arguments.sourceMapPrefix = sourceMapPrefix
     return arguments
   }
 
@@ -253,88 +492,8 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (args.irProduceKlibFile != castedDefaults.irProduceKlibFile) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-Xir-produce-klib-file' is not supported in the Build Tools API. Producing packed/unpacked klib is controlled using the `nopack` argument. This warning will become an error starting from Kotlin 2.6.0."))
   }
 
-  public class CommonJsAndWasmArgument<V>(
-    public val id: String,
-  ) {
-    init {
-      knownArguments.add(id)}
-  }
-
   public companion object {
-    private val knownArguments: MutableSet<String> = mutableSetOf()
-
-    public val X_CACHE_DIRECTORY: CommonJsAndWasmArgument<java.nio.`file`.Path?> =
-        CommonJsAndWasmArgument("X_CACHE_DIRECTORY")
-
-    public val X_ENABLE_ADVANCED_OPTIMIZATIONS: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_ENABLE_ADVANCED_OPTIMIZATIONS")
-
-    public val X_FRIEND_MODULES: CommonJsAndWasmArgument<List<java.nio.`file`.Path>?> =
-        CommonJsAndWasmArgument("X_FRIEND_MODULES")
-
-    public val X_FRIEND_MODULES_DISABLED: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_FRIEND_MODULES_DISABLED")
-
-    public val X_GENERATE_DTS: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_GENERATE_DTS")
-
-    public val X_INCLUDE: CommonJsAndWasmArgument<java.nio.`file`.Path?> =
-        CommonJsAndWasmArgument("X_INCLUDE")
-
-    public val X_IR_DCE: CommonJsAndWasmArgument<Boolean> = CommonJsAndWasmArgument("X_IR_DCE")
-
-    public val X_IR_DCE_PRINT_REACHABILITY_INFO: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_IR_DCE_PRINT_REACHABILITY_INFO")
-
-    public val X_IR_DCE_RUNTIME_DIAGNOSTIC: CommonJsAndWasmArgument<JsIrDiagnosticMode?> =
-        CommonJsAndWasmArgument("X_IR_DCE_RUNTIME_DIAGNOSTIC")
-
-    public val X_IR_MODULE_NAME: CommonJsAndWasmArgument<String?> =
-        CommonJsAndWasmArgument("X_IR_MODULE_NAME")
-
-    public val X_IR_PER_MODULE_OUTPUT_NAME: CommonJsAndWasmArgument<String?> =
-        CommonJsAndWasmArgument("X_IR_PER_MODULE_OUTPUT_NAME")
-
-    public val X_IR_PRODUCE_JS: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_IR_PRODUCE_JS")
-
-    public val X_IR_PRODUCE_KLIB_DIR: CommonJsAndWasmArgument<Boolean?> =
-        CommonJsAndWasmArgument("X_IR_PRODUCE_KLIB_DIR")
-
-    public val X_IR_PRODUCE_KLIB_FILE: CommonJsAndWasmArgument<Boolean?> =
-        CommonJsAndWasmArgument("X_IR_PRODUCE_KLIB_FILE")
-
-    public val X_IR_PROPERTY_LAZY_INITIALIZATION: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_IR_PROPERTY_LAZY_INITIALIZATION")
-
-    public val X_STRICT_IMPLICIT_EXPORT_TYPES: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_STRICT_IMPLICIT_EXPORT_TYPES")
-
-    public val IR_OUTPUT_DIR: CommonJsAndWasmArgument<java.nio.`file`.Path?> =
-        CommonJsAndWasmArgument("IR_OUTPUT_DIR")
-
-    public val IR_OUTPUT_NAME: CommonJsAndWasmArgument<String?> =
-        CommonJsAndWasmArgument("IR_OUTPUT_NAME")
-
-    public val LIBRARIES: CommonJsAndWasmArgument<List<java.nio.`file`.Path>?> =
-        CommonJsAndWasmArgument("LIBRARIES")
-
-    public val MAIN: CommonJsAndWasmArgument<JsMainCallMode?> = CommonJsAndWasmArgument("MAIN")
-
-    public val NOPACK: CommonJsAndWasmArgument<Boolean> = CommonJsAndWasmArgument("NOPACK")
-
-    public val SOURCE_MAP: CommonJsAndWasmArgument<Boolean> = CommonJsAndWasmArgument("SOURCE_MAP")
-
-    public val SOURCE_MAP_BASE_DIRS: CommonJsAndWasmArgument<List<java.nio.`file`.Path>?> =
-        CommonJsAndWasmArgument("SOURCE_MAP_BASE_DIRS")
-
-    public val SOURCE_MAP_EMBED_SOURCES: CommonJsAndWasmArgument<SourceMapEmbedSources?> =
-        CommonJsAndWasmArgument("SOURCE_MAP_EMBED_SOURCES")
-
-    public val SOURCE_MAP_NAMES_POLICY: CommonJsAndWasmArgument<SourceMapNamesPolicy?> =
-        CommonJsAndWasmArgument("SOURCE_MAP_NAMES_POLICY")
-
-    public val SOURCE_MAP_PREFIX: CommonJsAndWasmArgument<String?> =
-        CommonJsAndWasmArgument("SOURCE_MAP_PREFIX")
+    private val knownOptionIds: List<String> =
+        listOf("X_CACHE_DIRECTORY","X_ENABLE_ADVANCED_OPTIMIZATIONS","X_FRIEND_MODULES","X_FRIEND_MODULES_DISABLED","X_GENERATE_DTS","X_INCLUDE","X_IR_DCE","X_IR_DCE_PRINT_REACHABILITY_INFO","X_IR_DCE_RUNTIME_DIAGNOSTIC","X_IR_MODULE_NAME","X_IR_PER_MODULE_OUTPUT_NAME","X_IR_PRODUCE_JS","X_IR_PRODUCE_KLIB_DIR","X_IR_PRODUCE_KLIB_FILE","X_IR_PROPERTY_LAZY_INITIALIZATION","X_STRICT_IMPLICIT_EXPORT_TYPES","IR_OUTPUT_DIR","IR_OUTPUT_NAME","LIBRARIES","MAIN","NOPACK","SOURCE_MAP","SOURCE_MAP_BASE_DIRS","SOURCE_MAP_EMBED_SOURCES","SOURCE_MAP_NAMES_POLICY","SOURCE_MAP_PREFIX",)
   }
 }

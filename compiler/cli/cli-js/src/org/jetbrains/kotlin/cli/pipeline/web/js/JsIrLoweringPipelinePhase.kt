@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.pipeline.web.js
 
 import org.jetbrains.kotlin.backend.common.CompilationException
-import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.cli.common.reportCompilationException
 import org.jetbrains.kotlin.cli.js.resolve
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.js.config.*
 
 object JsIrLoweringPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, JsLoweredIrPipelineArtifact>(
@@ -54,11 +52,10 @@ object JsIrLoweringPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, Js
             incrementalCacheEnabled = false,
         )
         // Load declarations referenced during `context` initialization
-        val irProviders = listOf(element = deserializer)
-        ExternalDependenciesGenerator(symbolTable = symbolTable, irProviders = irProviders).generateUnboundSymbolsAsDependencies()
-        deserializer.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
-        deserializer.checkNoUnboundSymbols(symbolTable = symbolTable, whenDetected = "at the end of IR linkage process")
-        deserializer.clear()
+        deserializer.drainDeserializationQueue()
+        deserializer.finalizeIrLinkage(irBuiltIns)
+        deserializer.clearInternedData()
+
         // Sort dependencies after IR linkage.
         val sortedModuleDependencies = deserializer.moduleDependencyTracker.reverseTopoOrder(moduleDependencies = moduleDependencies)
         val allModules = sortedModuleDependencies.allDependencies

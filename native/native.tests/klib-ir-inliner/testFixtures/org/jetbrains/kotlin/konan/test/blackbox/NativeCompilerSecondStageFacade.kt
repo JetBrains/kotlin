@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
-import org.jetbrains.kotlin.konan.config.konanTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK_STAGE
@@ -27,10 +27,9 @@ import org.jetbrains.kotlin.test.GroupingStageInputArtifact
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
-import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.ByteArrayOutputStream
@@ -38,68 +37,21 @@ import java.io.File
 import java.io.PrintStream
 
 /**
- * An implementation of [CustomKlibCompilerSecondStageFacade] for Native.
- * Suits any version backend version: either current, or old released. It's specified by `nativeCompilerSettings` param.
+ * The second stage of Native tests: links KLIBs into an executable with the Kotlin/Native compiler CLI.
+ * Suits any backend version: either current, or old released. It's specified by the `customNativeCompilerSettings` param.
  */
 class NativeCompilerSecondStageFacade private constructor(
     val testServices: TestServices,
     private val customNativeCompilerSettings: CustomNativeCompilerSettings
 ) {
-    class NonGrouping(
-        testServices: TestServices,
-        private val customNativeCompilerSettings: CustomNativeCompilerSettings,
-        private val isCompatibilityTesting: Boolean,
-    ) : CustomKlibCompilerSecondStageFacade<BinaryArtifacts.Native>(testServices) {
-        override val outputKind get() = ArtifactKinds.Native
-        override fun isMainModule(module: TestModule): Boolean {
-            return NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)
-        }
-
-        override fun collectDependencies(module: TestModule): Pair<Set<String>, Set<String>> = module.collectDependencies(testServices)
-
-        override fun compileBinary(
-            module: TestModule,
-            customArgs: List<String>,
-            mainLibrary: String,
-            regularDependencies: Set<String>,
-            friendDependencies: Set<String>,
-        ): BinaryArtifacts.Native {
-            val facade = NativeCompilerSecondStageFacade(testServices, customNativeCompilerSettings)
-            val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.SECOND)
-            // Test-infrastructure invariant violation (not a failure of the code under test): throw a
-            // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-            checkTestInfrastructure(compilerConfiguration.konanTarget == facade.kotlinNativeTargets.testTarget.name) {
-                "Internal error: konanTargets in `compilerConfiguration`(${compilerConfiguration.konanTarget}) " +
-                        "and `facade.kotlinNativeTargets`(${facade.kotlinNativeTargets.testTarget.name}) don't match.\n" +
-                        "Check, if NativeSecondStageEnvironmentConfigurator has calculated `konanTarget` properly."
-            }
-            @OptIn(ExperimentalCompilerArgument::class)
-            val (exitCode, output, executableFile) = facade.runCli(
-                dirName = File(mainLibrary).name,
-                executableFileName = "${module.name}.${facade.executableExtension}",
-                fileCheckStage = module.fileCheckStage(),
-                regularDependencies = regularDependencies,
-                friendDependencies = friendDependencies,
-                mainLibraries = listOf(mainLibrary),
-                enableAssertions = AssertionsMode.ALWAYS_DISABLE !in module.directives[ASSERTIONS_MODE],
-                withPlatformLibs = module.directives.contains(WITH_PLATFORM_LIBS),
-                freeArgs = module.directives[FREE_COMPILER_ARGS] + irCheckersArguments(module) + customArgs,
-                verifyIrMode = if (isCompatibilityTesting) VerifyIrMode.NONE else VerifyIrMode.ERROR,
-            )
-
-            if (exitCode == ExitCode.OK) {
-                // Successfully compiled. Return the artifact.
-                return BinaryArtifacts.Native(executableFile)
-            } else {
-                // Throw an exception to abort further test execution.
-                throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
-            }
-        }
-    }
-
+    /**
+     * @param isCompatibilityTesting whether the batch is linked in a KLIB compatibility test, where either the KLIBs or the linker
+     *   come from a previously released compiler, so the IR of the KLIBs is not required to pass the IR validation of the linker.
+     */
     class Grouping(
         val testServices: TestServices,
-        private val customNativeCompilerSettings: CustomNativeCompilerSettings
+        private val customNativeCompilerSettings: CustomNativeCompilerSettings,
+        private val isCompatibilityTesting: Boolean,
     ) : AbstractGroupingStageTestFacade<GroupingStageInputArtifact, BinaryArtifacts.Native>() {
         override fun transform(inputArtifact: GroupingStageInputArtifact): BinaryArtifacts.Native {
             val servicesOfSomeModule = inputArtifact.nonGroupingStageOutputs.first().testServices
@@ -110,9 +62,11 @@ class NativeCompilerSecondStageFacade private constructor(
             val regularDependencies = mutableSetOf<String>()
             val friendDependencies = mutableSetOf<String>()
             val mainLibraries = mutableListOf<String>()
+            val facade = NativeCompilerSecondStageFacade(testServices, customNativeCompilerSettings)
             for ((val services = testServices, val _ = catchingExecutor) in inputArtifact.nonGroupingStageOutputs) {
+                checkTargetOfTest(services, facade.kotlinNativeTargets.testTarget)
                 val mainModule = services.moduleStructure.modules.last()
-                mainModule.collectDependencies(services).let { [regular, friend] ->
+                mainModule.collectDependencies(services, CompilationStage.SECOND).let { [regular, friend] ->
                     regularDependencies += regular
                     friendDependencies += friend
                 }
@@ -128,8 +82,6 @@ class NativeCompilerSecondStageFacade private constructor(
                     }
                 }
             }
-
-            val facade = NativeCompilerSecondStageFacade(testServices, customNativeCompilerSettings)
 
             // In grouping mode the module name is being escaped with the test info, which could produce
             // quite a big executable file path. This leads to problems on windows, as there is a hard
@@ -147,7 +99,7 @@ class NativeCompilerSecondStageFacade private constructor(
                 enableAssertions = AssertionsMode.ALWAYS_DISABLE !in someModule.directives[ASSERTIONS_MODE],
                 withPlatformLibs = someModule.directives.contains(WITH_PLATFORM_LIBS),
                 freeArgs = freeArgs + irCheckersArguments(someModule) + "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
-                verifyIrMode = VerifyIrMode.ERROR,
+                verifyIrMode = if (isCompatibilityTesting) VerifyIrMode.NONE else VerifyIrMode.ERROR,
             )
 
             if (exitCode == ExitCode.OK) {
@@ -156,6 +108,25 @@ class NativeCompilerSecondStageFacade private constructor(
             } else {
                 // Throw an exception to abort further test execution.
                 throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
+            }
+        }
+
+        /**
+         * Checks that every module of a test is configured for the [linkTarget] of its batch. A test class enforcing the host target
+         * leaves the target of its modules unconfigured. The target is not taken from the compiler configuration of the test:
+         * building it runs the environment configurators, whose side effects (like setting `kotlin.native.home`) are not meant for
+         * the thread of the batch.
+         */
+        private fun checkTargetOfTest(services: TestServices, linkTarget: KonanTarget) {
+            if (services.testInfo.enforcedHostTarget) return
+            for (module in services.moduleStructure.modules) {
+                val moduleTarget = services.nativeEnvironmentConfigurator.getNativeTarget(module)
+                // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+                // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+                checkTestInfrastructure(moduleTarget == linkTarget) {
+                    "Internal error: module ${module.name} of test ${services.testInfo.methodName} is configured for $moduleTarget, " +
+                            "but its batch is linked for $linkTarget."
+                }
             }
         }
 
@@ -199,7 +170,7 @@ class NativeCompilerSecondStageFacade private constructor(
         enableAssertions: Boolean,
         withPlatformLibs: Boolean,
         freeArgs: List<String>,
-        verifyIrMode: VerifyIrMode = VerifyIrMode.ERROR,
+        verifyIrMode: VerifyIrMode,
     ): CliRunResult {
         val executableFile = getNativeArtifactsOutputDir(testServices, dirName).resolve(executableFileName)
 

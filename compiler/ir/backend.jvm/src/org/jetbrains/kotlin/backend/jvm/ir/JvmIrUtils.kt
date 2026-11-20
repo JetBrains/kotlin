@@ -13,11 +13,10 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.classFileContainsMethod
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
-import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isKotlinValhallaValueClass
+import org.jetbrains.kotlin.config.isValhallaSupportEnabled
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -30,23 +29,26 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
+import org.jetbrains.kotlin.ir.overrides.isNonPrivate
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.kotlin.ir.util.isBoxedArray
-import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
+import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.load.kotlin.isValueClassCompiledAsIdentityClass
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -61,8 +63,31 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 import java.lang.annotation.RetentionPolicy
 
+// A full value class extending a value class compiled as an identity class is compiled as an identity class too, as a Valhalla value
+// class can't extend an identity class.
 fun IrClass.isKotlinValhallaValueClass(languageVersionSettings: LanguageVersionSettings): Boolean =
-    valueClassRepresentation.isKotlinValhallaValueClass(languageVersionSettings)
+    valueClassRepresentation.isKotlinValhallaValueClass(languageVersionSettings) &&
+            !extendsValueClassCompiledAsIdentityClass(languageVersionSettings)
+
+// A Kotlin value class that would be a Valhalla value class, but is compiled as an identity class because of its superclass.
+fun IrClass.isKotlinValueClassCompiledAsIdentityClassBySuperclass(languageVersionSettings: LanguageVersionSettings): Boolean =
+    valueClassRepresentation.isKotlinValhallaValueClass(languageVersionSettings) &&
+            extendsValueClassCompiledAsIdentityClass(languageVersionSettings)
+
+private var IrClass.cachedExtendsValueClassCompiledAsIdentityClass: Boolean? by irAttribute(copyByDefault = false)
+
+private fun IrClass.extendsValueClassCompiledAsIdentityClass(languageVersionSettings: LanguageVersionSettings): Boolean =
+    cachedExtendsValueClassCompiledAsIdentityClass
+        ?: superTypes.any { it.classOrNull?.owner?.isFullValueClassCompiledAsIdentityClass(languageVersionSettings) == true }
+            .also { cachedExtendsValueClassCompiledAsIdentityClass = it }
+
+private fun IrClass.isFullValueClassCompiledAsIdentityClass(languageVersionSettings: LanguageVersionSettings): Boolean {
+    if (valueClassRepresentation !is FullValueClassRepresentation) return false
+    val binaryClass = (source as? KotlinJvmBinarySourceElement)?.binaryClass as? FileBasedKotlinClass
+    return isValueClassCompiledAsIdentityClass(binaryClass, languageVersionSettings.isValhallaSupportEnabled()) {
+        extendsValueClassCompiledAsIdentityClass(languageVersionSettings)
+    }
+}
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName and @JvmExposeBoxed?
@@ -92,24 +117,6 @@ fun IrFunction.getJvmVisibilityOfDefaultArgumentStub() =
 
 fun IrDeclaration.isInCurrentModule(): Boolean =
     getPackageFragment() is IrFile
-
-// Determine if the IrExpression is smartcast, and if so, if it is cast from higher than nullable target types.
-// This is needed to pinpoint exceptional treatment of IEEE754 floating point comparisons, where proper IEEE
-// comparisons are used "if values are statically known to be of primitive numeric types", taken to mean as
-// "not learned through smartcasting".
-fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext): Boolean {
-    return when (this) {
-        is IrTypeOperatorCall ->
-            operator == IrTypeOperator.IMPLICIT_CAST && !argument.type.isSubtypeOf(type.makeNullable(), context.typeSystem)
-        is IrGetValue -> {
-            // Check if the variable initializer is smartcast. In FIR, if the subject of a `when` is smartcast,
-            // the IMPLICIT_CAST is in the initializer of the variable for the subject.
-            val variable = (symbol as? IrVariableSymbol)?.owner ?: return false
-            !variable.isVar && variable.initializer?.isSmartcastFromHigherThanNullable(context) == true
-        }
-        else -> false
-    }
-}
 
 fun IrElement.replaceThisByStaticReference(
     cachedFields: CachedFieldsForObjectInstances,
@@ -264,8 +271,9 @@ private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Bo
     if (isSuspend) return false
     // Ditto for suspend lambda methods
     if (parentClassOrNull?.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA) return false
-    // Ditto for private functions or methods of private classes
-    if (isEffectivelyPrivate()) return false
+    // Multifile parts are package-private, but their members are accessible through the facade.
+    val isInaccessibleEffectivelyPrivate = if (parentClassOrNull?.isFileClass == true) !isNonPrivate else isEffectivelyPrivate()
+    if (isInaccessibleEffectivelyPrivate) return false
     // Cannot expose open or abstract - @JvmName problem
     if (isOverridable) return false
     // Cannot expose sealed class constructors
@@ -480,11 +488,7 @@ fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: Jvm
     return classFileContainsMethod(classId, context.state, Method(originalSignature.name, descriptor))
 }
 
-fun IrFunction.extensionReceiverName(config: JvmBackendConfig): String {
-    if (!config.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
-        return AsmUtil.RECEIVER_PARAMETER_NAME
-    }
-
+fun IrFunction.extensionReceiverName(): String {
     parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.let {
         if (it.name.asString().startsWith(AsmUtil.LABELED_THIS_PARAMETER)) {
             return it.name.asString()

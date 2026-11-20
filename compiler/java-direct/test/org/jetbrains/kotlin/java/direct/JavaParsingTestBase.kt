@@ -7,16 +7,34 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
+import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
+import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
+import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirNullSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
@@ -25,6 +43,7 @@ import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -59,6 +78,25 @@ open class JavaParsingTestBase {
         }
         return JavaClassOverAst(classNode, parsed.tree, parsed.context)
     }
+
+    protected fun parseSourceWithSymbols(source: String, symbols: Map<ClassId, FirRegularClassSymbol>): ParsedSource =
+        parseSource(source, createSessionWithSymbols(symbols))
+
+    protected fun parseFirstClassWithSymbols(source: String, vararg classIds: ClassId): JavaClassOverAst =
+        parseFirstClassWithSymbols(source, classIds.associateWith { libraryClassSymbol(it) })
+
+    protected fun parseFirstClassWithSymbols(source: String, symbols: Map<ClassId, FirRegularClassSymbol>): JavaClassOverAst =
+        parseFirstClass(source, createSessionWithSymbols(symbols))
+
+    @OptIn(SessionConfiguration::class)
+    internal fun createSessionWithSymbols(symbols: Map<ClassId, FirRegularClassSymbol>): FirSession {
+        val session = createDummyFirSessionForTests()
+        session.register(FirSymbolProvider::class, StubSymbolProvider(session) { symbols[it] })
+        // Member lookups (e.g. enum entries) of the stub symbols go through declared member scopes.
+        session.register(FirCachesFactory::class, FirThreadUnsafeCachesFactory)
+        session.register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider(session))
+        return session
+    }
 }
 
 /**
@@ -89,8 +127,11 @@ private class SameFileOnlyClassFinder(private val context: () -> JavaResolutionC
  * Test-only [JavaClassFinderOverAstImpl] factory that supplies a dummy source-kind [FirSession].
  */
 internal fun JavaClassFinderOverAstImpl(sourceRoots: List<File>): JavaClassFinderOverAstImpl =
+    JavaClassFinderOverAstImpl(createDummyFirSessionForTests(), sourceRoots)
+
+internal fun JavaClassFinderOverAstImpl(session: FirSession, sourceRoots: List<File>): JavaClassFinderOverAstImpl =
     JavaClassFinderOverAstImpl(
-        createDummyFirSessionForTests(),
+        session,
         JavaSourceRootEntry.fromRootsWithoutPrefix(sourceRoots),
     )
 
@@ -140,4 +181,35 @@ internal class StubSymbolProvider(
 
     override fun hasPackage(fqName: FqName): Boolean = false
 }
+
+internal fun libraryClassSymbol(
+    classId: ClassId,
+    superClassId: ClassId? = null,
+    classKind: ClassKind = ClassKind.CLASS,
+    enumEntries: List<String> = emptyList(),
+): FirRegularClassSymbol = buildRegularClass {
+    moduleData = FirBinaryDependenciesModuleData(Name.special("<test>"))
+    origin = FirDeclarationOrigin.Library
+    name = classId.shortClassName
+    status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
+    this.classKind = classKind
+    scopeProvider = JavaScopeProvider
+    symbol = FirRegularClassSymbol(classId)
+    superClassId?.let { superTypeClassId ->
+        superTypeRefs += buildResolvedTypeRef { coneType = superTypeClassId.constructClassLikeType() }
+    }
+    for (entry in enumEntries) {
+        declarations += buildEnumEntry {
+            moduleData = this@buildRegularClass.moduleData
+            origin = FirDeclarationOrigin.Library
+            returnTypeRef = buildResolvedTypeRef { coneType = classId.constructClassLikeType() }
+            name = Name.identifier(entry)
+            symbol = FirEnumEntrySymbol(CallableId(classId, name))
+            status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public).apply {
+                isStatic = true
+            }
+            isLocal = false
+        }
+    }
+}.symbol
 

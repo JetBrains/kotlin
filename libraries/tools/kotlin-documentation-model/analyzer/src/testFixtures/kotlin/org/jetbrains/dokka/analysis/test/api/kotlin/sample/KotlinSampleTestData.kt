@@ -15,7 +15,7 @@ import org.jetbrains.dokka.analysis.test.api.TestDataFile
  *
  * @see TestData
  */
-class KotlinSampleTestData : TestData, KotlinSampleFileCreator {
+internal class KotlinSampleTestData : TestData, KotlinSampleFileCreator {
 
     private val files = mutableListOf<TestDataFile>()
 

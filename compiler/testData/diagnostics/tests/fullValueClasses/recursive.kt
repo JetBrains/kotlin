@@ -1,4 +1,5 @@
 // LANGUAGE: +FullValueClasses
+// LANGUAGE_FEATURE_TOGGLED: ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
@@ -9,10 +10,10 @@ value class C(val a: C?, val b: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>C<!>, val c: 
 
 value class D(val a: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>C<!>)
 
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Inline1(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline1<!>)
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Inline2(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline2?<!>)
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Inline3(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline4<!>)
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Inline4(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline3?<!>)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Inline1(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline1<!>)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Inline2(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline2?<!>)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Inline3(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline4<!>)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Inline4(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Inline3?<!>)
 
 @JvmInline
 value class Old1(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>New1<!>)
@@ -48,11 +49,11 @@ value class New7(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>New7_<!>)
 value class New7_(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>New7<!>, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>New7<!>)
 
 value class Bounded1<T: Bounded1<T>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_ERROR!>T<!>)
-value class Bounded2<T: Bounded2<T>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_ERROR!>T?<!>)
+value class Bounded2<T: Bounded2<T>>(val x: T?)
 value class Bounded3<T: Bounded3<T>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_ERROR!>T<!>, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_ERROR!>T<!>)
 value class Bounded4<T: Bounded4<T>>(val x: T?, val y: T?)
-value class Bounded5<T: Bounded5<T>?>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_ERROR!>T<!>)
-value class Bounded6<T: Bounded6<T>?>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_ERROR!>T?<!>)
+value class Bounded5<T: Bounded5<T>?>(val x: T)
+value class Bounded6<T: Bounded6<T>?>(val x: T?)
 value class Bounded7<T: Bounded7<T>?>(val x: T, val y: T)
 value class Bounded8<T: Bounded8<T>?>(val x: T?, val y: T?)
 

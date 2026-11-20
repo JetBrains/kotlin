@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -457,7 +458,7 @@ class FirSyntheticCallGenerator(
                 generateCalleeReferenceToFunctionWithSingleParameterOfSpecifiedType(
                     callableReferenceAccess,
                     argumentList,
-                    context.session.builtinTypes.anyType.coneType,
+                    StandardTypes.Any,
                     context,
                 )
             initialCallWasUnresolved = true
@@ -530,7 +531,7 @@ class FirSyntheticCallGenerator(
         val parameterType =
             when {
                 expectedType != null && !expectedType.isUnitOrFlexibleUnit -> expectedType
-                else -> context.session.builtinTypes.anyType.coneType
+                else -> StandardTypes.Any
             }
 
         return generateCalleeReferenceToFunctionWithSingleParameterOfSpecifiedType(
@@ -729,9 +730,9 @@ class FirSyntheticCallGenerator(
             SyntheticCallableId.EQUALITY.callableName,
             session.builtinTypes.booleanType
         ).apply {
-            valueParameters += session.builtinTypes.nullableAnyType.coneType
+            valueParameters += StandardTypes.NullableAny
                 .toValueParameter("x", functionSymbol)
-            valueParameters += session.builtinTypes.nullableAnyType.coneType
+            valueParameters += StandardTypes.NullableAny
                 .toValueParameter("y", functionSymbol)
         }.build()
     }

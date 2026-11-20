@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-87683
 
@@ -61,3 +62,6 @@ class CompanionParameterDefaultIgnored private constructor(val id: Int) {
             CompanionParameterDefaultIgnored(id)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, objectDeclaration,
+primaryConstructor, propertyDeclaration, stringLiteral */

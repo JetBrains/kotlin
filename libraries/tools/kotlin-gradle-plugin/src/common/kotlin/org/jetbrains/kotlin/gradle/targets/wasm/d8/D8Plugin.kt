@@ -13,17 +13,18 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.isRootProject
 
 @ExperimentalWasmDsl
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class D8Plugin internal constructor() : Plugin<Project> {
     override fun apply(project: Project) {
         project.plugins.apply(BasePlugin::class.java)
 
         val spec = project.extensions.createD8EnvSpec()
 
-        if (project.isRootProject()) {
+        if (project == project.jsToolingProject()) {
             @Suppress("DEPRECATION_ERROR")
             project.extensions.create(
                 D8RootExtension.EXTENSION_NAME,
@@ -71,6 +72,7 @@ abstract class D8Plugin internal constructor() : Plugin<Project> {
         command.convention(d8.commandProperty)
     }
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         const val TASKS_GROUP_NAME: String = "d8"
 

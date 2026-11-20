@@ -12,6 +12,7 @@ dependencies {
     api(project(":compiler:fir:raw-fir:raw-fir.common"))
     implementation(project(":compiler:fir:raw-fir:light-tree2fir"))
     implementation(project(":compiler:multiplatform-parsing"))
+    implementation(project(":core:language.syntax"))
     implementation(libs.org.jetbrains.syntax.api)
 
     compileOnly(intellijCore())
@@ -25,6 +26,8 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:raw-fir.common")))
+    testFixturesImplementation(project(":compiler:psi:parser"))
+    testImplementation(project(":compiler:psi:parser"))
 
     testCompileOnly(kotlinTest("junit"))
 }

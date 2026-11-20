@@ -1,4 +1,5 @@
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Wasm-js:2.3,2.4
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.4
 // ISSUE: KT-83337 Difference in behavior on nested class initialization
 // ISSUE: KT-83356 K/Wasm: Difference in behavior on nested class initialization (for enums?)
 

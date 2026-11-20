@@ -1,0 +1,5 @@
+Param()
+  psi: KtAnnotationEntry
+
+Everything()
+  psi: KtAnnotationEntry

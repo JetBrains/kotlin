@@ -232,7 +232,7 @@ class KotlinCliJavaFileManagerTest {
         File(fooPackageDir, "$className.java").writeText(text)
 
         // Initialize classpath/index in the manager
-        VirtualFileFinder.getInstance(project, module = null)
+        VirtualFileFinder.getInstance(project)
 
         val coreJavaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 

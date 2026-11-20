@@ -189,6 +189,8 @@ object StandardClassIds {
         Long to AtomicLongArray,
     )
 
+    val ClassCastException = "ClassCastException".baseId()
+
     object Annotations {
         val Suppress = "Suppress".baseId()
         val PublishedApi = "PublishedApi".baseId()
@@ -207,6 +209,8 @@ object StandardClassIds {
 
         val ConsistentCopyVisibility = "ConsistentCopyVisibility".baseId()
         val ExposedCopyVisibility = "ExposedCopyVisibility".baseId()
+
+        val WillBecomeValue = "WillBecomeValue".baseId()
 
         val HidesMembers = "HidesMembers".internalId()
         val DynamicExtension = "DynamicExtension".internalId()
@@ -253,6 +257,7 @@ object StandardClassIds {
         val jvmStatic = "JvmStatic".jvmId()
         val jvmName = "JvmName".jvmId()
         val Transient = "Transient".jvmId()
+        val JvmInline = "JvmInline".jvmId()
 
         val jsExport = "JsExport".jsId()
         val jsImplicitExport = "JsImplicitExport".jsId()
@@ -293,6 +298,10 @@ object StandardClassIds {
 
             val deprecatedMessage = Name.identifier("message")
             val deprecatedLevel = Name.identifier("level")
+            val deprecatedReplaceWith = Name.identifier("replaceWith")
+
+            val replaceWithExpression = Name.identifier("expression")
+            val replaceWithImports = Name.identifier("imports")
 
             val deprecatedSinceKotlinWarningSince = Name.identifier("warningSince")
             val deprecatedSinceKotlinErrorSince = Name.identifier("errorSince")

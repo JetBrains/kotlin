@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -255,16 +256,6 @@ open class PsiRawFirBuilder(
             }
         }
 
-    @OptIn(KtExperimentalApi::class)
-    override fun isReplSnippet(
-        script: PsiElement,
-        sourceFile: KtSourceFile,
-    ): Boolean {
-        // TODO(KT-84387): reintroduce call to `FirReplSnippetConfiguratorExtension.isReplSnippetSource`?
-        //  The lack of this call is a requirement from AA; make sure they agree with any redesign.
-        return (script as? KtScript)?.isReplSnippet == true
-    }
-
     override fun convertScript(
         script: PsiElement,
         scriptSource: KtSourceElement,
@@ -300,7 +291,7 @@ open class PsiRawFirBuilder(
 
         @Suppress("ConflictingExtensionProperty")
         override val KtDestructuringDeclarationEntry.name: Name
-            get() = if (nameIdentifier?.text == "_") {
+            get() = if (isSingleUnderscore) {
                 SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
             } else {
                 nameAsSafeName
@@ -527,7 +518,6 @@ open class PsiRawFirBuilder(
                         ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol
                     )
                 }
-                is KtDestructuringDeclaration -> buildErrorNonLocalDestructuringDeclaration(this)
                 is KtClassInitializer -> {
                     buildAnonymousInitializer(this, ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol)
                         .apply {
@@ -1039,34 +1029,7 @@ open class PsiRawFirBuilder(
                     bounds += extendsBound.convert<FirTypeRef>()
                 }
                 val owner = parameter.getStrictParentOfType<KtTypeParameterListOwner>() ?: return@buildTypeParameter
-                for (typeConstraint in owner.typeConstraints) {
-                    val subjectName = typeConstraint.subjectTypeParameterName?.getReferencedNameAsName()
-
-                    if (subjectName == parameterName) {
-                        bounds += typeConstraint.boundTypeReference.toFirOrErrorType()
-                    }
-
-                    for (entry in typeConstraint.annotationEntries) {
-                        annotations += buildErrorAnnotationCall {
-                            source = entry.toFirSourceElement()
-                            useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
-                            annotationTypeRef = entry.typeReference.toFirOrErrorType()
-                            diagnostic = ConeSimpleDiagnostic(
-                                "Type parameter annotations are not allowed inside where clauses",
-                                DiagnosticKind.AnnotationInWhereClause,
-                            )
-                            val name = (annotationTypeRef as? FirUserTypeRef)?.qualifier?.last()?.name
-                                ?: Name.special("<no-annotation-name>")
-                            calleeReference = buildSimpleNamedReference {
-                                source = (entry.typeReference?.typeElement as? KtUserType)?.referenceExpression?.toFirSourceElement()
-                                this.name = name
-                            }
-                            entry.extractArgumentsTo(this)
-                            typeArguments.appendTypeArguments(entry.typeArguments)
-                            containingDeclarationSymbol = context.containerSymbol
-                        }
-                    }
-                }
+                addTypeConstraints(owner.typeConstraints.filter { it.subjectTypeParameterName?.getReferencedNameAsName() == parameterName })
                 addDefaultBoundIfNecessary()
             }
         }
@@ -1075,20 +1038,57 @@ open class PsiRawFirBuilder(
             throw AssertionError("KtTypeParameter should be process via extractTypeParameter")
         }
 
-        private fun <T> KtTypeParameterListOwner.fillDanglingConstraintsTo(to: T) where T : FirDeclaration, T : FirTypeParameterRefsOwner {
+        /**
+         * @see FirDeclarationOrigin.Synthetic.DanglingTypeParameter
+         */
+        private fun KtTypeParameterListOwner.convertDanglingTypeParameters(declarationSymbol: FirBasedSymbol<*>): List<FirTypeParameter> {
             val typeParamNames = typeParameters.mapNotNull { it.nameAsName }.toSet()
-            val result = typeConstraints.mapNotNull { constraint ->
-                constraint.subjectTypeParameterName?.getReferencedNameAsName()?.let { name ->
-                    if (!typeParamNames.contains(name)) {
-                        DanglingTypeConstraint(name, constraint.subjectTypeParameterName!!.toFirSourceElement())
-                    } else {
-                        null
+            val constraintsByName = typeConstraints.groupBy { it.subjectTypeParameterName?.getReferencedNameAsName() }
+            return constraintsByName.mapNotNull { [name, constraints] ->
+                if (name == null || name in typeParamNames) return@mapNotNull null
+                buildTypeParameter {
+                    source = constraints.first().subjectTypeParameterName?.toFirSourceElement(KtFakeSourceElementKind.DanglingTypeParameter)
+                    moduleData = baseModuleData
+                    origin = FirDeclarationOrigin.Synthetic.DanglingTypeParameter
+                    this.name = name
+                    symbol = FirTypeParameterSymbol()
+                    containingDeclarationSymbol = declarationSymbol
+                    variance = Variance.INVARIANT
+                    isReified = false
+                    addTypeConstraints(constraints)
+                }
+            }
+        }
+
+        /**
+         * Adds the bounds and the annotations of [constraints] on this type parameter.
+         * Annotations are not allowed in `where` clauses, so they become error annotation calls in
+         * [constraintAnnotations][FirTypeParameterBuilder.constraintAnnotations].
+         */
+        private fun FirTypeParameterBuilder.addTypeConstraints(constraints: List<KtTypeConstraint>) {
+            for (typeConstraint in constraints) {
+                bounds += typeConstraint.boundTypeReference.toFirOrErrorType()
+
+                for (entry in typeConstraint.annotationEntries) {
+                    constraintAnnotations += buildErrorAnnotationCall {
+                        source = entry.toFirSourceElement()
+                        useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
+                        annotationTypeRef = entry.typeReference.toFirOrErrorType()
+                        diagnostic = ConeSimpleDiagnostic(
+                            "Type parameter annotations are not allowed inside where clauses",
+                            DiagnosticKind.AnnotationInWhereClause,
+                        )
+                        val name = (annotationTypeRef as? FirUserTypeRef)?.qualifier?.last()?.name
+                            ?: Name.special("<no-annotation-name>")
+                        calleeReference = buildSimpleNamedReference {
+                            source = (entry.typeReference?.typeElement as? KtUserType)?.referenceExpression?.toFirSourceElement()
+                            this.name = name
+                        }
+                        entry.extractArgumentsTo(this)
+                        typeArguments.appendTypeArguments(entry.typeArguments)
+                        containingDeclarationSymbol = context.containerSymbol
                     }
                 }
-
-            }
-            if (result.isNotEmpty()) {
-                to.danglingTypeConstraints = result
             }
         }
 
@@ -1143,7 +1143,7 @@ open class PsiRawFirBuilder(
                 origin = FirDeclarationOrigin.Synthetic.DelegateField
                 name = NameUtils.delegateFieldName(fieldOrd)
                 symbol = FirFieldSymbol(CallableId(this@PsiRawFirBuilder.context.currentClassId, name))
-                returnTypeRef = type
+                returnTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.ClassDelegationField)
                 this@PsiRawFirBuilder.context.withContainerSymbol(symbol) {
                     initializer = buildOrLazyExpression(delegateSource) {
                         entry.delegateExpression.toFirExpression("Should have delegate", sourceWhenInvalidExpression = entry)
@@ -1424,10 +1424,10 @@ open class PsiRawFirBuilder(
                     declarations += convertCodeFragment(file, this)
                 } else {
                     for (declaration in file.declarations) {
-                        declarations += when (declaration) {
-                            is KtScript -> convertScriptOrSnippets(declaration, psiSourceFile, this@buildFile)
-                            is KtDestructuringDeclaration -> buildErrorNonLocalDestructuringDeclaration(declaration)
-                            else -> declaration.convert()
+                        when (declaration) {
+                            is KtScript -> declarations += convertScriptOrSnippets(declaration, psiSourceFile, this@buildFile)
+                            is KtDestructuringDeclaration -> addNonLocalDestructuringDeclaration(declarations, declaration)
+                            else -> declarations += declaration.convert<FirDeclaration>()
                         }
                     }
 
@@ -1452,19 +1452,43 @@ open class PsiRawFirBuilder(
             return packageName
         }
 
-        protected fun buildErrorNonLocalDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirErrorProperty {
-            val initializer = destructuringDeclaration.toInitializerExpression()
-            return this@PsiRawFirBuilder.buildErrorNonLocalDestructuringDeclaration(
+        protected fun buildNonLocalDestructuringDeclarationContainer(destructuringDeclaration: KtDestructuringDeclaration): FirProperty {
+            val symbol = createNonLocalDestructuringDeclarationContainerSymbol()
+            val initializer = this@PsiRawFirBuilder.context.withContainerSymbol(symbol) {
+                destructuringDeclaration.toInitializerExpression()
+            }
+
+            return this@PsiRawFirBuilder.buildNonLocalDestructuringDeclarationContainer(
                 destructuringDeclaration.toFirSourceElement(),
+                symbol,
                 initializer,
                 baseModuleData,
             ) { destructuringDeclaration.extractAnnotationsTo(it) }
         }
 
+        private fun addNonLocalDestructuringDeclaration(
+            destination: MutableList<FirDeclaration>,
+            destructuringDeclaration: KtDestructuringDeclaration,
+        ) {
+            val container = buildNonLocalDestructuringDeclarationContainer(destructuringDeclaration)
+            addDestructuringVariables(
+                destination,
+                baseModuleData,
+                destructuringDeclaration,
+                container,
+                tmpVariable = true,
+                forceLocal = false,
+                isMember = true,
+                isCompanionBlockMember = isDirectlyInsideCompanionBlock,
+            ) {
+                configureNonLocalDestructuringDeclarationEntry(it, container)
+            }
+        }
+
         protected fun buildScriptDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirVariable {
             return buildDestructuringDeclaration(
                 destructuringDeclaration,
-                FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer,
+                FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer,
             )
         }
 
@@ -1480,10 +1504,9 @@ open class PsiRawFirBuilder(
                 )
             }
 
-            val destructuringContainerVar = generateTemporaryVariable(
+            val destructuringContainerVar = generateDestructuringContainerVariable(
                 moduleData = baseModuleData,
                 source = destructuringDeclaration.toFirSourceElement(),
-                specialName = "destruct",
                 initializer = firInitializer,
                 origin = origin,
                 extractAnnotationsTo = { extractAnnotationsTo(it) },
@@ -1545,7 +1568,7 @@ open class PsiRawFirBuilder(
                                     tmpVariable = false,
                                     forceLocal = false,
                                 ) {
-                                    configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                                    configureNonLocalDestructuringDeclarationEntry(it, destructuringContainerVar)
                                     it.isScriptTopLevelDeclaration = true
                                 }
                             }
@@ -1618,7 +1641,7 @@ open class PsiRawFirBuilder(
                             tmpVariable = false,
                             forceLocal = false,
                         ) {
-                            configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                            configureNonLocalDestructuringDeclarationEntry(it, destructuringContainerVar)
                         }
                     }
                     is KtProperty -> {
@@ -1884,12 +1907,13 @@ open class PsiRawFirBuilder(
                         isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
                         isData = classOrObject.hasModifier(DATA_KEYWORD)
                         isInline = classOrObject.hasModifier(INLINE_KEYWORD)
-                        isValue = classOrObject.hasModifier(VALUE_KEYWORD)
+                        isValue = classOrObject.hasModifier(VALUE_KEYWORD) || classOrObject.hasModifier(INLINE_KEYWORD)
                         isFun = classOrObject.hasModifier(FUN_KEYWORD)
                         isExternal = classOrObject.hasModifier(EXTERNAL_KEYWORD)
                         isRichError = classOrObject.hasModifier(ERROR_KEYWORD)
                     }
                     val firTypeParameters = classOrObject.convertTypeParameters(classSymbol)
+                    firTypeParameters += classOrObject.convertDanglingTypeParameters(classSymbol)
 
                     context.withCapturedTypeParameters(
                         status = status.isInner || isLocal,
@@ -1996,8 +2020,6 @@ open class PsiRawFirBuilder(
                             companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
                             this.delegateFieldsMap = delegatedFieldsMap
                         }
-                    }.also {
-                        classOrObject.fillDanglingConstraintsTo(it)
                     }
                 }
             }.also {
@@ -2021,6 +2043,7 @@ open class PsiRawFirBuilder(
         ) {
             classBody?.declarationsAndCompanionBlocks?.forEach {
                 when (it) {
+                    is KtDestructuringDeclaration -> addNonLocalDestructuringDeclaration(declarations, it)
                     is KtDeclaration -> {
                         declarations += it.toFirDeclaration(
                             delegatedSuperType,
@@ -2245,6 +2268,7 @@ open class PsiRawFirBuilder(
                     function.extractAnnotationsTo(this)
 
                     function.extractTypeParametersTo(this, functionSymbol)
+                    typeParameters += function.convertDanglingTypeParameters(functionSymbol)
                     contextParameters.addContextParameters(function.modifierList?.contextParameterLists.orEmpty(), functionSymbol)
                     for (valueParameter in function.valueParameters) {
                         valueParameters += valueParameter.toFirValueParameter(
@@ -2272,8 +2296,6 @@ open class PsiRawFirBuilder(
                     context.firFunctionTargets.removeLast()
                 }.build().also {
                     bindFunctionTarget(target, it)
-                    function.fillDanglingConstraintsTo(it)
-
                     if (!isLocalFunction && isCompanionBlockMember) {
                         it.initContainingClassAttr()
                     }
@@ -2511,8 +2533,7 @@ open class PsiRawFirBuilder(
         ): FirProperty {
             val isInsideScript = context.containingScriptSymbol != null && context.className == FqName.ROOT
             val propertyName = when {
-                // The stub-based name goes first as the name identifier forces AST loading for script properties
-                (isLocal || isInsideScript) && name == "_" && nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                (isLocal || isInsideScript) && isSingleUnderscore -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                 else -> nameAsSafeName
             }
             val propertySymbol = if (isLocal) {
@@ -2595,6 +2616,7 @@ open class PsiRawFirBuilder(
                             dispatchReceiverType = currentDispatchReceiverType()
                         }
                         extractTypeParametersTo(this, symbol)
+                        typeParameters += convertDanglingTypeParameters(symbol)
                         context.withCapturedTypeParameters(true, propertySource, this.typeParameters) {
                             backingField = this@toFirProperty.fieldDeclaration.toFirBackingField(
                                 this@toFirProperty,
@@ -2686,12 +2708,8 @@ open class PsiRawFirBuilder(
 
                     contextParameters.addContextParameters(this@toFirProperty.modifierList?.contextParameterLists.orEmpty(), propertySymbol)
                 }.also {
-                    if (!isLocal) {
-                        fillDanglingConstraintsTo(it)
-
-                        if (isCompanionBlockMember) {
-                            it.initContainingClassAttr()
-                        }
+                    if (!isLocal && isCompanionBlockMember) {
+                        it.initContainingClassAttr()
                     }
                 }
             }
@@ -2765,27 +2783,55 @@ open class PsiRawFirBuilder(
             // `getModifierList()` only returns the first one, so we have to get all modifier list children.
             val allModifierLists = allModifierLists.toMutableList()
 
+            // A nullable type with a dangling context parameter list is kept as a whole, see the `is KtNullableType` branch below
             fun KtTypeElement?.unwrapNullable(): KtTypeElement? =
                 when (this) {
                     is KtNullableType -> {
                         allModifierLists += this.allModifierLists
-                        this.innerType.unwrapNullable()
+                        if (this.danglingContextParameterList != null) this else this.innerType.unwrapNullable()
                     }
                     else -> this
                 }
 
-            val firTypeBuilder = when (val unwrappedElement = typeElement.unwrapNullable()) {
+            // In incomplete code like `context(A)` or `context(A) B`, no function type follows the context parameter list, so the parser
+            // leaves the list directly under the type reference (or under the nullable type in `(context(A))?`). Such a type is an error,
+            // and the incomplete function type is kept as its partially resolved type ref: the type element becomes its return type, so
+            // its source moves from the type reference to the type element.
+            fun buildIncompleteFunctionType(
+                source: KtPsiSourceElement,
+                contextParameterList: KtContextParameterList,
+                receiver: KtFunctionTypeReceiver?,
+                isNullable: Boolean,
+                returnTypeRef: FirTypeRef?,
+            ): FirErrorTypeRefBuilder = FirErrorTypeRefBuilder().apply {
+                this.source = source
+                diagnostic = ConeSyntaxDiagnostic("Incomplete code")
+                partiallyResolvedTypeRef = buildFunctionTypeRef {
+                    this.source = source.fakeElement(KtFakeSourceElementKind.IncompleteFunctionType)
+                    isMarkedNullable = isNullable
+                    isSuspend = allModifierLists.any { it.hasSuspendModifier() }
+                    receiverTypeRef = receiver?.typeReference?.toFirType()
+                    this.returnTypeRef = returnTypeRef ?: buildErrorTypeRef { diagnostic = ConeSyntaxDiagnostic("Incomplete code") }
+                    contextParameterList.convertContextParameterTypesTo(contextParameterTypeRefs)
+                }
+            }
+
+            fun convertTypeElement(
+                unwrappedElement: KtTypeElement?,
+                typeElementSource: KtPsiSourceElement,
+                isNullable: Boolean,
+            ): FirAnnotationContainerBuilder = when (unwrappedElement) {
                 is KtDynamicType -> FirDynamicTypeRefBuilder().apply {
-                    this.source = source
+                    this.source = typeElementSource
                     isMarkedNullable = isNullable
                 }
                 is KtUserType -> {
                     val referenceExpression = unwrappedElement.referenceExpression
                     if (referenceExpression != null) {
-                        convertKtTypeElement(source, isNullable, unwrappedElement, referenceExpression)
+                        convertKtTypeElement(typeElementSource, isNullable, unwrappedElement, referenceExpression)
                     } else {
                         FirErrorTypeRefBuilder().apply {
-                            this.source = source
+                            this.source = typeElementSource
                             diagnostic = ConeSyntaxDiagnostic("Incomplete user type")
 
                             val qualifier = unwrappedElement.qualifier
@@ -2803,7 +2849,7 @@ open class PsiRawFirBuilder(
                 }
                 is KtFunctionType -> {
                     FirFunctionTypeRefBuilder().apply {
-                        this.source = source
+                        this.source = typeElementSource
                         isMarkedNullable = isNullable
                         isSuspend = allModifierLists.any { it.hasSuspendModifier() }
                         receiverTypeRef = unwrappedElement.receiverTypeReference?.toFirType()
@@ -2821,33 +2867,55 @@ open class PsiRawFirBuilder(
                             }
                         }
 
-                        val contextReceiverList = unwrappedElement.contextParameterList
-                        contextReceiverList?.contextReceivers()?.mapNotNullTo(contextParameterTypeRefs) {
-                            it.typeReference()?.toFirType()
-                        }
-                        contextReceiverList?.contextParameters?.mapNotNullTo(contextParameterTypeRefs) {
-                            it.typeReference?.toFirType()
-                        }
+                        unwrappedElement.contextParameterList?.convertContextParameterTypesTo(contextParameterTypeRefs)
                     }
                 }
                 is KtIntersectionType -> FirIntersectionTypeRefBuilder().apply {
-                    this.source = source
+                    this.source = typeElementSource
                     isMarkedNullable = isNullable
                     leftType = unwrappedElement.getLeftTypeRef().toFirOrErrorType()
                     rightType = unwrappedElement.getRightTypeRef().toFirOrErrorType()
                 }
                 is KtUnionType -> FirUnionTypeRefBuilder().apply {
-                    this.source = source
+                    this.source = typeElementSource
                     isMarkedNullable = isNullable
                     unwrappedElement.types.mapTo(types) { it.toFirOrErrorType() }
                 }
+                // `(context(A) B)?`: the same as `context(A) B`, but the list is under the nullable type
+                is KtNullableType -> buildIncompleteFunctionType(
+                    typeElementSource,
+                    unwrappedElement.danglingContextParameterList!!,
+                    unwrappedElement.danglingFunctionTypeReceiver,
+                    isNullable = true,
+                    returnTypeRef = unwrappedElement.innerType?.let {
+                        convertTypeElement(it.unwrapNullable(), it.toFirSourceElement(), it is KtNullableType).build() as FirTypeRef
+                    },
+                )
                 null -> FirErrorTypeRefBuilder().apply {
-                    this.source = source
+                    this.source = typeElementSource
                     diagnostic = ConeSyntaxDiagnostic("Incomplete code")
                 }
                 else -> errorWithAttachment("Unexpected type element: ${unwrappedElement::class.simpleName}") {
                     withPsiEntry("unwrappedElement", unwrappedElement)
                 }
+            }
+
+            val danglingContextParameterList = danglingContextParameterList
+            val typeElementSource = when {
+                danglingContextParameterList != null && typeElement != null -> typeElement.toFirSourceElement()
+                else -> source
+            }
+            val typeElementBuilder = convertTypeElement(typeElement.unwrapNullable(), typeElementSource, isNullable)
+
+            val firTypeBuilder = when (danglingContextParameterList) {
+                null -> typeElementBuilder
+                else -> buildIncompleteFunctionType(
+                    source,
+                    danglingContextParameterList,
+                    danglingFunctionTypeReceiver,
+                    isNullable = false,
+                    returnTypeRef = if (typeElement != null) typeElementBuilder.build() as FirTypeRef else null,
+                )
             }
 
             for (modifierList in allModifierLists) {
@@ -2857,6 +2925,12 @@ open class PsiRawFirBuilder(
             }
 
             return firTypeBuilder.build() as FirTypeRef
+        }
+
+        @OptIn(KtExperimentalApi::class)
+        private fun KtContextParameterList.convertContextParameterTypesTo(destination: MutableList<FirTypeRef>) {
+            contextReceivers().mapNotNullTo(destination) { it.typeReference()?.toFirType() }
+            contextParameters.mapNotNullTo(destination) { it.typeReference?.toFirType() }
         }
 
         private fun convertKtTypeElement(
@@ -3087,7 +3161,7 @@ open class PsiRawFirBuilder(
             var subjectVariable = when (ktSubjectExpression) {
                 is KtVariableDeclaration -> {
                     val name = when {
-                        ktSubjectExpression.nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                        ktSubjectExpression.isSingleUnderscore -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                         else -> ktSubjectExpression.nameAsSafeName
                     }
                     buildProperty {
@@ -3318,7 +3392,7 @@ open class PsiRawFirBuilder(
                             source = ktParameter.toFirSourceElement(),
                             name = when {
                                 multiDeclaration != null -> SpecialNames.DESTRUCT
-                                ktParameter.nameIdentifier?.asText == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                                ktParameter.isSingleUnderscore -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                                 else -> ktParameter.nameAsSafeName
                             },
                             initializer = buildFunctionCall {
@@ -3441,7 +3515,7 @@ open class PsiRawFirBuilder(
                         firOperation,
                         leftArgument.annotations,
                         expression.right,
-                        expression.left?.elementType in UNWRAPPABLE_TOKEN_TYPES,
+                        expression.left?.elementType in @OptIn(KtImplementationDetail::class) UNWRAPPABLE_TOKEN_TYPES,
                     ) {
                         (this as KtExpression).toFirExpression(
                             sourceWhenInvalidExpression = expression,
@@ -3772,10 +3846,9 @@ open class PsiRawFirBuilder(
         }
 
         override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: FirElement?): FirElement {
-            val baseVariable = generateTemporaryVariable(
+            val baseVariable = generateDestructuringContainerVariable(
                 baseModuleData,
                 multiDeclaration.toFirSourceElement(),
-                "destruct",
                 multiDeclaration.initializer.toFirExpression(
                     "Initializer required for destructuring declaration",
                     sourceWhenInvalidExpression = multiDeclaration

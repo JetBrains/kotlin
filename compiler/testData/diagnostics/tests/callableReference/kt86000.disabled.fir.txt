@@ -1,0 +1,64 @@
+FILE: f1.kt
+    package p1
+
+    public final fun test(): R|kotlin/Unit| {
+        Q|kotlin/String?|::R|kotlin/Any.hashCode|
+        Q|kotlin/String|::R|kotlin/Any.hashCode|
+        Q|kotlin/Int?|::R|kotlin/Any.toString|
+        Q|kotlin/Int|::R|kotlin/Int.toString|
+        lval <unused var>: R|(kotlin/String?) -> kotlin/Int| = Q|kotlin/String?|::R|kotlin/hashCode|
+        lval <unused var>: R|(kotlin/String) -> kotlin/Int| = Q|kotlin/String?|::R|kotlin/hashCode|
+        lval <unused var>: R|(kotlin/String.Companion?) -> kotlin/Int| = Q|kotlin/String?|::R|kotlin/Any.hashCode|
+        lval <unused var>: R|(kotlin/String.Companion?) -> kotlin/Int| = Q|kotlin/String.Companion?|::R|kotlin/hashCode|
+        lval <unused var>: R|(kotlin/String.Companion) -> kotlin/Int| = Q|kotlin/String|::R|kotlin/Any.hashCode|
+    }
+FILE: f2.kt
+    package p2
+
+    public final fun test(): R|kotlin/Unit| {
+        Q|kotlin/String?|::R|kotlin/hashCode|
+        Q|kotlin/String|::R|kotlin/Any.hashCode|
+    }
+FILE: f3.kt
+    package p3
+
+    public final class WithCustomCompanion : R|kotlin/Any| {
+        public constructor(): R|p3/WithCustomCompanion| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|p3/WithCustomCompanion.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun apply(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|p3/WithCustomCompanion|::R|kotlin/Any.toString|
+        Q|p3/WithCustomCompanion?|::R|kotlin/Any.toString|
+        Q|p3/WithCustomCompanion|::R|p3/WithCustomCompanion.Companion.apply|
+        Q|p3/WithCustomCompanion?|::R|p3/WithCustomCompanion.Companion.apply|
+    }
+FILE: f5.kt
+    package p5
+
+    public final object B : R|kotlin/Any| {
+        private constructor(): R|p5/B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun apply(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|p5/B|::R|kotlin/Any.toString|
+        Q|p5/B|::R|p5/B.apply|
+        Q|p5/B?|::R|kotlin/Any.toString|
+        Q|p5/B?|::R|p5/B.apply|
+    }

@@ -135,15 +135,5 @@ public interface JvmJpsManagedIncrementalCompilationConfiguration : JvmIncrement
         @JvmField
         public val INLINE_CONST_TRACKER: Option<CompilerInlineConstTracker?> =
             Option("INLINE_CONST_TRACKER", KotlinReleaseVersion(2, 5, 0))
-
-        /**
-         * A tracker informed which source files an `expect` declaration and its `actual` counterpart live in.
-         *
-         * Relevant to multiplatform projects only. Without it, changing an `expect` declaration may not recompile
-         * the `actual` declaration implementing it, and the other way round, leaving the two out of sync.
-         */
-        @JvmField
-        public val EXPECT_ACTUAL_TRACKER: Option<CompilerExpectActualTracker?> =
-            Option("EXPECT_ACTUAL_TRACKER", KotlinReleaseVersion(2, 5, 0))
     }
 }

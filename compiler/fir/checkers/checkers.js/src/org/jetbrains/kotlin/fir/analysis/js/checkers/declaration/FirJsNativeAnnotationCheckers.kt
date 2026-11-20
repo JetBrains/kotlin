@@ -15,21 +15,12 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
-internal object FirJsNativeInvokeChecker : FirWebCommonAbstractNativeAnnotationChecker(
-    JsStandardClassIds.Annotations.JsNativeInvoke,
-    FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
-) {
-    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
-        get() = true
-}
-
 internal abstract class FirJsAbstractNativeIndexerChecker(
     requiredAnnotation: ClassId,
     private val indexerKind: String,
     private val requiredParametersCount: Int,
 ) : FirWebCommonAbstractNativeAnnotationChecker(
     requiredAnnotation,
-    FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
 ) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true

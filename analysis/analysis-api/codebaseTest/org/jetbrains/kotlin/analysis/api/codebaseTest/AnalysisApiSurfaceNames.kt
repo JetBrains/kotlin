@@ -19,10 +19,6 @@ internal object AnalysisApiSurfaceNames {
     @OptIn(KaImplementationDetail::class)
     val KA_INTERNALS: String = KaInternals::class.simpleName!!
 
-    const val KA_SPI: String = "KaSpi"
-    val SUBCLASS_OPT_IN_REQUIRED: String = SubclassOptInRequired::class.simpleName!!
-    val SUBCLASS_OPT_IN_REQUIRED_ANNOTATION: String = "@$SUBCLASS_OPT_IN_REQUIRED(KaImplementationDetail::class)"
-
     const val KA_IMPLEMENTATION_DETAIL: String = "KaImplementationDetail"
 
     const val IMPLEMENTATION_DETAIL: String = "KaSessionComponentImplementationDetail"

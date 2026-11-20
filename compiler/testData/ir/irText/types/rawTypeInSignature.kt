@@ -1,8 +1,4 @@
-// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
-
-// KT-85730 Reflection: incorrect nullability of raw type argument in new implementation
-// KOTLIN_REFLECT_DUMP_MISMATCH
 
 // FILE: rawTypeInSignature.kt
 

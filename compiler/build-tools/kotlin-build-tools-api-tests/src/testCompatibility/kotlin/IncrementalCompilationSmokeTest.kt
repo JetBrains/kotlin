@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutput
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.unwrap
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -169,7 +170,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
             module1.compile {
                 assertCompiledSources("main.kt", "bpkg/BClass.kt")
                 assertOutputs("bpkg/MainKt.class", "bpkg/BClass.class")
-                if (strategyConfig.first::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
+                if (strategyConfig.first.unwrap()::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
                     val count = if (useTrackedModules) {
                         1
                     } else {

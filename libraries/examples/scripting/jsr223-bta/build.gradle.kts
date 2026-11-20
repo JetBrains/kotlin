@@ -13,8 +13,9 @@ dependencies {
     implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
     // Only used for the scripting plugin's public option id.
     implementation(project(":kotlin-scripting-compiler"))
-    // ClassId/FqName/NameUtils only.
+    // ClassId/FqName/ScriptNames only.
     implementation(project(":core:compiler.common"))
+    runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

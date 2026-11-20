@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 // Nullable AFU's atomic properties should be forbidden
@@ -25,3 +26,5 @@ class C {
     private val aba: <!NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN!>AtomicBooleanArray?<!> = null
     private val ara: <!NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN!>AtomicArray<Any>?<!> = null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, propertyDeclaration */

@@ -162,7 +162,7 @@ fun Project.configureDefaultPublishing(
 
                 val deployRepoUrl: String? = project.providers.gradleProperty("deploy-url").orNull?.takeIf { it.isNotBlank() }
                     ?: project.providers.gradleProperty("kotlin.build.deploy-path").orNull?.takeIf { it.isNotBlank() }
-                        ?.let { "${project.rootProject.layout.projectDirectory.dir(it).asFile.toURI()}" }
+                        ?.let { "${project.isolated.rootProject.projectDirectory.dir(it).asFile.toURI()}" }
 
                 val repoUrl: String = deployRepoUrl ?: "${project.isolated.rootProject.projectDirectory.dir("build/repo").asFile.toURI()}"
 

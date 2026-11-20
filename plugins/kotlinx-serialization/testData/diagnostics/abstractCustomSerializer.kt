@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 // FILE: test.kt
@@ -38,3 +39,6 @@ class Holder (
 
     val ListWithSealed: List<<!ABSTRACT_SERIALIZER_TYPE!>@Serializable(SealedSerializer::class)<!> WithSealed>
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, interfaceDeclaration, primaryConstructor, propertyDeclaration,
+sealed */

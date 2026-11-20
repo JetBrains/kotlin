@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import java.io.PrintStream
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -122,18 +123,24 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 methods += ObjCKotlinThrowableAsErrorMethod
             }
 
-            val categoryMethods = categoryMembers[descriptor].orEmpty().toObjCMethods()
-
             val superClassNotAny = descriptor.getSuperClassNotAny()
                     ?.let { getType(it) as ObjCClassForKotlinClass }
 
-            ObjCClassForKotlinClass(binaryName, irClassSymbol, methods, categoryMethods, superClassNotAny)
+            ObjCClassForKotlinClass(binaryName, irClassSymbol, methods, superClassNotAny)
         }
     }
 
     val types = generatedClasses.map { getType(it) }
 
-    return ObjCExportCodeSpec(files, types)
+    val categories = categoryMembers.flatMap { [descriptor, members] ->
+        val binaryName = namer.getClassOrProtocolName(descriptor).binaryName
+        members.groupBy { it.module }.values.mapNotNull { moduleMembers ->
+            val methods = moduleMembers.toObjCMethods()
+            if (methods.isEmpty()) null else ObjCCategoryForKotlinClass(binaryName, methods)
+        }
+    }
+
+    return ObjCExportCodeSpec(files, types, categories)
 }
 
 internal fun <S : IrFunctionSymbol> createObjCMethodSpecBaseMethod(
@@ -152,7 +159,8 @@ internal fun <S : IrFunctionSymbol> createObjCMethodSpecBaseMethod(
 
 internal class ObjCExportCodeSpec(
         val files: List<ObjCClassForKotlinFile>,
-        val types: List<ObjCTypeForKotlinType>
+        val types: List<ObjCTypeForKotlinType>,
+        val categories: List<ObjCCategoryForKotlinClass>,
 )
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -189,6 +197,7 @@ internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String, sig
             is ObjCGetterForNSEnumType -> null
         }
         out.println("\n# Instance methods mapping")
+        val categoriesByClass = categories.groupBy { it.classBinaryName }
         for (type in types) {
             val overrides = buildMap {
                 for (method in type.irClassSymbol.descriptor.contributedMethods) {
@@ -202,9 +211,9 @@ internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String, sig
             for (mapping in type.methods.filter { it.isInstanceMethod() }) {
                 out.println(mapping.getMapping(type.binaryName, overrides) ?: continue)
             }
-            if (type is ObjCClassForKotlinClass) {
-                for (mapping in type.categoryMethods) {
-                    out.println(mapping.getMapping(type.binaryName, emptyMap()) ?: continue)
+            for (category in categoriesByClass[type.binaryName].orEmpty()) {
+                for (mapping in category.methods) {
+                    out.println(mapping.getMapping(category.classBinaryName, emptyMap()) ?: continue)
                 }
             }
         }
@@ -296,7 +305,6 @@ internal class ObjCClassForKotlinClass(
         binaryName: String,
         irClassSymbol: IrClassSymbol,
         methods: List<ObjCMethodSpec>,
-        val categoryMethods: List<ObjCMethodForKotlinMethod>,
         val superClassNotAny: ObjCClassForKotlinClass?
 ) : ObjCTypeForKotlinType(binaryName, irClassSymbol, methods) {
     override fun toString(): String =
@@ -320,4 +328,12 @@ internal class ObjCClassForKotlinFile(
 ) : ObjCTypeSpec(binaryName) {
     override fun toString(): String =
             "ObjC spec of class `$binaryName` for `${sourceFile.name}`"
+}
+
+internal class ObjCCategoryForKotlinClass(
+        val classBinaryName: String,
+        val methods: List<ObjCMethodForKotlinMethod>
+) {
+    override fun toString(): String =
+            "ObjC spec of a category on `$classBinaryName`"
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
@@ -52,11 +53,11 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
         val argumentClassId = serializeMethodNames[callableId.callableName] ?: return emptyList()
 
         val function = createMemberFunction(
-            owner, MembersOfSerializerGeneratorKey, callableId.callableName, session.builtinTypes.unitType.coneType,
+            owner, MembersOfSerializerGeneratorKey, callableId.callableName, StandardTypes.Unit,
         ) {
             valueParameter(X_NAME, argumentClassId.createConeType(session))
         }.apply {
-            replaceBody(buildBlock {}.apply { replaceConeTypeOrNull(session.builtinTypes.unitType.coneType) })
+            replaceBody(buildBlock {}.apply { replaceConeTypeOrNull(StandardTypes.Unit) })
         }
         return listOf(function.symbol)
     }

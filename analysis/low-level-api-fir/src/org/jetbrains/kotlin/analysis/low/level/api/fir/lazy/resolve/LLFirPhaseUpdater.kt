@@ -112,9 +112,6 @@ internal object LLFirPhaseUpdater {
             is FirScript -> {
                 element.receivers.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             }
-            is FirReplSnippet -> {
-                element.receivers.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
-            }
             is FirFunction -> {
                 element.valueParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
                 element.receiverParameter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
@@ -154,7 +151,7 @@ private object AnnotationArgumentsPhaseUpdatingVisitor : NonLocalAnnotationVisit
         if (owner == symbol) return true
 
         // Annotations of a script top-level destructuring declaration are created with the script as their owner
-        return symbol.origin == FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer && owner is FirScriptSymbol
+        return symbol.origin == FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer && owner is FirScriptSymbol
     }
 }
 

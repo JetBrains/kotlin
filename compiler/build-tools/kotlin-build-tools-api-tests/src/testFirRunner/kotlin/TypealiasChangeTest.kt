@@ -10,14 +10,12 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAg
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.moduleWithFir
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 
 @DisplayName("Single module IC scenarios with typealiases")
 class TypealiasChangeTest : BaseCompilationTest() {
 
-    @Disabled("Broken, KT-28233")
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Potential first-round errors: typealias change")
     @TestMetadata("empty")

@@ -1,7 +1,7 @@
 // CHECK_TYPESCRIPT_DECLARATIONS
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
-// LANGUAGE: +ExportKDocDocumentationToKlib
+// LANGUAGE: +ExportKDocDocumentationToKlib +JsAllowExportTypealiases
 
 // MODULE: JS_TESTS
 // FILE: test.kt
@@ -275,6 +275,52 @@ class User2(val name: String)
  */
 @JsExport
 class User3(val name: String)
+
+/**
+ * @property owned Property fallback must not replace getter documentation.
+ * @property fallback Documentation supplied by the class property tag.
+ */
+@JsExport
+class AccessorDocumentationPrecedence {
+    val owned: Int
+        /** Documentation owned by the getter. */
+        get() = 1
+
+    val fallback: Int = 2
+}
+
+/** Documentation for the exported string alias. */
+@JsExport
+typealias DocumentationAlias = String
+
+@JsExport
+interface DocumentedInterface {
+    /** Base member documentation. */
+    fun value(): String
+}
+
+@JsExport
+class InheritedDocumentation : DocumentedInterface {
+    override fun value(): String = "OK"
+}
+
+@JsExport
+class OwnedDocumentation : DocumentedInterface {
+    /** Override member documentation. */
+    override fun value(): String = "OK"
+}
+
+@JsExport
+enum class DocumentedEnum {
+    /** Documentation for the first enum entry. */
+    DOCUMENTED,
+    UNDOCUMENTED
+}
+
+// TODO(KT-91392): Re-enable when nested comment terminators are escaped in generated TSDoc.
+// /** Before /* nested */ after. */
+// @JsExport
+// fun nestedComment(): Int = 1
 
 @JsExport
 fun box(): String = "OK"

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -22,8 +23,7 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
      * Regression for the reviewer's concern on `ConstantEvaluator.evaluateReferenceExpression`:
      * a *statically imported* field referenced by its bare name (`import static a.b.C.FIELD;`,
      * then `int x = FIELD;`) must be routed to the cross-language resolver with the importing
-     * class qualifier and member name, not as the unqualified `(null, "FIELD")` pair (which the
-     * session-backed resolver rejects, leaving the constant unresolved).
+     * class qualifier and member name; a bare name alone is never resolved externally.
      *
      * A parsing-level [createDummyFirSessionForTests] has no `FirSymbolProvider`, so the real
      * cross-language lookup always returns null here. Instead we capture what the evaluator
@@ -48,8 +48,8 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
         val refNode = findReferenceExpression(tree, parsed.root, "MAX")
             ?: error("Could not find the 'MAX' reference expression in the parsed field initializer")
 
-        var captured: Pair<String?, String>? = null
-        val evaluator = ConstantEvaluator(javaClass) { classQualifier, fieldName ->
+        var captured: Pair<String, String>? = null
+        val evaluator = ConstantEvaluator(javaClass) { classQualifier, _, fieldName ->
             captured = classQualifier to fieldName
             if (classQualifier == "com.example.Constants" && fieldName == "MAX") 42 else null
         }
@@ -61,12 +61,11 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
     }
 
     /**
-     * A bare name that is neither a local field nor a static import must still fall back to the
-     * unqualified `(null, name)` callback — guarding against a regression where the static-import
-     * branch swallows the plain fallback.
+     * A bare name that is neither a field in scope nor statically imported has no qualifier to
+     * resolve it in another language, so it stays unresolved without an external lookup.
      */
     @Test
-    fun testBareNameWithoutStaticImportFallsBackToUnqualifiedCallback() {
+    fun testBareNameWithoutStaticImportIsNotResolvedExternally() {
         val source = """
             package test;
             class Foo {
@@ -82,15 +81,14 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
         val refNode = findReferenceExpression(tree, parsed.root, "MISSING")
             ?: error("Could not find the 'MISSING' reference expression in the parsed field initializer")
 
-        var captured: Pair<String?, String>? = null
-        val evaluator = ConstantEvaluator(javaClass) { classQualifier, fieldName ->
-            captured = classQualifier to fieldName
+        var called = false
+        val evaluator = ConstantEvaluator(javaClass) { _, _, _ ->
+            called = true
             null
         }
 
-        evaluator.evaluate(refNode)
-
-        assertEquals(null to "MISSING", captured)
+        assertEquals(null, evaluator.evaluate(refNode))
+        assertFalse(called) { "A bare name must not be resolved through the external resolver" }
     }
 
     /**

@@ -16,6 +16,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderConvertible
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.swiftApiLibraryName
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelectorFactory
@@ -49,12 +51,14 @@ abstract class ExportExtension @Inject internal constructor(
     providerFactory: ProviderFactory,
     projectLayout: ProjectLayout,
     dependencySelectorFactory: SwiftExportDependencySelectorFactory,
+    projectName: String,
 ) {
-    private val defaultSwiftExportConfiguration = DefaultSwiftExportConfiguration(
-        objectFactory = objectFactory,
-        providerFactory = providerFactory,
-        projectLayout = projectLayout,
-        dependencySelectorFactory = dependencySelectorFactory,
+    private val defaultSwiftExportConfiguration = objectFactory.newInstance<DefaultSwiftExportConfiguration>(
+        objectFactory,
+        providerFactory,
+        projectLayout,
+        dependencySelectorFactory,
+        projectName,
     )
 
     internal val swiftExportConfiguration: SwiftExportConfiguration get() = defaultSwiftExportConfiguration
@@ -293,6 +297,11 @@ internal interface SwiftExportSwiftPackageIntegrationConfiguration : SwiftExport
      * The directory that receives the exported Swift package.
      */
     val outputDirectory: Provider<Directory>
+
+    /**
+     * The name of the library product of the exported Swift package.
+     */
+    val productName: Provider<String>
 }
 
 /**
@@ -376,13 +385,25 @@ interface SwiftExportSwiftPackageIntegration : SwiftExportIntegration {
      * The export deletes everything in these subdirectories that is not part of the package.
      */
     val outputDirectory: DirectoryProperty
+
+    /**
+     * The name of the library product of the exported Swift package, the one consumers depend on with
+     * `.product(name: ..., package: ...)`. By default the Swift module name followed by `Library`,
+     * so `SharedLibrary` for a module named `Shared`.
+     *
+     * The name must not be blank.
+     *
+     * @since 2.5.20
+     */
+    val productName: Property<String>
 }
 
-private class DefaultSwiftExportConfiguration(
+internal open class DefaultSwiftExportConfiguration @Inject constructor(
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val projectLayout: ProjectLayout,
     private val dependencySelectorFactory: SwiftExportDependencySelectorFactory,
+    private val projectName: String,
 ) : SwiftExportConfiguration, SwiftExportConfigurationDsl {
     override val moduleName: Property<String> = objectFactory.property(String::class.java)
     override val rootPackage: Property<String> = objectFactory.property(String::class.java)
@@ -396,10 +417,10 @@ private class DefaultSwiftExportConfiguration(
 
     override fun xcodeIntegration(configure: SwiftExportXcodeIntegration.() -> Unit) {
         val integration = xcodeIntegrationConfiguration
-            ?: DefaultSwiftExportXcodeIntegration(
-                objectFactory = objectFactory,
-                providerFactory = providerFactory,
-                dependencySelectorFactory = dependencySelectorFactory,
+            ?: objectFactory.newInstance<DefaultSwiftExportXcodeIntegration>(
+                objectFactory,
+                providerFactory,
+                dependencySelectorFactory,
             ).also { xcodeIntegrationConfiguration = it }
         integration.configure()
     }
@@ -417,12 +438,15 @@ private class DefaultSwiftExportConfiguration(
 
     override fun swiftPackageIntegration(configure: SwiftExportSwiftPackageIntegration.() -> Unit) {
         val integration = swiftPackageIntegrationConfiguration
-            ?: DefaultSwiftExportSwiftPackageIntegration(
-                objectFactory = objectFactory,
-                providerFactory = providerFactory,
-                projectLayout = projectLayout,
-                dependencySelectorFactory = dependencySelectorFactory,
-            ).also { swiftPackageIntegrationConfiguration = it }
+            ?: objectFactory.newInstance<DefaultSwiftExportSwiftPackageIntegration>(
+                objectFactory,
+                providerFactory,
+                projectLayout,
+                dependencySelectorFactory,
+            ).also {
+                it.productName.convention(swiftApiLibraryName(moduleName.orElse(projectName.normalizedSwiftExportModuleName)))
+                swiftPackageIntegrationConfiguration = it
+            }
         integration.configure()
     }
 
@@ -434,7 +458,7 @@ private class DefaultSwiftExportConfiguration(
 /**
  * The settings and the dependency overrides, which every integration has.
  */
-private abstract class DefaultSwiftExportIntegration(
+internal abstract class DefaultSwiftExportIntegration(
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val dependencySelectorFactory: SwiftExportDependencySelectorFactory,
@@ -490,7 +514,7 @@ private abstract class DefaultSwiftExportIntegration(
     }
 }
 
-private class DefaultSwiftExportXcodeIntegration(
+internal open class DefaultSwiftExportXcodeIntegration @Inject constructor(
     objectFactory: ObjectFactory,
     providerFactory: ProviderFactory,
     dependencySelectorFactory: SwiftExportDependencySelectorFactory,
@@ -498,7 +522,7 @@ private class DefaultSwiftExportXcodeIntegration(
     SwiftExportXcodeIntegration,
     SwiftExportXcodeIntegrationConfiguration
 
-private class DefaultSwiftExportSwiftPackageIntegration(
+internal open class DefaultSwiftExportSwiftPackageIntegration @Inject constructor(
     objectFactory: ObjectFactory,
     providerFactory: ProviderFactory,
     projectLayout: ProjectLayout,
@@ -508,6 +532,7 @@ private class DefaultSwiftExportSwiftPackageIntegration(
     SwiftExportSwiftPackageIntegrationConfiguration {
     override val outputDirectory: DirectoryProperty = objectFactory.directoryProperty()
         .convention(projectLayout.projectDirectory.dir(DEFAULT_OUTPUT_DIRECTORY))
+    override val productName: Property<String> = objectFactory.property(String::class.java)
 
     companion object {
         const val DEFAULT_OUTPUT_DIRECTORY = "SwiftPackage"
@@ -516,4 +541,5 @@ private class DefaultSwiftExportSwiftPackageIntegration(
 
 internal fun ObjectFactory.ExportExtension(
     dependencySelectorFactory: SwiftExportDependencySelectorFactory,
-): ExportExtension = newInstance(ExportExtension::class.java, dependencySelectorFactory)
+    projectName: String,
+): ExportExtension = newInstance(ExportExtension::class.java, dependencySelectorFactory, projectName)

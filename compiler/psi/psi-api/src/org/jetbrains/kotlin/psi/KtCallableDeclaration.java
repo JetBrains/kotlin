@@ -125,7 +125,7 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtDeclaration
                     expression = "this.setCallableTypeReference(null, typeRef)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.setCallableTypeReference"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     @Nullable

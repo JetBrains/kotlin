@@ -405,6 +405,12 @@ public class LLSerializationDiagnosticsTestGenerated extends AbstractLLSerializa
     }
 
     @Test
+    @TestMetadata("inlineValueClassesSyntax.kt")
+    public void testInlineValueClassesSyntax() {
+      run("inlineValueClassesSyntax.kt");
+    }
+
+    @Test
     @TestMetadata("metaSerializable.kt")
     public void testMetaSerializable() {
       run("metaSerializable.kt");

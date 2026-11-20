@@ -18,13 +18,19 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsExecutable
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapter
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterRequest
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterToolchainService
 import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainMode
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.tasks.wasiadapter.UsesWasiAdapterToolchainService
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -37,6 +43,8 @@ import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
 import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -47,6 +55,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @DisplayName("FUS statistic")
+@MustRunOnChangesInGradle
 class FusStatisticsIT : KGPBaseTest() {
     private val expectedMetrics = arrayOf(
         "OS_TYPE",
@@ -62,6 +71,7 @@ class FusStatisticsIT : KGPBaseTest() {
         "KOTLIN_COMPILER_EXECUTION_POLICY",
     )
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("for dokka")
     @GradleTest
@@ -89,6 +99,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("for dokka v2 html doc")
     @GradleTest
@@ -102,6 +113,7 @@ class FusStatisticsIT : KGPBaseTest() {
         testDokkaPlugin(gradleVersion, "org.jetbrains.dokka", expectedDokkaFusMetrics)
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("for dokka v2 javadoc")
     @GradleTest
@@ -171,6 +183,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-cocoapods-template")
     @NativeGradlePluginTests
     @DisplayName("Verify that the metric for applying the Cocoapods plugin is being collected")
     @GradleTest
@@ -185,6 +198,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-incremental-simple")
     @NativeGradlePluginTests
     @DisplayName("Verify that the metric for native incremental compilation")
     @GradleTest
@@ -206,6 +220,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("Ensure that the metric are not collected if plugins were not applied to simple project")
     @GradleTest
@@ -222,6 +237,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("instantExecutionWithBuildSrc")
     @JvmGradlePluginTests
     @DisplayName("for project with buildSrc")
     @GradleTest
@@ -233,7 +249,6 @@ class FusStatisticsIT : KGPBaseTest() {
         ) {
             validateFusFiles(
                 "compileKotlin",
-                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
             ) { fusFiles ->
                 assertFilesCombinedContains(
                     fusFiles,
@@ -244,6 +259,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("for failed build")
     @GradleTest
@@ -273,6 +289,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @JvmGradlePluginTests
     @DisplayName("fus metric for multiproject")
     @GradleTest
@@ -315,12 +332,13 @@ class FusStatisticsIT : KGPBaseTest() {
             ) { fusFiles ->
                 assertFilesCombinedContains(
                     fusFiles,
-                    "KSP_GRADLE_PLUGIN_VERSION=1.9.22"
+                    "KSP_GRADLE_PLUGIN_VERSION=2.3.12"
                 )
             }
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @JvmGradlePluginTests
     @DisplayName("fus metric for jvm feature flags")
     @GradleTest
@@ -349,6 +367,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("jvm-with-common")
     @MppGradlePluginTests
     @DisplayName("fus metrics for KMP JVM incremental compilation flags")
     @GradleTest
@@ -386,6 +405,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("general fields with configuration cache")
     @GradleTest
@@ -393,6 +413,7 @@ class FusStatisticsIT : KGPBaseTest() {
         testFusStatisticsWithConfigurationCache(gradleVersion, IsolatedProjectsMode.DISABLED)
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("general fields with configuration cache and project isolation")
     @GradleTest
@@ -450,6 +471,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("configuration type metrics")
     @GradleTest
@@ -470,6 +492,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @GradleTest
     fun testFusMetricsCanBeDisabled(gradleVersion: GradleVersion) {
@@ -483,6 +506,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @GradleTest
     @GradleTestVersions(
@@ -518,6 +542,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-wasm-test")
     @MppGradlePluginTests
     @GradleTest
     fun testWasmIncrementalStatisticCollection(gradleVersion: GradleVersion) {
@@ -688,6 +713,125 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @OptIn(ExperimentalWasmDsl::class, ExperimentalNodeJsToolchainDsl::class)
+    @MppGradlePluginTests
+    @DisplayName("WASI adapter toolchain service is reported")
+    @GradleTest
+    fun testWasiAdapterToolchainServiceIsReported(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            addEcosystemPluginToBuildScriptCompilationClasspath()
+            settingsBuildScriptInjection {
+                settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+                settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                    wasiAdapter {
+                        toolchainService {
+                            downloadBaseUrl.set("some-invalid-url")
+                        }
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                registerTaskToPrintWasiAdapterToolchainService()
+            }
+
+            validateFusDirectory("printWasiAdapterToolchainService", buildAssertions = {
+                assertOutputContains("Wasi Adapter Toolchain Service is DefaultWasiAdapterToolchainServiceImpl\$Inject")
+            }) { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    StringListMetrics.WASI_ADAPTER_TOOLCHAIN_SERVICE.name,
+                    listOf("download")
+                )
+            }
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("WASI adapter toolchain service from property is reported")
+    @GradleTest
+    fun testWasiAdapterToolchainServicePropertyIsReported(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            gradleProperties.appendText(
+                """
+                |${PropertiesProvider.PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_MODE}=${WasiAdapterToolchainMode.DISABLE.name}
+                """.trimMargin()
+            )
+
+            buildScriptInjection {
+                registerTaskToPrintWasiAdapterToolchainService()
+            }
+
+            validateFusDirectory("printWasiAdapterToolchainService", buildAssertions = {
+                assertOutputContains("Wasi Adapter Toolchain Service is DisabledWasiAdapterToolchainServiceImpl\$Inject")
+            }) { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    StringListMetrics.WASI_ADAPTER_TOOLCHAIN_SERVICE.name,
+                    listOf("disable")
+                )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class, ExperimentalNodeJsToolchainDsl::class)
+    @MppGradlePluginTests
+    @DisplayName("Custom WASI adapter toolchain service is reported")
+    @GradleTest
+    fun testWasiAdapterCustomToolchainServiceIsReported(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            addEcosystemPluginToBuildScriptCompilationClasspath()
+            settingsBuildScriptInjection {
+                settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+
+                abstract class CustomWasiAdapterToolchainService : WasiAdapterToolchainService<WasiAdapterToolchainService.Parameters> {
+                    override fun requestAdapter(adapterRequest: WasiAdapterRequest): Provider<WasiAdapter> {
+                        throw UnsupportedOperationException("CustomWasiAdapterToolchainService is not supported")
+                    }
+                }
+
+                settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                    wasiAdapter {
+                        toolchainService(CustomWasiAdapterToolchainService::class) {}
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                registerTaskToPrintWasiAdapterToolchainService()
+            }
+
+            validateFusDirectory("printWasiAdapterToolchainService", buildAssertions = {
+                assertOutputContains("Wasi Adapter Toolchain Service is FusStatisticsIT\$testWasiAdapterCustomToolchainServiceIsReported\$1\$1\$CustomWasiAdapterToolchainService\$Inject")
+            }) { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    StringListMetrics.WASI_ADAPTER_TOOLCHAIN_SERVICE.name,
+                    listOf("custom")
+                )
+            }
+        }
+    }
+
+    @TestMetadata("native-incremental-simple")
     @DisplayName("native compiler arguments")
     @GradleTest
     @NativeGradlePluginTests
@@ -779,148 +923,7 @@ class FusStatisticsIT : KGPBaseTest() {
 
     // Swift Export enabled only on macOS.
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-    @DisplayName("Swift Export - new Swift Export DSL is not configured")
-    @GradleTest
-    @SwiftExportGradlePluginTests
-    fun testNewSwiftExportDslNotConfigured(gradleVersion: GradleVersion) {
-        project("empty", gradleVersion) {
-            plugins {
-                kotlin("multiplatform")
-            }
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    iosArm64()
-                }
-            }
-
-            validateFusDirectory("help") { fusDirectory ->
-                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_CONFIGURED")
-                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES")
-                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED")
-                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES")
-            }
-        }
-    }
-
-    // Swift Export enabled only on macOS.
-    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-    @DisplayName("Swift Export - new Swift Export DSL configured")
-    @GradleTest
-    @SwiftExportGradlePluginTests
-    @OptIn(ExperimentalSwiftExportDsl::class)
-    fun testNewSwiftExportDslConfigured(gradleVersion: GradleVersion) {
-        project("empty", gradleVersion) {
-            plugins {
-                kotlin("multiplatform")
-            }
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    iosArm64()
-                }
-                export.swift {
-                }
-            }
-
-            validateFusDirectory("help") { fusDirectory ->
-                fusDirectory.assertFusReportContainsMetricWithValues(
-                    "SWIFT_EXPORT_DSL_CONFIGURED", listOf("true")
-                )
-
-                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES")
-                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED")
-                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES")
-            }
-        }
-    }
-
-    // Swift Export enabled only on macOS.
-    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-    @DisplayName("Swift Export - overridden module options are reported")
-    @GradleTest
-    @SwiftExportGradlePluginTests
-    @OptIn(ExperimentalSwiftExportDsl::class)
-    fun testSwiftExportDslModuleOptionsOverridesIsReported(gradleVersion: GradleVersion) {
-        project("empty", gradleVersion) {
-            plugins {
-                kotlin("multiplatform")
-            }
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    iosArm64()
-                }
-                export.swift {
-                    moduleName.set("Shared")
-                    rootPackage.set("com.example")
-                }
-            }
-
-            validateFusDirectory("help") { fusDirectory ->
-                fusDirectory.assertFusReportContainsMetricWithValues(
-                    "SWIFT_EXPORT_DSL_CONFIGURED", listOf("true")
-                )
-                fusDirectory.assertFusReportContainsMetricWithValues(
-                    "SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES", listOf("moduleName", "rootPackage")
-                )
-
-                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED")
-                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES")
-            }
-        }
-    }
-
-    // Swift Export enabled only on macOS.
-    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-    @DisplayName("Swift Export - Xcode integration activation is reported")
-    @GradleTest
-    @SwiftExportGradlePluginTests
-    @OptIn(ExperimentalSwiftExportDsl::class)
-    fun testSwiftExportDslXcodeIntegrationActivationIsReported(gradleVersion: GradleVersion) {
-        project("empty", gradleVersion) {
-            plugins {
-                kotlin("multiplatform")
-            }
-            settingsBuildScriptInjection {
-                settings.rootProject.name = "shared"
-            }
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    iosArm64()
-                }
-                export.swift {
-                    moduleName.set("Shared")
-                    xcodeIntegration()
-                }
-            }
-
-            val subproject = project("empty", gradleVersion) {
-                buildScriptInjection {
-                    project.applyMultiplatform {
-                        iosArm64()
-                    }
-                }
-            }
-
-            include(subproject, "sub")
-
-            validateFusDirectory("help") { fusDirectory ->
-                fusDirectory.assertFusReportContainsMetricWithValues(
-                    "SWIFT_EXPORT_DSL_CONFIGURED", listOf("true")
-                )
-                fusDirectory.assertFusReportContainsMetricWithValues(
-                    "SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES", listOf("moduleName")
-                )
-                fusDirectory.assertFusReportContainsMetricWithValues(
-                    "SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED", listOf("true")
-                )
-
-                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES")
-            }
-        }
-    }
-
-    // Swift Export enabled only on macOS.
-    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-    @DisplayName("Swift Export - overridden Xcode integration options are reported")
+    @DisplayName("Swift Export - every export DSL metric value reaches the FUS report")
     @GradleTest
     @SwiftExportGradlePluginTests
     @OptIn(ExperimentalSwiftExportDsl::class)
@@ -938,6 +941,7 @@ class FusStatisticsIT : KGPBaseTest() {
                 }
                 export.swift {
                     moduleName.set("Shared")
+                    rootPackage.set("com.example")
                     xcodeIntegration {
                         settings.put("key", "value")
                         configure(project.dependencies.project(mapOf("path" to ":sub"))) {
@@ -967,7 +971,7 @@ class FusStatisticsIT : KGPBaseTest() {
                     "SWIFT_EXPORT_DSL_CONFIGURED", listOf("true")
                 )
                 fusDirectory.assertFusReportContainsMetricWithValues(
-                    "SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES", listOf("moduleName")
+                    "SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES", listOf("moduleName", "rootPackage")
                 )
                 fusDirectory.assertFusReportContainsMetricWithValues(
                     "SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED", listOf("true")
@@ -980,6 +984,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("multiplatformFlowAction")
     @DisplayName("add configuration metrics after build was finish")
     @GradleTest
     @MppGradlePluginTests
@@ -998,6 +1003,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("multiClassloaderProject")
     @DisplayName("add configuration metrics after build was finish")
     @GradleTest
     @JvmGradlePluginTests
@@ -1034,6 +1040,7 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("disable FUS on TC")
     @GradleTest
     @JvmGradlePluginTests
@@ -1066,6 +1073,117 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-90751: JVM compiler arguments from freeCompilerArgs")
+    @GradleTest
+    @JvmGradlePluginTests
+    fun testJvmFreeCompilerArguments(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("jvm")
+            }
+            buildScriptInjection {
+                // typed DSL control: reported even without the KT-90751 fix
+                kotlinJvm.compilerOptions.javaParameters.set(true)
+                kotlinJvm.compilerOptions.freeCompilerArgs.addAll(
+                    "-Xdebug", "-Xlambdas=class", "-Xbackend-threads=4",
+                    "-XXLanguage:+ContextParameters", "-progressive",
+                )
+            }
+            kotlinSourcesDir().source("main.kt") { "fun foo() = 1" }
+
+            validateFusFiles(
+                "compileKotlin",
+                buildAction = BuildActions.build,
+                buildAssertions = { assertTasksExecuted(":compileKotlin") },
+            ) { fusFiles ->
+                assertFilesCombinedContains(
+                    fusFiles,
+                    "CLI_JAVA_PARAMETERS_METADATA_ENABLED=true",
+                    "CLI_JVM_DEBUG_MODE_ENABLED=true",
+                    "CLI_LAMBDAS_CODEGEN_MODE=class",
+                    "CLI_BACKEND_THREADS_COUNT=4",
+                    "CLI_MANUALLY_CONFIGURED_LANGUAGE_FEATURES=+ContextParameters",
+                    "KOTLIN_PROGRESSIVE_MODE=true",
+                )
+            }
+        }
+    }
+
+    @DisplayName("KT-90751: JS compiler arguments from freeCompilerArgs")
+    @GradleTest
+    @JsGradlePluginTests
+    fun testJsFreeCompilerArguments(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js()
+                    compilerOptions {
+                        freeCompilerArgs.addAll("-XXLanguage:+ContextParameters", "-Xgenerate-polyfills")
+                    }
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+
+            validateFusFiles(
+                "compileKotlinJs",
+                buildAction = BuildActions.build,
+                buildAssertions = { assertTasksExecuted(":compileKotlinJs") },
+            ) { fusFiles ->
+                assertFilesCombinedContains(
+                    fusFiles,
+                    "CLI_MANUALLY_CONFIGURED_LANGUAGE_FEATURES=+ContextParameters",
+                    "CLI_JS_POLYFILLS_GENERATED=true",
+                )
+            }
+        }
+    }
+
+    @DisplayName("KT-90751: Wasm compiler arguments from freeCompilerArgs")
+    @GradleTest
+    @WasmJsGradlePluginTests
+    fun testWasmFreeCompilerArguments(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmJs()
+                    compilerOptions {
+                        freeCompilerArgs.addAll("-XXLanguage:+ContextParameters", "-Xwasm-enable-asserts")
+                    }
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+
+            validateFusFiles(
+                "compileKotlinWasmJs",
+                buildAction = BuildActions.build,
+                buildAssertions = { assertTasksExecuted(":compileKotlinWasmJs") },
+            ) { fusFiles ->
+                assertFilesCombinedContains(
+                    fusFiles,
+                    "CLI_MANUALLY_CONFIGURED_LANGUAGE_FEATURES=+ContextParameters",
+                    "CLI_WASM_ASSERTS_ENABLED=true",
+                )
+            }
+        }
+    }
+
+    @TestMetadata("simpleProject")
     @DisplayName("various compiler execution settings")
     @GradleTest
     @JvmGradlePluginTests
@@ -1100,7 +1218,7 @@ class FusStatisticsIT : KGPBaseTest() {
             buildScriptInjection {
                 @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
                 kotlinJvm.compilerVersion.set("2.2.20")
-                kotlinJvm.coreLibrariesVersion = "2.2.20"
+                kotlinJvm.coreKotlinLibrariesVersion.set("2.2.20")
             }
             validateFusFiles(
                 "compileKotlin",
@@ -1165,6 +1283,19 @@ private fun GradleProjectBuildScriptInjectionContext.registerTaskToPrintNodeJsTo
         }
     }
     project.tasks.register("printNodeJsToolchainService", PrintNodeJsToolchainServiceTask::class.java) {
+    }
+}
+
+@OptIn(ExperimentalWasmDsl::class)
+private fun GradleProjectBuildScriptInjectionContext.registerTaskToPrintWasiAdapterToolchainService() {
+    project.applyMultiplatform {} //kotlin plugin is required for FUS to be collected
+    abstract class PrintWasiAdapterToolchainServiceTask : DefaultTask(), UsesWasiAdapterToolchainService {
+        @TaskAction
+        fun action() {
+            println("Wasi Adapter Toolchain Service is ${wasiAdapterToolchainService.get().javaClass.simpleName}")
+        }
+    }
+    project.tasks.register("printWasiAdapterToolchainService", PrintWasiAdapterToolchainServiceTask::class.java) {
     }
 }
 

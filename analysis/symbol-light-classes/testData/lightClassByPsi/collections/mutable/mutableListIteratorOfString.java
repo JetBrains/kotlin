@@ -1,10 +1,4 @@
 public abstract class SMutableListIterator /* test.SMutableListIterator*/ implements java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableListIterator {
-  @java.lang.Override()
-  public abstract void remove();//  remove()
-
-  @java.lang.Override()
-  public final void remove();//  remove()
-
   public  SMutableListIterator();//  .ctor()
 }
 

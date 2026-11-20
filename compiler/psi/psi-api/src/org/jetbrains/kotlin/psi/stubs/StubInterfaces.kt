@@ -80,6 +80,15 @@ interface KotlinClassifierStub<T : KtClassLikeDeclaration> : KotlinStubElement<T
 interface KotlinTypeAliasStub : KotlinClassifierStub<KtTypeAlias>, KotlinStubWithFqName<KtTypeAlias> {
     @KtImplementationDetail
     val isTopLevel: Boolean
+
+    /**
+     * Raw KDoc text, if available.
+     *
+     * Currently, KDoc is only available for decompiled declaration.
+     * For source ones one can read the KDoc content from the PSI directly.
+     */
+    @KtImplementationDetail
+    val kdocText: String?
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
@@ -279,6 +288,15 @@ interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
 interface KotlinPropertyAccessorStub : KotlinDeclarationWithBodyStub<KtPropertyAccessor> {
     @KtImplementationDetail
     val isGetter: Boolean
+
+    /**
+     * Raw KDoc text, if available.
+     *
+     * Currently, KDoc is only available for decompiled declaration.
+     * For source ones one can read the KDoc content from the PSI directly.
+     */
+    @KtImplementationDetail
+    val kdocText: String?
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
@@ -294,6 +312,27 @@ interface KotlinDestructuringDeclarationStub : KotlinStubElement<KtDestructuring
 
     @KtImplementationDetail
     val hasInitializer: Boolean
+
+    @KtImplementationDetail
+    val hasSquareBrackets: Boolean
+
+    @KtImplementationDetail
+    val isFullForm: Boolean
+}
+
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinDestructuringDeclarationEntryStub : KotlinStubWithFqName<KtDestructuringDeclarationEntry> {
+    /**
+     * Whether the entry is mutable, either via its own `var` keyword or via the `var` keyword of its destructuring declaration.
+     */
+    @KtImplementationDetail
+    val isVar: Boolean
+
+    /**
+     * Whether the entry is named by a single underscore (`_`) that is not quoted with backticks, so it is an unused entry.
+     */
+    @KtImplementationDetail
+    val isSingleUnderscore: Boolean
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
@@ -391,14 +430,6 @@ interface KotlinFunctionTypeStub : KotlinStubElement<KtFunctionType>
 interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
     @KtIdeApi
     override val fqName: FqName
-
-    /**
-     * Whether the script is a REPL snippet.
-     *
-     * @see KtScript.isReplSnippet
-     */
-    @KtImplementationDetail
-    val isReplSnippet: Boolean
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)

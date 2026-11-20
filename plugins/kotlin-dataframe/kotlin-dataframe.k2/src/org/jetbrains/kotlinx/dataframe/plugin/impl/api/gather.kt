@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.plugin.createConeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -193,7 +194,7 @@ fun mergeRows(schema: SimpleColumnGroup, otherSchema: SimpleColumnGroup): List<S
     val intersections = (schema.columns() + otherSchema.columns()).groupBy { it.name }
         .mapValues {
             if (it.value.size == 1) {
-                it.value + simpleColumnOf(it.key, facade.session.builtinTypes.nullableNothingType.coneType)
+                it.value + simpleColumnOf(it.key, StandardTypes.NullableNothing)
             } else {
                 it.value
             }
@@ -277,7 +278,7 @@ fun merge(col1: SimpleColumnGroup, col2: SimpleDataColumn): SimpleCol {
     } else {
         simpleColumnOf(
             col1.name,
-            facade.session.builtinTypes.anyType.coneType.withNullability(
+            StandardTypes.Any.withNullability(
                 col2.type.coneType.isMarkedNullable,
                 facade.session.typeContext
             )
@@ -292,7 +293,7 @@ fun merge(col1: SimpleFrameColumn, col2: SimpleDataColumn): SimpleCol {
     } else {
         simpleColumnOf(
             col1.name,
-            facade.session.builtinTypes.anyType.coneType.withNullability(
+            StandardTypes.Any.withNullability(
                 col2.type.coneType.isMarkedNullable,
                 facade.session.typeContext
             )

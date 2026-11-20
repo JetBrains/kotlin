@@ -10,7 +10,7 @@ package kotlin.native.internal
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.native.internal.escapeAnalysis.Escapes
 
-internal value class TypeInfoNames(private val typeInfoPtr: NativePtr) {
+internal inline value class TypeInfoNames(private val typeInfoPtr: NativePtr) {
     init {
         require(!typeInfoPtr.isNull())
     }

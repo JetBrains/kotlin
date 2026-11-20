@@ -20,16 +20,18 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
 
-    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
     testFixturesApi(project(":compiler:fir:resolve"))
-    testFixturesApi(project(":compiler:fir:providers"))
-    testFixturesApi(project(":compiler:fir:semantics"))
+    testFixturesApi(project(":compiler:fir:semantics.api"))
+    testFixturesImplementation(project(":compiler:config.jvm"))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils.common")))
+    testImplementation(project(":compiler:fir:plugin.api"))
+
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 
-    testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
     composeCompilerPlugin(project(":plugins:compose-compiler-plugin:compiler-hosted")) { isTransitive = false }
 
@@ -56,7 +58,6 @@ projectTests {
         minHeapSize = testMaxHeapSizeHuge,
         maxHeapSize = testMaxHeapSizeHuge,
         reservedCodeCacheSize = 512.MiB,
-        javaLauncher = JdkMajorVersion.JDK_1_8,
         garbageCollector = null // explicitly not selecting any GC as the 'fir.modularized.jvm.args' is expected to provide such settings
     ) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
@@ -70,6 +71,8 @@ projectTests {
             this.jvmArgs(paramRegex.findAll(modularizedJvmArgs.get()).map<MatchResult, String> { it.groupValues[1] }.toList<String>())
         }
         systemProperties["junit.jupiter.execution.parallel.enabled"] = true
+        // Allow accessing `ManagementFactoryHelper` because we're accessing some HotSpot-specific stuff.
+        jvmArgs("--add-opens=java.management/sun.management=ALL-UNNAMED")
     }
 
     testGenerator(

@@ -1,0 +1,56 @@
+CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:Anno modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+  thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Anno
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:b visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.UByte visibility:public [final]
+      EXPRESSION_BODY
+        CONST Byte type=kotlin.UByte value=-1
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-b> visibility:public modality:FINAL returnType:kotlin.UByte
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:<root>.Anno
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:b visibility:public modality:FINAL [val]
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:s visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.UShort visibility:public [final]
+      EXPRESSION_BODY
+        CONST Short type=kotlin.UShort value=-1
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-s> visibility:public modality:FINAL returnType:kotlin.UShort
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:<root>.Anno
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:s visibility:public modality:FINAL [val]
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:i visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.UInt visibility:public [final]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.UInt value=-1
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-i> visibility:public modality:FINAL returnType:kotlin.UInt
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:<root>.Anno
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:i visibility:public modality:FINAL [val]
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:l visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:l type:kotlin.ULong visibility:public [final]
+      EXPRESSION_BODY
+        CONST Long type=kotlin.ULong value=-1
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-l> visibility:public modality:FINAL returnType:kotlin.ULong
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:<root>.Anno
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:l visibility:public modality:FINAL [val]
+  CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public returnType:<root>.Anno [primary]
+    VALUE_PARAMETER kind:Regular name:b index:0 type:kotlin.UByte
+      EXPRESSION_BODY
+        CONST Byte type=kotlin.UByte value=-1
+    VALUE_PARAMETER kind:Regular name:s index:1 type:kotlin.UShort
+      EXPRESSION_BODY
+        CONST Short type=kotlin.UShort value=-1
+    VALUE_PARAMETER kind:Regular name:i index:2 type:kotlin.UInt
+      EXPRESSION_BODY
+        CONST Int type=kotlin.UInt value=-1
+    VALUE_PARAMETER kind:Regular name:l index:3 type:kotlin.ULong
+      EXPRESSION_BODY
+        CONST Long type=kotlin.ULong value=-1
+  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+    VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    overridden:
+      public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Annotation
+  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+    VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    overridden:
+      public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Annotation
+  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+    VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    overridden:
+      public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation

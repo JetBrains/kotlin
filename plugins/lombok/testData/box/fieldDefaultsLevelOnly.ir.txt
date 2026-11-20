@@ -1,0 +1,28 @@
+FILE fqName:<root> fileName:/main.kt
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:example type:<root>.LevelOnlyExample [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.LevelOnlyExample' type=<root>.LevelOnlyExample origin=null
+      CALL 'public open fun setDefaultField (defaultField: kotlin.Int): kotlin.Unit declared in <root>.LevelOnlyExample' type=kotlin.Unit origin=EQ
+        ARG <this>: GET_VAR 'val example: <root>.LevelOnlyExample declared in <root>.box' type=<root>.LevelOnlyExample origin=null
+        ARG defaultField: CONST Int type=kotlin.Int value=10
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=10
+        ARG actual: CALL 'public open fun getDefaultField (): kotlin.Int declared in <root>.LevelOnlyExample' type=kotlin.Int origin=GET_PROPERTY
+          ARG <this>: GET_VAR 'val example: <root>.LevelOnlyExample declared in <root>.box' type=<root>.LevelOnlyExample origin=null
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:publicField type:kotlin.Int visibility:public declared in <root>.LevelOnlyExample' type=kotlin.Unit superQualifierSymbol=<root>.LevelOnlyExample origin=EQ
+        receiver: GET_VAR 'val example: <root>.LevelOnlyExample declared in <root>.box' type=<root>.LevelOnlyExample origin=null
+        value: CONST Int type=kotlin.Int value=20
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=20
+        ARG actual: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:publicField type:kotlin.Int visibility:public declared in <root>.LevelOnlyExample' type=kotlin.Int superQualifierSymbol=<root>.LevelOnlyExample origin=null
+          receiver: GET_VAR 'val example: <root>.LevelOnlyExample declared in <root>.box' type=<root>.LevelOnlyExample origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG expected: CONST Int type=kotlin.Int value=3
+        ARG actual: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:packagePrivateField type:kotlin.Int visibility:public/*package*/ declared in <root>.LevelOnlyExample' type=kotlin.Int superQualifierSymbol=<root>.LevelOnlyExample origin=null
+          receiver: GET_VAR 'val example: <root>.LevelOnlyExample declared in <root>.box' type=<root>.LevelOnlyExample origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

@@ -7,7 +7,7 @@ package org.jetbrains.dokka.testApi
 import org.jetbrains.dokka.DokkaConfiguration
 import kotlin.test.assertEquals
 
-public fun assertDokkaConfigurationEquals(
+internal fun assertDokkaConfigurationEquals(
     expected: DokkaConfiguration,
     actual: DokkaConfiguration
 ) {
@@ -39,7 +39,7 @@ public fun assertDokkaConfigurationEquals(
         }
 }
 
-public fun assertDokkaSourceSetEquals(
+internal fun assertDokkaSourceSetEquals(
     expected: DokkaConfiguration.DokkaSourceSet,
     actual: DokkaConfiguration.DokkaSourceSet
 ) {

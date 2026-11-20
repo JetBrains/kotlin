@@ -6,12 +6,17 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInBuildToolsApi
 @DisplayName("Cross-module type alias KMP incremental compilation")
 class CrossModuleTypeAliasIncrementalIT : KGPBaseTest() {
 
@@ -41,14 +46,29 @@ class CrossModuleTypeAliasIncrementalIT : KGPBaseTest() {
         )
     }
 
+    // KT-90252
+    @GradleTest
+    @DisplayName("Enabling type alias expansion tracking recompiles alias consumers left stale while it was disabled (separate KMP compilation enabled)")
+    fun testEnablingTypeAliasExpansionRecompilesStaleAliasConsumers(gradleVersion: GradleVersion) {
+        doTestExpandedClassChangeRecompilesAliasConsumer(
+            gradleVersion, separateCompilation = true, expandTypeAliases = false, expectedOutput = "output: Any",
+            expandTypeAliasesInFollowUpBuild = true,
+        )
+    }
+
     private fun doTestExpandedClassChangeRecompilesAliasConsumer(
         gradleVersion: GradleVersion,
         separateCompilation: Boolean,
         expandTypeAliases: Boolean,
         expectedOutput: String,
+        expandTypeAliasesInFollowUpBuild: Boolean? = null,
     ) {
         val buildOptions = defaultBuildOptions
-            .copy(separateCompilation = separateCompilation, expandTypeAliasesInClasspathSnapshots = expandTypeAliases)
+            .copy(
+                enableJvmIncrementalCompilationOfCommonSources = true,
+                separateCompilation = separateCompilation,
+                expandTypeAliasesInClasspathSnapshots = expandTypeAliases,
+            )
             .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         project("empty", gradleVersion, buildOptions = buildOptions) {
             addKgpToBuildScriptCompilationClasspath()
@@ -144,6 +164,29 @@ class CrossModuleTypeAliasIncrementalIT : KGPBaseTest() {
             build(":app:jvmRun", "-DmainClass=MainKt") {
                 assertTasksExecuted(":lib:compileKotlinJvm", ":app:compileKotlinJvm")
                 assertOutputContains(expectedOutput)
+            }
+
+            if (expandTypeAliasesInFollowUpBuild != null) {
+                val followUpBuildOptions = buildOptions.copy(
+                    expandTypeAliasesInClasspathSnapshots = expandTypeAliasesInFollowUpBuild,
+                    buildReport = listOf(BuildReportType.FILE),
+                )
+
+                // The flag is an input of every KMP JVM compile task, so `lib` re-runs, but must not recompile any sources
+                build(":lib:compileKotlinJvm", buildOptions = followUpBuildOptions) {
+                    assertTasksExecuted(":lib:compileKotlinJvm")
+                    assertIncrementalCompilationInBuildReport(expectedCompiledKotlinFiles = emptyList())
+                }
+
+                build(":app:jvmRun", "-DmainClass=MainKt", buildOptions = followUpBuildOptions) {
+                    assertTasksUpToDate(":lib:compileKotlinJvm")
+                    assertTasksExecuted(":app:compileKotlinJvm")
+                    assertIncrementalCompilationInBuildReport(
+                        expectedCompiledKotlinFiles = listOf(subProject("app").kotlinSourcesDir("commonMain").resolve("bar.kt"))
+                            .relativizeTo(projectPath)
+                    )
+                    assertOutputContains("output: Int")
+                }
             }
         }
     }

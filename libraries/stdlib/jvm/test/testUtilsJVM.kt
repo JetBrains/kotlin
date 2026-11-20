@@ -8,26 +8,25 @@ package test
 import java.util.*
 import kotlin.test.assertEquals
 
-private val isJava8 = System.getProperty("java.version").startsWith("1.8.")
-
-internal fun testOnJvm8(f: () -> Unit) {
-    if (isJava8) {
-        f()
-    }
-}
-
-internal fun testOnJvm9AndAbove(f: () -> Unit) {
-    if (!isJava8) {
-        f()
-    }
-}
-
-
 public actual fun assertTypeEquals(expected: Any?, actual: Any?) {
     assertEquals(expected?.javaClass, actual?.javaClass)
 }
 
 public actual val TestPlatform.Companion.current: TestPlatform get() = TestPlatform.Jvm
+public actual val TestPlatform.Companion.jvmVersion: Int? get() = _jvmVersion
+private val _jvmVersion: Int = System.getProperty("java.specification.version").removePrefix("1.").toInt()
+
+internal fun testOnJvm8(f: () -> Unit) {
+    if (_jvmVersion == 8) {
+        f()
+    }
+}
+
+internal fun testOnJvm9AndAbove(f: () -> Unit) {
+    if (_jvmVersion >= 9) {
+        f()
+    }
+}
 
 @Suppress("HasPlatformType", "UNCHECKED_CAST")
 public fun <T> platformNull() = Collections.singletonList(null as T).first()

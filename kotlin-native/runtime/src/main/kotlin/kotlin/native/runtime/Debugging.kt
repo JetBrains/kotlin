@@ -10,6 +10,19 @@ import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.InternalForKotlinNative
 
 /**
+ * Options for [Debugging.dumpMemory].
+ *
+ * @param omitPrimitiveArrayPayloads If `true`, primitive array contents are omitted from the dump.
+ *   Object arrays and native-pointer arrays are still written so the heap graph can be
+ *   reconstructed. `kdumputil` fills omitted primitive arrays with zeros when converting to hprof.
+ */
+@NativeRuntimeApi
+@SinceKotlin("2.5")
+public class MemoryDumpOptions(
+        public val omitPrimitiveArrayPayloads: Boolean = false,
+)
+
+/**
  * __Note__: this API is unstable and may change in any release.
  *
  * A set of utilities for debugging Kotlin/Native runtime.
@@ -31,12 +44,24 @@ public object Debugging {
         get() = Debugging_isThreadStateRunnable()
 
     /**
-     * Dump memory in binary format to the given POSIX file descriptor and
-     * returns success flag.
+     * Dump memory in binary format to the given POSIX file descriptor with [options]
+     * and returns success flag.
+     *
+     * The default [options] write a dump with full object and array payloads.
+     * Mutators stay suspended until the write finishes, then this function returns
+     * so the caller may close [fd].
      */
-    @GCUnsafeCall("Kotlin_native_runtime_Debugging_dumpMemory")
+    // Keep dumpMemory(Long) in the klib ABI: options did not exist in 1.9.
+    @SinceKotlin("2.5")
+    public fun dumpMemory(
+            fd: Long,
+            @IntroducedAt("2.5.20") options: MemoryDumpOptions = MemoryDumpOptions(),
+    ): Boolean =
+            dumpMemoryWithOptions(fd, options.omitPrimitiveArrayPayloads)
+
+    @GCUnsafeCall("Kotlin_native_runtime_Debugging_dumpMemoryWithOptions")
     @Escapes.Nothing
-    public external fun dumpMemory(fd: Long): Boolean
+    private external fun dumpMemoryWithOptions(fd: Long, omitPrimitiveArrayPayloads: Boolean): Boolean
 }
 
 @GCUnsafeCall("Kotlin_Debugging_isThreadStateRunnable")

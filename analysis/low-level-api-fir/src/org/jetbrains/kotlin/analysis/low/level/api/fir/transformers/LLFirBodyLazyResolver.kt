@@ -460,7 +460,7 @@ private class FirPartialBodyExpressionResolveTransformer(
         block.transformOtherChildren(transformer, data)
 
         // This makes the compiler think the declaration is fully resolved (see 'FirExpression.isResolved')
-        block.writeResultType(session)
+        block.writeResultType()
 
         publishPartialAnalysisState(
             request = request,
@@ -824,10 +824,6 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
     )
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        // There is no sense to resolve such declarations as they do not have bodies
-        // Also, they have STUB expression instead of default values, so we shouldn't change them
-        if (target is FirCallableDeclaration && target.canHaveDeferredReturnTypeCalculation) return
-
         when (target) {
             is FirFile, is FirScript, is FirRegularClass, is FirCodeFragment -> error("Should have been resolved in ${::doResolveWithoutLock.name}")
             is FirConstructor -> resolve(target, BodyStateKeepers.CONSTRUCTOR)
@@ -839,7 +835,6 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
             is FirDanglingModifierList,
             is FirTypeAlias,
-            is FirReplSnippet,
                 -> {
                 // No bodies here
             }

@@ -205,7 +205,7 @@ public class KaDataFlowExitPointSnapshot(
         "this.smartCastInfo",
         "org.jetbrains.kotlin.analysis.api.dataflow.smartCastInfo",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)

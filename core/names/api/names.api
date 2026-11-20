@@ -147,6 +147,14 @@ public final class org/jetbrains/kotlin/name/NameRenderingUtils {
 	public static synthetic fun render$default (Lorg/jetbrains/kotlin/name/Name;ZILjava/lang/Object;)Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/name/ScriptNames {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/name/ScriptNames;
+	public static final fun getScriptNameForFile (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/Name;
+	public static final fun getScriptTargetClassName (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/Name;
+	public static final fun getSnippetTargetClassName (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/Name;
+	public static final fun getSnippetTargetClassName (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/Name;
+}
+
 public final class org/jetbrains/kotlin/name/SpecialNames {
 	public static final field ANONYMOUS Lorg/jetbrains/kotlin/name/Name;
 	public static final field ANONYMOUS_FQ_NAME Lorg/jetbrains/kotlin/name/FqName;
@@ -230,6 +238,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds {
 	public final fun getCharIterator ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getCharRange ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getCharSequence ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getClassCastException ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getCloneable ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getCollection ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getComparable ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -332,6 +341,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getJsNoDispatchReceiver ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsNoRuntime ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJvmBuiltin ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJvmInline ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJvmName ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJvmStatic ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getKotlinActual ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -358,6 +368,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getUsedFromCompilerGeneratedCode ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getVolatile ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getWasExperimental ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getWillBecomeValue ()Lorg/jetbrains/kotlin/name/ClassId;
 }
 
 public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations$ParameterNames {
@@ -365,11 +376,14 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations$Parame
 	public final fun getActualizations ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedLevel ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedMessage ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getDeprecatedReplaceWith ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedSinceKotlinErrorSince ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedSinceKotlinHiddenSince ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getDeprecatedSinceKotlinWarningSince ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getEqualityBound ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getParameterNameName ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getReplaceWithExpression ()Lorg/jetbrains/kotlin/name/Name;
+	public final fun getReplaceWithImports ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getRetentionValue ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getSinceKotlinVersion ()Lorg/jetbrains/kotlin/name/Name;
 	public final fun getSuppressNames ()Lorg/jetbrains/kotlin/name/Name;

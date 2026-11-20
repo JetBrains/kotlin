@@ -4,6 +4,11 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -17,6 +22,9 @@ import kotlin.test.assertEquals
 
 @DisplayName("Kapt incremental compilation")
 @OtherGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCompilerPlugins
+@MustRunOnChangesInBuildToolsApi
 open class KaptIncrementalIT : KGPBaseTest() {
     companion object {
         private val EXAMPLE_ANNOTATION_REGEX = "@(field:)?example.ExampleAnnotation".toRegex()
@@ -45,6 +53,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         test = test
     )
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("After adding new line compilation is incremental")
     @GradleTest
     fun testAddNewLine(gradleVersion: GradleVersion) {
@@ -61,6 +70,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("On rebuild without changes tasks should be UP-TO-DATE")
     @GradleTest
     fun testBasic(gradleVersion: GradleVersion) {
@@ -86,6 +96,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Successfully rebuild after compilation error")
     @GradleTest
     fun testCompileError(gradleVersion: GradleVersion) {
@@ -106,6 +117,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Successfully rebuild after KAPT stubs generation error")
     @GradleTest
     open fun testKaptError(gradleVersion: GradleVersion) {
@@ -126,6 +138,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Change in the function body without changing the signature")
     @GradleTest
     fun testChangeFunctionBodyWithoutChangingSignature(gradleVersion: GradleVersion) {
@@ -150,6 +163,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Change in a function signature is handled incrementally")
     @GradleTest
     fun testChangeFunctionSignature(gradleVersion: GradleVersion) {
@@ -174,6 +188,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @Disabled("KT-70176")
     @DisplayName("Rename refactoring of an annotated element is handled incrementally")
     @GradleTest
@@ -195,6 +210,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Adding new annotated element")
     @GradleTest
     fun testAddAnnotatedElement(gradleVersion: GradleVersion) {
@@ -220,6 +236,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Adding new annotation triggers kapt run")
     @GradleTest
     fun testAddAnnotation(gradleVersion: GradleVersion) {
@@ -239,6 +256,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Kapt run is incremental after source file was removed")
     @GradleTest
     fun testRemoveSourceFile(gradleVersion: GradleVersion) {
@@ -284,6 +302,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Incremental kapt run is correct after removing all Kotlin sources")
     @GradleTest
     open fun testRemoveAllKotlinSources(gradleVersion: GradleVersion) {
@@ -312,7 +331,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
                         .toFile()
                         .walk()
                         .filter { it.extension == "java" }
-                        .map { it.absolutePath }
+                        .map { it.normalizedAbsolutePath().toString() }
                         .toList()
                 )
                 // Make sure all compiled kt files are cleaned up.
@@ -329,6 +348,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("On all annotations remove kapt and compile runs incrementally")
     @GradleTest
     @Disabled("KT-70176")
@@ -365,6 +385,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Changing annotated property type is handled correctly")
     @GradleTest
     fun testChangeAnnotatedPropertyType(gradleVersion: GradleVersion) {
@@ -383,6 +404,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Changes in inline delegate are handled incrementally")
     @GradleTest
     fun testChangeInlineDelegate(gradleVersion: GradleVersion) {
@@ -405,6 +427,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Changes in test sources are processed incrementally")
     @GradleTest
     fun testChangeTestSources(gradleVersion: GradleVersion) {
@@ -421,6 +444,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @DisplayName("Changes to main sources with annotated elements are handled in tests incrementally")
     @GradleTest
     fun testSourceChangesAreReflectedInTests(gradleVersion: GradleVersion) {

@@ -107,7 +107,7 @@ class Fir2IrLazyClass(
         set(_) = mutationNotSupported()
 
     override var isValue: Boolean
-        get() = fir.isInlineOrValue
+        get() = fir.isValue
         set(_) = mutationNotSupported()
 
     override var isExpect: Boolean

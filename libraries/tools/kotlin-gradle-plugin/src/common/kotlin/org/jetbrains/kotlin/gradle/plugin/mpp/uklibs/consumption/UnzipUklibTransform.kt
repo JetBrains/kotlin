@@ -12,13 +12,11 @@ import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
+import org.gradle.work.NormalizeLineEndings
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "...")
@@ -28,6 +26,7 @@ internal abstract class UnzipUklibTransform @Inject constructor(
 ) : TransformAction<TransformParameters.None> {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputArtifact
+    @get:NormalizeLineEndings
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {

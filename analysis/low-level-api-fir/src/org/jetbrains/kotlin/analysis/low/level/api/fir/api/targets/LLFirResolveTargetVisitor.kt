@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirScript
 
 /**
@@ -32,11 +31,6 @@ internal interface LLFirResolveTargetVisitor {
      * Access to elements inside [FirScript] will be performed inside [action].
      */
     fun withScript(firScript: FirScript, action: () -> Unit): Unit = action()
-
-    /**
-     * Access to elements inside [FirReplSnippet] will be performed inside [action].
-     */
-    fun withReplSnippet(firReplSnippet: FirReplSnippet, action: () -> Unit): Unit = action()
 
     /**
      * This method will be performed on some target element depends on [LLFirResolveTarget] implementation.

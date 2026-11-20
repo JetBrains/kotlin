@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import java.util.zip.ZipFile
 import kotlin.test.assertNotNull
 
 // Used AGP 9.0 as the minimal stable version supported for the android library
 @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_90)
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
 class AndroidLibraryWithJavaIT : KGPBaseTest() {
 
     // Uses `com.android.kotlin.multiplatform.library`, requires AGP new DSL.

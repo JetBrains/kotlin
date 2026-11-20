@@ -270,6 +270,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     }
 
     @get:Classpath
+    @get:NormalizeLineEndings
     @get:Incremental
     internal val packedLibraries by lazy {
         libraries.filter { !it.isDirectory }

@@ -584,6 +584,10 @@ object PositioningStrategies {
         ModifierSetBasedPositioningStrategy(KtTokens.INLINE_KEYWORD, KtTokens.VALUE_KEYWORD)
 
     @JvmField
+    val VALUE_MODIFIER: PositioningStrategy<KtModifierListOwner> =
+        ModifierSetBasedPositioningStrategy(KtTokens.VALUE_KEYWORD)
+
+    @JvmField
     val INNER_MODIFIER: PositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.INNER_KEYWORD)
 
@@ -1333,6 +1337,18 @@ object PositioningStrategies {
             return super.mark(parenthesized)
         }
     }
+
+    /**
+     * Marks the brackets of a destructuring declaration together with its entries, e.g., `(a, b)` in `val (a, b) = pair`.
+     */
+    val DESTRUCTURING_DECLARATION_ENTRIES: PositioningStrategy<KtDestructuringDeclaration> =
+        object : PositioningStrategy<KtDestructuringDeclaration>() {
+            override fun mark(element: KtDestructuringDeclaration): List<TextRange> {
+                val opening = element.lPar ?: return super.mark(element)
+                val closing = element.rPar ?: element.entries.lastOrNull() ?: opening
+                return markRange(opening, closing)
+            }
+        }
 
     val DEPRECATION: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {

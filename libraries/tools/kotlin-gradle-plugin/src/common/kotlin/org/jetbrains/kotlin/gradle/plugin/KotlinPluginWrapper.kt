@@ -24,7 +24,10 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.operations.BuildOperationListenerManager
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
+import org.jetbrains.kotlin.compilerRunner.btapi.checkKotlinCompilerVersionResolves
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_COMPAT
@@ -54,6 +57,8 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArt
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.registerWasiAdapterToolchainServiceIfAbsent
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.registerWasmToolsToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.publishing.addPgpSignatureHelpers
@@ -81,9 +86,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     private val logger = Logging.getLogger(DefaultKotlinBasePlugin::class.java)
     override val pluginVersion: String = getKotlinPluginVersion(logger)
 
+    @OptIn(ExperimentalNodeJsToolchainDsl::class, ExperimentalWasmDsl::class)
     override fun apply(project: Project) {
         project.checkCompilerEmbeddableInClasspath()
         project.registerDefaultVariantImplementations()
+        VariantImplementationFactories.bindServiceToTasks(project)
 
         project.runGradleCompatibilityCheck()
         project.runAgpCompatibilityCheckIfAgpIsApplied()
@@ -117,6 +124,10 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         KotlinNativeBundleBuildService.registerIfAbsent(project)
 
         registerNodeJsToolchainServiceIfAbsent(project)
+
+        registerWasiAdapterToolchainServiceIfAbsent(project)
+
+        registerWasmToolsToolchainServiceIfAbsent(project)
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {
@@ -189,6 +200,12 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
                         project.configurations.named(classpathConfiguration)
                     }
                 )
+                val compilerVersionCheck = project.provider {
+                    if (task.runViaBuildToolsApi.get()) project.checkKotlinCompilerVersionResolves(pluginVersion)
+                    // Empty files for dependsOn in both branches of if else with empty file list.
+                    project.files()
+                }
+                task.dependsOn(compilerVersionCheck)
             }
     }
 
@@ -257,9 +274,7 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         if (projectExtensionClass == KotlinAndroidProjectExtension::class) project.runAgpWithBuiltInKotlinIfAppliedCheck()
         if (projectExtensionClass == KotlinMultiplatformExtension::class) project.runKmpAgpWithBuiltInKotlinIfAppliedCheck()
 
-        project.createKotlinExtension(projectExtensionClass).apply {
-            coreLibrariesVersion = pluginVersion
-        }
+        project.createKotlinExtension(projectExtensionClass)
 
         project.extensions.add(KotlinTestsRegistry.PROJECT_EXTENSION_NAME, createTestRegistry(project))
 

@@ -9,11 +9,9 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -23,20 +21,20 @@ internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
     private val ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val isStatic: Boolean = false,
     originalSymbol: S?,
-) : KaBaseCachedSymbolPointer<S>(originalSymbol) {
+) : KaFirCachedSymbolPointer<S>(originalSymbol) {
     @KaImplementationDetail
     final override fun restoreIfNotCached(analysisSession: KaSession): S? {
         require(analysisSession is KaFirSession)
-        val scope = with(analysisSession) {
+        return with(analysisSession) {
             val ownerSymbol = ownerPointer.restoreSymbol() ?: return null
             val owner = ownerSymbol.firSymbol as? FirClassSymbol ?: return null
-            getSearchScope(analysisSession, owner)
-        } ?: return null
-
-        return analysisSession.chooseCandidateAndCreateSymbol(scope, analysisSession.firSession)
+            val scope = getSearchScope(analysisSession, owner) ?: return null
+            chooseCandidateAndCreateSymbol(scope, owner)
+        }
     }
 
-    protected abstract fun KaFirSession.chooseCandidateAndCreateSymbol(candidates: FirScope, firSession: FirSession): S?
+    context(analysisSession: KaFirSession)
+    protected abstract fun chooseCandidateAndCreateSymbol(candidates: FirScope, owner: FirClassSymbol<*>): S?
 
     protected open fun getSearchScope(analysisSession: KaFirSession, owner: FirClassSymbol<*>): FirScope? {
         val firSession = analysisSession.firSession

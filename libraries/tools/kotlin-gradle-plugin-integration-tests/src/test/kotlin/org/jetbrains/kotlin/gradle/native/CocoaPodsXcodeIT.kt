@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.testbase.*
 
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -24,6 +25,7 @@ import kotlin.test.assertTrue
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("K/N tests cocoapods with xcodebuild")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 @OptIn(EnvironmentalVariablesOverride::class)
 class CocoaPodsXcodeIT : KGPBaseTest() {
 
@@ -38,6 +40,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         ensureCocoapodsInstalled()
     }
 
+    @TestMetadata("native-cocoapods-single")
     @DisplayName("Checks xcodebuild for ios-app with a single framework")
     @GradleTest
     fun testXcodeUseFrameworksSingle(gradleVersion: GradleVersion) = doTestXcode(
@@ -48,6 +51,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         mapOf("kotlin-library" to null)
     )
 
+    @TestMetadata("native-cocoapods-single")
     @DisplayName("Checks xcodebuild for ios-app with a single framework with manual pod install")
     @GradleTest
     fun testXcodeUseFrameworksSingleWithManualPodInstall(gradleVersion: GradleVersion) {
@@ -61,6 +65,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-cocoapods-single")
     @DisplayName("Checks xcodebuild for ios-app with a single framework with custom name")
     @GradleTest
     fun testXcodeUseFrameworksWithCustomFrameworkNameSingle(gradleVersion: GradleVersion) = doTestXcode(
@@ -71,6 +76,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         mapOf("kotlin-library" to "MultiplatformLibrary")
     )
 
+    @TestMetadata("native-cocoapods-single")
     @DisplayName("Checks xcodebuild for ios-app using modular headers with a single framework")
     @GradleTest
     fun testXcodeUseModularHeadersSingle(gradleVersion: GradleVersion) = doTestXcode(
@@ -81,6 +87,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         mapOf("kotlin-library" to null)
     )
 
+    @TestMetadata("native-cocoapods-single")
     @DisplayName("Checks xcodebuild for ios-app using modular headers with a single framework with custom name")
     @GradleTest
     fun testXcodeUseModularHeadersWithCustomFrameworkNameSingle(gradleVersion: GradleVersion) = doTestXcode(
@@ -91,6 +98,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         mapOf("kotlin-library" to "MultiplatformLibrary")
     )
 
+    @TestMetadata("native-cocoapods-single")
     @DisplayName("Checks xcodebuild for ios-app with manual pod install and static framework")
     @GradleTest
     fun testXcodeWithManualPodInstallForStaticFramework(gradleVersion: GradleVersion) {
@@ -106,6 +114,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-cocoapods-template")
     @DisplayName("Checks xcodebuild for ios-app with kotlin library from root project")
     @GradleTest
     fun testXcodeBuildsWithKotlinLibraryFromRootProject(gradleVersion: GradleVersion) {
@@ -132,6 +141,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("native-cocoapods-multiple")
     @DisplayName("Checks xcodebuild for two libraries with framework")
     @GradleTest
     fun testXcodeUseFrameworksMultiple(gradleVersion: GradleVersion) = doTestXcode(
@@ -142,6 +152,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         mapOf("kotlin-library" to null, "second-library" to null)
     )
 
+    @TestMetadata("native-cocoapods-multiple")
     @DisplayName("Checks xcodebuild for two libraries with framework and custom names")
     @GradleTest
     fun testXcodeUseFrameworksWithCustomFrameworkNameMultiple(gradleVersion: GradleVersion) = doTestXcode(
@@ -152,6 +163,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         mapOf("kotlin-library" to "FirstMultiplatformLibrary", "second-library" to "SecondMultiplatformLibrary")
     )
 
+    @TestMetadata("native-cocoapods-multiple")
     @DisplayName("Checks xcodebuild for two libraries with modular headers")
     @GradleTest
     fun testXcodeUseModularHeadersMultiple(gradleVersion: GradleVersion) = doTestXcode(
@@ -162,6 +174,7 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
         mapOf("kotlin-library" to null, "second-library" to null)
     )
 
+    @TestMetadata("native-cocoapods-multiple")
     @DisplayName("Checks xcodebuild for two libraries with modular headers and custom names")
     @GradleTest
     fun testXcodeUseModularHeadersWithCustomFrameworkNameMultiple(gradleVersion: GradleVersion) = doTestXcode(

@@ -1382,11 +1382,6 @@ internal class DslMarkerAppliedToWrongTargetImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.DslMarkerAppliedToWrongTarget
 
-internal class JsModuleProhibitedOnNonNativeImpl(
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedOnNonNative
-
 internal class JsModuleProhibitedOnVarInModuleFileErrorImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
@@ -1418,12 +1413,6 @@ internal class RuntimeAnnotationOnExternalDeclarationImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RuntimeAnnotationOnExternalDeclaration
-
-internal class NativeAnnotationsAllowedOnlyOnMemberOrExtensionFunImpl(
-    override val type: KaType,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun
 
 internal class NativeIndexerKeyShouldBeStringOrNumberImpl(
     override val kind: String,
@@ -1526,14 +1515,59 @@ internal class WrongJsQualifierImpl(
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongJsQualifier
 
 internal class JsModuleProhibitedOnVarImpl(
+    override val annotation: KaType,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedOnVar
 
+internal class JsModuleProhibitedOnNonExternalImpl(
+    override val annotation: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedOnNonExternal
+
 internal class NestedJsModuleProhibitedImpl(
+    override val annotation: KaType,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NestedJsModuleProhibited
+
+internal class JsModuleProhibitedOnMemberImpl(
+    override val annotation: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedOnMember
+
+internal class JsModuleProhibitedOnExternalInterfaceImpl(
+    override val annotation: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedOnExternalInterface
+
+internal class JsModuleProhibitedInFileWithJsQualifierImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsModuleProhibitedInFileWithJsQualifier
+
+internal class JsQualifierProhibitedOnNonExternalErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsQualifierProhibitedOnNonExternalError
+
+internal class JsQualifierProhibitedOnNonExternalWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsQualifierProhibitedOnNonExternalWarning
+
+internal class JsQualifierProhibitedOnNonTopLevelErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsQualifierProhibitedOnNonTopLevelError
+
+internal class JsQualifierProhibitedOnNonTopLevelWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsQualifierProhibitedOnNonTopLevelWarning
 
 internal class InapplicableEagerInitializationErrorImpl(
     firDiagnostic: KtDiagnosticWithSource,
@@ -1544,6 +1578,12 @@ internal class InapplicableEagerInitializationWarningImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InapplicableEagerInitializationWarning
+
+internal class NativeAnnotationsAllowedOnlyOnMemberFunImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NativeAnnotationsAllowedOnlyOnMemberFun
 
 internal class UnresolvedEqualityBoundArgumentImpl(
     firDiagnostic: KtDiagnosticWithSource,
@@ -2143,6 +2183,135 @@ internal class ValueClassCannotBeCloneableImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassCannotBeCloneable
 
+internal class WillBecomeValueNotApplicableImpl(
+    override val target: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueNotApplicable
+
+internal class IdentityBasedMemberInWillBecomeValueClassImpl(
+    override val memberName: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.IdentityBasedMemberInWillBecomeValueClass
+
+internal class IdentitySensitiveOperationsWithValueTypeImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationsWithValueType
+
+internal class IdentitySensitiveOperationOnWillBecomeValueClassImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationOnWillBecomeValueClass
+
+internal class WillBecomeValueClassNotTopLevelImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassNotTopLevel
+
+internal class AbsenceOfPrimaryConstructorForWillBecomeValueClassImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.AbsenceOfPrimaryConstructorForWillBecomeValueClass
+
+internal class ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondary
+
+internal class WillBecomeValueClassEmptyConstructorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassEmptyConstructor
+
+internal class WillBecomeValueClassConstructorNotFinalReadOnlyParameterImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassConstructorNotFinalReadOnlyParameter
+
+internal class AbstractWillBecomeValueClassConstructorPropertyParameterImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.AbstractWillBecomeValueClassConstructorPropertyParameter
+
+internal class SealedWillBecomeValueClassConstructorPropertyParameterImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.SealedWillBecomeValueClassConstructorPropertyParameter
+
+internal class PropertyWithBackingFieldInsideWillBecomeValueClassImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtProperty>(firDiagnostic, token), KaFirDiagnostic.PropertyWithBackingFieldInsideWillBecomeValueClass
+
+internal class DelegatedPropertyInsideWillBecomeValueClassImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DelegatedPropertyInsideWillBecomeValueClass
+
+internal class WillBecomeValueClassCannotImplementInterfaceByDelegationImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotImplementInterfaceByDelegation
+
+internal class WillBecomeValueClassCannotExtendIdentityClassesImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotExtendIdentityClasses
+
+internal class WillBecomeValueClassCannotBeRecursiveImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotBeRecursive
+
+internal class WillBecomeValueClassCannotBeRecursiveViaTypeParametersImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotBeRecursiveViaTypeParameters
+
+internal class WillBecomeValueClassCannotBeCloneableImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassCannotBeCloneable
+
+internal class ValueClassWithoutJvmInlineAnnotationImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassWithoutJvmInlineAnnotation
+
+internal class InlineValueClassWithoutExplicitInlineErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.InlineValueClassWithoutExplicitInlineError
+
+internal class InlineValueClassWithoutExplicitInlineWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.InlineValueClassWithoutExplicitInlineWarning
+
+internal class JvmInlineWithoutValueClassImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineWithoutValueClass
+
+internal class JvmInlineWithoutValueClassWarningImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineWithoutValueClassWarning
+
+internal class RedundantJvmInlineImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RedundantJvmInline
+
+internal class JvmInlineOnValueObjectImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineOnValueObject
+
 internal class NoneApplicableImpl(
     override val candidates: List<Pair<KaSymbol, List<String>>>,
     firDiagnostic: KtDiagnosticWithSource,
@@ -2498,12 +2667,6 @@ internal class ContextParametersWithBackingFieldImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ContextParametersWithBackingField
-
-internal class CallableReferenceToContextualDeclarationImpl(
-    override val symbol: KaCallableSymbol,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.CallableReferenceToContextualDeclaration
 
 internal class NamedContextParameterInFunctionTypeImpl(
     firDiagnostic: KtDiagnosticWithSource,
@@ -4159,6 +4322,11 @@ internal class NameBasedDestructuringUnderscoreWithoutRenamingImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NameBasedDestructuringUnderscoreWithoutRenaming
 
+internal class NonLocalDestructuringDeclarationImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDestructuringDeclaration>(firDiagnostic, token), KaFirDiagnostic.NonLocalDestructuringDeclaration
+
 internal class ExpectedDeclarationWithBodyImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
@@ -5570,9 +5738,16 @@ internal class InefficientEqualsOverridingInValueClassImpl(
 ) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.InefficientEqualsOverridingInValueClass
 
 internal class InlineClassDeprecatedImpl(
+    override val replacement: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InlineClassDeprecated
+
+internal class InlineClassDeprecatedErrorImpl(
+    override val replacement: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InlineClassDeprecatedError
 
 internal class LessVisibleTypeAccessInInlineErrorImpl(
     override val typeVisibility: EffectiveVisibility,
@@ -5897,7 +6072,7 @@ internal class PrivateConstInInterfaceImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PrivateConstInInterface
 
 internal class IllegalCompanionBlockImpl(
-    override val parent: KaSymbol,
+    override val kind: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.IllegalCompanionBlock
@@ -5920,13 +6095,13 @@ internal class CompanionExtensionReceiverWithTypeArgumentsImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionReceiverWithTypeArguments
 
 internal class CompanionExtensionReceiverIsObjectImpl(
-    override val type: KaType,
+    override val type: KaClassLikeSymbol,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionReceiverIsObject
 
 internal class CompanionExtensionReceiverIsTypeParameterImpl(
-    override val type: KaType,
+    override val type: KaTypeParameterSymbol,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionReceiverIsTypeParameter
@@ -5940,6 +6115,13 @@ internal class CompanionExtensionNullableReceiverImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionNullableReceiver
+
+internal class UnresolvedReferenceWrongCompanionReceiverImpl(
+    override val candidate: KaSymbol,
+    override val actualClass: ClassId,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnresolvedReferenceWrongCompanionReceiver
 
 internal class NonErrorClassExtendsRichErrorImpl(
     firDiagnostic: KtDiagnosticWithSource,
@@ -5996,6 +6178,21 @@ internal class ActualTypealiasToNonErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ActualTypealiasToNonError
 
+internal class NonFinalRichErrorClassImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonFinalRichErrorClass
+
+internal class ActualTypealiasWithExpectRichErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ActualTypealiasWithExpectRichError
+
+internal class TypealiasToUnionTypeAsQualifierImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypealiasToUnionTypeAsQualifier
+
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
@@ -6040,16 +6237,6 @@ internal class FunctionDelegateMemberNameClashImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.FunctionDelegateMemberNameClash
-
-internal class ValueClassWithoutJvmInlineAnnotationImpl(
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ValueClassWithoutJvmInlineAnnotation
-
-internal class JvmInlineWithoutValueClassImpl(
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineWithoutValueClass
 
 internal class InapplicableJvmExposeBoxedWithNameImpl(
     firDiagnostic: KtDiagnosticWithSource,
@@ -6166,6 +6353,13 @@ internal class ConflictVersionAndJvmOverloadsAnnotationImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConflictVersionAndJvmOverloadsAnnotation
+
+internal class ValueClassExtendsValueClassCompiledAsIdentityClassImpl(
+    override val valueClass: KaClassLikeSymbol,
+    override val superType: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ValueClassExtendsValueClassCompiledAsIdentityClass
 
 internal class JavaTypeMismatchImpl(
     override val expectedType: KaType,
@@ -6302,6 +6496,11 @@ internal class SynchronizedOnValueClassWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.SynchronizedOnValueClassWarning
 
+internal class SynchronizedOnWillBecomeValueClassImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.SynchronizedOnWillBecomeValueClass
+
 internal class SynchronizedOnSuspendErrorImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
@@ -6406,6 +6605,12 @@ internal class AnnotationTargetsOnlyInJavaImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationTargetsOnlyInJava
+
+internal class AnnotationTargetsNonExistentAccessorImpl(
+    override val declarationName: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationTargetsNonExistentAccessor
 
 internal class RuntimeAnnotationOnLambdaIsNotRetainedImpl(
     override val annotationClass: KaClassLikeSymbol,
@@ -6597,12 +6802,6 @@ internal class InapplicableJvmFieldWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.InapplicableJvmFieldWarning
 
-internal class IdentitySensitiveOperationsWithValueTypeImpl(
-    override val type: KaType,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationsWithValueType
-
 internal class SynchronizedBlockOnJavaValueBasedClassImpl(
     override val type: KaType,
     firDiagnostic: KtDiagnosticWithSource,
@@ -6740,12 +6939,6 @@ internal class JsExternalArgumentImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.JsExternalArgument
 
-internal class WrongExportedDeclarationImpl(
-    override val kind: String,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongExportedDeclaration
-
 internal class NonExportableTypeImpl(
     override val kind: String,
     override val type: KaType,
@@ -6776,11 +6969,6 @@ internal class NamedCompanionInExportedInterfaceImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NamedCompanionInExportedInterface
 
-internal class NotExportedOrExternalActualDeclarationWhileExpectIsExportedImpl(
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NotExportedOrExternalActualDeclarationWhileExpectIsExported
-
 internal class ExposedNotExportedSuperInterfaceErrorImpl(
     override val restrictingDeclaration: KaClassLikeSymbol,
     firDiagnostic: KtDiagnosticWithSource,
@@ -6807,6 +6995,18 @@ internal class WrongJsExportTargetVisibilityImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongJsExportTargetVisibility
+
+internal class WrongExportedDeclarationImpl(
+    override val kind: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongExportedDeclaration
+
+internal class NotExportedOrExternalActualDeclarationWhileExpectIsExportedImpl(
+    override val fixSuggestion: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NotExportedOrExternalActualDeclarationWhileExpectIsExported
 
 internal class DelegationByDynamicImpl(
     firDiagnostic: KtDiagnosticWithSource,

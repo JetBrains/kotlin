@@ -1,6 +1,9 @@
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
+// KLIB-based Kotlin/Native tests which don't require platform libraries, so running them doesn't depend on building platform libraries.
+// Tests which require them belong to `:native:native.tests:klib-ir-inliner:withPlatformLibs`.
+
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -24,7 +27,6 @@ dependencies {
     testFixturesApi(project(":compiler:ir.serialization.native"))
     testFixturesApi(project(":compiler:test-infrastructure"))
     testFixturesApi(project(":kotlin-util-klib-abi"))
-    testFixturesImplementation(project(":compiler:ir.psi2ir"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesApi(testFixtures(project(":native:kotlin-native-utils")))
     testFixturesApi(testFixtures(project(":native:native.tests")))
@@ -60,19 +62,21 @@ projectTests {
 
     withStdlibCommon()
 
-    nativeTestTask(
-        "test",
+    fun commonBackendTestTask(taskName: String, tag: String? = null) = nativeTestTask(
+        taskName,
+        tag = tag,
         allowParallelExecution = true,
-        requirePlatformLibs = true,
+        requirePlatformLibs = false,
         enableGroupingTestEngine = true,
         maxHeapSize = testMaxHeapSizeLarge
     ) {
-        val testTargetName = providers.gradleProperty("kotlin.internal.native.test.target")
-            .orElse(providers.gradleProperty("kn.target"))
-            .getOrElse(HostManager.hostName)
+        groupingEngineSettings(batchSize = 20, simultaneousBatches = 4)
 
-        val testTarget = KonanTarget.predefinedTargets[testTargetName] ?: error("Test target $testTargetName is not defined")
-        if (!testTarget.family.isAppleFamily) {
+        val testTarget = providers.gradleProperty("kotlin.internal.native.test.target")
+            .orElse(providers.gradleProperty("kn.target"))
+            .map { KonanTarget.predefinedTargets[it] ?: error("Test target $it is not defined") }
+            .orNull ?: HostManager.hostOrNull
+        if (testTarget?.family?.isAppleFamily != true) {
             // KT-85080: make sure Llvm-dev native dependency is downloaded, so Clang tool is available
             // Clang is used via `compileWithClangToStaticLibrary()` in ObjCInteropFacade for CInterop tests with source files of types: c, cpp m, mm
             // Note: For Apple targets, clang is invoked from XCode toolchain instead, see `Settings.defaultClangDistribution()` in Clang.kt
@@ -88,6 +92,11 @@ projectTests {
 
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
     }
+
+    commonBackendTestTask("test")
+    // Windows-specific subset of `test` for pre-merge checks: only explicitly host-dependent tests.
+    // All tests, including the rest of `test`, are run on Windows nightly, which reveals tests that should be tagged `host-dependent`.
+    commonBackendTestTask("commonBackendTestOnWindows", tag = "host-dependent")
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt", generateTestsInBuildDirectory = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))

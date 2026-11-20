@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.test.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
@@ -415,6 +417,7 @@ class ScriptTemplateTest {
             if (isK2) {
                 configuration.put(CommonConfigurationKeys.USE_FIR, true)
             }
+            configuration.parserMode = ParserMode.Psi // `ScriptJvmCompilerFromEnvironment` builds FIR from PSI files, KT-91411
 
             loadScriptingPlugin(configuration, rootDisposable)
 

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.condition.OS
@@ -25,7 +26,9 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 
 @DisplayName("Configuration cache")
+@MustRunOnChangesInGradle
 class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
+    @TestMetadata("kotlinProject")
     @DisplayName("works in simple Kotlin project")
     @GradleTest
     @JvmGradlePluginTests
@@ -35,6 +38,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("kotlinProject")
     @JvmGradlePluginTests
     @DisplayName("works with publishing")
     @GradleTest
@@ -70,6 +74,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("new-mpp-lib-and-app/sample-lib")
     @MppGradlePluginTests
     @DisplayName("works with MPP publishing")
     @GradleTest
@@ -161,6 +166,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @DisplayName("KT-66452: There are no false-positive Configuration Cache failures with native tasks")
     @NativeGradlePluginTests
     @GradleTest
@@ -193,6 +199,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("cinterop-with-header")
     @DisplayName("KT-66452: There are no false-positive Configuration Cache failures with cinterop")
     @NativeGradlePluginTests
     @GradleTest
@@ -219,6 +226,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("composite-build-with-precompiled-script-plugins")
     @MppGradlePluginTests
     @GradleTest
     fun `test composite build with precompiled script plugins and multiplatform`(gradleVersion: GradleVersion) {
@@ -243,6 +251,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("kaptIncrementalCompilationProject")
     @OtherGradlePluginTests
     @DisplayName("with project using incremental kapt")
     @GradleTest
@@ -265,16 +274,12 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("instantExecution")
     @JvmGradlePluginTests
     @DisplayName("with instance execution")
     @GradleTest
     fun testInstantExecution(gradleVersion: GradleVersion) {
-        project(
-            "instantExecution",
-            gradleVersion,
-            // we can remove this line, when the min version of Gradle be at least 8.1
-            dependencyManagement = DependencyManagement.DisabledDependencyManagement
-        ) {
+        project("instantExecution", gradleVersion) {
             testConfigurationCacheOf(
                 "assemble",
                 executedTaskNames = listOf(":lib-project:compileKotlin")
@@ -282,6 +287,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("instantExecutionWithBuildSrc")
     @JvmGradlePluginTests
     @DisplayName("KT-43605: instant execution with buildSrc")
     @GradleTest
@@ -294,6 +300,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("instantExecutionWithIncludedBuildPlugin")
     @JvmGradlePluginTests
     @DisplayName("instant execution works with included build plugin")
     @GradleTest
@@ -306,6 +313,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("mppJvmWithJava")
     @MppGradlePluginTests
     @DisplayName("works in MPP with Java project")
     @GradleTest
@@ -318,6 +326,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("with build report")
     @GradleTest
@@ -337,6 +346,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("with build scan report")
     @GradleTest
@@ -353,6 +363,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         }
     }
 
+    @TestMetadata("native-simple-project")
     @DisplayName("with native dependencies downloader")
     @NativeGradlePluginTests
     @GradleTest

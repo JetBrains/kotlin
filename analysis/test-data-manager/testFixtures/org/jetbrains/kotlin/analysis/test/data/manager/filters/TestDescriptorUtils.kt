@@ -25,17 +25,17 @@ internal val AnnotatedElement.testMetadataPath: String?
  * Gets the full test data path for a test identifier.
  * Combines class and method @TestMetadata annotations.
  */
-internal val TestIdentifier.testDataPath: String?
+internal val TestIdentifier.testDataPath: TestMetadataPath?
     get() = source.orElse(null)?.testDataPath
 
-internal val TestSource.testDataPath: String?
+internal val TestSource.testDataPath: TestMetadataPath?
     get() = when (val source = this) {
-        is ClassSource -> source.javaClass.testMetadataPath
+        is ClassSource -> source.javaClass.testMetadataPath?.let(::TestMetadataPath)
         is MethodSource -> {
             val testMetadataPath = source.javaClass.testMetadataPath
             val testFileName = source.javaMethod.testMetadataPath
             if (testMetadataPath != null && testFileName != null) {
-                "$testMetadataPath/$testFileName"
+                TestMetadataPath("$testMetadataPath/$testFileName")
             } else {
                 null
             }

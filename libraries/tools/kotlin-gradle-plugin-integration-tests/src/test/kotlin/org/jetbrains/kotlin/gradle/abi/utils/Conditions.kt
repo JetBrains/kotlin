@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.abi.utils
 
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.junit.jupiter.api.extension.ConditionEvaluationResult
 import org.junit.jupiter.api.extension.ExecutionCondition
 import org.junit.jupiter.api.extension.ExtendWith
@@ -26,7 +27,7 @@ internal class CaseSensitiveFsCondition : ExecutionCondition {
         val f = Files.createTempFile("UPPER", "UPPER").toFile()
         f.deleteOnExit()
         return try {
-            val lower = File(f.absolutePath.lowercase())
+            val lower = File(f.normalizedAbsolutePath().toString().lowercase())
             val insensitive = lower.exists()
             if (insensitive) {
                 ConditionEvaluationResult.disabled(disabled)

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Linker
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import java.io.File
@@ -21,6 +22,7 @@ internal data class LinkerPhaseInput(
         val outputFiles: OutputFiles,
         val tempFiles: TempFiles,
         val resolvedCacheBinaries: ResolvedCacheBinaries,
+        val cacheInfo: PartialCacheInfo?,
         val extraLinkerFlags: List<String> = emptyList()
 )
 
@@ -32,6 +34,7 @@ internal val LinkerPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseCont
             linkerOutput = input.outputKind,
             outputFiles = input.outputFiles,
             tempFiles = input.tempFiles,
+            cacheInfo = input.cacheInfo,
     )
     val commands = linker.linkCommands(
             input.outputFile,

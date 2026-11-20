@@ -52,6 +52,7 @@ publishing {
 kotlin {
     if (!project.extra.has("repo.tests.skipVersionCatalog")) {
         val libs = project.extensions.getByType<VersionCatalogsExtension>().named("libs")
+        @Suppress("DEPRECATION")
         coreLibrariesVersion = libs.findVersion("kotlin.for.gradle.plugins.compilation").get().toString()
     }
 }

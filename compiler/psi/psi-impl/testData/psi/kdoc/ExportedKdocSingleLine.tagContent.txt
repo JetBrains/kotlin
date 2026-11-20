@@ -57,3 +57,8 @@ ORIGINAL KDOC:
  Top-level property documentation.
 CONTENT:
 Top-level property documentation.
+
+ORIGINAL KDOC:
+ Top-level property getter documentation.
+CONTENT:
+Top-level property getter documentation.

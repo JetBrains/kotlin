@@ -3,6 +3,7 @@ FILE[kind=File[packageFqName=test]]
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
   CLASS[classId=test/TypeParams, fqName=test.TypeParams, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=TypeParams, superNames=[]]
+    classFileMajorVersion: <current_major_version>
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T1]

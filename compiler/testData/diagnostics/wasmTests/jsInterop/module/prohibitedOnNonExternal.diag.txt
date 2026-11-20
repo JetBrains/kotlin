@@ -1,0 +1,7 @@
+/prohibitedOnNonExternal.kt:7:1: error: '@JsModule' annotation is prohibited for non-external declarations.
+
+/prohibitedOnNonExternal.kt:10:1: error: '@JsModule' annotation is prohibited for non-external declarations.
+
+/prohibitedOnNonExternal.kt:13:1: error: '@JsModule' annotation is prohibited for non-external declarations.
+
+/prohibitedOnNonExternal.kt:16:1: error: '@JsModule' annotation is prohibited for non-external declarations.

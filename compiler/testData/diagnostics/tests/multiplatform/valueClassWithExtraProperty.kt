@@ -1,16 +1,13 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // IGNORE_FIR_DIAGNOSTICS
-// LANGUAGE: +ContextParameters
+// LANGUAGE: -FullValueClasses +ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // LANGUAGE: -StrictEquals
 //  ^^^ KT-88389
 // WITH_STDLIB
-// LL_FIR_DIVERGENCE
-// Extra diagnostic in metadata compilation
-// LL_FIR_DIVERGENCE
 
 // MODULE: m1-common
 // FILE: common.kt
-expect value class Value(val x: Int) {
+expect <!INLINE_VALUE_CLASS_WITHOUT_EXPLICIT_INLINE_ERROR!>value<!> class Value(val x: Int) {
     context(x: String)
     <!CONTEXTUAL_OVERLOAD_SHADOWED!>val x: Int<!>
 }

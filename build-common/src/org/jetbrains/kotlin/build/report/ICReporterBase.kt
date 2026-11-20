@@ -22,6 +22,14 @@ abstract class ICReporterBase(private val pathsBase: File? = null) : ICReporter 
         }
     }
 
+    override fun reportCompilationStart(isIncremental: Boolean, reason: String?) {}
+    override fun reportProcessedChanges(
+        dirtySymbols: Iterable<Pair<String, String>>,
+        dirtyClasses: Iterable<String>,
+        dirtySealed: Iterable<String>
+    ) {
+    }
+
     protected fun relativizeIfPossible(files: Iterable<File>): List<File> =
         files.map { it.relativeOrAbsolute() }
 

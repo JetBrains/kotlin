@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -33,9 +34,16 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.wasm.WasmSpecialExportNames.CALL_FUNCTION_PREFIX
 
 val JS_EXPORT_ADAPTER by IrDeclarationOriginImpl.Regular
 val KOTLIN_TO_JS_CLOSURE_ORIGIN by IrDeclarationOriginImpl.Regular
+
+/**
+ * The call from a @JsExport adapter to the exported function, in which the arguments omitted in JS are `null`.
+ * [WasmDefaultParameterInjector] makes it through the `$default` stub, with the bits of such arguments set in the masks.
+ */
+val JS_EXPORT_ADAPTER_CALL by IrStatementOriginImpl
 
 /**
  * Create wrappers for external and @JsExport functions when type adaptation is needed
@@ -119,7 +127,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             }
         }
         val resultAdapter =
-            function.returnType.jsToKotlinAdapterIfNeeded(isReturn = true)
+            function.returnType.jsToKotlinAdapterIfNeeded(JsValueKind.RETURN)
 
         if (resultAdapter == null && valueParametersAdapters.all { it == null })
             return null
@@ -172,10 +180,13 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
      *      adaptResult(foo(adaptParameter(x)));
      *
      *  fun foo(x: KotlinType): KotlinType { <original-body> }
+     *
+     *  JS can omit the arguments for parameters with default values or pass `undefined`, which is adapted to `null`.
+     *  The call is then made through the `$default` stub by [WasmDefaultParameterInjector], see [JS_EXPORT_ADAPTER_CALL].
      */
     fun transformExportFunction(function: IrSimpleFunction): List<IrDeclaration>? {
         val valueParametersAdapters = function.parameters.map {
-            it.type.jsToKotlinAdapterIfNeeded(isReturn = false)
+            it.type.jsToKotlinAdapterIfNeeded(if (it.defaultValue != null) JsValueKind.OPTIONAL_PARAMETER else JsValueKind.PARAMETER)
         }
         val resultAdapter =
             function.returnType.kotlinToJsAdapterIfNeeded(isReturn = true)
@@ -203,7 +214,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
         // Delegate new function to old function:
         val builder: DeclarationIrBuilder = context.createIrBuilder(newFun.symbol)
-        newFun.body = createAdapterFunctionBody(builder, newFun, function, valueParametersAdapters, resultAdapter)
+        newFun.body = createAdapterFunctionBody(builder, newFun, function, valueParametersAdapters, resultAdapter, JS_EXPORT_ADAPTER_CALL)
 
         newFun.annotations += builder.irAnnotation(jsRelatedSymbols.jsNameConstructor, typeArguments = emptyList()).also {
             it.arguments[0] = builder.irString(function.getJsNameOrKotlinName().identifier)
@@ -220,10 +231,11 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         function: IrSimpleFunction,
         functionToCall: IrSimpleFunction,
         valueParametersAdapters: List<InteropTypeAdapter?>,
-        resultAdapter: InteropTypeAdapter?
+        resultAdapter: InteropTypeAdapter?,
+        callOrigin: IrStatementOrigin? = null,
     ) = builder.irBlockBody {
         +irReturn(
-            irCall(functionToCall).let { call ->
+            irCall(functionToCall, callOrigin).let { call ->
                 for ([index, valueParameter] in function.parameters.withIndex()) {
                     val get = irGet(valueParameter)
                     call.arguments[index] = valueParametersAdapters[index].adaptIfNeeded(get, builder)
@@ -426,9 +438,24 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         )
     }
 
-    private fun IrType.jsToKotlinAdapterIfNeeded(isReturn: Boolean): InteropTypeAdapter? {
+    private enum class JsValueKind {
+        RETURN,
+        PARAMETER,
+
+        /** A parameter with a default value, which can be omitted in JS, so that it's `undefined`. */
+        OPTIONAL_PARAMETER,
+    }
+
+    private fun IrType.jsToKotlinAdapterIfNeeded(kind: JsValueKind): InteropTypeAdapter? {
+        val isReturn = kind == JsValueKind.RETURN
         if (isReturn && this == builtIns.unitType)
             return null
+
+        // `undefined` is adapted to `null`, any other value is received as a nullable JS reference and checked for `null` if needed.
+        if (kind == JsValueKind.OPTIONAL_PARAMETER) {
+            val adapter = makeNullable().jsToKotlinAdapterIfNeeded(JsValueKind.PARAMETER)!!
+            return UndefinedOrAdapter(if (isNullable()) adapter else CombineAdapter(CheckNotNullNoAdapter(this), adapter))
+        }
 
         val notNullType = makeNotNull()
         val valueAdapter = notNullType.jsToKotlinAdapterIfNeededNotNullable(isReturn)
@@ -503,7 +530,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
     private fun createKotlinClosureCaller(info: FunctionTypeInfo): IrSimpleFunction {
         val result = context.irFactory.buildFun {
-            name = Name.identifier("$CALL_FUNCTION${info.signatureString}")
+            name = Name.identifier("$CALL_FUNCTION_PREFIX${info.signatureString}")
             returnType = info.adaptedResultType
             origin = KOTLIN_TO_JS_CLOSURE_ORIGIN
         }
@@ -711,7 +738,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val parametersAdapters: List<InteropTypeAdapter?> =
             originalParameterTypes.map { parameterType ->
                 if (toJs)
-                    parameterType.jsToKotlinAdapterIfNeeded(isReturn = false)
+                    parameterType.jsToKotlinAdapterIfNeeded(JsValueKind.PARAMETER)
                 else
                     parameterType.kotlinToJsAdapterIfNeeded(isReturn = false)
             }
@@ -720,7 +747,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             if (toJs)
                 originalResultType.kotlinToJsAdapterIfNeeded(isReturn = true)
             else
-                originalResultType.jsToKotlinAdapterIfNeeded(isReturn = true)
+                originalResultType.jsToKotlinAdapterIfNeeded(JsValueKind.RETURN)
 
         val adaptedParameterTypes: List<IrType> =
             originalParameterTypes.zip(parametersAdapters).map { [parameterType, adapter] ->
@@ -892,6 +919,27 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 
     /**
+     * Effectively `if (value === undefined) null else adapter(value)`
+     */
+    inner class UndefinedOrAdapter(
+        private val adapter: InteropTypeAdapter
+    ) : InteropTypeAdapter {
+        override val fromType: IrType = adapter.fromType.makeNullable()
+        override val toType: IrType = adapter.toType.makeNullable()
+        override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
+            return builder.irComposite {
+                val tmp = irTemporary(expression)
+                +irIfThenElse(
+                    type = toType,
+                    condition = irCall(adapters.jsIsUndefinedAdapter).also { it.arguments[0] = irGet(tmp) },
+                    thenPart = irNull(toType),
+                    elsePart = irImplicitCast(adapter.adapt(irGet(tmp), builder), toType)
+                )
+            }
+        }
+    }
+
+    /**
      * Effectively `adapter(value!!)`
      */
     inner class CheckNotNullAndAdapter(
@@ -975,7 +1023,6 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 
     companion object {
-        const val CALL_FUNCTION = "__callFunction_"
         val JS_CALL_INTEROP_FUNCTION by IrDeclarationOriginImpl.Synthetic
     }
 }

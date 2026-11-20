@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.buildtools.internal.metadata.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
@@ -15,46 +16,47 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.MetadataArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
-internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(KotlinMetadataKlibCompilationOperation::class),
-    override val sources: List<Path>,
-    override val destination: Path,
-    compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
-    private val compilerVersion: String,
-) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(compilerArguments),
+internal class KotlinMetadataKlibCompilationOperationImpl :
+    BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>,
     KotlinMetadataKlibCompilationOperation, KotlinMetadataKlibCompilationOperation.Builder,
     DeepCopyable<KotlinMetadataKlibCompilationOperationImpl> {
+    override val options: Options
+    override val sources: List<Path>
+    override val destination: Path
+    override val compilerArguments: MetadataArgumentsImpl
+    private val compilerVersion: String
+
     constructor(
         sources: List<Path>,
         destination: Path,
         compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
-        compilerVersion: String,
-    ) : this(
-        options = Options(KotlinMetadataKlibCompilationOperation::class),
-        sources = sources,
-        destination = destination,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
+        compilerVersion: String
+    ) : super() {
+        this.options = Options(KotlinMetadataKlibCompilationOperation::class)
+        this.sources = sources
+        this.destination = destination
+        this.compilerArguments = compilerArguments
+        this.compilerVersion = compilerVersion
         initializeOptions(this::class, options)
+    }
+
+    private constructor(other: KotlinMetadataKlibCompilationOperationImpl) : super(other) {
+        this.options = other.options.deepCopy()
+        this.sources = other.sources.toList()
+        this.destination = other.destination
+        this.compilerArguments = other.compilerArguments.deepCopy()
+        this.compilerVersion = other.compilerVersion
     }
 
     override fun toBuilder(): KotlinMetadataKlibCompilationOperation.Builder = deepCopy()
 
-    override fun deepCopy(): KotlinMetadataKlibCompilationOperationImpl {
-        return KotlinMetadataKlibCompilationOperationImpl(
-            options.deepCopy(),
-            sources,
-            destination,
-            compilerArguments.deepCopy(),
-            compilerVersion
-        )
-    }
+    override fun deepCopy(): KotlinMetadataKlibCompilationOperationImpl = KotlinMetadataKlibCompilationOperationImpl(this)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: KotlinMetadataKlibCompilationOperation.Option<V>): V = options[key]
@@ -109,7 +111,8 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
 
     override fun compileIncrementallyInProcess(
         arguments: K2MetadataCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext
     ): CompilationResult {
         error("Metadata compiler doesn't support incremental compilation")

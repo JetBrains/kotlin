@@ -101,6 +101,7 @@ enum class KaptCliOption(
         "classpathChange",
         "<jvmInternalName,[jvmInternalName,...]>",
         "Use only in apt mode. Classpath jvm internal names that changed.",
+        true,
         cliToolOption = CliToolOption("-Kapt-classpath-changes", VALUE)
     ),
 
@@ -226,11 +227,18 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-isolate-processors-from-build-classpath", FLAG)
     ),
 
+    HEADER_MODE_OPTION(
+        "headerMode",
+        "true | false",
+        "Skip function body resolution during stub generation",
+        cliToolOption = CliToolOption("-Kapt-header-mode", FLAG)
+    ),
+
     STUB_GENERATION_SCHEME_OPTION(
         "stubGenerationScheme",
         "<direct|jtree>",
-        "Stub generation scheme: 'jtree' (default) is the historical scheme that uses javac AST; " +
-                "'direct' is a new experimental scheme that generates Java text directly.",
+        "Stub generation scheme: 'direct' (default) generates Java text directly; " +
+                "'jtree' is the historical scheme that uses javac AST.",
         cliToolOption = CliToolOption("-Kapt-stub-generation-scheme", VALUE)
     ),
 

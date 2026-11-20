@@ -11,12 +11,8 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectD
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.contracts.coneEffectDeclarationToAnalysisApi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.KaSyntheticJavaPropertyAccessorKind
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
-import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
-import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
+import org.jetbrains.kotlin.analysis.api.fir.utils.callableId
+import org.jetbrains.kotlin.analysis.api.fir.utils.kotlinFunctionInvokeCallableIds
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -267,7 +263,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
             return KaFirDynamicFunctionSymbolPointer(name, this)
         }
 
-        if (origin == KaSymbolOrigin.JAVA_SOURCE || origin == KaSymbolOrigin.JAVA_LIBRARY) {
+        if (origin.isFromJava) {
             createJavaSyntheticPropertyAccessorPointerIfApplicable()?.let { return it }
         }
 

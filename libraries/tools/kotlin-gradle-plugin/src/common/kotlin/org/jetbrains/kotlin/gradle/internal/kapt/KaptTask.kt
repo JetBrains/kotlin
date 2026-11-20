@@ -44,6 +44,7 @@ abstract class KaptTask @Inject constructor(
     }
 
     @get:Classpath
+    @get:NormalizeLineEndings
     abstract val compilerClasspath: ConfigurableFileCollection
 
     @get:PathSensitive(PathSensitivity.NONE)
@@ -96,6 +97,7 @@ abstract class KaptTask @Inject constructor(
     )
     @get:Incremental
     @get:Classpath
+    @get:NormalizeLineEndings
     internal val internalNonAbiClasspath: FileCollection = project.objects.fileCollection().from(
         { if (includeCompileClasspath.get()) classpath else null }
     )
@@ -271,7 +273,7 @@ abstract class KaptTask @Inject constructor(
             return project
                 .providers
                 .gradleProperty(KAPT_VERBOSE_OPTION_NAME)
-                .map { it.toString().toBoolean() }
+                .map { it.toBoolean() }
                 .orElse(false)
         }
     }

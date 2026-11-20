@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_CLASS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_DIFFERENCE
@@ -53,7 +52,6 @@ class IrTextDumpHandler(
 ) : AbstractIrHandler(testServices, artifactKind) {
     companion object {
         const val DUMP_EXTENSION = "ir.txt"
-        const val DUMP_EXTENSION2 = "ir2.txt"
 
         fun List<IrFile>.groupWithTestFiles(testServices: TestServices, ordered: Boolean = false): List<Pair<Pair<TestModule, TestFile>?, IrFile>> {
             return mapNotNull { irFile ->
@@ -105,11 +103,7 @@ class IrTextDumpHandler(
 
     private val baseDumper = MultiModuleInfoDumper()
 
-    private var byteCodeListingEnabled = false
-
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
-
         if (directive !in module.directives) return
 
         pathRelativizer.addModule(module)
@@ -147,6 +141,8 @@ class IrTextDumpHandler(
         compareDumpsOfExternalClasses(module, info)
     }
 
+    private val externalFiles = mutableMapOf<File, String>()
+
     private fun compareDumpsOfExternalClasses(module: TestModule, info: IrBackendInput) {
         val externalClassIds = module.directives[DUMP_EXTERNAL_CLASS]
         if (externalClassIds.isEmpty()) return
@@ -159,6 +155,9 @@ class IrTextDumpHandler(
                     val suffix = ".__${externalClassId.replace("/", ".")}"
                     val expectedFile = baseFile.withSuffixAndExtension(suffix, getDumpExtension())
                     assertions.assertEqualsToFile(expectedFile, classDump)
+
+                    val classBaseDump = baseFile.withSuffixAndExtension(suffix, getBaseDumpExtension())
+                    externalFiles[classBaseDump] = classDump
                 }
             }
         )
@@ -182,11 +181,12 @@ class IrTextDumpHandler(
             directiveForIrDifference,
             actualDump,
             isKotlinLikeDump = false,
+            externalFilesDumps = externalFiles,
         )
     }
 
     private fun getBaseDumpExtension(): String {
-        return customExtension ?: (if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION)
+        return customExtension ?: DUMP_EXTENSION
     }
 
     private fun getDumpExtension(): String {

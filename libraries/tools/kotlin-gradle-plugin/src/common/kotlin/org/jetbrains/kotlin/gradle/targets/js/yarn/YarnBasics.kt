@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 
+@ObsoleteNpmDependencyModel
 abstract class YarnBasics internal constructor(
     private val execOps: ExecOperations,
     private val objects: ObjectFactory,

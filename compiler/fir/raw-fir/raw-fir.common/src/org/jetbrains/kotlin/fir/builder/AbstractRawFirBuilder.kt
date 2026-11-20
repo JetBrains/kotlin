@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
@@ -85,8 +86,14 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     private val nameBasedDestructuringShortFormEnabled: Boolean =
         baseSession.languageVersionSettings.supportsFeature(LanguageFeature.EnableNameBasedDestructuringShortForm)
 
+    /**
+     * Whether the builder is directly inside a companion block, i.e., a declaration converted at this point is a direct member of the
+     * block.
+     *
+     * It is `false` deeper inside the block, e.g., in the body of a member or in a class declared in the block.
+     */
     protected val isDirectlyInsideCompanionBlock: Boolean
-        get() = context.currentCompanionBlockOwnerOrNull.let { it != null && it == context.containerSymbolIfAny }
+        get() = context.companionBlockContainerSymbolCount == context.containerSymbolCount
 
     abstract fun Node.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement
     abstract val Node.elementType: Type
@@ -161,7 +168,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         return status.isActual && (status.isInline || status.isValue || classKind == ClassKind.ANNOTATION_CLASS)
     }
 
-    protected fun configureScriptDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {
+    protected fun configureNonLocalDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {
         (declaration as FirProperty).destructuringDeclarationContainerVariable = container.symbol
     }
 
@@ -209,27 +216,66 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     protected fun createErrorConstructorBuilder(diagnostic: ConeDiagnostic): FirErrorPrimaryConstructorBuilder =
         FirErrorPrimaryConstructorBuilder().apply { this.diagnostic = diagnostic }
 
-    protected fun buildErrorNonLocalDestructuringDeclaration(
+    /**
+     * Builds the container of a top-level or member destructuring declaration outside of scripts.
+     *
+     * Such declarations are not allowed, and the checkers report `NON_LOCAL_DESTRUCTURING_DECLARATION` on the container. Still, they
+     * are desugared like script destructuring declarations, so the entries become regular properties: references to them resolve, and
+     * they conflict with other declarations. The container itself is private and synthetic, so it stays out of member scopes.
+     *
+     * @param symbol the symbol from [createNonLocalDestructuringDeclarationContainerSymbol],
+     *   the [initializer] is expected to be built with it as the container symbol.
+     */
+    protected fun buildNonLocalDestructuringDeclarationContainer(
         source: KtSourceElement,
+        symbol: FirRegularPropertySymbol,
         initializer: FirExpression?,
         baseModuleData: FirModuleData,
         extractAnnotationsTo: (FirAnnotationContainerBuilder) -> Unit,
-    ): FirErrorProperty = buildErrorProperty {
-        this.source = source
-        moduleData = baseModuleData
-        origin = FirDeclarationOrigin.Source
-        name = Name.special("<destructuring>")
-        diagnostic = ConeDestructuringDeclarationsOnTopLevel
-        symbol = FirErrorPropertySymbol(diagnostic)
-        context.withContainerSymbol(symbol) {
-            extractAnnotationsTo(this)
-        }
-
-        this.initializer = initializer ?: buildErrorExpression {
+    ): FirProperty {
+        val isCompanionBlockMember = isDirectlyInsideCompanionBlock
+        return buildProperty {
             this.source = source
-            diagnostic = ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
+            moduleData = baseModuleData
+            origin = FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer
+            name = SpecialNames.DESTRUCT
+            this.symbol = symbol
+            returnTypeRef = implicitType
+            isVar = false
+            isLocal = context.inLocalContext
+            status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL).apply { isStatic = isCompanionBlockMember }
+            if (!isCompanionBlockMember) {
+                dispatchReceiverType = currentDispatchReceiverType()
+            }
+
+            context.withContainerSymbol(symbol) {
+                extractAnnotationsTo(this)
+            }
+
+            this.initializer = initializer ?: buildErrorExpression {
+                this.source = source
+                diagnostic = ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
+            }
+
+            getter = FirDefaultPropertyGetter(
+                source = source.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter),
+                moduleData = baseModuleData,
+                origin = origin,
+                propertyTypeRef = returnTypeRef,
+                propertySymbol = symbol,
+                status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL).apply { isStatic = isCompanionBlockMember },
+            )
+        }.apply {
+            isDestructuringDeclarationContainerVariable = true
+            if (isCompanionBlockMember) {
+                initContainingClassAttr()
+                getter?.initContainingClassAttr()
+            }
         }
     }
+
+    protected fun createNonLocalDestructuringDeclarationContainerSymbol(): FirRegularPropertySymbol =
+        FirRegularPropertySymbol(callableIdForName(SpecialNames.DESTRUCT))
 
     protected fun buildExpressionHandlingLabelErrors(
         element: FirElement?,
@@ -1279,7 +1325,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         UNDERSCORE_IS_RESERVED, MULTIPLE_LABEL
     }
 
-    protected open fun isReplSnippet(script: Node, sourceFile: KtSourceFile): Boolean {
+    private fun isReplSnippet(script: Node, sourceFile: KtSourceFile): Boolean {
         val scriptSource = script.toFirSourceElement()
         return baseSession.extensionService.replSnippetConfigurators.any {
             it.isReplSnippetsSource(sourceFile, scriptSource)
@@ -1356,7 +1402,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         target.bind(function)
     }
 
-    protected open fun <D : FirDeclaration, R : FirBasedSymbol<D>> replSnippetDeclarationSymbol(declaration: D): R {
+    protected fun <D : FirDeclaration, R : FirBasedSymbol<D>> replSnippetDeclarationSymbol(declaration: D): R {
         @Suppress("UNCHECKED_CAST")
         return declaration.symbol as R
     }
@@ -1376,7 +1422,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         buildEvalBody: (build: () -> FirBlock) -> FirBlock = { it() },
     ): FirReplSnippet {
         val snippetName = firSnippetName(fileName)
-        val snippetClassName = NameUtils.getSnippetTargetClassName(snippetName)
+        val snippetClassName = ScriptNames.getSnippetTargetClassName(snippetName)
         val classSymbol = FirRegularClassSymbol(ClassId(context.packageFqName, snippetClassName))
 
         val snippetSymbol = FirReplSnippetSymbol(classSymbol)

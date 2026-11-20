@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // KT-46529
 
 // FILE: PrefixJava.java
@@ -25,3 +26,6 @@ fun test() {
 
 // FILE: lombok.config
 lombok.accessors.prefix += pxa
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, javaType, localProperty,
+propertyDeclaration */

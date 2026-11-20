@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
             "plugins/kotlinx-serialization/testData"
         ) {
             // ------------------------------- diagnostics -------------------------------
-            testClass<AbstractSerializationFirPsiDiagnosticTest> {
+            testClass<AbstractSerializationFirLightTreeDiagnosticTest> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
                 model("firMembers")
             }
@@ -53,6 +53,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractSerializationJdk11FirLightTreeBoxTest> {
                 model("jdk11BoxIr")
+            }
+
+            testClass<AbstractSerializationValhallaBoxTest> {
+                model("boxValhalla")
             }
 
             testClass<AbstractSerializationWithoutRuntimeFirLightTreeBoxTest> {

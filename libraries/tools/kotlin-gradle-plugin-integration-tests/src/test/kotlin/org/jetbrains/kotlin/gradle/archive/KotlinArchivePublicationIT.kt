@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.gradle.uklibs.Variant
 import org.jetbrains.kotlin.gradle.uklibs.VariantFile
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.publish
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("Publication of a project in the Kotlin Archive format")
 class KotlinArchivePublicationIT : KGPBaseTest() {
 

@@ -32,6 +32,16 @@ interface CompilationTransaction : Closeable {
     fun deleteFile(outputFile: Path)
 
     /**
+     * Removes the directories inside the output directory that became empty because of the files removed by [deleteFile]
+     * since the previous call. The output directory itself is never removed.
+     *
+     * It's expected to be called after a round of stale outputs removal and before running the compiler.
+     * For example, on JVM an empty package directory that stays in the classes output directory would make the compiler
+     * treat the corresponding package as existing (KT-89297).
+     */
+    fun deleteEmptyOutputDirectories()
+
+    /**
      * Marks the transaction as successful, so it should not revert changes if it is able to perform revert.
      */
     fun markAsSuccessful()
@@ -134,9 +144,89 @@ abstract class BaseCompilationTransaction : CompilationTransaction {
 }
 
 /**
- * A non-recoverable implementation of compilation transaction. Changes reverting on failure should be performed externally if needed.
+ * Tracks the parent directories of the files deleted inside [outputDir] and removes the ones that became empty.
+ * The [outputDir] itself is never removed.
  */
-class NonRecoverableCompilationTransaction : CompilationTransaction, BaseCompilationTransaction() {
+private class EmptyOutputDirectoriesCleaner(
+    /**
+     * The output directory. Empty parent directories of deleted files are removed only within it and never the directory itself.
+     */
+    outputDir: Path,
+) {
+    private val outputDir = outputDir.toAbsolutePath().normalize()
+
+    /**
+     * Parent directories of the files removed since the last [deleteEmptyDirectories] call, all located inside [outputDir].
+     */
+    private val directoriesToCleanUp = hashSetOf<Path>()
+
+    /**
+     * Remembers the parent directory of the deleted [outputFile] as a candidate for [deleteEmptyDirectories]
+     * if the file is located inside [outputDir].
+     */
+    fun registerDeletedFile(outputFile: Path) {
+        val parent = outputFile.toAbsolutePath().normalize().parent ?: return
+        if (parent != outputDir && parent.startsWith(outputDir)) {
+            directoriesToCleanUp.add(parent)
+        }
+    }
+
+    /**
+     * Removes the directories registered via [registerDeletedFile] (and their ancestors inside [outputDir]) that are empty now.
+     */
+    fun deleteEmptyDirectories() {
+        val directories = hashSetOf<Path>()
+        // potentially removing an empty directory may make its parent directory empty as well
+        for (candidate in directoriesToCleanUp) {
+            var directory: Path? = candidate
+            // stop as soon as an already collected ancestor is met, as the rest of the chain is collected as well
+            while (directory != null && directory != outputDir && directory.startsWith(outputDir) && directories.add(directory)) {
+                directory = directory.parent
+            }
+        }
+        for (directory in directories.sortedByDescending { it.nameCount }) {
+            if (Files.isDirectory(directory) && isEmptyDirectory(directory)) {
+                Files.delete(directory)
+            }
+        }
+        directoriesToCleanUp.clear()
+    }
+
+    private fun isEmptyDirectory(directory: Path): Boolean = Files.newDirectoryStream(directory).use { !it.iterator().hasNext() }
+}
+
+class ReadOnlyCompilationTransaction : CompilationTransaction, BaseCompilationTransaction() {
+    override fun registerAddedOrChangedFile(outputFile: Path) {
+        error("Output files must not be changed through ${this::class.simpleName}, attempted to register $outputFile")
+    }
+
+    override fun deleteFile(outputFile: Path) {
+        error("Output files must not be removed through ${this::class.simpleName}, attempted to remove $outputFile")
+    }
+
+    override fun deleteEmptyOutputDirectories() {
+        error("Output directories must not be removed through ${this::class.simpleName}")
+    }
+
+    override fun close() {
+        checkForExecutionException()
+        closeCachesManager()?.let {
+            throw it
+        }
+    }
+}
+
+/**
+ * A non-recoverable implementation of compilation transaction. Changes reverting on failure should be performed externally if needed.
+ *
+ * If [outputDir] is `null`, empty output directories are not removed by [deleteEmptyOutputDirectories]. This is the case for JPS,
+ * where a single transaction spans all the module targets with different output directories.
+ */
+class NonRecoverableCompilationTransaction(
+    outputDir: Path? = null,
+) : CompilationTransaction, BaseCompilationTransaction() {
+    private val directoriesCleaner = outputDir?.let { EmptyOutputDirectoriesCleaner(it) }
+
     override fun registerAddedOrChangedFile(outputFile: Path) {
         // do nothing
     }
@@ -144,7 +234,12 @@ class NonRecoverableCompilationTransaction : CompilationTransaction, BaseCompila
     override fun deleteFile(outputFile: Path) {
         if (Files.exists(outputFile)) {
             Files.delete(outputFile)
+            directoriesCleaner?.registerDeletedFile(outputFile)
         }
+    }
+
+    override fun deleteEmptyOutputDirectories() {
+        directoriesCleaner?.deleteEmptyDirectories()
     }
 
     override fun close() {
@@ -164,7 +259,9 @@ class NonRecoverableCompilationTransaction : CompilationTransaction, BaseCompila
 class RecoverableCompilationTransaction(
     private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     private val stashDir: Path,
+    outputDir: Path,
 ) : CompilationTransaction, BaseCompilationTransaction() {
+    private val directoriesCleaner = EmptyOutputDirectoriesCleaner(outputDir)
     private val fileRelocationRegistry = hashMapOf<Path, Path?>()
     private var filesCounter = 0
 
@@ -191,6 +288,7 @@ class RecoverableCompilationTransaction(
         if (!Files.exists(outputFile)) {
             return
         }
+        directoriesCleaner.registerDeletedFile(outputFile)
         if (isFileRelocationIsAlreadyRegisteredFor(outputFile)) {
             reporter.debug { "Deleting $outputFile" }
             Files.delete(outputFile)
@@ -212,6 +310,8 @@ class RecoverableCompilationTransaction(
 
     private fun isFileRelocationIsAlreadyRegisteredFor(outputFile: Path) = outputFile in fileRelocationRegistry
 
+    override fun deleteEmptyOutputDirectories() = directoriesCleaner.deleteEmptyDirectories()
+
     /**
      * Reverts all the file changes registered in this transaction.
      * If the value for a key is null, then it's the file that was created during the transaction, so the file will be just removed.
@@ -226,6 +326,7 @@ class RecoverableCompilationTransaction(
                     }
                     continue
                 }
+                originPath.parent?.let { Files.createDirectories(it) }
                 Files.move(relocatedPath, originPath, StandardCopyOption.REPLACE_EXISTING)
             }
         }

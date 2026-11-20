@@ -1,0 +1,23 @@
+// DISABLE_NATIVE: targetFamily=MINGW
+
+// KT-78253: partial linkage diagnostics must be reported consistently on every incremental build,
+// including builds where the affected per-file caches are up to date and merely reused.
+
+MODULES: lib, user, main
+
+STEP 0:
+    libs: lib, user, main
+
+// lib drops `gone()`; user is NOT recompiled, so its klib still references the missing symbol.
+// Rebuilding user's cache detects the linkage problem and must report a PL warning.
+STEP 1:
+    libs: lib, main
+
+// Nothing changes: all caches are reused. The PL warning must still be reported.
+STEP 2:
+    libs: main
+
+// Still the same reused caches, but compiled with `-Xpartial-linkage-loglevel=error`:
+// the very same linkage issue must now be reported as an error and fail the compilation.
+STEP 3:
+    libs: main

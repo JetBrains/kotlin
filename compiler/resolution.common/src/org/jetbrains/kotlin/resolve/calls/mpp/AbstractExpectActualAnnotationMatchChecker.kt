@@ -34,6 +34,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.jsExportDefault,
         StandardClassIds.Annotations.jsNoRuntime,
         StandardClassIds.Annotations.NumericClass,
+        StandardClassIds.Annotations.JvmInline,
         OptInNames.OPT_IN_CLASS_ID,
         OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID,
         ClassId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier("Effects")),

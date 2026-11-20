@@ -5,22 +5,22 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertTrue
 
 @DisplayName("Gradle daemon memory leak")
+@MustRunOnChangesInGradle
 class GradleDaemonMemoryIT : KGPDaemonsBaseTest() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
-
     // For corresponding documentation, see https://docs.gradle.org/current/userguide/gradle_daemon.html
     // Setting user.variant to different value implies a new daemon process will be created.
     // In order to stop daemon process, special exit task is used ( System.exit(0) ).
+    @TestMetadata("gradleDaemonMemory")
     @DisplayName("No small memory leak in plugin")
     @GradleTest
     fun testGradleDaemonMemory(gradleVersion: GradleVersion) {
@@ -34,6 +34,7 @@ class GradleDaemonMemoryIT : KGPDaemonsBaseTest() {
 
             val usedMemory: List<Int> = (1..buildCount).map {
                 var reportedMemory = 0
+                // clean also checks that nothing from the previous build remains locked by the daemon, see KT-9440
                 build(userVariantArg, reportMemoryUsage, "clean", "assemble") {
                     val matches = output
                         .lineSequence()
@@ -61,9 +62,6 @@ class GradleDaemonMemoryIT : KGPDaemonsBaseTest() {
                         "(from $establishedMaximum to $totalMaximum) kb > $memoryMaxGrowthLimitKB kb\n" +
                         "Usages: $usedMemory"
             )
-
-            // testing that nothing remains locked by daemon, see KT-9440
-            build(userVariantArg, "clean")
         }
     }
 }

@@ -86,7 +86,7 @@ FILE: Main.kt
     public final fun acceptInt(num: R|kotlin/Int|): R|kotlin/Unit| {
     }
     public final typealias UIntAlias = R|kotlin/UInt|
-    @R|kotlin/NumericClass|(actualizations = vararg(*<collectionLiteralCall>(<getClass>(Q|UIntAlias|))) [evaluated = vararg(<getClass>(Q|UIntAlias|))]) public final expect value class SizeT : R|kotlin/Any| {
+    @R|kotlin/NumericClass|(actualizations = vararg(*<collectionLiteralCall>(<getClass>(Q|UIntAlias|))) [evaluated = vararg(<getClass>(Q|UIntAlias|))]) public final expect inline value class SizeT : R|kotlin/Any| {
         public final expect fun toByte(): R|kotlin/Byte|
 
         public final expect fun toShort(): R|kotlin/Short|

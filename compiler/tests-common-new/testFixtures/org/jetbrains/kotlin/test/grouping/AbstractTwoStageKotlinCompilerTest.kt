@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.UnspecifiedTargetBackend
 import org.jetbrains.kotlin.test.runners.toKotlinTestInfo
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInWasm
 import org.junit.jupiter.api.BeforeEach
@@ -38,7 +39,7 @@ abstract class AbstractTwoStageKotlinCompilerTest @UnspecifiedTargetBackend cons
         nonGroupingStage {
             startingArtifactFactory = { ResultingArtifact.Source() }
             testInfo = this@AbstractTwoStageKotlinCompilerTest.testInfo
-            useGroupingTestIsolators(::MutedTestsIsolator)
+            useGroupingTestIsolators(::MutedTestsIsolator, { RetriedTestIsolator(it) { isRetriedInIsolation } })
         }
 
         groupingStage {
@@ -104,3 +105,7 @@ abstract class AbstractTwoStageKotlinCompilerWasmTest : AbstractTwoStageKotlinCo
 @OptIn(UnspecifiedTargetBackend::class)
 @MustRunOnChangesInNative
 abstract class AbstractTwoStageKotlinCompilerNativeTest : AbstractTwoStageKotlinCompilerTest()
+
+@OptIn(UnspecifiedTargetBackend::class)
+@MustRunOnChangesInJs
+abstract class AbstractTwoStageKotlinCompilerJsTest : AbstractTwoStageKotlinCompilerTest()

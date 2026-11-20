@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import kotlin.reflect.KClass
@@ -56,7 +55,7 @@ public interface KaDiagnostic : KaLifetimeOwner {
      * Whether the diagnostic is suppressed at its use site, e.g., by a `@Suppress` annotation.
      *
      * Suppressed diagnostics are not reported by the compiler, so they should not be presented to the user as is. By default, diagnostic
-     * collection filters them out; [KaDiagnostics.ignoreSuppressed] yields them as well.
+     * collection filters them out; [KaDiagnostics.includingSuppressed] yields them as well.
      *
      * The property is only meaningful for diagnostics obtained from diagnostic collection. For diagnostics obtained in another way, such as
      * diagnostics of an unresolved call, the property is always `false`.
@@ -72,7 +71,6 @@ public interface KaDiagnostic : KaLifetimeOwner {
      *
      * The `UNUSED_VARIABLE` diagnostic reported on `unused` is suppressed.
      */
-    @KaExperimentalApi
     public val isSuppressed: Boolean
 
     /**

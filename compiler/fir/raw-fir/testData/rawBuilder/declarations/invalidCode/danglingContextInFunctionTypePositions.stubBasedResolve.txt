@@ -1,0 +1,177 @@
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] danglingContextInFunctionTypePositions.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.value, EvaluatedValue=String()] value: R|kotlin/String| = String()): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/String| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Other : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Other] constructor(): R|Other| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val annotated: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+        public [ResolvedTo(BODY_RESOLVE)] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+    public final [ResolvedTo(BODY_RESOLVE)] val annotatedWithType: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+        public [ResolvedTo(BODY_RESOLVE)] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+    public final [ResolvedTo(CONTRACTS)] val lambda: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): <implicit>
+    public final [ResolvedTo(CONTRACTS)] val anonymousFunction: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): <implicit>
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withVararg([ResolvedTo(ANNOTATION_ARGUMENTS)] vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withVarargType([ResolvedTo(ANNOTATION_ARGUMENTS)] vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withAnnotatedVararg([ResolvedTo(ANNOTATION_ARGUMENTS)] vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withAnnotatedVarargType([ResolvedTo(ANNOTATION_ARGUMENTS)] vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withVarargReceiver([ResolvedTo(ANNOTATION_ARGUMENTS)] vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withNullableVararg([ResolvedTo(ANNOTATION_ARGUMENTS)] vararg p: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final data [ResolvedTo(BODY_RESOLVE)] class Data : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Data] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Data.p] p: <ERROR TYPE REF: Incomplete code>): R|Data| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/Data.component1, IsFromPrimaryConstructor=true] val p: <ERROR TYPE REF: Incomplete code> = R|<local>/p|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Data] get(): <ERROR TYPE REF: Incomplete code>
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): <ERROR TYPE REF: Incomplete code>
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] p: <ERROR TYPE REF: Incomplete code> = this@R|/Data|.R|/Data.p|): R|Data|
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Forms : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] val simple: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Forms] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val withArguments: @R|Anno|[Types](value = <strcat>(String(1), String(2)) [evaluated = String(12)]) <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Forms] get(): @R|Anno|[Types](value = <strcat>(String(1), String(2)) [evaluated = String(12)]) <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val several: @R|Anno|[Types]() @R|Other|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Forms] get(): @R|Anno|[Types]() @R|Other|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val bracketed: @R|Anno|[Types]() @R|Other|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Forms] get(): @R|Anno|[Types]() @R|Other|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val useSiteTarget: @RECEIVER:R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Forms] get(): @RECEIVER:R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val suspendAfter: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Forms] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val suspendBefore: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Forms] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface InsideList : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] val inside: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InsideList] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val insideUnresolved: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InsideList] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val bothSides: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InsideList] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val named: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InsideList] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface TypeAfterList : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] val type: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeAfterList] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val unresolvedType: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeAfterList] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableType: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeAfterList] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface NullableAndParenthesized : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullable: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableWithoutAnnotation: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableWithType: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableWithReceiver: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val doubleNullable: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableInsideDangling: @R|Anno|[Types]() @R|Other|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): @R|Anno|[Types]() @R|Other|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableWithoutType: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableAnnotatedEntry: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableNullableType: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val nullableSuspend: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val suspendInsideDangling: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val suspendOutsideDangling: <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): <ERROR TYPE REF: Incomplete code>
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val parenthesized: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NullableAndParenthesized] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Nested : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] val typeArgument: R|kotlin/collections/List<@R|Anno|()  ERROR CLASS: Incomplete code>|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] get(): R|kotlin/collections/List<@R|Anno|()  ERROR CLASS: Incomplete code>|
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val functionTypeParameter: R|(@R|Anno|()  ERROR CLASS: Incomplete code) -> kotlin/Unit|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] get(): R|(@R|Anno|()  ERROR CLASS: Incomplete code) -> kotlin/Unit|
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val functionTypeReturn: R|() -> @R|Anno|()  ERROR CLASS: Incomplete code|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] get(): R|() -> @R|Anno|()  ERROR CLASS: Incomplete code|
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>.receiver(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun parameter([ResolvedTo(ANNOTATION_ARGUMENTS)] p: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun returnType(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code> {
+        ^returnType R|kotlin/TODO|()
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>> bound(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>> whereConstraint(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Alias = @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Supertype : @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code> {
+    }
+    public final data [ResolvedTo(BODY_RESOLVE)] class AnnotatedData : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotatedData] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotatedData.p] p: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>): R|AnnotatedData| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/AnnotatedData.component1, IsFromPrimaryConstructor=true] val p: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code> = R|<local>/p|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotatedData] get(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] p: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code> = this@R|/AnnotatedData|.R|/AnnotatedData.p|): R|AnnotatedData|
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Setter : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Setter] constructor(): R|Setter| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var p: R|kotlin/Int| = LAZY_EXPRESSION
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Setter] get(): R|kotlin/Int|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Setter] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: @R|Anno|[Types]() <ERROR TYPE REF: Incomplete code>): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun body([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }

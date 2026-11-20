@@ -64,7 +64,7 @@ interface CompilerCallbackServicesFacade : Remote {
     fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray?
 
     @Throws(RemoteException::class)
-    fun incrementalCache_getMetadata(target: TargetId, fragmentName: String): Map<File, ByteArray>
+    fun incrementalCache_getCommonMetadata(target: TargetId, fragmentName: String): Map<File, ByteArray>
 
     @Throws(RemoteException::class)
     fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String

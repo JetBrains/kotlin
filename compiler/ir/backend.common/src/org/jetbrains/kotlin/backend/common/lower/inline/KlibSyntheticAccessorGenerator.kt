@@ -29,8 +29,9 @@ import org.jetbrains.kotlin.name.Name
 typealias InlineFunctionInfo = Nothing?
 
 class KlibSyntheticAccessorGenerator(
-    context: LoweringContext
-) : SyntheticAccessorGenerator<LoweringContext, InlineFunctionInfo>(context) {
+    context: LoweringContext,
+    accessorNameSuffix: String? = null,
+) : SyntheticAccessorGenerator<LoweringContext, InlineFunctionInfo>(context, accessorNameSuffix) {
 
     private data class OuterThisAccessorKey(val innerClass: IrClass)
 

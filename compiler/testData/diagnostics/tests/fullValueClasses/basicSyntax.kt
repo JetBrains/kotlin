@@ -1,4 +1,5 @@
 // LANGUAGE: +FullValueClasses +NameBasedDestructuring -EnableNameBasedDestructuringShortForm
+// LANGUAGE: +ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
@@ -39,8 +40,8 @@ sealed value class C_
 value class NothingWrapper(val x: Nothing)
 value class UnitWrapper(val x: Unit)
 
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Inline1(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Unit<!>)
-<!INLINE_CLASS_DEPRECATED!>inline<!> class Inline2<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Unit, val y: Unit)<!>
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Inline1(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Unit<!>)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class Inline2<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Unit, val y: Unit)<!>
 
 
 @JvmInline
@@ -53,7 +54,7 @@ value class Delegation(val x: Int) : Comparable<Int> by x
 value class Delegation1(val x: Int) : <!VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION!>Comparable<Int><!> by (x.let { 2 + 2 })
 
 @JvmInline
-<!VALUE_CLASS_NOT_FINAL("@JvmInline value")!>abstract<!> value class AbstractOld(val x: Int)
+<!VALUE_CLASS_NOT_FINAL("Inline value")!>abstract<!> value class AbstractOld(val x: Int)
 @JvmInline
 <!VALUE_CLASS_NOT_FINAL!>open<!> value class OpenOld(val x: Int)
 @JvmInline

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
-import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
-import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.*
@@ -70,7 +67,7 @@ internal class LoadedJsIr(
 
     private fun collectSignatureProviders(lib: KotlinLibraryFile, irModule: IrModuleFragment): List<FileSignatureProvider> {
         val moduleDeserializer = linker.moduleDeserializer(irModule)
-        val deserializers = moduleDeserializer.fileDeserializers()
+        val deserializers = moduleDeserializer.fileDeserializers.values
         val providers = ArrayList<FileSignatureProvider>(deserializers.size)
         val sourceFiles = getIrFileNames(irModule)
 
@@ -96,10 +93,9 @@ internal class LoadedJsIr(
 
     fun loadUnboundSymbols() {
         signatureProvidersImpl.clear()
-        ExternalDependenciesGenerator(linker.symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
-        linker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
-        linker.checkNoUnboundSymbols(linker.symbolTable, "at the end of IR linkage process")
-        linker.clear()
+        linker.drainDeserializationQueue()
+        linker.finalizeIrLinkage(irBuiltIns)
+        linker.clearInternedData()
     }
 
     fun collectSymbolsReplacedWithStubs(): Set<IrSymbol> {
@@ -136,9 +132,8 @@ internal class JsIrLinkerLoader(
         return JsIrLinker(
             configuration = compilerConfiguration,
             symbolTable = symbolTable,
-            partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
             irDiagnosticReporter = irDiagnosticReporter,
-            friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
+            friendModules = mapOf(mainLibrary to mainModuleFriends)
         )
     }
 
@@ -198,12 +193,9 @@ internal class JsIrLinkerLoader(
                 else -> DeserializationStrategy.EXPLICITLY_EXPORTED
             }
             val modified = modifiedFiles[libraryFile]?.keys?.mapTo(hashSetOf()) { it.path } ?: emptySet()
-            libraryFile to linker.deserializeIrModuleHeader(descriptor, module, {
-                when (it) {
-                    in modified -> modifiedStrategy
-                    else -> DeserializationStrategy.WITH_INLINE_BODIES
-                }
-            })
+            libraryFile to linker.createAndRegisterModuleDeserializer(descriptor, module) { filePath: String ->
+                if (filePath in modified) modifiedStrategy else DeserializationStrategy.WITH_INLINE_BODIES
+            }.moduleFragment
         }
 
         @OptIn(InternalSymbolFinderAPI::class)

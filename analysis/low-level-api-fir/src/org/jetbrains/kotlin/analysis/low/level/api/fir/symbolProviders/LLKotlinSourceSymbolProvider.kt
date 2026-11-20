@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDe
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -65,7 +67,6 @@ import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
  * to duplicate symbols because FIR files (from which the symbols are taken) are unique in the session, but we would still cache a symbol in
  * the wrong symbol provider.
  */
-@OptIn(KtExperimentalApi::class)
 internal class LLKotlinSourceSymbolProvider private constructor(
     session: LLFirSession,
     private val moduleComponents: LLFirModuleResolveComponents,
@@ -107,6 +108,23 @@ internal class LLKotlinSourceSymbolProvider private constructor(
             extensionTool?.symbolNamesProvider,
         )
     )
+
+    /**
+     * A library source module may contain both the `expect` and the `actual` declaration of a class, e.g., stdlib sources contain common
+     * and JVM sources. The order of such declarations in the [declarationProvider] is arbitrary, so class ID-based lookups prefer a
+     * non-`expect` declaration over an `expect` one, also when an `expect` declaration is passed as the context.
+     *
+     * The symbol provider of a dangling file session doesn't apply this preference. A class ID lookup from a dangling file with a library
+     * source context module gets it once the lookup reaches the symbol provider of the context module. An `expect` class declared in the
+     * dangling file itself is found before that, since the declarations of a
+     * [PREFER_SELF][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode.PREFER_SELF] dangling file take
+     * precedence over the context module.
+     *
+     * This is a workaround for library sources which mix several platforms in one module. If there are several non-`expect` declarations
+     * (e.g., `actual`s for different platforms), the choice among them still depends on the order in the [declarationProvider]. The
+     * structural fix is to represent library sources of different platforms as separate modules (KT-82839).
+     */
+    private val prefersNonExpectClassLikeDeclarations: Boolean = moduleComponents.module is KaLibrarySourceModule
 
     private val classLikeCache =
         LLPsiAwareClassLikeSymbolCache(session, ::computeClassLikeSymbolByClassId) { declaration: KtClassLikeDeclaration, _ ->
@@ -180,17 +198,25 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId, context: KtClassLikeDeclaration?): FirClassLikeSymbol<*>? {
         require(context == null || context.isPhysical)
-        val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId)
-        if (ktClass != null && ktClass.getClassId() == null) return null
-        val declaration = ktClass ?: run {
-            if (!classId.isNestedClass) {
-                declarationProvider.findFilesForScript(classId.asSingleFqName()).find(KtScript::isReplSnippet)
-            } else {
-                null
-            }
-        } ?: return null
+        val declaration = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null
+        val ktClass = if (prefersNonExpectClassLikeDeclarations) findNonExpectClassLikeDeclaration(classId, declaration) else declaration
+        if (ktClass.getClassId() == null) return null
 
-        return findClassLikeSymbol(classId, declaration) { FirElementFinder.findClassifierWithClassId(it, classId) }
+        return findClassLikeSymbol(classId, ktClass) { FirElementFinder.findClassifierWithClassId(it, classId) }
+    }
+
+    /**
+     * Returns a non-`expect` declaration with the given [classId] if [declaration] is `expect` and such a declaration exists, and
+     * [declaration] otherwise. Classes are preferred over type aliases.
+     *
+     * See [prefersNonExpectClassLikeDeclarations] for why this is needed (KT-82839).
+     */
+    private fun findNonExpectClassLikeDeclaration(classId: ClassId, declaration: KtClassLikeDeclaration): KtClassLikeDeclaration {
+        if (!declaration.isExpectDeclaration()) return declaration
+
+        return declarationProvider.getAllClassesByClassId(classId).firstOrNull { !it.isExpectDeclaration() }
+            ?: declarationProvider.getAllTypeAliasesByClassId(classId).firstOrNull { !it.isExpectDeclaration() }
+            ?: declaration
     }
 
     private fun computeClassLikeSymbolByPsi(declaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
@@ -267,7 +293,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     private val functionCache: FirCache<CallableId, List<FirNamedFunctionSymbol>, Collection<KtFile>?> =
         session.firCachesFactory.createCache { callableId, context ->
-            computeCallableSymbolsByCallableId<FirNamedFunctionSymbol>(callableId, context)
+            computeCallableSymbolsByCallableId<FirNamedFunctionSymbol>(callableId, context, declarationProvider::getTopLevelFunctionFiles)
         }
 
     private fun getTopLevelFunctionSymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirNamedFunctionSymbol> {
@@ -296,7 +322,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     private val propertyCache: FirCache<CallableId, List<FirPropertySymbol>, Collection<KtFile>?> =
         session.firCachesFactory.createCache { callableId, context ->
-            computeCallableSymbolsByCallableId<FirPropertySymbol>(callableId, context)
+            computeCallableSymbolsByCallableId<FirPropertySymbol>(callableId, context, declarationProvider::getTopLevelPropertyFiles)
         }
 
     private fun getTopLevelPropertySymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirPropertySymbol> {
@@ -305,7 +331,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     /**
      * Locates all the callable symbols of required [TYPE] with the matching [callableId] within a specific set of files.
-     * Uses the passed [context] files to avoid index access if available; falls back to the [declarationProvider] otherwise.
+     * Uses the passed [context] files to avoid index access if available; falls back to [getFiles] otherwise.
      *
      * To work correctly with the [FirCache], this function has to obey the following contract:
      *
@@ -315,13 +341,14 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     private inline fun <reified TYPE : FirCallableSymbol<*>> computeCallableSymbolsByCallableId(
         callableId: CallableId,
         context: Collection<KtFile>?,
+        getFiles: (CallableId) -> Collection<KtFile>,
     ): List<TYPE> {
         require(context == null || context.all { it.isPhysical })
 
-        // we want to use `getTopLevelCallableFiles` instead of
-        // `getTopLevelFunctions/Properties`, because it is highly optimized
+        // we want to use `getTopLevelFunctionFiles/PropertyFiles` instead of
+        // `getTopLevelFunctions/Properties`, because they are highly optimized
         // to retrieve the files in the IDE mode
-        val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId)
+        val files = context ?: getFiles(callableId)
 
         if (files.isEmpty()) return emptyList()
 

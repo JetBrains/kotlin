@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
+import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
 import org.jetbrains.kotlin.backend.konan.library.deserialize
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
+import org.jetbrains.kotlin.backend.konan.serialization.PartialLinkageIssueCollector
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Path
@@ -118,6 +122,8 @@ class NativeSecondStageCompilationConfig(
     }
     val inlineForPerformance get() = !debug && !smallBinary
 
+    // The Gradle plugin enables assertions for debuggable binaries, and the distribution caches are built accordingly.
+    val defaultAsserts = !optimizationsEnabled
     val assertsEnabled = configuration.enableAssertions
 
     val sanitizer = configuration.get(BinaryOptions.sanitizer)?.takeIf {
@@ -242,8 +248,9 @@ class NativeSecondStageCompilationConfig(
     val fixedBlockPageSize: UInt
         get() = configuration.get(BinaryOptions.fixedBlockPageSize) ?: defaultFixedBlockPageSize
 
+    private val defaultConcurrentWeakSweep = true
     val concurrentWeakSweep: Boolean
-        get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: true
+        get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: defaultConcurrentWeakSweep
 
     val concurrentMarkMaxIterations: UInt
         get() = configuration.get(BinaryOptions.concurrentMarkMaxIterations) ?: 100U
@@ -364,6 +371,9 @@ class NativeSecondStageCompilationConfig(
     val perFileCacheForStdlib: Boolean
         get() = configuration.get(BinaryOptions.perFileCacheForStdlib) ?: defaultPerFileCacheForStdlib
 
+    val batchedCacheBuild: Boolean
+        get() = configuration.get(BinaryOptions.batchedCacheBuild) ?: true
+
     init {
         // NB: producing LIBRARY is enabled on any combination of hosts/targets
         if (produce != CompilerOutputKind.LIBRARY && !platformManager.isEnabled(target)) {
@@ -384,6 +394,24 @@ class NativeSecondStageCompilationConfig(
     internal val produceStaticFramework get() = configuration.staticFramework
 
     override val loadedKlibs = loadNativeKlibs(configuration, target)
+
+    internal val klibDag: KlibDAG = run {
+        fun reportDagProblemAndHaltCompilation(message: String): Nothing {
+            configuration.report(PartialLinkageDiagnostics.IR_LINKER_ERROR, message)
+            throw CompilationErrorException(message)
+        }
+
+        configuration.serializedKlibDag?.deserialize(
+                librariesUsedInCurrentCompilation = loadedKlibs.all,
+                onError = ::reportDagProblemAndHaltCompilation,
+        ) ?: KlibDAGBuilder(
+                Parameters(
+                        libraries = loadedKlibs.all,
+                        onWarning = { configuration.report(PartialLinkageDiagnostics.IR_LINKER_WARNING, it) },
+                        onError = ::reportDagProblemAndHaltCompilation,
+                ) { it.isExplicitlySpecifiedByUserInCLIArgument }
+        ).build()
+    }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::Path)
 
@@ -438,7 +466,7 @@ class NativeSecondStageCompilationConfig(
     // KT-69731 Kotlin/Native: handle heap-allocated non-escaping objects with CMS
     val escapeAnalysisPropagateExiledToHeapObjects by lazy {
         configuration.get(BinaryOptions.escapeAnalysisPropagateExiledToHeapObjects)?.also {
-            if (it && gc == GC.CONCURRENT_MARK_AND_SWEEP) {
+            if (!it && gc == GC.CONCURRENT_MARK_AND_SWEEP) {
                 configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "CMS GC requires escapeAnalysisPropagateExiledToHeapObjects=true")
             }
         } ?: true
@@ -481,7 +509,11 @@ class NativeSecondStageCompilationConfig(
 
     internal val useDebugInfoInNativeLibs = configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
 
-    internal val partialLinkageConfig = configuration.partialLinkageConfig
+    /**
+     * Accumulates the partial linkage issues reported during this compilation. When a cache is built, the issues
+     * are stored in it, so that they can be replayed by the compilations that reuse the cached code (see KT-78253).
+     */
+    internal val partialLinkageIssues = PartialLinkageIssueCollector()
 
     internal val additionalCacheFlags by lazy { platformManager.loader(target).additionalCacheFlags }
 
@@ -523,6 +555,8 @@ class NativeSecondStageCompilationConfig(
             append("-ccall_mode${cCallMode.name}")
         if (latin1Strings != defaultLatin1Strings)
             append("-latin1_strings${if (latin1Strings) "ENABLE" else "DISABLE"}")
+        if (assertsEnabled != defaultAsserts)
+            append("-asserts${if (assertsEnabled) "ENABLE" else "DISABLE"}")
     }
 
     private val systemCacheFlavorString = buildString {
@@ -550,6 +584,8 @@ class NativeSecondStageCompilationConfig(
             append("-fixed_block_page_size$fixedBlockPageSize")
         if (pagedAllocator != defaultPagedAllocator)
             append("-paged_allocator${if (pagedAllocator) "TRUE" else "FALSE"}")
+        if (concurrentWeakSweep != defaultConcurrentWeakSweep)
+            append("-concurrent_weak_sweep${if (concurrentWeakSweep) "TRUE" else "FALSE"}")
         if (minidumpLocation != null)
             append("-with_crash_dumps")
         if (runtimeLogsEnabled)
@@ -586,13 +622,10 @@ class NativeSecondStageCompilationConfig(
         else -> null
     }
 
-    internal var cacheSupport: CacheSupport = createCacheSupport(
-            klibDag = configuration.serializedKlibDag?.deserialize(loadedKlibs.all)
-                    ?: KlibDAGBuilder(loadedKlibs.all) { it.isExplicitlySpecifiedByUserInCLIArgument }.build()
-    )
+    internal var cacheSupport: CacheSupport = createCacheSupport()
         private set
 
-    private fun createCacheSupport(klibDag: KlibDAG) = CacheSupport(
+    private fun createCacheSupport() = CacheSupport(
             configuration = configuration,
             klibDag = klibDag,
             ignoreCacheReason = ignoreCacheReason,
@@ -604,21 +637,21 @@ class NativeSecondStageCompilationConfig(
     )
 
     internal fun reloadCacheSupport() {
-        // Reuse CachedKlibs.
-        cacheSupport = createCacheSupport(cacheSupport.klibDag)
+        // Reuse KlibDag, do not build it once again.
+        cacheSupport = createCacheSupport()
     }
 
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries
 
-    internal val libraryToCache: PartialCacheInfo?
-        get() = cacheSupport.libraryToCache
+    internal val librariesToCache: Map<KotlinLibrary, PartialCacheInfo>
+        get() = cacheSupport.librariesToCache
 
     internal val producePerFileCache
         get() = configuration.makePerFileCache
 
     private val implicitModuleName: String
-        get() = cacheSupport.libraryToCache?.let {
+        get() = cacheSupport.librariesToCache.values.singleOrNull()?.let {
             if (producePerFileCache)
                 CachedLibraries.getPerFileCachedLibraryName(it.klib)
             else
@@ -685,6 +718,9 @@ class NativeSecondStageCompilationConfig(
             else -> CInterfaceGenerationMode.NONE
         }
     }
+
+    internal val cExportUseIrDiscovery: Boolean
+        get() = configuration.get(BinaryOptions.cExportUseIrDiscovery) ?: false
 
     private val defaultCCallMode get() = CCallMode.IndirectOrDirect
     val cCallMode get() = configuration.get(BinaryOptions.cCallMode) ?: defaultCCallMode

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -112,7 +112,8 @@ open class FirDesignatedStatusResolveTransformer(
             val computationStatus = statusComputationSession.startComputing(firClass)
             statusComputationSession.forceResolveStatusesOfSupertypes(firClass)
             if (computationStatus != StatusComputationSession.StatusComputationStatus.Computed) {
-                firClass.transformStatus(this, statusResolver.resolveStatus(firClass, containingClass, isLocal = false))
+                transformClassStatus(firClass)
+                transformValueClassRepresentation(firClass)
             }
         } else {
             if (firClass.status !is FirResolvedDeclarationStatus) {
@@ -357,7 +358,7 @@ abstract class AbstractFirStatusResolveTransformer(
     }
 
     fun transformValueClassRepresentation(firClass: FirClass) {
-        if (firClass is FirRegularClass && firClass.isInlineOrValue) {
+        if (firClass is FirRegularClass && firClass.isValue) {
             firClass.valueClassRepresentation = computeValueClassRepresentation(firClass, session)
         }
     }

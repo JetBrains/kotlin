@@ -39,6 +39,8 @@ public class Flags {
     public static final BooleanFlagField IS_VALUE_CLASS = FlagField.booleanAfter(IS_EXPECT_CLASS);
     public static final BooleanFlagField IS_FUN_INTERFACE = FlagField.booleanAfter(IS_VALUE_CLASS);
     public static final BooleanFlagField HAS_ENUM_ENTRIES = FlagField.booleanAfter(IS_FUN_INTERFACE);
+    public static final BooleanFlagField IS_RICH_ERROR = FlagField.booleanAfter(HAS_ENUM_ENTRIES);
+    public static final BooleanFlagField IS_FULL_VALUE_CLASS = FlagField.booleanAfter(IS_RICH_ERROR);
 
     // Constructors
 
@@ -113,7 +115,9 @@ public class Flags {
             boolean isExpect,
             boolean isValue,
             boolean isFun,
-            boolean hasEnumEntries
+            boolean hasEnumEntries,
+            boolean isRichError,
+            boolean isFullValue
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality)
@@ -126,7 +130,13 @@ public class Flags {
                | IS_VALUE_CLASS.toFlags(isValue)
                | IS_FUN_INTERFACE.toFlags(isFun)
                | HAS_ENUM_ENTRIES.toFlags(hasEnumEntries)
+               | IS_RICH_ERROR.toFlags(isRichError)
+               | IS_FULL_VALUE_CLASS.toFlags(isFullValue)
                 ;
+    }
+
+    public static boolean isInlineValueClass(int classFlags) {
+        return IS_VALUE_CLASS.get(classFlags) && !IS_FULL_VALUE_CLASS.get(classFlags);
     }
 
     public static int getConstructorFlags(

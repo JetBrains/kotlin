@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -123,6 +123,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleRendererTestGenerated extends A
     @TestMetadata("derivedClass.kt")
     public void testDerivedClass() {
       run("derivedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClass.kt")
+    public void testExplicitInlineValueClass() {
+      run("explicitInlineValueClass.kt");
     }
 
     @Test

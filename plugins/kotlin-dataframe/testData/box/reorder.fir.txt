@@ -321,14 +321,14 @@ FILE: reorder.kt
             }
 
             local abstract class A_421 : R|kotlin/Any| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val age: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val name: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val city: R|kotlin/String?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val city: R|kotlin/String?|
                     public get(): R|kotlin/String?|
-
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val name: R|kotlin/String|
-                    public get(): R|kotlin/String|
 
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val weight: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
@@ -338,6 +338,12 @@ FILE: reorder.kt
             }
 
             local final class DataFramePropertiesScope1 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_421>|.name: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_421>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_421>|.age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
@@ -349,12 +355,6 @@ FILE: reorder.kt
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_421>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
-
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_421>|.name: R|kotlin/String|
-                    public get(): R|kotlin/String|
-
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_421>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_421>|.weight: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
@@ -849,34 +849,34 @@ FILE: reorder.kt
             }
 
             local abstract class A_921 : R|kotlin/Any| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val weight: R|kotlin/Int?|
-                    public get(): R|kotlin/Int?|
-
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val age: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
 
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val city: R|kotlin/String?|
                     public get(): R|kotlin/String?|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val age: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val weight: R|kotlin/Int?|
+                    public get(): R|kotlin/Int?|
 
                 public constructor(): R|<local>/A_921|
 
             }
 
             local final class DataFramePropertiesScope1 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_921>|.weight: R|kotlin/Int?|
-                    public get(): R|kotlin/Int?|
-
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_921>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
-
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_921>|.name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_921>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_921>|.age: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_921>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_921>|.city: R|kotlin/String?|
                     public get(): R|kotlin/String?|
@@ -884,11 +884,11 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_921>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_921>|.age: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_921>|.weight: R|kotlin/Int?|
+                    public get(): R|kotlin/Int?|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_921>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_921>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
                 public constructor(): R|<local>/DataFramePropertiesScope1|
 

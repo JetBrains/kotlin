@@ -86,6 +86,13 @@ object Baz {
     val Foo.doubleReceiverExtProp: Int get() = TODO()
 }
 
+open class OpenBaz {
+    open fun Foo.doubleReceiverExtFun(): String = TODO()
+    open var Foo.doubleReceiverExtProp: Int
+        get() = TODO()
+        set(value) = TODO()
+}
+
 @ExperimentalApi
 fun Baz.optInExtFun(): Boolean = TODO()
 

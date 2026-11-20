@@ -10,23 +10,22 @@ dependencies {
     implementation(kotlinStdlib())
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":analysis:decompiled:decompiler"))
-    implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:frontend.java"))
+    implementation(project(":analysis:decompiled:light-classes-for-decompiled"))
+    implementation(project(":analysis:stubs"))
+    implementation(project(":compiler:psi:psi-utils"))
     implementation(project(":compiler:psi:parser"))
-    implementation(project(":compiler:resolution"))
     implementation(project(":core:descriptors"))
-    implementation(project(":core:descriptors.jvm"))
-    implementation(project(":core:deserialization"))
+    implementation(project(":core:language.targets.jvm"))
     implementation(project(":kotlin-util-klib"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(libs.caffeine)
     implementation(libs.guava)
     api(project(":compiler:cli-base"))
     api(project(":analysis:analysis-api"))
-    implementation(project(":analysis:analysis-api-fir"))
-    api(project(":analysis:analysis-api-impl-base"))
+    api(project(":analysis:analysis-api-fir"))
     api(project(":analysis:light-classes-base"))
     api(project(":analysis:analysis-api-platform-interface"))
+    api(project(":analysis:analysis-api-standalone"))
     implementation(libs.intellij.patched.kotlinx.coroutines.core.jvm)
 
     testImplementation(platform(libs.junit.bom))
@@ -44,10 +43,15 @@ sourceSets {
 }
 
 kotlin {
-    compilerOptions {
-        optIn.add("org.jetbrains.kotlin.analysis.api.KaExperimentalApi")
-        optIn.add("org.jetbrains.kotlin.analysis.api.KaPlatformInterface")
-    }
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+            "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+            "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+            "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+            "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+        )
+    )
 }
 
 projectTests {

@@ -8,11 +8,11 @@ data class Person(val id: Int, val name: String?)
 @JsExport
 val person = Person(42, null)
 
-@JsExport
-val <!SYNTAX!>(id, name)<!> = person
+<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
+val <!NON_LOCAL_DESTRUCTURING_DECLARATION!>(id, name)<!> = person
 
-@JsExport
-<!SYNTAX!>(val fullId = id, var fullName = name)<!> = person
+<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
+<!NON_LOCAL_DESTRUCTURING_DECLARATION!>(val fullId = id, var fullName = name)<!> = person
 
 @JsExport
 fun main() {

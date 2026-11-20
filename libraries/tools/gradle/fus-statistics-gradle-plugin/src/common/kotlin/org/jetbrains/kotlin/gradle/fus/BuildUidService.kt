@@ -11,7 +11,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.services.internal.RegisteredBuildServiceProvider
-import org.gradle.util.GradleVersion
 import java.util.UUID.randomUUID
 
 abstract class BuildUidService : BuildService<BuildServiceParameters.None>, AutoCloseable {
@@ -28,11 +27,9 @@ abstract class BuildUidService : BuildService<BuildServiceParameters.None>, Auto
         fun registerIfAbsent(gradle: Gradle): Provider<BuildUidService> {
             return gradle.sharedServices.registerIfAbsent(serviceName, BuildUidService::class.java) {
             }.also {
-                // There is a specific behavior in Gradle 8.0 where: the BuildUidService gets closed during the build execution process.
-                // This results in having different buildIds for BuildCloseFusStatisticsBuildService and BuildFusService.
-                if (GradleVersion.current().baseVersion >= GradleVersion.version("8.0")) {
-                    (it as RegisteredBuildServiceProvider<*, *>).keepAlive()
-                }
+                // Without keepAlive, the service gets closed during the build execution process,
+                // which results in having different buildIds for services collecting FUS metrics
+                (it as RegisteredBuildServiceProvider<*, *>).keepAlive()
             }
         }
     }

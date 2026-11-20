@@ -1,0 +1,98 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.psi.stubs.impl
+
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.stubs.StubUtils.readNullableNonNegativeVarInt
+import org.jetbrains.kotlin.psi.stubs.StubUtils.writeNullableNonNegativeVarInt
+
+@KtImplementationDetail
+sealed class KotlinStubOrigin {
+    companion object {
+        private const val FACADE_KIND = 1
+        private const val MULTI_FILE_FACADE_KIND = 2
+
+        @JvmStatic
+        fun serialize(origin: KotlinStubOrigin?, dataStream: StubOutputStream) {
+            if (origin == null) {
+                dataStream.writeVarInt(0)
+            } else {
+                dataStream.writeVarInt(origin.kind)
+                origin.serializeContent(dataStream)
+            }
+        }
+
+        @JvmStatic
+        fun deserialize(dataStream: StubInputStream): KotlinStubOrigin? {
+            return when (dataStream.readVarInt()) {
+                FACADE_KIND -> Facade.deserializeContent(dataStream)
+                MULTI_FILE_FACADE_KIND -> MultiFileFacade.deserializeContent(dataStream)
+                else -> null
+            }
+        }
+    }
+
+    protected abstract val kind: Int
+
+    /**
+     * The major version of the package part class file, or `null` if it is unknown.
+     *
+     * @see KotlinClassStubImpl.classFileMajorVersion
+     */
+    abstract val classFileMajorVersion: Int?
+
+    protected abstract fun serializeContent(dataStream: StubOutputStream)
+
+    data class Facade(
+        val className: String, // Internal name of the package part class
+        val jvmClassName: String?,
+        override val classFileMajorVersion: Int?,
+    ) : KotlinStubOrigin() {
+        companion object {
+            @JvmStatic
+            internal fun deserializeContent(dataStream: StubInputStream): Facade? {
+                val className = dataStream.readNameString() ?: return null
+                val jvmClassName = dataStream.readNameString()
+                val classFileMajorVersion = dataStream.readNullableNonNegativeVarInt()
+                return Facade(className, jvmClassName, classFileMajorVersion)
+            }
+        }
+
+        override val kind: Int get() = FACADE_KIND
+
+        override fun serializeContent(dataStream: StubOutputStream) {
+            dataStream.writeName(className)
+            dataStream.writeName(jvmClassName)
+            dataStream.writeNullableNonNegativeVarInt(classFileMajorVersion)
+        }
+    }
+
+    data class MultiFileFacade(
+        val className: String, // Internal name of the package part class
+        val facadeClassName: String, // Internal name of the facade class
+        override val classFileMajorVersion: Int?,
+    ) : KotlinStubOrigin() {
+        companion object {
+            @JvmStatic
+            internal fun deserializeContent(dataStream: StubInputStream): MultiFileFacade? {
+                val classId = dataStream.readNameString() ?: return null
+                val facadeClassId = dataStream.readNameString() ?: return null
+                val classFileMajorVersion = dataStream.readNullableNonNegativeVarInt()
+                return MultiFileFacade(classId, facadeClassId, classFileMajorVersion)
+            }
+        }
+
+        override val kind: Int get() = MULTI_FILE_FACADE_KIND
+
+        override fun serializeContent(dataStream: StubOutputStream) {
+            dataStream.writeName(className)
+            dataStream.writeName(facadeClassName)
+            dataStream.writeNullableNonNegativeVarInt(classFileMajorVersion)
+        }
+    }
+}

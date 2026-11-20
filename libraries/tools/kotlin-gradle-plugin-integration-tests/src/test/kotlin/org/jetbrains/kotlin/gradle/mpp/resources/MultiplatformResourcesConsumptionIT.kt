@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectoriesIgnoringDotFiles
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("Test resources consumption APIs")
 class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
 
@@ -179,7 +181,6 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
                 deriveBuildOptions = {
                     buildOptions
                         .copy(androidVersion = androidVersion)
-                        .suppressAgpWarningIsProperty(gradleVersion)
                         .copy(warningMode = WarningMode.None)
                 }
             )

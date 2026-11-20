@@ -106,7 +106,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
     /**
      * The [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
      */
-    @Deprecated("Use 'functionalInterface' instead", ReplaceWith("functionalInterface"), level = DeprecationLevel.ERROR)
+    @Deprecated("Use 'functionalInterface' instead", ReplaceWith("functionalInterface"), level = DeprecationLevel.HIDDEN)
     public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
         get() = functionalInterface
 
@@ -447,7 +447,7 @@ public sealed interface KaCallableImplementationState {
         "this.containingSymbol",
         "org.jetbrains.kotlin.analysis.api.symbols.containingSymbol",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -467,7 +467,7 @@ public val KaSymbol.containingSymbol: KaSymbol?
         "this.containingDeclaration",
         "org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -484,7 +484,7 @@ public val KaSymbol.containingDeclaration: KaDeclarationSymbol?
         "this.containingFile",
         "org.jetbrains.kotlin.analysis.api.symbols.containingFile",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -528,7 +528,7 @@ public val KaSymbol.containingModule: KaModule
         "this.samConstructor",
         "org.jetbrains.kotlin.analysis.api.symbols.samConstructor",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -556,7 +556,7 @@ public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
         "this.functionalInterface",
         "org.jetbrains.kotlin.analysis.api.symbols.functionalInterface",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -566,12 +566,11 @@ public val KaSamConstructorSymbol.functionalInterface: KaClassLikeSymbol
 /**
  * The [KaClassLikeSymbol] of the corresponding [functional (SAM) interface](https://kotlinlang.org/docs/fun-interfaces.html).
  */
-@Deprecated("Use 'functionalInterface' instead", ReplaceWith("functionalInterface"), level = DeprecationLevel.ERROR)
+@Deprecated("Use 'functionalInterface' instead", ReplaceWith("functionalInterface"), level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
-    @Suppress("DEPRECATION_ERROR")
-    get() = with(session) { constructedClass }
+    get() = with(session) { functionalInterface }
 
 /**
  * All explicitly declared (non-fake) callable symbols overridden by this callable symbol.
@@ -623,7 +622,7 @@ public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
         "this.allOverriddenSymbols",
         "org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -670,7 +669,7 @@ public val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
         "this.directlyOverriddenSymbols",
         "org.jetbrains.kotlin.analysis.api.symbols.directlyOverriddenSymbols",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -688,7 +687,7 @@ public val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol
         "this.isSubClassOf(superClass)",
         "org.jetbrains.kotlin.analysis.api.symbols.isSubClassOf",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -711,7 +710,7 @@ public fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean {
         "this.isDirectSubClassOf(superClass)",
         "org.jetbrains.kotlin.analysis.api.symbols.isDirectSubClassOf",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -755,7 +754,7 @@ public fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean 
         "this.intersectionOverriddenSymbols",
         "org.jetbrains.kotlin.analysis.api.symbols.intersectionOverriddenSymbols",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -793,7 +792,7 @@ public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol
         "this.fakeOverrideOriginal",
         "org.jetbrains.kotlin.analysis.api.symbols.fakeOverrideOriginal",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)
@@ -816,7 +815,7 @@ public val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
         "this.sealedClassInheritors",
         "org.jetbrains.kotlin.analysis.api.symbols.sealedClassInheritors",
     ),
-    level = DeprecationLevel.ERROR,
+    level = DeprecationLevel.HIDDEN,
 )
 @KaContextParameterApi
 context(session: KaSession)

@@ -40,7 +40,7 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
     )
 
     // TODO: Move to a more generic SetUpExportAction.
-    val exportExtension = objects.ExportExtension(swiftExportDependencySelectorFactory())
+    val exportExtension = objects.ExportExtension(swiftExportDependencySelectorFactory(), project.name)
     multiplatformExtension.addExtension(EXPORT_EXTENSION_NAME, exportExtension)
 
     val appleTargets = project
@@ -127,7 +127,7 @@ internal fun KotlinMultiplatformExtension.isSwiftExportXcodeIntegrationActivated
 
     if (isSwiftExportRequested) return true
 
-    // TODO(KT-89151): Return false here once the legacy `swiftExport { }` DSL is removed in Kotlin 2.7.
+    // TODO(KT-89151): Return false here once the legacy `swiftExport { }` DSL is removed in Kotlin 2.6.0.
     //  Un-registering `embedSwiftExportForXcode` now would silently break a project whose Xcode build phase
     //  already invokes that task without a `swiftExport { }` block. Keep the integration until the DSL is gone.
     return true

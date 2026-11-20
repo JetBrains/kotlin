@@ -1,10 +1,14 @@
 package test.wasm.unsafe
 
-import kotlin.wasm.unsafe.*
 import kotlin.test.*
+import kotlin.wasm.ExperimentalWasmInterop
+import kotlin.wasm.internal.wasm_memory_size
+import kotlin.wasm.unsafe.*
 
-@OptIn(UnsafeWasmMemoryApi::class, ComponentModelInternalApi::class)
+@OptIn(UnsafeWasmMemoryApi::class, ComponentModelInternalApi::class, ExperimentalKotlinTestApi::class, ExperimentalWasmInterop::class)
 class ReallocTest {
+    val pageSize = 65_536
+
     var freelist: String = ""
 
     // make sure that the state of the freelist is exactly the same before and after each test, i.e. all allocated memory is freed
@@ -15,7 +19,13 @@ class ReallocTest {
 
     @AfterTest
     fun compareFreelist() {
-//        assertEquals(freelist, dumpFreeList())
+        // null is allowed, that just means the test was using freeAllComponentModelReallocAllocatedMemory()
+        assertEquals(
+            "",
+            dumpReallocAllocatorTrackedAllocations() ?: ""
+        ) { "The list tracking open reallocs must be empty by the end of the test" }
+
+        assertEquals(freelist, dumpFreeList()) { "The free list must be the same before and after the test" }
     }
 
     @Test
@@ -217,17 +227,43 @@ class ReallocTest {
     }
 
     @Test
+    fun reallocGrowInPlaceHugeTest() {
+        val hugeSize = (1 shl 20) + wasm_memory_size() * pageSize // 1 MiB + current memory size
+
+        val firstHugeAllocation = componentModelRealloc(0, 0, hugeSize)
+
+        val grownSize = hugeSize * 3 + 16384
+
+        val grownHugeAllocation = componentModelRealloc(firstHugeAllocation, hugeSize, grownSize)
+
+        assertEquals(firstHugeAllocation, grownHugeAllocation)
+
+        // make sure we can successfully write the entire allocation
+        for (addr in grownHugeAllocation until grownHugeAllocation + grownSize) {
+            Pointer(addr.toUInt()).storeByte(42)
+        }
+
+        componentModelRealloc(grownHugeAllocation, grownSize, 0)
+    }
+
+    @Test
     fun reallocZeroTest() {
-        // should just be a noop, and return 8 (cf. firstValidAddress in MemoryAllocation.kt)
+        // zero-size allocation should just be a noop, and return 8 (cf. firstValidAddress in MemoryAllocation.kt)
         assertEquals(8, componentModelRealloc(0, 0, 0))
+        // also, freeing a zero-size allocation should be a noop
+        assertEquals(-1, componentModelRealloc(componentModelRealloc(0, 0, 0), 0, 0))
 
         // should also work if we have valid allocations live
-        val alloc = componentModelRealloc(0, 0, 8)
-        assertEquals(alloc, componentModelRealloc(0, 0, 0))
+        val alloc1 = componentModelRealloc(0, 0, 8)
+        val alloc2 = componentModelRealloc(0, 0, 8)
+        assertEquals(8, componentModelRealloc(0, 0, 0))
+        assertEquals(-1, componentModelRealloc(componentModelRealloc(0, 0, 0), 0, 0))
+
 
         // free
         // NOTE: this also implicitly checks that the zero-size allocations don't need to be freed, otherwise the "everything freed" check run after every test would complain
-        componentModelRealloc(alloc, 8, 0)
+        componentModelRealloc(alloc1, 8, 0)
+        componentModelRealloc(alloc2, 8, 0)
     }
 
     @Test
@@ -255,25 +291,17 @@ class ReallocTest {
 
         // allocate, then free overlapping memory
         val alloc2 = componentModelRealloc(0, 0, 64)
-        // first free is correct, because we don't detect that we're freeing "too little" (would require additional management overhead)
-        componentModelRealloc(alloc2 + 16, 32, 0)
-        // freeing first 16 bytes afterwards is allowed
-        componentModelRealloc(alloc2, 16, 0)
-        // freeing anything inside the first 48 bytes now is not allowed
-        for (i in 0..5) {
-            assertFails {
-                componentModelRealloc(alloc2 + i*8, 8, 0)
-            }
-        }
-        // freeing larger chunks isn't allowed either
-        assertFails {
-            componentModelRealloc(alloc2, 48, 0)
-        }
-        // also not if the chunk overlaps an actually allocated part (last 16 bytes)
+        // can't just free anywhere: as the allocation didn't start there, we can't free it
         assertFails {
             componentModelRealloc(alloc2 + 16, 48, 0)
         }
-        // but the final 16 bytes are allowed
-        componentModelRealloc(alloc2 + 48, 16, 0)
+
+        // also can't free only the start, without the full size
+        assertFails {
+            componentModelRealloc(alloc2, 16, 0)
+        }
+
+        // correct free:
+        componentModelRealloc(alloc2, 64, 0)
     }
 }

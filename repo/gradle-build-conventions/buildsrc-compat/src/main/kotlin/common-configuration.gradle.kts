@@ -133,12 +133,33 @@ fun Project.checkNoApiDependenciesOnK1Modules() {
 }
 
 fun Project.addEmbeddedConfigurations() {
-    configurations.maybeCreate("embedded").apply {
+    val embedded = configurations.maybeCreate("embedded").apply {
         isCanBeConsumed = false
         isCanBeResolved = true
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
             attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+        }
+    }
+
+    if (kotlinBuildProperties.isInIdeaSync.get()) {
+        val k1Modules = (CompilerModules.fe10CompilerModules + CompilerModules.descriptorsCompilerModules).toSet()
+
+        plugins.withId("java-library") {
+            embedded.dependencies.withType<ProjectDependency>().configureEach {
+                if (path in k1Modules) {
+                    dependencies.add("implementation", this)
+                } else {
+                    dependencies.add("api", this)
+                }
+            }
+        }
+        plugins.withId("java") {
+            embedded.dependencies.withType<ProjectDependency>().configureEach {
+                if (!plugins.hasPlugin("java-library")) {
+                    dependencies.add("implementation", this)
+                }
+            }
         }
     }
 }

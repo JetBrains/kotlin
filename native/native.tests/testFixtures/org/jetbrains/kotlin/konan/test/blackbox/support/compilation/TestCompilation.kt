@@ -495,7 +495,7 @@ class BinaryLibraryCompilation(
     }
 }
 
-internal class GivenLibraryCompilation(givenArtifact: KLIB) : TestCompilation<KLIB>() {
+class GivenLibraryCompilation(givenArtifact: KLIB) : TestCompilation<KLIB>() {
     override val result = TestCompilationResult.Success(givenArtifact, LoggedData.NoopCompilerCall(givenArtifact.klibFile))
 }
 

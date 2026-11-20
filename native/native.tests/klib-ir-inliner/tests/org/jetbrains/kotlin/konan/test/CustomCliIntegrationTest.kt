@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.test.CompilerTestUtil
+import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -24,6 +25,7 @@ import java.io.File
 /**
  * Test class for CLI integration tests which could manually invoke CLI compiler(s).
  */
+@HostDependent
 class CustomCliIntegrationTest : AbstractNativeSimpleTest() {
     // ISSUE: KT-88548
     @Test

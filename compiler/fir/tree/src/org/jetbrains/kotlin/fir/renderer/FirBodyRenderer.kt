@@ -30,7 +30,7 @@ class FirBodyRenderer {
             it.accept(visitor)
         }
         variable.delegate?.let {
-            printer.print("by ")
+            printer.print(" by ")
             it.accept(visitor)
         }
     }

@@ -150,6 +150,7 @@ abstract class AbstractCompilerTest {
         additionalPaths: List<File> = listOf(),
         additionalConfigurationParameters: (CompilerConfiguration) -> Unit = {},
         forcedFirSetting: Boolean? = null,
+        registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null,
     ): GeneratedClassLoader {
         val classLoader = if (additionalPaths.isNotEmpty()) {
             URLClassLoader(
@@ -160,7 +161,7 @@ abstract class AbstractCompilerTest {
             defaultClassLoader
         }
         return GeneratedClassLoader(
-            createCompilerFacade(additionalPaths, forcedFirSetting, additionalConfigurationParameters)
+            createCompilerFacade(additionalPaths, forcedFirSetting, additionalConfigurationParameters, registerExtensions)
                 .compile(platformSourceFiles, commonSourceFiles).factory,
             classLoader
         )

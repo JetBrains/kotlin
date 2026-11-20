@@ -5,12 +5,18 @@
 
 package org.jetbrains.kotlin.metadata.jvm.deserialization
 
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 
 /**
  * @see Flags
  */
 object JvmFlags {
+    // Metadata.extraInt
+    val IS_PUBLIC_ABI: Flags.BooleanFlagField = Flags.BooleanFlagField(7)
+    val SYNTHETIC_CLASS_VISIBILITY: Flags.FlagField<ProtoBuf.Visibility> =
+        Flags.FlagField.after(IS_PUBLIC_ABI, ProtoBuf.Visibility.entries.toTypedArray())
+
     // Properties
     val IS_MOVED_FROM_INTERFACE_COMPANION = Flags.FlagField.booleanFirst()
 

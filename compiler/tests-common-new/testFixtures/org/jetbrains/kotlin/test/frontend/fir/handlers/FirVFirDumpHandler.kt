@@ -31,12 +31,8 @@ class FirVFirDumpHandler(
 
             val allFiles = collectFilesForRendering(module, info, part)
 
-            part.session.lazyDeclarationResolver.startResolvingPhase(FirResolvePhase.BODY_RESOLVE)
-
             val renderer = FirVerboseRenderer(FirVerbosePrinter(builderForModule))
             allFiles.forEach { it.accept(renderer) }
-
-            part.session.lazyDeclarationResolver.finishResolvingPhase(FirResolvePhase.BODY_RESOLVE)
         }
     }
 

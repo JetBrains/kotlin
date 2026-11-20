@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
+import org.jetbrains.kotlin.gradle.npm.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -17,7 +20,12 @@ import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.web.WebIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.targets.web.checkWebIsolatedProjectsSupportOff
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
+import org.jetbrains.kotlin.gradle.targets.web.providerRequiringWebIsolatedProjectsSupportOff
+import org.jetbrains.kotlin.gradle.targets.web.webIsolatedProjectsSupport
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import java.io.File
 import javax.inject.Inject
@@ -64,16 +72,23 @@ open class KotlinJsIrCompilation @Inject internal constructor(
  *
  * **Don't forget:** to call [Task.dependsOnNpmTooling] when setting [npmToolingDir] to task property.
  */
+@ObsoleteNpmDependencyModel
 internal fun KotlinJsIrCompilation.npmToolingDir(): Provider<Directory> {
     val npmToolingDir: Provider<File> = webTargetVariant(
         jsVariant = { npmProject.dir.map { it.asFile } },
-        wasmVariant = { (nodeJsRoot() as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
+        wasmVariant = {
+            project.providerRequiringWebIsolatedProjectsSupportOff("$name npm tooling directory") {
+                (nodeJsRoot() as WasmNodeJsRootExtension).npmTooling.map { it.dir }
+            }
+        },
     )
 
     return project.objects.directoryProperty().fileProvider(npmToolingDir)
 }
 
+@ObsoleteNpmDependencyModel
 internal fun Task.dependsOnNpmTooling(compilation: KotlinJsIrCompilation) {
+    if (compilation.project.webIsolatedProjectsSupport != WebIsolatedProjectsSupport.Off) return
     val task = this
     with(compilation) {
         val nodeJsRoot = nodeJsRoot()
@@ -87,12 +102,26 @@ internal fun Task.dependsOnNpmTooling(compilation: KotlinJsIrCompilation) {
     }
 }
 
+@ObsoleteNpmDependencyModel
 internal fun KotlinJsIrCompilation.nodeJsRoot(): BaseNodeJsRootExtension {
+    project.checkWebIsolatedProjectsSupportOff { "$name Node.js root extension" }
     return webTargetVariant(
         { NodeJsRootPlugin.apply(project.jsToolingProject()) },
         { WasmNodeJsRootPlugin.apply(project.jsToolingProject()) },
     )
 }
+
+/**
+ * The versions of npm packages used by KGP.
+ *
+ * Does not require [nodeJsRoot] with [WebIsolatedProjectsSupport.Preview].
+ */
+// TODO KT-91473 Expose a user-facing way to configure versions of npm packages used by KGP.
+internal fun KotlinJsIrCompilation.npmVersions(): NpmVersions =
+    when (project.webIsolatedProjectsSupport) {
+        WebIsolatedProjectsSupport.Off -> nodeJsRoot().versions
+        WebIsolatedProjectsSupport.Preview -> NpmVersions()
+    }
 
 /**
  * Returns `true` if the npm tooling directory for this compilation is in a global shared location between multiple Gradle builds.
@@ -104,5 +133,29 @@ internal fun KotlinJsIrCompilation.hasSharedNpmToolingDir(): Boolean {
         /* JS */ null -> false
         WasmTarget.WASI -> false // WASI does not have npm dependencies
         WasmTarget.JS -> true
+    }
+}
+
+/**
+ * Returns the npm dependencies for this compilation.
+ *
+ * Includes the dependencies from all associated compilations.
+ */
+internal fun KotlinJsIrCompilation.npmDependencies(): Provider<Set<KotlinNpmDependency>> {
+    val providers = project.providers
+    val compilation = this
+
+    val allCompilations = providers.provider {
+        listOf(compilation) + compilation.allAssociatedCompilations
+    }
+
+    return allCompilations.flatMap { compilations ->
+        compilations
+            .flatMap { it.allKotlinSourceSets }
+            .map { it.npmDependenciesCollector.npmDependencies }
+            .fold(providers.provider { emptyList<KotlinNpmDependency>() }) { acc, provider ->
+                acc.zip(provider) { a, b -> a + b }
+            }
+            .map { it.toSet() }
     }
 }

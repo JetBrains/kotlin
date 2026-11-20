@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCoreLibs
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
@@ -24,8 +26,10 @@ import kotlin.streams.toList
 import kotlin.test.fail
 
 @DisplayName("Kotlin default dependencies")
+@MustRunOnChangesInGradle
 class KotlinSpecificDependenciesIT : KGPBaseTest() {
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("JVM: kotlin-stdlib dependency is added by default")
     @GradleTest
@@ -36,6 +40,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @GradleTest
     @DisplayName("JVM: add pre-1.9.20 kotlin-stdlib dependency")
     @JvmGradlePluginTests
@@ -47,7 +52,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 //language=groovy
                 """
                 |
-                |kotlin.coreLibrariesVersion = "1.9.0"
+                |kotlin.coreKotlinLibrariesVersion.set("1.9.0")
                 """.trimMargin()
             )
 
@@ -55,6 +60,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("JVM: kotlin-stdlib dependency is not added when disabled via properties")
     @GradleTest
@@ -121,6 +127,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidLibraryKotlinProject")
     @AndroidGradlePluginTests
     @DisplayName("Android: kotlin-stdlib dependency is added by default")
     @GradleAndroidTest
@@ -135,8 +142,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(
                     androidVersion = agpVersion,
-                )
-                .suppressAgpWarningIsProperty(gradleVersion),
+                ),
             buildJdk = jdkVersion.location
         ) {
             removeDependencies(buildGradle)
@@ -148,6 +154,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidLibraryKotlinProject")
     @AndroidGradlePluginTests
     @DisplayName("Android: kotlin-stdlib dependency is not added when disabled via properties")
     @GradleAndroidTest
@@ -162,8 +169,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(
                     androidVersion = agpVersion,
-                )
-                .suppressAgpWarningIsProperty(gradleVersion),
+                ),
             buildJdk = jdkVersion.location
         ) {
             removeDependencies(buildGradle)
@@ -178,6 +184,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("jvm-and-js-hmpp")
     @MppGradlePluginTests
     @DisplayName("MPP: kotlin-stdlib is added by default")
     @GradleTest
@@ -196,6 +203,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("jvm-and-js-hmpp")
     @MppGradlePluginTests
     @DisplayName("MPP: kotlin-stdlib is not added when disabled in properties")
     @GradleTest
@@ -225,6 +233,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("Explicit kotlin-stdlib version overrides default one")
     @GradleTest
@@ -247,6 +256,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("hierarchical-all-native")
     @MppGradlePluginTests
     @DisplayName("Stdlib should be added into compilation not depending on common")
     @GradleTest
@@ -286,6 +296,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("wasm-d8-simple-project")
     @JsGradlePluginTests
     @DisplayName("Stdlib should be added into wasm compilations")
     @GradleTest
@@ -300,6 +311,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("KT-41642: adding stdlib should not resolve dependencies eagerly")
     @GradleTest
@@ -336,6 +348,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("KT-41642: adding kotlin.test should not resolve dependencies eagerly")
     @GradleTest
@@ -372,6 +385,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidLibraryKotlinProject")
     @AndroidGradlePluginTests
     @DisplayName("Android: Kotlin test single dependency in unit tests")
     @GradleAndroidTest
@@ -399,6 +413,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("AndroidLibraryKotlinProject")
     @AndroidGradlePluginTests
     @DisplayName("Android: Kotlin test single dependency in ui tests")
     @GradleAndroidTest
@@ -422,6 +437,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("JVM: Kotlin test single dependency")
     @GradleTest
@@ -451,6 +467,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("jvm-and-js-hmpp")
     @MppGradlePluginTests
     @DisplayName("MPP: Kotlin test single dependency in common")
     @GradleTest
@@ -467,6 +484,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("jvm-and-js-hmpp")
     @MppGradlePluginTests
     @DisplayName("MPP: Kotlin test single dependency in JVM and JS variants")
     @GradleTest
@@ -483,6 +501,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("jvm-and-js-hmpp")
     @MppGradlePluginTests
     @DisplayName("MPP (KTIJ-6098): in single platform project common metadata configurations resolve the framework-specific dependency ")
     @GradleTest
@@ -498,6 +517,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("JVM: test framework variant proper selection")
     @GradleTestVersions
@@ -521,6 +541,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("jvm-and-js-hmpp")
     @MppGradlePluginTests
     @DisplayName("MPP common: test framework variant proper selection")
     @GradleTestVersions
@@ -545,6 +566,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("jvm-and-js-hmpp")
     @MppGradlePluginTests
     @DisplayName("MPP jvm: test framework variant proper selection")
     @GradleTestVersions
@@ -569,6 +591,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("Possible to remove 'kotlin-test' dependency from configuration")
     @GradleTest
@@ -596,6 +619,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("coreLibrariesVersion override default version")
     @GradleTest
@@ -606,7 +630,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                 
-                kotlin.coreLibrariesVersion = "$customVersion"
+                kotlin.coreKotlinLibrariesVersion.set("$customVersion")
                 dependencies {
                     testImplementation("org.jetbrains.kotlin:kotlin-reflect")
                     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -622,6 +646,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("No failure if configuration is observed")
     @GradleTest

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.KaCompletionCandidateChecker
 import org.jetbrains.kotlin.analysis.api.components.KaCompletionExtensionCandidateChecker
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsCompletionCandidateChecker
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 @KaImplementationDetail
 internal class KaCompletionCandidateCheckerBridge(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaCompletionCandidateChecker {
+) : KaFirSessionComponent(), KaCompletionCandidateChecker {
     private val proxy: KaInternalsCompletionCandidateChecker
         get() = analysisSession.completionCandidateChecker
 

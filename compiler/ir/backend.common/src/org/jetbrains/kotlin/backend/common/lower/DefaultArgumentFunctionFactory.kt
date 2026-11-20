@@ -77,11 +77,18 @@ abstract class DefaultArgumentFunctionFactory(
     protected open val IrFunction.hasDefaultValues: Boolean
         get() = parameters.any { it.defaultValue != null }
 
+    protected open val IrFunction.doNotFindBaseFunctionWithDefaultArguments: Boolean
+        get() = isStatic
+
     fun findBaseFunctionWithDefaultArgumentsFor(
         declaration: IrFunction,
         skipInlineMethods: Boolean,
         skipExternalMethods: Boolean
     ): IrFunction? {
+        if (declaration.doNotFindBaseFunctionWithDefaultArguments) {
+            return declaration.takeIf { it.hasDefaultValues }
+        }
+
         val visited = mutableSetOf<IrFunction>()
 
         fun IrFunction.dfsImpl(): IrFunction? {
@@ -120,7 +127,7 @@ abstract class DefaultArgumentFunctionFactory(
         declaration.defaultArgumentsDispatchFunction?.let { return it }
         if (declaration is IrSimpleFunction) {
             // If this is an override of a function with default arguments, produce a fake override of a default stub.
-            if (declaration.overriddenSymbols.any {
+            if (!declaration.isStatic && declaration.overriddenSymbols.any {
                     findBaseFunctionWithDefaultArgumentsFor(
                         it.owner,
                         skipInlineMethods,

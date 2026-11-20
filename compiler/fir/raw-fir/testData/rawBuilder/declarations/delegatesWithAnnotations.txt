@@ -1,5 +1,5 @@
 FILE: delegatesWithAnnotations.kt
-    @Anno(<strcat>(String(x annotation ), x#)) public? final? val x: Intby lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+    @Anno(<strcat>(String(x annotation ), x#)) public? final? val x: Int by lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
         IntegerLiteral(1).plus#(IntegerLiteral(2))
     }
     )
@@ -21,11 +21,11 @@ FILE: delegatesWithAnnotations.kt
     }
 
         public? get(): <implicit>
-    @Anno(<strcat>(String(value annotation ), x#)) field:@PROPERTY_DELEGATE_FIELD:Anno(<strcat>(String(delegate: value annotation ), x#)) public? final? val value: <implicit>by delegate#
+    @Anno(<strcat>(String(value annotation ), x#)) field:@PROPERTY_DELEGATE_FIELD:Anno(<strcat>(String(delegate: value annotation ), x#)) public? final? val value: <implicit> by delegate#
         @PROPERTY_GETTER:Anno(<strcat>(String(get: value annotation ), x#)) public? get(): <implicit> {
             ^ D|/value|.getValue#(Null(null), ::R|/value|)
         }
-    @Anno(<strcat>(String(variable annotation ), x#)) field:@PROPERTY_DELEGATE_FIELD:Anno(<strcat>(String(delegate: value annotation ), x#)) public? final? var variable: <implicit>by delegate#
+    @Anno(<strcat>(String(variable annotation ), x#)) field:@PROPERTY_DELEGATE_FIELD:Anno(<strcat>(String(delegate: value annotation ), x#)) public? final? var variable: <implicit> by delegate#
         @PROPERTY_GETTER:Anno(<strcat>(String(get: value annotation ), x#)) public? get(): <implicit> {
             ^ D|/variable|.getValue#(Null(null), ::R|/variable|)
         }

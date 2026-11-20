@@ -1,12 +1,13 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ALLOW_KOTLIN_PACKAGE
+// LANGUAGE_FEATURE_TOGGLED: ExplicitInlineValueClassesSyntaxRequiredOnAllPlatforms
 
 package kotlin.jvm
 
 annotation class JvmInline
 
 <!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
-<!INLINE_CLASS_DEPRECATED!>inline<!> class IC(val a: Any)
+<!INLINE_CLASS_DEPRECATED_ERROR!>inline<!> class IC(val a: Any)
 
 @JvmInline
 value class VC(val a: Any)

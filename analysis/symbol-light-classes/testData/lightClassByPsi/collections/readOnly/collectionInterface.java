@@ -18,6 +18,9 @@ public abstract class CCollection /* test.CCollection*/<Elem>  implements test.I
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
 
   @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super Elem>);//  removeIf(java.util.function.Predicate<? super Elem>)
+
+  @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
@@ -25,6 +28,9 @@ public abstract class CCollection /* test.CCollection*/<Elem>  implements test.I
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public java.util.Iterator<Elem> iterator();//  iterator()
 
   @java.lang.Override()
   public void clear();//  clear()
@@ -60,6 +66,9 @@ public abstract class CCollection2 /* test.CCollection2*/<Elem>  implements test
 
   @java.lang.Override()
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super Elem>);//  removeIf(java.util.function.Predicate<? super Elem>)
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
@@ -107,6 +116,9 @@ public class CCollection3 /* test.CCollection3*/<Elem>  implements test.ICollect
 
   @java.lang.Override()
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super Elem>);//  removeIf(java.util.function.Predicate<? super Elem>)
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)

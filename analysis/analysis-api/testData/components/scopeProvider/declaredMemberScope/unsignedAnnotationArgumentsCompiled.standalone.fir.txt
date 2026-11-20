@@ -1,0 +1,512 @@
+KaNamedFunctionSymbol:
+  anchorPsi: null
+  annotations: []
+  callableId: test/MyInterface.function
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: ABSTRACT
+  name: function
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: [
+      test/TypeAnno(b = 1u, i = 3u, l = 4uL, s = 2u)
+        psi: null
+    ]
+    typeArguments: []
+    type: @R|test/TypeAnno|(b = UByte(1), s = UShort(2), i = UInt(3), l = ULong(4))  kotlin/Int
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      anchorPsi: null
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: argument
+      origin: LIBRARY
+      primaryConstructorProperty: null
+      psi: null
+      realPsi: null
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: [
+          test/TypeAnno(b = 255u, i = 4294967295u, l = 18446744073709551615uL, s = 65535u)
+            psi: null
+        ]
+        typeArguments: []
+        type: @R|test/TypeAnno|(b = UByte(-1), s = UShort(-1), i = UInt(-1), l = ULong(-1))  kotlin/Int
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: test.MyInterface
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecation: null
+      importableFqName: null
+  ]
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: test/MyInterface
+  getContainingFileSymbol: null
+  getContainingJvmClassName: test.MyInterface
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecation: null
+  returnValueStatus: Unspecified
+  javaMethodName: function
+  importableFqName: null
+
+KaNamedFunctionSymbol:
+  anchorPsi: null
+  annotations: []
+  callableId: test/MyInterface.constants
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: ABSTRACT
+  name: constants
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: [
+      test/TypeAnno(b = 255u, i = 4294967295u, l = 18446744073709551615uL, s = 0u)
+        psi: null
+    ]
+    typeArguments: []
+    type: @R|test/TypeAnno|(b = UByte(-1), s = UShort(0), i = UInt(-1), l = ULong(-1))  kotlin/Int
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: test/MyInterface
+  getContainingFileSymbol: null
+  getContainingJvmClassName: test.MyInterface
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecation: null
+  returnValueStatus: Unspecified
+  javaMethodName: constants
+  importableFqName: null
+
+KaNamedFunctionSymbol:
+  anchorPsi: null
+  annotations: []
+  callableId: test/MyInterface.nested
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: ABSTRACT
+  name: nested
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: [
+      test/NestedAnno(array = [test/TypeAnno(b = 255u, , s = 65535u, , i = 4294967295u, , l = 18446744073709551615uL, )], single = test/TypeAnno(b = 1u, , s = 2u, , i = 3u, , l = 4uL, ))
+        psi: null
+    ]
+    typeArguments: []
+    type: @R|test/NestedAnno|(single = @R|test/TypeAnno|(b = UByte(1), s = UShort(2), i = UInt(3), l = ULong(4)) , array = <collectionLiteralCall>(@R|test/TypeAnno|(b = UByte(-1), s = UShort(-1), i = UInt(-1), l = ULong(-1)) ))  kotlin/Int
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: test/MyInterface
+  getContainingFileSymbol: null
+  getContainingJvmClassName: test.MyInterface
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecation: null
+  returnValueStatus: Unspecified
+  javaMethodName: nested
+  importableFqName: null
+
+KaNamedFunctionSymbol:
+  anchorPsi: null
+  annotations: []
+  callableId: test/MyInterface.typeArgument
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: ABSTRACT
+  name: typeArgument
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: [
+          test/TypeAnno(b = 255u, i = 4294967295u, l = 18446744073709551615uL, s = 65535u)
+            psi: null
+        ]
+        typeArguments: []
+        type: @R|test/TypeAnno|(b = UByte(-1), s = UShort(-1), i = UInt(-1), l = ULong(-1))  kotlin/String
+    ]
+    type: kotlin/collections/List<@R|test/TypeAnno|(b = UByte(-1), s = UShort(-1), i = UInt(-1), l = ULong(-1))  kotlin/String>
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: test/MyInterface
+  getContainingFileSymbol: null
+  getContainingJvmClassName: test.MyInterface
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecation: null
+  returnValueStatus: Unspecified
+  javaMethodName: typeArgument
+  importableFqName: null
+
+KaKotlinPropertySymbol:
+  anchorPsi: null
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: null
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    isActual: false
+    isCompanion: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isNotDefault: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(test/MyInterface.property)
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: [
+        test/TypeAnno(b = 1u, i = 3u, l = 4uL, s = 2u)
+          psi: null
+      ]
+      typeArguments: []
+      type: @R|test/TypeAnno|(b = UByte(1), s = UShort(2), i = UInt(3), l = ULong(4))  kotlin/String
+    typeParameters: []
+    visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/MyInterface
+    getContainingFileSymbol: null
+    getContainingJvmClassName: test.MyInterface
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecation: null
+    importableFqName: null
+  callableId: test/MyInterface.property
+  contextParameters: []
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    anchorPsi: null
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: ABSTRACT
+    origin: LIBRARY
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: [
+        test/TypeAnno(b = 1u, i = 3u, l = 4uL, s = 2u)
+          psi: null
+      ]
+      typeArguments: []
+      type: @R|test/TypeAnno|(b = UByte(1), s = UShort(2), i = UInt(3), l = ULong(4))  kotlin/String
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/MyInterface
+    getContainingFileSymbol: null
+    getContainingJvmClassName: test.MyInterface
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecation: null
+    javaMethodName: getProperty
+    importableFqName: null
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isCompanion: false
+  isConst: false
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  location: CLASS
+  modality: ABSTRACT
+  name: property
+  origin: LIBRARY
+  primaryConstructorParameter: null
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: [
+      test/TypeAnno(b = 1u, i = 3u, l = 4uL, s = 2u)
+        psi: null
+    ]
+    typeArguments: []
+    type: @R|test/TypeAnno|(b = UByte(1), s = UShort(2), i = UInt(3), l = ULong(4))  kotlin/String
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: test/MyInterface
+  getContainingFileSymbol: null
+  getContainingJvmClassName: test.MyInterface
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecation: null
+  isInline: false
+  importableFqName: null
+
+KaKotlinPropertySymbol:
+  anchorPsi: null
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    anchorPsi: null
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    isActual: false
+    isCompanion: false
+    isDelegated: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isNotDefault: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(test/MyInterface.propertyWithDefaults)
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: [
+        test/AnnoWithDefaults()
+          psi: null
+      ]
+      typeArguments: []
+      type: @R|test/AnnoWithDefaults|()  kotlin/Int
+    typeParameters: []
+    visibility: PRIVATE
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/MyInterface
+    getContainingFileSymbol: null
+    getContainingJvmClassName: test.MyInterface
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecation: null
+    importableFqName: null
+  callableId: test/MyInterface.propertyWithDefaults
+  contextParameters: []
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    anchorPsi: null
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: ABSTRACT
+    origin: LIBRARY
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: [
+        test/AnnoWithDefaults()
+          psi: null
+      ]
+      typeArguments: []
+      type: @R|test/AnnoWithDefaults|()  kotlin/Int
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: test/MyInterface
+    getContainingFileSymbol: null
+    getContainingJvmClassName: test.MyInterface
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecation: null
+    javaMethodName: getPropertyWithDefaults
+    importableFqName: null
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isCompanion: false
+  isConst: false
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  location: CLASS
+  modality: ABSTRACT
+  name: propertyWithDefaults
+  origin: LIBRARY
+  primaryConstructorParameter: null
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: [
+      test/AnnoWithDefaults()
+        psi: null
+    ]
+    typeArguments: []
+    type: @R|test/AnnoWithDefaults|()  kotlin/Int
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: test/MyInterface
+  getContainingFileSymbol: null
+  getContainingJvmClassName: test.MyInterface
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecation: null
+  isInline: false
+  importableFqName: null

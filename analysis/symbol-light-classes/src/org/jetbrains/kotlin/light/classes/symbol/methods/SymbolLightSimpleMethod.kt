@@ -55,7 +55,10 @@ internal open class SymbolLightSimpleMethod protected constructor(
     override fun getName(): String = _name
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
-        hasTypeParameters().ifTrue {
+        val hasTypeParameters = withFunctionSymbol { it.typeParameters.isNotEmpty() } ||
+                containingClass.isDefaultImplsForInterfaceWithTypeParameters
+
+        hasTypeParameters.ifTrue {
             SymbolLightTypeParameterList(
                 owner = this,
                 symbolWithTypeParameterPointer = symbolPointer,
@@ -65,9 +68,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
         }
     }
 
-    override fun hasTypeParameters(): Boolean {
-        return withFunctionSymbol { it.typeParameters.isNotEmpty() } || containingClass.isDefaultImplsForInterfaceWithTypeParameters
-    }
+    override fun hasTypeParameters(): Boolean = _typeParameterList != null
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
@@ -77,7 +78,6 @@ internal open class SymbolLightSimpleMethod protected constructor(
             ifInlineOnly { return modifiersForInlineOnlyCase() }
             val modality = when {
                 isTopLevel -> PsiModifier.FINAL
-                containingClass is SymbolLightClassForInterfaceDefaultImpls -> null
                 this is SymbolLightMethodForMappedKotlinCollectionMethod -> if (this.isFinal) PsiModifier.FINAL else null
                 else -> withFunctionSymbol { computeMethodModality(it, containingClass) }
             }
@@ -173,6 +173,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
                     },
                     MethodAdditionalAnnotationsProvider,
                     JvmExposeBoxedAdditionalAnnotationsProvider,
+                    DefaultImplsAdditionalAnnotationsProvider,
                 ),
             )
         )
@@ -248,6 +249,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
             val isNonMaterializableInlineClassFunction = !suppressInlineClass &&
                     // Static methods should be materialized even inside inline classes if possible
                     !staticsFromCompanion &&
+                    !functionSymbol.isCompanion &&
                     containingClass.isInlineClass &&
                     // Overrides are materialized by default
                     !functionSymbol.isOverride

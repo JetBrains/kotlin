@@ -9,6 +9,7 @@ package kotlin.metadata.jvm
 
 import kotlin.metadata.*
 import kotlin.metadata.internal.*
+import org.jetbrains.kotlin.metadata.ProtoBuf.Visibility as ProtoVisibility
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import kotlin.metadata.jvm.internal.jvm
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags as JF
@@ -129,6 +130,24 @@ public var KmClass.isCompiledInCompatibilityMode: Boolean by BooleanFlagDelegate
     KmClass::jvmFlags,
     booleanFlag(JF.IS_COMPILED_IN_COMPATIBILITY_MODE)
 )
+
+/**
+ * Represents visibility of the corresponding synthetic class.
+ *
+ * The visibility of synthetic classes is not explicitly declared in the source code;
+ * it is calculated based on the source of the synthetic class and the visibility of the containing declaration.
+ *
+ * Note that Kotlin metadata has an extended list of visibilities; some of them are non-denotable.
+ * For additional details, see [Visibility].
+ */
+public var KotlinClassMetadata.SyntheticClass.visibility: Visibility
+    get() = Visibility.entries[JF.SYNTHETIC_CLASS_VISIBILITY.get(flags).number]
+    set(value) {
+        val visibilityFlag = JF.SYNTHETIC_CLASS_VISIBILITY
+        val oldVisibility = visibilityFlag.toFlags(visibilityFlag.get(flags))
+        val newVisibility = visibilityFlag.toFlags(ProtoVisibility.entries[value.ordinal])
+        flags = (flags xor oldVisibility) or newVisibility
+    }
 
 private fun booleanFlag(f: Flags.BooleanFlagField): FlagImpl =
     FlagImpl(f.offset, f.bitWidth, 1)

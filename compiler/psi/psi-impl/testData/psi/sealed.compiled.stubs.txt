@@ -3,12 +3,14 @@ FILE[kind=File[packageFqName=test]]
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
   CLASS[classId=test/Sealed, fqName=test.Sealed, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Sealed, superNames=[]]
+    classFileMajorVersion: <current_major_version>
     MODIFIER_LIST[public sealed]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Sealed]
       MODIFIER_LIST[protected]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       CLASS[classId=test/Sealed.Nested, fqName=test.Sealed.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[Sealed]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
           MODIFIER_LIST[public]
@@ -23,6 +25,7 @@ FILE[kind=File[packageFqName=test]]
                   isClassRef: true
         CLASS_BODY
       OBJECT_DECLARATION[classId=test/Sealed.Top, fqName=test.Sealed.Top, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[Sealed]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY

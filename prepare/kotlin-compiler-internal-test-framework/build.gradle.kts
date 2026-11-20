@@ -10,6 +10,7 @@ val testFixturesModules = listOf(
     ":compiler:test-infrastructure-utils",
     ":compiler:tests-compiler-utils",
     ":compiler:tests-common-new",
+    ":compiler:jvm.tests",
     ":generators:test-generator",
     ":kotlin-build-common",
     ":js:js.tests",

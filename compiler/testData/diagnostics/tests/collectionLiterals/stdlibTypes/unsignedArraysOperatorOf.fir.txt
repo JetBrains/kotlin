@@ -1,0 +1,63 @@
+Module: anno
+FILE: Anno.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/ExperimentalUnsignedTypes|)) [evaluated = vararg(<getClass>(Q|kotlin/ExperimentalUnsignedTypes|))])
+    @R|kotlin/annotation/Repeatable|() public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(int: R|kotlin/UIntArray|, byte: R|kotlin/UByteArray|, long: R|kotlin/ULongArray|, vararg short: R|kotlin/UShortArray|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val int: R|kotlin/UIntArray| = R|<local>/int|
+            public get(): R|kotlin/UIntArray|
+
+        public final val byte: R|kotlin/UByteArray| = R|<local>/byte|
+            public get(): R|kotlin/UByteArray|
+
+        public final val long: R|kotlin/ULongArray| = R|<local>/long|
+            public get(): R|kotlin/ULongArray|
+
+        public final val short: R|kotlin/UShortArray| = R|<local>/short|
+            public get(): R|kotlin/UShortArray|
+
+    }
+Module: companionsOn
+FILE: withCompanions.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/ExperimentalUnsignedTypes|)) [evaluated = vararg(<getClass>(Q|kotlin/ExperimentalUnsignedTypes|))])
+    @R|Anno|(int = Q|kotlin/UIntArray|.R|kotlin/UIntArray.of*s|() [evaluated = <collectionLiteralCall>()], byte = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s|() [evaluated = <collectionLiteralCall>()], long = Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|(vararg(ULong(42))) [evaluated = <collectionLiteralCall>(ULong(42))], short = vararg(*Q|kotlin/UShortArray|.R|kotlin/UShortArray.of*s|(vararg(UShort(1), UShort(2), UShort(3)))) [evaluated = vararg(UShort(1), UShort(2), UShort(3))]) public final fun testOn(): R|kotlin/Unit| {
+        lval a0: R|kotlin/UByteArray| = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s|()
+        lval aM: R|kotlin/UByteArray| = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s|(vararg(UByte(1), UByte(2)))
+        lval b0: R|kotlin/UShortArray| = Q|kotlin/UShortArray|.R|kotlin/UShortArray.of*s|()
+        lval bM: R|kotlin/UShortArray| = Q|kotlin/UShortArray|.R|kotlin/UShortArray.of*s|(vararg(UShort(1), UShort(2)))
+        lval c0: R|kotlin/UIntArray| = Q|kotlin/UIntArray|.R|kotlin/UIntArray.of*s|()
+        lval cM: R|kotlin/UIntArray| = Q|kotlin/UIntArray|.R|kotlin/UIntArray.of*s|(vararg(UInt(1), UInt(2)))
+        lval d0: R|kotlin/ULongArray| = Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|()
+        lval dM: R|kotlin/ULongArray| = Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|(vararg(ULong(1), ULong(2)))
+        lval x0: R|kotlin/UByteArray| = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s|()
+        lval xM: R|kotlin/UByteArray| = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s|(vararg(UByte(1), UByte(2)))
+        lval y0: R|kotlin/UShortArray| = Q|kotlin/UShortArray|.R|kotlin/UShortArray.of*s|()
+        lval yM: R|kotlin/UShortArray| = Q|kotlin/UShortArray|.R|kotlin/UShortArray.of*s|(vararg(UShort(1), UShort(2)))
+        lval z0: R|kotlin/UIntArray| = Q|kotlin/UIntArray|.R|kotlin/UIntArray.of*s|()
+        lval zM: R|kotlin/UIntArray| = Q|kotlin/UIntArray|.R|kotlin/UIntArray.of*s|(vararg(UInt(1), UInt(2)))
+        lval w0: R|kotlin/ULongArray| = Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|()
+        lval wM: R|kotlin/ULongArray| = Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|(vararg(ULong(1), ULong(2)))
+    }
+Module: companionsOff
+FILE: withoutCompanions.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/ExperimentalUnsignedTypes|)) [evaluated = vararg(<getClass>(Q|kotlin/ExperimentalUnsignedTypes|))])
+    @R|Anno|(int = Q|kotlin|.R|kotlin/uintArrayOf|(vararg(UInt(1), UInt(2), UInt(3))) [evaluated = <collectionLiteralCall>(UInt(1), UInt(2), UInt(3))], byte = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s<Inapplicable(INAPPLICABLE): kotlin/UByteArray.of>#|(vararg(UByte(42))) [evaluated = <collectionLiteralCall>(UByte(42))], long = Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s<Inapplicable(INAPPLICABLE): kotlin/ULongArray.of>#|() [evaluated = <collectionLiteralCall>()], short = vararg(*Q|kotlin|.R|kotlin/ushortArrayOf|()) [evaluated = vararg()]) public final fun testOff(): R|kotlin/Unit| {
+        lval a0: R|kotlin/UByteArray| = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s<Inapplicable(INAPPLICABLE): kotlin/UByteArray.of>#|()
+        lval aM: R|kotlin/UByteArray| = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s<Inapplicable(INAPPLICABLE): kotlin/UByteArray.of>#|(vararg(UByte(1), UByte(2)))
+        lval b0: R|kotlin/UShortArray| = Q|kotlin/UShortArray|.R|kotlin/UShortArray.of*s<Inapplicable(INAPPLICABLE): kotlin/UShortArray.of>#|()
+        lval bM: R|kotlin/UShortArray| = Q|kotlin/UShortArray|.R|kotlin/UShortArray.of*s<Inapplicable(INAPPLICABLE): kotlin/UShortArray.of>#|(vararg(UShort(1), UShort(2)))
+        lval c0: R|kotlin/UIntArray| = Q|kotlin/UIntArray|.R|kotlin/UIntArray.of*s<Inapplicable(INAPPLICABLE): kotlin/UIntArray.of>#|()
+        lval cM: R|kotlin/UIntArray| = Q|kotlin/UIntArray|.R|kotlin/UIntArray.of*s<Inapplicable(INAPPLICABLE): kotlin/UIntArray.of>#|(vararg(UInt(1), UInt(2)))
+        lval d0: R|kotlin/ULongArray| = Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s<Inapplicable(INAPPLICABLE): kotlin/ULongArray.of>#|()
+        lval dM: R|kotlin/ULongArray| = Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s<Inapplicable(INAPPLICABLE): kotlin/ULongArray.of>#|(vararg(ULong(1), ULong(2)))
+        lval x0: R|kotlin/UByteArray| = Q|kotlin|.R|kotlin/ubyteArrayOf|()
+        lval xM: R|kotlin/UByteArray| = Q|kotlin|.R|kotlin/ubyteArrayOf|(vararg(UByte(1), UByte(2)))
+        lval y0: R|kotlin/UShortArray| = Q|kotlin|.R|kotlin/ushortArrayOf|()
+        lval yM: R|kotlin/UShortArray| = Q|kotlin|.R|kotlin/ushortArrayOf|(vararg(UShort(1), UShort(2)))
+        lval z0: R|kotlin/UIntArray| = Q|kotlin|.R|kotlin/uintArrayOf|()
+        lval zM: R|kotlin/UIntArray| = Q|kotlin|.R|kotlin/uintArrayOf|(vararg(UInt(1), UInt(2)))
+        lval w0: R|kotlin/ULongArray| = Q|kotlin|.R|kotlin/ulongArrayOf|()
+        lval wM: R|kotlin/ULongArray| = Q|kotlin|.R|kotlin/ulongArrayOf|(vararg(ULong(1), ULong(2)))
+    }

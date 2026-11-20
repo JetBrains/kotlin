@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.resolveSupertypesOnAir
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -75,8 +76,8 @@ internal fun resolveQualifiedNameToClassIdFromParts(
 ): ClassId? {
     require(parts.size > 1)
 
-    // Leftmost type (JLS 6.5.4): the first segment as a simple type name in scope, else the
-    // shortest package prefix whose next segment names a top-level type.
+    // Leftmost type (JLS 6.5.4.2): the qualifier is classified left to right — the first segment as a simple type name in
+    // scope, else the package prefix grows one segment at a time until the next segment names a top-level type in it.
     var leftmostClassId: ClassId? = resolveSimpleNameToClassIdImpl(parts[0], fullResolution)
     var next = 1
     while (leftmostClassId == null && next < parts.size) {
@@ -107,10 +108,10 @@ internal fun resolveQualifiedNameToClassIdFromParts(
  *
  * [fullResolution] selects the flavor. `true` is the full primary path. `false` is the
  * reentrance-safe fallback used while an inherited-inner-class walk
- * ([resolveInheritedInnerClassToClassId]) is already in progress: it skips Step 1 (the local-scope
- * member-type lookup that would recurse back into the same walk) and probes class existence via
- * the source-index-aware [tryResolveInherited] rather than [tryResolve]. Every import step still
- * uses the same full package/class split in both flavors.
+ * ([resolveInheritedInnerClassToClassId]) is already in progress: it checks only declared member
+ * types in the enclosing-class chain (not inherited ones), and the remaining steps probe class
+ * existence via the source-index-aware [tryResolveInherited] rather than [tryResolve]. Every import
+ * step still uses the same full package/class split in both flavors.
  */
 context(c: JavaResolutionContext)
 internal fun resolveSimpleNameToClassIdImpl(
@@ -118,9 +119,7 @@ internal fun resolveSimpleNameToClassIdImpl(
     fullResolution: Boolean,
 ): ClassId? {
     // JLS 6.4.1: member types of the enclosing class shadow single-type imports.
-    if (fullResolution) {
-        resolveFromEnclosingClasses(simpleName)?.let { return it }
-    }
+    resolveFromEnclosingClasses(simpleName, includeInherited = fullResolution)?.let { return it }
     // JLS 6.4.1: same-file top-level types shadow single-type imports.
     resolveFromSameFile(simpleName, fullResolution)?.let { return it }
     // JLS 7.5.1: single-type imports.
@@ -143,6 +142,8 @@ internal fun resolveSimpleNameToClassIdImpl(
 /**
  * Step 1: member types of the enclosing classes, declared and inherited (JLS 6.4.1 / 6.5.2);
  * these shadow single-type imports, so this step runs before [resolveFromExplicitImport].
+ * With [includeInherited] = `false` only declared member types are checked; this is used during
+ * inherited-supertype walks to avoid recursively starting another inherited walk.
  *
  * Walks the containing-class chain from innermost to outermost, at each level probing the
  * declared member type and then the inherited ones — the lookups must interleave level by level
@@ -152,17 +153,15 @@ internal fun resolveSimpleNameToClassIdImpl(
  * same-package cross-file classes, so [resolveFromSamePackage] picks them up.
  */
 context(c: JavaResolutionContext)
-private fun resolveFromEnclosingClasses(simpleName: String): ClassId? {
+private fun resolveFromEnclosingClasses(simpleName: String, includeInherited: Boolean): ClassId? {
     val nameId = Name.identifier(simpleName)
     var current: JavaClass? = c.scopeContext.containingClass
     while (current != null) {
-        val fqName = current.fqName
-        if (fqName != null) {
-            val containingId = fqNameToClassId(fqName)
+        current.classId?.let { containingId ->
             val declared = containingId.createNestedClassId(nameId)
             if (tryResolve(declared)) return declared
             // Inherited member types, restricted to this level so the interleaving holds.
-            resolveInheritedInnerClassToClassId(simpleName, current)?.let { return it }
+            if (includeInherited) resolveInheritedInnerClassToClassId(simpleName, current)?.let { return it }
         }
         current = current.outerClass
     }
@@ -237,9 +236,9 @@ private fun resolveFromJavaLang(simpleName: String, fullResolution: Boolean): Cl
 
 /**
  * Step 6: type-import-on-demand (`import a.b.*;`, JLS 7.5.2). The on-demand target is a
- * `PackageOrTypeName`, so on a package-probe miss the entry is retried as a *class* whose member
- * types are imported (`import a.D.*;`). Returns `null` on ambiguity (a JLS 7.5.2 compile-time
- * error), falling through to Step 7.
+ * `PackageOrTypeName`: first resolve it as a type, importing its member types if it is a type;
+ * otherwise treat it as a package and import its top-level types. Returns `null` on ambiguity
+ * (a JLS 7.5.2 compile-time error), falling through to Step 7.
  */
 context(c: JavaResolutionContext)
 private fun resolveFromTypeStarImports(
@@ -248,20 +247,13 @@ private fun resolveFromTypeStarImports(
 ): ClassId? {
     var foundClassId: ClassId? = null
     for (starImport in c.fileContext.imports.typeStarImports) {
-        val candidateClassId = ClassId(starImport, Name.identifier(simpleName))
+        val outerClassId = resolveAsClassId(starImport, fullResolution)
+        val candidateClassId = outerClassId?.createNestedClassId(Name.identifier(simpleName))
+            ?: ClassId(starImport, Name.identifier(simpleName))
+
         if (classExists(candidateClassId, fullResolution)) {
             if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
             foundClassId = candidateClassId
-        } else {
-            // Class-level fallback: `import a.D.*` where `a.D` is a class.
-            val outerClassId = resolveAsClassId(starImport, fullResolution)
-            if (outerClassId != null) {
-                val nestedClassId = outerClassId.createNestedClassId(Name.identifier(simpleName))
-                if (classExists(nestedClassId, fullResolution)) {
-                    if (foundClassId != null && foundClassId != nestedClassId) return null // Ambiguous
-                    foundClassId = nestedClassId
-                }
-            }
         }
     }
     return foundClassId
@@ -327,11 +319,13 @@ private fun findInheritedNestedClass(
 ): ClassId? = resolveInheritedInnerClassToClassId(nestedName, classifierAdapterFor(outerClassId))
 
 /**
- * Builtins- and typealias-filtered class-existence probe: `true` if [classId] is known to the
- * session's symbol provider and denotes a real class (not a Kotlin builtin, not a `typealias`).
- * Returns `false` for sessions with no symbol provider.
+ * Class-existence probe: first checks whether [classId] can be found in the Java source index,
+ * avoiding re-entering the composite symbol provider while an enclosing source class is being
+ * built. If the source finder misses (including when only the outer class exists), falls back to
+ * the provider so generated members remain resolvable. Provider results must denote real classes
+ * (not Kotlin builtins or `typealias`es). Returns `false` if neither source nor provider has it.
  *
- * Both filters exist to match PSI's file-backed class finder, which only resolves a Java type
+ * The provider-result filters match PSI's file-backed class finder, which only resolves a Java type
  * reference when an actual `.class`/`.java` file exists:
  *  - `origin != BuiltIns` drops the `kotlin.*` builtins that FIR's symbol provider bundles into
  *    the compiler but PSI never sees;
@@ -342,6 +336,10 @@ private fun findInheritedNestedClass(
  */
 context(c: JavaResolutionContext)
 private fun tryResolve(classId: ClassId): Boolean {
+    val finder = c.fileContext.classFinder
+    if (finder != null && finder.isClassInIndex(classId) && finder.findClass(JavaClassFinder.Request(classId)) != null) {
+        return true
+    }
     val symbol = c.fileContext.session.cycleSafeClassLikeSymbol(classId) ?: return false
     if (symbol is FirTypeAliasSymbol) return false
     return symbol.origin != FirDeclarationOrigin.BuiltIns
@@ -379,23 +377,6 @@ private fun classExists(classId: ClassId, fullResolution: Boolean): Boolean =
 context(c: JavaResolutionContext)
 internal fun isTypeUseAnnotationClass(classId: ClassId): Boolean =
     c.fileContext.session.isTypeUseAnnotationClass(classId)
-
-/**
- * Cross-language constant-field resolution for qualified references such as `Foo.BAR` where
- * `Foo` is a Kotlin class / facade. Returns `null` when no `const val` is found.
- */
-context(c: JavaResolutionContext)
-internal fun resolveExternalFieldValue(classQualifier: String?, fieldName: String): Any? =
-    c.fileContext.session.resolveExternalFieldValue(classQualifier, fieldName, c.packageFqName)
-
-/**
- * Const-vs-enum-entry disambiguation for annotation arguments that look syntactically like enum
- * entries but may denote a Kotlin `const val`. Returns `null` when the reference is a real enum
- * entry or unresolvable.
- */
-context(c: JavaResolutionContext)
-internal fun resolveConstFieldValue(classId: ClassId, fieldName: Name): Any? =
-    c.fileContext.session.resolveConstFieldValue(classId, fieldName)
 
 /**
  * Materialises [classId] into a navigable [JavaClass]:
@@ -564,9 +545,9 @@ internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
             }
 
             // 3. Kotlin / built-in / deserialized arm.
-            firClass.supertypeRefsForJavaResolution(c.fileContext.session).map { ref ->
+            firClass.resolveSupertypesOnAir(c.fileContext.session).map { ref ->
                 // A ref that stayed unresolved makes this a partial answer, which must not be cached.
-                ((ref as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType)?.lookupTag?.classId
+                (ref.coneTypeOrNull as? ConeClassLikeType)?.lookupTag?.classId
                     ?: return@cycleGuardedSupertypeWalk null
             }
         }
@@ -597,9 +578,12 @@ internal fun getSimpleImport(simpleName: String): FqName? = c.fileContext.import
 context(c: JavaResolutionContext)
 internal fun getStaticImport(simpleName: String): FqName? = c.fileContext.imports.staticSingleImports[simpleName]
 
-/** Parsed imports of this context's file, exposed to avoid re-extracting them from the AST. */
+/**
+ * Resolves the class named in an import, e.g. the class part of a single-static import, the same
+ * way as imported types are resolved: classified left to right, see [resolveAsClassId].
+ */
 context(c: JavaResolutionContext)
-internal fun getImports(): JavaImports = c.fileContext.imports
+internal fun resolveImportedClassName(fqName: FqName): ClassId? = resolveAsClassId(fqName, fullResolution = true)
 
 /**
  * Returns the first star import package that could contain a class with the given simple name.
@@ -614,44 +598,26 @@ internal fun getFirstStarImportCandidate(simpleName: String): ClassId? {
     return ClassId(starPackage, Name.identifier(simpleName))
 }
 
-context(c: JavaResolutionContext)
-private fun fqNameToClassId(fqName: FqName): ClassId {
-    val fqnString = fqName.asString()
-    val pkgString = c.packageFqName.asString()
-    val className = if (pkgString.isEmpty()) {
-        fqnString
-    } else if (fqnString.startsWith(pkgString) && fqnString.length > pkgString.length && fqnString[pkgString.length] == '.') {
-        fqnString.substring(pkgString.length + 1)
-    } else {
-        fqnString
-    }
-    return ClassId(c.packageFqName, FqName(className), isLocal = false)
-}
-
-
 /**
- * Resolves a FqName to a ClassId by trying all package/class splits from longest package to
- * shortest — "a.x.b.b.b" tries ClassId(a.x.b.b, b), ClassId(a.x.b, b.b), … — unlike
- * ClassId.topLevel, which only splits at the last dot.
+ * Resolves the qualified name of an import to a ClassId, classifying it left to right, according to JLS 6.5.4.2 and JLS 6.5.5.2.
  */
 context(c: JavaResolutionContext)
 private fun resolveAsClassId(fqName: FqName, fullResolution: Boolean): ClassId? {
     if (fqName.isRoot) return null
 
-    // most common case: the longest-package split
-    ClassId.topLevel(fqName).takeIf { classExists(it, fullResolution) }?.let { return it }
-
     val parts = fqName.pathSegments()
-    val stringParts = parts.map { it.asString() }
-    for (classStartIndex in (parts.size - 2) downTo 0) {
-        val pkg = when (classStartIndex) {
-            0 -> FqName.ROOT
-            else -> FqName.fromSegments(stringParts.subList(0, classStartIndex))
-        }
-        val cls = FqName.fromSegments(stringParts.subList(classStartIndex, stringParts.size))
-        val classId = ClassId(pkg, cls, false)
 
-        if (classExists(classId, fullResolution)) return classId
+    // The root-package split is skipped: types of the unnamed package have no canonical name, so they cannot be imported (JLS 7.5).
+    var packageFqName = FqName.ROOT.child(parts[0])
+    for (i in 1 until parts.size) {
+        if (classExists(ClassId(packageFqName, parts[i]), fullResolution)) {
+            return ClassId(
+                packageFqName,
+                FqName.fromSegments(parts.subList(i, parts.size).map { it.asString() }),
+                false
+            ).takeIf { i == parts.lastIndex || classExists(it, fullResolution) }
+        }
+        packageFqName = packageFqName.child(parts[i])
     }
     return null
 }

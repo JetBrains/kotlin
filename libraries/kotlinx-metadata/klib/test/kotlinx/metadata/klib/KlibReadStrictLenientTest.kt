@@ -6,10 +6,12 @@
 package kotlinx.metadata.klib
 
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import kotlin.metadata.KmClass
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 
 class KlibReadStrictLenientTest {
     @Test
@@ -47,19 +49,53 @@ class KlibReadStrictLenientTest {
         assertFailsWith<IllegalStateException> { lenient.write() }
     }
 
+    @Test
+    fun testLenientReadingWithoutHeader() {
+        assertReadingWithoutHeader(lenient = true)
+    }
+
+    @Test
+    fun testStrictReadingWithoutHeader() {
+        assertReadingWithoutHeader(lenient = false)
+    }
+
+    private fun assertReadingWithoutHeader(lenient: Boolean) {
+        val module = readWithVersion(currentVersion, lenient = lenient, withHeader = false)
+        @Suppress("DEPRECATION")
+        assertNull(module.name)
+        assertEquals(listOf("klib"), module.fragments.map { it.fqName })
+        assertEquals(listOf("klib/Klass"), module.fragments.single().classes.map { it.name })
+    }
+
+    @Test
+    fun testWritingWithoutName() {
+        val metadata = KlibModuleMetadata(
+            name = null,
+            fragments = listOf(sampleFragment()),
+            metadataVersion = currentVersion,
+        )
+        assertFailsWith<IllegalStateException> { metadata.write() }
+    }
+
     private val previousVersion = KlibMetadataVersion(intArrayOf(2, 0, 0))
     private val currentVersion = KlibMetadataVersion(MetadataVersion.INSTANCE.toArray())
     private val nextVersion = KlibMetadataVersion(MetadataVersion.INSTANCE.next().toArray())
     private val notSupportedVersion = KlibMetadataVersion(MetadataVersion.INSTANCE.next().next().toArray())
 
-    private fun readWithVersion(version: KlibMetadataVersion, lenient: Boolean): KlibModuleMetadata {
+    private fun sampleFragment() = KmModuleFragment().apply {
+        fqName = "klib"
+        classes += KmClass().apply { name = "klib/Klass" }
+    }
+
+    private fun readWithVersion(version: KlibMetadataVersion, lenient: Boolean, withHeader: Boolean = true): KlibModuleMetadata {
         val metadata = KlibModuleMetadata(
             name = "klib",
-            fragments = listOf(KmModuleFragment().apply { fqName = "klib" }),
+            fragments = listOf(sampleFragment()),
             metadataVersion = version,
         ).write()
         val provider = object : KlibModuleMetadata.MetadataLibraryProvider {
-            override val moduleHeaderData: ByteArray get() = metadata.header
+            override val moduleHeaderData: ByteArray? get() = metadata.header.takeIf { withHeader }
+            override val packageFqNames: Set<String> = metadata.fragmentNames.toSet()
             override val metadataVersion: KlibMetadataVersion = metadata.metadataVersion
             override fun packageMetadataParts(fqName: String): Set<String> = metadata.fragmentNames.toSet()
             override fun packageMetadata(fqName: String, partName: String): ByteArray = metadata.fragments.single().single()

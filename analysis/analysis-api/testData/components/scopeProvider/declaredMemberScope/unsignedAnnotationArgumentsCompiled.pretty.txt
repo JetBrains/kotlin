@@ -1,0 +1,11 @@
+fun constants(): @test.TypeAnno(b = 255u, s = 0u, i = 4294967295u, l = 18446744073709551615uL) kotlin.Int
+
+fun function(argument: @test.TypeAnno(b = 255u, s = 65535u, i = 4294967295u, l = 18446744073709551615uL) kotlin.Int): @test.TypeAnno(b = 1u, s = 2u, i = 3u, l = 4uL) kotlin.Int
+
+fun nested(): @test.NestedAnno(single = test/TypeAnno(b = 1u, , s = 2u, , i = 3u, , l = 4uL, ), array = [test/TypeAnno(b = 255u, , s = 65535u, , i = 4294967295u, , l = 18446744073709551615uL, )]) kotlin.Int
+
+fun typeArgument(): kotlin.collections.List<@test.TypeAnno(b = 255u, s = 65535u, i = 4294967295u, l = 18446744073709551615uL) kotlin.String>
+
+val property: @test.TypeAnno(b = 1u, s = 2u, i = 3u, l = 4uL) kotlin.String
+
+val propertyWithDefaults: @test.AnnoWithDefaults kotlin.Int

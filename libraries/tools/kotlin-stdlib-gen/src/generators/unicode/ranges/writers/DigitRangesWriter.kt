@@ -13,10 +13,11 @@ internal class DigitRangesWriter(private val strategy: RangesWritingStrategy) : 
     override fun write(rangeStart: List<Int>, rangeEnd: List<Int>, rangeCategory: List<Int>, writer: FileWriter) {
         // digit ranges always have length equal to 10, so that the difference between the last char code in range and the first one is always 9.
         // Therefore, no need to generate ranges end
-        check(rangeStart.indices.all { rangeEnd[it] - rangeStart[it] == 9 })
+        check(rangeStart.indices.map { rangeEnd[it] - rangeStart[it] + 1 }.all { it > 0 && it % 10 == 0 })
 
+        val splittedRangeStart = splitRangesBy10(rangeStart, rangeEnd)
         strategy.beforeWritingRanges(writer)
-        writer.writeIntArray("rangeStart", rangeStart, strategy)
+        writer.writeIntArray("rangeStart", splittedRangeStart, strategy)
         strategy.afterWritingRanges(writer)
         writer.appendLine()
         writer.appendLine(binarySearchRange())
@@ -25,6 +26,11 @@ internal class DigitRangesWriter(private val strategy: RangesWritingStrategy) : 
         writer.appendLine()
         writer.appendLine(isDigitImpl())
     }
+
+    private fun splitRangesBy10(rangeStart: List<Int>, rangeEnd: List<Int>): List<Int> =
+        rangeStart.indices.flatMap {
+            rangeStart[it]..rangeEnd[it] step 10
+        }
 
     private fun binarySearchRange(): String = """
         /**
@@ -57,10 +63,9 @@ internal class DigitRangesWriter(private val strategy: RangesWritingStrategy) : 
          * Returns an integer from 0..9 indicating the digit this character represents,
          * or -1 if this character is not a digit.
          */
-        internal fun Char.digitToIntImpl(): Int {
-            val ch = this.code
-            val index = binarySearchRange($rangeStart, ch)
-            val diff = ch - $rangeStart[index]
+        internal fun digitToIntImpl(code: Int): Int {
+            val index = binarySearchRange($rangeStart, code)
+            val diff = code - $rangeStart[index]
             return if (diff < 10) diff else -1
         }
         """.trimIndent()
@@ -71,8 +76,8 @@ internal class DigitRangesWriter(private val strategy: RangesWritingStrategy) : 
         /**
          * Returns `true` if this character is a digit.
          */
-        internal fun Char.isDigitImpl(): Boolean {
-            return digitToIntImpl() >= 0
+        internal actual fun isDigitImpl(code: Int): Boolean {
+            return digitToIntImpl(code) >= 0
         }
         """.trimIndent()
     }

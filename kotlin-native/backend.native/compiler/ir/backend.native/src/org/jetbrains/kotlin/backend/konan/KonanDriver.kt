@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.isCache
+import org.jetbrains.kotlin.konan.target.isHeaderCache
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_COMPILER_VERSION
 import org.jetbrains.kotlin.library.components.irOrFail
@@ -107,7 +109,7 @@ class KonanDriver(
                 || isProducingExecutableFromLibraries
 
         // Return early if no input was provided.
-        if (!hasCompilerInput && config.libraryToCache == null) return
+        if (!hasCompilerInput && config.librariesToCache.isEmpty()) return
 
         if (isProducingExecutableFromLibraries && configuration.generateTestRunner != TestRunnerKind.NONE) {
             configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
@@ -142,13 +144,20 @@ class KonanDriver(
             config.reloadCacheSupport()
 
             // Parallel cache build might have already built our asked-to-build cache. Check for that and return early if true.
-            if (!hasCompilerInput && config.libraryToCache == null)
+            if (!hasCompilerInput && config.librariesToCache.isEmpty())
                 return
         }
 
         if (!config.produce.isHeaderCache) {
             config.cacheSupport.checkConsistency()
         }
+
+        // The code that is reused from the caches is not inspected by the partial linkage engine in this compilation,
+        // so the issues detected at the moment those caches were built have to be reported once again (KT-78253).
+        // Note: A compilation that produces a cache stores the issues in that cache directory instead;
+        // they are replayed by the compilations that consume it.
+        if (!config.produce.isCache)
+            replayPartialLinkageIssuesFromCaches(config, cacheBuilder::wasRebuiltInThisRun)
 
         NativeCompilerDriver(performanceManager).run(config, environment)
     }

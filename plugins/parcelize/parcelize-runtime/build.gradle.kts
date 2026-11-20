@@ -1,4 +1,5 @@
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -17,6 +18,7 @@ plugins {
     id("signing-convention")
     id("nodejs-configuration")
     id("binaryen-configuration")
+    id("wasmtime-configuration")
 }
 
 val publishedArtifactId = "kotlin-parcelize-runtime"
@@ -53,20 +55,26 @@ kotlin {
     metadata() // For common sources in IDE
 
     jvm()
-
+    val buildFeatures = serviceOf<BuildFeatures>()
     js {
-        browser()
-        nodejs()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            browser()
+            nodejs()
+        }
     }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        nodejs()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            nodejs()
+        }
     }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
-        nodejs()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            wasmtime()
+        }
     }
 
     if (kotlinBuildProperties.isInIdeaSync.get()) {
@@ -93,8 +101,19 @@ kotlin {
         tvosArm64()
 
         // Tier 3
+        iosX64()
         mingwX64()
         watchosDeviceArm64()
+
+        // Deprecated
+        @Suppress("DEPRECATION")
+        androidNativeArm32()
+        @Suppress("DEPRECATION")
+        androidNativeArm64()
+        @Suppress("DEPRECATION")
+        androidNativeX86()
+        @Suppress("DEPRECATION")
+        androidNativeX64()
     }
 
     sourceSets {

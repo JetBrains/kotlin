@@ -6,7 +6,6 @@ com/intellij/psi/PsiElement
 com/intellij/psi/PsiMember
 com/intellij/psi/search/GlobalSearchScope
 org/jetbrains/kotlin/config/LanguageVersionSettings
-org/jetbrains/kotlin/descriptors/annotations/AnnotationUseSiteTarget
 org/jetbrains/kotlin/idea/references/KtReference
 org/jetbrains/kotlin/name/CallableId
 org/jetbrains/kotlin/name/ClassId

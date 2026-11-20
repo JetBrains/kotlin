@@ -1,0 +1,209 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] explicitInlineValueClassWithMultipleFields.kt
+    public final? inline value [ResolvedTo(RAW_FIR)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.second] second: String): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): String
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] explicitInlineValueClassWithMultipleFields.kt
+    public final? inline value [ResolvedTo(RAW_FIR)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.second] second: String): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): String
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] explicitInlineValueClassWithMultipleFields.kt
+    public final? inline value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.second] second: String): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): String
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] explicitInlineValueClassWithMultipleFields.kt
+    public final? inline value [ResolvedTo(COMPANION_GENERATION)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.second] second: String): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): String
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] explicitInlineValueClassWithMultipleFields.kt
+    public final? inline value [ResolvedTo(SUPER_TYPES)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.second] second: String): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): String
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] explicitInlineValueClassWithMultipleFields.kt
+    public final? inline value [ResolvedTo(TYPES)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.second] second: String): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): String
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] explicitInlineValueClassWithMultipleFields.kt
+    public final inline value [ResolvedTo(STATUS)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.second] second: String): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): String
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] explicitInlineValueClassWithMultipleFields.kt
+    public final inline value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.second] second: String): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): String
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] explicitInlineValueClassWithMultipleFields.kt
+    public final inline value [ResolvedTo(CONTRACTS)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.second] second: String): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): String
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] explicitInlineValueClassWithMultipleFields.kt
+    public final inline value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.second] second: String): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): String
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] explicitInlineValueClassWithMultipleFields.kt
+    public final inline value [ResolvedTo(CONSTANT_EVALUATION)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.second] second: String): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): String
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] explicitInlineValueClassWithMultipleFields.kt
+    public final inline value [ResolvedTo(ANNOTATION_ARGUMENTS)] class Inline : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Inline.second] second: String): R|pack/Inline| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inline] get(): String
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] explicitInlineValueClassWithMultipleFields.kt
+    public final inline value [ResolvedTo(BODY_RESOLVE)] class Inline : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Inline.first] first: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Inline.second] second: R|kotlin/String|): R|pack/Inline| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|kotlin/Int| = R|<local>/first|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|kotlin/String| = R|<local>/second|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] get(): R|kotlin/String|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] explicitInlineValueClassWithMultipleFields.kt
+    public final inline value [ResolvedTo(BODY_RESOLVE)] class Inline : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Inline.first] first: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Inline.second] second: R|kotlin/String|): R|pack/Inline| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|kotlin/Int| = R|<local>/first|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|kotlin/String| = R|<local>/second|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] get(): R|kotlin/String|
+
+    }

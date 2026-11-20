@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.Serializable
 
+@ObsoleteNpmDependencyModel
 interface PackageManagerEnvironment : Serializable

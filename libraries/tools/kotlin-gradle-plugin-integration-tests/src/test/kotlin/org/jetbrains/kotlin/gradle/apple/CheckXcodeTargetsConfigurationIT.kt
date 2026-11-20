@@ -9,21 +9,53 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CheckXcodeTargetsConfigurationTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ConvertPbxprojToJsonTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ConvertXcodeProjectFileToJsonTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.appendText
+import kotlin.io.path.writeText
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Xcode project configuration checker task")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class CheckXcodeTargetsConfigurationIT : KGPBaseTest() {
 
-    private val convertPbxprojToJsonTask = ":${ConvertPbxprojToJsonTask.TASK_NAME}"
+    private val convertXcodeProjectToJsonTask = ":${ConvertXcodeProjectFileToJsonTask.TASK_NAME}"
     private val xcodeCheckTask = ":${CheckXcodeTargetsConfigurationTask.TASK_NAME}"
     private val ideaImportTask = ":prepareKotlinIdeaImport"
+
+    @TestMetadata("emptyxcproj")
+    @GradleTest
+    fun testXcprojTargetsAndChanges(gradleVersion: GradleVersion) {
+        project("emptyxcproj", gradleVersion) {
+            val includeMacos = "includeMacos"
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64().binaries.framework()
+                    if (project.hasProperty(includeMacos)) {
+                        macosArm64().binaries.framework()
+                    }
+                }
+            }
+            build(ideaImportTask, "-P${includeMacos}", "--rerun-tasks") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.MissingXcodeTargetDiagnostic)
+            }
+            build(ideaImportTask, "--rerun-tasks") {
+                assertNoDiagnostic(KotlinToolingDiagnostics.MissingXcodeTargetDiagnostic)
+            }
+            projectPath.resolve("iosApp/iosApp.xcodeproj/project.xcproj").writeText("{ malformed json")
+            build(ideaImportTask, "--rerun-tasks") {
+                assertNoDiagnostic(KotlinToolingDiagnostics.MissingXcodeTargetDiagnostic)
+                assertNoDiagnostic(KotlinToolingDiagnostics.NoApplicationTargetFoundDiagnostic)
+            }
+        }
+    }
 
     @DisplayName("Checker reports warning when .xcodeproj has no application targets")
     @GradleTest
@@ -41,7 +73,7 @@ class CheckXcodeTargetsConfigurationIT : KGPBaseTest() {
                 }
             }
             build(ideaImportTask) {
-                assertTasksExecuted(convertPbxprojToJsonTask, xcodeCheckTask)
+                assertTasksExecuted(convertXcodeProjectToJsonTask, xcodeCheckTask)
                 assertHasDiagnostic(KotlinToolingDiagnostics.NoApplicationTargetFoundDiagnostic)
                 assertNoDiagnostic(KotlinToolingDiagnostics.MissingXcodeTargetDiagnostic)
             }
@@ -69,7 +101,7 @@ class CheckXcodeTargetsConfigurationIT : KGPBaseTest() {
                 }
             }
             build(ideaImportTask) {
-                assertTasksExecuted(convertPbxprojToJsonTask, xcodeCheckTask)
+                assertTasksExecuted(convertXcodeProjectToJsonTask, xcodeCheckTask)
                 assertNoDiagnostic(KotlinToolingDiagnostics.MissingXcodeTargetDiagnostic)
                 assertNoDiagnostic(KotlinToolingDiagnostics.NoApplicationTargetFoundDiagnostic)
             }
@@ -97,7 +129,7 @@ class CheckXcodeTargetsConfigurationIT : KGPBaseTest() {
                 }
             }
             build(ideaImportTask) {
-                assertTasksExecuted(convertPbxprojToJsonTask, xcodeCheckTask)
+                assertTasksExecuted(convertXcodeProjectToJsonTask, xcodeCheckTask)
                 assertHasDiagnostic(KotlinToolingDiagnostics.MissingXcodeTargetDiagnostic)
                 assertNoDiagnostic(KotlinToolingDiagnostics.NoApplicationTargetFoundDiagnostic)
                 assertOutputContains("'tvos_arm64'")
@@ -124,7 +156,7 @@ class CheckXcodeTargetsConfigurationIT : KGPBaseTest() {
                 }
             }
             build(ideaImportTask) {
-                assertTasksAreNotInTaskGraph(convertPbxprojToJsonTask, xcodeCheckTask)
+                assertTasksAreNotInTaskGraph(convertXcodeProjectToJsonTask, xcodeCheckTask)
                 assertNoDiagnostic(KotlinToolingDiagnostics.MissingXcodeTargetDiagnostic)
                 assertNoDiagnostic(KotlinToolingDiagnostics.NoApplicationTargetFoundDiagnostic)
             }
@@ -146,7 +178,7 @@ class CheckXcodeTargetsConfigurationIT : KGPBaseTest() {
                 }
             }
             build(ideaImportTask) {
-                assertTasksAreNotInTaskGraph(convertPbxprojToJsonTask, xcodeCheckTask)
+                assertTasksAreNotInTaskGraph(convertXcodeProjectToJsonTask, xcodeCheckTask)
                 assertNoDiagnostic(KotlinToolingDiagnostics.MissingXcodeTargetDiagnostic)
                 assertNoDiagnostic(KotlinToolingDiagnostics.NoApplicationTargetFoundDiagnostic)
             }
@@ -169,7 +201,7 @@ class CheckXcodeTargetsConfigurationIT : KGPBaseTest() {
                 }
             }
             build(ideaImportTask) {
-                assertTasksExecuted(convertPbxprojToJsonTask, xcodeCheckTask)
+                assertTasksExecuted(convertXcodeProjectToJsonTask, xcodeCheckTask)
                 assertOutputContains("Failed to execute 'plutil'")
                 assertNoDiagnostic(KotlinToolingDiagnostics.MissingXcodeTargetDiagnostic)
                 assertNoDiagnostic(KotlinToolingDiagnostics.NoApplicationTargetFoundDiagnostic)
@@ -195,12 +227,12 @@ class CheckXcodeTargetsConfigurationIT : KGPBaseTest() {
 
             // First run, should execute both tasks
             build(ideaImportTask) {
-                assertTasksExecuted(convertPbxprojToJsonTask, xcodeCheckTask)
+                assertTasksExecuted(convertXcodeProjectToJsonTask, xcodeCheckTask)
             }
 
             // Second run, without changes, convert task should be up-to-date, check task should re-execute
             build(ideaImportTask) {
-                assertTasksUpToDate(convertPbxprojToJsonTask)
+                assertTasksUpToDate(convertXcodeProjectToJsonTask)
                 assertTasksExecuted(xcodeCheckTask)
             }
 
@@ -210,7 +242,7 @@ class CheckXcodeTargetsConfigurationIT : KGPBaseTest() {
 
             // Third run, after change, both tasks should execute again
             build(ideaImportTask) {
-                assertTasksExecuted(convertPbxprojToJsonTask, xcodeCheckTask)
+                assertTasksExecuted(convertXcodeProjectToJsonTask, xcodeCheckTask)
             }
         }
     }

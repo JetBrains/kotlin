@@ -16,7 +16,7 @@ import org.jetbrains.dokka.analysis.test.api.util.AnalysisTestDslMarker
  *                               with `/` to not confuse it with relative paths.
  */
 @AnalysisTestDslMarker
-abstract class TestDataFile(val pathFromProjectRoot: String) {
+internal abstract class TestDataFile(val pathFromProjectRoot: String) {
 
     init {
         require(pathFromProjectRoot.startsWith("/")) {

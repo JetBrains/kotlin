@@ -27,5 +27,6 @@ value class JvmClasspathRootId(val id: String) {
     }
 }
 
+/** The [VirtualFile] must itself be a classpath root, not a file or directory nested under one. */
 fun VirtualFile.asJvmClasspathRootId(): JvmClasspathRootId =
     JvmClasspathRootId(path.removeSuffix(JAR_SEPARATOR).trimEnd('/'))

@@ -38,30 +38,3 @@ public abstract class KaSymbolPointer<out S : KaSymbol> {
         return renderAsDataClassToString()
     }
 }
-
-@Deprecated(
-    "Symbol pointers are supposed to be created only by the Analysis API via `KaSymbol#createPointer()` API",
-    level = DeprecationLevel.HIDDEN,
-)
-@OptIn(KaImplementationDetail::class)
-public inline fun <S : KaSymbol> symbolPointer(crossinline getSymbol: (KaSession) -> S?): KaSymbolPointer<S> =
-    object : KaSymbolPointer<S>() {
-        @KaImplementationDetail
-        override fun restoreSymbol(analysisSession: KaSession): S? = getSymbol(analysisSession)
-    }
-
-@Deprecated(
-    "Symbol pointers are supposed to be created only by the Analysis API via `KaSymbol#createPointer()` API",
-    level = DeprecationLevel.HIDDEN,
-)
-@OptIn(KaImplementationDetail::class)
-public inline fun <T : KaSymbol, R : KaSymbol> symbolPointerDelegator(
-    pointer: KaSymbolPointer<T>,
-    crossinline transformer: KaSession.(T) -> R?,
-): KaSymbolPointer<R> = object : KaSymbolPointer<R>() {
-    @KaImplementationDetail
-    override fun restoreSymbol(analysisSession: KaSession): R? = with(analysisSession) {
-        val symbol = pointer.restoreSymbol() ?: return null
-        transformer(this, symbol)
-    }
-}

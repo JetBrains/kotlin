@@ -13,6 +13,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -81,6 +82,7 @@ internal class KotlinAndroidTargetResourcesPublication {
         @get:SkipWhenEmpty
         @get:PathSensitive(PathSensitivity.RELATIVE)
         @get:InputDirectory
+        @get:NormalizeLineEndings
         abstract val inputDirectory: DirectoryProperty
 
         @get:OutputDirectory

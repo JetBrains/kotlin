@@ -24,7 +24,7 @@ import java.net.URL
 import org.intellij.markdown.parser.MarkdownParser as IntellijMarkdownParser
 
 @InternalDokkaApi
-public open class MarkdownParser(
+internal open class MarkdownParser(
     private val externalDri: (String) -> DRI?,
     private val kdocLocation: String?,
 ) : Parser() {
@@ -546,8 +546,8 @@ public open class MarkdownParser(
         )
 
 
-    public companion object {
-        public fun DRI.fqDeclarationName(): String? {
+    companion object {
+        fun DRI.fqDeclarationName(): String? {
             if (this.target !is PointingToDeclaration) {
                 return null
             }

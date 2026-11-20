@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
-import org.jetbrains.kotlin.incremental.js.IrInlineFunctionRepresentation
-import org.jetbrains.kotlin.incremental.js.IrTranslationResultValue
-import org.jetbrains.kotlin.incremental.js.TranslationResultValue
+import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
@@ -39,6 +36,10 @@ open class IncrementalJsCache(
         private const val IR_TRANSLATION_RESULT_MAP = "ir-translation-result"
         private const val INLINE_FUNCTIONS = "inline-functions"
         private const val INLINE_FUNCTIONS_REPRESENTATION = "inline-functions-representation"
+
+        // KMP only
+        private const val COMMON_METADATA_MAP = "metadata"
+        private const val DIRTY_COMMON_METADATA_MAP = "dirty-metadata"
     }
 
     private val protoData = ProtoDataProvider(serializerProtocol)
@@ -49,12 +50,22 @@ open class IncrementalJsCache(
     private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, icContext))
     private val irInlineTranslationResults = registerMap(IrTranslationResultMap(INLINE_FUNCTIONS.storageFile, icContext))
     private val irInlineFunctionRepresentationMap = registerMap(IrInlineIdsMap(INLINE_FUNCTIONS_REPRESENTATION.storageFile, icContext))
-
     private val dirtySources = hashSetOf<File>()
+
+    // KMP only
+    private val commonMetadataMap = registerMap(CommonMetadataMap(COMMON_METADATA_MAP.storageFile, protoData, icContext))
+    private val dirtyCommonMetadataMap = registerMap(DirtyCommonMetadataMap(DIRTY_COMMON_METADATA_MAP.storageFile, icContext))
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         super.markDirty(removedAndCompiledSources)
         dirtySources.addAll(removedAndCompiledSources)
+
+        val removedAndCompiledCommonMetadata = removedAndCompiledSources.filter { source ->
+            commonMetadataMap.keys.any { fragmentName ->
+                commonMetadataMap[fragmentName, source] != null
+            }
+        }
+        dirtyCommonMetadataMap.markDirty(removedAndCompiledCommonMetadata)
     }
 
     fun compare(translatedFiles: Map<File, TranslationResultValue>, changesCollector: ChangesCollector) {
@@ -69,6 +80,13 @@ open class IncrementalJsCache(
     }
 
     fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {
+        if (incrementalResults is KmpIncrementalResultsConsumer) {
+            for ([fragmentName, metadata] in incrementalResults.commonMetadata) {
+                dirtyCommonMetadataMap.notDirty(metadata.keys)
+                commonMetadataMap.putAndCollect(fragmentName, metadata, changesCollector)
+            }
+        }
+
         for ([srcFile, newData] in incrementalResults.packageParts) {
             dirtySources.remove(srcFile)
             val oldProtoMap = translationResults[srcFile]?.metadata?.let { protoData(srcFile, it) } ?: emptyMap()
@@ -117,7 +135,8 @@ open class IncrementalJsCache(
         changesCollector: ChangesCollector,
     ): List<IrInlineFunctionRepresentation> {
         val oldRepresentation = irInlineFunctionRepresentationMap[srcFile]?.associate { it.callableId to it.hashes } ?: emptyMap()
-        val newRepresentation = incrementalResults.inlineFunctionRepresentationData[srcFile]?.associate { it.callableId to it.hashes } ?: emptyMap()
+        val newRepresentation =
+            incrementalResults.inlineFunctionRepresentationData[srcFile]?.associate { it.callableId to it.hashes } ?: emptyMap()
 
         (newRepresentation + oldRepresentation).forEach { [callableId, _] ->
             val scope = callableId.classId?.asSingleFqName() ?: callableId.packageName
@@ -143,6 +162,19 @@ open class IncrementalJsCache(
         removeAllFromClassStorage(dirtyOutputClassesMap.getDirtyOutputClasses(), changesCollector)
         dirtySources.clear()
         dirtyOutputClassesMap.clear()
+
+        val dirtyCommonMetadataSources = dirtyCommonMetadataMap.getDirtySources()
+        for (fragmentName in commonMetadataMap.keys) {
+            commonMetadataMap.remove(fragmentName, dirtyCommonMetadataSources, changesCollector)
+        }
+        dirtyCommonMetadataMap.clear()
+    }
+
+    fun nonDirtyCommonMetadata(fragmentName: String): Map<File, ByteArray> {
+        val metadata = commonMetadataMap[fragmentName] ?: return emptyMap()
+        val dirtyCommonMetadataSources = dirtyCommonMetadataMap.getDirtySources()
+
+        return if (dirtyCommonMetadataSources.isEmpty()) metadata else metadata.filterKeys { it !in dirtyCommonMetadataSources }
     }
 
     fun nonDirtyPackageParts(): Map<File, TranslationResultValue> =

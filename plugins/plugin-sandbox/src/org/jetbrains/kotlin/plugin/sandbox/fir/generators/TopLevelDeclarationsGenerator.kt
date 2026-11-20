@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationType
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.plugin.createTopLevelFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -29,7 +33,12 @@ import org.jetbrains.kotlin.plugin.sandbox.fir.SANDBOX_ANNOTATIONS_PACKAGE
 class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
         private val DUMMY_FUNCTION_CLASS_ID = ClassId(SANDBOX_ANNOTATIONS_PACKAGE, Name.identifier("DummyFunction"))
-        private val PREDICATE = LookupPredicate.create { annotated(DUMMY_FUNCTION_CLASS_ID.asSingleFqName()) }
+        private val PREDICATE = LookupPredicate.create {
+            annotated(DUMMY_FUNCTION_CLASS_ID.asSingleFqName()).matching(DeclarationType.Custom {
+                // Only match non-object classes.
+                it is FirRegularClass && it.classKind != ClassKind.OBJECT
+            })
+        }
     }
 
     private val predicateBasedProvider = session.predicateBasedProvider
@@ -47,7 +56,7 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
         val function = createTopLevelFunction(
             TopLevelDeclarationsGeneratorKey,
             callableId,
-            session.builtinTypes.stringType.coneType,
+            StandardTypes.String,
             containingFileName = containingFileName,
         ) {
             valueParameter(Name.identifier("value"), matchedClassSymbol.constructStarProjectedType())

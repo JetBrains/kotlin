@@ -9,7 +9,7 @@ import org.jetbrains.dokka.analysis.test.api.configuration.TestDokkaSourceSet
 /**
  * Declares a capability that a `.kt` file can be created that will be used as a usage sample.
  */
-interface KotlinSampleFileCreator {
+internal interface KotlinSampleFileCreator {
 
     /**
      * Creates a `.kt` file outside of the source code directory. It should be used as input

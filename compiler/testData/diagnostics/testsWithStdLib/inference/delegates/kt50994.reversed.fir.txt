@@ -4,7 +4,7 @@ FILE: kt50994.reversed.kt
             super<R|kotlin/Any|>()
         }
 
-        public final var processor: R|ProcessorWithChildren?|by this@R|/ProcessorWithParent|.R|/parent|<R|ProcessorWithParent|, R|ProcessorWithChildren|>(Q|ProcessorWithChildren|::R|/ProcessorWithChildren.processors|)
+        public final var processor: R|ProcessorWithChildren?| by this@R|/ProcessorWithParent|.R|/parent|<R|ProcessorWithParent|, R|ProcessorWithChildren|>(Q|ProcessorWithChildren|::R|/ProcessorWithChildren.processors|)
             public get(): R|ProcessorWithChildren?| {
                 ^ this@R|/ProcessorWithParent|.D|/ProcessorWithParent.processor|.R|SubstitutionOverride</Delegate.getValue: R|ProcessorWithChildren?|>|(this@R|/ProcessorWithParent|, ::R|/ProcessorWithParent.processor|)
             }
@@ -18,7 +18,7 @@ FILE: kt50994.reversed.kt
             super<R|kotlin/Any|>()
         }
 
-        public final var processors: R|kotlin/collections/MutableCollection<ProcessorWithParent>|by this@R|/ProcessorWithChildren|.R|/children|<R|ProcessorWithChildren|, R|ProcessorWithParent|>(<getClass>(Q|ProcessorWithParent|).R|kotlin/jvm/java|<R|ProcessorWithParent|>, Q|ProcessorWithParent|::R|/ProcessorWithParent.processor|)
+        public final var processors: R|kotlin/collections/MutableCollection<ProcessorWithParent>| by this@R|/ProcessorWithChildren|.R|/children|<R|ProcessorWithChildren|, R|ProcessorWithParent|>(<getClass>(Q|ProcessorWithParent|).R|kotlin/jvm/java|<R|ProcessorWithParent|>, Q|ProcessorWithParent|::R|/ProcessorWithParent.processor|)
             public get(): R|kotlin/collections/MutableCollection<ProcessorWithParent>| {
                 ^ this@R|/ProcessorWithChildren|.D|/ProcessorWithChildren.processors|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/collections/MutableCollection<ProcessorWithParent>|>|(this@R|/ProcessorWithChildren|, ::R|/ProcessorWithChildren.processors|)
             }
@@ -32,7 +32,7 @@ FILE: kt50994.reversed.kt
             super<R|kotlin/Any|>()
         }
 
-        public final var processor: R|Processor2WithChildren?|by this@R|/Processor2WithParent|.R|/parent|<R|Processor2WithParent|, R|Processor2WithChildren|>(Q|Processor2WithChildren|::R|/Processor2WithChildren.processors|)
+        public final var processor: R|Processor2WithChildren?| by this@R|/Processor2WithParent|.R|/parent|<R|Processor2WithParent|, R|Processor2WithChildren|>(Q|Processor2WithChildren|::R|/Processor2WithChildren.processors|)
             public get(): R|Processor2WithChildren?| {
                 ^ this@R|/Processor2WithParent|.D|/Processor2WithParent.processor|.R|SubstitutionOverride</Delegate.getValue: R|Processor2WithChildren?|>|(this@R|/Processor2WithParent|, ::R|/Processor2WithParent.processor|)
             }
@@ -46,7 +46,7 @@ FILE: kt50994.reversed.kt
             super<R|kotlin/Any|>()
         }
 
-        public final var processors: R|kotlin/collections/MutableCollection<Processor2WithParent>|by this@R|/Processor2WithChildren|.R|/children|<R|Processor2WithChildren|, R|Processor2WithParent|>(<getClass>(Q|Processor2WithParent|).R|kotlin/jvm/java|<R|Processor2WithParent|>, Q|Processor2WithParent|::R|/Processor2WithParent.processor|)
+        public final var processors: R|kotlin/collections/MutableCollection<Processor2WithParent>| by this@R|/Processor2WithChildren|.R|/children|<R|Processor2WithChildren|, R|Processor2WithParent|>(<getClass>(Q|Processor2WithParent|).R|kotlin/jvm/java|<R|Processor2WithParent|>, Q|Processor2WithParent|::R|/Processor2WithParent.processor|)
             public get(): R|kotlin/collections/MutableCollection<Processor2WithParent>| {
                 ^ this@R|/Processor2WithChildren|.D|/Processor2WithChildren.processors|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/collections/MutableCollection<Processor2WithParent>|>|(this@R|/Processor2WithChildren|, ::R|/Processor2WithChildren.processors|)
             }
@@ -60,7 +60,7 @@ FILE: kt50994.reversed.kt
             super<R|kotlin/Any|>()
         }
 
-        public final var processor: R|Processor3WithChildren?|by this@R|/Processor3WithParent|.R|/parent|<R|Processor3WithParent|, R|Processor3WithChildren|>(Q|Processor3WithChildren|::R|/Processor3WithChildren.processors|)
+        public final var processor: R|Processor3WithChildren?| by this@R|/Processor3WithParent|.R|/parent|<R|Processor3WithParent|, R|Processor3WithChildren|>(Q|Processor3WithChildren|::R|/Processor3WithChildren.processors|)
             public get(): R|Processor3WithChildren?| {
                 ^ this@R|/Processor3WithParent|.D|/Processor3WithParent.processor|.R|SubstitutionOverride</Delegate.getValue: R|Processor3WithChildren?|>|(this@R|/Processor3WithParent|, ::R|/Processor3WithParent.processor|)
             }
@@ -74,7 +74,7 @@ FILE: kt50994.reversed.kt
             super<R|kotlin/Any|>()
         }
 
-        public final var processors: R|kotlin/collections/MutableCollection<Processor3WithParent>|by this@R|/Processor3WithChildren|.R|/children|<R|Processor3WithChildren|, R|Processor3WithParent|>(<getClass>(Q|Processor3WithParent|).R|kotlin/jvm/java|<R|Processor3WithParent|>, Q|Processor3WithParent|::R|/Processor3WithParent.processor|)
+        public final var processors: R|kotlin/collections/MutableCollection<Processor3WithParent>| by this@R|/Processor3WithChildren|.R|/children|<R|Processor3WithChildren|, R|Processor3WithParent|>(<getClass>(Q|Processor3WithParent|).R|kotlin/jvm/java|<R|Processor3WithParent|>, Q|Processor3WithParent|::R|/Processor3WithParent.processor|)
             public get(): R|kotlin/collections/MutableCollection<Processor3WithParent>| {
                 ^ this@R|/Processor3WithChildren|.D|/Processor3WithChildren.processors|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/collections/MutableCollection<Processor3WithParent>|>|(this@R|/Processor3WithChildren|, ::R|/Processor3WithChildren.processors|)
             }

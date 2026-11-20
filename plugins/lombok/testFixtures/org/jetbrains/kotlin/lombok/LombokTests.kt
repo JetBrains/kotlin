@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.lombok
 
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
+import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.lombok.LombokDirectives.ENABLE_LOMBOK
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.preprocessors.ConfigCommentTransformerPreprocessor
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
+import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 
 // ---------------------------- box ----------------------------
@@ -31,7 +32,7 @@ open class AbstractFirLightTreeBlackBoxCodegenTestForLombok : AbstractFirLightTr
 
 // ---------------------------- diagnostics ----------------------------
 
-open class AbstractFirPsiDiagnosticTestForLombok : AbstractFirPsiDiagnosticTest() {
+open class AbstractFirLightTreeDiagnosticTestForLombok : AbstractPhasedJvmDiagnosticLightTreeTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.enableLombok()
@@ -45,7 +46,7 @@ open class AbstractFirPsiDiagnosticTestForLombok : AbstractFirPsiDiagnosticTest(
  *
  * This is the `KtFile.diagnostics(...)` path that the IDE uses for highlighting.
  * It resolves lazily, so it sees a declaration that a Lombok generator left below `BODY_RESOLVE`.
- * The compiler-based [AbstractFirPsiDiagnosticTestForLombok] resolves eagerly and cannot see that.
+ * The compiler-based [AbstractFirLightTreeDiagnosticTestForLombok] resolves eagerly and cannot see that.
  *
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
  */
@@ -60,6 +61,21 @@ abstract class AbstractLLLombokDiagnosticsTest : AbstractLLDiagnosticsTest() {
         builder.defaultDirectives {
             +AnalysisApiTestDirectives.IGNORE_UNKNOWN_FILES
         }
+    }
+}
+
+// ---------------------------- Analysis API symbols ----------------------------
+
+/**
+ * Builds Analysis API symbols for Lombok-generated declarations and restores them from their pointers in a new
+ * read action, as the IDE does for light classes.
+ *
+ * @see org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.AbstractSymbolByFqNameTest
+ */
+abstract class AbstractLombokSymbolByFqNameTest : AbstractSymbolByFqNameTest() {
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.enableLombok()
     }
 }
 

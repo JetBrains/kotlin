@@ -16,7 +16,7 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.memberProperties
 
 @Suppress("UNCHECKED_CAST") // It is only usable from tests so we do not care about safety
-public class MockContext(
+internal class MockContext(
     vararg extensions: Pair<ExtensionPoint<*>, (DokkaContext) -> Any>,
     private val testConfiguration: DokkaConfiguration? = null,
     private val unusedExtensionPoints: List<ExtensionPoint<*>>? = null

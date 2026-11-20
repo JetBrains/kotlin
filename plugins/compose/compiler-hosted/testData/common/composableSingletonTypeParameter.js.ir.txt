@@ -1,6 +1,10 @@
 FILE fqName:<root> fileName:/composableSingletonTypeParameter.kt
   CLASS OBJECT name:ComposableSingletons$ComposableSingletonTypeParameterKt modality:FINAL visibility:internal superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ComposableSingletons$ComposableSingletonTypeParameterKt
+    CONSTRUCTOR visibility:public returnType:<root>.ComposableSingletons$ComposableSingletonTypeParameterKt [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ComposableSingletons$ComposableSingletonTypeParameterKt modality:FINAL visibility:internal superTypes:[kotlin.Any]' type=kotlin.Unit
     PROPERTY name:lambda$-1840754746 visibility:internal modality:FINAL [val]
       FIELD name:lambda$-1840754746 type:kotlin.Function3<kotlin.Any?, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? visibility:private
       FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:<get-lambda$-1840754746> visibility:internal modality:FINAL returnType:kotlin.Function3<kotlin.Any?, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
@@ -125,10 +129,6 @@ FILE fqName:<root> fileName:/composableSingletonTypeParameter.kt
           RETURN type=kotlin.Nothing from='internal final fun <get-lambda$-1840754746> (): kotlin.Function3<kotlin.Any?, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt'
             GET_FIELD 'FIELD name:lambda$-1840754746 type:kotlin.Function3<kotlin.Any?, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? visibility:private declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt' type=kotlin.Function3<kotlin.Any?, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? origin=null
               receiver: GET_VAR '<this>: <root>.ComposableSingletons$ComposableSingletonTypeParameterKt declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt.<get-lambda$-1840754746>' type=<root>.ComposableSingletons$ComposableSingletonTypeParameterKt origin=null
-    CONSTRUCTOR visibility:public returnType:<root>.ComposableSingletons$ComposableSingletonTypeParameterKt [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ComposableSingletons$ComposableSingletonTypeParameterKt modality:FINAL visibility:internal superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:Effect visibility:public modality:FINAL returnType:kotlin.Unit
     TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER kind:Regular name:vm index:0 type:S of <root>.Effect

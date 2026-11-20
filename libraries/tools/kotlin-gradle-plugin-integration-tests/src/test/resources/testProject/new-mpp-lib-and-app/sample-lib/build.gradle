@@ -27,7 +27,6 @@ kotlin {
     targets {
         linuxX64('linux64')
         mingwX64('mingw64')
-        macosX64('macos64')
         macosArm64('macosArm64')
 
         // Check the DSL constructs in the Groovy DSL:
@@ -71,7 +70,6 @@ kotlin {
 
         nativeMain { dependsOn commonMain }
         linux64Main { dependsOn nativeMain }
-        macos64Main { dependsOn nativeMain }
         macosArm64Main { dependsOn nativeMain }
     }
 }

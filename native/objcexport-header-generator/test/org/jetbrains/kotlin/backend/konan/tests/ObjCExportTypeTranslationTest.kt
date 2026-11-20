@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.tests
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
+import org.jetbrains.kotlin.backend.konan.testUtils.IgnoreK1
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -94,25 +95,25 @@ class ObjCExportTypeTranslationTest(
 
     @Test
     fun `test - hiddenTypes - Any - are exposed as id`() {
-        val header = header("""fun foo(): Any""")
+        val header = header("""fun foo(): Any = error("stub")""")
         assertEquals(" -> id", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
     fun `test - hiddenTypes - Function - are exposed as id`() {
-        val header = header("""fun foo(): Function<*>""")
+        val header = header("""fun foo(): Function<*> = error("stub")""")
         assertEquals(" -> id", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
     fun `test - hiddenTypes - Iterable - are exposed as id`() {
-        val header = header("""fun foo(): Iterable<*>""")
+        val header = header("""fun foo(): Iterable<*> = error("stub")""")
         assertEquals(" -> id", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
     fun `test - hiddenTypes - Number - are exposed as id`() {
-        val header = header("""fun foo(): Number""")
+        val header = header("""fun foo(): Number = error("stub")""")
         assertEquals(" -> id", header.renderTypesOfSymbol("foo"))
     }
 
@@ -458,6 +459,10 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    // NonNullNativePtr is internal in the stdlib, so a public property of this type
+    // is not compilable Kotlin: the test module cannot be compiled in the K1 test
+    // pipeline; the source-based Analysis API pipeline still covers it.
+    @IgnoreK1(expectCrash = true)
     fun `test - NonNullNativePtr`() {
         val header = header(
             """
@@ -570,6 +575,10 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    // A public property of an internal type is not compilable Kotlin, and error types
+    // cannot be serialized into a klib, so the test module cannot be compiled in the
+    // K1 test pipeline; the source-based Analysis API pipeline still covers it.
+    @IgnoreK1(expectCrash = true)
     fun `test - ObjCObject types`() {
         val header = header(
             """
@@ -584,6 +593,10 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    // The source deliberately contains unresolved references to check how error types
+    // are rendered; a klib cannot contain error types, so the test module cannot be
+    // compiled in the K1 test pipeline; the source-based Analysis API pipeline still covers it.
+    @IgnoreK1(expectCrash = true)
     fun `test - unresolved error type`() {
         val header = header(
             """
@@ -632,7 +645,7 @@ class ObjCExportTypeTranslationTest(
     fun `test - function type returning char`() {
         val header = header(
             """
-            val foo: () -> Char
+            val foo: () -> Char get() = error("stub")
         """.trimIndent()
         )
 
@@ -652,6 +665,10 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    // A non-external Kotlin subclass of ObjCObject without an Objective-C superclass
+    // is rejected by the compiler backend checks, so the test module cannot be compiled
+    // in the K1 test pipeline; the source-based Analysis API pipeline still covers it.
+    @IgnoreK1(expectCrash = true)
     fun `test - ObjCObject - no ExternalObjCClass annotation`() {
         val header = header(
             """
@@ -691,6 +708,10 @@ class ObjCExportTypeTranslationTest(
     }
 
     @Test
+    // A non-external Kotlin subclass of ObjCClass is rejected by the compiler backend
+    // checks, so the test module cannot be compiled in the K1 test pipeline; the
+    // source-based Analysis API pipeline still covers it.
+    @IgnoreK1(expectCrash = true)
     fun `test - ObjCObject - with ObjCClass supertype`() {
         val header = header(
             """

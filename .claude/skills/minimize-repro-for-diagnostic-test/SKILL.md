@@ -20,7 +20,7 @@ For a local user project if it's open in the IDE, use JetBrains MCP resolution t
 
 # Initial version
 
-Using information from [tests description](../../../compiler/fir/analysis-tests/AGENTS.md), make a first version of the test which contains
+Using information from [tests description](../../../compiler/testData/diagnostics/AGENTS.md), make a first version of the test which contains
 some wide context needed to reproduce the issue, like all _necessary_/referenced declarations dumped (including Java files and dependencies in separate file).
 
 Make sure that the problem is reproduced by running a test, and if it's not, add some more context, if you fail for a couple of times, then stop.

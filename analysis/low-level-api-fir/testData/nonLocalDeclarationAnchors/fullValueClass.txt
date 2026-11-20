@@ -1,3 +1,4 @@
+/* anchor (KtFile) --> */
 package one
 
 /* anchor (KtClass) --> */value class Point/* anchor (KtPrimaryConstructor) --> */(/* anchor (KtParameter) --> */val x: Int/* <-- */, /* anchor (KtParameter) --> */val y: Int/* <-- */)/* <-- */ {
@@ -13,3 +14,4 @@ package one
 }/* <-- */
 
 /* anchor (KtObjectDeclaration) --> */value object Empty/* <-- */
+/* <-- */

@@ -10,9 +10,12 @@ import com.google.common.cache.CacheBuilder
 import org.jetbrains.kotlin.gradle.internal.KaptExecutionToken
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.net.URL
 import java.net.URLClassLoader
 import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.function.Supplier
 
 /**
  * LRU cache for [ClassLoader]s by class path.
@@ -107,7 +110,7 @@ class ClassLoadersCache(
 
     private fun makeClassLoader(files: List<File>, parent: ClassLoader): URLClassLoader {
         logger.info("Creating new classloader for classpath: ${files.map { it.path }}")
-        return URLClassLoader(files.map { it.toURI().toURL() }.toTypedArray(), parent)
+        return ClassTrackingURLClassLoader(files.map { it.toURI().toURL() }.toTypedArray(), parent)
     }
 
     private fun makeKey(files: List<File>): CacheKey {
@@ -121,4 +124,18 @@ class ClassLoadersCache(
     private data class ClasspathEntry(val path: File, val modificationTimestamp: Long)
 
     private data class CacheKey(val entries: List<ClasspathEntry>)
+}
+
+/**
+ * Remembers every class it defines, so that kapt memory leak detection can inspect them.
+ * Kapt reads them through the JDK [Supplier] interface, as it cannot see the Gradle plugin classes.
+ */
+private class ClassTrackingURLClassLoader(urls: Array<URL>, parent: ClassLoader) : URLClassLoader(urls, parent),
+    Supplier<Collection<Class<*>>> {
+    private val definedClasses = ConcurrentLinkedQueue<Class<*>>()
+
+    override fun findClass(name: String): Class<*> =
+        super.findClass(name).also(definedClasses::add)
+
+    override fun get(): Collection<Class<*>> = definedClasses
 }

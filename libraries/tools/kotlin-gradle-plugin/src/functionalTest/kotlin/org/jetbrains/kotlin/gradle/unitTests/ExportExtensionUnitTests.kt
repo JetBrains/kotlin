@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalSwiftExportDsl::class)
-
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.InvalidUserCodeException
@@ -16,19 +14,26 @@ import org.gradle.api.tasks.Sync
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.FATAL
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedSwiftExportForXcodeTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleIdentifier as validateSwiftExportModuleIdentifierAtTaskTime
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleName as validateSwiftExportModuleNameForConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleName as validateSwiftExportModuleNameAtTaskTime
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftPackagePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.swiftPackagePlatforms
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.AssembleSwiftPackageBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSPMPackageFromSwiftExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
@@ -36,7 +41,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDepende
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.SerializeSwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration
-import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.EMBED_SWIFT_EXPORT_TASK_NAME
@@ -66,6 +70,70 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ExportExtensionUnitTests {
+
+    @Test
+    fun `reserved swift module names are reported case-insensitively during configuration`() {
+        val project = buildProjectWithMPP()
+        val reservedModuleNames = listOf(
+            "ExportedKotlinPackages",
+            "KotlinRuntimeSupport",
+            "KotlinRuntime",
+            "KotlinCoroutineSupport",
+        )
+
+        (reservedModuleNames + reservedModuleNames.map { it.lowercase() }).forEach { moduleName ->
+            project.validateSwiftExportModuleNameForConfiguration(moduleName, project.path)
+            project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportReservedModuleName(moduleName, project.path))
+        }
+    }
+
+    @Test
+    fun `reserved swift module names are fatal during task-time validation while similar names are allowed`() {
+        val reservedModuleNames = listOf(
+            "ExportedKotlinPackages",
+            "KotlinRuntimeSupport",
+            "KotlinRuntime",
+            "KotlinCoroutineSupport",
+        )
+        val similarModuleNames = reservedModuleNames.map { "${it}Extra" } + "Shared"
+
+        (reservedModuleNames + reservedModuleNames.map { it.lowercase() }).forEach { moduleName ->
+            val diagnostics = mutableListOf<ToolingDiagnostic>()
+            validateSwiftExportModuleNameAtTaskTime(moduleName, "test module", reportDiagnostic = diagnostics::add)
+            assertEquals(
+                listOf(KotlinToolingDiagnostics.SwiftExportReservedModuleName(moduleName, "test module", severity = FATAL)),
+                diagnostics,
+            )
+        }
+
+        similarModuleNames.forEach { moduleName ->
+            val diagnostics = mutableListOf<ToolingDiagnostic>()
+            validateSwiftExportModuleNameAtTaskTime(moduleName, "test module", reportDiagnostic = diagnostics::add)
+            assertEquals(emptyList(), diagnostics)
+        }
+    }
+
+    @Test
+    fun `an invalid module identifier is fatal during task-time validation while valid identifiers are allowed`() {
+        val invalidModuleNames = listOf("1Shared", "Shared-Module", "Shared.Module")
+        // 'KotlinRuntime' is reserved but still a valid identifier: rejecting it is up to the other validation.
+        val validModuleNames = listOf("Shared", "_Private", "Shared2", "KotlinRuntime")
+
+        invalidModuleNames.forEach { moduleName ->
+            val diagnostics = mutableListOf<ToolingDiagnostic>()
+            validateSwiftExportModuleIdentifierAtTaskTime(moduleName, "test module", reportDiagnostic = diagnostics::add)
+            assertEquals(
+                listOf(KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName, "test module", severity = FATAL)),
+                diagnostics,
+            )
+        }
+
+        validModuleNames.forEach { moduleName ->
+            val diagnostics = mutableListOf<ToolingDiagnostic>()
+            validateSwiftExportModuleIdentifierAtTaskTime(moduleName, "test module", reportDiagnostic = diagnostics::add)
+            assertEquals(emptyList(), diagnostics)
+        }
+    }
 
     @Test
     fun `test export extension is registered on the multiplatform extension`() {
@@ -118,6 +186,61 @@ class ExportExtensionUnitTests {
 
         val integration = assertNotNull(project.exportExtension.swiftExportConfiguration.activatedXcodeIntegration)
         assertEquals(mapOf("key" to "value"), integration.settings.get())
+    }
+
+    // KT-91395
+    @Test
+    fun `test xcode integration is configurable with a groovy closure`() {
+        val project = buildProjectWithMPP()
+        val script = project.file("export.gradle")
+        script.writeText(
+            """
+            kotlin {
+                export {
+                    swift {
+                        xcodeIntegration {
+                            settings.put("key", "value")
+                        }
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+        project.apply(mapOf("from" to script))
+
+        val integration = assertNotNull(project.exportExtension.swiftExportConfiguration.activatedXcodeIntegration)
+        assertEquals(mapOf("key" to "value"), integration.settings.get())
+    }
+
+    @Test
+    fun `test swift package integration is configurable with a groovy closure`() {
+        val project = buildProjectWithMPP()
+        val script = project.file("export.gradle")
+        script.writeText(
+            """
+            kotlin {
+                export {
+                    swift {
+                        swiftPackageIntegration {
+                            configure("org.example:bar:1.0") {
+                                moduleName.set("Bar")
+                            }
+                        }
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+        project.apply(mapOf("from" to script))
+
+        val integration = assertNotNull(project.exportExtension.swiftExportConfiguration.activatedSwiftPackageIntegration)
+        assertEquals(
+            mapOf<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>(
+                SwiftExportDependencySelector.Module("org.example", "bar") to
+                        SwiftExportDeclaredModuleOptions(moduleName = "Bar", rootPackage = null)
+            ),
+            integration.dependencyOverrides.get(),
+        )
     }
 
     @Test
@@ -447,6 +570,24 @@ class ExportExtensionXcodeIntegrationTests {
     }
 
     @Test
+    fun `test the xcode integration can be activated before the targets are declared`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { configureRepositoriesForTests() },
+            code = {
+                exportExtension.swift {
+                    xcodeIntegration()
+                }
+                kotlin { iosSimulatorArm64() }
+                exportExtension.swift {
+                    moduleName.set("Shared")
+                }
+            }
+        ).also { it.evaluate() }
+
+        assertNotNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+    }
+
+    @Test
     fun `test the pipeline is registered for an activated project in the xcode environment`() {
         val project = exportDslProject(withXcodeEnvironment = true) {
             exportExtension.swift {
@@ -661,6 +802,17 @@ class LegacySwiftExportDslDiagnosticsTests {
     }
 
     @Test
+    fun `test a reserved module name is reported when configured with the legacy dsl`() {
+        val project = legacyDslProject {
+            legacySwiftExportExtension.moduleName.set("KotlinRuntime")
+        }
+
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportReservedModuleName("KotlinRuntime", project.path)
+        )
+    }
+
+    @Test
     fun `test the conflict is reported when both dsls are used`() {
         val project = legacyDslProject {
             legacySwiftExportExtension.moduleName.set("Legacy")
@@ -779,6 +931,62 @@ class ExportExtensionSwiftExportTests {
     @BeforeTest
     fun runOnMacOSOnly() {
         Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+    }
+
+    @Test
+    fun `invalid module name with hyphen is reported`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+            },
+            swiftExport = {
+                moduleName.set("Shared-S")
+                rootPackage.set("com.example.shared")
+            }
+        )
+
+        project.evaluate()
+
+        project.realizeSwiftModules()
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportInvalidModuleName("Shared-S", project.path)
+        )
+    }
+
+    @Test
+    fun `invalid module name that starts with digit is reported`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+            },
+            swiftExport = {
+                moduleName.set("123Shared")
+                rootPackage.set("com.example.shared")
+            }
+        )
+
+        project.evaluate()
+
+        project.realizeSwiftModules()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+    }
+
+    @Test
+    fun `a reserved default root module name fails during swift export`() {
+        val project = swiftExportProject(
+            projectBuilder = { withName("kotlin-runtime") },
+        )
+
+        project.evaluate()
+
+        project.assertRealizingSwiftModulesFailsWith(
+            KotlinToolingDiagnostics.SwiftExportReservedModuleName(
+                reservedModuleName = "KotlinRuntime",
+                module = "the module being exported",
+                integrationDsl = "xcodeIntegration",
+                severity = FATAL,
+            )
+        )
     }
 
     @Test
@@ -1453,7 +1661,7 @@ class ExportExtensionSwiftExportTests {
     }
 
     @Test
-    fun `an override with an invalid module name is reported`() {
+    fun `an override with an invalid module name fails`() {
         val project = swiftExportProject(
             multiplatform = {
                 iosSimulatorArm64()
@@ -1472,8 +1680,73 @@ class ExportExtensionSwiftExportTests {
 
         project.evaluate()
 
-        project.realizeSwiftModules()
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+        project.assertRealizingSwiftModulesFailsWith(
+            KotlinToolingDiagnostics.SwiftExportInvalidModuleName(
+                moduleName = "not-a-valid-swift-module",
+                module = "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0",
+                severity = FATAL,
+            )
+        )
+    }
+
+    @Test
+    fun `an override with a reserved module name fails`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        moduleName.set("KotlinRuntime")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        project.assertRealizingSwiftModulesFailsWith(
+            KotlinToolingDiagnostics.SwiftExportReservedModuleName(
+                reservedModuleName = "KotlinRuntime",
+                module = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                integrationDsl = "xcodeIntegration",
+                severity = FATAL,
+            )
+        )
+    }
+
+    @Test
+    fun `a safe override can replace a reserved derived dependency name`() {
+        val project = buildProject(
+            projectBuilder = { withName("shared") },
+            configureProject = { configureRepositoriesForTests() },
+        )
+        val projectDependency = project.subProject("KotlinRuntime") {
+            iosSimulatorArm64()
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api(projectDependency)
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure(projectDependency) { moduleName.set("SafeRuntime") }
+                }
+            },
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        assertEquals("SafeRuntime", project.realizeSwiftModules().single().moduleName)
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.SwiftExportReservedModuleName)
     }
 
     @Test
@@ -1496,6 +1769,24 @@ class ExportExtensionSwiftExportTests {
 
         project.realizeSwiftModules()
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportModuleResolutionError)
+    }
+
+    // KT-90135
+    @Test
+    fun `an unmatched override does not fail the task`() {
+        val project = swiftExportProject(
+            swiftExport = {
+                xcodeIntegration {
+                    configure("unknown:qa:1.0", SwiftExportVisibility.HIDDEN)
+                }
+            }
+        )
+
+        project.evaluate()
+
+        // configure() only selects dependencies, so a selector that matches nothing changes no module.
+        // Uses the task's own reporter, as a real build does, which would throw on a FATAL diagnostic.
+        project.tasks.withType(SwiftExportTask::class.java).single().resolveSwiftExportedModules()
     }
 
     @Test
@@ -1618,7 +1909,8 @@ class ExportExtensionSwiftExportTests {
 
         project.assertRealizingSwiftModulesFailsWith(
             KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(
-                mapOf("Shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0"))
+                mapOf("Shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0")),
+                "xcodeIntegration",
             )
         )
     }
@@ -1644,7 +1936,8 @@ class ExportExtensionSwiftExportTests {
 
         project.assertRealizingSwiftModulesFailsWith(
             KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(
-                mapOf("Shared/shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0"))
+                mapOf("Shared/shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0")),
+                "xcodeIntegration",
             )
         )
     }
@@ -2198,6 +2491,92 @@ class ExportExtensionSwiftPackageIntegrationTests {
     }
 
     @Test
+    fun `test the swift package product is named after the module by default`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration()
+            }
+        }
+
+        val generateTask = assertIs<GenerateSPMPackageFromSwiftExport>(project.tasks.findByName("generateDebugSwiftPackage"))
+        assertEquals("SharedLibrary", generateTask.swiftLibraryName.get())
+    }
+
+    @Test
+    fun `test the swift package product name is configurable`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    productName.set("SharedKit")
+                }
+            }
+        }
+
+        listOf("generateDebugSwiftPackage", "generateReleaseSwiftPackage").forEach { name ->
+            val generateTask = assertIs<GenerateSPMPackageFromSwiftExport>(project.tasks.findByName(name))
+            assertEquals("SharedKit", generateTask.swiftLibraryName.get(), name)
+        }
+    }
+
+    @Test
+    fun `test the default swift package product name can be read while the dsl is configured`() {
+        var defaultWithModuleName: String? = null
+        exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    defaultWithModuleName = productName.get()
+                }
+            }
+        }
+        assertEquals("SharedLibrary", defaultWithModuleName)
+    }
+
+    @Test
+    fun `test the default swift package product name follows the project name without a module name`() {
+        val project = buildProjectWithMPP(projectBuilder = { withName("my-shared") })
+        var default: String? = null
+        project.exportExtension.swift {
+            swiftPackageIntegration {
+                default = productName.get()
+            }
+        }
+        assertEquals("MySharedLibrary", default)
+    }
+
+    @Test
+    fun `test a blank swift package product name is reported`() {
+        listOf("", "  ").forEach { blankName ->
+            val project = exportDslProject {
+                exportExtension.swift {
+                    moduleName.set("Shared")
+                    swiftPackageIntegration {
+                        productName.set(blankName)
+                    }
+                }
+            }
+
+            project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftPackageBlankProductName(project.path))
+        }
+    }
+
+    @Test
+    fun `test a swift package product name that is not an identifier is not reported`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    productName.set("Shared-Kit")
+                }
+            }
+        }
+
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.SwiftPackageBlankProductName)
+    }
+
+    @Test
     fun `test swift export configured without apple targets is reported and registers no task`() {
         val project = exportDslProject(multiplatform = { jvm() }) {
             exportExtension.swift {
@@ -2313,23 +2692,52 @@ class ExportExtensionSwiftPackageIntegrationTests {
             listOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.MACOS_ARM64),
             targetOutputs.map { it.target.get() },
         )
-        assertEquals(
-            listOf("iosArm64", "iosSimulatorArm64", "macosArm64"),
-            targetOutputs.map { it.targetName.get() },
-        )
-        assertNull(generateTask.swiftModulesFile.orNull)
+        assertNull(generateTask.swiftExportOutputDirectory.orNull)
         // The headers are only collected for the Xcode integration.
         assertFalse(generateTask.collectIncludes.get())
         val swiftExportDirectory = project.layout.buildDirectory.dir("SwiftPackageExport").get().asFile
-        // locationOnly, because the value of a task output can't be read before the task has run.
         assertEquals(
-            listOf("iosArm64", "iosSimulatorArm64", "macosArm64").map { swiftExportDirectory.resolve("$it/modules.json") },
-            targetOutputs.map { it.swiftModulesFile.locationOnly.get().asFile },
+            listOf("iosArm64", "iosSimulatorArm64", "macosArm64").map { swiftExportDirectory.resolve("$it/output/modules.json") },
+            targetOutputs.map { it.swiftModulesFile.get().asFile },
         )
     }
 
     @Test
-    fun `test the generate task knows the targets by the names they are declared with`() {
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    fun `test the swift pm import cinterop is reexported by the package run`() {
+        val project = swiftPMImportPackageProject()
+
+        // So the API can expose the imported types, as it can in the Xcode flow.
+        val runTask = assertIs<SwiftExportTask>(project.tasks.findByName("iosArm64SwiftPackageExport"))
+        assertEquals("${project.name}-cinterop-swiftPMImport", runTask.cinteropModuleName.get())
+    }
+
+    @Test
+    fun `test the imported swift packages reach the generate task`() {
+        val project = swiftPMImportPackageProject()
+
+        // Declared in the exported manifest, so the consumer links what the Kotlin binary refers to.
+        val generateTask = assertIs<GenerateSPMPackageFromSwiftExport>(project.tasks.findByName("generateDebugSwiftPackage"))
+        assertEquals(setOf("localSwiftPackage", "Lib"), generateTask.swiftPMDependencies.get().map { it.packageName }.toSet())
+        assertEquals(project.projectDir.resolve("iosApp/SharedPackage/Debug").absolutePath, generateTask.exportDirectoryPath.get())
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    private fun swiftPMImportPackageProject() = exportDslProject(multiplatform = { iosArm64(); iosSimulatorArm64() }) {
+        multiplatformExtension.extensions.getByType(SwiftPMImportExtension::class.java).apply {
+            localSwiftPackage(layout.projectDirectory.dir("../localSwiftPackage"), products = listOf("LocalSwiftPackage"))
+            swiftPackage("https://github.com/example/Lib.git", version = "1.2.0", products = listOf("Lib"))
+        }
+        exportExtension.swift {
+            moduleName.set("Shared")
+            swiftPackageIntegration {
+                outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+            }
+        }
+    }
+
+    @Test
+    fun `test the generate task reads the output of targets declared with custom names`() {
         val project = exportDslProject(multiplatform = { iosArm64("phone"); macosArm64("desktop") }) {
             exportExtension.swift {
                 moduleName.set("Shared")
@@ -2340,9 +2748,13 @@ class ExportExtensionSwiftPackageIntegrationTests {
         }
 
         val generateTask = assertIs<GenerateSPMPackageFromSwiftExport>(project.tasks.findByName("generateDebugSwiftPackage"))
+        val swiftExportDirectory = project.layout.buildDirectory.dir("SwiftPackageExport").get().asFile
         assertEquals(
-            listOf("desktop" to KonanTarget.MACOS_ARM64, "phone" to KonanTarget.IOS_ARM64),
-            generateTask.targetOutputs.get().map { it.targetName.get() to it.target.get() },
+            listOf(
+                KonanTarget.MACOS_ARM64 to swiftExportDirectory.resolve("desktop/output/modules.json"),
+                KonanTarget.IOS_ARM64 to swiftExportDirectory.resolve("phone/output/modules.json"),
+            ),
+            generateTask.targetOutputs.get().map { it.target.get() to it.swiftModulesFile.get().asFile },
         )
     }
 
@@ -2485,4 +2897,90 @@ class ExportExtensionSwiftPackageIntegrationTests {
         val generateTask = assertIs<GenerateSPMPackageFromSwiftExport>(project.tasks.findByName("generateDebugSwiftPackage"))
         assertEquals(listOf(SwiftPackagePlatform("iOS", "18.0")), generateTask.platforms.get())
     }
+
+    // KT-91059
+    @Test
+    fun `an unresolved override of the swift package integration points at that integration`() {
+        val project = exportDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    configure("org.example:not-in-the-graph:1.0") { moduleName.set("Absent") }
+                }
+            }
+        }
+
+        project.swiftPackageExportRun().resolveSwiftExportedModules(project::reportDiagnostic)
+
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportModuleResolutionError(
+                listOf("org.example:not-in-the-graph"),
+                "export { swift { swiftPackageIntegration { configure() } } }",
+            )
+        )
+    }
+
+    // KT-91059
+    @Test
+    fun `a module name clash in the swift package integration points at that integration`() {
+        val project = exportDslProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            }
+        ) {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                swiftPackageIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") { moduleName.set("Shared") }
+                }
+            }
+        }
+
+        // The diagnostic is FATAL, so the collector throws right after recording it.
+        assertFails { project.swiftPackageExportRun().resolveSwiftExportedModules(project::reportDiagnostic) }
+
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(
+                mapOf("Shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0")),
+                "swiftPackageIntegration",
+            )
+        )
+    }
+
+    // KT-91396
+    @Test
+    fun `an override with a reserved module name of the swift package integration points at that integration`() {
+        val project = exportDslProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            }
+        ) {
+            exportExtension.swift {
+                swiftPackageIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") { moduleName.set("KotlinRuntime") }
+                }
+            }
+        }
+
+        // The diagnostic is FATAL, so the collector throws right after recording it.
+        assertFails { project.swiftPackageExportRun().resolveSwiftExportedModules(project::reportDiagnostic) }
+
+        project.assertContainsDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportReservedModuleName(
+                reservedModuleName = "KotlinRuntime",
+                module = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                integrationDsl = "swiftPackageIntegration",
+                severity = FATAL,
+            )
+        )
+    }
+
+    private fun Project.swiftPackageExportRun(): SwiftExportTask =
+        assertIs<SwiftExportTask>(tasks.findByName("iosSimulatorArm64SwiftPackageExport"))
 }

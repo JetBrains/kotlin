@@ -1,2 +1,5 @@
 FILE: topLevelDestructuringWithoutInitializer.kt
-    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
+    private final [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = ERROR_EXPR(Initializer required for destructuring declaration)
+        private get(): <implicit>
+    public final [DestructuringDeclarationContainerVariableKey=/<destruct>] val e: <implicit> = R|/<destruct>|.component1#()
+        public get(): <implicit>

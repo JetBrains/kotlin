@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
 // FIR_DUMP
 annotation class AllOpen
@@ -15,3 +16,6 @@ companion fun C.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>() {}
 
 @AllOpen
 companion var C.<!EXTENSION_SHADOWED_BY_MEMBER!>bar<!> = ""
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+propertyDeclaration, propertyWithExtensionReceiver, stringLiteral */

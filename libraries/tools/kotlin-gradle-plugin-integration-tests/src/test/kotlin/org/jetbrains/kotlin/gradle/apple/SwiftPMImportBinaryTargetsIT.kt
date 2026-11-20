@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -46,7 +48,9 @@ import kotlin.test.assertEquals
 @SwiftPMImportGradlePluginTests
 class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
 
+    @TestMetadata("emptyxcode")
     @GradleTest
+    @MustRunOnChangesInNative
     fun `local package with binaryTarget static framework xcframework`(version: GradleVersion) {
         testLocalPackageWithBinaryTargetXcframework(
             version,
@@ -55,7 +59,9 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
+    @MustRunOnChangesInNative
     fun `local package with binaryTarget dynamic framework xcframework`(version: GradleVersion) {
         testLocalPackageWithBinaryTargetXcframework(
             version,
@@ -64,7 +70,9 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
+    @MustRunOnChangesInNative
     fun `local package with binaryTarget static library xcframework`(version: GradleVersion) {
         testLocalPackageWithBinaryTargetXcframework(
             version,
@@ -73,6 +81,7 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `shared xcframework consumed from both kotlin and swift sides with dynamic framework`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -100,7 +109,7 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
 
             swiftConsumerDir.resolve("Package.swift").writeText(
                 """
-                    // swift-tools-version: 5.9
+                    // swift-tools-version: 6.1
                     import PackageDescription
 
                     let package = Package(
@@ -203,6 +212,7 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `test apple target without macosArm64 slice in swift package with binary target`(version: GradleVersion) {
         project("emptyxcode", version) {
@@ -242,6 +252,7 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("emptyxcode")
     @GradleTest
     fun `test apple target without macosArm64 slice in swift package with binary target and product filter`(version: GradleVersion) {
         project("emptyxcode", version) {

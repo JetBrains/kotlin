@@ -15,6 +15,8 @@ fun Project.applyEmbedAndSignEnvironment(
     archs: String,
     builtProductsDirectory: String = layout.buildDirectory.dir("products").getFile().absolutePath,
     targetBuildDirectory: String = layout.buildDirectory.dir("buildDir").getFile().absolutePath,
+    buildDirectory: String? = null,
+    effectivePlatformName: String? = null,
     dwarfDsymFolderPath: String? = null,
     action: String = "build",
 ) {
@@ -23,7 +25,7 @@ fun Project.applyEmbedAndSignEnvironment(
         configuration
     )
     extensions.extraProperties.set(
-        "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.SDK_NAME",
+        "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.PLATFORM_NAME",
         sdk
     )
     extensions.extraProperties.set(
@@ -38,6 +40,18 @@ fun Project.applyEmbedAndSignEnvironment(
         "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.TARGET_BUILD_DIR",
         targetBuildDirectory,
     )
+    buildDirectory?.let {
+        extensions.extraProperties.set(
+            "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.BUILD_DIR",
+            it,
+        )
+    }
+    effectivePlatformName?.let {
+        extensions.extraProperties.set(
+            "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.EFFECTIVE_PLATFORM_NAME",
+            it,
+        )
+    }
     extensions.extraProperties.set(
         "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.FRAMEWORKS_FOLDER_PATH",
         "Frameworks"

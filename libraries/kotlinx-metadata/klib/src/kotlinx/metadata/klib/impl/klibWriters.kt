@@ -5,14 +5,15 @@
 
 package kotlinx.metadata.klib.impl
 
-import kotlin.metadata.internal.*
-import kotlin.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.KlibMetadataVersion
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.serialization.ApproximatingStringTable
+import org.jetbrains.kotlin.serialization.SerializableStringTable
 import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmType
+import kotlin.metadata.internal.ModuleFragmentWriter
+import kotlin.metadata.internal.WriteContextExtension
+import kotlin.metadata.internal.common.KmModuleFragment
 
 class KlibMetadataVersionWriteExtension(val version: KlibMetadataVersion) : WriteContextExtension
 
@@ -21,7 +22,7 @@ class KlibTypeWriteExtension(val processType: (KmType) -> Unit) : WriteContextEx
 class KlibAnnotationWriteExtension(val processAnnotation: (KmAnnotation) -> Unit) : WriteContextExtension
 
 class KlibModuleFragmentWriter(
-    stringTable: ApproximatingStringTable,
+    stringTable: SerializableStringTable,
     contextExtensions: List<WriteContextExtension> = emptyList()
 ) : ModuleFragmentWriter(stringTable, contextExtensions) {
 
@@ -32,7 +33,7 @@ class KlibModuleFragmentWriter(
         super.writeModuleFragment(kmPackageFragment)
 
         // TODO: This should be moved to ModuleFragmentWriter.
-        val [strings, qualifiedNames] = (c.strings as ApproximatingStringTable).buildProto()
+        val [strings, qualifiedNames] = (c.strings as SerializableStringTable).buildProto()
         t.strings = strings
         t.qualifiedNames = qualifiedNames
 

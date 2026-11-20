@@ -1,0 +1,3 @@
+[DeprecatedPropertyWithReplacement | WARNING] Deprecated Project Property 'kotlin.swift-export.experimental.nowarn'
+Project property 'kotlin.swift-export.experimental.nowarn' is deprecated.
+Please use 'kotlin.native.suppressSwiftExportExperimentalWarning' instead.

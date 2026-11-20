@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
@@ -61,15 +62,15 @@ class MemberFunctionWithAnnotatedParametersGenerator(session: FirSession) : FirD
             context.owner,
             MemberFunctionWithAnnotatedParametersGeneratorKey,
             callableId.callableName,
-            session.builtinTypes.unitType.coneType,
+            StandardTypes.Unit,
         ) {
             valueParameter(
                 name = Name.identifier("x"),
-                type = session.builtinTypes.intType.coneType,
+                type = StandardTypes.Int,
             )
             valueParameter(
                 name = Name.identifier("y"),
-                type = session.builtinTypes.intType.coneType,
+                type = StandardTypes.Int,
             )
             withGeneratedDefaultBody()
         }

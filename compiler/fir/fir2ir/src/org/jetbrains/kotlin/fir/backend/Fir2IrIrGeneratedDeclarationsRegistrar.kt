@@ -330,7 +330,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                         isExternal = irSetter.isExternal
                         isOverride = irSetter.overriddenSymbols.isNotEmpty()
                     }
-                    returnTypeRef = buildResolvedTypeRef { coneType = session.builtinTypes.unitType.coneType }
+                    returnTypeRef = buildResolvedTypeRef { coneType = StandardTypes.Unit }
                     dispatchReceiverType = firProperty.dispatchReceiverType
                     propertySymbol = firProperty.symbol
                     symbol = FirPropertyAccessorSymbol()
@@ -394,6 +394,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 isCompanion = irClass.isCompanion
                 isData = irClass.isData
                 isInline = irClass.isValue
+                isValue = irClass.isValue
                 isFun = irClass.isFun
                 isExternal = irClass.isExternal
             }

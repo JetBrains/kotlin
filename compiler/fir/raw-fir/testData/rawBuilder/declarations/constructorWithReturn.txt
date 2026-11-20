@@ -1,0 +1,23 @@
+FILE: constructorWithReturn.kt
+    public open class Base : R|kotlin/Any| {
+        public? [ContainingClassKey=Base] constructor(x: Int): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final? class Owner : Base {
+        public? [ContainingClassKey=Owner] constructor(x: Int = IntegerLiteral(1)): R|Owner| {
+            super<<implicit>>(x#.plus#(IntegerLiteral(1)))
+            when () {
+                CMP(<, x#.compareTo#(IntegerLiteral(0))) ->  {
+                    ^ Unit
+                }
+            }
+
+            bar#(x#)
+        }
+
+        public? final? fun bar(i: Int): R|kotlin/Unit| {
+        }
+
+    }

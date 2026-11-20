@@ -41,6 +41,7 @@ internal val KmTypeAlias.klibExtensions: KlibTypeAliasExtension
 
 internal class KlibFunctionExtension : KmFunctionExtension {
     var file: KlibSourceFile? = null
+    var kdoc: String? = null
 
     override val type: KmExtensionType
         get() = TYPE
@@ -52,6 +53,7 @@ internal class KlibFunctionExtension : KmFunctionExtension {
 
 internal class KlibClassExtension : KmClassExtension {
     var file: KlibSourceFile? = null
+    var kdoc: String? = null
 
     override val type: KmExtensionType
         get() = TYPE
@@ -88,6 +90,9 @@ internal class KlibTypeExtension : KmTypeExtension {
 internal class KlibPropertyExtension : KmPropertyExtension {
     var file: KlibSourceFile? = null
     var compileTimeValue: KmAnnotationArgument? = null
+    var kdoc: String? = null
+    var getterKdoc: String? = null
+    var setterKdoc: String? = null
 
     override val type: KmExtensionType
         get() = TYPE
@@ -99,6 +104,7 @@ internal class KlibPropertyExtension : KmPropertyExtension {
 
 internal class KlibConstructorExtension : KmConstructorExtension {
     val annotations: MutableList<KmAnnotation> = mutableListOf()
+    var kdoc: String? = null
 
     override val type: KmExtensionType
         get() = TYPE
@@ -122,6 +128,7 @@ internal class KlibTypeParameterExtension : KmTypeParameterExtension {
 internal class KlibEnumEntryExtension : KmEnumEntryExtension {
     var ordinal: Int? = null
     val annotations: MutableList<KmAnnotation> = mutableListOf()
+    var kdoc: String? = null
 
     override val type: KmExtensionType
         get() = TYPE
@@ -155,6 +162,8 @@ internal class KlibModuleFragmentExtension : KmModuleFragmentExtension {
 }
 
 internal class KlibTypeAliasExtension : KmTypeAliasExtension {
+    var kdoc: String? = null
+
     override val type: KmExtensionType
         get() = TYPE
 

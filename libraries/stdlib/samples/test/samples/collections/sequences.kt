@@ -60,7 +60,6 @@ class Sequences {
         }
 
         @Sample
-        @OptIn(ExperimentalCollectionLiteralsApi::class)
         fun sequenceOfValuesLiteral() {
             val sequence: Sequence<String> = ["first", "second", "last"]
             sequence.forEach(::println)
@@ -73,7 +72,6 @@ class Sequences {
         }
 
         @Sample
-        @OptIn(ExperimentalCollectionLiteralsApi::class)
         fun sequenceOfSingleValueLiteral() {
             val sequence: Sequence<String> = ["single"]
             assertPrints(sequence.toList(), "[single]")
@@ -86,7 +84,6 @@ class Sequences {
         }
 
         @Sample
-        @OptIn(ExperimentalCollectionLiteralsApi::class)
         fun sequenceOfEmptyLiteral() {
             val sequence: Sequence<String> = []
             assertPrints(sequence.toList(), "[]")

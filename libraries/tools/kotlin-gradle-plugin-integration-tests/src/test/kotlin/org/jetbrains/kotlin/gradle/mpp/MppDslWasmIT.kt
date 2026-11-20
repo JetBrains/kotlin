@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 
-@MppGradlePluginTests
+@WasmJsGradlePluginTests
 class MppDslWasmIT : KGPBaseTest() {
 
     @GradleTest

@@ -6,25 +6,25 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.InlineClassesUtils
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
-import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
+import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
+import org.jetbrains.kotlin.backend.konan.ir.GlobalHierarchyAnalysisResult
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
-import org.jetbrains.kotlin.backend.konan.lower.*
+import org.jetbrains.kotlin.backend.konan.lower.BridgesSupport
+import org.jetbrains.kotlin.backend.konan.lower.CachesAbiSupport
+import org.jetbrains.kotlin.backend.konan.lower.EnumsSupport
+import org.jetbrains.kotlin.backend.konan.lower.NativeInnerClassesSupport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
-import org.jetbrains.kotlin.backend.konan.serialization.ModuleDeserializerProvider
-import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionDeserializer
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
-import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
-import org.jetbrains.kotlin.backend.konan.serialization.TrivialGettersDeserializer
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.backend.konan.serialization.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -35,10 +35,9 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.isTrivialGetter
+import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
-import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
 private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefault = false)
@@ -51,8 +50,7 @@ private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefa
  */
 internal class NativeBackendContext(
         config: NativeSecondStageCompilationConfig,
-        @OptIn(K1Deprecation::class)
-        val builtIns: KonanBuiltIns,
+        val builtIns: KotlinBuiltIns,
         override val irBuiltIns: IrBuiltIns,
         val irModules: List<IrModuleFragment>,
         val irLinker: KonanIrLinker,
@@ -86,7 +84,7 @@ internal class NativeBackendContext(
     }
 
     val moduleDeserializerProvider by lazy {
-        ModuleDeserializerProvider(config.libraryToCache, config.cachedLibraries, irLinker)
+        ModuleDeserializerProvider(config.librariesToCache, config.cachedLibraries, irLinker)
     }
 
     private val inlineFunctionDeserializers = ConcurrentHashMap<KonanPartialModuleDeserializer, InlineFunctionDeserializer>()
@@ -139,9 +137,8 @@ internal class NativeBackendContext(
 
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
 
-    @OptIn(K1Deprecation::class)
     val stdlibModule
-        get() = this.builtIns.any.module
+        get() = this.irBuiltIns.anyClass.owner.moduleFragment
 
     val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = HashMap()
 
@@ -150,11 +147,11 @@ internal class NativeBackendContext(
     override fun dispose() {}
 
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
-            config.partialLinkageConfig,
             KtDiagnosticReporterWithImplicitIrBasedContext(
                     configuration.diagnosticsCollector,
                     config.languageVersionSettings,
-            )
+            ),
+            config.partialLinkageIssues,
     )
 }
 

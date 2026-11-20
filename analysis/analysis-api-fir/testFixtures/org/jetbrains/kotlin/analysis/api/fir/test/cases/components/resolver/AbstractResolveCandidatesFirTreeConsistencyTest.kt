@@ -1,0 +1,36 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.resolver
+
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
+
+/**
+ * [org.jetbrains.kotlin.analysis.api.components.KaResolver.resolveToCallCandidates]
+ * has quite fragile and danger implementation which may easily change the original FIR tree structure.
+ *
+ * This test ensures that the tree structure is not affected.
+ *
+ * @see AbstractResolveCandidatesByFileFirTreeConsistencyTest
+ */
+abstract class AbstractResolveCandidatesFirTreeConsistencyTest : AbstractResolveCandidatesTest() {
+    override fun generateResolveOutput(resolveKind: ResolveKind, mainElement: KtElement, testServices: TestServices): String {
+        return testServices.assertions.assertFirTreeConsistency(mainElement.containingKtFile) {
+            super.generateResolveOutput(resolveKind, mainElement, testServices)
+        }
+    }
+}
+
+abstract class AbstractSourceLikeResolveCandidatesFirTreeConsistencyTest : AbstractResolveCandidatesFirTreeConsistencyTest() {
+    override val configurator: AnalysisApiTestConfigurator =
+        object : LLSourceLikeTestConfigurator() {
+            override val testPrefixes: List<String>
+                get() = super.testPrefixes.patchedChainForConsistencyTests()
+        }
+}

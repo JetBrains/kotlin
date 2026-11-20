@@ -1,0 +1,23 @@
+// LL_FIR_DIVERGENCE
+// FIR checkers don't raise backend's INLINE_CALL_CYCLE diagnostic.
+// LL_FIR_DIVERGENCE
+// ISSUE: KT-82017
+// RUN_PIPELINE_TILL: CODEGEN
+// LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization
+// DIAGNOSTICS: -NOTHING_TO_INLINE
+// LANGUAGE: -ForbidOverriddenDefaultParametersInInline
+// TARGET_BACKEND: NATIVE, JS_IR, WASM
+// ^^^ K/JVM legitimately raises not a warning, but error `NOT_YET_SUPPORTED_IN_INLINE`, irrelevant to ForbidOverriddenDefaultParametersInInline setting
+
+interface I {
+    abstract fun foo(a: Int = 42): Int
+}
+
+class A(): I {
+    inline override <!OVERRIDE_BY_INLINE!>fun foo(<!NOT_YET_SUPPORTED_IN_INLINE!>a: Int<!>): Int<!> = -42
+}
+
+fun bar() = A().foo()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, integerLiteral, interfaceDeclaration, override,
+primaryConstructor */

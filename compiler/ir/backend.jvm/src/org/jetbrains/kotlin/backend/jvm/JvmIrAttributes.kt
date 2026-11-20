@@ -70,3 +70,5 @@ var IrMutableAnnotationContainer.isJavaLangDeprecatedOnlyAddedByCompiler: Boolea
 
 // Marks an anonymous function used as an indy implementation method so codegen emits parameter assertions.
 var IrFunction.isIndyImplementationMethod: Boolean by irFlag(copyByDefault = false)
+
+var IrSimpleFunction.syntheticMethodForProperty: IrProperty? by irAttribute(true)

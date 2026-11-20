@@ -16,15 +16,18 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
 
+@MustRunOnChangesInGradle
 @DisplayName("Build cache relocation")
 class BuildCacheRelocationIT : KGPBaseTest() {
 
@@ -32,6 +35,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
 
     private val localBuildCacheDir get() = workingDir.resolve("remote-jdk-build-cache")
 
+    @TestMetadata("simpleProject")
     @JvmGradlePluginTests
     @DisplayName("works for Kotlin simple project")
     @GradleTest
@@ -46,6 +50,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("kapt/simple")
     @OtherGradlePluginTests
     @DisplayName("works for Kotlin with Kapt simple project")
     @GradleTest
@@ -70,8 +75,9 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("kotlin-js-dce")
     @JsGradlePluginTests
-    @DisplayName("works with JS/DCE project")
+    @DisplayName("works with JS project")
     @GradleTest
     fun testRelocationKotlinJs(gradleVersion: GradleVersion) {
         val (firstProject, secondProject) = prepareTestProjects(
@@ -93,6 +99,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("new-mpp-wasm-wasi-js-test")
     @MppGradlePluginTests
     @DisplayName("works with Wasm project")
     @GradleTest
@@ -119,6 +126,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("mpp-wasm-js-browser-nodejs")
     @MppGradlePluginTests
     @DisplayName("works with Wasm Browser project")
     @GradleTest
@@ -143,6 +151,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("new-mpp-lib-with-tests")
     @MppGradlePluginTests
     @DisplayName("works with Multiplatform")
     @GradleTest
@@ -168,6 +177,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("AndroidProject")
     @AndroidGradlePluginTests
     @DisplayName("works with Android project")
     @GradleAndroidTest
@@ -197,6 +207,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("kapt/android-dagger")
     @AndroidGradlePluginTests
     @DisplayName("Test relocation for Android with dagger project")
     @GradleAndroidTest
@@ -227,6 +238,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("kapt/android-dagger")
     @AndroidGradlePluginTests
     @DisplayName("KT-48617: Kapt ignores empty directories from Android variant")
     @GradleAndroidTest
@@ -260,6 +272,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("native-build-cache")
     @NativeGradlePluginTests
     @DisplayName("with native project")
     @GradleTest
@@ -300,6 +313,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
+    @TestMetadata("kapt/kaptAvoidance")
     @OtherGradlePluginTests
     @DisplayName("Kapt incremental compilation works with cache")
     @GradleTest
@@ -311,6 +325,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kapt/kaptAvoidance")
     @OtherGradlePluginTests
     @DisplayName("Kapt incremental compilation build does not break relocated build cache")
     @GradleTest
@@ -356,7 +371,6 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     ) {
         firstProject.build(
             *tasksToExecute.toTypedArray(),
-            buildOptions = firstProject.buildOptions.suppressAgpWarningIsProperty(firstProject.gradleVersion)
         ) {
             assertTasksPackedToCache(*cacheableTasks.toTypedArray())
             additionalAssertions()
@@ -417,6 +431,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("buildCacheSimple")
     @JvmGradlePluginTests
     @DisplayName("Kotlin incremental compilation should work correctly after cache hint")
     @GradleTest
@@ -424,6 +439,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         checkKotlinIncrementalCompilationAfterCacheHit(gradleVersion)
     }
 
+    @TestMetadata("buildCacheSimple")
     @JvmGradlePluginTests
     @DisplayName("test custom source set and build directory located outside project directory") // Regression test for KT-61852 and KT-58547
     @GradleTest
@@ -464,7 +480,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         configureProject: (TestProject) -> Unit = {},
     ) {
         val (firstProject, secondProject) =
-            prepareTestProjects("buildCacheSimple", gradleVersion, buildOptions, buildJdk = null) {
+            prepareTestProjects("buildCacheSimple", gradleVersion, buildOptions.copy(buildReport = listOf(BuildReportType.FILE)), buildJdk = null) {
                 configureProject(it)
             }
 
@@ -482,8 +498,8 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         secondProject.kotlinSourcesDir().resolve("foo.kt").modify {
             it.replace("Int = 1", "String = \"abc\"")
         }
-        secondProject.build("assemble", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
-            assertIncrementalCompilation(listOf("src/main/kotlin/foo.kt", "src/main/kotlin/fooUsage.kt").toPaths())
+        secondProject.build("assemble") {
+            assertIncrementalCompilationInBuildReport(listOf("src/main/kotlin/foo.kt", "src/main/kotlin/fooUsage.kt").toPaths())
         }
     }
 }

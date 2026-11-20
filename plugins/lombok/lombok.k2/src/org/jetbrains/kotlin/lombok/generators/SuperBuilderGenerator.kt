@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -27,14 +28,13 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.SuperBuilder
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -43,13 +43,13 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         const val CLASS_TYPE_PARAMETER_INDEX_FROM_END = 2
         const val BUILDER_TYPE_PARAMETER_INDEX_FROM_END = 1
         private val startProjectionsList = listOf(ConeStarProjection, ConeStarProjection)
+        private val SELF = Name.identifier("self")
     }
 
-    private val processedBuilderKeys: FirCache<BuilderKey, Boolean, Nothing?> = session.firCachesFactory.createCache { true }
+    private val processedSymbolsForClassesWithBuilders: FirCache<FirClassSymbol<*>, Boolean, Nothing?> =
+        session.firCachesFactory.createCache { true }
 
     override val builderModality: Modality = Modality.ABSTRACT
-
-    override val annotationClassId: ClassId = LombokNames.SUPER_BUILDER_ID
 
     override fun getBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? {
         // There is also a build impl class, but it's private, and it's used only for internal purposes. Not relevant for API.
@@ -68,7 +68,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
     override fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
         builder: SuperBuilder,
         builderSymbol: FirClassSymbol<*>,
-        builderDeclaration: FirDeclaration,
+        ownerDeclaration: FirDeclaration,
         substitutor: ConeSubstitutor,
         existingFunctionNames: Set<Name>,
     ) {
@@ -79,13 +79,14 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
             builderSymbol.typeParameterSymbols.elementAtOrNull(builderSymbol.typeParameterSymbols.size - CLASS_TYPE_PARAMETER_INDEX_FROM_END)?.defaultType
                 ?: return
 
-        addIfNonClashing(Name.identifier("self"), existingFunctionNames) {
+        addIfNonClashing(SELF, existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 it,
                 valueParameters = emptyList(),
                 returnTypeRef = builderType.toFirResolvedTypeRef(),
                 visibility = Visibilities.Protected,
-                modality = Modality.ABSTRACT
+                modality = Modality.ABSTRACT,
+                key = BuilderGeneratorKey(BuilderDeclarationType.Function.Self)
             ).symbol
         }
         addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) {
@@ -94,23 +95,32 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
                 valueParameters = emptyList(),
                 returnTypeRef = classType.toFirResolvedTypeRef(),
                 visibility = Visibilities.Public,
-                modality = Modality.ABSTRACT
+                modality = Modality.ABSTRACT,
+                key = BuilderGeneratorKey(
+                    BuilderDeclarationType.Function.Build(
+                        ownerDeclaration.symbol, lombokService.config.singularUseGuava
+                    )
+                )
             ).symbol
         }
     }
+
+    override fun SuperBuilder.getSpecialBuilderMethodNames(): List<Name> = listOf(SELF, Name.identifier(buildMethodName))
 
     override fun FirRegularClassBuilder.completeBuilder(
         classSymbol: FirClassSymbol<*>,
         builderSymbol: FirClassSymbol<*>,
         builder: SuperBuilder,
+        context: NestedClassGenerationContext,
     ) {
         val classTypeParameterSymbol = FirTypeParameterSymbol()
         val builderTypeParameterSymbol = FirTypeParameterSymbol()
         val builderTypeArguments = typeParameters.map { it.toConeType() as ConeTypeProjection }.toTypedArray()
+        val key = BuilderGeneratorKey(BuilderDeclarationType.Class.Builder)
 
         typeParameters += buildTypeParameter {
             moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Java.Plugin(BuilderGeneratorKey(BuilderDeclarationType.Class.Builder))
+            origin = FirDeclarationOrigin.Java.Plugin(key)
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             this.name = Name.identifier("C")
             symbol = classTypeParameterSymbol
@@ -123,7 +133,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         }
         typeParameters += buildTypeParameter {
             moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Java.Plugin(BuilderGeneratorKey(BuilderDeclarationType.Class.Builder))
+            origin = FirDeclarationOrigin.Java.Plugin(key)
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             this.name = Name.identifier("B")
             symbol = builderTypeParameterSymbol
@@ -151,9 +161,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
             // `@SingleBuilder` is only applicable to classes. It means it can be <= 1 builder in a super type.
             val builderName = builderNames.firstOrNull() ?: return@firstNotNullOfOrNull null
 
-            val builderKey = BuilderKey(superTypeSymbol, builderName)
-
-            if (processedBuilderKeys.getValueIfComputed(builderKey) != null) {
+            if (processedSymbolsForClassesWithBuilders.getValueIfComputed(classSymbol) != null) {
                 return@firstNotNullOfOrNull buildErrorTypeRef {
                     diagnostic = ConeSimpleDiagnostic(
                         "Loop in supertypes involving ${superTypeSymbol.classId}",
@@ -162,20 +170,38 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
                 }
             } else {
                 // Use the mutating `getValue` because the `FirCache` doesn't provide API for elements putting
-                require(processedBuilderKeys.getValue(builderKey))
+                require(processedSymbolsForClassesWithBuilders.getValue(classSymbol))
             }
 
-            val superBuilder = builderClassesCache.getValue(builderKey) ?: return@firstNotNullOfOrNull null
+            val builderKey = BuilderKey(superTypeSymbol, builderName)
+            val existingBuilder = superTypeSymbol.existingBuilder(builderName)
+            if (existingBuilder != null) {
+                existingBuilder.constructType(
+                    typeArguments = arrayOf(
+                        *superTypeRef.coneType.typeArguments,
+                        classTypeParameterSymbol.defaultType,
+                        builderTypeParameterSymbol.defaultType,
+                    )
+                ).toFirResolvedTypeRef()
+            } else {
+                val superBuilder = builderClassesCache.getValue(builderKey, context) ?: return@firstNotNullOfOrNull null
 
-            superBuilder.constructType(
-                typeArguments = arrayOf(
-                    *superTypeRef.coneType.typeArguments,
-                    classTypeParameterSymbol.defaultType,
-                    builderTypeParameterSymbol.defaultType,
-                )
-            ).toFirResolvedTypeRef()
+                superBuilder.constructType(
+                    typeArguments = arrayOf(
+                        *superTypeRef.coneType.typeArguments,
+                        classTypeParameterSymbol.defaultType,
+                        builderTypeParameterSymbol.defaultType,
+                    )
+                ).toFirResolvedTypeRef()
+            }
         }
 
         superTypeRefs += superTypeRef ?: session.builtinTypes.anyType
+    }
+
+    override fun MutableList<BuilderDescription<SuperBuilder>>.addAnnotatedCallables(
+        owner: FirRegularClassSymbol,
+    ) {
+        // do nothing. @SuperBuilder does not support callables
     }
 }

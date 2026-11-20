@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseBackingFieldSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirBackingFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
@@ -60,13 +60,13 @@ internal class KaFirBackingFieldSymbol private constructor(
             if (!backingPsi?.annotationEntries.isNullOrEmpty() || backingOwningProperty.mayHaveBackingFieldAnnotation()) {
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
             } else {
-                KaBaseEmptyAnnotationList(token)
+                KaFirEmptyAnnotationList(token)
             }
         }
 
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaBackingFieldSymbol>()
-            ?: KaBaseBackingFieldSymbolPointer(backingOwningProperty.createPointer(), this)
+            ?: KaFirBackingFieldSymbolPointer(backingOwningProperty.createPointer(), this)
     }
 
     override fun equals(other: Any?): Boolean {

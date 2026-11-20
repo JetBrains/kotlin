@@ -52,6 +52,8 @@ internal class ProblemsApiCompilerMessageRenderer(
         })
     }
 
+    fun hasRenderedErrors(): Boolean = bufferedDiagnostics.any { it.severity == CompilerMessageRenderer.Severity.ERROR }
+
     override fun render(
         severity: CompilerMessageRenderer.Severity,
         message: String,

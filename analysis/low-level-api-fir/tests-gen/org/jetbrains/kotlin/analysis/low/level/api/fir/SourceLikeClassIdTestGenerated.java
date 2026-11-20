@@ -52,15 +52,33 @@ public class SourceLikeClassIdTestGenerated extends AbstractSourceLikeClassIdTes
   }
 
   @Test
-  @TestMetadata("classWithPackageRepl.repl.kts")
-  public void testClassWithPackageRepl_repl() {
-    run("classWithPackageRepl.repl.kts");
-  }
-
-  @Test
   @TestMetadata("classWithPackageScript.kts")
   public void testClassWithPackageScript() {
     run("classWithPackageScript.kts");
+  }
+
+  @Test
+  @TestMetadata("companionBlockInsideDataClass.kt")
+  public void testCompanionBlockInsideDataClass() {
+    run("companionBlockInsideDataClass.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockInsideDataClassScript.kts")
+  public void testCompanionBlockInsideDataClassScript() {
+    run("companionBlockInsideDataClassScript.kts");
+  }
+
+  @Test
+  @TestMetadata("companionBlocks.kt")
+  public void testCompanionBlocks() {
+    run("companionBlocks.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlocksScript.kts")
+  public void testCompanionBlocksScript() {
+    run("companionBlocksScript.kts");
   }
 
   @Test
@@ -235,17 +253,5 @@ public class SourceLikeClassIdTestGenerated extends AbstractSourceLikeClassIdTes
   @TestMetadata("namelessInsideNamelessLocalClassesScript.kts")
   public void testNamelessInsideNamelessLocalClassesScript() {
     run("namelessInsideNamelessLocalClassesScript.kts");
-  }
-
-  @Test
-  @TestMetadata("replSnippetLocalClasses.repl.kts")
-  public void testReplSnippetLocalClasses_repl() {
-    run("replSnippetLocalClasses.repl.kts");
-  }
-
-  @Test
-  @TestMetadata("replSnippetSimple.repl.kts")
-  public void testReplSnippetSimple_repl() {
-    run("replSnippetSimple.repl.kts");
   }
 }

@@ -1,7 +1,9 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.js.swc.SwcEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
@@ -96,6 +98,18 @@ val resolveJsTools = tasks.register("resolveJsTools") {
 
             extensions.findByType<YarnRootEnvSpec>()?.run(yarnRootEnvSpecAction)
             extensions.findByType<WasmYarnRootEnvSpec>()?.run(yarnRootEnvSpecAction)
+
+            @OptIn(InternalKotlinGradlePluginApi::class)
+            extensions.findByType<SwcEnvSpec>()?.run {
+                val versionValue = version.get()
+                project.resolveDependencies(
+                    "com.github.swc-project:swc:$versionValue:darwin-arm64@",
+                    "com.github.swc-project:swc:$versionValue:darwin-x64@",
+                    "com.github.swc-project:swc:$versionValue:linux-arm64-gnu@",
+                    "com.github.swc-project:swc:$versionValue:linux-x64-gnu@",
+                    "com.github.swc-project:swc:$versionValue:win32-x64-msvc.exe@",
+                )
+            }
         }
     }
 }

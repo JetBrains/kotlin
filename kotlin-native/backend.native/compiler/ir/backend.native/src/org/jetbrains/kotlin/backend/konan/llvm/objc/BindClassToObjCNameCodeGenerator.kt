@@ -13,7 +13,6 @@ import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.NativeBackendDiagnostics
-import org.jetbrains.kotlin.backend.konan.isCache
 import org.jetbrains.kotlin.backend.konan.isFinalBinary
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.ir.annotations.BindClassToObjCName
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.konan.target.isCache
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 internal fun CodeGenerator.processBindClassToObjCNameAnnotations(file: IrFile) {

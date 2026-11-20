@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import java.nio.file.Path
 
 /**
@@ -21,16 +22,18 @@ import java.nio.file.Path
  */
 @MustRunOnChangesInCompilerInfrastructure
 @MustRunOnChangesInBuildToolsApi
+@MustRunOnChangesInGradle
 abstract class KmpIncrementalITBase : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK2().copy(
+        get() = super.defaultBuildOptions.copy(
             /**
              * disable IC-breaking feature; it's tested separately in [org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsITBase]
              */
             enableJvmIncrementalCompilationOfCommonSources = true,
             enableJsUnsafeIncrementalCompilationForMultiplatform = true,
             enableWasmUnsafeIncrementalCompilationForMultiplatform = true,
+            buildReport = listOf(BuildReportType.FILE),
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     protected open val gradleTask = "assemble"
@@ -61,9 +64,9 @@ abstract class KmpIncrementalITBase : KGPBaseTest() {
 
     protected open fun TestProject.checkIncrementalBuild(
         tasksExpectedToExecute: Set<String>,
-        assertions: BuildResult.() -> Unit = {}
+        assertions: BuildResult.() -> Unit = {},
     ) {
-        build(gradleTask, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+        build(gradleTask) {
             assertTasksExecuted(tasksExpectedToExecute)
             assertTasksUpToDate(mainCompileTasks - tasksExpectedToExecute)
             assertions()
@@ -74,11 +77,11 @@ abstract class KmpIncrementalITBase : KGPBaseTest() {
         incrementalPath: Path,
         steps: List<String>,
         tasksExpectedToExecuteOnEachStep: Set<String>,
-        afterEachStep: BuildResult.() -> Unit = {}
+        afterEachStep: BuildResult.() -> Unit = {},
     ) {
         for (step in steps) {
             incrementalPath.replaceWithVersion(step)
-            build(gradleTask, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build(gradleTask) {
                 assertTasksExecuted(tasksExpectedToExecuteOnEachStep)
                 assertTasksUpToDate(mainCompileTasks - tasksExpectedToExecuteOnEachStep)
                 afterEachStep()

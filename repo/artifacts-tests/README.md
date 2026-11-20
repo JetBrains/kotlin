@@ -11,3 +11,5 @@ To reproduce locally, first run:
 
 `-Pteamcity=true` is needed for Gradle metadata tests because the tests expect artifacts to contain metadata for Javadoc elements, 
 which are only generated on CI.
+
+For the full procedure of updating a dependency, see [Updating a dependency](../../ReadMe.md#updating-a-dependency).

@@ -253,11 +253,23 @@ The default value is 'indy'.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @Argument(
-        value = "-Xcompile-ir",
-        description = "Enable the IR compilation phase."
-    )
+    /**
+     * Whether to run the IR compilation phase. Not exposed as a command line argument: only
+     * `K2JKlibCompiler.compileKlibAndDeserializeIr` sets it, to get the IR of the module.
+     */
     var compileIr: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xklib-manifest-property",
+        valueDescription = "<key=value>",
+        description = "Provide a custom property (key=value) to be added to the KLIB manifest.",
+        delimiter = Argument.Delimiters.none,
+    )
+    var klibManifestProperties: Array<String>? = null
         set(value) {
             checkFrozen()
             field = value

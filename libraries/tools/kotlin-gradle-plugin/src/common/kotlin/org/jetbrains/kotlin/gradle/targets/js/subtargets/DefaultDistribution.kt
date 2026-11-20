@@ -18,7 +18,7 @@ internal fun createDefaultDistribution(
     targetName: String,
     name: String? = null,
 ) =
-    DefaultDistribution(project, project.objects.property(targetName), project.objects.property(name))
+    DefaultDistribution(project, project.objects.property(targetName), project.objects.property<String>().value(name))
 
 internal fun createDefaultDistribution(
     project: Project,

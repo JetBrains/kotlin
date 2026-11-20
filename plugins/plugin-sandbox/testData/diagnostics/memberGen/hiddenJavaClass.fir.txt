@@ -1,0 +1,21 @@
+FILE: main.kt
+    public final class Nested : R|kotlin/Any| {
+        public constructor(): R|Nested| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/String| {
+            ^foo String(OK)
+        }
+
+    }
+    public final class MyClass : R|JavaClass| {
+        public constructor(): R|MyClass| {
+            super<R|JavaClass|>()
+        }
+
+        public final fun check(n: R|Nested|): R|kotlin/String| {
+            ^check R|<local>/n|.R|/Nested.foo|()
+        }
+
+    }

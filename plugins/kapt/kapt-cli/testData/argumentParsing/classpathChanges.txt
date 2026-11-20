@@ -1,0 +1,21 @@
+# before
+-Kapt-classpath-changes=a/B
+-Kapt-classpath-changes=c/D$E
+-Kapt-classpath-changes=f/G,h/I
+-Kapt-classpath-changes=j/K, l/M
+
+# after
+-P
+plugin:org.jetbrains.kotlin.kapt3:aptMode=stubsAndApt
+-P
+plugin:org.jetbrains.kotlin.kapt3:classpathChange=a/B
+-P
+plugin:org.jetbrains.kotlin.kapt3:classpathChange=c/D$E
+-P
+plugin:org.jetbrains.kotlin.kapt3:classpathChange=f/G
+-P
+plugin:org.jetbrains.kotlin.kapt3:classpathChange=h/I
+-P
+plugin:org.jetbrains.kotlin.kapt3:classpathChange=j/K
+-P
+plugin:org.jetbrains.kotlin.kapt3:classpathChange=l/M

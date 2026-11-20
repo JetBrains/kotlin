@@ -2,8 +2,9 @@ FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/PrivateValue, fqName=PrivateValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PrivateValue, superNames=[]]
+    classFileMajorVersion: <current_major_version>
     valueClassRepresentation: inline [ value -> kotlin.String ]
-    MODIFIER_LIST[public final value]
+    MODIFIER_LIST[public final inline value]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
         valueArguments: [ ]
         CONSTRUCTOR_CALLEE

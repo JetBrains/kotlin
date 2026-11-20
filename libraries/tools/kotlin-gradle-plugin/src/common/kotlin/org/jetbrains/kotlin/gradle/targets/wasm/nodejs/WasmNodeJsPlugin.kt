@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.nodejs
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.ObsoleteJsAndWasmToolingProvisioning
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.CommonNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NodeJsPluginApplier
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
  * centralize the application process.
  *
  */
+@ObsoleteJsAndWasmToolingProvisioning
 abstract class WasmNodeJsPlugin internal constructor(): CommonNodeJsPlugin {
     override fun apply(target: Project) {
         NodeJsPluginApplier(
@@ -34,6 +36,7 @@ abstract class WasmNodeJsPlugin internal constructor(): CommonNodeJsPlugin {
         ).apply(target)
     }
 
+    @ObsoleteJsAndWasmToolingProvisioning
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         fun apply(project: Project): WasmNodeJsEnvSpec {
             project.plugins.apply(WasmNodeJsPlugin::class.java)

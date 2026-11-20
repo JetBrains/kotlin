@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.jspo.runners
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLJsDiagnosticsTest
 import org.jetbrains.kotlin.js.test.runners.AbstractJsDiagnosticTestBase
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives
 import org.jetbrains.kotlin.test.services.TestPhase
 
-abstract class AbstractFirJsPlainObjectsPluginDiagnosticTest : AbstractJsDiagnosticTestBase(FirParser.Psi) {
+abstract class AbstractFirJsPlainObjectsPluginDiagnosticTest : AbstractJsDiagnosticTestBase(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -20,9 +21,17 @@ abstract class AbstractFirJsPlainObjectsPluginDiagnosticTest : AbstractJsDiagnos
                 TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE with TestPhase.CODEGEN
             }
 
-            configureForKotlinxJsPlainObjects()
+            configureForKotlinxJsPlainObjects(addNoFirCompilationErrorsHandler = true)
             disableOptInErrors()
         }
+    }
+}
+
+abstract class AbstractLLJsPlainObjectsDiagnosticsTest : AbstractLLJsDiagnosticsTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureForKotlinxJsPlainObjects(addNoFirCompilationErrorsHandler = false)
+        builder.disableOptInErrors()
     }
 }
 

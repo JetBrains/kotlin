@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
-import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WasmLinkedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.library.isWasmStdlib
 
@@ -30,14 +28,14 @@ object WasmIrLinkingPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, W
             configuration = configuration,
         )
         // Create stubs
-        ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
+        irLinker.drainDeserializationQueue()
         // Sort dependencies after IR linkage.
         val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
         val allModules = sortedModuleDependencies.allDependencies
         allModules.forEach { it.patchDeclarationParents() }
-        irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
-        irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
-        irLinker.clear()
+        irLinker.finalizeIrLinkage(irBuiltIns)
+        irLinker.clearInternedData()
+
         return WasmLinkedIrPipelineArtifact(
             allModules,
             context,

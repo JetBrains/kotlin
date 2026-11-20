@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.declarations.isArrayOfCall
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
 
 /**
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.util.ArrayLiteralResolution
  * the corresponding logic is applied on the [FirExpressionEvaluator] level.
  */
 @ArrayLiteralResolution
-class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
+class FirArrayOfCallTransformer : FirTransformer<FirSession>() {
     private fun toArrayLiteral(functionCall: FirFunctionCall, session: FirSession): FirExpression? {
         if (!functionCall.isArrayOfCall()) return null
         if (functionCall.calleeReference !is FirResolvedNamedReference) return null

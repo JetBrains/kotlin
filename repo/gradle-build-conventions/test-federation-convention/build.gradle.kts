@@ -17,6 +17,7 @@ group = "org.jetbrains.kotlin"
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = embeddedKotlinVersion
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = embeddedKotlinVersion
     jvmToolchain(17)
 
@@ -65,6 +66,7 @@ dependencies {
     implementation(kotlin("tooling-core", version = embeddedKotlinVersion))
     implementation(libs.jackson.module.kotlin)
     implementation(libs.jackson.dataformat.yaml)
+    implementation(libs.kotlinx.html.jvm)
     compileOnly(libs.develocity.gradlePlugin)
 
     testImplementation(libs.junit.jupiter.api)

@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrLock
-import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.moduleVisibilityProvider
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
@@ -46,7 +46,10 @@ class Fir2IrComponentsStorage(
 
     val module: IrModuleFragment = IrModuleFragmentImpl(
         FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns)
-    )
+    ).also {
+        it.leafModule = it
+        it.moduleVisibilityProvider = Fir2IrModuleVisibilityProvider
+    }
 
     private val conversionScope = Fir2IrConversionScope(configuration)
 
@@ -63,8 +66,6 @@ class Fir2IrComponentsStorage(
 
     // builtins should go after storages and generators, because they use them during initialization
     override val builtins: Fir2IrBuiltinSymbolsContainer = Fir2IrBuiltinSymbolsContainer(this, syntheticIrBuiltinsSymbolsContainer)
-
-    override val irProviders: List<IrProvider> = emptyList()
 
     override val typeConverter: Fir2IrTypeConverter = Fir2IrTypeConverter(this, conversionScope)
 

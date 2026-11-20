@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
@@ -49,7 +50,7 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
         )
         val baseBackendInput = with(fir2IrResult) {
             JvmIrCodegenFactory.BackendInput(
-                irModuleFragment, irBuiltIns, symbolTable, components.irProviders,
+                irModuleFragment, irBuiltIns, symbolTable,
                 debuggerExtensions = null, jvmBackendExtension, pluginContext
             )
         }
@@ -74,6 +75,7 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
                 configurationForModule.parserMode.treeBased -> {
                     val wholeModule = baseBackendInput.irModuleFragment
                     val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor)
+                    moduleCopy.copyAttributes(wholeModule)
                     wholeModule.files.filterTo(moduleCopy.files) { file ->
                         file.fileEntry.name in module.getSourceFiles()
                     }
@@ -130,8 +132,8 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
     ): List<KtFile> {
         assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
         val [moduleSourceDirs, moduleSourceFiles] =
-            JvmConfigurationUpdater.getBuildFilePaths(buildFile, getSourceFiles())
-                .mapNotNull(localFileSystem!!::findFileByPath)
+            JvmConfigurationUpdater.getBuildFiles(buildFile, getSourceFiles())
+                .mapNotNull { localFileSystem!!.findFileByPath(it.absolutePath) }
                 .partition(VirtualFile::isDirectory)
 
         return allSourceFiles.filter { file ->

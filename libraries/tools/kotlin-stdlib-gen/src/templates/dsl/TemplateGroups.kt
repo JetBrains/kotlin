@@ -18,7 +18,7 @@ abstract class TemplateGroupBase : TemplateGroup {
 
     override fun invoke(): Sequence<MemberTemplate> = sequence {
         with(this@TemplateGroupBase) {
-            this::class.members.filter { it.name.startsWith("f_") }.forEach {
+            this::class.members.filter { it.name.startsWith("f_") }.sortedBy { it.name }.forEach {
                 require(it.parameters.size == 1) { "Member $it violates naming convention" }
                 when {
                     it.returnType.isSubtypeOf(typeMemberTemplate) ->

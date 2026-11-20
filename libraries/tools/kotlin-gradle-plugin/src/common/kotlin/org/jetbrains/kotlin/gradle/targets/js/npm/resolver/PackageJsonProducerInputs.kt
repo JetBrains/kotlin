@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import java.io.File
 
+@ObsoleteNpmDependencyModel
 class PackageJsonProducerInputs(
     @get:Input
     val internalDependencies: Collection<String>,

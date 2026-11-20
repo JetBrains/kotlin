@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithExtensionReceiverKt]]
   IMPORT_LIST
   FUNCTION[fqName=testConditionInExtension, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=testConditionInExtension]
     contract: [ effect:param(-1) HoldsIn(param(0)) ]
-    origin: Facade(className=WithExtensionReceiverKt, jvmClassName=null)
+    origin: Facade(className=WithExtensionReceiverKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     TYPE_REFERENCE
       USER_TYPE
@@ -32,7 +32,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithExtensionReceiverKt]]
           isClassRef: true
   FUNCTION[fqName=testLambdaInExtension, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=testLambdaInExtension]
     contract: [ effect:param(0) HoldsIn(param(-1)) ]
-    origin: Facade(className=WithExtensionReceiverKt, jvmClassName=null)
+    origin: Facade(className=WithExtensionReceiverKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     TYPE_REFERENCE
       FUNCTION_TYPE

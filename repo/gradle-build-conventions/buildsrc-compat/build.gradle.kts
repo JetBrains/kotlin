@@ -45,6 +45,7 @@ plugins {
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = embeddedKotlinVersion
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = embeddedKotlinVersion
     jvmToolchain(17)
 
@@ -75,6 +76,7 @@ dependencies {
 
     implementation(libs.shadow.gradlePlugin)
     implementation(libs.proguard.gradlePlugin)
+    implementation(libs.dependencyAnalysis.gradlePlugin)
 
     implementation(libs.jetbrains.ideaExt.gradlePlugin)
 

@@ -53,7 +53,6 @@ fun Project.customCompilerTest(
     version: CustomCompilerVersion,
     taskName: String,
     tag: String,
-    body: Test.() -> Unit = {},
 ): TaskProvider<out Task> {
     if (HostManager.hostIsMingw) {
         // Klib compatibility tests are intended to run on MacOS(for some developers) and Linux(for some developers and CI),
@@ -94,13 +93,13 @@ fun Project.customCompilerTest(
         taskName,
         allowParallelExecution = true,
         requirePlatformLibs = false,
+        enableGroupingTestEngine = true,
     ) {
-        val testTargetName = providers.gradleProperty("kotlin.internal.native.test.target")
+        val testTarget = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))
-            .getOrElse(HostManager.hostName)
-
-        val testTarget = KonanTarget.predefinedTargets[testTargetName] ?: error("Test target $testTargetName is not defined")
-        if (!testTarget.family.isAppleFamily) {
+            .map { KonanTarget.predefinedTargets[it] ?: error("Test target $it is not defined") }
+            .orNull ?: HostManager.hostOrNull
+        if (testTarget?.family?.isAppleFamily != true) {
             // KT-85080: make sure Llvm-dev native dependency is downloaded, so Clang tool is available
             // Clang is used via `compileWithClangToStaticLibrary()` in ObjCInteropFacade for CInterop tests with source files of types: c, cpp m, mm
             // Note: For Apple targets, clang is invoked from XCode toolchain instead, see `Settings.defaultClangDistribution()` in Clang.kt
@@ -134,7 +133,9 @@ fun Project.customCompilerTest(
             systemProperties.remove("kotlin.internal.native.test.compat.customCompilerClasspath")
         }
         systemProperty("kotlin.internal.native.test.compat.customCompilerVersion", version.rawVersion)
-        body()
+        // Of batches of 10 to 100 tests, 2 to 16 at a time, these gave the shortest run of the boxInline tests of the custom first stage.
+        // On all tests of the custom second stage, these were faster than 20 tests 4 at a time, or 50 tests 8 at a time.
+        groupingEngineSettings(batchSize = 100, simultaneousBatches = 8)
     }
 }
 
@@ -166,7 +167,7 @@ fun Project.customStagesAggregateTest(rawVersion: String, customStage: String): 
     return customCompilerTest(
         version = version,
         taskName = "testMinimalInAggregate_${customStage}Stage",
-        tag = "custom-${customStage}-stage"
+        tag = "aggregate-${customStage}-stage"
     )
 }
 
@@ -191,7 +192,7 @@ customSecondStageTest("2.4.0")
 // For forward compatibility test -> vice versa
 // Should backward and forward tests be executed together in one Gradle task -> so/dylib versions would be inevitably mixed up
 
-// TODO: Drop these short tasks after KT-84712, when full tasks `testCustomFirstStage_$version` and `testCustomSecondStage_$version` will become very fast
+// TODO: Drop these short tasks when the full tasks `testCustomFirstStage_$version` and `testCustomSecondStage_$version` become fast enough for the release aggregate
 customStagesAggregateTest("2.4.0", "first")
 customStagesAggregateTest("2.4.0", "second")
 // TODO: Drop the next one after KTI migrates to execution of  `testMinimalInAggregate_firstStage` and `testMinimalInAggregate_secondStage`

@@ -1,4 +1,12 @@
+// DUMP_IR_DIFFERENCE: JKLIB
 // TARGET_BACKEND: JVM
+// SKIP_IR_DESERIALIZATION_CHECKS
+// ^Contains the additional:
+//  ```
+//  annotations:
+//    Deprecated(1 = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", 2 = ReplaceWith(1 = "", 2 = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), 3 = DeprecationLevel.WARNING)
+//  ```
+//  for `Impl.toArray`
 
 // FILE: Foo.java
 

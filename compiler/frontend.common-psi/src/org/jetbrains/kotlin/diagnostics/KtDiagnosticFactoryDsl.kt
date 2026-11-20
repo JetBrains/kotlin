@@ -35,6 +35,13 @@ inline fun <reified P : PsiElement> warning0(
 }
 
 context(container: KtDiagnosticsContainer)
+inline fun <reified P : PsiElement> strongWarning0(
+    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+): DiagnosticFactory0DelegateProvider {
+    return DiagnosticFactory0DelegateProvider(Severity.STRONG_WARNING, positioningStrategy, P::class, container)
+}
+
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement, A> strongWarning1(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory1DelegateProvider<A> {

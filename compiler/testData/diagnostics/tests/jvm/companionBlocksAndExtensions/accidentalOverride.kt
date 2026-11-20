@@ -3,6 +3,8 @@
 
 @file:OptIn(kotlin.ExperimentalVersionOverloading::class)
 
+@JvmInline value class InlineString(val value: String)
+
 open class A {
     val prop: Int = 0
     val prop2: String = ""
@@ -22,15 +24,17 @@ open class A {
         fun compBaz2(x: List<Int>) {}
         fun compBaz3(x: List<Int>) {}
         fun compBaz4(x: List<Int>) {}
+
+        fun compWithInlineClass(s: InlineString) {}
     }
 }
 
 class B : A() {
     companion {
-        val prop: Int = 0
-        val prop2: String = ""
+        <!ACCIDENTAL_OVERRIDE!>val prop: Int<!> = 0
+        <!ACCIDENTAL_OVERRIDE!>val prop2: String<!> = ""
 
-        fun memberFoo(x: List<Int>) {}
+        <!ACCIDENTAL_OVERRIDE!>fun memberFoo(x: List<Int>)<!> {}
         <!ACCIDENTAL_OVERRIDE!>fun memberBar(x: List<String>)<!> {}
         @JvmOverloads
         <!ACCIDENTAL_OVERRIDE!>fun memberBaz(x: List<Int>, y: Int = 0) {}<!>
@@ -47,7 +51,15 @@ class B : A() {
         <!ACCIDENTAL_OVERRIDE!>fun compBaz2(x: List<String>, y: Int = 0) {}<!>
         <!ACCIDENTAL_OVERRIDE!>fun compBaz3(x: List<Int>, @IntroducedAt("1.1") y: Int = 0) {}<!>
         <!ACCIDENTAL_OVERRIDE!>fun compBaz4(x: List<String>, @IntroducedAt("1.1") y: Int = 0) {}<!>
+
+        // KT-90607
+        fun compWithInlineClass(s: InlineString) {}
     }
+}
+
+class C : A() {
+    @JvmOverloads
+    fun compFoo(x: List<Int>, y: Int = 0) {}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

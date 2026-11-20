@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -199,15 +198,13 @@ internal fun createScriptSourceSession(
     }
 
 internal fun configureLibrarySessionIfNeeded(
-    state: K2ScriptingCompilerEnvironment,
+    state: ScriptCompilerState,
     compilerConfiguration: CompilerConfiguration,
     classpath: List<File>,
 ): FirSession? {
-    (state as? K2ScriptingCompilerEnvironmentInternal)
-        ?: error("Expected the state of type K2ScriptingCompilerEnvironmentInternal, got ${state::class}")
     // needed for class finders for now anyway
     compilerConfiguration.addJvmClasspathRoots(classpath)
-    state.compilerContext.environment.updateClasspath(classpath.map(::JvmClasspathRoot))
+    state.projectEnvironment.updateClasspath(classpath)
     val [libModuleData, _] = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
     return libModuleData?.let {
         createScriptingAdditionalLibrariesSession(

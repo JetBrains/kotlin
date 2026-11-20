@@ -17,6 +17,7 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import java.security.Security
@@ -29,6 +30,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @OtherGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("PGP signing helper tasks")
 class PgpHelpersTest : KGPBaseTest() {
 

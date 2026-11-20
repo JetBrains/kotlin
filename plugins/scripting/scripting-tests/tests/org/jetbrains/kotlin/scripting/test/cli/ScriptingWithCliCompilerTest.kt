@@ -149,7 +149,7 @@ class ScriptingWithCliCompilerTest {
             ),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
-                "error: invalid argument: -abracadabra"
+                "error: invalid argument: '-abracadabra'."
             )
         )
         runWithK2JVMCompiler(
@@ -163,7 +163,7 @@ class ScriptingWithCliCompilerTest {
             ),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
-                "error: invalid argument: -abracadabra"
+                "error: invalid argument: '-abracadabra'."
             )
         )
     }
@@ -228,7 +228,6 @@ class ScriptingWithCliCompilerTest {
                         "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
                         K2JVMCompilerArguments::classpath.cliArgument, (getMainKtsClassPath() + runtimeJarForTests()).joinToString(File.pathSeparator),
                         K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
-                        @Suppress("DEPRECATION") K2JVMCompilerArguments::useFirLT.cliArgument("false"),
                         K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
                         K2JVMCompilerArguments::verbose.cliArgument,
                         K2JVMCompilerArguments::noStdlib.cliArgument,
@@ -256,7 +255,6 @@ class ScriptingWithCliCompilerTest {
                     arrayOf(
                         "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
                         K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator), K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
-                        @Suppress("DEPRECATION") K2JVMCompilerArguments::useFirLT.cliArgument("false"),
                         K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
                         K2JVMCompilerArguments::verbose.cliArgument,
                         "$TEST_DATA_DIR/compiler/mixedCompilation/nonScriptAccessingScript.kt",
@@ -267,6 +265,39 @@ class ScriptingWithCliCompilerTest {
             assertTrue(err.contains("error: unresolved reference 'SimpleScript_main'"), "Expecting an error about unresolved 'SimpleScript_main', got:\n$err")
             assertTrue(err.contains("error: unresolved reference 'ok'"), "Expecting an error about unresolved 'ok', got:\n$err")
             assertEquals(ExitCode.COMPILATION_ERROR.code, ret.code)
+        }
+    }
+
+    @Test
+    fun testScriptSortedBeforeSourcesInDefinitionPackage() {
+        withTempDir { tmpdir ->
+            // The script's path sorts before the sources, so its definition (and base class) is processed first
+            val script = File(tmpdir, "aaa/script.main.kts").apply {
+                parentFile.mkdirs()
+                writeText("println(\"OK\")\n")
+            }
+            val sourcesDir = File(tmpdir, "src/org/jetbrains/kotlin/mainKts").apply { mkdirs() }
+            val helper = File(sourcesDir, "Helper.kt").apply {
+                writeText("package org.jetbrains.kotlin.mainKts\n\nobject Helper { fun value() = 42 }\n")
+            }
+            val usesHelper = File(sourcesDir, "UsesHelper.kt").apply {
+                writeText("package org.jetbrains.kotlin.mainKts\n\nclass UsesHelper { fun run() = Helper.value() }\n")
+            }
+            val [_, err, ret] = captureOutErrRet {
+                CLICompiler.doMainNoExit(
+                    K2JVMCompiler(),
+                    arrayOf(
+                        "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
+                        K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
+                        K2JVMCompilerArguments::destination.cliArgument, File(tmpdir, "out").path,
+                        K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
+                        script.path,
+                        helper.path,
+                        usesHelper.path,
+                    )
+                )
+            }
+            assertEquals(ExitCode.OK.code, ret.code, "Expecting successful compilation, got:\n$err")
         }
     }
 

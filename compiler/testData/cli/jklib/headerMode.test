@@ -1,0 +1,5 @@
+// EXISTS: header.klib
+// EXISTS: header.klib!default/manifest
+// EXISTS: header.klib!default/linkdata/
+// ABSENT: header.klib!default/ir/
+// CONTAINS: header.klib!default/manifest, unique_name=header_module

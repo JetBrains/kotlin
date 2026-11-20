@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractMapToJvmTypeDescriptorTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.javaInteroperabilityComponent.AbstractMapToJvmTypeDescriptorTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -47,6 +47,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleMapToJvmTypeDescriptorTestGe
   @Test
   public void testAllFilesPresentInMapToJvmTypeDescriptor() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/javaInteroperabilityComponent/mapToJvmTypeDescriptor"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("explicitInlineValueClass.kt")
+  public void testExplicitInlineValueClass() {
+    run("explicitInlineValueClass.kt");
   }
 
   @Test

@@ -524,6 +524,54 @@ public actual fun Double.nextDown(): Double = when {
 @SinceKotlin("1.2")
 public actual fun Double.nextTowards(to: Double): Double = kotlin.math.fdlibm.nextafter(this, to)
 
+/**
+ * Rounds this [Double] value to the nearest integer and converts the result to [Int].
+ * Ties are rounded towards positive infinity.
+ *
+ * Special cases:
+ *   - `x.roundToInt() == Int.MAX_VALUE` when `x > Int.MAX_VALUE`
+ *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
+ *
+ * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Doubles.roundToInt
+ */
+@SinceKotlin("1.2")
+public actual fun Double.roundToInt(): Int = when {
+    isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
+    // Compared to native implementation, this one lacks saturation checks. This makes it faster on Wasm, with the saturation still coming
+    // from the toInt call at the end.
+    else -> {
+        val floored = floor(this)
+        // Even though `this - floor(this)` is not guaranteed to be exact when `-0.5 < x < 0` (see Sterbenz lemma), it does not matter when
+        // ties are resolved towards positive infinity, because:
+        // - `floor` is -1 for every number within the range
+        // - hence the result of the above subtraction, `d`, is `0.5 < d < 1.0` and cannot be rounded to anything below 0.5 because 0.5 is
+        // exactly representable.
+        (if (this - floored >= 0.5) floored + 1.0 else floored).toInt()
+    }
+}
+
+/**
+ * Rounds this [Double] value to the nearest integer and converts the result to [Long].
+ * Ties are rounded towards positive infinity.
+ *
+ * Special cases:
+ *   - `x.roundToLong() == Long.MAX_VALUE` when `x > Long.MAX_VALUE`
+ *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
+ *
+ * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Doubles.roundToLong
+ */
+@SinceKotlin("1.2")
+public actual fun Double.roundToLong(): Long = when {
+    isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
+    // See the comments in Double.roundToInt().
+    else -> {
+        val floored = floor(this)
+        (if (this - floored >= 0.5) floored + 1.0 else floored).toLong()
+    }
+}
+
 // endregion
 
 
@@ -988,6 +1036,48 @@ public actual fun Float.withSign(sign: Float): Float = kotlin.wasm.internal.wasm
  */
 @SinceKotlin("1.2")
 public actual fun Float.withSign(sign: Int): Float = kotlin.wasm.internal.wasm_f32_copysign(this, sign.toFloat())
+
+/**
+ * Rounds this [Float] value to the nearest integer and converts the result to [Int].
+ * Ties are rounded towards positive infinity.
+ *
+ * Special cases:
+ *   - `x.roundToInt() == Int.MAX_VALUE` when `x > Int.MAX_VALUE`
+ *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
+ *
+ * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Floats.roundToInt
+ */
+@SinceKotlin("1.2")
+public actual fun Float.roundToInt(): Int = if (isNaN()) {
+    throw IllegalArgumentException("Cannot round NaN value.")
+} else {
+    // This implementation is correct because when |this| < 2^32, double precision is enough to not have rounding issues that would arise
+    // without the double widening (like KT-89074), otherwise `this` is already integral, with the addition either being exact (thanks to
+    // double precision) or with numbers being far enough apart for the rounding mode to play any role.
+    //
+    // This approach also makes it fast on Wasm.
+    floor(toDouble() + 0.5).toInt()
+}
+
+/**
+ * Rounds this [Float] value to the nearest integer and converts the result to [Long].
+ * Ties are rounded towards positive infinity.
+ *
+ * Special cases:
+ *   - `x.roundToLong() == Long.MAX_VALUE` when `x > Long.MAX_VALUE`
+ *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
+ *
+ * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Floats.roundToLong
+ */
+@SinceKotlin("1.2")
+public actual fun Float.roundToLong(): Long = if (isNaN()) {
+    throw IllegalArgumentException("Cannot round NaN value.")
+} else {
+    // See the comment in Float.roundToInt().
+    floor(toDouble() + 0.5).toLong()
+}
 
 // endregion
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import kotlinx.serialization.*
@@ -18,3 +19,6 @@ class Foo(
     val bb: MyBox<Long>,
     val bbb: MyBox<MyLong>
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, propertyDeclaration, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -12,6 +12,7 @@ public final class JvmOverloadsValueParameterDirectiveKt /* JvmOverloadsValuePar
   public static final @org.jetbrains.annotations.NotNull() java.lang.String topLevel(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  topLevel(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() StringWrapper)
 }
 
+@kotlin.jvm.JvmInline()
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;

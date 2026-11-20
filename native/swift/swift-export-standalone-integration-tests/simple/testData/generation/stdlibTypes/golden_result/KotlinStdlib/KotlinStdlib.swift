@@ -5,16 +5,19 @@ import KotlinRuntimeSupport
 
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.text.Appendable where Self : ExportedKotlinPackages.kotlin.text.__Appendable {
+    @discardableResult
     public func append(
         value: Swift.Unicode.UTF16.CodeUnit
     ) -> any ExportedKotlinPackages.kotlin.text.Appendable {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_text_Appendable_append__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(self.__externalRCRef(), value), conformsTo: ExportedKotlinPackages.kotlin.text.Appendable.Type.self) as! any ExportedKotlinPackages.kotlin.text.Appendable
     }
+    @discardableResult
     public func append(
         value: (any ExportedKotlinPackages.kotlin.CharSequence)?
     ) -> any ExportedKotlinPackages.kotlin.text.Appendable {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil), conformsTo: ExportedKotlinPackages.kotlin.text.Appendable.Type.self) as! any ExportedKotlinPackages.kotlin.text.Appendable
     }
+    @discardableResult
     public func append(
         value: (any ExportedKotlinPackages.kotlin.CharSequence)?,
         startIndex: Swift.Int32,
@@ -232,12 +235,15 @@ extension ExportedKotlinPackages.kotlin {
 }
 extension ExportedKotlinPackages.kotlin.text {
     public protocol Appendable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.text._Appendable {
+        @discardableResult
         func append(
             value: Swift.Unicode.UTF16.CodeUnit
         ) -> any ExportedKotlinPackages.kotlin.text.Appendable
+        @discardableResult
         func append(
             value: (any ExportedKotlinPackages.kotlin.CharSequence)?
         ) -> any ExportedKotlinPackages.kotlin.text.Appendable
+        @discardableResult
         func append(
             value: (any ExportedKotlinPackages.kotlin.CharSequence)?,
             startIndex: Swift.Int32,
@@ -298,66 +304,79 @@ extension ExportedKotlinPackages.kotlin.text {
         ) -> Swift.Void {
             return { kotlin_text_StringBuilder_set__TypesOfArguments__Swift_Int32_Swift_Unicode_UTF16_CodeUnit__(self.__externalRCRef(), index, value); return () }()
         }
+        @discardableResult
         public func append(
             value: Swift.Bool
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Bool__(self.__externalRCRef(), value))
         }
+        @discardableResult
         public func append(
             value: ExportedKotlinPackages.kotlin.CharArray
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__ExportedKotlinPackages_kotlin_CharArray__(self.__externalRCRef(), value.__externalRCRef()))
         }
+        @discardableResult
         public func append(
             value: Swift.Unicode.UTF16.CodeUnit
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(self.__externalRCRef(), value))
         }
+        @discardableResult
         public func append(
             value: Swift.Double
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Double__(self.__externalRCRef(), value))
         }
+        @discardableResult
         public func append(
             value: Swift.Float
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Float__(self.__externalRCRef(), value))
         }
+        @discardableResult
         public func append(
             value: Swift.Int16
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Int16__(self.__externalRCRef(), value))
         }
+        @discardableResult
         public func append(
             value: Swift.Int32
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), value))
         }
+        @discardableResult
         public func append(
             value: Swift.Int64
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), value))
         }
+        @discardableResult
         public func append(
             value: Swift.Int8
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Int8__(self.__externalRCRef(), value))
         }
+        @discardableResult
         public func append(
             value: (any ExportedKotlinPackages.kotlin.CharSequence)?
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil))
         }
+        @discardableResult
         public func append(
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil))
         }
+        @discardableResult
         public func append(
             value: Swift.String?
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_Swift_String___(self.__externalRCRef(), value ?? nil))
         }
+        @discardableResult
         public func append(
             value: (any ExportedKotlinPackages.kotlin.CharSequence)?,
             startIndex: Swift.Int32,
@@ -365,6 +384,7 @@ extension ExportedKotlinPackages.kotlin.text {
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32__(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, startIndex, endIndex))
         }
+        @discardableResult
         public func appendRange(
             value: any ExportedKotlinPackages.kotlin.CharSequence,
             startIndex: Swift.Int32,
@@ -372,6 +392,7 @@ extension ExportedKotlinPackages.kotlin.text {
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_appendRange__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_CharSequence_Swift_Int32_Swift_Int32__(self.__externalRCRef(), value.__externalRCRef(), startIndex, endIndex))
         }
+        @discardableResult
         public func appendRange(
             value: ExportedKotlinPackages.kotlin.CharArray,
             startIndex: Swift.Int32,
@@ -382,11 +403,13 @@ extension ExportedKotlinPackages.kotlin.text {
         public func capacity() -> Swift.Int32 {
             return kotlin_text_StringBuilder_capacity(self.__externalRCRef())
         }
+        @discardableResult
         public func deleteAt(
             index: Swift.Int32
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_deleteAt__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index))
         }
+        @discardableResult
         public func deleteRange(
             startIndex: Swift.Int32,
             endIndex: Swift.Int32
@@ -409,78 +432,91 @@ extension ExportedKotlinPackages.kotlin.text {
         ) -> Swift.Int32 {
             return kotlin_text_StringBuilder_indexOf__TypesOfArguments__Swift_String_Swift_Int32__(self.__externalRCRef(), string, startIndex)
         }
+        @discardableResult
         public func insert(
             index: Swift.Int32,
             value: Swift.Bool
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Bool__(self.__externalRCRef(), index, value))
         }
+        @discardableResult
         public func insert(
             index: Swift.Int32,
             value: ExportedKotlinPackages.kotlin.CharArray
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_ExportedKotlinPackages_kotlin_CharArray__(self.__externalRCRef(), index, value.__externalRCRef()))
         }
+        @discardableResult
         public func insert(
             index: Swift.Int32,
             value: Swift.Unicode.UTF16.CodeUnit
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Unicode_UTF16_CodeUnit__(self.__externalRCRef(), index, value))
         }
+        @discardableResult
         public func insert(
             index: Swift.Int32,
             value: Swift.Double
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Double__(self.__externalRCRef(), index, value))
         }
+        @discardableResult
         public func insert(
             index: Swift.Int32,
             value: Swift.Float
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Float__(self.__externalRCRef(), index, value))
         }
+        @discardableResult
         public func insert(
             index: Swift.Int32,
             value: Swift.Int16
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Int16__(self.__externalRCRef(), index, value))
         }
+        @discardableResult
         public func insert(
             index: Swift.Int32,
             value: Swift.Int32
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), index, value))
         }
+        @discardableResult
         public func insert(
             index: Swift.Int32,
             value: Swift.Int64
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Int64__(self.__externalRCRef(), index, value))
         }
+        @discardableResult
         public func insert(
             index: Swift.Int32,
             value: Swift.Int8
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Int8__(self.__externalRCRef(), index, value))
         }
+        @discardableResult
         public func insert(
             index: Swift.Int32,
             value: (any ExportedKotlinPackages.kotlin.CharSequence)?
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil))
         }
+        @discardableResult
         public func insert(
             index: Swift.Int32,
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil))
         }
+        @discardableResult
         public func insert(
             index: Swift.Int32,
             value: Swift.String?
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_Swift_String___(self.__externalRCRef(), index, value ?? nil))
         }
+        @discardableResult
         public func insertRange(
             index: Swift.Int32,
             value: any ExportedKotlinPackages.kotlin.CharSequence,
@@ -489,6 +525,7 @@ extension ExportedKotlinPackages.kotlin.text {
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insertRange__TypesOfArguments__Swift_Int32_anyU20ExportedKotlinPackages_kotlin_CharSequence_Swift_Int32_Swift_Int32__(self.__externalRCRef(), index, value.__externalRCRef(), startIndex, endIndex))
         }
+        @discardableResult
         public func insertRange(
             index: Swift.Int32,
             value: ExportedKotlinPackages.kotlin.CharArray,
@@ -508,6 +545,7 @@ extension ExportedKotlinPackages.kotlin.text {
         ) -> Swift.Int32 {
             return kotlin_text_StringBuilder_lastIndexOf__TypesOfArguments__Swift_String_Swift_Int32__(self.__externalRCRef(), string, startIndex)
         }
+        @discardableResult
         public func reverse() -> ExportedKotlinPackages.kotlin.text.StringBuilder {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_reverse(self.__externalRCRef()))
         }
@@ -516,6 +554,7 @@ extension ExportedKotlinPackages.kotlin.text {
         ) -> Swift.Void {
             return { kotlin_text_StringBuilder_setLength__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newLength); return () }()
         }
+        @discardableResult
         public func setRange(
             startIndex: Swift.Int32,
             endIndex: Swift.Int32,

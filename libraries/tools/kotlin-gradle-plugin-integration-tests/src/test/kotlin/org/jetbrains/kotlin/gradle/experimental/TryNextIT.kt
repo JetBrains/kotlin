@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.experimental
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTest
-import org.jetbrains.kotlin.gradle.BrokenOnMacosTestFailureExpectation
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -24,6 +22,7 @@ import kotlin.io.path.appendText
 @DisplayName("'kotlin.experimental.tryNext' option")
 class TryNextIT : KGPBaseTest() {
 
+    @TestMetadata("multiprojectWithDependency")
     @DisplayName("Produces single warning message in multi-project when enabled")
     @JvmGradlePluginTests
     @GradleTest
@@ -42,6 +41,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("JVM: language version default is changed to next")
     @JvmGradlePluginTests
     @GradleTest
@@ -49,7 +49,6 @@ class TryNextIT : KGPBaseTest() {
         project(
             "simpleProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             enableTryNext()
 
@@ -61,6 +60,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("JVM: build report is not printed")
     @JvmGradlePluginTests
     @GradleTest
@@ -78,6 +78,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("JVM: report is printed at the end of the build")
     @JvmGradlePluginTests
     @GradleTest
@@ -102,6 +103,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("k2-native-intermediate-metadata")
     @DisplayName("Native: report is printed at the end of the build")
     @MppGradlePluginTests
     @GradleTest
@@ -120,16 +122,16 @@ class TryNextIT : KGPBaseTest() {
                     |:compileCommonMainKotlinMetadata: $nextKotlinLanguageVersion language version
                     |:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version
                     |:compileKotlinMacosArm64: $nextKotlinLanguageVersion language version
-                    |:compileKotlinMacosX64: $nextKotlinLanguageVersion language version
                     |:compileKotlinMingwX64: $nextKotlinLanguageVersion language version
                     |:compileNativeMainKotlinMetadata: $nextKotlinLanguageVersion language version
-                    |##### 100% (6/6) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
+                    |##### 100% (5/5) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                     """.trimMargin().normalizeLineEndings()
                 )
             }
         }
     }
 
+    @TestMetadata("incrementalMultiproject")
     @DisplayName("JVM: report is printed at the end of the build in case of compilation error")
     @JvmGradlePluginTests
     @GradleTest
@@ -161,6 +163,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("new-mpp-published")
     @DisplayName("MPP: language version default is changed to next")
     @MppGradlePluginTests
     @GradleTest
@@ -172,9 +175,7 @@ class TryNextIT : KGPBaseTest() {
             "new-mpp-published",
             gradleVersion,
             localRepoDir = localRepository,
-            buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
-            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableTryNext()
 
@@ -205,7 +206,7 @@ class TryNextIT : KGPBaseTest() {
             build(":compileKotlinLinuxX64") {
                 assertTasksExecuted(":compileKotlinLinuxX64")
 
-                val compileTaskOutput = getOutputForTask(":compileKotlinLinuxX64")
+                val compileTaskOutput = getOutputForTask(":compileKotlinLinuxX64", LogLevel.INFO)
                 @Suppress("DEPRECATION")
                 val compilerArgs = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, compileTaskOutput)
                 assert(compilerArgs.languageVersion == nextKotlinLanguageVersion) {
@@ -215,6 +216,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("commonizeHierarchically")
     @DisplayName("MPP: language version default is changed to next for metadata compilations")
     @MppGradlePluginTests
     @GradleTest
@@ -222,7 +224,6 @@ class TryNextIT : KGPBaseTest() {
         project(
             "commonizeHierarchically",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             enableTryNext()
 
@@ -235,7 +236,7 @@ class TryNextIT : KGPBaseTest() {
 
                 assertCompilerArgument(":p1:compileCommonMainKotlinMetadata", "-language-version $nextKotlinLanguageVersion")
                 assertCompilerArgument(":p1:compileConcurrentMainKotlinMetadata", "-language-version $nextKotlinLanguageVersion")
-                val taskOutput = getOutputForTask(":p1:compileAppleAndLinuxMainKotlinMetadata")
+                val taskOutput = getOutputForTask(":p1:compileAppleAndLinuxMainKotlinMetadata", LogLevel.INFO)
                 @Suppress("DEPRECATION")
                 val appleAndLinuxMetadataArgs = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
                 assert(appleAndLinuxMetadataArgs.languageVersion == nextKotlinLanguageVersion) {
@@ -245,6 +246,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("JVM: explicit user setting for languageVersion is not overridden")
     @JvmGradlePluginTests
     @GradleTest
@@ -252,7 +254,6 @@ class TryNextIT : KGPBaseTest() {
         project(
             "simpleProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             enableTryNext()
             val version = KotlinVersion.firstNonDeprecated
@@ -272,6 +273,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("JS: language version default is changed to next")
     @JsGradlePluginTests
     @GradleTest
@@ -279,9 +281,7 @@ class TryNextIT : KGPBaseTest() {
         project(
             "kotlin-js-nodejs-project",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
-            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableTryNext()
 
@@ -293,6 +293,7 @@ class TryNextIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-nodejs-project")
     @DisplayName("JS: tryNext report is produced")
     @JsGradlePluginTests
     @GradleTest
@@ -323,7 +324,6 @@ class TryNextIT : KGPBaseTest() {
     @NativeGradlePluginTests
     @GradleTest
     @TestMetadata("native-configuration-cache")
-    @BrokenOnMacosTest(failureExpectation = BrokenOnMacosTestFailureExpectation.ALWAYS)
     fun smokeTestForNativeTasks(gradleVersion: GradleVersion) {
         project(
             "native-configuration-cache",

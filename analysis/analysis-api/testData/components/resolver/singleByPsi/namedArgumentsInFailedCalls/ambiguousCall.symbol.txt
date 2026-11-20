@@ -1,0 +1,12 @@
+KtNameReferenceExpression(123,124): 'x'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      x: kotlin.Int,
+      x: kotlin.Int
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun foo(x: Int, y: Int = ...): Unit
+    fun foo(x: Int, z: String = ...): Unit>

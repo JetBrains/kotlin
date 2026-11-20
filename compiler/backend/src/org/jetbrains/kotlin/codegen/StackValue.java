@@ -9,10 +9,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase;
+import org.jetbrains.kotlin.ir.declarations.IrClass;
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationsKt;
+import org.jetbrains.kotlin.ir.types.IrType;
+import org.jetbrains.kotlin.ir.types.IrTypesKt;
+import org.jetbrains.kotlin.ir.util.IrTypeUtilsKt;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode;
-import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext;
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -33,21 +36,19 @@ public abstract class StackValue {
     @NotNull
     public final Type type;
     @Nullable
-    public final KotlinTypeMarker kotlinType;
+    public final IrType irType;
 
-    protected StackValue(@NotNull Type type, @Nullable KotlinTypeMarker kotlinType) {
+    protected StackValue(@NotNull Type type, @Nullable IrType irType) {
         this.type = type;
-        this.kotlinType = kotlinType;
+        this.irType = irType;
     }
 
     public abstract void put(
-            @NotNull Type type, @Nullable KotlinTypeMarker kotlinType, @NotNull InstructionAdapter v,
-            @NotNull KotlinTypeMapperBase typeMapper
+            @NotNull Type type, @Nullable IrType irType, @NotNull InstructionAdapter v, @NotNull KotlinTypeMapperBase typeMapper
     );
 
     public void store(
-            @NotNull Type type, @Nullable KotlinTypeMarker kotlinType, @NotNull InstructionAdapter v,
-            @NotNull KotlinTypeMapperBase typeMapper
+            @NotNull Type type, @Nullable IrType irType, @NotNull InstructionAdapter v, @NotNull KotlinTypeMapperBase typeMapper
     ) {
         throw new UnsupportedOperationException("Cannot store to value " + this);
     }
@@ -97,12 +98,10 @@ public abstract class StackValue {
         v.invokevirtual(methodOwner.getInternalName(), type.getClassName() + "Value", "()" + type.getDescriptor(), false);
     }
 
-    private static void boxInlineClass(
-            @NotNull KotlinTypeMarker kotlinType, @NotNull InstructionAdapter v, @NotNull KotlinTypeMapperBase typeMapper
-    ) {
-        Type boxed = typeMapper.mapTypeCommon(kotlinType, TypeMappingMode.CLASS_DECLARATION);
-        Type unboxed = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType, typeMapper);
-        boolean isNullable = typeMapper.getTypeSystem().isNullableType(kotlinType) && !isPrimitive(unboxed);
+    private static void boxInlineClass(@NotNull IrType irType, @NotNull InstructionAdapter v, @NotNull KotlinTypeMapperBase typeMapper) {
+        Type boxed = typeMapper.mapType(irType, TypeMappingMode.CLASS_DECLARATION, null, true);
+        Type unboxed = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(irType, typeMapper);
+        boolean isNullable = typeMapper.getTypeSystem().isNullableType(irType) && !isPrimitive(unboxed);
         boxInlineClass(unboxed, boxed, isNullable, v);
     }
 
@@ -131,11 +130,11 @@ public abstract class StackValue {
 
     public static void unboxInlineClass(
             @NotNull Type type,
-            @NotNull KotlinTypeMarker targetInlineClassType,
+            @NotNull IrType targetInlineClassType,
             @NotNull InstructionAdapter v,
             @NotNull KotlinTypeMapperBase typeMapper
     ) {
-        Type boxed = typeMapper.mapTypeCommon(targetInlineClassType, TypeMappingMode.CLASS_DECLARATION);
+        Type boxed = typeMapper.mapType(targetInlineClassType, TypeMappingMode.CLASS_DECLARATION, null, true);
         Type unboxed = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(targetInlineClassType, typeMapper);
         boolean isNullable = typeMapper.getTypeSystem().isNullableType(targetInlineClassType) && !isPrimitive(unboxed);
         unboxInlineClass(type, boxed, unboxed, isNullable, v);
@@ -184,35 +183,34 @@ public abstract class StackValue {
 
     public static void coerce(
             @NotNull Type fromType,
-            @Nullable KotlinTypeMarker fromKotlinType,
+            @Nullable IrType fromIrType,
             @NotNull Type toType,
-            @Nullable KotlinTypeMarker toKotlinType,
+            @Nullable IrType toIrType,
             @NotNull InstructionAdapter v,
             @NotNull KotlinTypeMapperBase typeMapper
     ) {
-        if (coerceInlineClasses(fromType, fromKotlinType, toType, toKotlinType, v, typeMapper)) return;
+        if (coerceInlineClasses(fromType, fromIrType, toType, toIrType, v, typeMapper)) return;
         coerce(fromType, toType, v);
     }
 
     public static boolean requiresInlineClassBoxingOrUnboxing(
             @NotNull Type fromType,
-            @Nullable KotlinTypeMarker fromKotlinType,
+            @Nullable IrType fromIrType,
             @NotNull Type toType,
-            @Nullable KotlinTypeMarker toKotlinType,
+            @Nullable IrType toIrType,
             @NotNull KotlinTypeMapperBase typeMapper
     ) {
         // NB see also coerceInlineClasses below
 
-        if (fromKotlinType == null || toKotlinType == null) return false;
+        if (fromIrType == null || toIrType == null) return false;
 
-        TypeSystemCommonBackendContext typeSystem = typeMapper.getTypeSystem();
-        boolean isFromTypeInlineClass = typeSystem.isInlineClass(typeSystem.typeConstructor(fromKotlinType));
-        boolean isToTypeInlineClass = typeSystem.isInlineClass(typeSystem.typeConstructor(toKotlinType));
+        boolean isFromTypeInlineClass = isTypeOfInlineClass(fromIrType);
+        boolean isToTypeInlineClass = isTypeOfInlineClass(toIrType);
 
         if (!isFromTypeInlineClass && !isToTypeInlineClass) return false;
 
-        boolean isFromTypeUnboxed = isFromTypeInlineClass && isUnboxedInlineClass(fromKotlinType, fromType, typeMapper);
-        boolean isToTypeUnboxed = isToTypeInlineClass && isUnboxedInlineClass(toKotlinType, toType, typeMapper);
+        boolean isFromTypeUnboxed = isFromTypeInlineClass && isUnboxedInlineClass(fromIrType, fromType, typeMapper);
+        boolean isToTypeUnboxed = isToTypeInlineClass && isUnboxedInlineClass(toIrType, toType, typeMapper);
 
         if (isFromTypeInlineClass && isToTypeInlineClass) {
             return isFromTypeUnboxed != isToTypeUnboxed;
@@ -225,23 +223,22 @@ public abstract class StackValue {
 
     private static boolean coerceInlineClasses(
             @NotNull Type fromType,
-            @Nullable KotlinTypeMarker fromKotlinType,
+            @Nullable IrType fromIrType,
             @NotNull Type toType,
-            @Nullable KotlinTypeMarker toKotlinType,
+            @Nullable IrType toIrType,
             @NotNull InstructionAdapter v,
             @NotNull KotlinTypeMapperBase typeMapper
     ) {
         // NB see also requiresInlineClassBoxingOrUnboxing above
 
-        if (fromKotlinType == null || toKotlinType == null) return false;
+        if (fromIrType == null || toIrType == null) return false;
 
-        TypeSystemCommonBackendContext typeSystem = typeMapper.getTypeSystem();
-        boolean isFromTypeInlineClass = typeSystem.isInlineClass(typeSystem.typeConstructor(fromKotlinType));
-        boolean isToTypeInlineClass = typeSystem.isInlineClass(typeSystem.typeConstructor(toKotlinType));
+        boolean isFromTypeInlineClass = isTypeOfInlineClass(fromIrType);
+        boolean isToTypeInlineClass = isTypeOfInlineClass(toIrType);
 
         if (!isFromTypeInlineClass && !isToTypeInlineClass) return false;
 
-        if (fromKotlinType.equals(toKotlinType) && fromType.equals(toType)) return true;
+        if (fromIrType.equals(toIrType) && fromType.equals(toType)) return true;
 
         /*
         * Preconditions: one of the types is definitely inline class type and types are not equal
@@ -254,26 +251,26 @@ public abstract class StackValue {
         * */
 
         if (isFromTypeInlineClass && isToTypeInlineClass) {
-            boolean isFromTypeUnboxed = isUnboxedInlineClass(fromKotlinType, fromType, typeMapper);
-            boolean isToTypeUnboxed = isUnboxedInlineClass(toKotlinType, toType, typeMapper);
+            boolean isFromTypeUnboxed = isUnboxedInlineClass(fromIrType, fromType, typeMapper);
+            boolean isToTypeUnboxed = isUnboxedInlineClass(toIrType, toType, typeMapper);
             if (isFromTypeUnboxed && !isToTypeUnboxed) {
-                boxInlineClass(fromKotlinType, v, typeMapper);
+                boxInlineClass(fromIrType, v, typeMapper);
                 return true;
             }
             else if (!isFromTypeUnboxed && isToTypeUnboxed) {
-                unboxInlineClass(fromType, toKotlinType, v, typeMapper);
+                unboxInlineClass(fromType, toIrType, v, typeMapper);
                 return true;
             }
         }
         else if (isFromTypeInlineClass) {
-            if (isUnboxedInlineClass(fromKotlinType, fromType, typeMapper)) {
-                boxInlineClass(fromKotlinType, v, typeMapper);
+            if (isUnboxedInlineClass(fromIrType, fromType, typeMapper)) {
+                boxInlineClass(fromIrType, v, typeMapper);
                 return true;
             }
         }
         else { // isToTypeInlineClass is `true`
-            if (isUnboxedInlineClass(toKotlinType, toType, typeMapper)) {
-                unboxInlineClass(fromType, toKotlinType, v, typeMapper);
+            if (isUnboxedInlineClass(toIrType, toType, typeMapper)) {
+                unboxInlineClass(fromType, toIrType, v, typeMapper);
                 return true;
             }
         }
@@ -281,10 +278,15 @@ public abstract class StackValue {
         return false;
     }
 
+    private static boolean isTypeOfInlineClass(@NotNull IrType type) {
+        IrClass irClass = IrTypesKt.getClass(type);
+        return irClass != null && IrDeclarationsKt.isInlineClass(irClass, false);
+    }
+
     private static boolean isUnboxedInlineClass(
-            @NotNull KotlinTypeMarker kotlinType, @NotNull Type actualType, @NotNull KotlinTypeMapperBase typeMapper
+            @NotNull IrType irType, @NotNull Type actualType, @NotNull KotlinTypeMapperBase typeMapper
     ) {
-        return KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType, typeMapper).equals(actualType);
+        return KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(irType, typeMapper).equals(actualType);
     }
 
     public static void coerce(@NotNull Type fromType, @NotNull Type toType, @NotNull InstructionAdapter v) {
@@ -373,8 +375,8 @@ public abstract class StackValue {
     public static class Local extends StackValue {
         public final int index;
 
-        public Local(int index, Type type, KotlinTypeMarker kotlinType) {
-            super(type, kotlinType);
+        public Local(int index, Type type, IrType irType) {
+            super(type, irType);
 
             if (index < 0) {
                 throw new IllegalStateException("local variable index must be non-negative");
@@ -385,26 +387,26 @@ public abstract class StackValue {
 
         @Override
         public void put(
-                @NotNull Type type, @Nullable KotlinTypeMarker kotlinType, @NotNull InstructionAdapter v,
+                @NotNull Type type, @Nullable IrType irType, @NotNull InstructionAdapter v,
                 @NotNull KotlinTypeMapperBase typeMapper
         ) {
             v.load(index, this.type);
-            coerce(this.type, this.kotlinType, type, kotlinType, v, typeMapper);
+            coerce(this.type, this.irType, type, irType, v, typeMapper);
         }
 
         @Override
         public void store(
-                @NotNull Type topOfStackType, @Nullable KotlinTypeMarker topOfStackKotlinType, @NotNull InstructionAdapter v,
+                @NotNull Type topOfStackType, @Nullable IrType topOfStackIrType, @NotNull InstructionAdapter v,
                 @NotNull KotlinTypeMapperBase typeMapper
         ) {
-            coerce(topOfStackType, topOfStackKotlinType, this.type, this.kotlinType, v, typeMapper);
+            coerce(topOfStackType, topOfStackIrType, this.type, this.irType, v, typeMapper);
             v.store(index, this.type);
         }
     }
 
     public static class OnStack extends StackValue {
-        public OnStack(Type type, KotlinTypeMarker kotlinType) {
-            super(type, kotlinType);
+        public OnStack(Type type, IrType irType) {
+            super(type, irType);
             if (type == Type.VOID_TYPE) {
                 throw new IllegalArgumentException("Cannot create OnStack with void type");
             }
@@ -412,10 +414,10 @@ public abstract class StackValue {
 
         @Override
         public void put(
-                @NotNull Type type, @Nullable KotlinTypeMarker kotlinType, @NotNull InstructionAdapter v,
+                @NotNull Type type, @Nullable IrType irType, @NotNull InstructionAdapter v,
                 @NotNull KotlinTypeMapperBase typeMapper
         ) {
-            coerce(this.type, this.kotlinType, type, kotlinType, v, typeMapper);
+            coerce(this.type, this.irType, type, irType, v, typeMapper);
         }
     }
 
@@ -430,7 +432,7 @@ public abstract class StackValue {
 
         @Override
         public void put(
-                @NotNull Type type, @Nullable KotlinTypeMarker kotlinType, @NotNull InstructionAdapter v,
+                @NotNull Type type, @Nullable IrType irType, @NotNull InstructionAdapter v,
                 @NotNull KotlinTypeMapperBase typeMapper
         ) {
             if (value instanceof Integer || value instanceof Byte || value instanceof Short) {
@@ -453,7 +455,7 @@ public abstract class StackValue {
             }
 
             if (value != null || AsmUtil.isPrimitive(type)) {
-                coerce(this.type, this.kotlinType, type, kotlinType, v, typeMapper);
+                coerce(this.type, this.irType, type, irType, v, typeMapper);
             }
         }
     }
@@ -478,21 +480,21 @@ public abstract class StackValue {
 
         @Override
         public void put(
-                @NotNull Type type, @Nullable KotlinTypeMarker kotlinType, @NotNull InstructionAdapter v,
+                @NotNull Type type, @Nullable IrType irType, @NotNull InstructionAdapter v,
                 @NotNull KotlinTypeMapperBase typeMapper
         ) {
-            receiver.put(receiver.type, receiver.kotlinType, v, typeMapper);
+            receiver.put(receiver.type, receiver.irType, v, typeMapper);
             v.visitFieldInsn(GETFIELD, owner.getInternalName(), name, this.type.getDescriptor());
-            coerce(this.type, this.kotlinType, type, kotlinType, v, typeMapper);
+            coerce(this.type, this.irType, type, irType, v, typeMapper);
         }
 
         @Override
         public void store(
-                @NotNull Type topOfStackType, @Nullable KotlinTypeMarker topOfStackKotlinType, @NotNull InstructionAdapter v,
+                @NotNull Type topOfStackType, @Nullable IrType topOfStackIrType, @NotNull InstructionAdapter v,
                 @NotNull KotlinTypeMapperBase typeMapper
         ) {
-            receiver.put(receiver.type, receiver.kotlinType, v, typeMapper);
-            coerce(topOfStackType, topOfStackKotlinType, this.type, this.kotlinType, v, typeMapper);
+            receiver.put(receiver.type, receiver.irType, v, typeMapper);
+            coerce(topOfStackType, topOfStackIrType, this.type, this.irType, v, typeMapper);
             v.visitFieldInsn(PUTFIELD, owner.getInternalName(), name, this.type.getDescriptor());
         }
     }

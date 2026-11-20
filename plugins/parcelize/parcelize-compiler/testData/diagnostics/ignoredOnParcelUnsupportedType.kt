@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 package test
 
 import android.os.Parcelable

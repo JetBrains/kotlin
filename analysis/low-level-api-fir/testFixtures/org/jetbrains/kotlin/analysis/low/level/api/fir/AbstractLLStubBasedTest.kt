@@ -117,7 +117,7 @@ abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBas
             }
 
             result.exceptionOrNull()?.let { exception ->
-                if (exception.message?.startsWith("Access to tree elements not allowed for") != true) {
+                if (exception !is AstLoadingAssertionError) {
                     throw exception
                 }
             }

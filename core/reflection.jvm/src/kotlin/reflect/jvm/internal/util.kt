@@ -64,6 +64,7 @@ import kotlin.reflect.*
 import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
 import kotlin.reflect.jvm.internal.types.AbstractKType
+import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.jvmName
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
@@ -104,6 +105,11 @@ internal fun ClassLoader.loadClass(kotlinClassId: ClassId, arrayDimensions: Int 
 internal val stdlibClassLoader: ClassLoader
     get() = Unit::class.java.safeClassLoader
 
+// JDK and kotlin-stdlib can be loaded by different class loaders. In this case, trying to resolve `kotlin/Unit` reference in a builtin
+// class will use the JDK class loader which cannot load `kotlin/Unit`. Same for `kotlin/ranges/IntRange` reference in `kotlin/Int`.
+internal fun ClassLoader.tryLoadClassOrFallbackToStdlib(fqName: String): Class<*>? =
+    tryLoadClass(fqName) ?: stdlibClassLoader.tryLoadClass(fqName)
+
 private fun loadClass(classLoader: ClassLoader, packageName: String, className: String, arrayDimensions: Int): Class<*>? {
     if (packageName == "kotlin") {
         when (className) {
@@ -116,12 +122,6 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
             "IntArray" -> return IntArray::class.java
             "LongArray" -> return LongArray::class.java
             "ShortArray" -> return ShortArray::class.java
-            "Unit" -> {
-                // JDK and kotlin-stdlib can be loaded by different class loaders. In this case, trying to resolve `kotlin/Unit` reference
-                // in a builtin class will use the JDK class loader which cannot load `kotlin/Unit`. This should happen for all non-mapped
-                // builtin classes referenced from builtins, but right now Unit seems to be the only one.
-                return Unit::class.java
-            }
         }
     }
 
@@ -141,11 +141,16 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
         }
     }
 
-    return classLoader.tryLoadClass(fqName)
+    return classLoader.tryLoadClassOrFallbackToStdlib(fqName)
 }
 
 internal fun Class<*>.createArrayType(): Class<*> =
     java.lang.reflect.Array.newInstance(this, 0)::class.java
+
+internal fun computeArrayClassifier(arguments: List<KTypeProjection>): KClass<*> {
+    val elementType = arguments.singleOrNull()?.takeUnless { it.variance == KVariance.IN }?.type ?: StandardKTypes.ANY
+    return elementType.jvmErasure.javaObjectType.createArrayType().kotlin
+}
 
 internal fun DescriptorVisibility.toKVisibility(): KVisibility? =
     when (this) {
@@ -428,12 +433,24 @@ internal fun Class<*>.getDeclaredMethodOrNull(name: String, vararg parameterType
         null
     }
 
-internal fun Class<*>.getDeclaredFieldOrNull(name: String): Field? =
-    try {
-        getDeclaredField(name)
-    } catch (e: NoSuchFieldException) {
-        null
+internal fun Class<*>.getDeclaredFieldOrNull(name: String, isStatic: Boolean): Field? {
+    fun Class<*>.lookup(name: String): Field? =
+        try {
+            getDeclaredField(name)
+        } catch (e: NoSuchFieldException) {
+            null
+        }
+
+    lookup(name)?.let { return it }
+    if (isInterface && isStatic) {
+        val classLoader = safeClassLoader
+        classLoader.tryLoadClass(this.name + "$" + JvmAbi.INTERFACE_PRIVATE_FIELDS1_CLASS_NAME)
+            ?.lookup(name)?.let { return it }
+        classLoader.tryLoadClass(this.name + "$" + JvmAbi.INTERFACE_PRIVATE_FIELDS2_CLASS_NAME)
+            ?.lookup(name)?.let { return it }
     }
+    return null
+}
 
 /**
  * Returns `true` if this type allows `null` values. Based on `TypeUtils.isNullableType` (K1), `ConeKotlinType.canBeNull` (K2).
@@ -502,7 +519,10 @@ internal fun ClassLoader.parseAndLoadDescriptor(desc: String, loadReturnType: Bo
 
 private fun ClassLoader.parseAndLoadType(desc: String, begin: Int = 0, end: Int = desc.length): Class<*> =
     when (desc[begin]) {
-        'L' -> loadClass(desc.substring(begin + 1, end - 1).replace('/', '.'))
+        'L' -> {
+            val fqName = desc.substring(begin + 1, end - 1).replace('/', '.')
+            tryLoadClassOrFallbackToStdlib(fqName) ?: throw ClassNotFoundException(fqName)
+        }
         '[' -> parseAndLoadType(desc, begin + 1, end).createArrayType()
         'V' -> Void.TYPE
         'Z' -> Boolean::class.java

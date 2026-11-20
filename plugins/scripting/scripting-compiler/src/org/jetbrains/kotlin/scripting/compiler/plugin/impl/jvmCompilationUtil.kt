@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.scriptFileName
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
-import kotlin.script.experimental.host.StringScriptSource
 import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 
@@ -63,6 +63,23 @@ inline fun <T> withMessageCollectorAndDisposable(
     } finally {
         if (disposeOnSuccess || failed) {
             Disposer.dispose(disposable)
+        }
+    }
+}
+
+fun disposeOnFinalization(disposable: Disposable): AutoCloseable = FinalizingDisposableHolder(disposable)
+
+private class FinalizingDisposableHolder(disposable: Disposable) : AutoCloseable {
+    private val disposableRef = AtomicReference<Disposable?>(disposable)
+
+    override fun close() {
+        disposableRef.getAndSet(null)?.let { Disposer.dispose(it) }
+    }
+
+    protected fun finalize() {
+        try {
+            close()
+        } catch (_: Throwable) {
         }
     }
 }

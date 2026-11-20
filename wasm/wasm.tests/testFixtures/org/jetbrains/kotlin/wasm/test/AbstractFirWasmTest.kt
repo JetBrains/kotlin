@@ -76,7 +76,7 @@ abstract class AbstractFirWasmTest(
             defaultDirectives {
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
                 DiagnosticsDirectives.DIAGNOSTICS with listOf("-infos")
-                FirDiagnosticsDirectives.FIR_PARSER with FirParser.Psi
+                FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
             }
 
             firHandlersStep {
@@ -107,6 +107,17 @@ open class AbstractFirWasmJsTest(
 open class AbstractFirWasmJsCodegenInteropTest : AbstractFirWasmJsTest(
     "compiler/testData/codegen/boxWasmJsInterop",
     "codegen/firWasmJsInterop"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureCodegenFirHandlerSteps()
+        builder.configureCodegenIrHandlerSteps()
+    }
+}
+
+open class AbstractFirWasmJsCodegenIrCheckTest : AbstractFirWasmJsTest(
+    "compiler/testData/codegen/wasmIrChecks",
+    "codegen/wasmIrChecks"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

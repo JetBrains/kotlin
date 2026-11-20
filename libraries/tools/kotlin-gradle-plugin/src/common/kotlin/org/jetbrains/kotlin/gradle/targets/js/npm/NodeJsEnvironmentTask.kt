@@ -10,7 +10,9 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
+@ObsoleteNpmDependencyModel
 internal interface NodeJsEnvironmentTask : Task {
     @get:Internal
     @InternalKotlinGradlePluginApi

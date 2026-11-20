@@ -91,17 +91,6 @@ public interface KaTypeBuilder : KaLifetimeOwner
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaClassTypeBuilder : KaTypeBuilder {
     /**
-     * Default value: [KaTypeNullability.NON_NULLABLE].
-     */
-    @Deprecated(
-        "Use `isMarkedNullable` instead.",
-        ReplaceWith("isMarkedNullable"),
-        level = DeprecationLevel.HIDDEN
-    )
-    @Suppress("DEPRECATION_ERROR")
-    public var nullability: KaTypeNullability
-
-    /**
      * Whether the type is marked as nullable, i.e. the type is represented as `T?`.
      *
      * Default value: `false`.
@@ -131,17 +120,6 @@ public interface KaClassTypeBuilder : KaTypeBuilder {
 @KaObsoleteComponentApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
-    /**
-     * Default value: [KaTypeNullability.NON_NULLABLE].
-     */
-    @Deprecated(
-        "Use `isMarkedNullable` instead.",
-        ReplaceWith("isMarkedNullable"),
-        level = DeprecationLevel.HIDDEN
-    )
-    @Suppress("DEPRECATION_ERROR")
-    public var nullability: KaTypeNullability
-
     /**
      * Whether the type is marked as nullable, i.e. the type is represented as `T?`.
      *

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOf
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazyResolveRenderer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
@@ -88,7 +88,7 @@ private fun doTestInBlockModification(
     dumpFirFile: Boolean,
     resolutionFacade: LLResolutionFacade,
 ): String {
-    val declaration = elementToModify.getNonLocalContainingOrThisDeclaration() ?: file
+    val declaration = elementToModify.getNonLocalContainingOrThisElement() ?: file
     val firDeclarationBefore = declaration.getOrBuildFirOfType<FirDeclaration>(resolutionFacade)
     val declarationToRender = if (dumpFirFile) {
         file.getOrBuildFirFile(resolutionFacade).also { it.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE) }

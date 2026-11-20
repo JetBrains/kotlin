@@ -1,4 +1,3 @@
-import org.gradle.jvm.toolchain.JavaLauncher
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.testFederation.testFederation
 
@@ -15,7 +14,6 @@ dependencies {
     testImplementation(project(":compiler:util"))
     testImplementation(project(":compiler:cli"))
     testImplementation(project(":compiler:cli-jvm"))
-    testImplementation(project(":compiler:frontend"))
     testImplementation(project(":compiler:backend"))
 
     testImplementation(testFixtures(project(":compiler:tests-common")))
@@ -30,7 +28,7 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
-
+    testImplementation(testFixtures(project(":compiler:jvm.tests")))
 
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
@@ -56,7 +54,7 @@ abstract class JdkHomeArgumentProvider : CommandLineArgumentProvider {
 }
 
 projectTests {
-    testTask(javaLauncher = JdkMajorVersion.JDK_17_0) {
+    testTask {
         develocity {
             testRetry.maxRetries.set(0)
         }

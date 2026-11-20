@@ -6,9 +6,9 @@ package org.jetbrains.dokka.utilities
 
 import java.util.concurrent.atomic.AtomicInteger
 
-public interface DokkaLogger {
-    public var warningsCount: Int
-    public var errorsCount: Int
+internal interface DokkaLogger {
+    var warningsCount: Int
+    var errorsCount: Int
 
     /**
      * This level is for showing significant execution steps.
@@ -30,7 +30,7 @@ public interface DokkaLogger {
      * * Gradle - `info`
      * * Maven - `debug`
      */
-    public fun progress(message: String)
+    fun progress(message: String)
 
     /**
      * This level is for logging non-user actionable messages,
@@ -49,7 +49,7 @@ public interface DokkaLogger {
      * * Gradle - `debug`
      * * Maven - `debug`
      */
-    public fun debug(message: String)
+    fun debug(message: String)
 
     /**
      * This level is for logging useful messages about Dokka usage.
@@ -65,7 +65,7 @@ public interface DokkaLogger {
      * * Gradle - `info`
      * * Maven - `info`
      */
-    public fun info(message: String)
+    fun info(message: String)
 
     /**
      * This level is for logging messages about issues during the documentation generation,
@@ -85,7 +85,7 @@ public interface DokkaLogger {
      * * Gradle - `warn`
      * * Maven - `warn`
      */
-    public fun warn(message: String)
+    fun warn(message: String)
 
     /**
      * This level is for logging error messages that describe what prevented Dokka from proceeding
@@ -103,10 +103,10 @@ public interface DokkaLogger {
      * * Gradle - `error`
      * * Maven - `error`
      */
-    public fun error(message: String)
+    fun error(message: String)
 }
 
-public fun DokkaLogger.report() {
+internal fun DokkaLogger.report() {
     if (warningsCount > 0 || errorsCount > 0) {
         info(
             "Generation completed with $warningsCount warning" +
@@ -119,8 +119,8 @@ public fun DokkaLogger.report() {
     }
 }
 
-public enum class LoggingLevel(
-    public val index: Int
+internal enum class LoggingLevel(
+    val index: Int
 ) {
     DEBUG(0), PROGRESS(1), INFO(2), WARN(3), ERROR(4);
 }
@@ -128,13 +128,13 @@ public enum class LoggingLevel(
 /**
  * Used to decouple the transport layer from logger and make it convenient for testing
  */
-public fun interface MessageEmitter : (String) -> Unit {
-    public companion object {
-        public val consoleEmitter: MessageEmitter = MessageEmitter { message -> println(message) }
+internal fun interface MessageEmitter : (String) -> Unit {
+    companion object {
+        val consoleEmitter: MessageEmitter = MessageEmitter { message -> println(message) }
     }
 }
 
-public class DokkaConsoleLogger(
+internal class DokkaConsoleLogger(
     private val minLevel: LoggingLevel = LoggingLevel.PROGRESS,
     private val emitter: MessageEmitter = MessageEmitter.consoleEmitter
 ) : DokkaLogger {

@@ -9,15 +9,18 @@ import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments.Companion.X_EXPORT_KDOC
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputsContains
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.unwrap
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import kotlin.io.path.readText
@@ -49,7 +52,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
 
             module1.compile {
                 assertOutputs("bpkg/MainKt.class", "bpkg/BClass.class")
-                if (strategyConfig.first::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
+                if (strategyConfig.first.unwrap()::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
                     assertLogContainsSubstringExactlyTimes(LogLevel.DEBUG, "AClass.java", 1) // no duplication of java sources
                 }
             }
@@ -147,25 +150,34 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
 
     @OptIn(ExperimentalCompilerArgument::class)
     @BtaV2StrategyAgnosticCompilationTest
-    @TestMetadata("js-ic-basic-app")
+    @TestMetadata("js-only-ic-basic-app")
     fun basicJsRichDtsGeneration(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        if (strategyConfig.first.getCompilerVersion() < "2.5.0") {
-            // The rich dts generation is not available in pre 2.5.0 versions of Kotlin
+        val [toolchains] = strategyConfig
+        toolchains.assumeJsIsSupported()
+
+        val kotlinToolingVersion = KotlinToolingVersion(toolchains.getCompilerVersion())
+        if (kotlinToolingVersion < KotlinToolingVersion(2, 5, 0, "Beta1")) {
+            val exception = assertThrows<UnsupportedOperationException> {
+                toolchains.js.jsDtsGenerationOperationBuilder(emptyList(), workingDirectory.resolve("dts"))
+            }
+            assertEquals("JsDtsGenerationOperation is available from Kotlin compiler version 2.5.0", exception.message)
             return
         }
 
+        assumeTrue(KotlinToolingVersion(toolchains.getCompilerVersion()) >= KotlinToolingVersion(2, 5, 0, "Beta2"))
+
         jsProject(strategyConfig, useRichDtsGenerator = true) {
             val libModule = module("js-ic-basic-lib")
-            val appModule = module("js-ic-basic-app", listOf(libModule)) {
+            val appModule = module("js-only-ic-basic-app", listOf(libModule)) {
                 it.compilerArguments[X_EXPORT_KDOC] = true
             }
             libModule.compile()
             appModule.compile()
             appModule.link(destinationDirectory = appModule.outputDirectory.resolve("out")) {
-                assertOutputsContains("js-ic-basic-app.js", "js-ic-basic-app.d.ts")
+                assertOutputsContains("js-only-ic-basic-app.js", "js-only-ic-basic-app.d.ts")
             }
 
-            val dts = appModule.outputDirectory.resolve("out/js-ic-basic-app.d.ts").readText()
+            val dts = appModule.outputDirectory.resolve("out/js-only-ic-basic-app.d.ts").readText()
             assertTrue("function richDts(value: string): string" in dts)
             assertTrue("* A declaration generated from KLIB metadata." in dts)
         }

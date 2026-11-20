@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByReferenceTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.AbstractSymbolByReferenceTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -183,9 +183,33 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   }
 
   @Test
+  @TestMetadata("constructorWithThrowsFromLibrary.kt")
+  public void testConstructorWithThrowsFromLibrary() {
+    run("constructorWithThrowsFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("contextParametersInTypesLibrary.kt")
   public void testContextParametersInTypesLibrary() {
     run("contextParametersInTypesLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingTypeConstraintInClass.kt")
+  public void testDanglingTypeConstraintInClass() {
+    run("danglingTypeConstraintInClass.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingTypeConstraintSubject.kt")
+  public void testDanglingTypeConstraintSubject() {
+    run("danglingTypeConstraintSubject.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingTypeConstraintUsage.kt")
+  public void testDanglingTypeConstraintUsage() {
+    run("danglingTypeConstraintUsage.kt");
   }
 
   @Test
@@ -264,6 +288,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   @TestMetadata("genericFromOuterClassInInnerClass.kt")
   public void testGenericFromOuterClassInInnerClass() {
     run("genericFromOuterClassInInnerClass.kt");
+  }
+
+  @Test
+  @TestMetadata("genericMethodWithThrowsFromLibrary.kt")
+  public void testGenericMethodWithThrowsFromLibrary() {
+    run("genericMethodWithThrowsFromLibrary.kt");
   }
 
   @Test
@@ -585,6 +615,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   }
 
   @Test
+  @TestMetadata("propertyAccessorsWithThrowsFromLibrary.kt")
+  public void testPropertyAccessorsWithThrowsFromLibrary() {
+    run("propertyAccessorsWithThrowsFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("propertyReceiverParameter.kt")
   public void testPropertyReceiverParameter() {
     run("propertyReceiverParameter.kt");
@@ -723,6 +759,30 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   }
 
   @Test
+  @TestMetadata("valueClassCompanionBlockFunctionLibrary.kt")
+  public void testValueClassCompanionBlockFunctionLibrary() {
+    run("valueClassCompanionBlockFunctionLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassCompanionBlockVariableLibrary.kt")
+  public void testValueClassCompanionBlockVariableLibrary() {
+    run("valueClassCompanionBlockVariableLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassCompanionExtensionFunctionLibrary.kt")
+  public void testValueClassCompanionExtensionFunctionLibrary() {
+    run("valueClassCompanionExtensionFunctionLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassCompanionExtensionVariableLibrary.kt")
+  public void testValueClassCompanionExtensionVariableLibrary() {
+    run("valueClassCompanionExtensionVariableLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("valueParameter.kt")
   public void testValueParameter() {
     run("valueParameter.kt");
@@ -789,6 +849,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
     @TestMetadata("generatedCompanionWorksAsValue.kt")
     public void testGeneratedCompanionWorksAsValue() {
       run("generatedCompanionWorksAsValue.kt");
+    }
+
+    @Test
+    @TestMetadata("generatedJavaGetter.kt")
+    public void testGeneratedJavaGetter() {
+      run("generatedJavaGetter.kt");
     }
 
     @Test

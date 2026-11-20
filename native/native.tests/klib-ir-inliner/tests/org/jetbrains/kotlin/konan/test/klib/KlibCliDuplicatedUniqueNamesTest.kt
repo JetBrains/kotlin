@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.utils.patchManifestAsMap
+import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import kotlin.collections.set
 import kotlin.test.assertEquals
 
 @Tag("klib")
+@HostDependent
 class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
     @Test
     fun `Metadata compilation - DENY strategy`() = runTest(

@@ -28,14 +28,13 @@ import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
@@ -70,7 +69,6 @@ class JvmIrCodegenFactory(
         val irModuleFragment: IrModuleFragment,
         val irBuiltIns: IrBuiltIns,
         val symbolTable: SymbolTable,
-        val irProviders: List<IrProvider>,
         val debuggerExtensions: JvmDebuggerExtensions?,
         val backendExtension: JvmBackendExtension,
         val pluginContext: IrPluginContext?,
@@ -101,6 +99,7 @@ class JvmIrCodegenFactory(
         val moduleChunk = sourceFiles.toSet()
         val wholeModule = wholeBackendInput.irModuleFragment
         val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor)
+        moduleCopy.copyAttributes(wholeModule)
         wholeModule.files.filterTo(moduleCopy.files) { file ->
             file.getKtFile() in moduleChunk
         }
@@ -113,7 +112,7 @@ class JvmIrCodegenFactory(
     }
 
     fun invokeLowerings(state: GenerationState, input: BackendInput): CodegenInput {
-        (val irModuleFragment, val irBuiltIns, val symbolTable, val irProviders, val debuggerExtensions, val backendExtension, val irPluginContext = pluginContext) = input
+        (val irModuleFragment, val irBuiltIns, val symbolTable, val debuggerExtensions, val backendExtension, val irPluginContext = pluginContext) = input
 
         val evaluatorData = ideCodegenSettings.evaluatorData
         val context = JvmBackendContext(
@@ -128,9 +127,6 @@ class JvmIrCodegenFactory(
         }
 
         context.enumEntriesIntrinsicMappingsCache = EnumEntriesIntrinsicMappingsCacheImpl(context, generationExtensions)
-
-        /* JvmBackendContext creates new unbound symbols, have to resolve them. */
-        ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 
         context.state.factory.registerSourceFiles(irModuleFragment.files.map(IrFile::getIoFile))
 
@@ -162,18 +158,17 @@ class JvmIrCodegenFactory(
         // TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
         for (generateMultifileFacades in listOf(true, false)) {
             if (executor != null) {
-                val tasks = mutableListOf<CompletableFuture<Void>>()
-                val childrenStats = mutableListOf<UnitStats>()
+                val tasks = mutableListOf<CompletableFuture<UnitStats?>>()
 
                 for (irFile in module.files) {
                     tasks.add(
-                        CompletableFuture.runAsync(
+                        CompletableFuture.supplyAsync(
                             {
                                 val childPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = false)
                                 childPerfManager.tryMeasurePhaseTime(PhaseType.Backend) {
                                     generateFile(context, irFile, intrinsicExtensions, generateMultifileFacades)
                                 }
-                                childPerfManager?.let { childrenStats.add(it.unitStats) }
+                                childPerfManager?.unitStats
                             },
                             executor
                         )
@@ -182,7 +177,7 @@ class JvmIrCodegenFactory(
                 CompletableFuture.allOf(*tasks.toTypedArray()).get()
 
                 if (perfManager != null) {
-                    childrenStats.forEach { perfManager.addOtherUnitStats(it) }
+                    tasks.mapNotNull { it.get() }.forEach { perfManager.addOtherUnitStats(it) }
                 }
             } else {
                 perfManager.tryMeasurePhaseTime(PhaseType.Backend) {

@@ -1,0 +1,51 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.psi.stubs.impl
+
+import com.intellij.psi.stubs.StubElement
+import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.KtTypeAlias
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
+import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
+
+@KtImplementationDetail
+class KotlinTypeAliasStubImpl(
+    parent: StubElement<*>?,
+    private val name: StringRef?,
+    private val qualifiedName: StringRef?,
+    override val classId: ClassId?,
+    override val isTopLevel: Boolean,
+    override val kdocText: String?,
+) : KotlinStubBaseImpl<KtTypeAlias>(parent, KtNodeTypes.TYPEALIAS), KotlinTypeAliasStub {
+    override fun getName(): String? =
+        StringRef.toString(name)
+
+    override val fqName: FqName?
+        get() = StringRef.toString(qualifiedName)?.let(::FqName)
+
+    @KtImplementationDetail
+    override fun copyInto(newParent: StubElement<*>?): KotlinTypeAliasStubImpl = KotlinTypeAliasStubImpl(
+        parent = newParent,
+        name = name,
+        qualifiedName = qualifiedName,
+        classId = classId,
+        isTopLevel = isTopLevel,
+        kdocText = kdocText,
+    )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinTypeAliasStubImpl &&
+                other.name == name &&
+                other.qualifiedName == qualifiedName &&
+                other.isTopLevel == isTopLevel &&
+                other.classId == classId &&
+                other.kdocText == kdocText
+}

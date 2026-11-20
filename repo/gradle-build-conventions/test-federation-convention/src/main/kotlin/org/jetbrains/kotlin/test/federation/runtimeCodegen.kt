@@ -57,7 +57,7 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                     this += "|    Domain.${domain.name} -> MustRunOnChangesIn${domain.name}::class"
                 }
                 this += "|}"
-            }.trimMargin()
+            }.trimMargin().trimEnd() + "\n"
         )
 
         outputDir.asFile.get().toPath().resolve("domains.kt").createParentDirectories().writeText(
@@ -76,7 +76,7 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                 this += "|    companion object"
                 this += "|}"
                 this += "|"
-            }.trimMargin()
+            }.trimMargin().trimEnd() + "\n"
         )
 
         outputDir.asFile.get().toPath().resolve("testSubsets.kt").createParentDirectories().writeText(
@@ -116,7 +116,7 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                 }
                 this += "|        else -> null"
                 this += "|    }"
-            }.trimMargin()
+            }.trimMargin().trimEnd() + "\n"
         )
     }
 }

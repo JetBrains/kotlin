@@ -29,6 +29,7 @@
 # is not actually needed at runtime.
 -dontwarn org.jetbrains.kotlin.analysis.decompiler.**
 -dontwarn org.jetbrains.kotlin.psi.**
+-dontwarn org.jetbrains.kotlin.kdoc.lexer.**
 -dontwarn org.jetbrains.kotlin.kdoc.psi.**
 -dontwarn org.jetbrains.kotlin.type.MapPsiToAsmDesc
 -dontwarn org.jetbrains.kotlin.lexer.**
@@ -40,3 +41,4 @@
 -dontwarn org.jetbrains.kotlin.com.google.common.hash.**
 -dontwarn org.jetbrains.kotlin.org.apache.log4j.**
 -dontwarn org.jetbrains.kotlin.cli.**
+-dontwarn org.jetbrains.kotlin.serialization.**

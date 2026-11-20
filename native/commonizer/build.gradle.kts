@@ -38,7 +38,6 @@ dependencies {
     compileOnly(libs.intellij.fastutil)
 
     compileOnly(project(":core:descriptors"))
-    compileOnly(project(":core:deserialization"))
     compileOnly(project(":core:deserialization.common"))
 
     // This dependency is necessary to keep the right dependency record inside of POM file:
@@ -55,6 +54,7 @@ dependencies {
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
     testImplementation(project(":kotlin-tooling-core"))
     testImplementation(project(":native:native.config"))
+    testImplementation(project(":core:language.targets.jvm"))
     testImplementation(intellijCore())
 
     testRuntimeOnly(libs.junit.jupiter.engine)

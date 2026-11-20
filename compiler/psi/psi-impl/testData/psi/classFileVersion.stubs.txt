@@ -1,0 +1,52 @@
+Declarations.kt:
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.DeclarationsKt]]
+    facadeFqName: test.DeclarationsKt
+    partSimpleName: "DeclarationsKt"
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    CLASS[classId=test/Foo, fqName=test.Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Foo, superNames=[]]
+      CLASS_BODY
+        CLASS[classId=test/Foo.Nested, fqName=test.Foo.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
+        OBJECT_DECLARATION[classId=test/Foo.Companion, fqName=test.Foo.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+          MODIFIER_LIST[companion]
+    OBJECT_DECLARATION[classId=test/Obj, fqName=test.Obj, isObjectLiteral=false, isTopLevel=true, name=Obj, superNames=[]]
+    CLASS[classId=test/Bar, fqName=test.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=Bar, superNames=[]]
+      CLASS_BODY
+        OBJECT_DECLARATION[classId=test/Bar.Companion, fqName=test.Bar.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+          MODIFIER_LIST[companion]
+    FUNCTION[fqName=test.topLevelFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=topLevelFun]
+      VALUE_PARAMETER_LIST
+    PROPERTY[fqName=test.topLevelVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=topLevelVal]
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Int]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+
+
+Part.kt:
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.Multifile]]
+    facadeFqName: test.Multifile
+    partSimpleName: "Multifile"
+    FILE_ANNOTATION_LIST
+      ANNOTATION
+        ANNOTATION_TARGET[useSiteTarget=FILE]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=JvmName]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=JvmName]
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              STRING_TEMPLATE
+                LITERAL_STRING_TEMPLATE_ENTRY[text=Multifile]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmMultifileClass]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=JvmMultifileClass]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=test]
+    IMPORT_LIST
+    FUNCTION[fqName=test.partFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=partFun]
+      VALUE_PARAMETER_LIST

@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 
 @MustRunOnChangesInAnalysisApi
 class SymbolsTranslatorTest : BaseAbstractTest() {
-    val configuration = dokkaConfiguration {
+    internal val configuration = dokkaConfiguration {
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/main/kotlin")

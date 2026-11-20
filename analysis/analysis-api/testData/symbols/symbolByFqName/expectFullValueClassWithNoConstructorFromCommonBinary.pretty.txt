@@ -1,0 +1,1 @@
+expect value class ExpectFullValueClassWithNoConstructorFromCommonBinary

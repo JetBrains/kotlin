@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
@@ -27,11 +28,12 @@ import kotlin.io.path.relativeTo
 @MustRunOnChangesInCompilerPlugins
 @MustRunOnChangesInBuildToolsApi
 @OtherGradlePluginTests
-abstract class ScriptingIT : KGPBaseTest() {
+class ScriptingIT : KGPBaseTest() {
 
+    @TestMetadata("scripting")
     @DisplayName("basic script is working")
     @GradleTest
-    open fun testScripting(gradleVersion: GradleVersion) {
+    fun testScripting(gradleVersion: GradleVersion) {
         project("scripting", gradleVersion) {
             val appSubProject = subProject("app")
             val scriptTemplateSubProject = subProject("script-template")
@@ -50,6 +52,7 @@ abstract class ScriptingIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("scriptingCustomExtension")
     @Disabled("Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450")
     @DisplayName("With custom file extension compiled non-incremental")
     @GradleTest
@@ -57,10 +60,11 @@ abstract class ScriptingIT : KGPBaseTest() {
         testScriptingCustomExtensionImpl(gradleVersion, withIC = false)
     }
 
+    @TestMetadata("scriptingCustomExtension")
     @Disabled("Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450")
     @DisplayName("With custom file extension compiled incremental")
     @GradleTest
-    open fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
+    fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
         testScriptingCustomExtensionImpl(gradleVersion, withIC = true)
     }
 
@@ -73,7 +77,7 @@ abstract class ScriptingIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 incremental = withIC,
-                logLevel = if (withIC) LogLevel.DEBUG else defaultBuildOptions.logLevel
+                buildReport = listOf(BuildReportType.FILE),
             )
         ) {
             val appSubproject = subProject("app")
@@ -86,7 +90,10 @@ abstract class ScriptingIT : KGPBaseTest() {
                 .resolve("GreetScriptTemplate.kt")
                 .relativeTo(projectPath)
 
-            build("assemble") {
+            build(
+                "assemble",
+                buildOptions = if (withIC) buildOptions.copy(logLevel = LogLevel.DEBUG) else buildOptions,
+            ) {
                 val classesDir = appSubproject.kotlinClassesDir()
                 assertFileExists(classesDir.resolve("World.class"))
                 assertFileExists(classesDir.resolve("Alice.class"))
@@ -104,12 +111,13 @@ abstract class ScriptingIT : KGPBaseTest() {
             bobGreetSource.modify { it.replace("Bob", "Uncle Bob") }
             build("assemble") {
                 if (withIC) {
-                    assertCompiledKotlinSources(listOf(bobGreet), output)
+                    assertCompiledKotlinSourcesInBuildReport(listOf(bobGreet))
                 }
             }
         }
     }
 
+    @TestMetadata("simpleProject")
     @DisplayName("KT-31124: No scripting warning")
     @GradleTest
     fun testNoScriptingWarning(gradleVersion: GradleVersion) {
@@ -121,6 +129,7 @@ abstract class ScriptingIT : KGPBaseTest() {
     }
 
     // Compose only works on JDK 11+
+    @TestMetadata("scriptingComposeInterop")
     @DisplayName("Compose compiler plugin should work with scripting")
     @GradleTest
     fun testComposeInterop(gradleVersion: GradleVersion) {
@@ -129,9 +138,11 @@ abstract class ScriptingIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
         ) {
             val appSubProject = subProject("app")
-            build(":app:test", buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
-            )) {
+            build(
+                ":app:test", buildOptions = defaultBuildOptions.copy(
+                    logLevel = LogLevel.DEBUG,
+                )
+            ) {
                 assertCompiledKotlinSources(
                     listOf(
                         appSubProject.kotlinSourcesDir("test").resolve("script/ComposeMainKtsTest.kt").relativeTo(projectPath),
@@ -141,9 +152,4 @@ abstract class ScriptingIT : KGPBaseTest() {
             }
         }
     }
-}
-
-@DisplayName("K2 Scripting plugin")
-class ScriptingK2IT : ScriptingIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }

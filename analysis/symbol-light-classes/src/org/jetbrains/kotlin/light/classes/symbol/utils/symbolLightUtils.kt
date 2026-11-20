@@ -282,8 +282,33 @@ private fun AnnotationValue.KClass.toAnnotationMemberValue(parent: PsiElement): 
     return SymbolPsiClassObjectAccessExpression(sourcePsi, parent, psiType)
 }
 
+/**
+ * The value of this constant as the JVM backend stores it.
+ *
+ * An unsigned value is stored as its signed counterpart of the same width, e.g., `UInt.MAX_VALUE` as `-1`.
+ */
+internal val KaConstantValue.jvmValue: Any?
+    get() = when (this) {
+        is KaConstantValue.UByteValue -> value.toByte()
+        is KaConstantValue.UShortValue -> value.toShort()
+        is KaConstantValue.UIntValue -> value.toInt()
+        is KaConstantValue.ULongValue -> value.toLong()
+        is KaConstantValue.NullValue,
+        is KaConstantValue.BooleanValue,
+        is KaConstantValue.CharValue,
+        is KaConstantValue.ByteValue,
+        is KaConstantValue.ShortValue,
+        is KaConstantValue.IntValue,
+        is KaConstantValue.LongValue,
+        is KaConstantValue.FloatValue,
+        is KaConstantValue.DoubleValue,
+        is KaConstantValue.StringValue,
+        is KaConstantValue.ErrorValue,
+            -> value
+    }
+
 private fun KaConstantValue.asStringForPsiExpression(): String =
-    when (val value = value) {
+    when (val value = jvmValue) {
         Double.NEGATIVE_INFINITY -> "-1.0 / 0.0"
         Double.NaN -> "0.0 / 0.0"
         Double.POSITIVE_INFINITY -> "1.0 / 0.0"
@@ -354,6 +379,13 @@ internal val KaPropertySymbol.isJvmField: Boolean get() = backingFieldSymbol?.ha
 internal val KaPropertySymbol.isConst: Boolean get() = (this as? KaKotlinPropertySymbol)?.isConst == true
 internal val KaPropertySymbol.isLateInit: Boolean get() = (this as? KaKotlinPropertySymbol)?.isLateInit == true
 internal val KaPropertySymbol.canHaveNonPrivateField: Boolean get() = isConstOrJvmField || isLateInit
+
+/**
+ * Whether this callable is a
+ * [companion extension](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md#companion-extensions).
+ * Unlike [KaCallableSymbol.isCompanion], it's `false` for the members of companion blocks.
+ */
+internal val KaCallableSymbol.isCompanionExtension: Boolean get() = isCompanion && isExtension && isTopLevel
 
 internal inline fun <reified T> Collection<T>.toArrayIfNotEmptyOrDefault(default: Array<T>): Array<T> {
     return if (isNotEmpty()) toTypedArray() else default

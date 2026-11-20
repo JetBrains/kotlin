@@ -142,6 +142,7 @@ class FunctionCallTransformer(
         DataFrameCallTransformer(),
         DataRowCallTransformer(),
         ColumnGroupCallTransformer(),
+        FrameColumnCallTransformer(),
     )
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
@@ -233,6 +234,8 @@ class FunctionCallTransformer(
     inner class DataRowCallTransformer : CallTransformer by DataSchemaLikeCallTransformer(Names.DATA_ROW_CLASS_ID)
 
     inner class ColumnGroupCallTransformer : CallTransformer by DataSchemaLikeCallTransformer(Names.COLUM_GROUP_CLASS_ID)
+
+    inner class FrameColumnCallTransformer : CallTransformer by DataSchemaLikeCallTransformer(Names.FRAME_COLUMN_CLASS_ID)
 
     inner class GroupByCallTransformer : CallTransformer {
         override fun interceptOrNull(
@@ -500,7 +503,9 @@ class FunctionCallTransformer(
                 linkedMapOf(argument to scopeFunction.valueParameterSymbols[0].fir)
             )
             calleeReference = buildResolvedNamedReference {
-                source = null
+                // fir2ir takes the start offset of a call from its callee reference and the end offset from the call itself,
+                // so both need a source to produce valid IR offsets
+                source = call.calleeReference.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
                 this.name = scopeFunction.name
                 resolvedSymbol = scopeFunction
             }

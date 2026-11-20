@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-88505
 // FILE: JavaEntity.java
 
@@ -17,3 +18,5 @@ fun box(): String {
     JavaEntity.builder().<!UNRESOLVED_REFERENCE!>staticField<!>(2)
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, stringLiteral */

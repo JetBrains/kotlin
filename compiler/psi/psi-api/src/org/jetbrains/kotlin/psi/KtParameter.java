@@ -110,7 +110,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
                     expression = "this.setParameterTypeReference(typeRef)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.setParameterTypeReference"
             ),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.HIDDEN
     )
     @Deprecated
     public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {

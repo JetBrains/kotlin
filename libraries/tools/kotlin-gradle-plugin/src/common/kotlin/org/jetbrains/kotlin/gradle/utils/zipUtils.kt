@@ -22,7 +22,7 @@ internal fun ZipFile.copyPartially(destinationZipFile: File, path: String) {
     val entries = listDescendants(path).toList()
     if (entries.isEmpty()) return
 
-    ZipOutputStream(destinationZipFile.outputStream()).use { destinationZipOutputStream ->
+    ZipOutputStream(destinationZipFile.outputStream().buffered()).use { destinationZipOutputStream ->
         entries.forEach { sourceEntry ->
             val destinationEntry = ZipEntry(sourceEntry.name.substringAfter(path))
 

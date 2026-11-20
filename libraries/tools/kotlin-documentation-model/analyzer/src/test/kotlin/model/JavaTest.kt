@@ -17,8 +17,6 @@ import org.jetbrains.dokka.model.doc.See
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
-import utils.OnlyJavaPsi
-import utils.OnlyJavaSymbols
 import utils.assertContains
 import utils.assertNotNull
 import utils.name
@@ -28,7 +26,7 @@ import kotlin.test.assertTrue
 
 @MustRunOnChangesInAnalysisApi
 class JavaTest : BaseAbstractTest() {
-    val configuration = dokkaConfiguration {
+    internal val configuration = dokkaConfiguration {
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/")
@@ -275,7 +273,7 @@ class JavaTest : BaseAbstractTest() {
                         type.name equals "Array"
                         with(parameters.firstOrNull().assertNotNull("parameters")) {
                             name equals "data"
-                            type.name equals "Array"
+                            type.name equals "IntArray"
                         }
                     }
                 }
@@ -398,7 +396,6 @@ class JavaTest : BaseAbstractTest() {
         }
     }
 
-    @OnlyJavaSymbols("Java symbols have `KotlinOnlyModifiers.VarArg`")
     @Test
     fun varargs() {
         testInline(
@@ -419,7 +416,7 @@ class JavaTest : BaseAbstractTest() {
                         name equals "bar"
                         with(parameters.firstOrNull().assertNotNull("parameter")) {
                             name equals "x"
-                            type.name equals "Array"
+                            type.name equals "String"
                             assertEquals(
                                 setOf(ExtraModifiers.KotlinOnlyModifiers.VarArg),
                                 extra[AdditionalModifiers]?.content?.values?.first(),
@@ -662,7 +659,7 @@ class JavaTest : BaseAbstractTest() {
         ) {
             documentablesTransformationStage = { module ->
                 with((module / "java" / "Test" / "fn").cast<DFunction>()) {
-                    assertTrue(type is JavaObject)
+                    assertEquals(DRI("kotlin", "Any"), type.driOrNull)
                 }
             }
         }
@@ -836,7 +833,6 @@ class JavaTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlyJavaSymbols("Java PSI incorrectly omits generating a synthetic property without a backing field")
     fun `synthetic properties should have a Java type`() {
         testInline(
             """
@@ -848,19 +844,14 @@ class JavaTest : BaseAbstractTest() {
             """.trimIndent(), configuration
         ) {
             documentablesTransformationStage = { module ->
-                with((module / "java" / "Foo" / "a").cast< DProperty>()) {
-                    val expectedDRI = DRI(
-                        packageName = "java.lang", classNames = "String",
-                        target = PointingToDeclaration,
-                    )
-                    assertEquals(expectedDRI, this.type.driOrNull)
+                with((module / "java" / "Foo" / "a").cast<DProperty>()) {
+                    assertEquals(DRI("kotlin", "String"), this.type.driOrNull)
                 }
             }
         }
     }
 
     @Test
-    @OnlyJavaPsi("Experimental Java analysis by symbols intentionally displays unmapped Java types, see #4564")
     fun `java members inherited into a kotlin class should have kotlin types`() {
         testInline(
             """
@@ -873,7 +864,7 @@ class JavaTest : BaseAbstractTest() {
             |    public Integer method() { return null; }
             |}
             |
-            |/src/test/Child.kt 
+            |/src/test/Child.kt
             |package test
             |class Child : Parent()
             """.trimIndent(), configuration
@@ -881,6 +872,7 @@ class JavaTest : BaseAbstractTest() {
             documentablesTransformationStage = { module ->
                 val child = module / "test" / "Child"
 
+                // Java types are mapped to Kotlin types by the Analysis API
                 (child / "s").cast<DProperty>().type.driOrNull equals DRI("kotlin", "String")
                 (child / "i").cast<DProperty>().type.driOrNull equals DRI("kotlin", "Int")
                 (child / "integer").cast<DProperty>().type.driOrNull equals DRI("kotlin", "Int")

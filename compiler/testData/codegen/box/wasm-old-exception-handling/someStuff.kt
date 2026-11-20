@@ -1,7 +1,5 @@
-// TARGET_BACKEND: WASM
+// TARGET_BACKEND: WASM_JS
 // USE_OLD_EXCEPTION_HANDLING_PROPOSAL
-// WASM_IGNORE_FOR: vm=Wasmtime
-// WASM_IGNORE_FOR: vm=WasmEdge
 
 // Tests that are inspired by the stack-related and verifier-related bugs in the wasm backend
 

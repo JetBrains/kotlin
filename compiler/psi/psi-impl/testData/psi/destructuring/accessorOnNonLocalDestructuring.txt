@@ -8,15 +8,14 @@ KtFile: accessorOnNonLocalDestructuring.kt
     PsiWhiteSpace('\n')
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-      PsiElement(LPAR)('(')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('a')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('b')
-      PsiElement(RPAR)(')')
+    PsiElement(LPAR)('(')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('a')
+    PsiElement(COMMA)(',')
+    PsiWhiteSpace(' ')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('b')
+    PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
@@ -36,15 +35,14 @@ KtFile: accessorOnNonLocalDestructuring.kt
   DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-      PsiElement(LBRACKET)('[')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('c')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('d')
-      PsiElement(RBRACKET)(']')
+    PsiElement(LBRACKET)('[')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('c')
+    PsiElement(COMMA)(',')
+    PsiWhiteSpace(' ')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('d')
+    PsiElement(RBRACKET)(']')
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
@@ -90,15 +88,14 @@ KtFile: accessorOnNonLocalDestructuring.kt
   DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-      PsiElement(LPAR)('(')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('e')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('f')
-      PsiElement(RPAR)(')')
+    PsiElement(LPAR)('(')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('e')
+    PsiElement(COMMA)(',')
+    PsiWhiteSpace(' ')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('f')
+    PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
@@ -124,15 +121,14 @@ KtFile: accessorOnNonLocalDestructuring.kt
   DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-      PsiElement(LPAR)('(')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('g')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('h')
-      PsiElement(RPAR)(')')
+    PsiElement(LPAR)('(')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('g')
+    PsiElement(COMMA)(',')
+    PsiWhiteSpace(' ')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('h')
+    PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
@@ -153,15 +149,14 @@ KtFile: accessorOnNonLocalDestructuring.kt
   DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-      PsiElement(LPAR)('(')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('i')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace(' ')
-      DESTRUCTURING_DECLARATION_ENTRY
-        PsiElement(IDENTIFIER)('j')
-      PsiElement(RPAR)(')')
+    PsiElement(LPAR)('(')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('i')
+    PsiElement(COMMA)(',')
+    PsiWhiteSpace(' ')
+    DESTRUCTURING_DECLARATION_ENTRY
+      PsiElement(IDENTIFIER)('j')
+    PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
@@ -197,15 +192,14 @@ KtFile: accessorOnNonLocalDestructuring.kt
       DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('l')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('m')
-          PsiElement(RPAR)(')')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('l')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('m')
+        PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
@@ -225,15 +219,14 @@ KtFile: accessorOnNonLocalDestructuring.kt
       DESTRUCTURING_DECLARATION
         PsiElement(var)('var')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Destructuring declarations are only allowed for local variables/values
-          PsiElement(LPAR)('(')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('n')
-          PsiElement(COMMA)(',')
-          PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION_ENTRY
-            PsiElement(IDENTIFIER)('o')
-          PsiElement(RPAR)(')')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('n')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('o')
+        PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')

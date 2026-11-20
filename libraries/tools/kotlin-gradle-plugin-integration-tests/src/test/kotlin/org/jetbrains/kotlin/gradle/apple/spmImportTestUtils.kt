@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.apple
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
@@ -43,6 +46,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadataSignatures
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import java.io.Closeable
 import java.io.File
 import java.nio.file.Path
@@ -149,7 +153,7 @@ internal fun writePackageManifest(
 ) {
     localPackageDir.resolve("Package.swift").writeText(
         """
-            // swift-tools-version: 5.9
+            // swift-tools-version: 6.1
             import PackageDescription
 
             let package = Package(
@@ -271,12 +275,12 @@ internal fun writeLocalPackageSources(
     }
 }
 
-internal fun swiftSourceContent(): String = """
+internal fun swiftSourceContent(className: String = "LocalHelper"): String = """
     import Foundation
 
-    @objc public class LocalHelper: NSObject {
+    @objc public class ${className}: NSObject {
         @objc public static func greeting() -> String {
-            return "Hello from LocalHelper"
+            return "Hello from ${className}"
         }
         
         public static func invisible() -> String {
@@ -920,7 +924,7 @@ internal fun BuildResult.assertResolvedVersions(
                 )
             )
         },
-        version = 2,
+        version = 3,
     )
 
     assertEquals(expected.sortedPins(), actual.sortedPins().ignoreRevisions())
@@ -1031,6 +1035,7 @@ data class SwiftPackageDescription(
 @Serializable
 data class SwiftPackageDependency(
     val identity: String,
+    val path: String? = null,
     val requirement: SwiftPackageDependencyRequirement? = null,
     val type: String,
     val url: String? = null,
@@ -1038,6 +1043,7 @@ data class SwiftPackageDependency(
 
 @Serializable
 data class SwiftPackageDependencyRequirement(
+    val exact: List<String>? = null,
     val range: List<SwiftPackageVersionRange>? = null,
 )
 
@@ -1296,6 +1302,9 @@ data class SwiftPackageDumpTarget(
 data class SwiftPackageDumpTargetDependency(
     // product is a heterogeneous array: [productName: String, packageName: String, moduleAliases: Any?, condition: Any?]
     val product: List<kotlinx.serialization.json.JsonElement>? = null,
+    // target and byName are [name: String, condition: Any?]; a dependency written as a plain string dumps as byName
+    val target: List<kotlinx.serialization.json.JsonElement>? = null,
+    val byName: List<kotlinx.serialization.json.JsonElement>? = null,
 )
 
 @Serializable
@@ -1319,6 +1328,14 @@ data class SwiftPackageDumpUnsafeFlags(
 fun dumpSwiftPackage(packagePath: Path): SwiftPackageDump {
     return runAppleToolCommand(packagePath, listOf("swift", "package", "dump-package"))
 }
+
+/** The target dependencies of [target], with the platforms a condition limits each one to. */
+fun SwiftPackageDump.targetDependencyPlatforms(target: String): Map<String, List<String>?> =
+    targets.single { it.name == target }.dependencies.mapNotNull { dependency ->
+        val entry = dependency.target ?: dependency.byName ?: return@mapNotNull null
+        val platforms = (entry.getOrNull(1) as? JsonObject)?.get("platformNames")?.jsonArray?.map { it.jsonPrimitive.content }
+        entry[0].jsonPrimitive.content to platforms
+    }.toMap()
 
 // region xcodebuild PIF dump DTOs
 
@@ -1395,7 +1412,7 @@ data class XcodebuildPIFFrameworksBuildPhase(
 
 fun dumpXcodebuildPIF(appPath: Path): List<XcodebuildPIFEntry> {
     val outputFile = File.createTempFile("xcodebuild-pif", ".json")
-    return runAppleToolCommand(appPath, listOf("xcodebuild", "-dumpPIF", outputFile.absolutePath), outputFile)
+    return runAppleToolCommand(appPath, listOf("xcodebuild", "-dumpPIF", outputFile.normalizedAbsolutePath().toString()), outputFile)
 }
 
 data class ApplicationRun(
@@ -1484,9 +1501,9 @@ fun PublishedProject.assertSwiftPMMetadataVariantExistsInRootComponent() {
 
 fun TestProject.commonizeAndDumpCinteropSignatures(
     commonizerBasePath: Path = projectPath,
-    commonizeTask: String = "commonizeCInterop",
+    vararg extraArgs: String = arrayOf(),
 ): String {
-    build(commonizeTask)
+    build("commonizeCInterop", *extraArgs)
 
     val commonizerResult = commonizerBasePath.resolve("build/classes/kotlin/commonizer/swiftPMImport")
         .listDirectoryEntries()

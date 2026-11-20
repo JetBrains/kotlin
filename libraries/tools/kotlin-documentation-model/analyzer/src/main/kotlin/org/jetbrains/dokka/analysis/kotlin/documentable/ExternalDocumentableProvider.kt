@@ -36,7 +36,7 @@ import org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator
  * properties set to null or empty, because some information cannot be extracted from it in any way.
  * One such example is KDocs, they are present in source code, but not in compiled classes.
  */
-public interface ExternalDocumentableProvider {
+internal interface ExternalDocumentableProvider {
 
     /**
      * Returns a valid and fully initialized [DClasslike] if the [dri] points to a class-like
@@ -50,5 +50,5 @@ public interface ExternalDocumentableProvider {
      * it may need to analyze parts of the project and instantiate new documentables on every invocation.
      * Use this function sparingly, and cache results on your side if you need to.
      */
-    public fun getClasslike(dri: DRI, sourceSet: DokkaSourceSet): DClasslike?
+    fun getClasslike(dri: DRI, sourceSet: DokkaSourceSet): DClasslike?
 }

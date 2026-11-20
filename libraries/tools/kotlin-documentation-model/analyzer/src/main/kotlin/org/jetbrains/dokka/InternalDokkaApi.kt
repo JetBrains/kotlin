@@ -25,4 +25,4 @@ package org.jetbrains.dokka
     AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS
 )
 @Retention(AnnotationRetention.BINARY)
-public annotation class InternalDokkaApi()
+internal annotation class InternalDokkaApi()

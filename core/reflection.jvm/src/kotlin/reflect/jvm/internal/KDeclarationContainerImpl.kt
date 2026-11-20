@@ -45,7 +45,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
     }
 
-    protected open val methodOwner: Class<*>
+    open val methodOwner: Class<*>
         get() = jClass.wrapperByPrimitive ?: jClass
 
     abstract val functionsMetadata: Collection<KmFunction>

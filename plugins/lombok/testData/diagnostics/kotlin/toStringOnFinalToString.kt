@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-88420
 
 // FILE: JavaFinalToString.java
@@ -50,3 +51,6 @@ class ChildOfFinalToStringWithOwnToString : FinalToString() {
     <!OVERRIDING_FINAL_MEMBER!>override<!> fun toString(): String = "own"
     val a = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaType, override, propertyDeclaration,
+stringLiteral */

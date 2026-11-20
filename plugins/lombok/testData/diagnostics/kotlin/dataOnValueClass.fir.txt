@@ -1,0 +1,39 @@
+FILE: dataOnValueClass.kt
+    @R|kotlin/jvm/JvmInline|() @R|lombok/Data|() public final inline value class DataValue : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|DataValue| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public open override fun toString(): R|kotlin/String|
+
+    }
+    @R|kotlin/jvm/JvmInline|() @R|lombok/EqualsAndHashCode|() public final inline value class EqualsAndHashCodeValue : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|EqualsAndHashCodeValue| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/jvm/JvmInline|() @R|lombok/ToString|() public final inline value class ToStringValue : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|ToStringValue| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public open override fun toString(): R|kotlin/String|
+
+    }
+    public final fun test(a: R|DataValue|, b: R|EqualsAndHashCodeValue|, c: R|ToStringValue|): R|kotlin/Unit| {
+        ==(R|<local>/a|, R|/DataValue.DataValue|(Int(1)))
+        R|<local>/a|.R|/DataValue.hashCode|()
+        ==(R|<local>/b|, R|/EqualsAndHashCodeValue.EqualsAndHashCodeValue|(Int(1)))
+        R|<local>/b|.R|/EqualsAndHashCodeValue.hashCode|()
+        R|<local>/c|.R|/ToStringValue.toString|()
+    }

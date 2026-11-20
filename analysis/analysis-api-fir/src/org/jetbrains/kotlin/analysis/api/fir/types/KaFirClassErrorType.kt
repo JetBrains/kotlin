@@ -51,23 +51,6 @@ internal class KaFirClassErrorType(
             }
         }
 
-    @Deprecated(
-        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
-        replaceWith = ReplaceWith("this.isMarkedNullable"),
-        level = DeprecationLevel.HIDDEN,
-    )
-    @Suppress("DEPRECATION_ERROR")
-    override val nullability: KaTypeNullability
-        get() = withValidityAssertion {
-            val coneType = coneType
-            val isNullable = if (coneType is ConeErrorType) coneType.nullable else coneType.isMarkedNullable
-            when (isNullable) {
-                true -> KaTypeNullability.NULLABLE
-                false -> KaTypeNullability.NON_NULLABLE
-                null -> KaTypeNullability.UNKNOWN
-            }
-        }
-
     @KaNonPublicApi
     override val presentableText: String?
         get() = withValidityAssertion {

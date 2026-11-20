@@ -30,14 +30,6 @@ class ChangesCollector {
     private val changedMembers = hashMapOf<FqName, MutableSet<String>>()
     private val areSubclassesAffected = hashMapOf<FqName, Boolean>()
 
-    //TODO for test only: ProtoData or ProtoBuf
-    private val storage = hashMapOf<FqName, ProtoData>()
-    private val removed = ArrayList<FqName>()
-
-    //TODO change to immutable map
-    fun protoDataChanges(): Map<FqName, ProtoData> = storage
-    fun protoDataRemoved(): List<FqName> = removed
-
     fun changes(): List<ChangeInfo> {
         val changes = arrayListOf<ChangeInfo>()
 
@@ -87,33 +79,9 @@ class ChangesCollector {
         }
     }
 
-    fun collectProtoChanges(oldData: ProtoData?, newData: ProtoData?, collectAllMembersForNewClass: Boolean = false, packageProtoKey: String? = null) {
+    fun collectProtoChanges(oldData: ProtoData?, newData: ProtoData?, collectAllMembersForNewClass: Boolean = false) {
         if (oldData == null && newData == null) {
             throw IllegalStateException("Old and new value are null")
-        }
-
-        if (newData != null) {
-            when (newData) {
-                is ClassProtoData -> {
-                    val fqName = newData.nameResolver.getClassId(newData.proto.fqName).asSingleFqName()
-                    storage[fqName] = newData
-                }
-                is PackagePartProtoData -> {
-                    //TODO fqName is not unique. It's package and can be present in both java and kotlin
-                    val fqName = newData.packageFqName
-                    storage[packageProtoKey?.let { FqName(it) } ?: fqName] = newData
-                }
-            }
-        } else if (oldData != null) {
-            when (oldData) {
-                is ClassProtoData -> {
-                    removed.add(oldData.nameResolver.getClassId(oldData.proto.fqName).asSingleFqName())
-                }
-                is PackagePartProtoData -> {
-                    //TODO fqName is not unique. It's package and can be present in both java and kotlin
-                    removed.add(packageProtoKey?.let { FqName(it) } ?: oldData.packageFqName)
-                }
-            }
         }
 
         if (oldData == null) {

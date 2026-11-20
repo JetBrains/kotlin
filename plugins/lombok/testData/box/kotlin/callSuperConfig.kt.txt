@@ -43,7 +43,7 @@ class DerivedExplicitFalse : Base {
     return other is DerivedExplicitFalse
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -89,7 +89,7 @@ class DerivedExplicitTrue : Base {
     return other is DerivedExplicitTrue
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -138,7 +138,7 @@ class DerivedImplicit : Base {
     return other is DerivedImplicit
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -183,7 +183,7 @@ class NotDerivedImplicit {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }

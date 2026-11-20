@@ -32,21 +32,21 @@ internal class LowercaseMappingsWriter(private val strategy: RangesWritingStrate
     }
 
     private fun lowercaseCodePoint(): String = """
-        internal fun Int.lowercaseCodePoint(): Int {
-            if (this in 0x41..0x5a) {
-                return this + 32
+        internal fun lowercaseCodePoint(code: Int): Int {
+            if (code in 0x41..0x5a) {
+                return code + 32
             }
-            if (this < 0x80) {
-                return this
+            if (code < 0x80) {
+                return code
             }
-            val index = binarySearchRange(rangeStart, this)
-            return equalDistanceMapping(this, rangeStart[index], rangeLength[index])
+            val index = binarySearchRange(rangeStart, code)
+            return equalDistanceMapping(code, rangeStart[index], rangeLength[index])
         }
     """.trimIndent()
 
     private fun lowercaseCharImpl(): String = """
         internal fun Char.lowercaseCharImpl(): Char {
-            return code.lowercaseCodePoint().toChar()
+            return lowercaseCodePoint(code).toChar()
         }
     """.trimIndent()
 }

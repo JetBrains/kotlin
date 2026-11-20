@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
-import org.junit.jupiter.api.Disabled
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
@@ -17,25 +17,12 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
-
-@DisplayName("Incremental compilation tests for Kotlin JS IR backend with K2")
-@JsGradlePluginTests
-class Kotlin2JsK2IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK2()
-
-    @Disabled("Not found way to fail BE compilation with successful FE 2.0 compilation")
-    @GradleTest
-    override fun testRebuildAfterError(gradleVersion: GradleVersion) {
-        super.testRebuildAfterError(gradleVersion)
-    }
-}
 
 @DisplayName("Incremental compilation tests for Kotlin JS IR backend")
 @JsGradlePluginTests
-abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
+@MustRunOnChangesInJsIrCompiler
+class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions = BuildOptions(
         jsOptions = BuildOptions.JsOptions(
             incrementalJsKlib = true,
@@ -43,54 +30,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
         ),
     ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
-    @DisplayName("Test rebuild after backend error")
-    @GradleTest
-    open fun testRebuildAfterError(gradleVersion: GradleVersion) {
-        project("kotlin-js-ir-ic-rebuild-after-error", gradleVersion) {
-            fun readCacheFiles(): Map<String, Int> {
-                val cacheFiles = mutableMapOf<String, Int>()
-                projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile().walk().forEach { cachedFile ->
-                    if (cachedFile.isFile) {
-                        cacheFiles[cachedFile.absolutePath] = cachedFile.readBytes().contentHashCode()
-                    }
-                }
-                return cacheFiles
-            }
-
-            val srcFile = projectPath.resolve("app/src/main/kotlin/App.kt").toFile()
-            val guardFile = projectPath.resolve("app/build/klib/cache/js/developmentExecutable/cache.guard").toFile()
-            val badCode = srcFile.readText()
-
-            var successfulBuildCacheFiles = emptyMap<String, Int>()
-            srcFile.appendText("\nfun unknownFunction() = 1\n")
-            build("jsNodeDevelopmentRun") {
-                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
-                assertOutputContains("Hello, World!")
-                successfulBuildCacheFiles = readCacheFiles()
-                assertTrue("Cache should not be empty after successful build") { successfulBuildCacheFiles.isNotEmpty() }
-            }
-
-            srcFile.writeText(badCode)
-
-            for (i in 0..1) {
-                buildAndFail("jsNodeDevelopmentRun") {
-                    assertTasksFailed(":app:compileDevelopmentExecutableKotlinJs")
-                    assertTrue("guard file after compilation error expected") { guardFile.exists() }
-                }
-            }
-
-            srcFile.writeText(badCode.replace("Hello, World!", "Hello, Kotlin!") + "\nfun unknownFunction() = 2\n")
-            build("jsNodeDevelopmentRun") {
-                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
-                assertOutputContains("Hello, Kotlin!")
-                val successfulRebuildCacheFiles = readCacheFiles()
-                assertEquals(successfulBuildCacheFiles.size, successfulRebuildCacheFiles.size, "The number of files must be the same")
-                assertNotEquals(successfulBuildCacheFiles, successfulRebuildCacheFiles, "The cache files should be modified")
-                assertFalse("guard file after successful compilation must be removed") { guardFile.exists() }
-            }
-        }
-    }
-
+    @TestMetadata("kotlin2JsIrICProject")
     @DisplayName("Test cache invalidation after modifying compiler args")
     @GradleTest
     fun testCacheInvalidationAfterCompilerArgModifying(gradleVersion: GradleVersion) {
@@ -136,6 +76,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-ir-ic-multiple-artifacts")
     @DisplayName("Test multiple artifacts in one project")
     @GradleTest
     fun testMultipleArtifacts(gradleVersion: GradleVersion) {
@@ -154,7 +95,11 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
                 val libKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("lib.klib.") }
                 assertEquals(1, libKlibCacheDirs?.size, "cache should contain 1 dirs for lib.klib")
                 val mainKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("main") }
-                assertEquals(2, mainKlibCacheDirs?.size, "cache should contain 2 dirs starting from main (1 for main of lib + 1 main of app)")
+                assertEquals(
+                    2,
+                    mainKlibCacheDirs?.size,
+                    "cache should contain 2 dirs starting from main (1 for main of lib + 1 main of app)"
+                )
 
                 var lib = false
                 var libOther = false
@@ -191,6 +136,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-ir-ic-remove-unused-dep")
     @DisplayName("KT-50503: Test removing unused dependency from klib")
     @GradleTest
     fun testRemoveUnusedDependency(gradleVersion: GradleVersion) {
@@ -224,6 +170,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     }
 
 
+    @TestMetadata("kotlin2JsIrICProject")
     @DisplayName("Test cache invalidation after detecting guard file")
     @GradleTest
     fun testCacheGuardInvalidation(gradleVersion: GradleVersion) {
@@ -252,6 +199,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("kotlin-js-ir-ic-multiple-artifacts")
     @DisplayName("Separate caches for different binaries")
     @GradleTest
     fun testSeparateCachesForDifferentBinaries(gradleVersion: GradleVersion) {

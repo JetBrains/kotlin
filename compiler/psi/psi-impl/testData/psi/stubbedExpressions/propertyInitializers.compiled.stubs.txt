@@ -4,6 +4,7 @@ Holder.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     OBJECT_DECLARATION[classId=test/Holder, fqName=test.Holder, isObjectLiteral=false, isTopLevel=true, name=Holder, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public]
       CLASS_BODY
         PROPERTY[fqName=test.Holder.inObject, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inObject]
@@ -48,8 +49,8 @@ PropertyInitializersKt.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     PROPERTY[fqName=test.boolean, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=boolean]
-      constantInitializer: 1
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      constantInitializer: true
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -57,10 +58,10 @@ PropertyInitializersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Boolean]
             isClassRef: true
-      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
     PROPERTY[fqName=test.byte, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=byte]
-      constantInitializer: 1
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      constantInitializer: 1.toByte()
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -70,8 +71,8 @@ PropertyInitializersKt.class:
             isClassRef: true
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     PROPERTY[fqName=test.short, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=short]
-      constantInitializer: 2
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      constantInitializer: 2.toShort()
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -82,7 +83,7 @@ PropertyInitializersKt.class:
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
     PROPERTY[fqName=test.int, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=int]
       constantInitializer: 3
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -93,7 +94,7 @@ PropertyInitializersKt.class:
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
     PROPERTY[fqName=test.long, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=long]
       constantInitializer: 4.toLong()
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -104,7 +105,7 @@ PropertyInitializersKt.class:
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4L]
     PROPERTY[fqName=test.float, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=float]
       constantInitializer: 5.0.toFloat()
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -115,7 +116,7 @@ PropertyInitializersKt.class:
       FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=5.0F]
     PROPERTY[fqName=test.double, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=double]
       constantInitializer: 6.6.toDouble()
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -125,8 +126,8 @@ PropertyInitializersKt.class:
             isClassRef: true
       FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=6.6]
     PROPERTY[fqName=test.char, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=char]
-      constantInitializer: 99
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      constantInitializer: \u0063 ('c')
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -134,10 +135,10 @@ PropertyInitializersKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Char]
             isClassRef: true
-      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=99]
+      CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='c']
     PROPERTY[fqName=test.string, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=string]
       constantInitializer: "s"
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -147,9 +148,65 @@ PropertyInitializersKt.class:
             isClassRef: true
       STRING_TEMPLATE
         LITERAL_STRING_TEMPLATE_ENTRY[text=s]
+    PROPERTY[fqName=test.uByte, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uByte]
+      constantInitializer: -1.toUByte()
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=UByte]
+            isClassRef: true
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=255u]
+    PROPERTY[fqName=test.uShort, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uShort]
+      constantInitializer: -1.toUShort()
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=UShort]
+            isClassRef: true
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=65535u]
+    PROPERTY[fqName=test.uInt, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uInt]
+      constantInitializer: -1.toUInt()
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=UInt]
+            isClassRef: true
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4294967295u]
+    PROPERTY[fqName=test.uLong, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=uLong]
+      constantInitializer: -1.toULong()
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=ULong]
+            isClassRef: true
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=18446744073709551615uL]
+    PROPERTY[fqName=test.aliasedUInt, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=aliasedUInt]
+      constantInitializer: -1.toUInt()
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
+      MODIFIER_LIST[public const]
+      TYPE_REFERENCE
+        USER_TYPE
+          abbreviatedType: test.UIntAlias
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=UInt]
+            isClassRef: true
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4294967295u]
     PROPERTY[fqName=test.negative, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=negative]
       constantInitializer: -7
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -162,7 +219,7 @@ PropertyInitializersKt.class:
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=7]
     PROPERTY[fqName=test.sum, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=sum]
       constantInitializer: 3
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -173,7 +230,7 @@ PropertyInitializersKt.class:
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
     PROPERTY[fqName=test.parenthesized, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=parenthesized]
       constantInitializer: 8
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -184,7 +241,7 @@ PropertyInitializersKt.class:
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=8]
     PROPERTY[fqName=test.concatenation, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=concatenation]
       constantInitializer: "ab"
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -196,7 +253,7 @@ PropertyInitializersKt.class:
         LITERAL_STRING_TEMPLATE_ENTRY[text=ab]
     PROPERTY[fqName=test.reference, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=reference]
       constantInitializer: 3
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -207,7 +264,7 @@ PropertyInitializersKt.class:
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
     PROPERTY[fqName=test.qualified, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=qualified]
       constantInitializer: 3
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -218,7 +275,7 @@ PropertyInitializersKt.class:
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
     PROPERTY[fqName=test.infinity, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=infinity]
       constantInitializer: Infinity.toDouble()
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -233,7 +290,7 @@ PropertyInitializersKt.class:
         REFERENCE_EXPRESSION[referencedName=POSITIVE_INFINITY]
     PROPERTY[fqName=test.nan, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=nan]
       constantInitializer: NaN.toFloat()
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -248,7 +305,7 @@ PropertyInitializersKt.class:
         REFERENCE_EXPRESSION[referencedName=NaN]
     PROPERTY[fqName=test.intrinsicCall, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=intrinsicCall]
       constantInitializer: "12"
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -260,7 +317,7 @@ PropertyInitializersKt.class:
         LITERAL_STRING_TEMPLATE_ENTRY[text=12]
     PROPERTY[fqName=test.intrinsicProperty, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=intrinsicProperty]
       constantInitializer: 3
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -270,7 +327,7 @@ PropertyInitializersKt.class:
             isClassRef: true
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
     PROPERTY[fqName=test.nonConst, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=nonConst]
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -279,13 +336,21 @@ PropertyInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.mutable, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=mutable]
-      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/PropertyInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
+    TYPEALIAS[classId=test/UIntAlias, fqName=test.UIntAlias, isTopLevel=true, name=UIntAlias]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=UInt]
             isClassRef: true
 
 
@@ -295,6 +360,7 @@ WithMember.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/WithMember, fqName=test.WithMember, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithMember, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithMember]
         MODIFIER_LIST[public]

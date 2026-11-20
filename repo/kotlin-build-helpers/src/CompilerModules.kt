@@ -46,8 +46,10 @@ object CompilerModules {
         ":core:compiler.common.wasm",
         ":core:compiler.common.web",
         ":core:util.runtime",
+        ":core:error.handling",
         ":core:names",
         ":core:language.model",
+        ":core:language.syntax",
         ":core:language.targets",
         ":core:language.targets.jvm",
         ":core:language.version-settings",
@@ -71,19 +73,18 @@ object CompilerModules {
      */
     val firCommonCompilerModules = arrayOf(
         ":compiler:fir:cones",
-        ":compiler:fir:providers",
-        ":compiler:fir:semantics",
+        ":compiler:fir:semantics.api",
         ":compiler:fir:resolve",
         ":compiler:fir:fir-serialization",
         ":compiler:fir:fir-deserialization",
-        ":compiler:fir:plugin-utils",
+        ":compiler:fir:plugin.api",
         ":compiler:fir:tree",
         ":compiler:fir:fir-jvm",
-        ":compiler:fir:fir-js",
         ":compiler:fir:fir-native",
         ":compiler:fir:raw-fir:raw-fir.common",
         ":compiler:fir:raw-fir:psi2fir",
-        ":compiler:fir:checkers",
+        ":compiler:fir:checkers:checkers.api",
+        ":compiler:fir:checkers:checkers.common",
         ":compiler:fir:checkers:checkers.jvm",
         ":compiler:fir:checkers:checkers.js",
         ":compiler:fir:checkers:checkers.native",
@@ -112,14 +113,7 @@ object CompilerModules {
         ":compiler",
         ":core:descriptors.runtime",
         ":core:descriptors.jvm",
-        ":compiler:resolution",
-        ":compiler:serialization",
-        ":compiler:frontend",
-        ":compiler:frontend.java",
-        ":compiler:container",
         ":core:deserialization",
-        ":compiler:frontend:cfg",
-        ":compiler:ir.psi2ir",
         ":native:frontend.native",
         ":wasm:wasm.frontend",
     )
@@ -196,13 +190,26 @@ object CompilerModules {
         ":compiler:ir.validation",
     )
 
-    val analysisApiSurfaceDependencies = listOf(
+    val analysisApiSyntaxSurfaceDependencies = listOf(
+        ":core:error.handling",
         ":core:names",
         ":core:language.model",
+        ":core:language.syntax",
+    )
+
+    val analysisApiSurfaceDependencies = analysisApiSyntaxSurfaceDependencies + listOf(
         ":core:language.targets",
         ":core:language.targets.jvm",
         ":core:language.version-settings",
+    )
+
+    val analysisApiSyntaxSurfaceModules = arrayOf(
         ":compiler:psi:psi-api",
+    )
+
+    val analysisApiSyntaxImplementationModules = arrayOf(
+        ":compiler:psi:psi-impl",
+        ":compiler:psi:parser",
     )
 
     val cliCompilerModules = arrayOf(
@@ -246,7 +253,6 @@ object CompilerModules {
         *analysisApiStandaloneModules,
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api-fir-diagnostics",
-        ":analysis:analysis-api-impl-base",
         ":analysis:analysis-internal-utils",
         ":analysis:decompiled:decompiler",
         ":analysis:decompiled:light-classes-for-decompiled",
@@ -269,8 +275,10 @@ object CompilerModules {
     val analysisApiArtifacts = listOf(
         ":prepare:analysis-api:kotlin-analysis-api",
         ":prepare:analysis-api:kotlin-analysis-api-surface",
+        ":prepare:analysis-api:kotlin-analysis-api-syntax-surface",
         ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
         ":prepare:analysis-api:kotlin-analysis-api-implementation",
+        ":prepare:analysis-api:kotlin-analysis-api-syntax-implementation",
         ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
         ":prepare:analysis-api:kotlin-analysis-api-standalone-surface",
         ":prepare:analysis-api:kotlin-analysis-api-standalone-implementation",
@@ -400,7 +408,6 @@ object CompilerModules {
     ":core:deserialization.common",
     ":core:deserialization.common.jvm",
     ":compiler:frontend.common.jvm",
-    ":compiler:frontend.java",
     ":core:metadata",
     ":core:metadata.jvm",
     ":kotlin-preloader",
@@ -411,6 +418,7 @@ object CompilerModules {
     ":wasm:wasm.config",
     ":native:native.config",
     ":core:util.runtime",
+    ":core:error.handling",
     ":compiler:compiler.version",
     ":compiler:build-tools:kotlin-build-statistics",
     ":kotlin-build-common",
@@ -424,6 +432,7 @@ object CompilerModules {
         ":kotlin-util-klib-metadata",
         ":native:kotlin-native-utils",
         ":compiler:build-tools:kotlin-build-tools-api",
+        ":compiler:build-tools:kotlin-build-tools-api-jps",
     )
 
     val compilerArtifactsForIde = listOfNotNull(
@@ -452,7 +461,6 @@ object CompilerModules {
         ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide",
         ":prepare:ide-plugin-dependencies:low-level-api-fir-for-ide",
         ":prepare:ide-plugin-dependencies:analysis-api-for-ide",
-        ":prepare:ide-plugin-dependencies:analysis-api-impl-base-for-ide",
         ":prepare:ide-plugin-dependencies:analysis-api-k2-for-ide",
         ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
         ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
@@ -483,6 +491,7 @@ object CompilerModules {
         ":kotlin-main-kts",
         ":kotlin-dom-api-compat",
         ":compiler:build-tools:kotlin-build-tools-api",
+        ":compiler:build-tools:kotlin-build-tools-api-jps",
         ":compiler:build-tools:kotlin-build-tools-impl",
         ":compiler:build-tools:kotlin-build-tools-cri-impl",
     )

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
+import org.jetbrains.kotlin.ir.util.canSeeInternalsOf
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -87,19 +87,17 @@ abstract class FakeOverrideBuilderStrategy {
         }
     }
 
-    protected abstract fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean
-
     private fun isVisibleForOverrideInClass(original: IrOverridableMember, clazz: IrClass) : Boolean {
         return when {
             DescriptorVisibilities.isPrivate(original.visibility) -> false
             original.visibility == DescriptorVisibilities.INVISIBLE_FAKE -> false
             original.visibility == DescriptorVisibilities.INTERNAL -> {
-                val thisModule = clazz.getPackageFragment().moduleDescriptor
-                val memberModule = original.getPackageFragment().moduleDescriptor
+                val thisModule = clazz.getPackageFragment().module
+                val memberModule = original.getPackageFragment().module
 
                 when {
                     thisModule == memberModule -> true
-                    shouldSeeInternals(thisModule, memberModule) -> true
+                    thisModule.canSeeInternalsOf(memberModule) -> true
                     !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
                             original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
                     else -> false

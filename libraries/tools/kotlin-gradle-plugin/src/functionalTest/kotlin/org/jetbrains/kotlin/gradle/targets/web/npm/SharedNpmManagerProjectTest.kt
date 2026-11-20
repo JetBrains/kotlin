@@ -10,9 +10,6 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
-import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinSetupSharedNpmProjectTask
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -23,69 +20,119 @@ import kotlin.test.assertEquals
 
 class SharedNpmManagerProjectTest {
 
-    private val root = buildProject(projectBuilder = { withName("root-project") }) {
-        plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
-    }
-    private val jsBrowser = subproject("js-browser") { js { browser() } }
-    private val wasmJsBrowser = subproject("wasm-js-browser") { wasmJs { browser() } }
-    private val jsNodejs = subproject("js-nodejs") { js { nodejs() } }
-
-    private fun subproject(name: String, configure: KotlinMultiplatformExtension.() -> Unit): ProjectInternal {
-        val project = buildProjectWithMPP(projectBuilder = { withParent(root).withName(name) }) { kotlin(configure) }
-        root.dependencies.add("kotlinNpmSharedDependencies", root.dependencies.project(mapOf("path" to project.path)))
-        root.dependencies.add("kotlinWasmNpmSharedDependencies", root.dependencies.project(mapOf("path" to project.path)))
-        project.evaluate()
-        return project
-    }
-
-    private fun packageJsonFiles(vararg projects: Project): List<File> = projects
-        .flatMap { it.multiplatformExtension.targets.filterIsInstance<KotlinJsIrTarget>() }
-        .flatMap { it.compilations }
-        .map { it.npmProject.packageJsonFile.get().asFile }
-        .sorted()
-
-    private fun resolvedFiles(configurationName: String): List<File> =
-        root.configurations.getByName(configurationName).incoming.artifactView { it.lenient(true) }.files.files.sorted()
-
-    private fun assembleJsSharedNpmProject(): File {
-        (root.tasks.getByName("kotlinSetupSharedNpmProject") as KotlinSetupSharedNpmProjectTask).assemble()
-        return root.layout.buildDirectory.dir("js/shared-npm-project").get().asFile
-    }
-
     @Test
-    fun `package json files of all compilations are collected per platform`() {
-        assertEquals(packageJsonFiles(jsBrowser, jsNodejs), resolvedFiles("kotlinNpmSharedDependenciesResolver"))
-        assertEquals(packageJsonFiles(wasmJsBrowser), resolvedFiles("kotlinWasmNpmSharedDependenciesResolver"))
-    }
+    fun `npm dependency reports of all compilations are collected per platform`() {
+        val root = buildProject(
+            projectBuilder = {
+                withName("root")
+            }
+        )
+        root.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
 
-    @Test
-    fun `setup task assembles the root and workspace package json files`() {
-        val inputs = packageJsonFiles(jsBrowser, jsNodejs)
-        inputs.forEachIndexed { index, file -> PackageJson("lib-$index", "1.0.0").saveTo(file) }
-
-        val outputDirectory = assembleJsSharedNpmProject()
-
-        val rootPackageJson = fromSrcPackageJson(outputDirectory.resolve("package.json"))!!
-        assertEquals("root-project", rootPackageJson.name)
-        assertEquals("unspecified", rootPackageJson.version)
-        assertEquals(true, rootPackageJson.private)
-        assertEquals(listOf("packages/lib-0", "packages/lib-1", "packages/lib-2", "packages/lib-3"), rootPackageJson.workspaces?.toList())
-        inputs.forEachIndexed { index, file ->
-            assertEquals(file.readText(), outputDirectory.resolve("packages/lib-$index/package.json").readText())
+        val jsBrowser = buildKotlinProject(parent = root, name = "js-browser") {
+            js {
+                browser()
+            }
         }
+        val jsNodejs = buildKotlinProject(parent = root, name = "js-nodejs") {
+            js {
+                nodejs()
+            }
+        }
+        val wasmJsBrowser = buildKotlinProject(parent = root, name = "wasm-js-browser") {
+            wasmJs {
+                browser()
+            }
+        }
+
+        for (project in listOf(jsBrowser, jsNodejs, wasmJsBrowser)) {
+            root.addSharedNpmDependency("kotlinNpmSharedDependenciesJs", project)
+            root.addSharedNpmDependency("kotlinNpmSharedDependenciesWasmJs", project)
+            project.evaluate()
+        }
+
+        assertEquals(
+            reportFiles(jsBrowser, jsNodejs),
+            root.resolvedReports("kotlinNpmDependenciesReportJsResolver"),
+        )
+        assertEquals(
+            reportFiles(wasmJsBrowser),
+            root.resolvedReports("kotlinNpmDependenciesReportWasmJsResolver"),
+        )
     }
 
     @Test
-    fun `invalid package json files are skipped`() {
-        val (valid, unparsable, unnamed) = packageJsonFiles(jsBrowser, jsNodejs)
-        PackageJson("valid", "1.0.0").saveTo(valid)
-        unparsable.parentFile.mkdirs()
-        unparsable.writeText("{ not json")
-        unnamed.parentFile.mkdirs()
-        unnamed.writeText("""{ "version": "1.0.0" }""")
+    fun `the plugin can be applied to a non-root project`() {
+        val root = buildProject(
+            projectBuilder = {
+                withName("root")
+            }
+        )
 
-        val outputDirectory = assembleJsSharedNpmProject()
+        val manager = buildProject(
+            projectBuilder = {
+                withParent(root)
+                withName("npm-manager")
+            }
+        )
+        manager.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
 
-        assertEquals(listOf("packages/valid"), fromSrcPackageJson(outputDirectory.resolve("package.json"))!!.workspaces?.toList())
+        val lib = buildKotlinProject(parent = root, name = "lib") {
+            js {
+                nodejs()
+            }
+        }
+        manager.addSharedNpmDependency("kotlinNpmSharedDependenciesJs", lib)
+        lib.evaluate()
+
+        assertEquals(
+            reportFiles(lib),
+            manager.resolvedReports("kotlinNpmDependenciesReportJsResolver"),
+        )
+
+        val setupTask = manager.tasks.getByName("kotlinJsSetupSharedNpmProject") as KotlinSetupSharedNpmProjectTask
+
+        val expectedOutputDirectory = manager.layout.buildDirectory
+            .dir("js/shared-npm-project")
+            .get()
+            .asFile
+        assertEquals(expectedOutputDirectory, setupTask.outputDirectory.get().asFile)
+
+        assertEquals("npm-manager", setupTask.rootPackageName.get())
     }
 }
+
+private fun buildKotlinProject(
+    parent: Project,
+    name: String,
+    configure: KotlinMultiplatformExtension.() -> Unit,
+): ProjectInternal {
+    val project = buildProjectWithMPP(
+        projectBuilder = {
+            withParent(parent)
+            withName(name)
+        }
+    )
+    project.kotlin(configure)
+    return project
+}
+
+private fun Project.addSharedNpmDependency(configurationName: String, project: Project) {
+    val projectDependency = dependencies.project(mapOf("path" to project.path))
+    dependencies.add(configurationName, projectDependency)
+}
+
+private fun Project.resolvedReports(resolverName: String): List<File> =
+    configurations.getByName(resolverName)
+        .incoming
+        .artifactView { it.lenient(true) }
+        .files
+        .files
+        .sorted()
+
+private fun reportFiles(vararg projects: Project): List<File> =
+    projects
+        .flatMap { it.multiplatformExtension.targets.filterIsInstance<KotlinJsIrTarget>() }
+        .flatMap { it.compilations }
+        .map { it.npmDependenciesReportFile() }
+        .sorted()

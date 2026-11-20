@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
-import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.propertySignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -53,7 +52,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     protected open fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? = null
 
     override fun loadClassAnnotations(container: ProtoContainer.Class): List<A> {
-        if (noAnnotationsInBytecode(container.classProto.flags)) return emptyList()
+        if (noClassAnnotationsInBytecode(container.classProto.flags)) return emptyList()
         val kotlinClass = container.toBinaryClass() ?: error("Class for loading annotations is not found: ${container.debugFqName()}")
 
         val result = ArrayList<A>(1)
@@ -72,7 +71,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
 
     override fun loadCallableAnnotations(container: ProtoContainer, proto: MessageLite, kind: AnnotatedCallableKind): List<A> {
         val flags = proto.getCallableAnnotationFlags(kind)
-        if (noAnnotationsInBytecode(flags)) return emptyList()
+        if (noAnnotationsInBytecode(flags) && !maySynthesizeExtraCallableAnnotations(kind)) return emptyList()
 
         if (kind == AnnotatedCallableKind.PROPERTY) {
             return loadPropertyAnnotations(container, proto as ProtoBuf.Property, PropertyRelatedElement.PROPERTY)
@@ -81,6 +80,8 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         val signature = getCallableSignature(proto, container.nameResolver, container.typeTable, kind) ?: return emptyList()
         return findClassAndLoadMemberAnnotations(container, signature)
     }
+
+    abstract fun maySynthesizeExtraCallableAnnotations(kind: AnnotatedCallableKind): Boolean
 
     override fun loadPropertyBackingFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<A> =
         loadAnnotationsIfPresentInBytecode(proto.flags) {
@@ -139,21 +140,18 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         isConst: Boolean? = null,
         isMovedFromInterfaceCompanion: Boolean = false
     ): List<A> {
-        val kotlinClass =
-            findClassWithAnnotationsAndInitializers(
-                container,
-                getSpecialCaseContainerClass(
-                    container,
-                    property,
-                    field,
-                    isConst,
-                    isMovedFromInterfaceCompanion,
-                    kotlinClassFinder, metadataVersion
-                )
-            )
-                ?: return listOf()
-
-        return getAnnotationsContainer(kotlinClass).memberAnnotations[signature] ?: listOf()
+        val specialCase = getSpecialCaseContainerClass(
+            container,
+            property,
+            field,
+            isConst,
+            isMovedFromInterfaceCompanion,
+            kotlinClassFinder, metadataVersion
+        )
+        return specialCase
+            ?.let { getAnnotationsContainer(it).memberAnnotations[signature] }
+            ?: (container as? ProtoContainer.Class)?.toBinaryClass()?.let(::getAnnotationsContainer)?.memberAnnotations[signature]
+            ?: listOf()
     }
 
     override fun loadValueParameterAnnotations(
@@ -228,6 +226,9 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
 
     private fun noAnnotationsInBytecode(flags: Int): Boolean =
         !Flags.HAS_ANNOTATIONS.get(flags)
+
+    protected open fun noClassAnnotationsInBytecode(classFlags: Int): Boolean =
+        noAnnotationsInBytecode(classFlags)
 
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<A> {
         return proto.annotationList.map { loadAnnotation(it, nameResolver) }

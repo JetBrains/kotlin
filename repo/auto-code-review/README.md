@@ -90,8 +90,12 @@ JetBrains employees can also run the tool on the CI.
 ## Operation
 
 The review tool runs Claude Code in [bare mode](https://code.claude.com/docs/en/headless#start-faster-with-bare-mode),
-passing the rule and the diff of the affected files as input.
+passing the rule as input, and the diff of the affected files in a file
+that the agent can read and search as the rule requires.
 It runs invocations in parallel.
+
+If the diff of the files subject to a rule is too large, it is split into batches,
+each checked in a separate invocation.
 
 While having a separate session per each rule probably doesn't scale perfectly, it is the easiest way to start with
 this rule-based AI code review.
@@ -101,6 +105,10 @@ As a side effect, this approach also allows estimating the API costs for each ru
 (this information is included in the report).
 
 ## Rule files
+
+As explained above, the tool checks only the existing rules in the repo.
+So, if the repo doesn't have a rule for a problem, the tool won't report it.
+If you have an idea for a new rule or an improvement to an existing one, please contribute it.
 
 Rules are organized in special Markdown files named `code-rules.md`.
 

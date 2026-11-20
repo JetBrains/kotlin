@@ -9,6 +9,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Paths
@@ -21,6 +23,7 @@ import kotlin.io.path.deleteRecursively
     supportedOn = [OS.LINUX, OS.MAC],
     enabledOnCI = [OS.LINUX, OS.MAC]
 )
+@MustRunOnChangesInGradle
 class NativeDownloadAndPlatformLibsNonParallelIT : KGPDaemonsBaseTest() {
 
     private val platformName: String = HostManager.platformName()
@@ -30,6 +33,7 @@ class NativeDownloadAndPlatformLibsNonParallelIT : KGPDaemonsBaseTest() {
         get() = super.defaultBuildOptions.withBundledKotlinNative().copy()
 
 
+    @TestMetadata("native-platform-libraries")
     @DisplayName("Downloading K/N distribution in default .konan dir")
     @GradleTest
     fun testLibrariesGenerationInDefaultKonanDir(gradleVersion: GradleVersion) {

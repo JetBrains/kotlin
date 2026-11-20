@@ -48,8 +48,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val property: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=AbstractClass] get(): <implicit>
+            public final [ResolvedTo(STATUS)] val property: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): <implicit>
 
             public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
@@ -61,9 +61,9 @@ TARGET: public final override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyRetur
     public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass] get(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
-    SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideWithImplicitTypeScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
-        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideWithImplicitTypeScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-substitutionFakeOverrideWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] class SubClass : R|AbstractClass<kotlin/Int>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
@@ -77,8 +77,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] val property: <implicit> = LAZY_EXPRESSION
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] get(): <implicit>
+            public final [ResolvedTo(STATUS)] val property: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): <implicit>
 
             public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
@@ -135,8 +135,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONSTANT_EVALUATION)] val property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
-                public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] get(): R|T|
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T|
 
             public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
@@ -164,8 +164,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
-                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T|
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T|
 
             public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
@@ -193,8 +193,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
-                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T|
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T|
 
             public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 

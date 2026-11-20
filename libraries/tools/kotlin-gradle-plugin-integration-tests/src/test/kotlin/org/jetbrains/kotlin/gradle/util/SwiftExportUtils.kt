@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.util
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.readLines
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -42,23 +43,23 @@ import org.jetbrains.kotlin.gradle.uklibs.Variant
 import org.jetbrains.kotlin.gradle.uklibs.VariantFile
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.publish
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 
 @OptIn(EnvironmentalVariablesOverride::class)
 internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     testBuildDir: Path,
     archs: List<String> = listOf("arm64"),
-    sdk: String = "iphoneos",
+    platform: String = "iphoneos",
     iphoneOsDeploymentTarget: String = "18.0",
     customVariables: Map<String, String> = emptyMap(),
 ) = EnvironmentalVariables(
     buildMap {
         put("CONFIGURATION", "Debug")
-        put("SDK_NAME", sdk)
         put("ARCHS", archs.joinToString(" "))
         put("ONLY_ACTIVE_ARCH", "YES")
         put("TARGET_BUILD_DIR", testBuildDir.absolutePathString())
         put("FRAMEWORKS_FOLDER_PATH", "build/xcode-derived")
-        put("PLATFORM_NAME", sdk)
+        put("PLATFORM_NAME", platform)
         put("DEPLOYMENT_TARGET_SETTING_NAME", "IPHONEOS_DEPLOYMENT_TARGET")
         put("IPHONEOS_DEPLOYMENT_TARGET", iphoneOsDeploymentTarget)
         put("BUILT_PRODUCTS_DIR", projectPath.resolve("build/builtProductsDir").absolutePathString())
@@ -119,8 +120,8 @@ internal fun KGPBaseTest.swiftExportKotlinArchiveProducer(
 internal fun swiftCompile(workingDir: File, libDir: File, source: File, target: String) = runProcess(
     listOf(
         "xcrun", "--sdk", "iphonesimulator", "swiftc", "${source.relativeTo(workingDir).path}",
-        "-I", libDir.absolutePath, "-target", target,
-        "-Xlinker", "-L", "-Xlinker", libDir.absolutePath, "-Xlinker", "-lShared",
+        "-I", libDir.normalizedAbsolutePath().toString(), "-target", target,
+        "-Xlinker", "-L", "-Xlinker", libDir.normalizedAbsolutePath().toString(), "-Xlinker", "-lShared",
         "-framework", "Foundation", "-framework", "UIKit"
     ),
     workingDir
@@ -175,13 +176,13 @@ private fun swiftSymbolgraphExtract(
         "xcrun", "swift", "symbolgraph-extract",
         "-module-name", moduleName,
         "-target", target,
-        "-output-dir", outputDir.absolutePath,
+        "-output-dir", outputDir.normalizedAbsolutePath().toString(),
         "-sdk", sdkPath,
         "-skip-synthesized-members"
     )
     searchPaths.forEach { path ->
         command.add("-I")
-        command.add(path.absolutePath)
+        command.add(path.normalizedAbsolutePath().toString())
     }
 
     return runProcess(command, workingDir)
@@ -355,7 +356,7 @@ internal fun assertAllSwiftModuleSymbols(
     val swiftModuleDirs = allDirEntries.filter { it.isDirectory && it.name.endsWith(".swiftmodule") }
 
     assert(swiftModuleDirs.isNotEmpty()) {
-        "No .swiftmodule directories found in: ${builtProductsDir.absolutePath}\n" +
+        "No .swiftmodule directories found in: ${builtProductsDir.normalizedAbsolutePath().toString()}\n" +
                 "Directory contents: ${allDirEntries.map { it.name }}"
     }
 
@@ -443,4 +444,36 @@ internal fun PublishedProject.assertSwiftExportMetadataKarVariantExistsInRootCom
         rootComponentVariants().find { it.name == SWIFT_EXPORT_METADATA_ELEMENTS },
         "Under the Kotlin Archive format only the -published variant must be declared"
     )
+}
+
+/**
+ * The lines of a generated Swift file without their indentation, so that a test can look for a whole
+ * declaration line.
+ */
+internal fun Path.swiftSourceLines(): List<String> = readLines().map { it.trim() }
+
+/** The typealiases a generated Swift file declares, as name to target. */
+internal fun Path.swiftTypealiases(): Map<String, String> = swiftSourceLines()
+    .mapNotNull { swiftTypealiasDeclaration.matchEntire(it) }
+    .associate { it.groupValues[1] to it.groupValues[2] }
+
+/** The names of the functions a generated Swift file declares. */
+internal fun Path.swiftFunctionNames(): Set<String> = swiftSourceLines()
+    .mapNotNull { swiftFunctionDeclaration.find(it)?.groupValues?.get(1) }
+    .toSet()
+
+/** The names of the classes a generated Swift file declares. */
+internal fun Path.swiftClassNames(): Set<String> = swiftSourceLines()
+    .mapNotNull { swiftClassDeclaration.find(it)?.groupValues?.get(1) }
+    .toSet()
+
+private val swiftTypealiasDeclaration = Regex("""public typealias (\w+) = (.+)""")
+private val swiftFunctionDeclaration = Regex("""^public (?:static )?func (\w+)\(""")
+private val swiftClassDeclaration = Regex("""^public (?:final |open )?class (\w+)""")
+
+/** The names of the symbols that `nm` lists for [library], a file in [workingDir]. */
+internal fun nmSymbols(library: String, workingDir: File): Set<String> {
+    val nm = runProcess(listOf("nm", library), workingDir)
+    assertTrue(nm.isSuccessful, "nm $library failed:\n${nm.output}")
+    return nm.output.lines().map { it.substringAfterLast(' ') }.filter { it.isNotBlank() }.toSet()
 }

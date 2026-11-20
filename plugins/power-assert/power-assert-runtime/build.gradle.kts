@@ -15,6 +15,7 @@ plugins {
     id("signing-convention")
     id("nodejs-configuration")
     id("binaryen-configuration")
+    id("wasmtime-configuration")
 }
 
 description = "Kotlin Power-Assert Runtime"
@@ -72,7 +73,6 @@ kotlin {
         }
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         if (!buildFeatures.isolatedProjects.active.get()) {
             nodejs()
@@ -82,7 +82,7 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
         if (!buildFeatures.isolatedProjects.active.get()) {
-            nodejs()
+            wasmtime()
         }
     }
     if (kotlinBuildProperties.isInIdeaSync.get()) {
@@ -124,7 +124,7 @@ kotlin {
             api(kotlinStdlib())
         }
         commonTest.dependencies {
-            api(kotlinTest())
+            implementation(kotlinTest())
         }
         jvmTest.dependencies {
             implementation(kotlinTest("junit5"))

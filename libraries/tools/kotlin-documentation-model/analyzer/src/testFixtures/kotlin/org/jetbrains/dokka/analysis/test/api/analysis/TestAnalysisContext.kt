@@ -13,7 +13,7 @@ import org.jetbrains.dokka.plugability.DokkaContext
 /**
  * Context and data gathered during the analysis of a [TestProject].
  */
-class TestAnalysisContext(
+internal class TestAnalysisContext(
 
     /**
      * The actual [DokkaContext] that was used to run Dokka.

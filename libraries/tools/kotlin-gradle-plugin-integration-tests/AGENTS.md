@@ -9,6 +9,12 @@ Integration tests for the Kotlin Gradle Plugin using Gradle TestKit.
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpJvmTests
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpJsTests
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpJsBrowserTests
+
+# kgpWasmTests includes kgpWasmJsTests and kgpWasmWasiTests
+./gradlew :kotlin-gradle-plugin-integration-tests:kgpWasmTests
+./gradlew :kotlin-gradle-plugin-integration-tests:kgpWasmJsTests
+./gradlew :kotlin-gradle-plugin-integration-tests:kgpWasmWasiTests
+
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpMppTests
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpNativeTests
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpSwiftPMImportTests
@@ -33,6 +39,9 @@ Extend `KGPBaseTest` and annotate with appropriate tag:
 - `@JvmGradlePluginTests` - Kotlin/JVM tests
 - `@JsGradlePluginTests` - Kotlin/JS tests
 - `@JsBrowserGradlePluginTests` - Kotlin/JS tests that require running browser
+- `@WasmJsGradlePluginTests` - Kotlin/Wasm tests for the wasmJs target
+- `@WasmWasiGradlePluginTests` - Kotlin/Wasm tests for the wasmWasi target
+- `@WasmGradlePluginTests` - Kotlin/Wasm tests not specific to one Wasm target (e.g. both wasmJs and wasmWasi)
 - `@MppGradlePluginTests` - Multiplatform tests
 - `@NativeGradlePluginTests` - Kotlin/Native tests
 - `@SwiftPMImportGradlePluginTests` - SwiftPM import tests

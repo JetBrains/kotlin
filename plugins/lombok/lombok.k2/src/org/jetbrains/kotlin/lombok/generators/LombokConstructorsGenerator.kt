@@ -54,16 +54,18 @@ class LombokConstructorsGenerator(session: FirSession) :
     override fun needsCompanionObject(owner: FirClassSymbol<*>): Boolean =
         parts.any { part -> part.generatesStaticFactory(owner) }
 
-    private val cache: FirCache<FirClassSymbol<*>, Collection<FirFunctionSymbol<*>>?, MemberGenerationContext?> =
+    private val cache: FirCache<FirClassSymbol<*>, Collection<FirFunctionSymbol<*>>?, MemberGenerationContext> =
         session.firCachesFactory.createCache(::createConstructors)
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return buildSet {
-            cache.getValue(classSymbol, context)?.forEach {
-                when (it) {
-                    is FirConstructorSymbol -> add(SpecialNames.INIT)
-                    else -> add(it.callableId.callableName)
+            parts.forEach { part ->
+                val constructorInfo = part.extractConstructorInfoAndTargetClassSymbol(classSymbol)?.first ?: return@forEach
+                val staticName = constructorInfo.staticName
+                if (staticName != null) {
+                    add(Name.identifier(staticName))
                 }
+                add(SpecialNames.INIT)
             }
         }
     }
@@ -77,11 +79,11 @@ class LombokConstructorsGenerator(session: FirSession) :
         return cache.getValue(context.owner, context)?.filterIsInstance<FirConstructorSymbol>().orEmpty()
     }
 
-    private fun createConstructors(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext?): Collection<FirFunctionSymbol<*>>? {
+    private fun createConstructors(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Collection<FirFunctionSymbol<*>>? {
         return buildList {
             parts.forEach {
                 with(it) {
-                    addIfNonClashing(classSymbol, context?.declaredScope)
+                    addIfNonClashing(classSymbol, context)
                 }
             }
         }.takeIf { it.isNotEmpty() }?.map { it.symbol }

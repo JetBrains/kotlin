@@ -68,6 +68,9 @@ typedef struct {
 } smoke_kref_kotlin_Any;
 typedef struct {
   smoke_KNativePtr pinned;
+} smoke_kref_kotlin_collections_List;
+typedef struct {
+  smoke_KNativePtr pinned;
 } smoke_kref_tests_native_CatInterface;
 typedef struct {
   smoke_KNativePtr pinned;
@@ -120,6 +123,9 @@ typedef struct {
 typedef struct {
   smoke_KNativePtr pinned;
 } smoke_kref_tests_native_WithCompanionBlock;
+typedef struct {
+  smoke_KNativePtr pinned;
+} smoke_kref_tests_native_MultipleConstructors;
 
 
 typedef struct {
@@ -242,6 +248,13 @@ typedef struct {
             smoke_KType* (*_type)(void);
             smoke_kref_tests_native_WithCompanionBlock (*WithCompanionBlock)();
           } WithCompanionBlock;
+          struct {
+            smoke_KType* (*_type)(void);
+            smoke_kref_tests_native_MultipleConstructors (*MultipleConstructors)(const char* text);
+            smoke_kref_tests_native_MultipleConstructors (*MultipleConstructors_)(smoke_KBoolean flag);
+            smoke_kref_tests_native_MultipleConstructors (*MultipleConstructors__)(smoke_KInt value);
+            smoke_KInt (*get_value)(smoke_kref_tests_native_MultipleConstructors thiz);
+          } MultipleConstructors;
           smoke_KDouble (*get_constDouble)();
           smoke_KFloat (*get_constFloat)();
           smoke_KInt (*get_constInt)();
@@ -250,8 +263,11 @@ typedef struct {
           void (*set_variableAnyNullable)(smoke_kref_kotlin_Any set);
           const char* (*get_variableString)();
           void (*set_variableString)(const char* set);
+          smoke_KInt (*get_sizeDoubled)(smoke_kref_kotlin_collections_List thiz);
           smoke_KInt (*consumeValueClass)(smoke_KInt param);
           const char* (*functionWithParams)(const char* a, const char* b);
+          smoke_KInt (*overloaded)(const char* text);
+          smoke_KInt (*overloaded_)(smoke_KInt number);
           smoke_KInt (*produceValueClass)();
           void (*interfaceExtension)(smoke_kref_tests_native_CatInterface thiz);
           void (*interfaceExtension_)(smoke_kref_tests_native_Tom thiz);

@@ -102,7 +102,6 @@ fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
  * @param createModuleSerializer Used for creating a backend-specific instance of [IrModuleSerializer].
  * @param metadataSerializer Something capable of serializing the metadata of the source files. See the corresponding interface KDoc.
  * @param processCompiledFileData Called for each newly serialized file. Useful for incremental compilation.
- * @param processKlibHeader Called after serializing the KLIB header. Useful for incremental compilation.
  */
 fun <SourceFile> serializeModuleIntoKlib(
     moduleName: String,

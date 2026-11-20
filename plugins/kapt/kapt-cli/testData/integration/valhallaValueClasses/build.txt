@@ -1,0 +1,124 @@
+# valhalla
+
+# mkdir
+output/ap
+output/lib-identity
+output/lib-value
+output/jtree/stubs
+output/jtree/classes
+output/jtree/sources
+output/direct/stubs
+output/direct/classes
+output/direct/sources
+output/noValhalla/stubs
+output/noValhalla/classes
+output/noValhalla/sources
+output/check
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/Processor.kt
+
+# copy
+ap/META-INF/services/javax.annotation.processing.Processor
+output/ap/META-INF/services/javax.annotation.processing.Processor
+
+# kotlinc
+-Xfull-value-classes
+-Xjvm-enable-preview
+-jvm-target
+28
+-d output/lib-identity
+lib/IdentityLib.kt
+
+# kotlinc
+-Xfull-value-classes
+-Xvalhalla-value-classes
+-Xjvm-enable-preview
+-jvm-target
+28
+-d output/lib-value
+lib/ValueLib.kt
+
+# kapt
+-Xfull-value-classes
+-Xvalhalla-value-classes
+-Xjvm-enable-preview
+-jvm-target
+28
+-Kapt-stub-generation-scheme=jtree
+-Kapt-javac-option:--enable-preview=
+-Kapt-stubs=output/jtree/stubs
+-Kapt-classes=output/jtree/classes
+-Kapt-sources=output/jtree/sources
+-Kapt-classpath=output/ap:%KOTLIN_STDLIB%
+-d output/jtree/classes
+-cp output/ap:output/lib-identity:output/lib-value:%KOTLIN_STDLIB%
+source/Valhalla.kt
+
+# kapt
+-Xfull-value-classes
+-Xvalhalla-value-classes
+-Xjvm-enable-preview
+-jvm-target
+28
+-Kapt-stub-generation-scheme=direct
+-Kapt-javac-option:--enable-preview=
+-Kapt-stubs=output/direct/stubs
+-Kapt-classes=output/direct/classes
+-Kapt-sources=output/direct/sources
+-Kapt-classpath=output/ap:%KOTLIN_STDLIB%
+-d output/direct/classes
+-cp output/ap:output/lib-identity:output/lib-value:%KOTLIN_STDLIB%
+source/Valhalla.kt
+
+# kapt
+-Xfull-value-classes
+-Xjvm-enable-preview
+-jvm-target
+28
+-Kapt-javac-option:--enable-preview=
+-Kapt-stubs=output/noValhalla/stubs
+-Kapt-classes=output/noValhalla/classes
+-Kapt-sources=output/noValhalla/sources
+-Kapt-classpath=output/ap:%KOTLIN_STDLIB%
+-d output/noValhalla/classes
+-cp output/ap:%KOTLIN_STDLIB%
+source/NoValhalla.kt
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/check
+Check.kt
+
+# java
+-cp output/check:%KOTLIN_STDLIB%
+CheckKt
+
+# after
+jtree:
+FromIdentityLibrary [final, public], superclass IdentityBase [abstract, public]
+FromMiddle [final, public], superclass Middle [abstract, public]
+FromValueLibrary [final, public, value], superclass ValueBase [abstract, public, value]
+Identity [final, public]
+Interface [abstract, public]
+Middle [abstract, public], superclass IdentityBase [abstract, public]
+Money [final, public, value]
+Shape [abstract, public, value]
+Square [final, public, value], superclass Shape [abstract, public, value]
+
+direct:
+FromIdentityLibrary [final, public], superclass IdentityBase [abstract, public]
+FromMiddle [final, public], superclass Middle [abstract, public]
+FromValueLibrary [final, public, value], superclass ValueBase [abstract, public, value]
+Identity [final, public]
+Interface [abstract, public]
+Middle [abstract, public], superclass IdentityBase [abstract, public]
+Money [final, public, value]
+Shape [abstract, public, value]
+Square [final, public, value], superclass Shape [abstract, public, value]
+
+noValhalla:
+NoValhalla [final, public], superclass NoValhallaBase [abstract, public]
+NoValhallaBase [abstract, public]

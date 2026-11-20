@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
+import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.util.Properties
 import kotlin.io.path.nameWithoutExtension
 
+@HostDependent
 class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterParameters>(::NewNativeKlibWriterParameters) {
     class NewNativeKlibWriterParameters : NativeParameters() {
         var targetsForManifest: List<KonanTarget>? = null

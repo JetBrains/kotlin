@@ -11,8 +11,8 @@ import org.jetbrains.dokka.analysis.java.JavadocTag
  * MUST override equals and hashcode
  */
 @InternalDokkaApi
-public interface DocComment {
-    public fun hasTag(tag: JavadocTag): Boolean
+internal interface DocComment {
+    fun hasTag(tag: JavadocTag): Boolean
 
-    public fun resolveTag(tag: JavadocTag): List<DocumentationContent>
+    fun resolveTag(tag: JavadocTag): List<DocumentationContent>
 }

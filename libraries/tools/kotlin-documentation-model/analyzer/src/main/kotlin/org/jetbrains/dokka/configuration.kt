@@ -8,41 +8,41 @@ import org.jetbrains.dokka.utilities.cast
 import java.io.File
 import java.io.Serializable
 
-public object DokkaDefaults {
-    public val moduleName: String = "root"
-    public val moduleVersion: String? = null
-    public val outputDir: File = File("./dokka")
-    public const val failOnWarning: Boolean = false
-    public const val suppressObviousFunctions: Boolean = true
-    public const val suppressInheritedMembers: Boolean = false
+internal object DokkaDefaults {
+    val moduleName: String = "root"
+    val moduleVersion: String? = null
+    val outputDir: File = File("./dokka")
+    const val failOnWarning: Boolean = false
+    const val suppressObviousFunctions: Boolean = true
+    const val suppressInheritedMembers: Boolean = false
 
-    public const val sourceSetDisplayName: String = "JVM"
-    public const val sourceSetName: String = "main"
-    public val analysisPlatform: Platform = Platform.DEFAULT
+    const val sourceSetDisplayName: String = "JVM"
+    const val sourceSetName: String = "main"
+    val analysisPlatform: Platform = Platform.DEFAULT
 
-    public const val suppress: Boolean = false
-    public const val suppressGeneratedFiles: Boolean = true
+    const val suppress: Boolean = false
+    const val suppressGeneratedFiles: Boolean = true
 
-    public const val skipEmptyPackages: Boolean = true
-    public const val skipDeprecated: Boolean = false
+    const val skipEmptyPackages: Boolean = true
+    const val skipDeprecated: Boolean = false
 
-    public const val reportUndocumented: Boolean = false
+    const val reportUndocumented: Boolean = false
 
-    public const val jdkVersion: Int = 8
+    const val jdkVersion: Int = 8
 
-    public val documentedVisibilities: Set<DokkaConfiguration.Visibility> = setOf(DokkaConfiguration.Visibility.PUBLIC)
+    val documentedVisibilities: Set<DokkaConfiguration.Visibility> = setOf(DokkaConfiguration.Visibility.PUBLIC)
 
-    public val pluginsConfiguration: List<PluginConfigurationImpl> = mutableListOf()
+    val pluginsConfiguration: List<PluginConfigurationImpl> = mutableListOf()
 
     /**
      * Default value for [DokkaConfiguration.DokkaSourceSet.suppressAnnotatedWith].
      */
-    public val suppressAnnotatedWith: Set<String> = emptySet()
+    val suppressAnnotatedWith: Set<String> = emptySet()
 
 }
 
-public enum class Platform(
-    public val key: String
+internal enum class Platform(
+    val key: String
 ) {
     jvm("jvm"),
     js("js"),
@@ -53,10 +53,10 @@ public enum class Platform(
     native("native"),
     common("common");
 
-    public companion object {
-        public val DEFAULT: Platform = jvm
+        companion object {
+        val DEFAULT: Platform = jvm
 
-        public fun fromString(key: String): Platform {
+        fun fromString(key: String): Platform {
 
             return when (key.lowercase()) {
                 jvm.key -> jvm
@@ -74,11 +74,11 @@ public enum class Platform(
     }
 }
 
-public fun interface DokkaConfigurationBuilder<T : Any> {
-    public fun build(): T
+internal fun interface DokkaConfigurationBuilder<T : Any> {
+    fun build(): T
 }
 
-public fun <T : Any> Iterable<DokkaConfigurationBuilder<T>>.build(): List<T> = this.map { it.build() }
+internal fun <T : Any> Iterable<DokkaConfigurationBuilder<T>>.build(): List<T> = this.map { it.build() }
 
 /**
  * Represents a unique identifier for a [DokkaConfiguration.DokkaSourceSet].
@@ -91,7 +91,7 @@ public fun <T : Any> Iterable<DokkaConfigurationBuilder<T>>.build(): List<T> = t
  *    multiple DokkaTasks that contain source sets with the same name (but different configuration)
  * @property sourceSetName The name of the source set.
  */
-public data class DokkaSourceSetID(
+internal data class DokkaSourceSetID(
     val scopeId: String,
     val sourceSetName: String
 ) : Serializable {
@@ -100,18 +100,18 @@ public data class DokkaSourceSetID(
     }
 }
 
-public interface DokkaConfiguration : Serializable {
-    public val moduleName: String
-    public val moduleVersion: String?
-    public val outputDir: File
-    public val failOnWarning: Boolean
-    public val sourceSets: List<DokkaSourceSet>
-    public val modules: List<DokkaModuleDescription>
-    public val pluginsClasspath: List<File>
-    public val pluginsConfiguration: List<PluginConfiguration>
-    public val suppressObviousFunctions: Boolean
-    public val includes: Set<File>
-    public val suppressInheritedMembers: Boolean
+internal interface DokkaConfiguration : Serializable {
+    val moduleName: String
+    val moduleVersion: String?
+    val outputDir: File
+    val failOnWarning: Boolean
+    val sourceSets: List<DokkaSourceSet>
+    val modules: List<DokkaModuleDescription>
+    val pluginsClasspath: List<File>
+    val pluginsConfiguration: List<PluginConfiguration>
+    val suppressObviousFunctions: Boolean
+    val includes: Set<File>
+    val suppressInheritedMembers: Boolean
 
     /**
      * Whether coroutines dispatchers should be shutdown after
@@ -135,16 +135,16 @@ public interface DokkaConfiguration : Serializable {
      * and closing it down will leave the build in an inoperable state.
      * One such example is unit tests, for which finalization should be disabled.
      */
-    public val finalizeCoroutines: Boolean
+    val finalizeCoroutines: Boolean
 
-    public enum class SerializationFormat : Serializable {
+    enum class SerializationFormat : Serializable {
         JSON, XML
     }
 
-    public interface PluginConfiguration : Serializable {
-        public val fqPluginName: String
-        public val serializationFormat: SerializationFormat
-        public val values: String
+    interface PluginConfiguration : Serializable {
+        val fqPluginName: String
+        val serializationFormat: SerializationFormat
+        val values: String
     }
 
     /**
@@ -154,34 +154,34 @@ public interface DokkaConfiguration : Serializable {
      *
      * **See Also:** [Dokka#3246](https://github.com/Kotlin/dokka/issues/3246)
      */
-    public interface DokkaSourceSet : Serializable {
-        public val sourceSetID: DokkaSourceSetID
-        public val displayName: String
-        public val classpath: List<File>
-        public val sourceRoots: Set<File>
-        public val dependentSourceSets: Set<DokkaSourceSetID>
-        public val samples: Set<File>
-        public val includes: Set<File>
-        public val analysisPlatform: Platform
-        public val languageVersion: String?
-        public val apiVersion: String?
+    interface DokkaSourceSet : Serializable {
+        val sourceSetID: DokkaSourceSetID
+        val displayName: String
+        val classpath: List<File>
+        val sourceRoots: Set<File>
+        val dependentSourceSets: Set<DokkaSourceSetID>
+        val samples: Set<File>
+        val includes: Set<File>
+        val analysisPlatform: Platform
+        val languageVersion: String?
+        val apiVersion: String?
 
-        public val jdkVersion: Int // used only for builkding links
+        val jdkVersion: Int // used only for builkding links
 
-        public val reportUndocumented: Boolean
+        val reportUndocumented: Boolean
 
-        public val perPackageOptions: List<PackageOptions>
-        public val suppressedFiles: Set<File>
-        public val skipEmptyPackages: Boolean
-        public val skipDeprecated: Boolean
+        val perPackageOptions: List<PackageOptions>
+        val suppressedFiles: Set<File>
+        val skipEmptyPackages: Boolean
+        val skipDeprecated: Boolean
         /**
          * A set of annotation fully qualified names (FQNs) to suppress declarations annotated with.
          */
-        public val suppressAnnotatedWith: Set<String>
-        public val documentedVisibilities: Set<Visibility>
+        val suppressAnnotatedWith: Set<String>
+        val documentedVisibilities: Set<Visibility>
     }
 
-    public enum class Visibility {
+    enum class Visibility {
         /**
          * `public` modifier for Java, default visibility for Kotlin
          */
@@ -207,25 +207,25 @@ public interface DokkaConfiguration : Serializable {
          */
         PACKAGE;
 
-        public companion object {
-            public fun fromString(value: String): Visibility = valueOf(value.uppercase())
+    companion object {
+            fun fromString(value: String): Visibility = valueOf(value.uppercase())
         }
     }
 
-    public interface DokkaModuleDescription : Serializable {
-        public val name: String
-        public val relativePathToOutputDirectory: File
-        public val sourceOutputDirectory: File
-        public val includes: Set<File>
+    interface DokkaModuleDescription : Serializable {
+        val name: String
+        val relativePathToOutputDirectory: File
+        val sourceOutputDirectory: File
+        val includes: Set<File>
     }
 
-    public interface PackageOptions : Serializable {
-        public val matchingRegex: String
+    interface PackageOptions : Serializable {
+        val matchingRegex: String
 
-        public val reportUndocumented: Boolean?
-        public val skipDeprecated: Boolean
-        public val suppress: Boolean
-        public val documentedVisibilities: Set<Visibility>
+        val reportUndocumented: Boolean?
+        val skipDeprecated: Boolean
+        val suppress: Boolean
+        val documentedVisibilities: Set<Visibility>
     }
 
 }

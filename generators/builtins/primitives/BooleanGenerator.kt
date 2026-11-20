@@ -87,6 +87,8 @@ abstract class BooleanGenerator(private val writer: PrintWriter) : BuiltInsGener
         val doc = """
             Performs a logical `and` operation between this Boolean and the [other] one. Unlike the `&&` operator,
             this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
+            
+            @sample samples.misc.BooleanSamples.and
         """.trimIndent()
         generateBooleanMethod("and", doc).modifyGeneratedAnd()
     }
@@ -95,12 +97,18 @@ abstract class BooleanGenerator(private val writer: PrintWriter) : BuiltInsGener
         val doc = """
             Performs a logical `or` operation between this Boolean and the [other] one. Unlike the `||` operator,
             this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
+            
+            @sample samples.misc.BooleanSamples.or
         """.trimIndent()
         generateBooleanMethod("or", doc).modifyGeneratedOr()
     }
 
     private fun ClassBuilder.generateXor() {
-        val doc = "Performs a logical `xor` operation between this Boolean and the [other] one."
+        val doc = """
+            Performs a logical `xor` operation between this Boolean and the [other] one.
+            
+            @sample samples.misc.BooleanSamples.xor
+        """.trimIndent()
         generateBooleanMethod("xor", doc).modifyGeneratedXor()
     }
 

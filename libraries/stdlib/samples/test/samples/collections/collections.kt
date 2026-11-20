@@ -1382,6 +1382,19 @@ class Collections {
     @Nested
     inner class Elements {
         @Sample
+        fun contains() {
+            val array = arrayOf("apples", "oranges", "lime")
+
+            assertPrints("oranges" in array, "true")
+            assertPrints("banana" !in array, "true")
+
+            val numbers = intArrayOf(1, 2, 3)
+
+            assertPrints(2 in numbers, "true")
+            assertPrints(4 !in numbers, "true")
+        }
+
+        @Sample
         fun elementAt() {
             val list = listOf(1, 2, 3)
             assertPrints(list.elementAt(0), "1")
@@ -1793,5 +1806,23 @@ class Collections {
             assertPrints(cats, "[Scratchy]")
         }
 
+    }
+
+    @Nested
+    inner class Deques {
+
+        @Sample
+        fun arrayDequeAddFirst() {
+            val deque = ArrayDeque(listOf(2, 3, 4))
+            deque.addFirst(1)
+            assertPrints(deque, "[1, 2, 3, 4]")
+        }
+
+        @Sample
+        fun arrayDequeAddLast() {
+            val deque = ArrayDeque(listOf(1, 2, 3))
+            deque.addLast(4)
+            assertPrints(deque, "[1, 2, 3, 4]")
+        }
     }
 }

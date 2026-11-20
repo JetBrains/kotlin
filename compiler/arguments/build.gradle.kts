@@ -74,11 +74,11 @@ val generateJson = tasks.register<JavaExec>("generateJson") {
     systemProperties["teamcity"] = kotlinBuildProperties.isTeamcityBuild.get()
 }
 
-tasks.named("processResources") {
-    dependsOn(generateJson)
-}
-tasks.named("sourcesJar") {
-    dependsOn(generateJson)
+sourceSets.named("main") {
+    val generatedResourcesDir = file("resources")
+    // generatedResourcesDir are commited to be reviewed, but we need to declare the dependency to generateJson
+    resources.setSrcDirs(resources.srcDirs - generatedResourcesDir)
+    resources.srcDir(objects.fileCollection().from(generatedResourcesDir).builtBy(generateJson))
 }
 
 val stableReleaseSsotDecl = configurations.dependencyScope("stableReleaseCompilerArguments")

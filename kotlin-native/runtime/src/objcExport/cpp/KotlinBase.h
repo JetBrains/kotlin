@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @see `+_createProtocolWrapperForExternalRCRef:`
  */
-+ (instancetype)_createClassWrapperForExternalRCRef:(void *)ref NS_SWIFT_NAME(__createClassWrapper(externalRCRef:));
++ (instancetype)_createClassWrapperForExternalRCRef:(void *)ref NS_RETURNS_RETAINED NS_SWIFT_NAME(__createClassWrapper(externalRCRef:));
 
 /**
  * Creates and/or returns a `KotlinBase` instance that acts as an existential wrapper for the provided external Kotlin reference (`ref`).
@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @see `+_createClassWrapperForExternalRCRef:`
  */
 + (KotlinBase *)_createProtocolWrapperForExternalRCRef:(void *)ref
-                                            conformsTo:(NS_NOESCAPE BOOL (^ _Nullable)(Class candidate))conformsTo NS_SWIFT_NAME(__createProtocolWrapper(externalRCRef:conformsTo:));
+                                            conformsTo:(NS_NOESCAPE BOOL (^ _Nullable)(Class candidate))conformsTo NS_RETURNS_RETAINED NS_SWIFT_NAME(__createProtocolWrapper(externalRCRef:conformsTo:));
 
 /**
  * Designated initializer creating a fresh Kotlin.Any object.

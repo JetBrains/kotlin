@@ -1,0 +1,10 @@
+# before
+-Kapt-processors=a.P,b.Q
+
+# after
+-P
+plugin:org.jetbrains.kotlin.kapt3:aptMode=stubsAndApt
+-P
+plugin:org.jetbrains.kotlin.kapt3:processors=a.P
+-P
+plugin:org.jetbrains.kotlin.kapt3:processors=b.Q

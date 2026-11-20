@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.irCallConstructor
+import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -17,11 +18,17 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.types.starProjectedType
+import org.jetbrains.kotlin.ir.types.typeOrFail
+import org.jetbrains.kotlin.ir.util.allTypeParameters
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.lombok.generators.ConstructorGeneratorKey
 
@@ -41,8 +48,9 @@ import org.jetbrains.kotlin.lombok.generators.ConstructorGeneratorKey
  */
 object ConstructorBodyBuilder : IrBodyBuilder<ConstructorGeneratorKey>() {
     /**
-     * The static factory: `return Entity()` and nothing else, the function existing only so that the no-args
-     * constructor beside it can be called by that name.
+     * The static factory: `return Entity(...)` and nothing else, the function existing only so that a constructor
+     * can be called by that name - the no-args one when the factory takes no parameters, and otherwise the primary
+     * one, the parameters of which the factory copies (see `RequiredArgsConstructorGeneratorPart`).
      */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun IrBlockBodyBuilder.build(key: ConstructorGeneratorKey, declaration: IrSimpleFunction) {
@@ -51,13 +59,23 @@ object ConstructorBodyBuilder : IrBodyBuilder<ConstructorGeneratorKey>() {
         val constructedClass = declaration.returnType.classOrNull?.owner
             ?: error("No constructed class for ${declaration.render()}")
 
-        val constructor = constructedClass.constructors.firstOrNull(IrConstructor::takesNoArguments)
-            ?: error("No no-args constructor for ${constructedClass.render()}")
+        val regularParameters = declaration.parameters.filter { it.kind == IrParameterKind.Regular }
+        val constructor = if (regularParameters.isEmpty()) {
+            constructedClass.constructors.firstOrNull(IrConstructor::takesNoArguments)
+                ?: error("No no-args constructor for ${constructedClass.render()}")
+        } else {
+            constructedClass.primaryConstructor?.takeIf { it.parameters.size == regularParameters.size }
+                ?: error("No primary constructor with ${regularParameters.size} parameters for ${constructedClass.render()}")
+        }
 
         // `irCallConstructor` types the call from the constructor's own return type, which carries the class's
         // type parameters rather than the factory's copies of them, and the IR validator rejects a reference to
         // a type parameter from another scope. The factory's return type is that same type already substituted.
-        val constructorCall = irCallConstructor(constructor.symbol, declaration.typeParameters.map { it.defaultType })
+        val constructorCall = irCallConstructor(constructor.symbol, declaration.typeParameters.map { it.defaultType }).apply {
+            constructor.parameters.zip(regularParameters).forEach { [parameter, value] ->
+                arguments[parameter] = irGet(value)
+            }
+        }
         constructorCall.type = declaration.returnType
 
         +irReturn(constructorCall)
@@ -72,19 +90,32 @@ object ConstructorBodyBuilder : IrBodyBuilder<ConstructorGeneratorKey>() {
     fun buildConstructorBody(context: IrPluginContext, constructor: IrConstructor) {
         val ownerClass = constructor.parent as? IrClass ?: return
 
-        val superClass = ownerClass.superTypes.mapNotNull(IrType::getClass).singleOrNull { it.kind == ClassKind.CLASS }
-            ?: context.irBuiltIns.anyClass.owner
+        val superType = ownerClass.superTypes.singleOrNull { it.getClass()?.kind == ClassKind.CLASS }
+        val superClass = superType?.getClass() ?: context.irBuiltIns.anyClass.owner
 
         val superConstructor = superClass.constructors.firstOrNull(IrConstructor::takesNoArguments)
             ?: error("No no-args superclass constructor for ${ownerClass.render()}")
+
+        // The class's type arguments come from the supertype (`Base<String>` gives `<String>`);
+        // a generic Java constructor's own type parameters like U in `public <U> constructor(...)`
+        // can't be inferred from no arguments, so they get their erased upper bound, as javac infers them
+        // (`Number?` for `<U extends Number>`, `Any?` for an unbounded one).
+        val superTypeArguments = (superType as? IrSimpleType)?.arguments.orEmpty()
+            .take(superClass.typeParameters.size)
+            .map { it.typeOrFail }
+        val constructorTypeArguments = superConstructor.typeParameters.map {
+            it.erasedUpperBound.symbol.starProjectedType.makeNullable()
+        }
 
         constructor.body = context.irFactory.createBlockBody(
             constructor.startOffset, constructor.endOffset,
             listOf(
                 IrDelegatingConstructorCallImpl(
                     constructor.startOffset, constructor.endOffset, context.irBuiltIns.unitType,
-                    superConstructor.symbol, typeArgumentsCount = 0,
-                )
+                    superConstructor.symbol, typeArgumentsCount = superConstructor.allTypeParameters.size,
+                ).apply {
+                    (superTypeArguments + constructorTypeArguments).forEachIndexed { index, type -> typeArguments[index] = type }
+                }
             )
         )
     }

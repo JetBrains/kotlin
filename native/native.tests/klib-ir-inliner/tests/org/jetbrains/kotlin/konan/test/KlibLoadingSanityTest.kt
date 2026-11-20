@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_LIBRARY_VERSION
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.utils.patchManifestAsMap
+import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Test
 
+@HostDependent
 class KlibLoadingSanityTest : AbstractNativeSimpleTest() {
     @Test
     fun `Compiler ignores dependency versions in manifest`() {

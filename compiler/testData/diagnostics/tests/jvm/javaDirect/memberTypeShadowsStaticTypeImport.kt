@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 
 // FILE: a/C.java
 package a;

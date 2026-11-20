@@ -16,7 +16,10 @@ namespace kotlin::mm {
  * metadata emitted by the compiler and converted to the "hprof" format by an
  * external tool.
  *
+ * When `omitPrimitiveArrayPayloads` is true, primitive array contents are omitted
+ * (count is preserved). Object arrays and native-pointer arrays are still written
+ * in full so the heap graph can be reconstructed.
  */
-bool DumpMemory(int fd) noexcept;
+bool DumpMemory(int fd, bool omitPrimitiveArrayPayloads) noexcept;
 
 } // namespace kotlin::mm

@@ -11,15 +11,15 @@ import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 
-public interface AnnotationTarget
+internal interface AnnotationTarget
 
-public abstract class Documentable : WithChildren<Documentable>,
+internal abstract class Documentable : WithChildren<Documentable>,
     AnnotationTarget {
-    public abstract val name: String?
-    public abstract val dri: DRI
-    public abstract val documentation: SourceSetDependent<DocumentationNode>
-    public abstract val sourceSets: Set<DokkaSourceSet>
-    public abstract val expectPresentInSet: DokkaSourceSet?
+    abstract val name: String?
+    abstract val dri: DRI
+    abstract val documentation: SourceSetDependent<DocumentationNode>
+    abstract val sourceSets: Set<DokkaSourceSet>
+    abstract val expectPresentInSet: DokkaSourceSet?
     abstract override val children: List<Documentable>
 
     override fun toString(): String =
@@ -31,85 +31,85 @@ public abstract class Documentable : WithChildren<Documentable>,
     override fun hashCode(): Int = dri.hashCode()
 }
 
-public typealias SourceSetDependent<T> = Map<DokkaSourceSet, T>
+internal typealias SourceSetDependent<T> = Map<DokkaSourceSet, T>
 
-public interface WithSources {
-    public val sources: SourceSetDependent<DocumentableSource>
+internal interface WithSources {
+    val sources: SourceSetDependent<DocumentableSource>
 }
 
-public interface WithScope {
-    public val functions: List<DFunction>
-    public val properties: List<DProperty>
-    public val classlikes: List<DClasslike>
+internal interface WithScope {
+    val functions: List<DFunction>
+    val properties: List<DProperty>
+    val classlikes: List<DClasslike>
 }
 
-public interface WithVisibility {
-    public val visibility: SourceSetDependent<Visibility>
+internal interface WithVisibility {
+    val visibility: SourceSetDependent<Visibility>
 }
 
-public interface WithType {
-    public val type: Bound
+internal interface WithType {
+    val type: Bound
 }
 
-public interface WithAbstraction {
-    public val modifier: SourceSetDependent<Modifier>
+internal interface WithAbstraction {
+    val modifier: SourceSetDependent<Modifier>
 }
 
-public sealed class Modifier(
-    public val name: String
+internal sealed class Modifier(
+    val name: String
 )
 
-public sealed class KotlinModifier(name: String) : Modifier(name) {
-    public object Abstract : KotlinModifier("abstract")
-    public object Open : KotlinModifier("open")
-    public object Final : KotlinModifier("final")
-    public object Sealed : KotlinModifier("sealed")
-    public object Empty : KotlinModifier("")
+internal sealed class KotlinModifier(name: String) : Modifier(name) {
+    object Abstract : KotlinModifier("abstract")
+    object Open : KotlinModifier("open")
+    object Final : KotlinModifier("final")
+    object Sealed : KotlinModifier("sealed")
+    object Empty : KotlinModifier("")
 }
 
-public sealed class JavaModifier(name: String) : Modifier(name) {
-    public object Abstract : JavaModifier("abstract")
-    public object Final : JavaModifier("final")
-    public object Empty : JavaModifier("")
+internal sealed class JavaModifier(name: String) : Modifier(name) {
+    object Abstract : JavaModifier("abstract")
+    object Final : JavaModifier("final")
+    object Empty : JavaModifier("")
 }
 
-public interface WithCompanion {
-    public val companion: DObject?
+internal interface WithCompanion {
+    val companion: DObject?
 }
 
-public interface WithConstructors {
-    public val constructors: List<DFunction>
+internal interface WithConstructors {
+    val constructors: List<DFunction>
 }
 
-public interface WithGenerics {
-    public val generics: List<DTypeParameter>
+internal interface WithGenerics {
+    val generics: List<DTypeParameter>
 }
 
 @ExperimentalDokkaApi
-public interface WithContextParameters {
-    public val contextParameters: List<DParameter>
+internal interface WithContextParameters {
+    val contextParameters: List<DParameter>
 }
 
-public interface WithTypealiases {
-    public val typealiases: List<DTypeAlias>
+internal interface WithTypealiases {
+    val typealiases: List<DTypeAlias>
 }
 
-public interface WithSupertypes {
-    public val supertypes: SourceSetDependent<List<TypeConstructorWithKind>>
+internal interface WithSupertypes {
+    val supertypes: SourceSetDependent<List<TypeConstructorWithKind>>
 }
 
-public interface WithIsExpectActual {
-    public val isExpectActual: Boolean
+internal interface WithIsExpectActual {
+    val isExpectActual: Boolean
 }
 
 @OptIn(ExperimentalDokkaApi::class)
-public interface Callable : WithVisibility, WithContextParameters, WithType, WithAbstraction, WithSources, WithIsExpectActual {
-    public val receiver: DParameter?
+internal interface Callable : WithVisibility, WithContextParameters, WithType, WithAbstraction, WithSources, WithIsExpectActual {
+    val receiver: DParameter?
 }
 
-public sealed class DClasslike : Documentable(), WithScope, WithVisibility, WithSources, WithIsExpectActual
+internal sealed class DClasslike : Documentable(), WithScope, WithVisibility, WithSources, WithIsExpectActual
 
-public data class DModule(
+internal data class DModule(
     override val name: String,
     val packages: List<DPackage>,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -124,7 +124,7 @@ public data class DModule(
     override fun withNewExtras(newExtras: PropertyContainer<DModule>): DModule = copy(extra = newExtras)
 }
 
-public data class DPackage(
+internal data class DPackage(
     override val dri: DRI,
     override val functions: List<DFunction>,
     override val properties: List<DProperty>,
@@ -151,7 +151,7 @@ public data class DPackage(
     override fun withNewExtras(newExtras: PropertyContainer<DPackage>): DPackage = copy(extra = newExtras)
 }
 
-public data class DClass(
+internal data class DClass(
     override val dri: DRI,
     override val name: String,
     override val constructors: List<DFunction>,
@@ -174,7 +174,7 @@ public data class DClass(
     WithExtraProperties<DClass>, WithTypealiases {
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public constructor(
+    constructor(
         dri: DRI,
         name: String,
         constructors: List<DFunction>,
@@ -214,7 +214,7 @@ public data class DClass(
     )
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public fun copy(
+    fun copy(
         dri: DRI,
         name: String,
         constructors: List<DFunction>,
@@ -259,7 +259,7 @@ public data class DClass(
     override fun withNewExtras(newExtras: PropertyContainer<DClass>): DClass = copy(extra = newExtras)
 }
 
-public data class DEnum(
+internal data class DEnum(
     override val dri: DRI,
     override val name: String,
     val entries: List<DEnumEntry>,
@@ -282,7 +282,7 @@ public data class DEnum(
         get() = (entries + functions + properties + classlikes + constructors + typealiases)
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public constructor(
+    constructor(
         dri: DRI,
         name: String,
         entries: List<DEnumEntry>,
@@ -320,7 +320,7 @@ public data class DEnum(
     )
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public fun copy(
+    fun copy(
         dri: DRI,
         name: String,
         entries: List<DEnumEntry>,
@@ -360,7 +360,7 @@ public data class DEnum(
     override fun withNewExtras(newExtras: PropertyContainer<DEnum>): DEnum = copy(extra = newExtras)
 }
 
-public data class DEnumEntry(
+internal data class DEnumEntry(
     override val dri: DRI,
     override val name: String,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -377,7 +377,7 @@ public data class DEnumEntry(
     override fun withNewExtras(newExtras: PropertyContainer<DEnumEntry>): DEnumEntry = copy(extra = newExtras)
 }
 
-public data class DFunction(
+internal data class DFunction(
     override val dri: DRI,
     override val name: String,
     val isConstructor: Boolean,
@@ -398,7 +398,7 @@ public data class DFunction(
 ) : Documentable(), Callable, WithGenerics, WithExtraProperties<DFunction> {
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public constructor(
+    constructor(
         dri: DRI,
         name: String,
         isConstructor: Boolean,
@@ -434,7 +434,7 @@ public data class DFunction(
     )
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public fun copy(
+    fun copy(
         dri: DRI,
         name: String,
         isConstructor: Boolean,
@@ -475,7 +475,7 @@ public data class DFunction(
     override fun withNewExtras(newExtras: PropertyContainer<DFunction>): DFunction = copy(extra = newExtras)
 }
 
-public data class DInterface(
+internal data class DInterface(
     override val dri: DRI,
     override val name: String,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -499,7 +499,7 @@ public data class DInterface(
         get() = (functions + properties + classlikes + typealiases)
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public constructor(
+    constructor(
         dri: DRI,
         name: String,
         documentation: SourceSetDependent<DocumentationNode>,
@@ -537,7 +537,7 @@ public data class DInterface(
     )
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public fun copy(
+    fun copy(
         dri: DRI,
         name: String,
         documentation: SourceSetDependent<DocumentationNode>,
@@ -577,7 +577,7 @@ public data class DInterface(
     override fun withNewExtras(newExtras: PropertyContainer<DInterface>): DInterface = copy(extra = newExtras)
 }
 
-public data class DObject(
+internal data class DObject(
     override val name: String?,
     override val dri: DRI,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -597,7 +597,7 @@ public data class DObject(
         get() = (functions + properties + classlikes + typealiases)
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public constructor(
+    constructor(
         name: String?,
         dri: DRI,
         documentation: SourceSetDependent<DocumentationNode>,
@@ -629,7 +629,7 @@ public data class DObject(
     )
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public fun copy(
+    fun copy(
         name: String?,
         dri: DRI,
         documentation: SourceSetDependent<DocumentationNode>,
@@ -663,7 +663,7 @@ public data class DObject(
     override fun withNewExtras(newExtras: PropertyContainer<DObject>): DObject = copy(extra = newExtras)
 }
 
-public data class DAnnotation(
+internal data class DAnnotation(
     override val name: String,
     override val dri: DRI,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -686,7 +686,7 @@ public data class DAnnotation(
     override fun withNewExtras(newExtras: PropertyContainer<DAnnotation>): DAnnotation = copy(extra = newExtras)
 }
 
-public data class DProperty(
+internal data class DProperty(
     override val dri: DRI,
     override val name: String,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -707,7 +707,7 @@ public data class DProperty(
 ) : Documentable(), Callable, WithExtraProperties<DProperty>, WithGenerics {
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public constructor(
+    constructor(
         dri: DRI,
         name: String,
         documentation: SourceSetDependent<DocumentationNode>,
@@ -743,7 +743,7 @@ public data class DProperty(
     )
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public fun copy(
+    fun copy(
         dri: DRI,
         name: String,
         documentation: SourceSetDependent<DocumentationNode>,
@@ -785,7 +785,7 @@ public data class DProperty(
 }
 
 // TODO: treat named Parameters and receivers differently
-public data class DParameter(
+internal data class DParameter(
     override val dri: DRI,
     override val name: String?,
     override val documentation: SourceSetDependent<DocumentationNode>,
@@ -800,7 +800,7 @@ public data class DParameter(
     override fun withNewExtras(newExtras: PropertyContainer<DParameter>): DParameter = copy(extra = newExtras)
 }
 
-public data class DTypeParameter(
+internal data class DTypeParameter(
     val variantTypeParameter: Variance<TypeParameter>,
     override val documentation: SourceSetDependent<DocumentationNode>,
     override val expectPresentInSet: DokkaSourceSet?,
@@ -809,7 +809,7 @@ public data class DTypeParameter(
     override val extra: PropertyContainer<DTypeParameter> = PropertyContainer.empty()
 ) : Documentable(), WithExtraProperties<DTypeParameter> {
 
-    public constructor(
+    constructor(
         dri: DRI,
         name: String,
         presentableName: String?,
@@ -836,7 +836,7 @@ public data class DTypeParameter(
     override fun withNewExtras(newExtras: PropertyContainer<DTypeParameter>): DTypeParameter = copy(extra = newExtras)
 }
 
-public data class DTypeAlias(
+internal data class DTypeAlias(
     override val dri: DRI,
     override val name: String,
     override val type: Bound,
@@ -855,9 +855,9 @@ public data class DTypeAlias(
     override fun withNewExtras(newExtras: PropertyContainer<DTypeAlias>): DTypeAlias = copy(extra = newExtras)
 }
 
-public sealed class Projection
-public sealed class Bound : Projection()
-public data class TypeParameter(
+internal sealed class Projection
+internal sealed class Bound : Projection()
+internal data class TypeParameter(
     val dri: DRI,
     val name: String,
     val presentableName: String? = null,
@@ -867,13 +867,13 @@ public data class TypeParameter(
         copy(extra = extra)
 }
 
-public sealed class TypeConstructor : Bound(), AnnotationTarget {
-    public abstract val dri: DRI
-    public abstract val projections: List<Projection>
-    public abstract val presentableName: String?
+internal sealed class TypeConstructor : Bound(), AnnotationTarget {
+    abstract val dri: DRI
+    abstract val projections: List<Projection>
+    abstract val presentableName: String?
 }
 
-public data class GenericTypeConstructor(
+internal data class GenericTypeConstructor(
     override val dri: DRI,
     override val projections: List<Projection>,
     override val presentableName: String? = null,
@@ -883,7 +883,7 @@ public data class GenericTypeConstructor(
         copy(extra = newExtras)
 }
 
-public data class FunctionalTypeConstructor(
+internal data class FunctionalTypeConstructor(
     override val dri: DRI,
     override val projections: List<Projection>,
     val isExtensionFunction: Boolean = false,
@@ -895,7 +895,7 @@ public data class FunctionalTypeConstructor(
 ) : TypeConstructor(), WithExtraProperties<FunctionalTypeConstructor> {
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public constructor(
+    constructor(
         dri: DRI,
         projections: List<Projection>,
         isExtensionFunction: Boolean = false,
@@ -912,7 +912,7 @@ public data class FunctionalTypeConstructor(
     )
 
     @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
-    public fun copy(
+    fun copy(
         dri: DRI,
         projections: List<Projection>,
         isExtensionFunction: Boolean = false,
@@ -934,7 +934,7 @@ public data class FunctionalTypeConstructor(
 }
 
 // kotlin.annotation.AnnotationTarget.TYPEALIAS
-public data class TypeAliased(
+internal data class TypeAliased(
     val typeAlias: Bound,
     val inner: Bound,
     override val extra: PropertyContainer<TypeAliased> = PropertyContainer.empty()
@@ -943,7 +943,7 @@ public data class TypeAliased(
         copy(extra = newExtras)
 }
 
-public data class PrimitiveJavaType(
+internal data class PrimitiveJavaType(
     val name: String,
     override val extra: PropertyContainer<PrimitiveJavaType> = PropertyContainer.empty()
 ) : Bound(), AnnotationTarget, WithExtraProperties<PrimitiveJavaType> {
@@ -951,13 +951,13 @@ public data class PrimitiveJavaType(
         copy(extra = newExtras)
 }
 
-public data class JavaObject(override val extra: PropertyContainer<JavaObject> = PropertyContainer.empty()) :
+internal data class JavaObject(override val extra: PropertyContainer<JavaObject> = PropertyContainer.empty()) :
     Bound(), AnnotationTarget, WithExtraProperties<JavaObject> {
     override fun withNewExtras(newExtras: PropertyContainer<JavaObject>): JavaObject =
         copy(extra = newExtras)
 }
 
-public data class UnresolvedBound(
+internal data class UnresolvedBound(
     val name: String,
     override val extra: PropertyContainer<UnresolvedBound> = PropertyContainer.empty()
 ) : Bound(), AnnotationTarget, WithExtraProperties<UnresolvedBound> {
@@ -966,67 +966,68 @@ public data class UnresolvedBound(
 }
 
 // The following Projections are not AnnotationTargets; they cannot be annotated.
-public data class Nullable(val inner: Bound) : Bound()
+internal data class Nullable(val inner: Bound) : Bound()
 
 /**
  * It introduces [definitely non-nullable types](https://github.com/Kotlin/KEEP/blob/c72601cf35c1e95a541bb4b230edb474a6d1d1a8/proposals/definitely-non-nullable-types.md)
  */
-public data class DefinitelyNonNullable(val inner: Bound) : Bound()
+internal data class DefinitelyNonNullable(val inner: Bound) : Bound()
 
-public sealed class Variance<out T : Bound> : Projection() {
-    public abstract val inner: T
+internal sealed class Variance<out T : Bound> : Projection() {
+    abstract val inner: T
 }
 
-public data class Covariance<out T : Bound>(override val inner: T) : Variance<T>() {
+internal data class Covariance<out T : Bound>(override val inner: T) : Variance<T>() {
     override fun toString(): String = "out"
 }
 
-public data class Contravariance<out T : Bound>(override val inner: T) : Variance<T>() {
+internal data class Contravariance<out T : Bound>(override val inner: T) : Variance<T>() {
     override fun toString(): String = "in"
 }
 
-public data class Invariance<out T : Bound>(override val inner: T) : Variance<T>() {
+internal data class Invariance<out T : Bound>(override val inner: T) : Variance<T>() {
     override fun toString(): String = ""
 }
 
-public object Star : Projection()
+internal object Star : Projection()
 
-public object Void : Bound()
-public object Dynamic : Bound()
+internal object Void : Bound()
+internal object Dynamic : Bound()
 
-public fun Variance<TypeParameter>.withDri(dri: DRI): Variance<TypeParameter> = when (this) {
+@Suppress("unused")
+internal fun Variance<TypeParameter>.withDri(dri: DRI): Variance<TypeParameter> = when (this) {
     is Contravariance -> Contravariance(TypeParameter(dri, inner.name, inner.presentableName))
     is Covariance -> Covariance(TypeParameter(dri, inner.name, inner.presentableName))
     is Invariance -> Invariance(TypeParameter(dri, inner.name, inner.presentableName))
 }
 
-public fun Documentable.dfs(predicate: (Documentable) -> Boolean): Documentable? =
+internal fun Documentable.dfs(predicate: (Documentable) -> Boolean): Documentable? =
     if (predicate(this)) {
         this
     } else {
         this.children.asSequence().mapNotNull { it.dfs(predicate) }.firstOrNull()
     }
 
-public sealed class Visibility(public val name: String)
+internal sealed class Visibility(val name: String)
 
-public sealed class KotlinVisibility(name: String) : Visibility(name) {
-    public object Public : KotlinVisibility("public")
-    public object Private : KotlinVisibility("private")
-    public object Protected : KotlinVisibility("protected")
-    public object Internal : KotlinVisibility("internal")
+internal sealed class KotlinVisibility(name: String) : Visibility(name) {
+    object Public : KotlinVisibility("public")
+    object Private : KotlinVisibility("private")
+    object Protected : KotlinVisibility("protected")
+    object Internal : KotlinVisibility("internal")
 }
 
-public sealed class JavaVisibility(name: String) : Visibility(name) {
-    public object Public : JavaVisibility("public")
-    public object Private : JavaVisibility("private")
-    public object Protected : JavaVisibility("protected")
-    public object Default : JavaVisibility("")
+internal sealed class JavaVisibility(name: String) : Visibility(name) {
+    object Public : JavaVisibility("public")
+    object Private : JavaVisibility("private")
+    object Protected : JavaVisibility("protected")
+    object Default : JavaVisibility("")
 }
 
-public fun <T> SourceSetDependent<T>?.orEmpty(): SourceSetDependent<T> = this ?: emptyMap()
+internal fun <T> SourceSetDependent<T>?.orEmpty(): SourceSetDependent<T> = this ?: emptyMap()
 
-public interface DocumentableSource {
-    public val path: String
+internal interface DocumentableSource {
+    val path: String
 
     /**
      * Computes the first line number of the documentable's declaration/signature/identifier.
@@ -1035,7 +1036,7 @@ public interface DocumentableSource {
      *
      * May return null if the sources could not be found - for example, for synthetic/generated declarations.
      */
-    public fun computeLineNumber(): Int?
+    fun computeLineNumber(): Int?
 }
 
-public data class TypeConstructorWithKind(val typeConstructor: TypeConstructor, val kind: ClassKind)
+internal data class TypeConstructorWithKind(val typeConstructor: TypeConstructor, val kind: ClassKind)

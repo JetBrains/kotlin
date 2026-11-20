@@ -9,6 +9,7 @@ plugins {
     id("d8-configuration")
     id("binaryen-configuration")
     id("nodejs-configuration")
+    id("wasmtime-configuration")
     id("test-inputs-check")
 }
 
@@ -72,6 +73,9 @@ fun Project.customCompilerTest(
         with(binaryenKotlinBuild) {
             setupBinaryen()
         }
+        with(wasmtimeKotlinBuild) {
+            setupWasmtime()
+        }
         val buildFeatures = project.serviceOf<BuildFeatures>()
         if (!buildFeatures.isolatedProjects.active.get()) {
             with(wasmNodeJsKotlinBuild) {
@@ -88,8 +92,11 @@ fun Project.customFirstStageTest(rawVersion: String): TaskProvider<out Task> {
     return customCompilerTest(
         version = version,
         taskName = "testCustomFirstStage_$version",
-        tag = "custom-first-stage"
-    )
+        tag = "custom-first-stage",
+        enableGroupingTestEngine = true,
+    ) {
+        groupingEngineSettings(batchSize = 100, simultaneousBatches = 8)
+    }
 }
 
 fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
@@ -101,7 +108,9 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
         // The custom-second-stage tests are migrated to the two-stage grouping test infrastructure
         // (`AbstractCustomWasmJsCompilerSecondStageTest`), so the grouping test engine must be enabled.
         enableGroupingTestEngine = true,
-    )
+    ) {
+        groupingEngineSettings(batchSize = 100, simultaneousBatches = 8)
+    }
 }
 
 fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task> {
@@ -110,6 +119,7 @@ fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task
         version = version,
         taskName = "testMinimalInAggregate",
         tag = "aggregate",
+        enableGroupingTestEngine = true,
     )
 }
 

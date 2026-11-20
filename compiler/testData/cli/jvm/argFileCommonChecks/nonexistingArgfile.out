@@ -1,2 +1,3 @@
-warning: argfile not found: $TESTDATA_DIR$/nonexisting.argfile
-OK
+error: argfile not found: '$TESTDATA_DIR$/nonexisting.argfile'.
+info: use -help for more information
+COMPILATION_ERROR

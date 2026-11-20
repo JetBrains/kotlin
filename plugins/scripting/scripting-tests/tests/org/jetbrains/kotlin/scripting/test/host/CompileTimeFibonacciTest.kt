@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
+import org.jetbrains.kotlin.config.ParserMode
+import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.test.TestDisposable
@@ -115,6 +117,7 @@ class CompileTimeFibonacciTest {
     ): ResultWithDiagnostics<CompiledScript> {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
             useFir = true
+            parserMode = ParserMode.Psi // `ScriptJvmCompilerFromEnvironment` builds FIR from PSI files, KT-91411
             updateWithBaseCompilerArguments()
             val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration)
             add(

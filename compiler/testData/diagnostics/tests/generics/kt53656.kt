@@ -10,7 +10,7 @@ fun <E, R : SecuredEntity<E>> SecurityCodeAware<E, R>.secured() : R where E : En
     else -> null!!
 }<!>
 class Order : Entity<Int>
-class SecuredOrder(order: Order) : <!INAPPLICABLE_CANDIDATE!>SecuredEntity<<!UPPER_BOUND_VIOLATED!>Order<!>><!>(order)
+class SecuredOrder(order: Order) : SecuredEntity<<!UPPER_BOUND_VIOLATED!>Order<!>>(order)
 fun main() {
     val securedOrder = Order().<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>secured<!>()
 }

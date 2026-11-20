@@ -242,22 +242,9 @@ class MainKtsIT {
                 classpath = listOf(mainKtsJar),
             )
 
-            runWithK2JVMCompiler(
-                scriptPath,
-                listOf("hello"),
-                classpath = listOf(mainKtsJar),
-                additionalArgs = listOf("-Xuse-fir-lt=false"),
-            )
-
             runWithKotlincAndMainKts(
                 scriptPath,
                 listOf("hello"),
-            )
-
-            runWithKotlincAndMainKts(
-                scriptPath,
-                listOf("hello"),
-                additionalArgs = listOf("-Xuse-fir-lt=false"),
             )
         }
     }

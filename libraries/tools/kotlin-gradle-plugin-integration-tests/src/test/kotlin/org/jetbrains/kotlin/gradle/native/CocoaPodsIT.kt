@@ -1112,7 +1112,7 @@ class CocoaPodsIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "debug",
-                "SDK_NAME" to "iphoneos123",
+                "PLATFORM_NAME" to "iphoneos",
                 "ARCHS" to "arm64",
                 "TARGET_BUILD_DIR" to tempDir.absolutePathString(),
                 "FRAMEWORKS_FOLDER_PATH" to "frameworks",
@@ -1136,7 +1136,7 @@ class CocoaPodsIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "debug",
-                "SDK_NAME" to "iphoneos123",
+                "PLATFORM_NAME" to "iphoneos",
                 "ARCHS" to "arm64",
                 "TARGET_BUILD_DIR" to tempDir.absolutePathString(),
                 "FRAMEWORKS_FOLDER_PATH" to "frameworks",
@@ -1163,7 +1163,7 @@ class CocoaPodsIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "debug",
-                "SDK_NAME" to "iphoneos123",
+                "PLATFORM_NAME" to "iphoneos",
                 "ARCHS" to "arm64",
                 "TARGET_BUILD_DIR" to tempDir.absolutePathString(),
                 "FRAMEWORKS_FOLDER_PATH" to "frameworks",
@@ -1224,7 +1224,7 @@ class CocoaPodsIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "debug",
-                "SDK_NAME" to "iphoneos123",
+                "PLATFORM_NAME" to "iphoneos",
                 "ARCHS" to "arm64",
                 "TARGET_BUILD_DIR" to tmp.absolutePathString(),
                 "FRAMEWORKS_FOLDER_PATH" to "frameworks",

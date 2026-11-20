@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME_SETTER
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrStatement
@@ -133,8 +132,18 @@ fun IrStatement.isPartialLinkageRuntimeError(): Boolean {
 }
 
 
+/**
+ * Receives every partial linkage issue that has been logged by the PL engine.
+ */
+fun interface PartialLinkageIssueSink {
+    fun record(message: String, location: PartialLinkageLogger.Location, significance: PartialLinkageIssueSignificance)
+}
+
 // A workaround for KT-58837 until KT-58904 is fixed.
-class PartialLinkageLogger(val diagnosticReporter: IrDiagnosticReporter, val logLevel: PartialLinkageLogLevel) {
+class PartialLinkageLogger(
+    val diagnosticReporter: IrDiagnosticReporter,
+    private val issueSink: PartialLinkageIssueSink? = null,
+) {
     class Location(val moduleName: String, val filePath: String, val lineNumber: Int, val columnNumber: Int) {
         fun render(): StringBuilder = StringBuilder().apply {
             append(moduleName)
@@ -150,6 +159,8 @@ class PartialLinkageLogger(val diagnosticReporter: IrDiagnosticReporter, val log
     }
 
     fun log(message: String, location: Location, significance: PartialLinkageIssueSignificance) {
+        issueSink?.record(message, location, significance)
+
         diagnosticReporter.report(
             significance.toDiagnosticFactory(),
             location.render().append(": ").append(message).toString()

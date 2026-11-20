@@ -123,7 +123,7 @@ class CliJavaModuleFinder(
         val file = moduleRoot.findChild(if (useSig) PsiJavaModule.MODULE_INFO_CLASS + ".sig" else PsiJavaModule.MODULE_INFO_CLS_FILE)
             ?: return null
         val moduleInfo = try {
-            JavaModuleInfo.read(file) { javaFileManager.findClass(JavaClassFinder.Request(it), allScope) } ?: return null
+            readJavaModuleInfo(file) { javaFileManager.findClass(JavaClassFinder.Request(it), allScope) } ?: return null
         } catch (e: FileReadingException) {
             reportError(e.message + "\nCaused by: ${e.cause::class.java.name}: ${e.cause.message}")
             throw CompilationErrorException()

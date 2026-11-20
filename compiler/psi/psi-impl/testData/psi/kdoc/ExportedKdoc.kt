@@ -93,4 +93,30 @@ fun bar(number: Int) {}
  * documentation.
  */
 val topLevelProp: Int
+    /**
+     * Top-level
+     * property
+     * getter
+     * documentation.
+     */
     get() = 0
+
+/**
+ * Top-level
+ * mutable
+ * property
+ * documentation.
+ */
+var topLevelVar: Int = 0
+    /**
+     * Bodyless
+     * getter
+     * documentation.
+     */
+    get
+    /**
+     * Bodyless
+     * setter
+     * documentation.
+     */
+    set

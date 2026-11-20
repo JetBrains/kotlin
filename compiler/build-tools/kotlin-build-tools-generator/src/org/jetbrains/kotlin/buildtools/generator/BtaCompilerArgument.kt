@@ -27,6 +27,7 @@ import kotlin.reflect.full.allSupertypes
  */
 sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
     val name: String,
+    val effectiveCompilerName: String,
     val description: String,
     val valueType: T,
     val delimiter: CodeBlock?,
@@ -38,10 +39,10 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
 
     @OptIn(ExperimentalArgumentApi::class)
     class SSoTCompilerArgument(
-        val effectiveCompilerName: String,
         origin: KotlinCompilerArgument,
     ) : BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>(
         name = origin.name,
+        effectiveCompilerName = origin.calculateName(),
         description = origin.description.current,
         valueType = BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType(origin.argumentType),
         delimiter = origin.toDelimiterBlock(),
@@ -49,9 +50,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         deprecatedSinceVersion = origin.releaseVersionsMetadata.deprecatedVersion,
         removedSinceVersion = origin.releaseVersionsMetadata.removedVersion,
         affectsCompilationOutcome = origin.affectsCompilationOutcome,
-    ) {
-        constructor(origin: KotlinCompilerArgument) : this(origin.calculateName(), origin)
-    }
+    )
 
     class CustomCompilerArgument(
         name: String,
@@ -66,6 +65,9 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         delimiter: String? = null,
     ) : BtaCompilerArgument<BtaCompilerArgumentValueType.CustomArgumentValueType>(
         name = name,
+        effectiveCompilerName = name.removePrefix("X").removePrefix("X")
+            .split("-").joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }
+            .replaceFirstChar(Char::lowercaseChar),
         description = description,
         valueType = valueType,
         delimiter = delimiter?.let { CodeBlock.of(it) },
@@ -131,7 +133,7 @@ object CustomCompilerArguments {
         defaultValue = CodeBlock.of(
             "%M<%T>()",
             MemberName("kotlin.collections", "emptyList"),
-            ClassName(API_ARGUMENTS_PACKAGE, "CompilerPlugin")
+            ClassName(IMPL_ARGUMENTS_PACKAGE, "CompilerPluginImpl")
         ),
     )
 
@@ -149,7 +151,7 @@ object CustomCompilerArguments {
         defaultValue = CodeBlock.of(
             "%M<%T>()",
             MemberName(KOTLIN_COLLECTIONS, "emptyList"),
-            ClassName(API_ARGUMENTS_PACKAGE, "NullabilityAnnotation"),
+            ClassName(IMPL_ARGUMENTS_PACKAGE, "NullabilityAnnotationImpl"),
         ),
     )
 
@@ -160,7 +162,7 @@ object CustomCompilerArguments {
         defaultValue = CodeBlock.of(
             "%M<%T>()",
             MemberName(KOTLIN_COLLECTIONS, "emptyList"),
-            ClassName(API_ARGUMENTS_PACKAGE, "Jsr305"),
+            ClassName(IMPL_ARGUMENTS_PACKAGE, "Jsr305Impl"),
         ),
     )
 
@@ -171,7 +173,7 @@ object CustomCompilerArguments {
         defaultValue = CodeBlock.of(
             "%M<%T>()",
             MemberName(KOTLIN_COLLECTIONS, "emptyList"),
-            ClassName(API_ARGUMENTS_PACKAGE, "WarningLevel"),
+            ClassName(IMPL_ARGUMENTS_PACKAGE, "WarningLevelImpl"),
         ),
     )
 }

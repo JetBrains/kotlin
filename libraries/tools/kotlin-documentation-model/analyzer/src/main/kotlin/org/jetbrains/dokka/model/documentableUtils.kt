@@ -6,10 +6,10 @@ package org.jetbrains.dokka.model
 
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 
-public fun <T> SourceSetDependent<T>.filtered(sourceSets: Set<DokkaSourceSet>): SourceSetDependent<T> = filter { it.key in sourceSets }
-public fun DokkaSourceSet?.filtered(sourceSets: Set<DokkaSourceSet>): DokkaSourceSet? = takeIf { this in sourceSets }
+internal fun <T> SourceSetDependent<T>.filtered(sourceSets: Set<DokkaSourceSet>): SourceSetDependent<T> = filter { it.key in sourceSets }
+internal fun DokkaSourceSet?.filtered(sourceSets: Set<DokkaSourceSet>): DokkaSourceSet? = takeIf { this in sourceSets }
 
-public fun DTypeParameter.filter(filteredSet: Set<DokkaSourceSet>): DTypeParameter? =
+internal fun DTypeParameter.filter(filteredSet: Set<DokkaSourceSet>): DTypeParameter? =
     if (filteredSet.containsAll(sourceSets)) this
     else {
         val intersection = filteredSet.intersect(sourceSets)
@@ -24,4 +24,5 @@ public fun DTypeParameter.filter(filteredSet: Set<DokkaSourceSet>): DTypeParamet
         )
     }
 
-public fun Documentable.isExtension(): Boolean = this is Callable && receiver != null
+@Suppress("unused")
+internal fun Documentable.isExtension(): Boolean = this is Callable && receiver != null

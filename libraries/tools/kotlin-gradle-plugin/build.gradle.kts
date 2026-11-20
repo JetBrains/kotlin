@@ -17,6 +17,7 @@ plugins {
     id("gradle-plugin-common-configuration")
     id("kotlin-git.gradle-build-conventions.binary-compatibility-extended")
     id("kotlin-git.gradle-build-conventions.kgp-npm-tooling-helper")
+    id("kgp-build-utils")
     id("kgp-jacoco-on-the-fly")
     id("kgp-jacoco-instrumenter")
     id("android-sdk-provisioner")
@@ -115,6 +116,7 @@ dependencies {
         commonCompileOnly(project(compilerRuntimeDependency)) { isTransitive = false }
     }
     commonCompileOnly(libs.guava)
+    commonCompileOnly(libs.org.jetbrains.annotations)
     commonCompileOnly(project(":daemon-common")) {
         isTransitive = false
     }
@@ -442,7 +444,7 @@ tasks.named("validatePlugins") {
 }
 
 projectTests {
-    testTask(javaLauncher = JdkMajorVersion.JDK_17_0) {
+    testTask() {
         workingDir = rootDir
     }
 }
@@ -595,7 +597,6 @@ testing {
                 implementation("com.github.gundy:semver4j:0.16.4:nodeps") {
                     exclude(group = "*")
                 }
-                implementation("org.reflections:reflections:0.10.2")
                 implementation(project(":compose-compiler-gradle-plugin"))
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json") {
                     version {
@@ -696,6 +697,29 @@ testing {
                 }
             }
         }
+
+        register<JvmTestSuite>("archTest") {
+            dependencies {
+                implementation(libs.archunit)
+                implementation(project(":kotlin-gradle-plugin-arch-test-utils"))
+            }
+
+            targets.configureEach {
+                testTask.configure {
+                    shouldRunAfter(test)
+                    configureArchUnit(
+                        task = this,
+                        sources = files(
+                            project.sourceSets.main.map { it.output.classesDirs },
+                            project.sourceSets.common.map { it.output.classesDirs },
+                            GradlePluginVariant.entries.map { variant ->
+                                project.sourceSets.named(variant.sourceSetName).map { it.output.classesDirs }
+                            },
+                        ),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -748,6 +772,11 @@ jvmToolchains {
         jdkVersion = JdkMajorVersion.JDK_17_0
         targetBytecodeVersion = JdkMajorVersion.JDK_17_0
     }
+
+    configureForSourceSet("test") {
+        jdkVersion = JdkMajorVersion.JDK_17_0
+        targetBytecodeVersion = JdkMajorVersion.JDK_17_0
+    }
 }
 
 val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
@@ -768,6 +797,9 @@ configurations.named(lincheckTestCompilation.compileDependencyConfigurationName)
     // Reject the main source set Gradle API dependency brought transitevely via test fixtures
     exclude("dev.gradleplugins", "gradle-api")
 }
+
+val archTestCompilation = kotlin.target.compilations.getByName("archTest")
+archTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 
 val acceptLicensesTask = with(androidSdkProvisioner) {
     registerAcceptLicensesTask()
@@ -793,6 +825,7 @@ kotlin {
 
 val generateKgpBuildConstants = registerGenerateKgpBuildConstantsTask {
     defaultYarnVersion = libs.versions.yarn
+    defaultNodeJsVersion = nodejsLtsVersion
 }
 
 kotlin.sourceSets.common {

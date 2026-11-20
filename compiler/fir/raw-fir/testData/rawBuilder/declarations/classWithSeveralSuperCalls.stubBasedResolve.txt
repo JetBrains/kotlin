@@ -1,0 +1,27 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] classWithSeveralSuperCalls.kt
+    public open [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor([ResolvedTo(BODY_RESOLVE)] y: R|kotlin/Int|): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class WithPrimaryConstructor : R|A|, R|B| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithPrimaryConstructor] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|WithPrimaryConstructor| {
+            super<R|A|>(R|<local>/x|.R|kotlin/Int.plus|(Int(1)))
+            super<R|B|>(R|<local>/x|.R|kotlin/Int.plus|(Int(2)))
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class WithImplicitConstructor : R|A|, R|B| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithImplicitConstructor] constructor(): R|WithImplicitConstructor| {
+            super<R|A|>(Int(1).R|kotlin/Int.plus|(Int(2)))
+            super<R|B|>(Int(3).R|kotlin/Int.plus|(Int(4)))
+        }
+
+    }

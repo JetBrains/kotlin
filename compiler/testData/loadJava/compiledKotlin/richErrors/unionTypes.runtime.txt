@@ -1,0 +1,26 @@
+package test
+
+public fun foo1(): @test.Ann kotlin.String
+public fun </*0*/ X, /*1*/ Y> foo2(): @test.Ann test.Outer<X>.Inner<Y>?
+public fun foo3(): @test.Ann suspend () -> kotlin.Unit
+public fun </*0*/ T> foo4(/*0*/ T & Any): @test.Ann T & Any
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Ann : kotlin.Annotation {
+    /*primary*/ public constructor Ann()
+}
+
+public object Bar : kotlin.RichError {
+    /*primary*/ private constructor Bar()
+}
+
+public final class Foo : kotlin.RichError {
+    /*primary*/ public constructor Foo()
+}
+
+public final class Outer</*0*/ T> {
+    /*primary*/ public constructor Outer</*0*/ T>()
+
+    public final inner class Inner</*0*/ R> /*captured type parameters: /*1*/ T*/ {
+        /*primary*/ public constructor Inner</*0*/ R>()
+    }
+}

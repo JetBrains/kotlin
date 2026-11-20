@@ -235,12 +235,20 @@ class BodyResolveContext(
         }
     }
 
+    var lastCompanionBlockOwner: FirClass? = null
+
     @PrivateForInline
     inline fun <T> withCompanionBlockIf(condition: Boolean, f: () -> T): T {
-        return withTowerDataContexts(
-            newContexts = runIf(condition) { regularTowerDataContexts.forCompanionBlock() },
-            f
-        )
+        val oldValue = lastCompanionBlockOwner
+        try {
+            if (condition) lastCompanionBlockOwner = containingClassDeclarations.last()
+            return withTowerDataContexts(
+                newContexts = runIf(condition) { regularTowerDataContexts.forCompanionBlock() },
+                f
+            )
+        } finally {
+            lastCompanionBlockOwner = oldValue
+        }
     }
 
     @PrivateForInline
@@ -594,12 +602,21 @@ class BodyResolveContext(
 
         val statics = base.addCompanionAndStaticScopes(towerElementsForClass)
 
-        val staticsAndCompanion = when (val companionReceiver = towerElementsForClass.companionReceiver) {
+        val companionReceiver = towerElementsForClass.companionReceiver
+
+        val staticsAndCompanion = when (companionReceiver) {
             null -> statics
             else -> base
                 .addReceiver(null, companionReceiver)
                 .addCompanionAndStaticScopes(towerElementsForClass)
         }
+
+        @OptIn(PrivateForInline::class)
+        val forCompanionBlock = regularTowerDataContexts.companionBlockContext
+            ?.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
+            ?.addReceiverIfNotNull(null, companionReceiver)
+            ?.addCompanionAndStaticScopes(towerElementsForClass)
+            ?: staticsAndCompanion
 
         val typeParameterScope = (owner as? FirRegularClass)?.typeParameterScope()
 
@@ -609,7 +626,7 @@ class BodyResolveContext(
         val withTypeParameters = if (typeParameterScope != null) {
             towerDataContext
                 .addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
-                .addReceiverIfNotNull(null, towerElementsForClass.companionReceiver)
+                .addReceiverIfNotNull(null, companionReceiver)
                 .addCompanionAndStaticScopes(towerElementsForClass)
                 // Note: scopes here are in reverse order, so type parameter scope is the most prioritized
                 .addNonLocalScope(typeParameterScope)
@@ -673,7 +690,7 @@ class BodyResolveContext(
             towerDataContext
                 .addReceiver(labelName, inaccessibleThisInHeader)
                 .addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
-                .addReceiverIfNotNull(null, towerElementsForClass.companionReceiver)
+                .addReceiverIfNotNull(null, companionReceiver)
                 .addCompanionAndStaticScopes(towerElementsForClass)
                 .addNonLocalScopeIfNotNull(typeParameterScope)
         } else {
@@ -684,7 +701,7 @@ class BodyResolveContext(
             regular = forMembersResolution,
             forNestedClasses = newTowerDataContextForStaticNestedClasses,
             forCompanionObject = statics,
-            forCompanionBlock = staticsAndCompanion,
+            forCompanionBlock = forCompanionBlock,
             forConstructorHeaders = forConstructorHeader,
             forEnumEntries = scopeForEnumEntries,
             primaryConstructorPureParametersScope = primaryConstructorPureParametersScope,
@@ -1028,7 +1045,7 @@ class BodyResolveContext(
     fun <T> withPropertyAccessor(
         property: FirProperty,
         accessor: FirPropertyAccessor,
-        forContracts: Boolean = false,
+        hideBackingField: Boolean = false,
         f: () -> T
     ): T {
         if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
@@ -1045,7 +1062,7 @@ class BodyResolveContext(
                 storeValueParameterIfNeeded(parameter, holder.session)
             }
 
-            if (!forContracts && !property.isInstanceExtension && property.returnTypeRef !is FirImplicitTypeRef &&
+            if (!hideBackingField && !property.isInstanceExtension && property.returnTypeRef !is FirImplicitTypeRef &&
                 property.symbol is FirRegularPropertySymbol && property.delegate == null &&
                 property.contextParameters.isEmpty()
             ) {

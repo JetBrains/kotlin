@@ -7,7 +7,7 @@ package org.jetbrains.dokka.analysis.test.api.jvm.java
 /**
  * Declares a capability that a `.java` file can be created in the scope of the implementation.
  */
-interface JavaFileCreator {
+internal interface JavaFileCreator {
 
     /**
      * Creates a `.java` file.

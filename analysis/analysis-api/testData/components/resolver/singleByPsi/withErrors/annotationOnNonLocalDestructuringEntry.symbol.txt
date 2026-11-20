@@ -1,5 +1,8 @@
-KtNameReferenceExpression(156,159): 'Ann'
+KtNameReferenceExpression(102,105): 'Ann'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Ann
+    ]

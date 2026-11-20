@@ -9,17 +9,21 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.fail
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Apple Silicon builds")
+@MustRunOnChangesInGradle
 @NativeGradlePluginTests
 class AppleSiliconIT : KGPBaseTest() {
 
     private val host = HostManager.host
 
+    @TestMetadata("appleSilicon")
     @DisplayName("Tests compilation")
     @GradleTest
     fun shouldCompiledSuccessfully(gradleVersion: GradleVersion) {
@@ -44,6 +48,7 @@ class AppleSiliconIT : KGPBaseTest() {
         }
     }
 
+    @TestMetadata("appleSilicon")
     @DisplayName("Tests execution")
     @GradleTest
     fun shouldExecuteTestsSuccessfully(gradleVersion: GradleVersion) {

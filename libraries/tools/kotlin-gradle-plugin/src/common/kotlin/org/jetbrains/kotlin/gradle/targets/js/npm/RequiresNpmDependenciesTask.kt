@@ -8,18 +8,17 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 
 /**
  * A Gradle [org.gradle.api.Task] that uses npm dependencies.
  *
  * @see RequiresNpmDependencies
  */
+@ObsoleteNpmDependencyModel
 interface RequiresNpmDependenciesTask : RequiresNpmDependencies, Task {
 
     /**
@@ -64,4 +63,13 @@ interface RequiresNpmDependenciesTask : RequiresNpmDependencies, Task {
     @InternalKotlinGradlePluginApi
     @get:Internal
     val fileBasedNpmDependencyLocations: ListProperty<String>
+
+    /**
+     * _This is an internal KGP utility and should not be used in user buildscripts._
+     */
+    @InternalKotlinGradlePluginApi
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Optional
+    val fileBasedDependencyDirectories: ConfigurableFileCollection
 }

@@ -20,6 +20,7 @@ dependencies {
     api(project(":native:objcexport-header-generator"))
 
     implementation(project(":core:compiler.common.native"))
+    implementation(project(":compiler:frontend.common"))
     implementation(project(":kotlin-util-klib"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
@@ -30,6 +31,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":native:objcexport-header-generator")))
     testFixturesApi(project(":native:analysis-api-based-test-utils"))
     testImplementation(project(":analysis:analysis-api-standalone"))
+    testRuntimeOnly(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
 }
 
 sourceSets {

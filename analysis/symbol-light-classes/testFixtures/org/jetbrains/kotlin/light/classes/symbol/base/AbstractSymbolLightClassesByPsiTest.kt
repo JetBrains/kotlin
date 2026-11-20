@@ -11,7 +11,9 @@ import com.intellij.psi.PsiEnumConstantInitializer
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.asJava.renderClass
 import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightClassesFromFile
@@ -51,10 +53,18 @@ abstract class AbstractSymbolLightClassesByPsiTest(
             val packageFqName = containingKtFile?.packageDirective?.fqName ?: FqName.ROOT
             Assertions.assertNotNull(finder.findPackage(packageFqName.asString()), "package $packageFqName not found")
 
-            // [JavaElementFinder#findClass] finds facade classes and regular classes, not ones in a script.
-            if (containingKtFile!!.isScript()) continue
             // Skip enum entries
             if (lc is PsiEnumConstantInitializer) continue
+
+            // A fake light class stands for the light class of the same declaration, e.g., in inheritor searches
+            val classOrObject = (lc as? KtLightClass)?.kotlinOrigin
+            if (classOrObject != null) {
+                val fakeLightClass = KotlinAsJavaSupport.getInstance(project).getFakeLightClass(classOrObject)
+                Assertions.assertEquals(lc.qualifiedName, fakeLightClass.qualifiedName, "Fake light class of $classOrObject")
+            }
+
+            // [JavaElementFinder#findClass] finds facade classes and regular classes, not ones in a script.
+            if (containingKtFile!!.isScript()) continue
 
             val fqName = lc.qualifiedName ?: continue
             // [JavaElementFinder#findClass] declines to create a light class for invalid fqName.

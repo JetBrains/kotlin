@@ -49,6 +49,8 @@ object LombokConfigNames {
     val STATIC_NAME = Name.identifier("staticName")
     val STATIC_CONSTRUCTOR = Name.identifier("staticConstructor")
     val FORCE = Name.identifier("force")
+    val LEVEL = Name.identifier("level")
+    val MAKE_FINAL = Name.identifier("makeFinal")
 
     val BUILDER_CLASS_NAME = Name.identifier("builderClassName")
     val BUILD_METHOD_NAME = Name.identifier("buildMethodName")
@@ -110,6 +112,7 @@ object LombokConfigNames {
     const val REQUIRED_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG = "lombok.requiredArgsConstructor.flagUsage"
 
     const val FIELD_DEFAULTS_PRIVATE = "lombok.fieldDefaults.defaultPrivate"
+    const val FIELD_DEFAULTS_FINAL = "lombok.fieldDefaults.defaultFinal"
 }
 
 enum class FlagUsageValue {

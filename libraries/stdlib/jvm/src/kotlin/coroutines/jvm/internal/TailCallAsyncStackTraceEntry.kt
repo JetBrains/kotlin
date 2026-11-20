@@ -6,7 +6,6 @@
 package kotlin.coroutines.jvm.internal
 
 import kotlin.coroutines.Continuation
-import kotlin.coroutines.CoroutineContext
 
 /**
  * This function is called by generated code right before tail-call.
@@ -67,8 +66,8 @@ internal class TailCallBaseContinuationImpl(
      * their values - (2n+1)'st indices, similar to [getSpilledVariableFieldMapping]
      */
     val spilledVariables: Array<Any?>,
-    private val continuation: Continuation<Any?>,
-) : BaseContinuationImpl(continuation) {
+    continuation: Continuation<Any?>,
+) : ContinuationImpl(continuation) {
     override fun invokeSuspend(result: Result<Any?>): Any? {
         // Nothing to do - the function is tail-call
         return result.getOrThrow()
@@ -79,7 +78,4 @@ internal class TailCallBaseContinuationImpl(
         val moduleAndClass = if (moduleName == null) declaringClass else "$moduleName/${declaringClass}"
         return StackTraceElement(moduleAndClass, methodName, fileName, lineNumber)
     }
-
-    override val context: CoroutineContext
-        get() = continuation.context
 }

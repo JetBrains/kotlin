@@ -1,0 +1,118 @@
+plugins {
+    id("common-configuration")
+    id("com.autonomousapps.dependency-analysis")
+    kotlin("jvm")
+    id("share-foreign-java-nullability-annotations")
+    id("java-test-fixtures")
+    id("test-inputs-check")
+    id("test-coverage-convention")
+}
+
+dependencies {
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(project(":compiler:config.jvm"))
+    testFixturesApi(project(":core:language.targets.jvm"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
+    testFixturesImplementation(project(":compiler:fir:fir2ir"))
+    testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
+    testFixturesImplementation(project(":compiler:backend.jvm.lower"))
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
+    testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+
+    testRuntimeOnly(project(":compiler:fir:fir2ir:jvm-backend"))
+    testRuntimeOnly(project(":kotlin-util-klib-abi"))
+    testRuntimeOnly(project(":generators"))
+
+    testRuntimeOnly(intellijCore())
+
+    testFixturesCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
+    testRuntimeOnly(libs.intellij.fastutil)
+
+    thirdPartyAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
+    thirdPartyAnnotationsClasspath(commonDependency("io.vertx", "vertx-codegen"))
+}
+
+kotlin {
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+            "org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess",
+            "org.jetbrains.kotlin.types.model.K2Only",
+        )
+    )
+}
+optInToObsoleteDescriptorBasedAPI()
+
+sourceSets {
+    main { none() }
+    testFixtures { projectDefault() }
+    test { projectDefault() }
+}
+
+projectTests {
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/klib")
+    testData(project(":compiler").isolated, "testData/debug")
+    testData(project(":compiler").isolated, "testData/checkLocalVariablesTable")
+    testData(project(":compiler").isolated, "testData/writeSignature")
+    testData(project(":compiler").isolated, "testData/writeFlags")
+    testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler").isolated, "testData/compileJavaAgainstKotlin")
+    testData(project(":compiler:tests-spec").isolated, "testData")
+
+    val environment = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0, JdkMajorVersion.JDK_25_0)
+    testTask(
+        defineJDKEnvVariables = environment,
+        maxHeapSize = testMaxHeapSizeLarge,
+    )
+
+    testTask(
+        "aggregateTests",
+        defineJDKEnvVariables = environment,
+        skipInLocalBuild = true,
+        maxHeapSize = testMaxHeapSizeLarge,
+    ) {
+        useJUnitPlatform {
+            excludeTags("FirPsiCodegenTest")
+        }
+    }
+
+    testTask(
+        "nightlyTests",
+        defineJDKEnvVariables = environment,
+        skipInLocalBuild = true,
+    ) {
+        useJUnitPlatform {
+            includeTags("FirPsiCodegenTest")
+        }
+    }
+
+    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForJvmTestsKt", generateTestsInBuildDirectory = true)
+
+    withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withTestJar()
+    withScriptingPlugin()
+    withMockJdkRuntime()
+    withStdlibCommon()
+    withAnnotations()
+    withThirdPartyAnnotations()
+    withThirdPartyJsr305()
+    withThirdPartyJava8Annotations()
+    withMockJDKModifiedRuntime()
+    withThirdPartyJava9Annotations()
+}
+
+testsJarToBeUsedAlongWithFixtures()

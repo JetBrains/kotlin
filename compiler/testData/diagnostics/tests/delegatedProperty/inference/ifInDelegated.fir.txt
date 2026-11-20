@@ -19,7 +19,7 @@ FILE: ifInDelegated.kt
         ^getElement (this@R|/getElement|.R|SubstitutionOverride<kotlin/collections/List.get: R|Ref<*>|>|(R|<local>/i|) as R|Ref<E>|)
     }
     public final fun test(list: R|kotlin/collections/List<Ref<*>>|, arg: R|kotlin/Boolean|): R|kotlin/Unit| {
-        lval data: R|kotlin/String|by when () {
+        lval data: R|kotlin/String| by when () {
             R|<local>/arg| ->  {
                 R|<local>/list|.R|/getElement|<R|kotlin/String|>(Int(0))
             }

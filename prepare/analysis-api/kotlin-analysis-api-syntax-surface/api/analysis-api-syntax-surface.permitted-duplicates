@@ -1,0 +1,5 @@
+# Entries which are allowed to be present in more than one JAR of the runtime classpath of 'kotlin-analysis-api-syntax-surface'.
+# One entry name per line. Blank lines and lines starting with '#' are ignored.
+#
+# Prefer fixing the dependency declarations over adding an exception here: for every entry listed below,
+# which of the copies wins is decided by the classpath order.

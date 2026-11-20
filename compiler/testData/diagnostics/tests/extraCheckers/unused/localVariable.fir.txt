@@ -30,7 +30,7 @@ FILE: localVariable.kt
 
     }
     public final fun foo(v: R|kotlin/Int|): R|kotlin/Unit| {
-        lval d: R|kotlin/Int|by Q|Delegate|
+        lval d: R|kotlin/Int| by Q|Delegate|
             local get(): R|kotlin/Int| {
                 ^ D|<local>/d|.R|/Delegate.getValue|(Null(null), ::R|<local>/d|)
             }

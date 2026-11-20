@@ -7,25 +7,21 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.FunctionOrigin
-import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
-import org.jetbrains.kotlin.backend.konan.llvm.standardLlvmSymbolsOrigin
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.CachedEagerInitializedFiles
+import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
+import org.jetbrains.kotlin.konan.target.isCache
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.atMostOne
 
 interface DependenciesTracker {
@@ -89,6 +85,7 @@ internal class DependenciesTrackerImpl(
         private val llvmModuleSpecification: LlvmModuleSpecification,
         private val config: NativeSecondStageCompilationConfig,
         private val context: NativeBackendContext,
+        private val libraryToCache: PartialCacheInfo?,
 ) : DependenciesTracker {
     private data class LibraryFile(val library: KotlinLibrary, val fqName: String, val filePath: String)
 
@@ -104,13 +101,13 @@ internal class DependenciesTrackerImpl(
 
             // TODO(KT-88867): Drop this workaround when KT-88867 is fixed.
             if (config.configuration.konanProducedArtifactKind?.isCache == true) {
-                addIfNotNull(config.libraryToCache?.klib)
+                addAll(config.librariesToCache.keys)
             }
         }
     }
 
     private fun findStdlibFile(fqName: FqName, fileName: String): LibraryFile {
-        val stdlib = (context.standardLlvmSymbolsOrigin as? DeserializedKlibModuleOrigin)?.library
+        val stdlib = context.stdlibModule.kotlinLibrary
                 ?: error("Can't find stdlib")
         val stdlibDeserializer = context.moduleDeserializerProvider.getDeserializerOrNull(stdlib)
                 ?: error("No deserializer for stdlib")
@@ -148,10 +145,7 @@ internal class DependenciesTrackerImpl(
         return if (packageFragment.isFunctionInterfaceFile)
             FileOrigin.StdlibKFunctionImpl
         else {
-            val library = when (val origin = packageFragment.llvmSymbolOrigin) {
-                CurrentKlibModuleOrigin -> config.libraryToCache?.klib?.takeIf { config.producePerFileCache }
-                else -> (origin as DeserializedKlibModuleOrigin).library
-            }
+            val library = packageFragment.module.kotlinLibrary
             when {
                 library == null -> FileOrigin.CurrentFile
                 library.isCInteropLibrary() -> FileOrigin.EntireModule(library)
@@ -227,7 +221,7 @@ internal class DependenciesTrackerImpl(
             val immediateBitcodeDependencies = usefulLibrariesInRTO
                     .filter { it.isExplicitlySpecifiedByUserInCLIArgument || bitcodeIsUsed(it) }
             for (library in immediateBitcodeDependencies) {
-                if (library == context.config.libraryToCache?.klib) continue
+                if (library in config.librariesToCache) continue
                 val cache = context.config.cachedLibraries.getLibraryCache(library)
 
                 if (cache != null) {
@@ -296,6 +290,7 @@ internal class DependenciesTrackerImpl(
         private fun addDependency(dependency: DependenciesTracker.ResolvedDependency) {
             val (library, kind) = dependency
             if (library in moduleDependencies) return
+            if (library in config.librariesToCache) return
             val cachedDependency = context.config.cachedLibraries.getLibraryCache(library)
                     ?: error("Library ${library.path} is expected to be cached")
 
@@ -321,7 +316,6 @@ internal class DependenciesTrackerImpl(
             val usedBitcode = usedBitcode().groupBy { it.file.library }
             val bitcodeModuleDependencies = mutableListOf<DependenciesTracker.ResolvedDependency>()
             val bitcodeFileDependencies = mutableListOf<DependenciesTracker.ResolvedDependency>()
-            val libraryToCache = config.cacheSupport.libraryToCache
             val strategy = libraryToCache?.strategy as? CacheDeserializationStrategy.SingleFile
 
             // Note: Unclear, whether the order of libraries is important or not.
@@ -348,7 +342,8 @@ internal class DependenciesTrackerImpl(
         val allBitcodeDependencies: List<DependenciesTracker.ResolvedDependency> = run {
             val allBitcodeDependencies = mutableMapOf<KotlinLibrary, DependenciesTracker.ResolvedDependency>()
             for (library in usefulLibrariesInRTO) {
-                if (context.config.cachedLibraries.getLibraryCache(library) == null || library == context.config.libraryToCache?.klib)
+                if (library in config.librariesToCache && library != libraryToCache?.klib) continue
+                if (context.config.cachedLibraries.getLibraryCache(library) == null || library == libraryToCache?.klib)
                     allBitcodeDependencies[library] = DependenciesTracker.ResolvedDependency.wholeModule(library)
             }
             for (dependency in allCachedBitcodeDependencies)

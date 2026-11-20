@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
 
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaModuleContainer {
     /**
      * All registered [KaModule]s, excluding [KaNotUnderContentRootModule]s and the built-ins module.

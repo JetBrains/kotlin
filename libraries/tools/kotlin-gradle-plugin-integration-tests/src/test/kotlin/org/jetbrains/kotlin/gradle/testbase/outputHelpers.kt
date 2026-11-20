@@ -29,6 +29,7 @@ private fun taskOutputRegexForInfoLog(
     ^> Task $taskName( FAILED)?$\r?
     ([\s\S]+?)\r?
     ^\s*$\r?
+    (?=^(?:> |BUILD |FAILURE: |\d+ problems? w|See the complete report|\[Incubating] Problems report))
     """.trimIndent()
         .toRegex(RegexOption.MULTILINE)
 

@@ -9,7 +9,6 @@ import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -27,7 +26,7 @@ internal class KaFirLocalClassFromCompilerPluginSymbolPointer(
     private val name: Name,
     private val compilerPluginOrigin: GeneratedDeclarationKey,
     originalSymbol: KaNamedClassSymbol?,
-) : KaBaseCachedSymbolPointer<KaNamedClassSymbol>(originalSymbol) {
+) : KaFirCachedSymbolPointer<KaNamedClassSymbol>(originalSymbol) {
     override fun restoreIfNotCached(analysisSession: KaSession): KaNamedClassSymbol? {
         require(analysisSession is KaFirSession)
         val call = psiPointer.element?.getOrBuildFirSafe<FirFunctionCall>(analysisSession.resolutionFacade) ?: return null

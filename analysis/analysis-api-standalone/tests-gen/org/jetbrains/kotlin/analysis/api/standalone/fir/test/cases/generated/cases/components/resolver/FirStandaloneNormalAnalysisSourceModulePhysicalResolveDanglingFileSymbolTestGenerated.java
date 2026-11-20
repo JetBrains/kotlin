@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractPhysicalResolveDanglingFileSymbolTest;
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.resolver.AbstractPhysicalResolveDanglingFileSymbolTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -60,6 +60,12 @@ public class FirStandaloneNormalAnalysisSourceModulePhysicalResolveDanglingFileS
   @TestMetadata("classSameFile.kt")
   public void testClassSameFile() {
     run("classSameFile.kt");
+  }
+
+  @Test
+  @TestMetadata("expectAndActualClassInLibrarySource.kt")
+  public void testExpectAndActualClassInLibrarySource() {
+    run("expectAndActualClassInLibrarySource.kt");
   }
 
   @Test
@@ -109,6 +115,12 @@ public class FirStandaloneNormalAnalysisSourceModulePhysicalResolveDanglingFileS
     @TestMetadata("constructorValueParameterFromPrecedingParameterDefaultValue.kt")
     public void testConstructorValueParameterFromPrecedingParameterDefaultValue() {
       run("constructorValueParameterFromPrecedingParameterDefaultValue.kt");
+    }
+
+    @Test
+    @TestMetadata("expectAndActualClassInLibrarySource.kt")
+    public void testExpectAndActualClassInLibrarySource() {
+      run("expectAndActualClassInLibrarySource.kt");
     }
 
     @Test
@@ -237,6 +249,12 @@ public class FirStandaloneNormalAnalysisSourceModulePhysicalResolveDanglingFileS
     @TestMetadata("companionObject.kt")
     public void testCompanionObject() {
       run("companionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("expectAndActualClassInLibrarySource.kt")
+    public void testExpectAndActualClassInLibrarySource() {
+      run("expectAndActualClassInLibrarySource.kt");
     }
 
     @Test

@@ -41,10 +41,6 @@ public final class GroupedNewsListDelegateAdapter {
  */
 @kotlin.Metadata()
 public final class HomeFragment {
-    @org.jetbrains.annotations.NotNull()
-    private final kotlin.Unit categoryNewsListPresenter$delegate = null;
-    @org.jetbrains.annotations.NotNull()
-    private final kotlin.Lazy groupedNewsListAdapter$delegate = null;
 
     public HomeFragment() {
         super();
@@ -58,10 +54,14 @@ public final class HomeFragment {
     @java.lang.Deprecated()
     private static void getCategoryNewsListPresenter$annotations() {
     }
+    @org.jetbrains.annotations.NotNull()
+    private final kotlin.Unit categoryNewsListPresenter$delegate = null;
 
     private final GroupedNewsListDelegateAdapter getGroupedNewsListAdapter() {
         return null;
     }
+    @org.jetbrains.annotations.NotNull()
+    private final kotlin.Lazy groupedNewsListAdapter$delegate = null;
 }
 
 ////////////////////

@@ -1,0 +1,93 @@
+@kotlin.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class neg/ArrayMarker {
+    // source: 'Marker.kt'
+    public abstract method value(): neg.Marker$Scope[]
+    public final inner class neg/Marker$Scope
+}
+
+@kotlin.Metadata
+public final class neg/Delegator {
+    // source: 'main.kt'
+    private synthetic final field $$delegate_0: neg.Greeter
+    public method <init>(@org.jetbrains.annotations.NotNull p0: neg.Greeter): void
+    public @neg.ArrayMarker(value=[A]) method arrayWithMissingEntry(): java.lang.String
+    public @neg.Marker method missingEntry(): java.lang.String
+    public @neg.Marker method missingPackage(): java.lang.String
+    public @neg.Marker method missingQualifier(): java.lang.String
+    public @neg.Marker(value=1) method nonEnumNestedField(): java.lang.String
+    public @neg.Marker method objectProperty(): java.lang.String
+    public final inner class neg/Marker$Scope
+}
+
+@kotlin.Metadata
+public final class neg/GreeterImpl {
+    // source: 'main.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method arrayWithMissingEntry(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method missingEntry(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method missingPackage(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method missingQualifier(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method nonEnumNestedField(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method objectProperty(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class neg/Marker$Holder {
+    // source: 'Marker.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: neg.Marker$Holder
+    private final static @org.jetbrains.annotations.NotNull field VALUE: neg.Marker$Scope
+    static method <clinit>(): void
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getVALUE(): neg.Marker$Scope
+    public final inner class neg/Marker$Holder
+    public final inner class neg/Marker$Scope
+}
+
+@kotlin.Metadata
+public final class neg/Marker$Inner$Companion {
+    // source: 'Marker.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final inner class neg/Marker$Inner
+    public final inner class neg/Marker$Inner$Companion
+}
+
+@kotlin.Metadata
+public final class neg/Marker$Inner {
+    // source: 'Marker.kt'
+    public final static field CONST: int
+    public final static @org.jetbrains.annotations.NotNull field Companion: neg.Marker$Inner$Companion
+    static method <clinit>(): void
+    public method <init>(): void
+    public final inner class neg/Marker$Inner
+    public final inner class neg/Marker$Inner$Companion
+}
+
+@kotlin.Metadata
+public final enum class neg/Marker$Scope {
+    // source: 'Marker.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
+    private synthetic final static field $VALUES: neg.Marker$Scope[]
+    public final enum static field A: neg.Marker$Scope
+    public final enum static field B: neg.Marker$Scope
+    private synthetic final static method $values(): neg.Marker$Scope[]
+    static method <clinit>(): void
+    private method <init>(p0: java.lang.String, p1: int): void
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
+    public static method valueOf(p0: java.lang.String): neg.Marker$Scope
+    public static method values(): neg.Marker$Scope[]
+    public final inner class neg/Marker$Scope
+}
+
+@kotlin.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class neg/Marker {
+    // source: 'Marker.kt'
+    public abstract method value(): neg.Marker$Scope
+    public final inner class neg/Marker$Holder
+    public final inner class neg/Marker$Inner
+    public final inner class neg/Marker$Scope
+}

@@ -1,5 +1,11 @@
 public abstract class CListIterator /* test.CListIterator*/ implements test.IListIterator {
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.String next();//  next()
+
+  @java.lang.Override()
+  public boolean hasNext();//  hasNext()
+
+  @java.lang.Override()
   public void add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()

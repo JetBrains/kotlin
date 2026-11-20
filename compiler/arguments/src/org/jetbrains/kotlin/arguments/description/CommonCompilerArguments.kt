@@ -569,21 +569,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
     compilerArgument {
-        name = "Xuse-fir-lt"
-        compilerName = "useFirLT"
-        description = "Compile using the LightTree parser with the frontend IR.".asReleaseDependent()
-        valueType = BooleanType.defaultTrue
-        deprecatedMessage =
-            "The light tree mode is enabled by default, and it will become the only available mode in one of the future releases."
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_7_0,
-            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
-        )
-        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
-    }
-
-    compilerArgument {
         name = "Xmetadata-klib"
         deprecatedName = "Xexpect-actual-linker"
         description = "Produce a klib that only contains the metadata of declarations.".asReleaseDependent()
@@ -1145,18 +1130,6 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
     }
 
     compilerArgument {
-        name = "Xallow-pre-17-runtime-jdk"
-        description = ("Temporarily allow running Kotlin compiler with JDK older than JDK 17. " +
-                "This option will not work starting Kotlin 2.5.20-Beta1. " +
-                "See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.").asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_5_0,
-        )
-    }
-
-    compilerArgument {
         name = "Xallow-reified-type-in-catch"
         description = "Allow 'catch' parameters to have reified types.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
@@ -1409,6 +1382,20 @@ Warning: this flag is not intended for production use. If you want to configure 
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_5_0
+        )
+    }
+
+    compilerArgument {
+        name = "Xrich-errors"
+        description = "Enable experimental language support for Rich Errors.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(RichErrors),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_20
         )
     }
 }

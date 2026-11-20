@@ -4,6 +4,6 @@ class Foo {
 }
 
 class Bar {
-    fun someMethodWithDiffReturnType(): Int
+    fun someMethodWithDiffReturnType(): Int = 0
     fun someMethodWithSameReturnType() = Unit
 }

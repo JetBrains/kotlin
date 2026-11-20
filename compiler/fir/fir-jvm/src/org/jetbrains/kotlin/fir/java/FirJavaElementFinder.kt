@@ -34,13 +34,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
-import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -165,6 +162,12 @@ class FirJavaElementFinder(
             )
         )
 
+        if (firClass.classKind == ClassKind.ENUM_CLASS) {
+            for (enumEntry in firClass.declarations.filterIsInstance<FirEnumEntry>()) {
+                buildEnumConstantStub(enumEntry, classId, stub)
+            }
+        }
+
         val classProperties = firClass.declarations.filterIsInstance<FirProperty>()
         // Note: we must store companion properties in outer clas because java resolver will not find it other way.
         val companionProperties = firClass.companionObjectSymbol?.declarationSymbols?.map { it.fir }?.filterIsInstance<FirProperty>() ?: emptyList()
@@ -192,12 +195,7 @@ class FirJavaElementFinder(
             firClass.typeParameters.filterIsInstance<FirTypeParameter>().map { Pair(it.name.asString(), arrayOf(CommonClassNames.JAVA_LANG_OBJECT)) }
         )
 
-        val superTypeRefs = when {
-            firClass.superTypeRefs.all { it is FirResolvedTypeRef } -> firClass.superTypeRefs
-            else -> firClass.resolveSupertypesOnAir(session)
-        }
-
-        stub.addSupertypesReferencesLists(firClass, superTypeRefs, session)
+        stub.addSupertypesReferencesLists(firClass, firClass.resolveSupertypesOnAir(session), session)
 
         for (nestedClass in firClass.declarations.filterIsInstance<FirRegularClass>()) {
             buildStub(nestedClass, stub)
@@ -208,6 +206,23 @@ class FirJavaElementFinder(
 
     private fun FirAnnotation.findTargets(): List<String> = buildList {
         forEachAnnotationTarget(session) { add(it.identifier) }
+    }
+
+    // Enum entries become ENUM_CONSTANT field stubs, so Java PSI resolves e.g. `Scope.VALUE` to a PsiEnumConstant (KT-90014).
+    private fun buildEnumConstantStub(enumEntry: FirEnumEntry, enumClassId: ClassId, classStub: PsiClassStubImpl<ClsClassImpl>) {
+        val fieldStub = PsiFieldStubImpl(
+            classStub,
+            enumEntry.name.identifier,
+            TypeInfo.fromString(enumClassId.asSingleFqName().asString()),
+            /* initializer = */ null,
+            PsiFieldStubImpl.packFlags(
+                /* isEnumConst = */ true,
+                /* isDeprecated = */ false,
+                /* hasDeprecatedAnnotation = */ false,
+                /* hasDocComment = */ false,
+            ),
+        )
+        PsiModifierListStubImpl(fieldStub, ModifierFlags.PUBLIC_MASK + ModifierFlags.FINAL_MASK + ModifierFlags.STATIC_MASK)
     }
 
     private fun buildFieldStubForConst(firProperty: FirProperty, classStub: PsiClassStubImpl<ClsClassImpl>) {
@@ -255,13 +270,6 @@ class FirJavaElementFinder(
         }
 
         PsiModifierListStubImpl(psiField, ModifierFlags.PUBLIC_MASK + ModifierFlags.FINAL_MASK + ModifierFlags.STATIC_MASK)
-    }
-}
-
-private fun FirRegularClass.resolveSupertypesOnAir(session: FirSession): List<FirTypeRef> {
-    val visitor = FirSupertypeResolverVisitor(session, SupertypeComputationSession(), ScopeSession())
-    return visitor.withFile(session.firProvider.getFirClassifierContainerFile(this.symbol)) {
-        visitor.resolveSpecificClassLikeSupertypes(this, superTypeRefs, resolveRecursively = true)
     }
 }
 
@@ -401,9 +409,9 @@ private fun ConeKotlinType.mapToCanonicalString(session: FirSession): String {
 
 private fun ConeClassLikeType.mapToCanonicalString(session: FirSession): String {
     @Suppress("SuspiciousWhenOverConeKotlinType")
-    return when (this) {
-        is ConeErrorType -> ERROR_TYPE_STUB
-        else -> fullyExpandedType(session).mapToCanonicalNoExpansionString(session)
+    return when (val expandedType = this.fullyExpandedType(session)) {
+        is ConeClassLikeType -> expandedType.mapToCanonicalNoExpansionString(session)
+        else -> ERROR_TYPE_STUB
     }
 }
 

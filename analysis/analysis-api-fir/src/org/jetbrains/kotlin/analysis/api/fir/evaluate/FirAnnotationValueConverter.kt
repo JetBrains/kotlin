@@ -9,11 +9,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
-import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.findAnnotationConstructor
-import org.jetbrains.kotlin.analysis.api.impl.base.*
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.*
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.analysis.api.fir.*
+import org.jetbrains.kotlin.analysis.api.fir.annotations.*
 import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -23,7 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -45,7 +42,7 @@ internal object FirAnnotationValueConverter {
         argumentMapping: Map<Name, FirExpression>,
         builder: KaSymbolByFirBuilder,
     ): List<KaNamedAnnotationValue> = argumentMapping.map { [name, expression] ->
-        KaBaseNamedAnnotationValue(
+        KaFirNamedAnnotationValue(
             name,
             expression.convertConstantExpression(builder) ?: KaUnsupportedAnnotationValueImpl(analysisSession.token),
         )
@@ -133,7 +130,7 @@ internal object FirAnnotationValueConverter {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
                 when (val resolvedSymbol = reference.resolvedSymbol) {
                     is FirConstructorSymbol -> {
-                        val annotationSymbol = resolvedSymbol.getContainingClassSymbol()?.fullyExpandedClass(session) ?: return null
+                        val annotationSymbol = resolvedType.toRegularClassSymbol(session) ?: return null
                         val argumentMapping = buildMap {
                             for ([argumentExpression, valueParameter] in resolvedArgumentMapping?.entries.orEmpty()) {
                                 put(valueParameter.name, argumentExpression)

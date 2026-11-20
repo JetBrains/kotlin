@@ -33,7 +33,6 @@ import org.gradle.tooling.events.task.TaskExecutionResult
 import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
 import org.jetbrains.kotlin.build.report.statistics.HttpReportParameters
@@ -50,6 +49,7 @@ import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.utils.rootProjectName
 import java.lang.management.ManagementFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -57,7 +57,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 internal interface UsesBuildMetricsService : Task {
     @get:Internal
-    val buildMetricsService: Property<BuildMetricsService?>
+    val buildMetricsService: Property<BuildMetricsService>
 }
 
 abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters>, AutoCloseable, OperationCompletionListener,
@@ -70,7 +70,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         val httpParameters: Property<HttpReportParameters>
 
         val projectDir: DirectoryProperty
-        val label: Property<String?>
+        val label: Property<String>
         val projectName: Property<String>
         val kotlinVersion: Property<String>
         val buildConfigurationTags: ListProperty<StatTag>
@@ -179,38 +179,39 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     }
 
     override fun finished(
-        operationDescriptor: BuildOperationDescriptor?,
-        event: OperationFinishEvent?,
+        operationDescriptor: BuildOperationDescriptor,
+        event: OperationFinishEvent,
     ) {
-        val details = operationDescriptor?.details
+        val details = operationDescriptor.details
         if (details is ConfigureProjectBuildOperationType.Details) {
-            if (processedMessages.putIfAbsent(operationDescriptor.id.id, true) != null) {
-                log.debug("Skipping duplicate message with id ${operationDescriptor.id.id}")
+            val operationId = operationDescriptor.id?.id ?: return
+            if (processedMessages.putIfAbsent(operationId, true) != null) {
+                log.debug("Skipping duplicate message with id $operationId")
                 return
             }
 
             val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric> = BuildMetrics()
-            buildMetrics.buildTimes.addTimeMs(GRADLE_CONFIGURATION_TIME, ((event?.endTime ?: 0) - (event?.startTime ?: 0)))
+            buildMetrics.buildTimes.addTimeMs(GRADLE_CONFIGURATION_TIME, event.endTime - event.startTime)
             addConfigurationRecord(
                 getPath(details),
                 OperationFinishEvent::class.java,
-                event?.startTime ?: 0,
-                (event?.endTime ?: 0) - (event?.startTime ?: 0),
+                event.startTime,
+                event.endTime - event.startTime,
                 buildMetrics
             )
         }
     }
 
     override fun progress(
-        operationIdentifier: OperationIdentifier?,
-        operationProgressEvent: OperationProgressEvent?,
+        operationIdentifier: OperationIdentifier,
+        operationProgressEvent: OperationProgressEvent,
     ) {
         //ignore
     }
 
     override fun started(
-        operationDescriptor: BuildOperationDescriptor?,
-        operationStartEvent: OperationStartEvent?,
+        operationDescriptor: BuildOperationDescriptor,
+        operationStartEvent: OperationStartEvent,
     ) {
         //ignore
     }
@@ -253,7 +254,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
 
             return project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {
                 it.parameters.label.set(reportingSettings.buildReportLabel)
-                it.parameters.projectName.set(project.rootProject.name)
+                it.parameters.projectName.set(project.rootProjectName())
                 it.parameters.kotlinVersion.set(kotlinVersion)
                 it.parameters.startParameters.set(getStartParameters(project))
                 it.parameters.reportingSettings.set(reportingSettings)
@@ -291,15 +292,10 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         private fun subscribeForTaskEvents(project: Project, buildMetricServiceProvider: Provider<BuildMetricsService>) {
             val buildScanAdapter = initBuildScanAdapter(project, buildMetricServiceProvider)
             if (buildScanAdapter != null) {
-                subscribeForTaskEventsForBuildScan(project, buildMetricServiceProvider, buildScanAdapter)
+                StatisticsBuildFlowManager.getInstance(project).subscribeForBuildScan(buildScanAdapter)
             }
 
-            val gradle80withBuildScanReport =
-                GradleVersion.current().baseVersion == GradleVersion.version("8.0") && buildScanAdapter != null
-
-            if (!gradle80withBuildScanReport) {
-                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildMetricServiceProvider)
-            }
+            BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildMetricServiceProvider)
         }
 
         private fun initBuildScanAdapter(
@@ -332,39 +328,6 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             }
 
             return buildScan
-        }
-
-        private fun subscribeForTaskEventsForBuildScan(
-            project: Project,
-            buildMetricServiceProvider: Provider<BuildMetricsService>,
-            buildScanAdapter: BuildScanAdapter,
-        ) {
-            when {
-                GradleVersion.current().baseVersion < GradleVersion.version("8.0") -> {
-                    buildScanAdapter.buildFinished {
-                        buildMetricServiceProvider.map { it.addBuildScanReport(buildScanAdapter) }.get()
-                    }
-                }
-                GradleVersion.current().baseVersion < GradleVersion.version("8.1") -> {
-                    val buildMetricService = buildMetricServiceProvider.get()
-                    buildMetricService.buildReportService.initBuildScanTags(buildScanAdapter, buildMetricService.parameters.label.orNull)
-                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
-                        OperationCompletionListener { event ->
-                            if (event is TaskFinishEvent) {
-                                val buildOperation = buildMetricService.updateBuildOperationRecord(event)
-                                val buildParameters = buildMetricService.parameters.toBuildReportParameters()
-                                val buildReportService = buildMetricServiceProvider.map { it.buildReportService }.get()
-                                buildReportService.addBuildScanReport(event, buildOperation, buildParameters, buildScanAdapter)
-                                buildReportService.onFinish(event, buildOperation, buildParameters)
-                            }
-                        }
-
-                    })
-                }
-                else -> {
-                    StatisticsBuildFlowManager.getInstance(project).subscribeForBuildScan(buildScanAdapter)
-                }
-            }
         }
 
         fun registerIfAbsent(project: Project, buildOperationListenerManager: BuildOperationListenerManager) =

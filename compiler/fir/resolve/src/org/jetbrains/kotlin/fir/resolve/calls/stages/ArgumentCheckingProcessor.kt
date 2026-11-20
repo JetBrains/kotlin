@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor.argumentTypeWithCustomConversion
@@ -313,7 +314,7 @@ internal object ArgumentCheckingProcessor {
         when {
             isReceiver && isDispatch -> {
                 if (!expectedType.isMarkedOrFlexiblyNullable && argumentType.isMarkedNullable) {
-                    reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
+                    reportDiagnostic(InapplicableWrongReceiver())
                 }
             }
 
@@ -348,7 +349,7 @@ internal object ArgumentCheckingProcessor {
                 val nullableExpectedType = expectedType.withNullability(nullable = true, session.typeContext)
 
                 if (csBuilder.addSubtypeConstraintIfCompatible(
-                        argumentType.applyIf(argumentType is ConeUnionType) { argumentType.primaryType },
+                        argumentType.fullyExpandedType().primaryTypeIfUnion(),
                         nullableExpectedType,
                         position,
                     )
@@ -359,7 +360,7 @@ internal object ArgumentCheckingProcessor {
                     reportDiagnostic(InapplicableUnsafeReceiver(actualType))
                 } else {
                     csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
-                    reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
+                    reportDiagnostic(InapplicableWrongReceiver())
                 }
             }
         }
@@ -646,7 +647,7 @@ internal object ArgumentCheckingProcessor {
         }.withNullability(expectedFunctionType.isMarkedNullable, c.session.typeContext)
 
         val typeArguments =
-            functionType.typeArguments.map { it.type ?: c.session.builtinTypes.nullableAnyType.coneType }
+            functionType.typeArguments.map { it.type ?: StandardTypes.NullableAny }
                 .ifEmpty { return null }
         return ConversionData(
             typeAfterConversion = createFunctionType(

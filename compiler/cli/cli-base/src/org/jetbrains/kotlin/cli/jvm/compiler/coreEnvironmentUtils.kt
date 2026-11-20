@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
-import org.jetbrains.kotlin.extensions.PreprocessedFileCreator
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.psi.KtFile
@@ -45,8 +44,6 @@ fun List<KotlinSourceRoot>.forAllFiles(
 
     val localFileSystem = VirtualFileManager.getInstance()
         .getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-
-    val virtualFileCreator = PreprocessedFileCreator(project)
 
     var pluginsConfigured = false
     fun ensurePluginsConfigured() {
@@ -71,7 +68,7 @@ fun List<KotlinSourceRoot>.forAllFiles(
             }
             isKotlin
         },
-        convertToSourceFiles = { listOf(virtualFileCreator.create(it)) }
+        convertToSourceFiles = { listOf(it) }
     ).forEach { filesInfo ->
         filesInfo.sourceFiles.forEach {
             body(it, filesInfo.isCommon, filesInfo.moduleName)

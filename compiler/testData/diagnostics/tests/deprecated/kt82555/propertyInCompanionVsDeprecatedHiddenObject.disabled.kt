@@ -1,5 +1,5 @@
 // LANGUAGE_FEATURE_TOGGLED: SkipHiddenObjectsInResolution
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 
 class C {
     companion object {
