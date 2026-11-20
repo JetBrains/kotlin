@@ -51,6 +51,8 @@ class FunctionReferenceBuilder(
     private val generatorContext: IrGeneratorContext,
     private val currentScopeOwnerSymbol: IrSymbol,
     private val irTypeSystemContext: IrTypeSystemContext,
+    // The JS and Wasm backends treat a class of the JVM origins, matched by name, as their own lambda class
+    private val isJvm: Boolean,
 ) {
     private val callee = irFunctionExpression.function
     private val superMethod =
@@ -59,7 +61,7 @@ class FunctionReferenceBuilder(
     private val functionReferenceClass = generatorContext.irFactory.buildClass {
         setSourceRange(irFunctionExpression)
         visibility = DescriptorVisibilities.LOCAL
-        origin = JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+        if (isJvm) origin = JvmLoweredDeclarationOrigin.LAMBDA_IMPL
         name = SpecialNames.NO_NAME_PROVIDED
     }.apply {
         parent = currentDeclarationParent
@@ -84,7 +86,7 @@ class FunctionReferenceBuilder(
 
     private fun createConstructor(): IrConstructor =
         functionReferenceClass.addConstructor {
-            origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
+            if (isJvm) origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
             returnType = functionReferenceClass.defaultType
             isPrimary = true
         }.apply {
@@ -109,6 +111,7 @@ class FunctionReferenceBuilder(
             returnType = callee.returnType
             isSuspend = callee.isSuspend
         }.apply {
+            isComposableFunInterfaceImplementation = true
             overriddenSymbols += superMethod
             parameters += parentAsClass.thisReceiver!!.copyTo(this)
             createLambdaInvokeMethod()
