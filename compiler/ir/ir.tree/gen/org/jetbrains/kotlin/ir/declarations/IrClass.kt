@@ -8,8 +8,10 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -22,9 +24,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.class]
  */
 abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrDeclarationWithVisibility, IrTypeParametersContainer, IrDeclarationContainer, IrMetadataSourceOwner {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ClassDescriptor
-
     abstract override val symbol: IrClassSymbol
 
     abstract var kind: ClassKind

@@ -8,8 +8,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -21,9 +19,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.field]
  */
 abstract class IrField : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrDeclarationWithVisibility, IrDeclarationParent, IrMetadataSourceOwner {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: PropertyDescriptor
-
     abstract override val symbol: IrFieldSymbol
 
     abstract var type: IrType

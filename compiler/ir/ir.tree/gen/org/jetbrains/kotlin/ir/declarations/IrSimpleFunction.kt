@@ -8,8 +8,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -19,9 +17,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.simpleFunction]
  */
 abstract class IrSimpleFunction : IrFunction(), IrOverridableDeclaration<IrSimpleFunctionSymbol> {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: FunctionDescriptor
-
     abstract override val symbol: IrSimpleFunctionSymbol
 
     abstract override var overriddenSymbols: List<IrSimpleFunctionSymbol>

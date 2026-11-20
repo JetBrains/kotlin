@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -13,13 +14,11 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
-import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
-import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
@@ -29,9 +28,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 /**
  * Determine if the [IrDeclaration] is from a C-interop library.
  *
- * Note: This implementation accesses FIR only when `this` is a lazy Fir2Ir declaration, and accesses descriptors
- * only when `this` is a LazyIr declaration. Thus, it becomes possible to use this function with deserialized
- * pure IR where FIR and descriptors might be unavailable.
+ * Note: This implementation accesses FIR only when `this` is a lazy Fir2Ir declaration, and accesses KotlinLibrary
+ * otherwise. Thus, it becomes possible to use this function with deserialized pure IR where FIR might be unavailable.
  */
 fun IrDeclaration.isFromCInteropLibrary(): Boolean {
     // We need to find top-level non-accessor declaration, because
@@ -39,12 +37,12 @@ fun IrDeclaration.isFromCInteropLibrary(): Boolean {
     //  - K2 metadata deserializer doesn't set containerSource for property accessors.
     val topLevelDeclaration = findTopLevelDeclaration().propertyIfAccessor()
 
-    val containerSource = if (topLevelDeclaration is AbstractFir2IrLazyDeclaration<*>)
-        getSourceElementFromFir(topLevelDeclaration)
-    else
-        getSourceElementFromDescriptor(topLevelDeclaration)
-
-    return containerSource is KlibDeserializedContainerSource && containerSource.klib.isCInteropLibrary()
+    if (topLevelDeclaration is AbstractFir2IrLazyDeclaration<*>) {
+        val containerSource = getSourceElementFromFir(topLevelDeclaration)
+        return containerSource is KlibDeserializedContainerSource && containerSource.klib.isCInteropLibrary()
+    } else {
+        return topLevelDeclaration.moduleFragment.kotlinLibrary?.isCInteropLibrary() == true
+    }
 }
 
 /**
@@ -64,14 +62,6 @@ private fun getSourceElementFromFir(topLevelLazyFir2IrDeclaration: AbstractFir2I
         is FirClassLikeDeclaration -> firDeclaration.sourceElement
         else -> null
     }
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-private fun getSourceElementFromDescriptor(topLevelDeclaration: IrDeclaration): SourceElement? {
-    val descriptor = topLevelDeclaration.getPackageFragment().symbol.descriptor
-    // FirPackageFragmentDescriptor does not implement getSource
-    if (descriptor is FirPackageFragmentDescriptor) return null
-    return descriptor.source
-}
 
 private tailrec fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when (val parent = this.parent) {
     is IrDeclaration -> parent.findTopLevelDeclaration()

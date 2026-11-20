@@ -10,9 +10,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -29,10 +27,6 @@ class IrReplSnippetImpl(
     override var attributeOwnerId: IrElement = this
 
     override var annotations: List<IrAnnotation> = emptyList()
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: DeclarationDescriptor
-        get() = symbol.descriptor
 
     override var origin: IrDeclarationOrigin = REPL_SNIPPET_ORIGIN
 

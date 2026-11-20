@@ -10,10 +10,8 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -38,10 +36,6 @@ class IrScriptImpl(
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
     override var metadata: MetadataSource? = null
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ScriptDescriptor
-        get() = symbol.descriptor
 
     override var thisReceiver: IrValueParameter? = null
 

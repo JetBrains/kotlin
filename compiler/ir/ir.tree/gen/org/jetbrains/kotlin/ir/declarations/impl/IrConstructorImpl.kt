@@ -10,11 +10,9 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -48,10 +46,6 @@ class IrConstructorImpl @IrImplementationDetail constructor(
     override lateinit var returnType: IrType
 
     override var body: IrBody? = null
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassConstructorDescriptor
-        get() = symbol.descriptor
 
     init {
         symbol.bind(this)
