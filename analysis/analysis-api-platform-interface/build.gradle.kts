@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":core:language.targets.jvm"))
     implementation(project(":compiler:util"))
     implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":compiler:psi:psi-utils"))
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":core:compiler.common"))
     implementation(project(":analysis:analysis-api"))

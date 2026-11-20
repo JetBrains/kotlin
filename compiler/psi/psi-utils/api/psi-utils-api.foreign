@@ -1,3 +1,5 @@
+org/jetbrains/kotlin/name/FqName
 org/jetbrains/kotlin/psi/KtExperimentalApi
+org/jetbrains/kotlin/psi/KtFile
 org/jetbrains/kotlin/psi/KtNamedDeclaration
 org/jetbrains/kotlin/psi/KtSimpleNameExpression

@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.fileClasses
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmFileClassNaming
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS_SHORT
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_PACKAGE_NAME_SHORT
-import org.jetbrains.kotlin.name.JvmStandardClassIds.MULTIFILE_PART_NAME_DELIMITER
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -27,42 +26,25 @@ object JvmFileClassUtil {
 
     @JvmStatic
     fun manglePartName(facadeName: String, fileName: String): String =
-        "$facadeName$MULTIFILE_PART_NAME_DELIMITER${PackagePartClassUtils.getFilePartShortName(fileName)}"
+        JvmFileClassNaming.multifileClassPartName(facadeName, fileName)
 
     @JvmStatic
     fun getFileClassInfoNoResolve(file: KtFile): JvmFileClassInfo {
-        val parsedAnnotations = parseJvmNameOnFileNoResolve(file)
-        val packageFqName = parsedAnnotations?.jvmPackageName ?: file.packageFqName
+        val fileClassFqName = file.jvmFileClassFqName
+        val facadeClassFqName = file.jvmFacadeClassFqName
         return when {
-            parsedAnnotations != null -> {
-                val simpleName = parsedAnnotations.jvmName ?: PackagePartClassUtils.getFilePartShortName(file.name)
-                val facadeClassFqName = packageFqName.child(Name.identifier(simpleName))
-                when {
-                    parsedAnnotations.isMultifileClass -> JvmMultifileClassPartInfo(
-                        fileClassFqName = packageFqName.child(Name.identifier(manglePartName(simpleName, file.name))),
-                        facadeClassFqName = facadeClassFqName
-                    )
-
-                    else -> JvmSimpleFileClassInfo(facadeClassFqName, true)
-                }
-            }
-
-            else -> JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(packageFqName, file.name), false)
+            fileClassFqName != facadeClassFqName -> JvmMultifileClassPartInfo(fileClassFqName, facadeClassFqName)
+            else -> JvmSimpleFileClassInfo(fileClassFqName, withJvmName = hasJvmNameOrJvmPackageName(file))
         }
     }
 
-    private fun parseJvmNameOnFileNoResolve(file: KtFile): ParsedJvmFileClassAnnotations? {
+    private fun hasJvmNameOrJvmPackageName(file: KtFile): Boolean {
         val jvmNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JVM_NAME_SHORT)
         val jvmName = jvmNameAnnotation?.let(this::getLiteralStringFromAnnotation)?.takeIf(Name::isValidIdentifier)
+        if (jvmName != null) return true
 
         val jvmPackageNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JVM_PACKAGE_NAME_SHORT)
-        val jvmPackageName = jvmPackageNameAnnotation?.let(this::getLiteralStringFromAnnotation)?.let(::FqName)
-
-        if (jvmName == null && jvmPackageName == null) return null
-
-        val isMultifileClass = file.isJvmMultifileClassFile
-
-        return ParsedJvmFileClassAnnotations(jvmName, jvmPackageName, isMultifileClass)
+        return jvmPackageNameAnnotation?.let(this::getLiteralStringFromAnnotation) != null
     }
 
     @JvmStatic
@@ -88,8 +70,6 @@ object JvmFileClassUtil {
     }
 }
 
-internal class ParsedJvmFileClassAnnotations(val jvmName: String?, val jvmPackageName: FqName?, val isMultifileClass: Boolean)
-
 val KtFile.fileClassInfo: JvmFileClassInfo
     get() {
         return CachedValuesManager.getCachedValue(this) {
@@ -99,9 +79,7 @@ val KtFile.fileClassInfo: JvmFileClassInfo
 
 val KtFile.javaFileFacadeFqName: FqName
     get() {
-        val facadeFqName =
-            if (isCompiled) packageFqName.child(Name.identifier(virtualFile.nameWithoutExtension))
-            else this.fileClassInfo.facadeClassFqName
+        val facadeFqName = jvmFacadeClassFqName
 
         if (!Name.isValidIdentifier(facadeFqName.shortName().identifier)) {
             LOG.error(
