@@ -15,12 +15,8 @@
  *   3. add the per-project `severity("warn")` overrides to the convention.
  *
  * The lists are generated from the warnings in
- * `build/reports/dependency-analysis/build-health-report.txt` (baseline: 2026-11-18, master; run with
- * `-Pkotlin.native.enabled=true`). The dominant families behind the entries: IntelliJ platform jars shipping the
- * same classes as both `intellij-core-implementation` and the standalone `syntax-api` artifacts, fat published
- * artifacts consumed in-repo, and fat compiler jars on test classpaths. (The abi-comparator fat jar used to
- * embed kotlin-stdlib and org.jetbrains:annotations classes on test classpaths; that family pruned itself from
- * the lists once the jar was slimmed.)
+ * `build/reports/dependency-analysis/build-health-report.txt` (baseline: 2026-11-19, run with
+ * `-Pkotlin.native.enabled=true`).
  *
  * The TeamCity BuildHealth build runs `:buildHealth` with `-Pkotlin.native.enabled=true`, which adds
  * Kotlin/Native-only projects to the analysis and changes some native modules' classpaths, so its report contains
@@ -118,7 +114,6 @@ object BuildHealthBaselines {
         ":kotlinx-metadata-klib",
         ":kotlinx-serialization-compiler-plugin",
         ":kotlinx-serialization-compiler-plugin.k2",
-        ":libraries:tools:abi-comparator",
         ":libraries:tools:analysis-api-based-klib-reader",
         ":native:base",
         ":native:cinterop.deserialization",
@@ -150,8 +145,6 @@ object BuildHealthBaselines {
         ":repo:codebase-tests",
         ":test-instrumenter",
         ":tools:kotlin-documentation-model:analyzer",
-        ":tools:kotlinp-jvm",
-        ":tools:kotlinp-klib",
     )
 
     // Modules that additionally have duplicate-classes warnings when Kotlin/Native is enabled — the CI BuildHealth
