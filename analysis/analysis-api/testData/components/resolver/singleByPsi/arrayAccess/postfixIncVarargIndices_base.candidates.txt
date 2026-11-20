@@ -1,0 +1,36 @@
+KtArrayAccessExpression(174,184): 'b[1, 2, 3]'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = b
+        isSafeNavigation = false
+        type = B
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = B
+        symbol = /B.get(<dispatch receiver>: B, vararg indices: kotlin.Int): B
+        valueParameters = [
+          KaVariableSignature:
+            name = indices
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg indices: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /B.get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = indices
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = vararg indices: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true

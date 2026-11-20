@@ -1,0 +1,115 @@
+KtOperationReferenceExpression(173,175): '+='
+  KaCompoundArrayAccessCallResolutionAttempt:
+    call = KaCompoundArrayAccessCall:
+      compoundOperation = KaCompoundAssignOperation:
+        kind = PLUS_ASSIGN
+        operand = 1
+        operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = b["key"]
+            isSafeNavigation = false
+            type = B
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = B
+            symbol = /B.plus(<dispatch receiver>: B, other: kotlin.Int): B
+            valueParameters = [
+              KaVariableSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = other: kotlin.Int
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = /B.plus
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {
+            b["key"] -> (KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              contextParameters = []
+              callableId = null)
+          }
+      getterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = b
+          isSafeNavigation = false
+          type = B
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = B
+          symbol = /B.get(<dispatch receiver>: B, i: I): B
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = I
+              symbol = i: I
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /B.get
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "key" -> (KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = I
+            symbol = i: I
+            contextParameters = []
+            callableId = null)
+        }
+      indexArguments = [
+        "key"
+      ]
+      setterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = b
+          isSafeNavigation = false
+          type = B
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /B.set(<dispatch receiver>: B, i: kotlin.String, value: B): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.String
+              symbol = i: kotlin.String
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = B
+              symbol = value: B
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /B.set
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "key" -> (KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = B
+            symbol = value: B
+            contextParameters = []
+            callableId = null)
+        }

@@ -1,0 +1,118 @@
+KtOperationReferenceExpression(196,198): '+='
+  KaApplicableCallCandidate:
+    candidate = KaCompoundArrayAccessCall:
+      compoundOperation = KaCompoundAssignOperation:
+        kind = PLUS_ASSIGN
+        operand = 1
+        operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = b[1, 2, 3]
+            isSafeNavigation = false
+            type = B
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = B
+            symbol = /B.plus(<dispatch receiver>: B, other: kotlin.Int): B
+            valueParameters = [
+              KaVariableSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = other: kotlin.Int
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = /B.plus
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {
+            b[1, 2, 3] -> (KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              contextParameters = []
+              callableId = null)
+          }
+      getterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = b
+          isSafeNavigation = false
+          type = B
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = B
+          symbol = /B.get(<dispatch receiver>: B, vararg indices: kotlin.Int): B
+          valueParameters = [
+            KaVariableSignature:
+              name = indices
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = vararg indices: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /B.get
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          1 -> (KaVariableSignature:
+            name = indices
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg indices: kotlin.Int
+            contextParameters = []
+            callableId = null)
+        }
+      indexArguments = [
+        1,
+        2,
+        3
+      ]
+      setterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = b
+          isSafeNavigation = false
+          type = B
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /B.set(<dispatch receiver>: B, vararg indices: kotlin.Int, value: B): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = indices
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = vararg indices: kotlin.Int
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = B
+              symbol = value: B
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /B.set
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          3 -> (KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = B
+            symbol = value: B
+            contextParameters = []
+            callableId = null)
+        }
+    isInBestCandidates = true

@@ -1,0 +1,49 @@
+KtArrayAccessExpression(178,195): 'b[x, x as String]'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = b
+        isSafeNavigation = false
+        type = B
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = B
+        symbol = /B.get(<dispatch receiver>: B, i: kotlin.Any, j: kotlin.String): B
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Any
+            symbol = i: kotlin.Any
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = j
+            receiverType = null
+            returnType = kotlin.String
+            symbol = j: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /B.get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        x -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = i: kotlin.Any
+          contextParameters = []
+          callableId = null),
+        x as String -> (KaVariableSignature:
+          name = j
+          receiverType = null
+          returnType = kotlin.String
+          symbol = j: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }

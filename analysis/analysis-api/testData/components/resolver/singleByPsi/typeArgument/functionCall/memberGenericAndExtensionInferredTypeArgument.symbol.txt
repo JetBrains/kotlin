@@ -1,0 +1,5 @@
+KtDotQualifiedExpression(90,100): 'c.foo("x")'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /C.foo(<dispatch receiver>: C, t: T): kotlin.Unit
+    ]
