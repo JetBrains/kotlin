@@ -334,6 +334,7 @@ private fun createKaCallResolutionAttempt(
     calleeReference: FirReference?,
     candidate: Candidate?,
     resolveFragmentOfCall: Boolean,
+    handleCompoundAccess: Boolean = true,
 ): KaCallResolutionAttempt? {
     if (fir is FirSmartCastExpression) {
         return (fir.originalExpression as? FirResolvable)?.let {
@@ -343,17 +344,24 @@ private fun createKaCallResolutionAttempt(
                 calleeReference = calleeReference,
                 candidate = candidate,
                 resolveFragmentOfCall = resolveFragmentOfCall,
+                handleCompoundAccess = handleCompoundAccess,
             )
         }
     }
 
     val mappingResult = computeTypeArgumentsMapping(fir, calleeReference, candidate) ?: return null
-    return handleCompoundAccessCall(
-        psi = psi,
-        fir = fir,
-        resolveFragmentOfCall = resolveFragmentOfCall,
-        typeArgumentsMapping = mappingResult.typeArgumentsMapping,
-    ) ?: buildKaCall(
+    val compoundAccessAttempt = if (handleCompoundAccess) {
+        handleCompoundAccessCall(
+            psi = psi,
+            fir = fir,
+            resolveFragmentOfCall = resolveFragmentOfCall,
+            typeArgumentsMapping = mappingResult.typeArgumentsMapping,
+        )
+    } else {
+        null
+    }
+
+    return compoundAccessAttempt ?: buildKaCall(
         psi = psi,
         fir = fir,
         calleeReference = calleeReference,
@@ -677,6 +685,7 @@ internal fun transformErrorReference(
     diagnosticHolder: FirDiagnosticHolder,
     calleeReference: FirNamedReference?,
     resolveFragmentOfCall: Boolean,
+    handleCompoundAccess: Boolean = true,
 ): KaSimpleCallResolutionError {
     val diagnostic = diagnosticHolder.diagnostic
     val kaDiagnostic = diagnosticHolder.createKaDiagnostic()
@@ -697,6 +706,7 @@ internal fun transformErrorReference(
                     calleeReference = calleeReference,
                     candidate = it,
                     resolveFragmentOfCall = resolveFragmentOfCall,
+                    handleCompoundAccess = handleCompoundAccess,
                 ) as? KaSimpleCallResolutionSuccess
 
                 attempt?.call
@@ -710,7 +720,8 @@ internal fun transformErrorReference(
             fir = call,
             calleeReference = calleeReference,
             candidate = null,
-            resolveFragmentOfCall = resolveFragmentOfCall
+            resolveFragmentOfCall = resolveFragmentOfCall,
+            handleCompoundAccess = handleCompoundAccess,
         ) as? KaSimpleCallResolutionSuccess
 
         listOfNotNull(attempt?.call)
@@ -733,6 +744,8 @@ internal fun findErrorCall(
         diagnosticHolder = ref,
         calleeReference = ref,
         resolveFragmentOfCall = false,
+        // `call` is a part of a compound access, so its candidates are its own calls, not the compound access again
+        handleCompoundAccess = false,
     )
 
     else -> null
