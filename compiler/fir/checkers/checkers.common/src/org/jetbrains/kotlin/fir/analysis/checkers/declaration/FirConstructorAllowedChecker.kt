@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.extractModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object FirConstructorAllowedChecker : FirConstructorChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -42,10 +43,12 @@ object FirConstructorAllowedChecker : FirConstructorChecker(MppCheckerKind.Commo
             ClassKind.CLASS -> when (containingClass) {
                 is FirAnonymousObjectSymbol -> reporter.reportOn(source, FirErrors.CONSTRUCTOR_IN_OBJECT)
                 is FirRegularClassSymbol -> if (containingClass.modality == Modality.SEALED) {
-                    val modifierList = source.getModifierList() ?: return
+                    val modifierList = source.extractModifierList() ?: return
                     val hasIllegalModifier = modifierList.modifiers.any {
-                        val token = it.token
-                        token in KtTokens.VISIBILITY_MODIFIERS && token != KtTokens.PROTECTED_KEYWORD && token != KtTokens.PRIVATE_KEYWORD
+                        val tokenId = it.tokenId
+                        tokenId in KotlinSyntaxIdSets.VISIBILITY_MODIFIER &&
+                                tokenId != KotlinSyntaxTokenIds.PROTECTED_MODIFIER &&
+                                tokenId != KotlinSyntaxTokenIds.PRIVATE_MODIFIER
                     }
                     if (hasIllegalModifier) {
                         reporter.reportOn(source, FirErrors.NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED)

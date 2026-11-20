@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -169,7 +168,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
     context(syntax: FirSyntaxComponent<*>)
     private fun KtSourceElement.syntaxKind(originalDestructuringDeclaration: FirVariable): DestructuringSyntax {
         val hasOpeningSquareBracket = originalDestructuringDeclaration.source?.findSquareBracket() != null
-        val hasValVar = getChild(KotlinSyntaxIdSets.VAL_VAR, depth = 1) != null
+        val hasValVar = with(syntax) { findValOrVarKeywordSource() } != null
 
         return when (hasOpeningSquareBracket) {
             true -> when (hasValVar) {
@@ -187,7 +186,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
     private fun checkFullFormLanguageFeature(source: KtSourceElement) {
         if (LanguageFeature.NameBasedDestructuring.isEnabled()) return
 
-        withSyntax { source.getChild(KotlinSyntaxIdSets.VAL_VAR, depth = 1) }?.let {
+        withSyntax { source.findValOrVarKeywordSource() }?.let {
             reporter.reportOn(
                 it,
                 FirErrors.UNSUPPORTED_FEATURE,

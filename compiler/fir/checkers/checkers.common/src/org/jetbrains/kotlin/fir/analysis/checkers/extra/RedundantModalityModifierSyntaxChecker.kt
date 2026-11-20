@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.diagnostics.modalityModifier
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.shouldReportOpenInInterface
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.extractModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.redundantModalities
 import org.jetbrains.kotlin.fir.analysis.checkers.resolvedStatus
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDeclarationSyntaxChecker
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
 
@@ -65,6 +66,7 @@ object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirD
     /**
      * [KtTokens.OPEN_KEYWORD] in interfaces is already reported by [FirErrors.REDUNDANT_OPEN_IN_INTERFACE].
      */
+    context(context: CheckerContext)
     private val FirDeclaration.declaresOpenModality: Boolean
-        get() = source?.getModifierList()?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
+        get() = source?.extractModifierList()?.modifiers?.any { it.tokenId == KotlinSyntaxTokenIds.OPEN_MODIFIER } == true
 }

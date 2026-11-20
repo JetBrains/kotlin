@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object FirWebCommonExternalPropertyAccessorChecker : FirPropertyAccessorChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -32,7 +32,8 @@ object FirWebCommonExternalPropertyAccessorChecker : FirPropertyAccessorChecker(
         }
     }
 
+    context(context: CheckerContext)
     private fun FirPropertyAccessor.isDirectlyExternal(): Boolean {
-        return hasModifier(KtTokens.EXTERNAL_KEYWORD)
+        return hasModifier(KotlinSyntaxTokenIds.EXTERNAL_MODIFIER)
     }
 }

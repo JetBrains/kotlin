@@ -6,17 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.KtNodeTypes.ANNOTATION_ENTRY
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
-import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.extractModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.syntax.withSyntax
-import org.jetbrains.kotlin.psi.psiUtil.children
-import org.jetbrains.kotlin.util.getChildren
 
 object FirUnsupportedModifiersInFunctionTypeParameterChecker : FirFunctionalTypeParameterSyntaxChecker() {
 
@@ -25,56 +21,32 @@ object FirUnsupportedModifiersInFunctionTypeParameterChecker : FirFunctionalType
         element: FirFunctionTypeParameter,
         source: KtSourceElement,
     ) {
-        checkModifiers(source)
-        checkAnnotations(source)
-        checkValOrVarKeyword(source)
-    }
+        val modifiersList = source.extractModifierList()
 
-    context(reporter: DiagnosticReporter, context: CheckerContext)
-    private fun checkValOrVarKeyword(source: KtSourceElement) {
-        val keyword = withSyntax { source.findValOrVarKeywordSource() } ?: return
-
-        reporter.reportOn(
-            keyword,
-            FirErrors.UNSUPPORTED,
-            "Function type parameters cannot be 'val' or 'var'."
-        )
-    }
-
-    context(reporter: DiagnosticReporter, context: CheckerContext)
-    private fun checkModifiers(source: KtSourceElement): Boolean {
-        val modifiersList = source.getModifierList() ?: return true
-        for (modifier in modifiersList.modifiers) {
-            reporter.reportOn(
-                modifier.source,
-                FirErrors.UNSUPPORTED,
-                "Function type parameters cannot have modifiers."
-            )
-        }
-        return false
-    }
-
-    context(reporter: DiagnosticReporter, context: CheckerContext)
-    private fun checkAnnotations(source: KtSourceElement): Boolean {
-        val commonModifiersList = source.getModifierList() ?: return true
-        val annotationsSource = when (commonModifiersList) {
-            is FirModifierList.FirLightModifierList -> {
-                val tree = commonModifiersList.tree
-                val children = commonModifiersList.modifierList.getChildren(tree)
-                children.filter { it.tokenType == ANNOTATION_ENTRY }.map { it.toKtLightSourceElement(tree) }
+        if (modifiersList != null) {
+            for (modifier in modifiersList.modifiers) {
+                reporter.reportOn(
+                    modifier.source,
+                    FirErrors.UNSUPPORTED,
+                    "Function type parameters cannot have modifiers."
+                )
             }
-            is FirModifierList.FirPsiModifierList -> {
-                val children = commonModifiersList.modifierList.node.children()
-                children.filter { it.elementType == ANNOTATION_ENTRY }.map { KtRealPsiSourceElement(it.psi) }.toList()
+
+            for (annSource in modifiersList.annotationSources) {
+                reporter.reportOn(
+                    annSource,
+                    FirErrors.UNSUPPORTED,
+                    "Function type parameters cannot have annotations."
+                )
             }
         }
-        for (ann in annotationsSource) {
+
+        withSyntax { source.findValOrVarKeywordSource() }?.let {
             reporter.reportOn(
-                ann,
+                it,
                 FirErrors.UNSUPPORTED,
-                "Function type parameters cannot have annotations."
+                "Function type parameters cannot be 'val' or 'var'."
             )
         }
-        return false
     }
 }

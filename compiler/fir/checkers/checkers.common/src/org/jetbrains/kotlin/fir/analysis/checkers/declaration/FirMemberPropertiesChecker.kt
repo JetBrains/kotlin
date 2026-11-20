@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.extractModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 // See old FE's [DeclarationsChecker]
 object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
@@ -110,7 +110,7 @@ internal fun checkProperty(
     if (source.kind is KtFakeSourceElementKind) return
     // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
     // So, our source of truth should be the full modifier list retrieved from the source.
-    val modifierList = propertySymbol.source.getModifierList()
+    val modifierList = propertySymbol.source.extractModifierList()
 
     checkPropertyInitializer(
         containingDeclaration,
@@ -121,7 +121,7 @@ internal fun checkProperty(
     )
 
     if (containingDeclaration != null) {
-        val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
+        val hasAbstractModifier = KotlinSyntaxTokenIds.ABSTRACT_MODIFIER in modifierList
         val isAbstract = propertySymbol.isAbstract || hasAbstractModifier
         if (containingDeclaration.isInterface &&
             Visibilities.isPrivate(propertySymbol.visibility) &&
@@ -154,7 +154,7 @@ internal fun checkProperty(
             }
         }
 
-        val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
+        val hasOpenModifier = KotlinSyntaxTokenIds.OPEN_MODIFIER in modifierList
         if (hasOpenModifier &&
             containingDeclaration.isInterface &&
             shouldReportOpenInInterface(propertySymbol, containingDeclaration.symbol)
@@ -168,8 +168,8 @@ internal fun checkProperty(
 
 context(context: CheckerContext)
 fun shouldReportOpenInInterface(symbol: FirCallableSymbol<*>, containingClassSymbol: FirClassSymbol<*>): Boolean {
-    val modifierList = symbol.source.getModifierList()
-    val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
+    val modifierList = symbol.source.extractModifierList()
+    val hasAbstractModifier = KotlinSyntaxTokenIds.ABSTRACT_MODIFIER in modifierList
 
     return !hasAbstractModifier &&
             symbol.isAbstract &&

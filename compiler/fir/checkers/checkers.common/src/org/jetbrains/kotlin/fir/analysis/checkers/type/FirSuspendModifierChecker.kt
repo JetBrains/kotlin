@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
-import org.jetbrains.kotlin.fir.syntax.withSyntax
-import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -15,10 +12,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
 import org.jetbrains.kotlin.fir.analysis.getChild
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUnresolvedTypeRef
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.syntax.SyntaxIdSet
 
@@ -30,13 +28,14 @@ object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
         // We are only interested in source type refs (i.e., Fir(Dynamic|User|Function)TypeRef).
         if (typeRef !is FirUnresolvedTypeRef) return
 
-        val suspendModifierSources = mutableListOf<KtSourceElement>()
-        withSyntax {
-            typeRef.source.getChild(KotlinSyntaxNodeTypeIds.MODIFIER_LIST, depth = 1)?.forEachChildOfType(suspendTokenElementSet, depth = 1) {
-                    suspendModifierSources += it
-                }
-        }
-        if (suspendModifierSources.isEmpty()) return
+        val suspendModifierSources = buildList {
+            withSyntax {
+                typeRef.source.getChild(KotlinSyntaxNodeTypeIds.MODIFIER_LIST, depth = 1)
+                    ?.forEachChildOfType(suspendTokenElementSet, depth = 1) {
+                        add(it)
+                    }
+            }
+        }.takeIf { it.isNotEmpty() } ?: return
 
         // `suspend` is invalid for non-function types (i.e., FirDynamicTypeRef or FirUserTypeRef).
         //
@@ -54,14 +53,14 @@ object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 suspendModifierSources.first(),
                 FirErrors.WRONG_MODIFIER_TARGET,
-                KtTokens.SUSPEND_KEYWORD,
+                "suspend",
                 "non-functional type"
             )
         } else if (suspendModifierSources.size > 1) {
             reporter.reportOn(
                 suspendModifierSources.first(),
                 FirErrors.REPEATED_MODIFIER,
-                KtTokens.SUSPEND_KEYWORD
+                "suspend"
             )
         }
     }

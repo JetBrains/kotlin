@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.checkModifiersCompatibility
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 
-
 object FirIncompatibleProjectionsOnTypeArgumentChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
