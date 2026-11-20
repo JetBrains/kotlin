@@ -27,7 +27,10 @@ KtOperationReferenceExpression(68,70): '+='
             ]
             contextParameters = []
             callableId = /plus
-          typeArgumentsMapping = {}
+          typeArgumentsMapping = {
+            R -> (Foo),
+            P -> (kotlin.Int)
+          }
           valueArgumentMapping = {
             1 -> (KaVariableSignature:
               name = other
