@@ -1,0 +1,6 @@
+KtArrayAccessExpression(35,43): 'obj["a"]'
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/text/get(<extension receiver>: kotlin.text.MatchGroupCollection, name: kotlin.String): kotlin.text.MatchGroup?
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
