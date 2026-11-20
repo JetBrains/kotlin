@@ -882,25 +882,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Wasi library")
-    @GradleTest
-    fun wasiLibrary(gradleVersion: GradleVersion) {
-        project("wasm-wasi-library", gradleVersion) {
-
-            build(":build") {
-                assertTasksExecuted(":compileProductionLibraryKotlinWasmWasi")
-                assertTasksExecuted(":compileKotlinWasmWasi")
-                assertTasksExecuted(":wasmWasiNodeTest")
-                assertTasksExecuted(":wasmWasiNodeProductionLibraryDistribution")
-
-                val dist = "build/dist/wasmWasi/productionLibrary"
-                assertFileExists(projectPath.resolve("$dist/foo.txt"))
-                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library.wasm"))
-                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library.wasm.map"))
-                assertFileExists(projectPath.resolve("$dist/wasm-wasi-library.mjs"))
-            }
-        }
-    }
+    // NOTE: for now, the KGP library use-case won't be tested as an integration test, while we're redesigning how the exact componentized output should look like, then we'll readd a test for this based on that new behavior
 }
 
 private const val WASI_PACKAGES_VERSION = "0.2.12"
