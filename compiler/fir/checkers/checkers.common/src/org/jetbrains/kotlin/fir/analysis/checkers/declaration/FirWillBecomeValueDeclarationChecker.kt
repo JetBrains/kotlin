@@ -17,13 +17,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.isMethodOfAny
-import org.jetbrains.kotlin.fir.declarations.utils.expandedClassLikeType
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
@@ -89,20 +85,6 @@ object FirWillBecomeValueIdentityBasedMembersChecker : FirRegularClassChecker(Mp
             superclass = superclass.getSuperClassSymbolOrAny(session)
         }
         return false
-    }
-}
-
-/**
- * An actual typealias to a Java class annotated with '@WillBecomeValue' is checked for the identity-based members of that class,
- * which the class checkers never see, as they only run on Kotlin declarations.
- */
-object FirWillBecomeValueActualTypeAliasToJavaChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirTypeAlias) {
-        if (!declaration.isActual) return
-        val expandedClass = declaration.expandedClassLikeType?.toRegularClassSymbol(context.session) ?: return
-        if (expandedClass.origin !is FirDeclarationOrigin.Java || !expandedClass.hasWillBecomeValueAnnotation()) return
-        checkIdentityBasedMembers(expandedClass, declaration.source)
     }
 }
 
