@@ -936,7 +936,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     ) // The CI can't run the test, so, ignore it until we add headless Chrome browser to our CI
     fun testBrowserNullPrint(gradleVersion: GradleVersion) {
         project("kt-63230", gradleVersion) {
-            build("check", "-Pkotlin.tests.individualTaskReports=true") {
+            build("check") {
                 assertTestResults(
                     projectPath.resolve(
                         if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-wasm.xml" else "Gradle93-TEST-wasm.xml"

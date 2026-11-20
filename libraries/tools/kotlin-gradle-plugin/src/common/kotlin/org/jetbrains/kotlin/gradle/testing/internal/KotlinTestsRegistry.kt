@@ -38,7 +38,6 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
         project.tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME).dependsOn(taskHolder)
         project.cleanAllTestTask.configure { it.dependsOn(cleanTaskName(taskHolder.name)) }
         aggregate.configure {
-            it.dependsOn(taskHolder.name)
             it.registerTestTask(taskHolder.get())
         }
 

@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.gradle.utils.toUri
  * into one consolidated HTML report.
  *
  * The task is report-only: individual test tasks fail the build on their own
- * failures, as with Gradle's native test tasks. Consequently, this task is
- * skipped when any of the aggregated test tasks fail unless `--continue` is
- * used or the failing tasks opt out via `ignoreFailures`, in which case no
- * consolidated report is generated (same as with Gradle's Test Report
- * Aggregation plugin).
+ * failures, as with Gradle's native test tasks. The aggregate is wired to the
+ * test tasks only through their binary results output (see [registerTestTask]),
+ * never via an explicit `dependsOn`, so with `--continue` the consolidated
+ * report is still generated when some tests fail; without it the build stops
+ * at the first failing test task.
  *
  * Aggregate test reports may form hierarchy, for example:
  *  - allTest // aggregates all tests
