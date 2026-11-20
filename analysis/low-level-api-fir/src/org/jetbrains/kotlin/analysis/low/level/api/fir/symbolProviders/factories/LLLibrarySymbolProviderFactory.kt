@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
 /**
@@ -28,7 +29,7 @@ internal interface LLLibrarySymbolProviderFactory {
 
     fun createMetadataLibrarySymbolProvider(
         session: LLFirSession,
-        packagePartProvider: PackagePartProvider,
+        packagePartProvider: PackageAndMetadataPartProvider,
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider>
 

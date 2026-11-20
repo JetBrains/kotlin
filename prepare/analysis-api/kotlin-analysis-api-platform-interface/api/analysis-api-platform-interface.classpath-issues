@@ -1,3 +1,0 @@
-org/jetbrains/kotlin/load/kotlin/PackagePartProvider
-    org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactory
-    org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactoryKt

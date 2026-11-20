@@ -7,14 +7,8 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
-import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -26,13 +20,6 @@ class AnalysisApiTestCompilerConfiguratorProvider(
 ) : CompilerConfigurationProvider(testServices) {
     private val configurationCache: MutableMap<Pair<TestModule, CompilationStage>, CompilerConfiguration> = mutableMapOf()
 
-    private val allProjectBinaryRoots by lazy {
-        StandaloneProjectFactory.getAllBinaryRoots(
-            testServices.ktTestModuleStructure.mainAndBinaryKtModules,
-            testServices.environmentManager.getApplicationEnvironment()
-        )
-    }
-
     override fun getProject(module: TestModule): Project {
         return testServices.environmentManager.getProject()
     }
@@ -40,21 +27,6 @@ class AnalysisApiTestCompilerConfiguratorProvider(
     override fun getCompilerConfiguration(module: TestModule, compilationStage: CompilationStage): CompilerConfiguration {
         return configurationCache.getOrPut(module to compilationStage) {
             createKotlinCompilerConfiguration(module, compilationStage)
-        }
-    }
-
-    /**
-     * Scope-based factory for the Analysis API `KotlinPackagePartProviderFactory` test implementation.
-     * Analysis API scopes are IDE-style scopes that cannot be expressed as a [JvmClasspath], so the scope adapter lives here
-     * rather than in the compiler test infrastructure.
-     */
-    fun getPackagePartProviderFactoryForScope(module: TestModule): (GlobalSearchScope) -> JvmPackagePartProvider {
-        val configuration = getCompilerConfiguration(module, CompilationStage.FIRST)
-
-        return { scope ->
-            JvmPackagePartProvider(configuration.languageVersionSettings) { it in scope }.apply {
-                addRoots(allProjectBinaryRoots, configuration)
-            }
         }
     }
 
