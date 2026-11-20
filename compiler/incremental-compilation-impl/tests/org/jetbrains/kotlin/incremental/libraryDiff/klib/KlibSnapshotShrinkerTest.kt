@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.incremental.libraryDiff.klib
 
 import org.jetbrains.kotlin.incremental.storage.LookupSymbolKey
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -15,7 +14,6 @@ import kotlin.test.assertEquals
  * The klib counterpart of `ClasspathSnapshotShrinkerTest`. The JVM test covers `package-info` / `module-info`, which klibs don't
  * have, so these tests cover the basic shrinking rules instead.
  */
-@Disabled("KT-90559: KlibSnapshotShrinker is not implemented yet")
 class KlibSnapshotShrinkerTest : KlibSnapshotTestCommon() {
 
     private val allSnapshots: List<KlibSnapshot> by lazy {
@@ -43,6 +41,14 @@ class KlibSnapshotShrinkerTest : KlibSnapshotTestCommon() {
     @Test
     fun testReferencedPackageMemberIsRetained() {
         assertEquals(setOf("com/example/TopLevelKt"), shrink(LookupSymbolKey(name = "topLevelFunction", scope = "com.example")))
+    }
+
+    @Test
+    fun testSupertypesOfUnreferencedClassesInRetainedFileAreNotRetained() {
+        assertEquals(
+            setOf("com/example/SubAndTopLevelKt"),
+            shrink(LookupSymbolKey(name = "otherTopLevelFunction", scope = "com.example")),
+        )
     }
 
     @Test
