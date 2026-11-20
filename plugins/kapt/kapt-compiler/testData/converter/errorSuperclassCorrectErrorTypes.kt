@@ -52,3 +52,10 @@ class MappedList<R>() : AbstractList<R>(), List<R> {
 interface Parent<A : CharSequence?, B>
 
 class Child : AbstractList<String>(), Parent<String, Int>, List<String>
+
+// KT-34193
+open class ValueHolder<T>(val value: T)
+
+class SomeHolder(
+    var foo: GeneratedClass
+) : ValueHolder<GeneratedClass>(foo)

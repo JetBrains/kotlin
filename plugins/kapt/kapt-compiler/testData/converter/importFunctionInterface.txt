@@ -1,0 +1,47 @@
+package test;
+
+/**
+ * public open class test/Base<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public class Base<T extends java.lang.Object> {
+
+    public Base() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/Fn : test/Base<error/NonExistentClass>, kotlin/Function0<kotlin/Unit> {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: invoke()V
+ *   // must-use return value
+ *   public open operator fun invoke(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Fn extends test.Base<Gen> implements kotlin.jvm.functions.Function0<kotlin.Unit> {
+
+    public Fn() {
+        super();
+    }
+
+    @java.lang.Override()
+    public void invoke() {
+    }
+}
