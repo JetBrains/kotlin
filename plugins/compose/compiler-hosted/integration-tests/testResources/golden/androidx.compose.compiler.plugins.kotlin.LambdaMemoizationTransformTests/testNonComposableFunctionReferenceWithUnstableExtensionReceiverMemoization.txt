@@ -36,7 +36,7 @@ fun Example(%composer: Composer?, %changed: Int) {
   val shouldNotMemoize = <block>{
     val tmp0 = x
     sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-    val tmp1_group = %composer.cache(%composer.changedInstance(tmp0)) {
+    val tmp1_group = %composer.cache(false) {
       tmp0::foo<kotlin.reflect.KFunction0> {
         fun foo(receiver: Unstable): Function0<Unit> {
           return receiver.foo()

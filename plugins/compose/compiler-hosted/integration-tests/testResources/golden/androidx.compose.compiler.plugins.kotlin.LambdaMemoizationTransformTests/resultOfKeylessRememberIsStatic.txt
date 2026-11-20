@@ -1,0 +1,114 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+
+class Stable(val x: Int = 0)
+class Unstable(var x: Int = 0)
+
+@Composable
+fun Button(onClick: () -> Unit) {}
+
+@Composable
+fun Test() {
+    val stable = remember { Stable() }
+    val unstable = remember { Unstable() }
+    Button { stable }
+    Button { unstable }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+class Stable(val x: Int = 0) {
+  val %stable: Int = 0
+    get() {
+      return field
+    }
+}
+@StabilityInferred(parameters = 0)
+class Unstable(var x: Int = 0) {
+  val %stable: Int = 8
+    get() {
+      return field
+    }
+}
+@Composable
+@FunctionKeyMeta(key = 1834976240, startOffset = 293, endOffset = 327)
+fun Button(onClick: Function0<Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Button)N(onClick):Test.kt")
+  if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Button(onClick, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@FunctionKeyMeta(key = -1794342280, startOffset = 365, endOffset = 567)
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<rememb...>,<rememb...>,<{>,<Button>,<{>,<Button>:Test.kt")
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val stable = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        Stable()
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
+    val unstable = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp1_group = %composer.cache(false) {
+        Unstable()
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp1_group
+    }
+    Button(<block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp2_group = %composer.cache(false) {
+        {
+          stable
+        }
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp2_group
+    }, %composer, 0b0110)
+    Button(<block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp3_group = %composer.cache(false) {
+        {
+          unstable
+        }
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp3_group
+    }, %composer, 0b0110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
