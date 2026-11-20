@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.parcelize.fir.diagnostics
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
@@ -21,17 +19,12 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.resolve.isSubclassOf
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELER_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_ID
-import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_CLASS_IDS
-import org.jetbrains.kotlin.parcelize.fir.parcelizeService
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
+import org.jetbrains.kotlin.parcelize.fir.isParcelize
 
 object FirParcelizeClassChecker : FirClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -89,14 +82,10 @@ object FirParcelizeClassChecker : FirClassChecker(MppCheckerKind.Platform) {
             reporter.reportOn(source, KtErrorsParcelize.NO_PARCELABLE_SUPERTYPE, context)
         }
 
+        val parcelableType = PARCELABLE_ID.constructClassLikeType()
         klass.delegateFieldsMap?.forEach { [index, _] ->
             val superTypeRef = klass.superTypeRefs[index]
             val superType = superTypeRef.coneType
-            val parcelableType = ConeClassLikeTypeImpl(
-                PARCELABLE_ID.toLookupTag(),
-                ConeTypeProjection.EMPTY_ARRAY,
-                isMarkedNullable = false
-            )
             if (superType.isSubtypeOf(parcelableType, context.session)) {
                 reporter.reportOn(superTypeRef.source, KtErrorsParcelize.PARCELABLE_DELEGATE_IS_NOT_ALLOWED, context)
             }
@@ -123,41 +112,3 @@ object FirParcelizeClassChecker : FirClassChecker(MppCheckerKind.Platform) {
     }
 }
 
-@OptIn(ExperimentalContracts::class)
-fun FirClassSymbol<*>?.isParcelize(session: FirSession): Boolean {
-    contract {
-        returns(true) implies (this@isParcelize != null)
-    }
-
-    if (this == null) return false
-    val parcelizeAnnotations = session.parcelizeService.parcelizeAnnotations
-    return checkParcelizeClassSymbols(this, session) { symbol ->
-        symbol.resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId(session) in parcelizeAnnotations }
-    }
-}
-
-/**
- * Check all related [FirClassSymbol]s to the provided [symbol] which are valid locations for a
- * `Parcelize` annotation to be present. This commonizes class symbol navigation between checker and
- * generator, even though [predicate] implementation is different.
- */
-inline fun checkParcelizeClassSymbols(
-    symbol: FirClassSymbol<*>,
-    session: FirSession,
-    predicate: (FirClassSymbol<*>) -> Boolean,
-): Boolean {
-    if (predicate(symbol)) return true
-    return symbol.resolvedSuperTypeRefs.any { superTypeRef ->
-        val superTypeSymbol = superTypeRef.coneType.toRegularClassSymbol(session)
-            ?.takeIf { it.rawStatus.modality == Modality.SEALED }
-            ?: return@any false
-        predicate(superTypeSymbol)
-    }
-}
-
-fun FirRegularClass.hasCustomParceler(session: FirSession): Boolean {
-    val companion = companionObjectSymbol ?: return false
-    return lookupSuperTypes(companion, lookupInterfaces = true, deep = true, useSiteSession = session).any {
-        it.classId in PARCELER_CLASS_IDS
-    }
-}

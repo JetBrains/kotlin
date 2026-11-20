@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallCh
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedClassLikeType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -27,10 +28,11 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.DEPRECATED_RUNTIME_PACKAGE
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_TAG_CLASS_IDS
-import org.jetbrains.kotlin.parcelize.ParcelizeNames.POLYMORPHIC_SEALED_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.TYPE_PARCELER_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_WITH_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.fir.hasPolymorphicSealedAnnotation
+import org.jetbrains.kotlin.parcelize.fir.isParcelize
 import org.jetbrains.kotlin.parcelize.fir.parcelizeService
 
 // TODO: extract common checker for expect interfaces
@@ -79,14 +81,13 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
     }
 
     private fun checkTypeParcelerUsage(annotationCall: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val thisMappedType = annotationCall.typeArguments.takeIf { it.size == 2 }?.first()?.toConeTypeProjection()?.type
-            ?: return
+        val thisMappedType = annotationCall.typeParcelerMappedType() ?: return
 
         val annotationContainer = context.annotationContainers.lastOrNull()
         val duplicatingAnnotationCount = annotationContainer
             ?.annotations
             ?.filter { it.toAnnotationClassId(context.session) in TYPE_PARCELER_CLASS_IDS }
-            ?.mapNotNull { it.typeArguments.takeIf { it.size == 2 }?.first()?.toConeTypeProjection()?.type }
+            ?.mapNotNull { it.typeParcelerMappedType() }
             ?.count { it == thisMappedType }
 
         if (duplicatingAnnotationCount != null && duplicatingAnnotationCount > 1) {
@@ -109,6 +110,12 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
             }
         }
     }
+
+    /**
+     * For `@TypeParceler<T, P>`, returns `T`, i.e. the type whose serialization is customized by the parceler `P`.
+     */
+    private fun FirAnnotation.typeParcelerMappedType(): ConeKotlinType? =
+        typeArguments.takeIf { it.size == 2 }?.first()?.toConeTypeProjection()?.type
 
     private fun checkForRedundantTypeParceler(
         enclosingClass: FirClassSymbol<*>,
@@ -173,9 +180,7 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
     ) {
         val annotationContainer = context.annotationContainers.lastOrNull() as? FirClass
         val containingClass = annotationContainer?.getContainingClassSymbol()
-        val isContainingClassPolymorphicSealed = containingClass?.resolvedAnnotationsWithClassIds.orEmpty().any {
-            it.toAnnotationClassId(context.session) in POLYMORPHIC_SEALED_CLASS_IDS
-        }
+        val isContainingClassPolymorphicSealed = containingClass?.hasPolymorphicSealedAnnotation(context.session) == true
         val implementsContainingClass = annotationContainer?.superTypeRefs.orEmpty().any {
             it.coneType.toRegularClassSymbol(context.session) == containingClass
         }
