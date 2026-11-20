@@ -16,6 +16,8 @@ public abstract class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemPlugi
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl {
+	public abstract fun binaryen (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun binaryen (Lorg/gradle/api/Action;)V
 	public abstract fun nodeJs (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun nodeJs (Lorg/gradle/api/Action;)V
 	public abstract fun wasiAdapter (Lkotlin/jvm/functions/Function1;)V
@@ -25,6 +27,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/ecosystem/KotlinTool
 }
 
 public final class org/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl$DefaultImpls {
+	public static fun binaryen (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl;Lorg/gradle/api/Action;)V
 	public static fun nodeJs (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl;Lorg/gradle/api/Action;)V
 	public static fun wasiAdapter (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl;Lorg/gradle/api/Action;)V
 	public static fun wasmTools (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl;Lorg/gradle/api/Action;)V
