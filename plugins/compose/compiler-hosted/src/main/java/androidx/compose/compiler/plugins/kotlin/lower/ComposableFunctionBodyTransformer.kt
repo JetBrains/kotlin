@@ -1244,34 +1244,38 @@ class ComposableFunctionBodyTransformer(
         val [body, returnVar] = originalBody.asBodyAndResultVar(expectedTarget = declaration)
         body.transformChildrenVoid()
 
-        // Avoid transforming functions that are not referencing anything composable, as they cannot use slots (read-only is fine).
-        if (!scope.hasComposableCallsWithGroups) {
-            return super.visitFunction(declaration)
-        }
-        encounteredCapturedComposableCall()
+        // Avoid emitting groups for functions that are not referencing anything composable, as they cannot use slots (read-only is fine).
+        val needsGroup = scope.hasComposableCallsWithGroups
+        if (needsGroup) {
+            encounteredCapturedComposableCall()
 
-        scope.realizeGroup {
-            irEndReplaceGroup(scope = scope, startOffset = body.endOffset, endOffset = body.endOffset)
+            scope.realizeGroup {
+                irEndReplaceGroup(scope = scope, startOffset = body.endOffset, endOffset = body.endOffset)
+            }
         }
 
         declaration.body = context.irFactory.createBlockBody(body.startOffset, body.endOffset) {
-            statements.add(
-                irStartReplaceGroup(
-                    body,
-                    scope,
-                    irFunctionSourceKey(),
-                    startOffset = body.startOffset,
-                    endOffset = body.startOffset
+            if (needsGroup) {
+                statements.add(
+                    irStartReplaceGroup(
+                        body,
+                        scope,
+                        irFunctionSourceKey(),
+                        startOffset = body.startOffset,
+                        endOffset = body.startOffset
+                    )
                 )
-            )
+            }
             statements.addAll(body.statements)
-            statements.add(
-                irEndReplaceGroup(
-                    startOffset = body.endOffset,
-                    endOffset = body.endOffset,
-                    scope
+            if (needsGroup) {
+                statements.add(
+                    irEndReplaceGroup(
+                        startOffset = body.endOffset,
+                        endOffset = body.endOffset,
+                        scope
+                    )
                 )
-            )
+            }
             if (returnVar != null) {
                 statements.add(
                     irReturnVar(declaration.symbol, returnVar)

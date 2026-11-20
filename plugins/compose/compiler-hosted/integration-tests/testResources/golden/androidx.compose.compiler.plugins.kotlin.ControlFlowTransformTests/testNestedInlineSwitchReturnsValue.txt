@@ -1,0 +1,74 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Test(a: Boolean, b: Boolean): String =
+    pick(a, { "y" }, { pick(b, { "z" }, { "w" }) })
+
+@Composable
+fun TestNonConst(a: Boolean, b: Boolean): String =
+    pick(a, { a.toString() }, { pick(b, { a.toString() }, { b.toString() }) })
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@FunctionKeyMeta(key = 2013702577, startOffset = 84, endOffset = 190)
+fun Test(a: Boolean, b: Boolean, %composer: Composer?, %changed: Int): String {
+  sourceInformationMarkerStart(%composer, <>, "C(Test)N(a,b):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = pick(a, {
+    val tmp0 = "y"
+    tmp0
+  }
+  ) {
+    val tmp0 = pick(b, {
+      val tmp0 = "z"
+      tmp0
+    }
+    ) {
+      val tmp0 = "w"
+      tmp0
+    }
+    tmp0
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+@FunctionKeyMeta(key = 116803131, startOffset = 228, endOffset = 369)
+fun TestNonConst(a: Boolean, b: Boolean, %composer: Composer?, %changed: Int): String {
+  sourceInformationMarkerStart(%composer, <>, "C(TestNonConst)N(a,b):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = pick(a, {
+    val tmp0 = a.toString()
+    tmp0
+  }
+  ) {
+    val tmp0 = pick(b, {
+      val tmp0 = a.toString()
+      tmp0
+    }
+    ) {
+      val tmp0 = b.toString()
+      tmp0
+    }
+    tmp0
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
