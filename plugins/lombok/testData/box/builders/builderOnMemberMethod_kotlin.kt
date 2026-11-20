@@ -1,4 +1,5 @@
 // ISSUE: KT-87683
+// FIR_DUMP
 
 import lombok.Builder
 import lombok.Singular
