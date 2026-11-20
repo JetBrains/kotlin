@@ -1,6 +1,5 @@
 KtArrayAccessExpression(155,159): 'b[0]'
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /B.get(<dispatch receiver>: B, i: kotlin.Int): B
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'B', but 'String' was expected.>

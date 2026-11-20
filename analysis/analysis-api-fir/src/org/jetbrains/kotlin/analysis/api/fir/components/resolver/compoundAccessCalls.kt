@@ -38,6 +38,21 @@ private fun createKaCallForArrayAccessConvention(
 }
 
 /**
+ * Whether [fir] is the `set` call of the array access that [psi] assigns (`a[i] += x`) or increments (`a[i]++`).
+ */
+internal fun isCompoundArrayAccessSetCall(psi: KtElement, fir: FirElement): Boolean {
+    if (fir !is FirFunctionCall || fir.calleeReference.name != OperatorNameConventions.SET) return false
+
+    val accessExpression = when (psi) {
+        is KtBinaryExpression if psi.operationToken in KtTokens.AUGMENTED_ASSIGNMENTS -> psi.left
+        is KtUnaryExpression if psi.operationToken in KtTokens.INCREMENT_AND_DECREMENT -> psi.baseExpression
+        else -> return false
+    }
+
+    return deparenthesize(accessExpression) is KtArrayAccessExpression
+}
+
+/**
  * Handle compound assignment with variable
  */
 context(resolver: KaFirResolver)
