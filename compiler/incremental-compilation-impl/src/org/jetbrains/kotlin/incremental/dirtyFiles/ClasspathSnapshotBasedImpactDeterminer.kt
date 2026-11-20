@@ -54,14 +54,14 @@ internal class ClasspathSnapshotBasedImpactDeterminer (
     }
 }
 
-private fun DirtyData.toChangesEither(): ChangesEither.Known {
+internal fun DirtyData.toChangesEither(): ChangesEither.Known {
     return ChangesEither.Known(
         lookupSymbols = dirtyLookupSymbols,
         fqNames = dirtyClassesFqNames + dirtyClassesFqNamesForceRecompile
     )
 }
 
-private fun ProgramSymbolSet.toChangeInfoList(): List<ChangeInfo> {
+internal fun ProgramSymbolSet.toChangeInfoList(): List<ChangeInfo> {
     val changes = mutableListOf<ChangeInfo>()
     classes.forEach { classId ->
         // It's important to set `areSubclassesAffected = true` when we don't know
