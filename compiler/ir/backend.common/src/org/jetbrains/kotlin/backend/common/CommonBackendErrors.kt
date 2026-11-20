@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.EVALUATION_ERROR_EXPLANATION
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.TAILREC_MODIFIER
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
 object CommonBackendErrors : KtDiagnosticsContainer() {
-    val EVALUATION_ERROR by error1<String>()
-
     val INLINE_CALL_CYCLE by error1<IrFunction>()
 
     val IR_DUMP_WARNING by warningWithoutSource()
@@ -36,11 +32,6 @@ object CommonBackendErrors : KtDiagnosticsContainer() {
 
 object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
     override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
-        map.put(
-            CommonBackendErrors.EVALUATION_ERROR,
-            "Cannot evaluate constant expression: {0}",
-            EVALUATION_ERROR_EXPLANATION,
-        )
         map.put(
             CommonBackendErrors.INLINE_CALL_CYCLE,
             "The ''{0}'' invocation is part of an inline cycle.",
@@ -66,20 +57,5 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
             CommonBackendErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR,
             "Tailrec is prohibited on open and abstract members.",
         )
-    }
-}
-
-object BackendDiagnosticRenderers {
-    val EVALUATION_ERROR_EXPLANATION = Renderer<String> {
-        val result = Regex("Exception (\\S+)(: (.*))?").matchEntire(it)?.groupValues
-        val exceptionName = result?.getOrNull(1)
-        val message = result?.getOrNull(3)
-        when {
-            !message.isNullOrBlank() -> message
-            exceptionName == StackOverflowError::class.java.name -> "stack overflow (potentially due to infinite recursion)"
-            exceptionName == NullPointerException::class.java.name -> "null reference access"
-            exceptionName != null -> exceptionName.split('.').last()
-            else -> it
-        }
     }
 }
