@@ -105,7 +105,7 @@ class ObjCExportUnits internal constructor(
         line(protocolForwardDeclarations.size)
         protocolForwardDeclarations.forEach(::line)
         line(classClaims.size)
-        classClaims.forEach { line(it.classId, "${it.isFinal.bit}${it.isInterface.bit}", it.supertypes.sorted().joinToString(LIST)) }
+        classClaims.forEach { line(it.classId, "${it.isFinal.bit}${it.isInterface.bit}", *it.supertypes.sorted().toTypedArray()) }
         line(names.size)
         names.forEach { line(*it.encode().toTypedArray()) }
         line(classes.size)
@@ -142,7 +142,6 @@ class ObjCExportUnits internal constructor(
         const val FORMAT_VERSION = 1
 
         private const val FORMAT = "objc-export-units $FORMAT_VERSION"
-        private const val LIST = "\u001E"
 
         private val Boolean.bit: Int
             get() = if (this) 1 else 0
@@ -179,22 +178,19 @@ class ObjCExportUnits internal constructor(
             }
         }
 
-        private fun ObjCExportNameRecord.encode(): List<String> {
-            val encodedClaim = claim?.let {
-                listOf(
-                    it.owner, "${it.isTopLevel.bit}${it.isConstructor.bit}${it.hasNoDispatchReceiver.bit}${it.isSetter.bit}",
-                    it.kotlinName, it.extensionReceiverType, it.parameterTypes, it.bridge,
-                ).joinToString(LIST)
-            }.orEmpty()
-            return listOf(kind.ordinal.toString(), key, name, encodedClaim)
-        }
+        private fun ObjCExportNameRecord.encode(): List<String> = listOf(kind.ordinal.toString(), key, name) + claim?.let {
+            listOf(
+                it.owner, "${it.isTopLevel.bit}${it.isConstructor.bit}${it.hasNoDispatchReceiver.bit}${it.isSetter.bit}",
+                it.kotlinName, it.extensionReceiverType, it.parameterTypes, it.bridge,
+            )
+        }.orEmpty()
 
         private fun decodeRecord(fields: List<String>): ObjCExportNameRecord {
-            val [kind, key, name, claim] = fields
-            val claimFields = claim.split(LIST)
+            val [kind, key, name] = fields
+            val claimFields = fields.drop(3)
             return ObjCExportNameRecord(
                 ObjCExportNameKind.entries[kind.toInt()], key, name,
-                if (claim.isEmpty()) null else ObjCExportMemberClaim(
+                if (claimFields.isEmpty()) null else ObjCExportMemberClaim(
                     owner = claimFields[0],
                     isTopLevel = claimFields[1][0] == '1',
                     isConstructor = claimFields[1][1] == '1',
@@ -248,8 +244,9 @@ class ObjCExportUnits internal constructor(
             }.toSet()
             val protocolForwardDeclarations = list(::line).toSet()
             val classClaims = list {
-                val [classId, flags, supertypes] = fields()
-                ObjCExportClassClaim(classId, supertypes.split(LIST).filterTo(mutableSetOf()) { it.isNotEmpty() }, isFinal = flags[0] == '1', isInterface = flags[1] == '1')
+                val fields = fields()
+                val [classId, flags] = fields
+                ObjCExportClassClaim(classId, fields.drop(2).toSet(), isFinal = flags[0] == '1', isInterface = flags[1] == '1')
             }
             val names = list { decodeRecord(fields()) }
             val classes = list {
