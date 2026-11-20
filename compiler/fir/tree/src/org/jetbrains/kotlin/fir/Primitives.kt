@@ -27,6 +27,9 @@ object StandardTypes {
     val NullableAny: ConeClassLikeType = StandardClassIds.Any.constructClassLikeType(isMarkedNullable = true)
     val Nothing: ConeClassLikeType = StandardClassIds.Nothing.constructClassLikeType()
     val NullableNothing: ConeClassLikeType = StandardClassIds.Nothing.constructClassLikeType(isMarkedNullable = true)
+
+    fun nothing(isMarkedNullable: Boolean): ConeClassLikeType = if (isMarkedNullable) NullableNothing else Nothing
+
     val Unit: ConeClassLikeType = StandardClassIds.Unit.constructClassLikeType()
 
     val String: ConeClassLikeType = StandardClassIds.String.constructClassLikeType()

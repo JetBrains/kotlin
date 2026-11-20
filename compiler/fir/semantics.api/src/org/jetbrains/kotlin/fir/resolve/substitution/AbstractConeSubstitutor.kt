@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.substitution
 
+import org.jetbrains.kotlin.fir.StandardTypes
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.isBoundedByRichError
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -105,7 +107,38 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
 
         if (!somethingIsSubstituted) return null
 
-        return ConeTypeUnifier.unify(substitutedPrimaryType, substitutedRichErrorTypes, attributes, typeContext)
+        // Unbounded or bounded by nullable-rich-error type parameters in the first component of a union are treated as primary type.
+        // But if they're substituted with a rich error type, they need to be moved to the error components.
+        // To determine the errorness, we need to expand typealiases.
+        // Doing so using the default fullyExpandedType would cause contract violations in SUPERTYPES phase (when typealiases are expanded).
+        // For this reason, we delegate `fullyExpand` which is overridden by the implementation in `createParametersSubstitutor`
+        // which in turn delegates to the supertypeSupplier (see FirTypeResolverImpl.resolveType).
+        val fullyExpandedPrimaryType = fullyExpand(substitutedPrimaryType)
+        return if (fullyExpandedPrimaryType.isBoundedByRichError(typeContext.session)) {
+            val adjustedRichErrorTypes = buildList {
+                add(substitutedPrimaryType.withNullability(false, typeContext))
+                addAll(substitutedRichErrorTypes)
+            }
+
+            val nothingPossiblyNullable = if (substitutedPrimaryType.hasFlexibleMarkedNullability) {
+                StandardTypes.Nothing.toTrivialFlexibleType(typeContext)
+            } else {
+                // We can't use `canBeNull` because we might encounter unresolved type parameter bounds
+                // during the first round of type parameter bound resolution.
+                // This is fine because we're already looking at the fully expanded type,
+                // and `isBoundedByRichError` returns false for type parameters with nullable bounds,
+                // so in this case we wouldn't be in this branch anyway.
+                StandardTypes.nothing(fullyExpandedPrimaryType.isMarkedNullable)
+            }
+
+            ConeTypeUnifier.unify(nothingPossiblyNullable, adjustedRichErrorTypes, attributes, typeContext)
+        } else {
+            ConeTypeUnifier.unify(substitutedPrimaryType, substitutedRichErrorTypes, attributes, typeContext)
+        }
+    }
+
+    protected open fun fullyExpand(type: ConeKotlinType): ConeKotlinType {
+        return type.fullyExpandedType(typeContext.session)
     }
 
     protected fun ConeDefinitelyNotNullType.substituteOriginal(): ConeKotlinType? {

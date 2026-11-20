@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeIllegalProjectionInExpansion
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.wrapProjection
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -197,10 +199,7 @@ private fun ConeUnionType.fullyExpandedUnionType(
 
 fun ConeClassLikeType.directExpansionType(
     useSiteSession: FirSession,
-    expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType? = { alias ->
-        alias.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-        alias.expandedConeType
-    },
+    expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeSimpleKotlinType? {
     if (this is ConeErrorType) return null
     val typeAliasSymbol = lookupTag.toTypeAliasSymbol(useSiteSession) ?: return null
@@ -213,7 +212,7 @@ fun ConeClassLikeType.directExpansionType(
 
     // A union type has no type arguments of its own, but its components may still use the type parameters of the alias
     if (resultType !is ConeUnionType && resultType.typeArguments.isEmpty()) return resultType
-    return mapTypeAliasArguments(typeAlias, this, resultType, useSiteSession).asTypeAliasExpansionOrNull()
+    return mapTypeAliasArguments(typeAlias, this, resultType, useSiteSession, expandedConeType).asTypeAliasExpansionOrNull()
 }
 
 private fun <T : ConeSimpleKotlinType> T.applyNullabilityFrom(
@@ -237,14 +236,33 @@ fun FirTypeAlias.mapParametersToArgumentsOf(type: ConeKotlinType): List<Pair<Fir
 fun createParametersSubstitutor(
     useSiteSession: FirSession,
     typeAliasMap: Map<FirTypeParameterSymbol, ConeTypeProjection>,
+    expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
 ): ConeSubstitutor = object : AbstractConeSubstitutor(useSiteSession.typeContext) {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-        return null
+        // Regular type arguments are handled by `substituteArgument`,
+        // so we only land here for components of union types.
+        // We'd also land here for the original type of a DNN but that's currently bugged,
+        // see TODO(KT-91521) in `substituteArgument`.
+        if (type !is ConeTypeParameterType) return null
+        val projection = typeAliasMap[type.lookupTag.symbol] ?: return null
+
+        if (projection !is ConeKotlinType) return ConeErrorType(
+            ConeIllegalProjectionInExpansion,
+            delegatedType = projection.type,
+        )
+
+        return projection
+            .updateNullabilityIfNeeded(type)
+            .withCombinedAttributesFrom(type)
+    }
+
+    override fun fullyExpand(type: ConeKotlinType): ConeKotlinType {
+        return type.fullyExpandedType(useSiteSession, expandedConeType)
     }
 
     override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
         val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
-        // TODO: Consider making code more generic and "ready" to any kind of types (KT-68497)
+        // TODO(KT-91521) DNN is lost during expansion
         val symbol =
             (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeParameterType)?.lookupTag?.symbol
                 ?: return super.substituteArgument(projection, index)
@@ -255,51 +273,39 @@ fun createParametersSubstitutor(
         val mappedType =
             mappedProjection.type
                 .updateNullabilityIfNeeded(type)
-                .let { mappedType -> mappedType.withAttributes(type.attributes.add(mappedType.attributes)) }
+                .withCombinedAttributesFrom(type)
 
-        fun convertProjectionKindToConeTypeProjection(projectionKind: ProjectionKind): ConeTypeProjection {
-            return when (projectionKind) {
-                ProjectionKind.STAR -> ConeStarProjection
-                ProjectionKind.IN -> ConeKotlinTypeProjectionIn(mappedType)
-                ProjectionKind.OUT -> ConeKotlinTypeProjectionOut(mappedType)
-                ProjectionKind.INVARIANT -> mappedType
-            }
-        }
-
-        if (mappedProjection.kind == projection.kind) {
-            return convertProjectionKindToConeTypeProjection(mappedProjection.kind)
-        }
-
-        if (mappedProjection.kind == ProjectionKind.STAR || projection.kind == ProjectionKind.STAR) {
-            return ConeStarProjection
+        if (mappedProjection.kind == projection.kind || projection.kind == ProjectionKind.INVARIANT) {
+            return wrapProjection(mappedProjection, mappedType)
         }
 
         if (mappedProjection.kind == ProjectionKind.INVARIANT) {
-            return convertProjectionKindToConeTypeProjection(projection.kind)
-        }
-
-        if (projection.kind == ProjectionKind.INVARIANT) {
-            return convertProjectionKindToConeTypeProjection(mappedProjection.kind)
+            return wrapProjection(projection, mappedType)
         }
 
         return ConeKotlinTypeConflictingProjection(mappedType)
     }
 }
 
-fun FirTypeAlias.createParametersSubstitutor(abbreviatedType: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor =
-    createParametersSubstitutor(useSiteSession, mapParametersToArgumentsOf(abbreviatedType).toMap())
+private fun FirTypeAlias.createParametersSubstitutor(
+    abbreviatedType: ConeClassLikeType,
+    useSiteSession: FirSession,
+    expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType?,
+): ConeSubstitutor =
+    createParametersSubstitutor(useSiteSession, mapParametersToArgumentsOf(abbreviatedType).toMap(), expandedConeType)
 
 private fun mapTypeAliasArguments(
     typeAlias: FirTypeAlias,
     abbreviatedType: ConeClassLikeType,
     resultingType: ConeSimpleKotlinType,
     useSiteSession: FirSession,
+    expandedConeType: (FirTypeAlias) -> ConeSimpleKotlinType?,
 ): ConeKotlinType {
     if (typeAlias.typeParameters.isNotEmpty() && abbreviatedType.typeArguments.isEmpty()) {
         return resultingType.withoutArgumentsForBareTypeAlias(useSiteSession.typeContext)
     }
 
-    return typeAlias.createParametersSubstitutor(abbreviatedType, useSiteSession).substituteOrSelf(resultingType)
+    return typeAlias.createParametersSubstitutor(abbreviatedType, useSiteSession, expandedConeType).substituteOrSelf(resultingType)
 }
 
 /**

@@ -7,12 +7,18 @@ package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.ProjectionRelationCheckerImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeIllegalProjectionInExpansion
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
+import org.jetbrains.kotlin.fir.types.contains
 
 object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -20,5 +26,9 @@ object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
         if (typeRef.source?.kind is KtFakeSourceElementKind) return
 
         ProjectionRelationCheckerImpl.doCheck(extractArgumentsTypeRefAndSource(typeRef), typeRef.coneType.abbreviatedTypeOrSelf)
+
+        if (typeRef.coneType.fullyExpandedType().contains { it is ConeErrorType && it.diagnostic is ConeIllegalProjectionInExpansion }) {
+            reporter.reportOn(typeRef.source, FirErrors.ILLEGAL_PROJECTION_IN_TYPEALIAS_EXPANSION)
+        }
     }
 }

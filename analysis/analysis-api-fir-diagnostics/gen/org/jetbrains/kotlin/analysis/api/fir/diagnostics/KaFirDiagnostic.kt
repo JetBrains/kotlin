@@ -4059,6 +4059,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IllegalProjectionInTypealiasExpansion : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IllegalProjectionInTypealiasExpansion>
+            get() = IllegalProjectionInTypealiasExpansion::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ConflictingProjectionInCallableReferenceWarning : KaFirDiagnostic<KtTypeProjection> {
         override val diagnosticClass: KClass<ConflictingProjectionInCallableReferenceWarning>
             get() = ConflictingProjectionInCallableReferenceWarning::class
