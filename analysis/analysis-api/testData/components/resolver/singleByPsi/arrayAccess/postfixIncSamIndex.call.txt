@@ -1,0 +1,99 @@
+KtOperationReferenceExpression(186,188): '++'
+  KaCompoundArrayAccessCallResolutionAttempt:
+    call = KaCompoundArrayAccessCall:
+      compoundOperation = KaCompoundUnaryOperation:
+        kind = INC
+        operationCall = KaSimpleFunctionCall:
+          contextArgumentMapping = {}
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = b[fn]
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+            valueParameters = []
+            contextParameters = []
+            callableId = kotlin/Int.inc
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
+        precedence = POSTFIX
+      getterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = b
+          isSafeNavigation = false
+          type = B
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = /B.get(<dispatch receiver>: B, i: IFoo): kotlin.Int
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = IFoo
+              symbol = i: IFoo
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /B.get
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          fn -> (KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = IFoo
+            symbol = i: IFoo
+            contextParameters = []
+            callableId = null)
+        }
+      indexArguments = [
+        fn
+      ]
+      setterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = b
+          isSafeNavigation = false
+          type = B
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /B.set(<dispatch receiver>: B, i: IFoo, value: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = IFoo
+              symbol = i: IFoo
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = value: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /B.set
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          fn -> (KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = IFoo
+            symbol = i: IFoo
+            contextParameters = []
+            callableId = null)
+        }

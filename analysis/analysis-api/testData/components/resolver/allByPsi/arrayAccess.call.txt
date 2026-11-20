@@ -383,7 +383,7 @@ KtBinaryExpression(134,172): '(@Suppress("SOME_ERROR") list[1]) += 2'
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
           valueArgumentMapping = {
-            list[1] -> (KaVariableSignature:
+            2 -> (KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Int
@@ -460,10 +460,10 @@ KtBinaryExpression(134,172): '(@Suppress("SOME_ERROR") list[1]) += 2'
         typeArgumentsMapping = {}
         valueArgumentMapping = {
           1 -> (KaVariableSignature:
-            name = element
+            name = index
             receiverType = null
             returnType = kotlin.Int
-            symbol = element: E
+            symbol = index: kotlin.Int
             contextParameters = []
             callableId = null)
         }
@@ -681,7 +681,7 @@ KtOperationReferenceExpression(168,170): '+='
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
           valueArgumentMapping = {
-            list[1] -> (KaVariableSignature:
+            2 -> (KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Int
@@ -758,10 +758,10 @@ KtOperationReferenceExpression(168,170): '+='
         typeArgumentsMapping = {}
         valueArgumentMapping = {
           1 -> (KaVariableSignature:
-            name = element
+            name = index
             receiverType = null
             returnType = kotlin.Int
-            symbol = element: E
+            symbol = index: kotlin.Int
             contextParameters = []
             callableId = null)
         }
@@ -800,7 +800,7 @@ KtBinaryExpression(177,191): '(list[2]) += 3'
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
           valueArgumentMapping = {
-            list[2] -> (KaVariableSignature:
+            3 -> (KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Int
@@ -877,10 +877,10 @@ KtBinaryExpression(177,191): '(list[2]) += 3'
         typeArgumentsMapping = {}
         valueArgumentMapping = {
           2 -> (KaVariableSignature:
-            name = element
+            name = index
             receiverType = null
             returnType = kotlin.Int
-            symbol = element: E
+            symbol = index: kotlin.Int
             contextParameters = []
             callableId = null)
         }
@@ -978,7 +978,7 @@ KtOperationReferenceExpression(187,189): '+='
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
           valueArgumentMapping = {
-            list[2] -> (KaVariableSignature:
+            3 -> (KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Int
@@ -1055,10 +1055,10 @@ KtOperationReferenceExpression(187,189): '+='
         typeArgumentsMapping = {}
         valueArgumentMapping = {
           2 -> (KaVariableSignature:
-            name = element
+            name = index
             receiverType = null
             returnType = kotlin.Int
-            symbol = element: E
+            symbol = index: kotlin.Int
             contextParameters = []
             callableId = null)
         }
@@ -1306,10 +1306,10 @@ KtPrefixExpression(245,254): '--list[i]'
         typeArgumentsMapping = {}
         valueArgumentMapping = {
           i -> (KaVariableSignature:
-            name = element
+            name = index
             receiverType = null
             returnType = kotlin.Int
-            symbol = element: E
+            symbol = index: kotlin.Int
             contextParameters = []
             callableId = null)
         }
@@ -1406,10 +1406,10 @@ KtOperationReferenceExpression(245,247): '--'
         typeArgumentsMapping = {}
         valueArgumentMapping = {
           i -> (KaVariableSignature:
-            name = element
+            name = index
             receiverType = null
             returnType = kotlin.Int
-            symbol = element: E
+            symbol = index: kotlin.Int
             contextParameters = []
             callableId = null)
         }
@@ -1599,10 +1599,10 @@ KtPrefixExpression(266,277): '++(list[2])'
         typeArgumentsMapping = {}
         valueArgumentMapping = {
           2 -> (KaVariableSignature:
-            name = element
+            name = index
             receiverType = null
             returnType = kotlin.Int
-            symbol = element: E
+            symbol = index: kotlin.Int
             contextParameters = []
             callableId = null)
         }
@@ -1699,10 +1699,10 @@ KtOperationReferenceExpression(266,268): '++'
         typeArgumentsMapping = {}
         valueArgumentMapping = {
           2 -> (KaVariableSignature:
-            name = element
+            name = index
             receiverType = null
             returnType = kotlin.Int
-            symbol = element: E
+            symbol = index: kotlin.Int
             contextParameters = []
             callableId = null)
         }

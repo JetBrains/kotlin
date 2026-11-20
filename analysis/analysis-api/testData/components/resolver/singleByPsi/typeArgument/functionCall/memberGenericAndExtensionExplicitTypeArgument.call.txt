@@ -1,0 +1,37 @@
+KtDotQualifiedExpression(90,108): 'c.foo<String>("x")'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = c
+        isSafeNavigation = false
+        type = C
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /C.foo(<dispatch receiver>: C, t: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = t
+            receiverType = null
+            returnType = kotlin.String
+            symbol = t: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /C.foo
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "x" -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = kotlin.String
+          symbol = t: T
+          contextParameters = []
+          callableId = null)
+      }

@@ -38,6 +38,21 @@ private fun createKaCallForArrayAccessConvention(
 }
 
 /**
+ * Whether [fir] is the `set` call of the array access that [psi] assigns (`a[i] += x`) or increments (`a[i]++`).
+ */
+internal fun isCompoundArrayAccessSetCall(psi: KtElement, fir: FirElement): Boolean {
+    if (fir !is FirFunctionCall || fir.calleeReference.name != OperatorNameConventions.SET) return false
+
+    val accessExpression = when (psi) {
+        is KtBinaryExpression if psi.operationToken in KtTokens.AUGMENTED_ASSIGNMENTS -> psi.left
+        is KtUnaryExpression if psi.operationToken in KtTokens.INCREMENT_AND_DECREMENT -> psi.baseExpression
+        else -> return false
+    }
+
+    return deparenthesize(accessExpression) is KtArrayAccessExpression
+}
+
+/**
  * Handle compound assignment with variable
  */
 context(resolver: KaFirResolver)
@@ -189,15 +204,8 @@ private fun createCompoundArrayAccessCall(
     resolveFragmentOfCall: Boolean,
     compoundOperationProvider: (KaFunctionCall<KaNamedFunctionSymbol>) -> KaCompoundOperation,
 ): KaCallResolutionAttempt? {
-    // The last argument of `set` is the new value to be set. This value should be a call to the respective `plus`, `minus`,
-    // `times`, `div`, or `rem` function.
-    val firOperationCall = firCall.arguments.lastOrNull() as? FirFunctionCall ?: return null
-
-    // The explicit receiver for both `get` and `set` call should be the array expression.
-    val firExplicitReceiver = firOperationCall.explicitReceiver ?: return null
-    val firGetCall = firExplicitReceiver as? FirFunctionCall // case for array access and prefix
-        ?: getInitializerOfReferencedLocalVariable(firExplicitReceiver) // case for postfix
-        ?: return null
+    val firOperationCall = firCall.compoundArrayAccessOperationCall() ?: return null
+    val firGetCall = firOperationCall.operationReceiverGetCall() ?: return null
 
     val indexExpressions = lhsArrayAccessExpression.indexExpressions
     val arrayExpression = lhsArrayAccessExpression.arrayExpression
@@ -209,11 +217,10 @@ private fun createCompoundArrayAccessCall(
         getterAttempt = getterError
     } else {
         val getPartiallyAppliedSymbol = firGetCall.toPartiallyAppliedSymbol(arrayExpression) ?: return null
-        val getArgumentMapping = indexExpressions.zip(getPartiallyAppliedSymbol.signature.valueParameters).toMap()
         val getCall = KaFirSimpleFunctionCall(
             backingPartiallyAppliedSymbol = getPartiallyAppliedSymbol,
-            backingArgumentMapping = getArgumentMapping,
-            backingTypeArgumentsMapping = firCall
+            backingArgumentMapping = firGetCall.createArgumentMapping(getPartiallyAppliedSymbol.signature),
+            backingTypeArgumentsMapping = firGetCall
                 .toFirTypeArgumentsMapping(symbol = getPartiallyAppliedSymbol.symbol.firSymbol)
                 .asKaTypeParametersMapping(),
         ).let {
@@ -236,13 +243,13 @@ private fun createCompoundArrayAccessCall(
         // The explicit receiver in this case is a synthetic FirFunctionCall to `get`, which does not have a corresponding PSI. So
         // we use the `lhsArrayAccessExpression` as the supplement.
         val operationPartiallyAppliedSymbol = firOperationCall.toPartiallyAppliedSymbol(lhsArrayAccessExpression) ?: return null
-        val operationArgumentsMapping = listOfNotNull(lhsArrayAccessExpression, rhsExpression)
+        val operationArgumentsMapping = listOfNotNull(rhsExpression)
             .zip(operationPartiallyAppliedSymbol.signature.valueParameters)
             .toMap()
         val operationCall = KaFirSimpleFunctionCall(
             backingPartiallyAppliedSymbol = operationPartiallyAppliedSymbol,
             backingArgumentMapping = operationArgumentsMapping,
-            backingTypeArgumentsMapping = firCall
+            backingTypeArgumentsMapping = firOperationCall
                 .toFirTypeArgumentsMapping(symbol = operationPartiallyAppliedSymbol.symbol.firSymbol)
                 .asKaTypeParametersMapping(),
         ).let {
@@ -260,10 +267,10 @@ private fun createCompoundArrayAccessCall(
         setterAttempt = setterError
     } else {
         val setPartiallyAppliedSymbol = firCall.toPartiallyAppliedSymbol(arrayExpression) ?: return null
-        val setArgumentsMapping = mapOf(indexExpressions.last() to setPartiallyAppliedSymbol.signature.valueParameters.last())
         val setCall = KaFirSimpleFunctionCall(
             backingPartiallyAppliedSymbol = setPartiallyAppliedSymbol,
-            backingArgumentMapping = setArgumentsMapping,
+            // The value argument is the result of the operation call, which has no PSI of its own
+            backingArgumentMapping = firCall.createArgumentMapping(setPartiallyAppliedSymbol.signature),
             backingTypeArgumentsMapping = firCall
                 .toFirTypeArgumentsMapping(symbol = setPartiallyAppliedSymbol.symbol.firSymbol)
                 .asKaTypeParametersMapping(),
@@ -284,6 +291,32 @@ private fun createCompoundArrayAccessCall(
     )
 }
 
+/**
+ * The operation call (`inc`, `plus`, ...) of the compound array access whose `set` call is [this].
+ */
+private fun FirFunctionCall.compoundArrayAccessOperationCall(): FirFunctionCall? {
+    // The last argument of `set` is the new value to be set, the result of the operation call
+    return arguments.lastOrNull() as? FirFunctionCall
+}
+
+/**
+ * The `get` call of the compound array access whose operation call is [this]: the receiver of the operation.
+ */
+context(resolver: KaFirResolver)
+private fun FirFunctionCall.operationReceiverGetCall(): FirFunctionCall? {
+    val firExplicitReceiver = explicitReceiver ?: return null
+    return firExplicitReceiver as? FirFunctionCall // case for array access and prefix
+        ?: getInitializerOfReferencedLocalVariable(firExplicitReceiver) // case for postfix
+}
+
+/**
+ * The `get` call of the compound array access whose `set` call is [setCall].
+ */
+context(resolver: KaFirResolver)
+internal fun compoundArrayAccessGetCall(setCall: FirFunctionCall): FirFunctionCall? {
+    return setCall.compoundArrayAccessOperationCall()?.operationReceiverGetCall()
+}
+
 context(resolver: KaFirResolver)
 private fun getInitializerOfReferencedLocalVariable(variableReference: FirExpression): FirFunctionCall? {
     return variableReference.toReference(resolutionFacade.useSiteFirSession)
@@ -300,7 +333,7 @@ private fun buildOperationCallForCompoundVariableAccess(
 ): KaFunctionCall<KaNamedFunctionSymbol>? {
     val operationPartiallyAppliedSymbol = firOperationCall.toPartiallyAppliedSymbol(leftOperandPsi) ?: return null
 
-    val operationArgumentsMapping = listOfNotNull(leftOperandPsi, rightOperandPsi)
+    val operationArgumentsMapping = listOfNotNull(rightOperandPsi)
         .zip(operationPartiallyAppliedSymbol.signature.valueParameters)
         .toMap()
 

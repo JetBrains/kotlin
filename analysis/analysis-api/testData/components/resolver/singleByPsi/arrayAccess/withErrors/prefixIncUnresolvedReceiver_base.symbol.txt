@@ -1,0 +1,5 @@
+KtArrayAccessExpression(35,43): 'obj["a"]'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/text/get(<extension receiver>: kotlin.text.MatchGroupCollection, name: kotlin.String): kotlin.text.MatchGroup?
+    ]

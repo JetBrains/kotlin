@@ -29,7 +29,7 @@ KtOperationReferenceExpression(195,197): '+='
             callableId = test/WithOperator.plus
           typeArgumentsMapping = {}
           valueArgumentMapping = {
-            variable -> (KaVariableSignature:
+            foo -> (KaVariableSignature:
               name = f
               receiverType = null
               returnType = test.Foo

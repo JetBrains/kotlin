@@ -1,0 +1,5 @@
+KtOperationReferenceExpression(202,204): '++'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  null

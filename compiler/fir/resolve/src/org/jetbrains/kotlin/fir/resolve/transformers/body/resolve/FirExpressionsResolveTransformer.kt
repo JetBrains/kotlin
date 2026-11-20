@@ -2397,8 +2397,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 dispatchReceiver = lhsGetCall.dispatchReceiver
             }
             calleeReference = lhsGetCall.calleeReference
+            // The get call isn't completed again, so it keeps the type and context arguments resolved for the original one
+            typeArguments += lhsGetCall.typeArguments
+            contextArguments += lhsGetCall.contextArguments
             var i = 0
-            argumentList = lhsGetCall.argumentList.mapArguments { argument ->
+            argumentList = lhsGetCall.argumentList.mapArguments(originalArguments = indicesQualifiedAccess) { argument ->
                 if (argument is FirVarargArgumentsExpression) {
                     buildVarargArgumentsExpression {
                         val varargSize = argument.arguments.size
@@ -2470,10 +2473,20 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             return (this as? WithExpectedType)?.arrayLiteralPosition != null
         }
 
-    private inline fun FirArgumentList.mapArguments(transform: (FirExpression) -> FirExpression): FirArgumentList =
+    /**
+     * [originalArguments] are the arguments before their mapping to parameters (varargs not packed yet), see
+     * [FirResolvedArgumentList.originalArgumentList].
+     */
+    private inline fun FirArgumentList.mapArguments(
+        originalArguments: List<FirExpression>,
+        transform: (FirExpression) -> FirExpression,
+    ): FirArgumentList =
         when (this) {
             is FirResolvedArgumentList -> buildResolvedArgumentList(
-                this,
+                original = buildArgumentList {
+                    source = this@mapArguments.source
+                    arguments += originalArguments
+                },
                 mapping = mapping.mapKeysTo(LinkedHashMap()) { transform(it.key) },
             )
             else -> buildArgumentList {

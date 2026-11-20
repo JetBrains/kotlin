@@ -383,7 +383,17 @@ internal fun assertStableResult(
         }
 
         is KaMultiCallResolutionAttempt -> if (symbolResolutionAttempt is KaCompoundSymbolResolutionError) {
-            val callErrors = callResolutionAttempt.errors
+            // The operation reference of a compound array access resolves to its operation and setter, not to its getter
+            val callErrors = if (
+                mainElement is KtOperationReferenceExpression &&
+                callResolutionAttempt is KaCompoundArrayAccessCallResolutionAttempt
+            ) {
+                listOf(callResolutionAttempt.operationCallAttempt, callResolutionAttempt.setterCallAttempt)
+                    .filterIsInstance<KaSimpleCallResolutionError>()
+            } else {
+                callResolutionAttempt.errors
+            }
+
             val symbolErrors = symbolResolutionAttempt.errors
             assertions.assertEquals(callErrors.size, symbolErrors.size) {
                 "Number of error attempts differs between call and symbol resolution"
