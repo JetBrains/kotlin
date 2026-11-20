@@ -43,7 +43,7 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
 
     internal var kgpMetricsCollectorOut: ByteArray? = null
 
-    internal var enableClassloaderCache: Boolean = false
+    internal var enableClassloaderCache: Boolean = true
 
     @Transient
     private val executionStarted = AtomicBoolean(false)
