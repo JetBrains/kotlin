@@ -219,6 +219,7 @@ object CompilerModules {
 
     val analysisApiSyntaxSurfaceModules = arrayOf(
         ":compiler:psi:psi-api",
+        ":compiler:psi:psi-utils",
     )
 
     val analysisApiSyntaxImplementationModules = arrayOf(
