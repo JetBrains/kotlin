@@ -39,6 +39,12 @@ internal class KotlinWrapperPre2_5_20(
 
     override val implClassloader: ClassLoader by lazy { getImplClassloader() }
 
+    override fun createNativeImageProcessExecutionPolicy(dist: Path): ExecutionPolicy.NativeImageProcess =
+        error("Native image execution policies are supported from compiler version 2.5.20.")
+
+    override fun nativeImageDaemonExecutionPolicyBuilder(dist: Path): ExecutionPolicy.NativeImageDaemon.Builder =
+        error("Native image execution policies are supported from compiler version 2.5.20.")
+
     @Suppress("UNCHECKED_CAST")
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T = when (type) {
         JvmPlatformToolchain::class.java -> JvmPlatformToolchainWrapper(base.getToolchain(type))

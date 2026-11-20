@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.daemon
 
+import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.JavaLanguageVersion
 import org.jetbrains.kotlin.daemon.common.makeRunFileDigest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import java.io.File
 import kotlin.io.path.Path
 
 class MakeRunFileDigestTest {
@@ -43,6 +45,41 @@ class MakeRunFileDigestTest {
         assertNotEquals(
             makeRunFileDigest(JavaLanguageVersion.of(17), classpath),
             makeRunFileDigest(JavaLanguageVersion.of(17), other)
+        )
+    }
+
+    @Test
+    @DisplayName("native image digest includes the executable and the compiler version")
+    fun nativeImageDigestIncludesExecutableAndCompilerVersion() {
+        assertNotEquals(
+            makeRunFileDigest(
+                JavaLanguageVersion.of(17),
+                CompilerId.makeNativeImageCompilerId(File("/dist-a/kotlin-daemon-native-image"), "2.5.20"),
+            ),
+            makeRunFileDigest(
+                JavaLanguageVersion.of(17),
+                CompilerId.makeNativeImageCompilerId(File("/dist-a/kotlin-daemon-native-image"), "2.5.30"),
+            )
+        )
+        assertNotEquals(
+            makeRunFileDigest(
+                JavaLanguageVersion.of(17),
+                CompilerId.makeNativeImageCompilerId(File("/dist-a/kotlin-daemon-native-image"), "2.5.20"),
+            ),
+            makeRunFileDigest(
+                JavaLanguageVersion.of(17),
+                CompilerId.makeNativeImageCompilerId(File("/dist-b/kotlin-daemon-native-image"), "2.5.20"),
+            )
+        )
+        assertEquals(
+            makeRunFileDigest(
+                JavaLanguageVersion.of(17),
+                CompilerId.makeNativeImageCompilerId(File("/dist-a/kotlin-daemon-native-image"), "2.5.20"),
+            ),
+            makeRunFileDigest(
+                JavaLanguageVersion.of(17),
+                CompilerId.makeNativeImageCompilerId(File("/dist-a/kotlin-daemon-native-image"), "2.5.20"),
+            )
         )
     }
 

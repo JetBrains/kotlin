@@ -32,6 +32,8 @@ The module defines test suites using the `jvm-test-suite` plugin.
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testJps` to run them
 * Example: provides examples of the DSL usage. Excluded from the `check` task
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testExample` to run them
+* Native image execution policies: verifies the native image execution policies work correctly; excluded from the default `check` task
+    * Use `./gradlew -Pkotlin.build.native-image.kotlin-daemon=true :compiler:build-tools:kotlin-build-tools-api-tests:testNativeImage` to run them
 
 #### How to work with the tests
 

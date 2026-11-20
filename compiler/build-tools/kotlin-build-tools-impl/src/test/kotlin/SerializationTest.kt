@@ -318,4 +318,22 @@ class SerializationTest {
         assertEquals(jvmSnapshotIc.rootProjectDir, deserializedJvmSnapshotIc.rootProjectDir)
         assertEquals(jvmSnapshotIc.moduleBuildDir, deserializedJvmSnapshotIc.moduleBuildDir)
     }
+
+    @Test
+    @DisplayName("Native image execution policies are serialized correctly")
+    fun nativeImageExecutionPoliciesSerialization() {
+        val nativeImageProcessPolicy = NativeImageProcessExecutionPolicyImpl(Path("dist"))
+        val deserializedProcessPolicy = serializer.serializeAndDeserialize(nativeImageProcessPolicy)
+        assertEquals(nativeImageProcessPolicy, deserializedProcessPolicy)
+
+        val nativeImageDaemonPolicy = NativeImageDaemonExecutionPolicyImpl(Path("dist")).apply {
+            shutdownDelayMillis = 1000
+            daemonRunDirPath = Path("daemon-run")
+            logsPath = Path("daemon-logs")
+            logsFileSizeLimit = 42
+            logsFileCountLimit = 4
+        }
+        val deserializedDaemonPolicy = serializer.serializeAndDeserialize(nativeImageDaemonPolicy)
+        assertEquals(nativeImageDaemonPolicy, deserializedDaemonPolicy)
+    }
 }

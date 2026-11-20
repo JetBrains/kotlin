@@ -92,6 +92,24 @@ public interface KotlinToolchains {
     public fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder
 
     /**
+     * Creates an [ExecutionPolicy] that allows executing operations in an external native image process.
+     *
+     * @param dist the path to the native image distribution
+     * @see BuildSession.executeOperation
+     * @since 2.5.20
+     */
+    public fun createNativeImageProcessExecutionPolicy(dist: Path): ExecutionPolicy.NativeImageProcess
+
+    /**
+     * Creates a builder for [ExecutionPolicy.NativeImageDaemon] using the given native image distribution.
+     *
+     * @param dist the native image distribution used to run the daemon
+     * @see BuildSession.executeOperation
+     * @since 2.5.20
+     */
+    public fun nativeImageDaemonExecutionPolicyBuilder(dist: Path): ExecutionPolicy.NativeImageDaemon.Builder
+
+    /**
      * Returns the version of the Kotlin compiler used to run compilation.
      *
      * @return A string representing the version of the Kotlin compiler, for example `2.3.0`.

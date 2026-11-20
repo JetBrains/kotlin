@@ -13,19 +13,19 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class DaemonConnectionRegistry(private val sessionIsAliveFlagFile: Lazy<File>) : AutoCloseable {
     private val closeableGuard = CloseableGuard(this)
-    private val connections = ConcurrentHashMap<DaemonExecutionPolicyImpl, CompileServiceSession>()
+    private val connections = ConcurrentHashMap<DaemonBasedExecutionPolicy, CompileServiceSession>()
 
     fun getCompileServiceSession(
-        policy: DaemonExecutionPolicyImpl,
+        policy: DaemonBasedExecutionPolicy,
         logger: KotlinLogger,
         messageCollector: MessageCollectorWithDiagnosticId,
     ): CompileServiceSession? {
         closeableGuard.requireNotClosed()
         @Suppress("UNCHECKED_CAST") // to support the case when compute returns null and the mapping is not recorded
-        val connectionsNullable = connections as MutableMap<DaemonExecutionPolicyImpl, CompileServiceSession?>
+        val connectionsNullable = connections as MutableMap<DaemonBasedExecutionPolicy, CompileServiceSession?>
 
         return connectionsNullable.compute(policy) { policy, daemon: CompileServiceSession? ->
-            daemon.takeIfAlive() ?: policy.createDaemonConnection(logger, messageCollector, sessionIsAliveFlagFile)
+            daemon.takeIfAlive(policy) ?: policy.createDaemonConnection(logger, messageCollector, sessionIsAliveFlagFile)
         }
     }
 
@@ -42,9 +42,13 @@ internal class DaemonConnectionRegistry(private val sessionIsAliveFlagFile: Lazy
     }
 }
 
-private fun CompileServiceSession?.takeIfAlive(): CompileServiceSession? {
+private fun CompileServiceSession?.takeIfAlive(policy: DaemonBasedExecutionPolicy): CompileServiceSession? {
     if (this == null) return null
     return try {
+        if (!compileService.checkCompilerId(policy.createCompilerId())) {
+            compileService.releaseCompileSession(sessionId)
+            return null
+        }
         this.takeIf { compileService.isSessionActive(sessionId).takeIf { it.isGood }?.get() ?: false }
     } catch (_: Exception) {
         null

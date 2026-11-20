@@ -28,16 +28,49 @@ abstract class BaseCompilationTest {
         additionalDaemonConfiguration: ExecutionPolicy.WithDaemon.Builder.() -> Unit = {},
         additionalCleanupActions: (daemonRunPath: Path) -> Unit = {},
         body: (ExecutionPolicy.WithDaemon, daemonRunPath: Path) -> Unit,
-    ) {
-        val daemonRunPath: Path = createTempDirectory("test-daemon-files")
-        try {
-            val daemonPolicy = kotlinToolchains.daemonExecutionPolicy {
-                @OptIn(DelicateBuildToolsApi::class)
+    ) = runSingleShot(
+        "test-daemon-files",
+        additionalCleanupActions,
+        createPolicy = { daemonRunPath ->
+            kotlinToolchains.daemonExecutionPolicy {
                 this[ExecutionPolicy.WithDaemon.DAEMON_RUN_DIR_PATH] = daemonRunPath
                 this[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 0
                 additionalDaemonConfiguration()
             }
-            body(daemonPolicy, daemonRunPath)
+        },
+    ) { daemonPolicy, daemonRunPath ->
+        body(daemonPolicy, daemonRunPath)
+    }
+
+    fun runSingleShotNativeImageDaemonTest(
+        kotlinToolchains: KotlinToolchains,
+        distPath: Path,
+        additionalDaemonConfiguration: ExecutionPolicy.NativeImageDaemon.Builder.() -> Unit = {},
+        additionalCleanupActions: (daemonRunPath: Path) -> Unit = {},
+        body: (ExecutionPolicy.NativeImageDaemon, daemonRunPath: Path) -> Unit,
+    ) = runSingleShot(
+        "test-native-image-daemon-files",
+        additionalCleanupActions,
+        createPolicy = { daemonRunPath ->
+            kotlinToolchains.nativeImageDaemonExecutionPolicyBuilder(distPath).apply {
+                this[ExecutionPolicy.NativeImageDaemon.DAEMON_RUN_DIR_PATH] = daemonRunPath
+                this[ExecutionPolicy.NativeImageDaemon.SHUTDOWN_DELAY_MILLIS] = 0
+                additionalDaemonConfiguration()
+            }.build()
+        },
+    ) { daemonPolicy, daemonRunPath ->
+        body(daemonPolicy, daemonRunPath)
+    }
+
+    private fun <P> runSingleShot(
+        daemonFilesPrefix: String,
+        additionalCleanupActions: (daemonRunPath: Path) -> Unit,
+        createPolicy: (daemonRunPath: Path) -> P,
+        body: (policy: P, daemonRunPath: Path) -> Unit,
+    ) {
+        val daemonRunPath: Path = createTempDirectory(daemonFilesPrefix)
+        try {
+            body(createPolicy(daemonRunPath), daemonRunPath)
         } finally {
             attemptCleanupDaemon(daemonRunPath, additionalCleanupActions)
         }
