@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.forEachExpandedType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -650,8 +651,18 @@ abstract class ParameterizedKaptStubConverter<
 
         val [superClass, superInterfaces] = partitionSuperTypes(firClass) ?: return defaultSuperTypes
 
+        val session = kaptContext.firSession ?: return defaultSuperTypes
+
+        val hasErrorTypes = (listOfNotNull(superClass) + superInterfaces).any { typeRef ->
+            typeRef.coneType.forEachExpandedType(session) {
+                if (it is ConeErrorType) return@any true
+            }
+            false
+        }
+
         if ((superClass == null) == (defaultSuperTypes.superClass == null) &&
-            superInterfaces.size == defaultSuperTypes.interfaces.size
+            superInterfaces.size == defaultSuperTypes.interfaces.size &&
+            !hasErrorTypes
         ) {
             return defaultSuperTypes
         }

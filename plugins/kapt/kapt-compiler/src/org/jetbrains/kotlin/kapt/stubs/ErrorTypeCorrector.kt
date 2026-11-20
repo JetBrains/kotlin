@@ -222,7 +222,10 @@ class ErrorTypeCorrector<Expression>(
         }
 
         val name = "Function" + (allTypeArguments.size - 1)
-        return converter.makeTypeApply(converter.makeSimpleName(name), allTypeArguments)
+        return converter.makeTypeApply(
+            converter.makeQualifiedName("kotlin.jvm.functions.$name"),
+            allTypeArguments
+        )
     }
 
     private fun FirTypeAlias.getSubstitutions(arguments: List<FirTypeProjection>, coneType: ConeKotlinType?): SubstitutionMap {
@@ -255,12 +258,33 @@ class ErrorTypeCorrector<Expression>(
         val part = parts[index]
         val abbreviatedType = coneType.abbreviatedType
 
+        fun expandTypeAlias(
+            typeAlias: FirTypeAlias,
+            arguments: List<FirTypeProjection>,
+            aliasType: ConeKotlinType
+        ) = convert(
+            typeAlias.expandedTypeRef,
+            null,
+            typeAlias.getSubstitutions(arguments, aliasType)
+        )
+
+        val typeAliasSymbol = (coneType as? ConeClassLikeType)?.classId
+            ?.let(session.symbolProvider::getClassLikeSymbolByClassId) as? FirTypeAliasSymbol
+
         val baseExpression = when {
+            typeAliasSymbol != null &&
+                    (typeAliasSymbol.fir.expandedTypeRef as? FirResolvedTypeRef)?.delegatedTypeRef != null -> {
+                return expandTypeAlias(typeAliasSymbol.fir, part.typeArgumentList.typeArguments, coneType)
+            }
             abbreviatedType != null && coneType is ConeErrorType -> {
-                val firTypeAlias = abbreviatedType.classId?.let(session.symbolProvider::getClassLikeSymbolByClassId) as? FirTypeAliasSymbol
+                val firTypeAlias = abbreviatedType.classId?.let(session.symbolProvider::getClassLikeSymbolByClassId)
+                        as? FirTypeAliasSymbol
                 val typeAlias = firTypeAlias?.fir ?: return defaultType
-                val newSubstitutions = typeAlias.getSubstitutions(part.typeArgumentList.typeArguments, abbreviatedType)
-                return convert(typeAlias.expandedTypeRef, null, newSubstitutions)
+                return expandTypeAlias(
+                    typeAlias,
+                    part.typeArgumentList.typeArguments,
+                    abbreviatedType
+                )
             }
             coneType is ConeClassLikeType && coneType !is ConeErrorType -> {
                 // Nested under an error type, so keep primitives boxed.

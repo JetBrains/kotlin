@@ -1,0 +1,86 @@
+package test;
+
+/**
+ * public final class test/Alias : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: f()Lerror/NonExistentClass;
+ *   public final fun f(): error/NonExistentClass (* = test/H^<error/NonExistentClass> *)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Alias extends Two<java.lang.String, Gen> {
+
+    public Alias() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Two<java.lang.String, Gen> f() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public open class test/Base<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public class Base<T extends java.lang.Object> {
+
+    public Base() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/ErrAlias : test/Base<error/NonExistentClass (* = test/GA^ *)> {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ErrAlias extends test.Base<GeneratedClass> {
+
+    public ErrAlias() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   public typealias GA = error/NonExistentClass (* = error/NonExistentClass *)
+ *
+ *   public typealias H<T#0 (* T *)> = error/NonExistentClass (* = error/NonExistentClass *)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ErrorTypealiasCorrectErrorTypesKt {
+}
