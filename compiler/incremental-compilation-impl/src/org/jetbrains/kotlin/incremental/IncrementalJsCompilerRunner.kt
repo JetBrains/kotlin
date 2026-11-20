@@ -120,9 +120,9 @@ class IncrementalJsCompilerRunner(
     override val shouldTrackLibrarySetChanges
         get() = lazyKlibSnapshot == null
 
-
+    // The klib snapshot shrinker matches lookups by name, like on the JVM
     override val shouldStoreFullFqNamesInLookupCache
-        get() = false
+        get() = lazyKlibSnapshot != null
 
     override fun createCacheManager(
         icContext: IncrementalCompilationContext,

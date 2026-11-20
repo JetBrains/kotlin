@@ -5,7 +5,14 @@
 
 package org.jetbrains.kotlin.incremental.libraryDiff.klib
 
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
+import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler
+import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
+import org.jetbrains.kotlin.incremental.LookupStorage
+import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.incremental.NonRecoverableCompilationTransaction
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.snapshots.LazySnapshotLoadingMetrics.OnClasspathDiffComputation
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
@@ -55,6 +62,32 @@ class LazyKlibSnapshotTest : KlibSnapshotTestCommon() {
 
         assertSame(current, lazyKlibSnapshot.getCurrentKlibSnapshot(OnClasspathDiffComputation))
         assertSame(savedShrunk, lazyKlibSnapshot.getSavedShrunkKlibSnapshotAgainstPreviousLookups(OnClasspathDiffComputation))
+    }
+
+    @Test
+    fun testShrinkAndSaveKlibSnapshot() {
+        val currentSnapshotFile = File(tmpDir, "current.bin").also { KlibEntrySnapshotExternalizer.saveToFile(it, firstKlib) }
+        val classpathChanges = ToBeComputedByIncrementalCompiler(ClasspathSnapshotFiles(listOf(currentSnapshotFile), tmpDir))
+        val shrunkSnapshotFile = classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile
+
+        val icContext = IncrementalCompilationContext(
+            storeFullFqNamesInLookupCache = true,
+            transaction = NonRecoverableCompilationTransaction(),
+        )
+        LookupStorage(File(tmpDir, "lookups"), icContext).use { lookupStorage ->
+            val lookups = MultiMap.create<LookupSymbol, String>().apply { putValue(LookupSymbol("Sub", "com.example"), "/src/Usage.kt") }
+            lookupStorage.addAll(lookups, setOf("/src/Usage.kt"))
+
+            shrinkAndSaveKlibSnapshot(
+                classpathChanges, lookupStorage, LazyKlibSnapshot(listOf(currentSnapshotFile), shrunkSnapshotFile, reporter), reporter
+            )
+        }
+
+        assertEquals(
+            setOf("com/example/SubKt", "com/example/BaseKt"),
+            LazyKlibSnapshot(emptyList(), shrunkSnapshotFile, reporter)
+                .getSavedShrunkKlibSnapshotAgainstPreviousLookups(OnClasspathDiffComputation).mapTo(mutableSetOf()) { it.id },
+        )
     }
 
     private val reporter = ClasspathSnapshotBuildReporter(DoNothingBuildReporter)

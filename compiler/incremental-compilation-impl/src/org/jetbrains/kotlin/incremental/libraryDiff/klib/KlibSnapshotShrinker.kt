@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.incremental.libraryDiff.klib
 
+import org.jetbrains.kotlin.build.report.debug
+import org.jetbrains.kotlin.build.report.metrics.CLASSPATH_ENTRY_COUNT
+import org.jetbrains.kotlin.build.report.metrics.CLASSPATH_SNAPSHOT_SIZE
+import org.jetbrains.kotlin.build.report.metrics.SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT
+import org.jetbrains.kotlin.build.report.metrics.SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT
+import org.jetbrains.kotlin.build.report.metrics.SHRUNK_CLASSPATH_SNAPSHOT_SIZE
+import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.incremental.LookupSymbol
@@ -13,7 +20,10 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClassSymbol
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.LookupSymbolSet
 import org.jetbrains.kotlin.incremental.classpathDiff.toLookupSymbol
+import org.jetbrains.kotlin.incremental.snapshots.LazySnapshotLoadingMetrics
+import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.LookupSymbolKey
+import org.jetbrains.kotlin.incremental.storage.saveToFile
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.filterToSetOrEmpty
 
@@ -70,12 +80,36 @@ internal object KlibSnapshotShrinker {
     }
 }
 
-/** Shrinks the current klib snapshot against the lookups of this build and saves it for the next build. */
+/**
+ * Shrinks the current klib snapshot against the lookups of this build and saves it for the next build.
+ *
+ * Unlike `shrinkAndSaveClasspathSnapshot`, it always shrinks non-incrementally (see KT-90559 progress doc).
+ */
 internal fun shrinkAndSaveKlibSnapshot(
     classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
     lookupStorage: LookupStorage,
     lazyKlibSnapshot: LazyKlibSnapshot,
     reporter: ClasspathSnapshotBuildReporter,
 ) {
-    TODO("KT-90559 step 1")
+    val metrics = LazySnapshotLoadingMetrics.OnNonIncrementalShrunkClasspathUpdate
+    val currentSnapshot = lazyKlibSnapshot.getCurrentKlibSnapshot(metrics)
+    val shrunkCurrentSnapshot = reporter.measure(metrics.calculateShrunkClasspathTag) {
+        KlibSnapshotShrinker.shrink(currentSnapshot, lookupStorage)
+    }
+
+    val snapshotFiles = classpathChanges.classpathSnapshotFiles
+    reporter.measure(SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT) {
+        ListExternalizer(KlibSnapshotExternalizer).saveToFile(snapshotFiles.shrunkPreviousClasspathSnapshotFile, shrunkCurrentSnapshot)
+    }
+
+    reporter.debug {
+        "Shrunk current klib snapshot after compilation, retained ${shrunkCurrentSnapshot.size} / ${currentSnapshot.size} snapshots"
+    }
+
+    if (!reporter.isEnabled) return
+
+    reporter.addMetric(SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
+    reporter.addMetric(CLASSPATH_ENTRY_COUNT, snapshotFiles.currentClasspathEntrySnapshotFiles.size.toLong())
+    reporter.addMetric(CLASSPATH_SNAPSHOT_SIZE, snapshotFiles.currentClasspathEntrySnapshotFiles.sumOf { it.length() })
+    reporter.addMetric(SHRUNK_CLASSPATH_SNAPSHOT_SIZE, snapshotFiles.shrunkPreviousClasspathSnapshotFile.length())
 }
