@@ -367,9 +367,6 @@ public final class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaMod
 	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAnnotationsProvider;
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleJavaAnnotationsProvider : org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAnnotationsProvider {
-}
-
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModulePsiAnnotationsProvider : org/jetbrains/kotlin/analysis/api/platform/java/KotlinJavaModuleAnnotationsProvider {
 }
 

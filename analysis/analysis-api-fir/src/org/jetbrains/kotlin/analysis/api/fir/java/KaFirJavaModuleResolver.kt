@@ -27,13 +27,14 @@ internal class KaFirJavaModuleResolver(private val project: Project) : JavaModul
             when (provider) {
                 is KotlinJavaModulePsiAnnotationsProvider -> {
                     provider.getAnnotationsForModuleOwnerOfClass(classId)?.convert { psiAnnotation ->
-                        val sourceFactory = JavaElementSourceFactory.getInstance(project)
-                        val psiJavaSource = sourceFactory.createPsiSource(psiAnnotation)
-                        JavaAnnotationImpl(psiJavaSource)
+                        if (psiAnnotation is KaFirJavaAnnotationPsi) {
+                            psiAnnotation.javaAnnotation
+                        } else {
+                            val sourceFactory = JavaElementSourceFactory.getInstance(project)
+                            val psiJavaSource = sourceFactory.createPsiSource(psiAnnotation)
+                            JavaAnnotationImpl(psiJavaSource)
+                        }
                     }
-                }
-                is KotlinJavaModuleJavaAnnotationsProvider -> {
-                    provider.getAnnotationsForModuleOwnerOfClass(classId)
                 }
             }
         }
