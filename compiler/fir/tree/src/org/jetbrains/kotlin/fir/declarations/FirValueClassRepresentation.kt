@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
-import org.jetbrains.kotlin.descriptors.interpretAsInlineClassRepresentationOrNull
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -27,12 +25,8 @@ val FirRegularClassSymbol.valueClassRepresentation: ValueClassRepresentation<Con
         return fir.valueClassRepresentation
     }
 
-@OptIn(ValueClassBackendAgnosticApi::class)
-fun FirRegularClassSymbol.inlineClassRepresentationInJvm(): InlineClassRepresentation<ConeRigidType>? =
-    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(
-        treatCompatibleFullValueClassesAsInline = false,
-        hasSuperClass = { error("No super class check must be called for inline classes in JVM") }
-    )
+val FirRegularClassSymbol.inlineClassRepresentation: InlineClassRepresentation<ConeRigidType>?
+    get() = valueClassRepresentation as? InlineClassRepresentation<ConeRigidType>
 
 val FirRegularClassSymbol.isFullValueClass: Boolean
     get() = isValue && !isInline

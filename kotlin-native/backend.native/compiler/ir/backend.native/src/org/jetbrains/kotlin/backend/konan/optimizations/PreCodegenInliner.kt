@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnbox
-import org.jetbrains.kotlin.backend.konan.ir.isInlineClass
+import org.jetbrains.kotlin.ir.declarations.isInlineClass
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint

@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
+import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -434,9 +433,6 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
     private val ushortSerializer = IrUnsafeCoerceWrappedSerializer(shortSerializer, symbols.kotlinUShort.defaultType, irBuiltIns.shortType)
     private val uintSerializer = IrUnsafeCoerceWrappedSerializer(intSerializer, symbols.kotlinUInt.defaultType, irBuiltIns.intType)
     private val ulongSerializer = IrUnsafeCoerceWrappedSerializer(longSerializer, symbols.kotlinULong.defaultType, irBuiltIns.longType)
-
-    @OptIn(ValueClassBackendAgnosticApi::class)
-    private val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatCompatibleFullValueClassesAsInline = false)
 
     // Unsigned array types
     private val ubyteArraySerializer = IrUnsafeCoerceWrappedSerializer(

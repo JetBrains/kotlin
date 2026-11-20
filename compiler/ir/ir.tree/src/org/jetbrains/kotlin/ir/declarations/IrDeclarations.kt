@@ -9,14 +9,11 @@ import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrAttribute
-import org.jetbrains.kotlin.descriptors.interpretAsInlineClassRepresentationOrNull
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils.getPackagePartClassNamePrefix
 import java.io.File
@@ -40,17 +37,20 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
 }
 
 /**
- * Checks if the class is an inline class or if [treatCompatibleFullValueClassesAsInline] is `true` and
- * the class is a full value class compatible with inline classes.
+ * Checks if the class is an inline class. A full value class is never an inline class.
  *
- * See [ValueClassRepresentation] documentation for more details about value class types and their compatibility.
- *
- * @return `true` if the class is an inline class or if [treatCompatibleFullValueClassesAsInline] is `true` and
- * the class is a full value class compatible with inline classes; otherwise, `false`.
+ * See [ValueClassRepresentation] documentation for more details about value class types.
  */
-@ValueClassBackendAgnosticApi
-fun IrClass.isInlineClass(treatCompatibleFullValueClassesAsInline: Boolean): Boolean =
-    inlineClassRepresentation(treatCompatibleFullValueClassesAsInline) != null
+val IrClass.isInlineClass: Boolean
+    get() = valueClassRepresentation is InlineClassRepresentation<*>
+
+/**
+ * The [InlineClassRepresentation] of the class if it is an inline class, `null` otherwise. A full value class is never an inline class.
+ *
+ * See [ValueClassRepresentation] documentation for more details about value class types.
+ */
+val IrClass.inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
+    get() = valueClassRepresentation as? InlineClassRepresentation<IrSimpleType>
 
 val IrClass.isFullValueClass: Boolean
     get() = valueClassRepresentation is FullValueClassRepresentation<*>
@@ -73,23 +73,6 @@ val IrFunction.isStaticMethodOfClass: Boolean
 
 val IrFunction.isPropertyAccessor: Boolean
     get() = this is IrSimpleFunction && correspondingPropertySymbol != null
-
-/**
- * Retrieves an [InlineClassRepresentation] of the [IrClass] if the class is an inline class or
- * computes an [InlineClassRepresentation] if [treatCompatibleFullValueClassesAsInline] is `true` and
- * the class is a compatible full value class.
- *
- * See [ValueClassRepresentation] documentation for more details about value class types and their compatibility.
- *
- * @return An [InlineClassRepresentation] or `null`.
- */
-@ValueClassBackendAgnosticApi
-fun IrClass.inlineClassRepresentation(treatCompatibleFullValueClassesAsInline: Boolean): InlineClassRepresentation<IrSimpleType>? =
-    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(
-        treatCompatibleFullValueClassesAsInline = treatCompatibleFullValueClassesAsInline,
-        hasSuperClass = { superClass != null }
-    )
-
 
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
 fun <D : IrElement> D.copyAttributes(other: IrElement?): D = apply {

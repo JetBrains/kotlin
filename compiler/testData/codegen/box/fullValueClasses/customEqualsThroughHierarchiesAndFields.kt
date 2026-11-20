@@ -1,8 +1,7 @@
 // ISSUE: KT-89978
 // LANGUAGE: +FullValueClasses
 // WITH_STDLIB
-// Checks that comparisons of full value classes call custom equals of the classes they wrap,
-// which the single-field equality optimization must preserve.
+// Checks that comparisons of full value classes call custom equals of the classes they wrap.
 
 abstract value class OpenMod10 {
     abstract val x: Int
