@@ -33,7 +33,7 @@ internal abstract class AbstractFakeTestIntegrationTest {
         testClassPattern,
         testDataPath?.let(::unresolvedTestDataPaths),
         goldenOnly,
-        PackageNameFilter.includePackageNames(FakeManagedTest::class.java.`package`.name),
+        testPackages = listOf(FakeManagedTest::class.java.`package`.name),
         // Executed by `TestDataManagerRunnerIntegrationTest` only
         PackageNameFilter.excludePackageNames(FakeRunnerScenario::class.java.`package`.name),
         *additionalFilters,

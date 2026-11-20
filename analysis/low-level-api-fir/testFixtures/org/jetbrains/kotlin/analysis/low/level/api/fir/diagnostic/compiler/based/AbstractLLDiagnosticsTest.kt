@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirOnlyNonReversedTestSuppressor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLLCompilerBasedTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.LLDiagnosticsVariantChains
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithoutPreresolve
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.jvmTestConfigurationWithSingleFrontendFacade
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -29,7 +32,10 @@ import org.jetbrains.kotlin.utils.bind
  *
  * @see AbstractLLReversedDiagnosticsTest
  */
-abstract class AbstractLLDiagnosticsTest : AbstractLLCompilerBasedTest() {
+abstract class AbstractLLDiagnosticsTest : AbstractLLCompilerBasedTest(), ManagedTest {
+    override val variantChain: TestVariantChain
+        get() = LLDiagnosticsVariantChains.LL
+
     override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
             jvmTestConfigurationWithSingleFrontendFacade(

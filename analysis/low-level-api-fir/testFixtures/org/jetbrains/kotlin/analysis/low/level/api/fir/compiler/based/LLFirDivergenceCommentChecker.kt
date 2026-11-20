@@ -8,13 +8,16 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.managedTestData
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.utils.isLLFirTestData
+import org.jetbrains.kotlin.test.utils.isLLFirDivergenceTestData
 
 class LLFirDivergenceCommentChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override fun check(thereWereFailures: Boolean) {
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        if (!testDataFile.isLLFirTestData) return
+        // A managed test checks the variant it writes, which `updateTestData` might have created from the actual output of this run, or
+        // deleted as redundant.
+        val testDataFile = testServices.managedTestData?.writeTargetFile ?: testServices.moduleStructure.originalTestDataFiles.first()
+        if (!testDataFile.isLLFirDivergenceTestData || !testDataFile.exists()) return
 
         if (!testDataFile.hasLlFirDivergenceDirective()) {
             testServices.assertions.fail {

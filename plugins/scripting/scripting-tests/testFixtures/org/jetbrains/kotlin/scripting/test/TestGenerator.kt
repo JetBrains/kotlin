@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.scripting.test.runners.AbstractFirPsiCustomScriptCod
 import org.jetbrains.kotlin.scripting.test.runners.AbstractFirScriptCodegenTest
 import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
@@ -47,7 +46,6 @@ fun main(args: Array<String>) {
                     "testData/diagnostics/general",
                     skipTestAllFilesCheck = true,
                     pattern = TestGeneratorUtil.KT_OR_KTS.canFreezeIDE,
-                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 )
             }
 
@@ -62,7 +60,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirScriptCodegenTest> {
-                model("testData/codegen/scripting", pattern = "^(.*)\\.kts?$", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("testData/codegen/scripting", pattern = "^(.*)\\.kts?$")
             }
 
             testClass<AbstractFirPsiCustomScriptCodegenTest> {
@@ -77,7 +75,6 @@ fun main(args: Array<String>) {
                 model(
                     "testData/diagnostics/repl",
                     extension = "kts",
-                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 )
             }
 
@@ -85,7 +82,6 @@ fun main(args: Array<String>) {
                 model(
                     "testData/diagnostics/repl",
                     extension = "kts",
-                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 )
             }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.runners
 
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.SPEC_HELPERS
@@ -22,7 +23,10 @@ abstract class AbstractFirDiagnosticTestSpecBase(parser: FirParser) : AbstractFi
     }
 }
 
-abstract class AbstractFirLightTreeDiagnosticTestSpec : AbstractFirDiagnosticTestSpecBase(FirParser.LightTree)
+/**
+ * The golden test of the spec diagnostic test data: low-level API tests of the same test data are its variants.
+ */
+abstract class AbstractFirLightTreeDiagnosticTestSpec : AbstractFirDiagnosticTestSpecBase(FirParser.LightTree), ManagedTest
 
 fun TestConfigurationBuilder.baseFirSpecDiagnosticTestConfiguration() {
     defaultDirectives {

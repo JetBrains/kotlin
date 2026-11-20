@@ -18,6 +18,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
+    testFixturesApi(testFixtures(project(":analysis:test-data-manager")))
     testFixturesImplementation(testFixtures(project(":js:js.tests")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
 }
@@ -26,6 +27,15 @@ sourceSets {
     "main" { none() }
     "test" { generatedTestDir() }
     "testFixtures" { projectDefault() }
+}
+
+if (!kotlinBuildProperties.isTeamcityBuild.get()) {
+    testDataManager {
+        // The compiler's diagnostic tests are the golden tests of the LL diagnostic tests
+        mustRunAfterProjects.add(":compiler:jvm.tests")
+        mustRunAfterProjects.add(":plugins:plugin-sandbox")
+        mustRunAfterProjects.add(":plugins:scripting:scripting-tests")
+    }
 }
 
 kotlin {
@@ -41,6 +51,10 @@ kotlin {
             "org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint",
         )
     }
+}
+
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.analysis.low.level.api.fir")
 }
 
 projectTests {

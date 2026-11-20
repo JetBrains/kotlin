@@ -6,20 +6,19 @@
 package org.jetbrains.kotlin.allopen
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "plugins/allopen/testData") {
             testClass<AbstractFirLightTreeBytecodeListingTestForAllOpen> {
-                model("bytecodeListing", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("bytecodeListing")
             }
             testClass<AbstractFirLightTreeDiagnosticTestForAllOpen> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("diagnostics")
             }
             testClass<AbstractLLDiagnosticTestForAllOpen> {
-                model("diagnostics", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("diagnostics")
             }
         }
     }

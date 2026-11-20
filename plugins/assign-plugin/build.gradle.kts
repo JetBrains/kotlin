@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 dependencies {
@@ -39,6 +40,10 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
+
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.assignment.plugin")
+}
 
 projectTests {
     testData(project.isolated, "testData")

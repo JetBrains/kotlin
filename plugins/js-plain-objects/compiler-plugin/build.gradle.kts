@@ -11,6 +11,7 @@ plugins {
     id("java-test-fixtures")
     id("d8-configuration")
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 val jsoIrRuntimeForTests = configurations.create("jsoIrRuntimeForTests") {
@@ -65,6 +66,10 @@ publish {
 runtimeJar()
 sourcesJar()
 javadocJar()
+
+testDataManager {
+    testPackages.add("org.jetbrains.kotlinx.jspo.runners")
+}
 
 projectTests {
     testTask {

@@ -33,7 +33,7 @@ public class LLSerializationDiagnosticsTestGenerated extends AbstractLLSerializa
 
     @Test
     public void testAllFilesPresentInDiagnostics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test

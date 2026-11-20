@@ -29,6 +29,9 @@ class NoFirCompilationErrorsHandler(
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
+    override val failsByDesign: Boolean
+        get() = true
+
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirDiagnosticCollectorService))
 

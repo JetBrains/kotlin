@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.fileNameToJavaIden
 import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
 import org.jetbrains.kotlin.generators.util.extractTagsFromTestFile
 import org.jetbrains.kotlin.generators.util.getFilePath
+import org.jetbrains.kotlin.test.isTestDataVariant
+import org.jetbrains.kotlin.test.matchesTestDataPattern
+import org.jetbrains.kotlin.test.testDataFileNames
 import java.io.File
 import java.util.regex.Pattern
 
@@ -114,13 +117,15 @@ class SimpleTestClassModel(
             }
             addAll(additionalMethods)
 
-            val simpleTestMethods = rootFile.listFiles().orEmpty().mapNotNull l@{ file ->
+            val files = rootFile.listFiles().orEmpty()
+            val fileNames = testDataFileNames(files)
+            val simpleTestMethods = files.mapNotNull l@{ file ->
                 val fileName = file.name
-                // doesn't match testdata pattern
-                if (!filenamePattern.matcher(fileName).matches()) return@l null
+                // doesn't match testdata pattern or excluded by pattern
+                if (!matchesTestDataPattern(fileName, filenamePattern, excludePattern)) return@l null
 
-                // excluded by pattern
-                if (excludePattern != null && excludePattern.matcher(fileName).matches()) return@l null
+                // a variant of another testdata file
+                if (isTestDataVariant(file, fileNames, filenamePattern)) return@l null
 
                 // excluded by directory
                 if (file.isDirectory && (fileName in allExcludedDirs)) return@l null

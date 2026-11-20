@@ -86,6 +86,10 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
     @get:[Input Optional]
     abstract val incremental: Property<Boolean>
 
+    /** Packages of the managed tests, see `TestDataManagerExtension.testPackages`. */
+    @get:Input
+    abstract val testPackages: ListProperty<String>
+
     /**
      * Id of the run, the name of the report `build/test-data-manager/<runId>.json`. A caller running several modules
      * passes one id to all of them; without it, the runner generates a UUIDv7 at execution time.
@@ -151,6 +155,8 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
         forwardOption(TestDataManagerOption.RERUN_ID, rerunId)
         forwardOption(TestDataManagerOption.OUTPUT, output)
         systemProperty(TestDataManagerOption.REPORT_DIR, reportDirectory.get().asFile.absolutePath)
+        val packages = testPackages.get()
+        if (packages.isNotEmpty()) systemProperty(TestDataManagerOption.TEST_PACKAGES, packages.joinToString(","))
         super.exec()
     }
 

@@ -300,15 +300,6 @@ abstract class ProjectTestsExtension(val project: Project) {
             targetFile.set(project.layout.buildDirectory.file("testDataInfo/testDataFilesList.txt"))
             testDataFiles.set(this@ProjectTestsExtension.testDataFiles)
             filePatterns.set(listOf("**/*.kt", "**/*.kts", "**/*.kt.can-freeze-ide"))
-            excludeFilePatterns.set(
-                listOf(
-                    "**/*.reversed.kt",
-                    "**/*.partialBody.kt",
-                    "**/*.ll.kt",
-                    "**/*.latestLV.kt",
-                    "**/*.disabled.kt",
-                )
-            )
             configure()
         }
         generatorTask.configure {

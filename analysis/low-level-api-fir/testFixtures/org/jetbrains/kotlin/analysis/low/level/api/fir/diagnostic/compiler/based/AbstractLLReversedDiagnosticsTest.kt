@@ -5,17 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.CustomOutputDiagnosticsConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirOnlyReversedTestSuppressor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLLCompilerBasedTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.LLDiagnosticsVariantChains
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.jvmTestConfigurationWithSingleFrontendFacade
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.frontend.fir.handlers.AbstractAlternativeKtFileIdenticalChecker
-import org.jetbrains.kotlin.test.services.MetaTestConfigurator
+import org.jetbrains.kotlin.test.services.ManagedTestData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.managedTestData
+import org.jetbrains.kotlin.test.utils.REVERSED_VARIANT
 import org.jetbrains.kotlin.test.utils.llFirTestDataFile
 import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import org.jetbrains.kotlin.utils.bind
@@ -35,7 +39,10 @@ import java.io.File
  *
  * @see AbstractLLDiagnosticsTest
  */
-abstract class AbstractLLReversedDiagnosticsTest : AbstractLLCompilerBasedTest() {
+abstract class AbstractLLReversedDiagnosticsTest : AbstractLLCompilerBasedTest(), ManagedTest {
+    override val variantChain: TestVariantChain
+        get() = LLDiagnosticsVariantChains.REVERSED
+
     override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
             jvmTestConfigurationWithSingleFrontendFacade(
@@ -44,7 +51,6 @@ abstract class AbstractLLReversedDiagnosticsTest : AbstractLLCompilerBasedTest()
             )
 
             useFailureSuppressors(::LLFirOnlyReversedTestSuppressor)
-            useMetaTestConfigurators(::reversedDiagnosticsConfigurator)
             defaultDirectives {
                 TestDumpDirectives.DUMP_CLASSIFIER with "reversed"
             }
@@ -52,12 +58,14 @@ abstract class AbstractLLReversedDiagnosticsTest : AbstractLLCompilerBasedTest()
     }
 }
 
-fun reversedDiagnosticsConfigurator(testServices: TestServices): MetaTestConfigurator {
-    return CustomOutputDiagnosticsConfigurator(".reversed.", testServices)
-}
-
 class ReversedFirIdenticalChecker(testServices: TestServices) : AbstractAlternativeKtFileIdenticalChecker(testServices) {
     override fun checkTestDataFile(testDataFile: File) {
+        val managedTestData = testServices.managedTestData
+        if (managedTestData != null) {
+            checkManagedTestData(managedTestData)
+            return
+        }
+
         if (".reversed." !in testDataFile.path) return
         val originalFile = testDataFile.originalTestDataFile.path.replace(".reversed", "").let(::File)
         val baseFile = originalFile.llFirTestDataFile.takeIf(File::exists)
@@ -70,11 +78,26 @@ class ReversedFirIdenticalChecker(testServices: TestServices) : AbstractAlternat
                 "`${testDataFile.name}` and `${baseFile.name}` are identical. Remove `$testDataFile`."
             }
         } else {
-            assertPreprocessedTestDataAreEqual(testServices, baseFile, baseContent, testDataFile, reversedFirContent) {
-                "When ignoring diagnostics, the contents of `${baseFile.name}` (expected) and `${testDataFile.name}` (actual) are not" +
-                        " identical. `.reversed.kt` test data may only differ from its base `.fir.kt` or `.kt` test data in the reported" +
-                        " diagnostics. Update one of these test data files."
-            }
+            assertSameCode(baseFile, baseContent, testDataFile, reversedFirContent)
+        }
+    }
+
+    /**
+     * Compares the reversed variant a managed test writes (e.g., `.reversed.kt` or `.reversed.wasmJs.kt`) with the test data it falls
+     * back to. `updateTestData` might have deleted the variant as redundant; otherwise, the test data manager reports identical ones.
+     */
+    private fun checkManagedTestData(managedTestData: ManagedTestData) {
+        if (REVERSED_VARIANT !in managedTestData.variantChain) return
+        val reversedFile = managedTestData.writeTargetFile.takeIf(File::exists) ?: return
+        val baseFile = managedTestData.fallbackFile ?: return
+        assertSameCode(baseFile, readContent(baseFile, trimLines = false), reversedFile, readContent(reversedFile, trimLines = false))
+    }
+
+    private fun assertSameCode(baseFile: File, baseContent: String, reversedFile: File, reversedContent: String) {
+        assertPreprocessedTestDataAreEqual(testServices, baseFile, baseContent, reversedFile, reversedContent) {
+            "When ignoring diagnostics, the contents of `${baseFile.name}` (expected) and `${reversedFile.name}` (actual) are not" +
+                    " identical. `.reversed.kt` test data may only differ from its base `.fir.kt` or `.kt` test data in the reported" +
+                    " diagnostics. Update one of these test data files."
         }
     }
 }

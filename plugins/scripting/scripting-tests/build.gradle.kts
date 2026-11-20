@@ -3,6 +3,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
+    id("test-data-manager")
 }
 
 val powerAssertCompilerPluginJar = configurations.create("powerAssertCompilerPluginJar")
@@ -49,6 +50,10 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+testDataManager {
+    testPackages.add("org.jetbrains.kotlin.scripting.test")
+}
+
 projectTests {
     testTask(
         defineJDKEnvVariables = listOf(
@@ -81,4 +86,3 @@ projectTests {
     withDist()
     withTestScriptDefinition()
 }
-

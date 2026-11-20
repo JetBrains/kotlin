@@ -25,6 +25,9 @@ class NoIrCompilationErrorsHandler(testServices: TestServices) : BackendInputHan
     failureDisablesNextSteps = true,
     doNotRunIfThereWerePreviousFailures = false,
 ) {
+    override val failsByDesign: Boolean
+        get() = true
+
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::DiagnosticsService))
 

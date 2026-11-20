@@ -37,9 +37,6 @@ abstract class CollectTestDataTask : DefaultTask() {
     @get:Input
     abstract val filePatterns: ListProperty<String>
 
-    @get:Input
-    abstract val excludeFilePatterns: ListProperty<String>
-
     @TaskAction
     fun run() {
         val directories = testDataFiles.get()
@@ -53,7 +50,6 @@ abstract class CollectTestDataTask : DefaultTask() {
         val text = directories.flatMap { directory ->
             directory.asFileTree.matching {
                 include(filePatterns.get())
-                exclude(excludeFilePatterns.get())
             }.files
         }.sorted().joinToString("\n") {
             it.relativeTo(rootDir).path.replace('\\', '/')

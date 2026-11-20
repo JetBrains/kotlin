@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 
 import com.intellij.psi.util.descendantsOfType
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalSourceOutOfBlockModificationEvent
-import org.jetbrains.kotlin.analysis.low.level.api.fir.CustomOutputDiagnosticsConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLResolutionFacadeService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLLCompilerBasedTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.LLDiagnosticsVariantChains
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.LowLevelFirAnalyzerFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.bodyBlock
@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.getDeclarationsToResolve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.body
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialBodyResolvable
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -48,7 +50,10 @@ import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.utils.bind
 import kotlin.test.assertEquals
 
-abstract class AbstractLLPartialDiagnosticsTest : AbstractLLCompilerBasedTest() {
+abstract class AbstractLLPartialDiagnosticsTest : AbstractLLCompilerBasedTest(), ManagedTest {
+    override val variantChain: TestVariantChain
+        get() = LLDiagnosticsVariantChains.PARTIAL_BODY
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         jvmTestConfigurationWithSingleFrontendFacade(
             frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirPartialBodyAnalysisAnalyzerFacadeFactory),
@@ -57,7 +62,6 @@ abstract class AbstractLLPartialDiagnosticsTest : AbstractLLCompilerBasedTest() 
 
         useFailureSuppressors(::LLFirPartialBodyTestSuppressor)
         useAfterAnalysisCheckers(::ControlFlowGraphConsistencyChecker)
-        useMetaTestConfigurators({ testServices -> CustomOutputDiagnosticsConfigurator(".partialBody.", testServices) })
         defaultDirectives {
             TestDumpDirectives.DUMP_CLASSIFIER with "partialBody"
         }
