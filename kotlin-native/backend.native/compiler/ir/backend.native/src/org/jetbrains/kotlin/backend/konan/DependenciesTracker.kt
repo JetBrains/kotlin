@@ -24,22 +24,25 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.atMostOne
 
 interface DependenciesTracker {
+    @JvmInline
+    value class FileDependency(val fileId: String)
+
     sealed class DependencyKind {
         object WholeModule : DependencyKind()
-        class CertainFiles(val files: List<String>) : DependencyKind()
+        class CertainFiles(val files: List<FileDependency>) : DependencyKind()
     }
 
     data class UnresolvedDependency(val libName: String, val kind: DependencyKind) {
         companion object {
             fun wholeModule(libName: String) = UnresolvedDependency(libName, DependencyKind.WholeModule)
-            fun certainFiles(libName: String, files: List<String>) = UnresolvedDependency(libName, DependencyKind.CertainFiles(files))
+            fun certainFiles(libName: String, files: List<FileDependency>) = UnresolvedDependency(libName, DependencyKind.CertainFiles(files))
         }
     }
 
     data class ResolvedDependency(val library: KotlinLibrary, val kind: DependencyKind) {
         companion object {
             fun wholeModule(library: KotlinLibrary) = ResolvedDependency(library, DependencyKind.WholeModule)
-            fun certainFiles(library: KotlinLibrary, files: List<String>) = ResolvedDependency(library, DependencyKind.CertainFiles(files))
+            fun certainFiles(library: KotlinLibrary, files: List<FileDependency>) = ResolvedDependency(library, DependencyKind.CertainFiles(files))
         }
     }
 
@@ -204,7 +207,7 @@ internal class DependenciesTrackerImpl(
         private val usedBitcode = usedBitcode().groupBy { it.library }
 
         private val moduleDependencies = mutableSetOf<KotlinLibrary>()
-        private val fileDependencies = mutableMapOf<KotlinLibrary, MutableSet<String>>()
+        private val fileDependencies = mutableMapOf<KotlinLibrary, MutableSet<DependenciesTracker.FileDependency>>()
 
         val allDependencies: List<DependenciesTracker.ResolvedDependency>
 
@@ -219,7 +222,7 @@ internal class DependenciesTrackerImpl(
                 if (cache != null) {
                     val filesUsed = buildList {
                         usedBitcode[library]?.forEach {
-                            add(CacheSupport.cacheFileId(it.fqName, it.filePath))
+                            add(DependenciesTracker.FileDependency(CacheSupport.cacheFileId(it.fqName, it.filePath)))
                         }
                         val moduleDeserializer = context.moduleDeserializerProvider.getDeserializerOrNull(library)
                         if (moduleDeserializer == null) {
@@ -228,7 +231,7 @@ internal class DependenciesTrackerImpl(
                             val eagerInitializedFiles = CachedEagerInitializedFiles(context.config.cachedLibraries, library, moduleDeserializer)
                                     .eagerInitializedFiles
                             eagerInitializedFiles.forEach {
-                                add(CacheSupport.cacheFileId(it.packageFqName.asString(), it.path))
+                                add(DependenciesTracker.FileDependency(CacheSupport.cacheFileId(it.packageFqName.asString(), it.path)))
                             }
                         }
                     }
@@ -260,12 +263,12 @@ internal class DependenciesTrackerImpl(
                     .forEach { addDependency(it) }
         }
 
-        private fun addDependencies(cachedLibrary: CachedLibraries.Cache, files: List<String>) = when (cachedLibrary) {
+        private fun addDependencies(cachedLibrary: CachedLibraries.Cache, files: List<DependenciesTracker.FileDependency>) = when (cachedLibrary) {
             is CachedLibraries.Cache.Monolithic -> addAllDependencies(cachedLibrary)
 
             is CachedLibraries.Cache.PerFile ->
                 files.forEach { file ->
-                    cachedLibrary.getFileDependencies(file)
+                    cachedLibrary.getFileDependencies(file.fileId)
                             .map { resolveDependency(it) }
                             .forEach { addDependency(it) }
                 }
@@ -310,7 +313,7 @@ internal class DependenciesTrackerImpl(
                     bitcodeModuleDependencies.add(DependenciesTracker.ResolvedDependency.wholeModule(library))
                 }
                 filesUsed?.filter { library != libraryToCache?.klib || strategy?.filePath != it.filePath /* Skip loops */ }
-                        ?.map { CacheSupport.cacheFileId(it.fqName, it.filePath) }
+                        ?.map { DependenciesTracker.FileDependency(CacheSupport.cacheFileId(it.fqName, it.filePath)) }
                         ?.takeIf { it.isNotEmpty() }
                         ?.let { bitcodeFileDependencies.add(DependenciesTracker.ResolvedDependency.certainFiles(library, it)) }
             }
@@ -384,13 +387,13 @@ internal object DependenciesSerializer {
                 val libName = library.uniqueName
                 when (kind) {
                     DependenciesTracker.DependencyKind.WholeModule -> listOf("$libName$DEPENDENCIES_DELIMITER")
-                    is DependenciesTracker.DependencyKind.CertainFiles -> kind.files.map { "$libName$DEPENDENCIES_DELIMITER$it" }
+                    is DependenciesTracker.DependencyKind.CertainFiles -> kind.files.map { "$libName$DEPENDENCIES_DELIMITER${it.fileId}" }
                 }
             }
 
     fun deserialize(path: String, dependencies: List<String>): List<DependenciesTracker.UnresolvedDependency> {
         val wholeModuleDependencies = mutableListOf<String>()
-        val fileDependencies = mutableMapOf<String, MutableList<String>>()
+        val fileDependencies = mutableMapOf<String, MutableList<DependenciesTracker.FileDependency>>()
         for (dependency in dependencies) {
             // <lib>| or <lib>|<file>
             val delimiterIndex = dependency.lastIndexOf(DEPENDENCIES_DELIMITER)
@@ -400,7 +403,7 @@ internal object DependenciesSerializer {
             if (file.isEmpty())
                 wholeModuleDependencies.add(libName)
             else
-                fileDependencies.getOrPut(libName) { mutableListOf() }.add(file)
+                fileDependencies.getOrPut(libName) { mutableListOf() }.add(DependenciesTracker.FileDependency(file))
         }
         return wholeModuleDependencies.map { DependenciesTracker.UnresolvedDependency.wholeModule(it) } +
                 fileDependencies.map { [libName, files] -> DependenciesTracker.UnresolvedDependency.certainFiles(libName, files) }
