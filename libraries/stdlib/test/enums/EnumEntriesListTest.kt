@@ -9,6 +9,9 @@ import kotlin.enums.enumEntries
 import kotlin.test.*
 import test.collections.behaviors.listBehavior
 import test.collections.compare
+import kotlin.enums.EnumEntries
+import kotlin.enums.valueOf
+import kotlin.enums.valueOfOrNull
 
 @Suppress("EnumValuesSoftDeprecate") // <- Used deliberately as a sanity check for tests
 class EnumEntriesListTest {
@@ -57,7 +60,7 @@ class EnumEntriesListTest {
     }
 
     @Test
-    fun testyEnumBehaviour() {
+    fun testEnumBehaviour() {
         val list = enumEntries(NonEmptyEnum::values)
         compare(NonEmptyEnum.values().toList(), list) { listBehavior() }
     }
@@ -89,5 +92,26 @@ class EnumEntriesListTest {
         assertTrue(enumList.contains(E1.A))
         assertFalse(enumList.contains(E2.A))
         assertFalse(enumList.contains(E2.B))
+    }
+
+
+    @Test
+    fun entriesValueOf() {
+        fun <E : Enum<E>> EnumEntries<E>.testValueOf(expected: E?, name: String) {
+            assertEquals(expected, valueOfOrNull(name))
+            if (expected != null) {
+                assertEquals(expected, valueOf(name))
+            } else {
+                assertFailsWith<NoSuchElementException> { valueOf(name) }
+            }
+        }
+
+        NonEmptyEnum.entries.testValueOf(A, "A")
+        enumEntries<NonEmptyEnum>().testValueOf(B, "B")
+        NonEmptyEnum.entries.testValueOf(null, "X")
+        NonEmptyEnum.entries.testValueOf(null, "a")
+        NonEmptyEnum.entries.testValueOf(null, "")
+
+        EmptyEnum.entries.testValueOf(null, "A")
     }
 }
