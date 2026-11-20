@@ -1,13 +1,13 @@
-/kt78942.kt:12:9: error: Return type mismatch: expected 'String', actual '() -> ??? (Unknown lambda return type)'.
+/kt78942.kt:12:9: error: Return type mismatch in lambda: expected 'String', actual '() -> ??? (Unknown lambda return type)'.
 
-/kt78942.kt:16:9: error: Return type mismatch: expected 'String', actual '() -> String'.
+/kt78942.kt:16:9: error: Return type mismatch in lambda: expected 'String', actual '() -> String'.
 
-/kt78942.kt:20:9: error: Return type mismatch: expected 'String', actual '() -> String'.
+/kt78942.kt:20:9: error: Return type mismatch in lambda: expected 'String', actual '() -> String'.
 
-/kt78942.kt:24:9: error: Return type mismatch: expected 'String', actual '() -> String'.
+/kt78942.kt:24:9: error: Return type mismatch in lambda: expected 'String', actual '() -> String'.
 
-/kt78942.kt:28:9: error: Return type mismatch: expected 'String', actual '() -> ??? (Unknown lambda return type)'.
+/kt78942.kt:28:9: error: Return type mismatch in lambda: expected 'String', actual '() -> ??? (Unknown lambda return type)'.
 
-/kt78942.kt:32:9: error: Return type mismatch: expected 'String', actual '() -> String'.
+/kt78942.kt:32:9: error: Return type mismatch in lambda: expected 'String', actual '() -> String'.
 
-/kt78942.kt:36:9: error: Return type mismatch: expected 'String', actual '() -> ??? (Unknown lambda return type)'.
+/kt78942.kt:36:9: error: Return type mismatch in lambda: expected 'String', actual '() -> ??? (Unknown lambda return type)'.

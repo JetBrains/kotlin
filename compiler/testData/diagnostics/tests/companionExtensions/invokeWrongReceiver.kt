@@ -6,7 +6,7 @@
 // ISSUE: KT-91409
 
 fun test() {
-    <!CANNOT_INFER_PARAMETER_TYPE("T"), UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER("companion fun <T> Function1.invoke(): (T) -> Unit; kotlin.Function0")!>Function0<!>()
+    <!CANNOT_INFER_PARAMETER_TYPE("'T' (of 'fun <T> Function1.invoke')"), UNRESOLVED_REFERENCE_WRONG_COMPANION_RECEIVER("companion fun <T> Function1.invoke(): (T) -> Unit; kotlin.Function0")!>Function0<!>()
 }
 
 companion operator fun <T> Function1.invoke(): (T) -> Unit = {}
@@ -35,7 +35,7 @@ fun t11() { Function1.a11(<!TOO_MANY_ARGUMENTS("companion fun Function1.a11(): U
 
 companion fun Function1.a15(x: Int) {}
 companion fun Function1.a15(x: String) {}
-fun t15() { Function1.<!NONE_APPLICABLE("companion fun Function1.a15(x: Int): Unit:  Argument type mismatch: actual type is 'Double', but 'Int' was expected.companion fun Function1.a15(x: String): Unit:  Argument type mismatch: actual type is 'Double', but 'String' was expected.")!>a15<!>(1.0) }
+fun t15() { Function1.<!NONE_APPLICABLE("companion fun Function1.a15(x: Int): Unit:  Argument type mismatch: actual type is 'Double', but 'Int' was expected.companion fun Function1.a15(x: String): Unit:  Argument type mismatch: actual type is 'Double', but 'String' was expected.;  for expression 'Function1.a15(1.0)'")!>a15<!>(1.0) }
 
 companion fun Function1.a49(vararg x: Int) {}
 companion fun Function1.a49(vararg x: Long) {}
@@ -50,7 +50,7 @@ fun t30() { Function1.<!DEPRECATION_ERROR("companion fun Function1.a30(): Unit; 
 
 companion fun Function1.a25() {}
 companion fun Function2.a25() {}
-fun t25() { Function0.<!NONE_APPLICABLE("companion fun Function1.a25(): Unit:  Companion extension 'companion fun Function1.a25(): Unit' cannot be called on receiver class 'kotlin.Function0'.companion fun Function2.a25(): Unit:  Companion extension 'companion fun Function2.a25(): Unit' cannot be called on receiver class 'kotlin.Function0'.")!>a25<!>() }
+fun t25() { Function0.<!NONE_APPLICABLE("companion fun Function1.a25(): Unit:  Companion extension 'companion fun Function1.a25(): Unit' cannot be called on receiver class 'kotlin.Function0'.companion fun Function2.a25(): Unit:  Companion extension 'companion fun Function2.a25(): Unit' cannot be called on receiver class 'kotlin.Function0'.;  for expression 'Function0.a25()'")!>a25<!>() }
 
 @Deprecated("x")
 companion fun Function1.a12(): String = "ok"

@@ -8,10 +8,10 @@ KtCallExpression(134,137): 'x()'
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
     fun Int.invoke(a: String): Unit:
-      No value passed for parameter 'a'.
+      No value passed for parameter 'a' of type 'String'.
 
     fun Int.invoke(b: Boolean): Unit:
-      No value passed for parameter 'b'.
+      No value passed for parameter 'b' of type 'Boolean'.
 
     fun x(c: Char): Unit:
-      No value passed for parameter 'c'.>
+      No value passed for parameter 'c' of type 'Char'.>

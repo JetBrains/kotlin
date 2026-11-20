@@ -975,7 +975,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'step'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'step' of type 'Int'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(297,311): 'IntProgression'
@@ -1078,7 +1078,7 @@ KtNameReferenceExpression(297,311): 'IntProgression'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'step'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'step' of type 'Int'.>
     isInBestCandidates = false
 
 KtValueArgumentList(311,318): '(1, 10)'

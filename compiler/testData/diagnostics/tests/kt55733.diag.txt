@@ -1,0 +1,11 @@
+/kt55733.kt:7:22: error: Classifier 'typealias Appendable = Appendable' does not have a companion object, so it cannot be used as an expression.
+
+/kt55733.kt:8:25: error: Classifier 'typealias StringBuilder = StringBuilder' does not have a companion object, so it cannot be used as an expression. Did you intend to call the constructor 'StringBuilder()'?
+
+/kt55733.kt:9:21: error: Classifier 'typealias IllegalStateException = IllegalStateException' does not have a companion object, so it cannot be used as an expression. Did you intend to call the constructor 'IllegalStateException()'?
+
+/kt55733.kt:10:17: error: Classifier 'class Array<T> : Any, Cloneable, Serializable' does not have a companion object, so it cannot be used as an expression. Did you intend to call the constructor 'Array(...)'?
+
+/kt55733.kt:11:39: error: Classifier 'annotation class Retention : Annotation' does not have a companion object, so it cannot be used as an expression.
+
+/kt55733.kt:12:30: error: Classifier 'class MyAbstractWithCtor : Any' does not have a companion object, so it cannot be used as an expression.

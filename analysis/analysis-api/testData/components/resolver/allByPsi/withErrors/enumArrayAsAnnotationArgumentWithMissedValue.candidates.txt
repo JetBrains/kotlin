@@ -52,7 +52,7 @@ KtAnnotationEntry(28,56): '@MyJavaAnnotation(test = [])'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value' of type 'String'.>
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(29,45): 'MyJavaAnnotation'
@@ -94,7 +94,7 @@ KtConstructorCalleeExpression(29,45): 'MyJavaAnnotation'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value' of type 'String'.>
     isInBestCandidates = true
 
 KtTypeReference(29,45): 'MyJavaAnnotation'
@@ -142,7 +142,7 @@ KtNameReferenceExpression(29,45): 'MyJavaAnnotation'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value' of type 'String'.>
     isInBestCandidates = true
 
 KtValueArgumentList(45,56): '(test = [])'

@@ -235,6 +235,10 @@ internal object FirToKtConversionCreator {
             "{0}?.let { firSymbolBuilder.typeBuilder.buildKtType(it) }",
             KaType::class.createType(nullable = true)
         ),
+        FirConstructorSymbol::class to HLFunctionCallConversion(
+            "{0}?.let { firSymbolBuilder.functionBuilder.buildConstructorSymbol(it) }",
+            KaFunctionSymbol::class.createType(nullable = true)
+        ),
         ConeReceiverInfo::class to HLFunctionCallConversion(
             "{0}?.let { firSymbolBuilder.typeBuilder.buildKtType(it.type) }",
             KaType::class.createType(nullable = true),

@@ -43,5 +43,5 @@ KtCallExpression(95,100): 'foo()'
         callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'int'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'int' of type 'Int'.>
     isInBestCandidates = false

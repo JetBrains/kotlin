@@ -79,7 +79,7 @@ KtCallExpression(98,103): 'Foo()'
         callableId = com/example/Foo.Companion.invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'param'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'param' of type 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -126,7 +126,7 @@ KtNameReferenceExpression(98,101): 'Foo'
         callableId = com/example/Foo.Companion.invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'param'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'param' of type 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
