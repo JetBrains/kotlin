@@ -1766,9 +1766,183 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     }
 
     @Test
+    @TestMetadata("getGenericAndExtension.kt")
+    public void testGetGenericAndExtension() {
+      run("getGenericAndExtension.kt");
+    }
+
+    @Test
     @TestMetadata("getOperator.kt")
     public void testGetOperator() {
       run("getOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignContextGet.kt")
+    public void testPlusAssignContextGet() {
+      run("plusAssignContextGet.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignContextGet_base.kt")
+    public void testPlusAssignContextGet_base() {
+      run("plusAssignContextGet_base.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignGenericGet.kt")
+    public void testPlusAssignGenericGet() {
+      run("plusAssignGenericGet.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignGenericGet_base.kt")
+    public void testPlusAssignGenericGet_base() {
+      run("plusAssignGenericGet_base.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignGenericPlus.kt")
+    public void testPlusAssignGenericPlus() {
+      run("plusAssignGenericPlus.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignGenericPlus_base.kt")
+    public void testPlusAssignGenericPlus_base() {
+      run("plusAssignGenericPlus_base.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignSamIndex.kt")
+    public void testPlusAssignSamIndex() {
+      run("plusAssignSamIndex.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignSamIndex_base.kt")
+    public void testPlusAssignSamIndex_base() {
+      run("plusAssignSamIndex_base.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignTwoIndices.kt")
+    public void testPlusAssignTwoIndices() {
+      run("plusAssignTwoIndices.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignTwoIndices_base.kt")
+    public void testPlusAssignTwoIndices_base() {
+      run("plusAssignTwoIndices_base.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignVarargGetOverloads.kt")
+    public void testPlusAssignVarargGetOverloads() {
+      run("plusAssignVarargGetOverloads.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignVarargGetOverloads_base.kt")
+    public void testPlusAssignVarargGetOverloads_base() {
+      run("plusAssignVarargGetOverloads_base.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignVarargIndices.kt")
+    public void testPlusAssignVarargIndices() {
+      run("plusAssignVarargIndices.kt");
+    }
+
+    @Test
+    @TestMetadata("plusAssignVarargIndices_base.kt")
+    public void testPlusAssignVarargIndices_base() {
+      run("plusAssignVarargIndices_base.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncGenericGet.kt")
+    public void testPostfixIncGenericGet() {
+      run("postfixIncGenericGet.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncGenericGetAndExtension.kt")
+    public void testPostfixIncGenericGetAndExtension() {
+      run("postfixIncGenericGetAndExtension.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncGenericGetAndExtension_base.kt")
+    public void testPostfixIncGenericGetAndExtension_base() {
+      run("postfixIncGenericGetAndExtension_base.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncGenericGet_base.kt")
+    public void testPostfixIncGenericGet_base() {
+      run("postfixIncGenericGet_base.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncGetOverloads.kt")
+    public void testPostfixIncGetOverloads() {
+      run("postfixIncGetOverloads.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncGetOverloads_base.kt")
+    public void testPostfixIncGetOverloads_base() {
+      run("postfixIncGetOverloads_base.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncSamIndex.kt")
+    public void testPostfixIncSamIndex() {
+      run("postfixIncSamIndex.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncSamIndex_base.kt")
+    public void testPostfixIncSamIndex_base() {
+      run("postfixIncSamIndex_base.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncSmartCastIndex.kt")
+    public void testPostfixIncSmartCastIndex() {
+      run("postfixIncSmartCastIndex.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncSmartCastIndex_base.kt")
+    public void testPostfixIncSmartCastIndex_base() {
+      run("postfixIncSmartCastIndex_base.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncTwoIndices.kt")
+    public void testPostfixIncTwoIndices() {
+      run("postfixIncTwoIndices.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncTwoIndices_base.kt")
+    public void testPostfixIncTwoIndices_base() {
+      run("postfixIncTwoIndices_base.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncVarargIndices.kt")
+    public void testPostfixIncVarargIndices() {
+      run("postfixIncVarargIndices.kt");
+    }
+
+    @Test
+    @TestMetadata("postfixIncVarargIndices_base.kt")
+    public void testPostfixIncVarargIndices_base() {
+      run("postfixIncVarargIndices_base.kt");
     }
 
     @Test
@@ -6938,6 +7112,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
       @Test
       public void testAllFilesPresentInFunctionCall() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/typeArgument/functionCall"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("memberGenericAndExtensionExplicitTypeArgument.kt")
+      public void testMemberGenericAndExtensionExplicitTypeArgument() {
+        run("memberGenericAndExtensionExplicitTypeArgument.kt");
+      }
+
+      @Test
+      @TestMetadata("memberGenericAndExtensionInferredTypeArgument.kt")
+      public void testMemberGenericAndExtensionInferredTypeArgument() {
+        run("memberGenericAndExtensionInferredTypeArgument.kt");
       }
 
       @Test

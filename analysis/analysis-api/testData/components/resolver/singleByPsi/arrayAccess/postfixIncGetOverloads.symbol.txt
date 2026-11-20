@@ -1,0 +1,9 @@
+KtOperationReferenceExpression(236,238): '++'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /B.inc(<dispatch receiver>: B): B,
+      /B.set(<dispatch receiver>: B, i: kotlin.Int, value: B): kotlin.Unit
+    ]
