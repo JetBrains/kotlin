@@ -1,0 +1,328 @@
+FILE: builderOnMemberMethod_kotlin.kt
+    public final class User : R|kotlin/Any| {
+        public constructor(): R|User| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var name: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final var age: R|kotlin/Int| = Int(-1)
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        @R|lombok/Builder|() public final fun init(name: R|kotlin/String|, age: R|kotlin/Int|): R|kotlin/Unit| {
+            this@R|/User|.R|/User.name| = R|<local>/name|
+            this@R|/User|.R|/User.age| = R|<local>/age|
+        }
+
+        public final fun builder(): R|User.UnitBuilder|
+
+        public open inner class UnitBuilder : R|kotlin/Any| {
+            public open fun build(): R|kotlin/Unit|
+
+            public open fun name(name: R|kotlin/String|): R|User.UnitBuilder|
+
+            private final var name: R|kotlin/String|
+                private get(): R|kotlin/String|
+                private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+            public open fun age(age: R|kotlin/Int|): R|User.UnitBuilder|
+
+            private final var age: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            internal User.constructor(): R|User.UnitBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Greeter : R|kotlin/Any| {
+        public constructor(): R|Greeter| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var lastGreeting: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        @R|lombok/Builder|(builderClassName = String(GreetingBuilder) [evaluated = String(GreetingBuilder)], builderMethodName = String(greetingBuilder) [evaluated = String(greetingBuilder)], buildMethodName = String(greet) [evaluated = String(greet)]) public final fun greet(name: R|kotlin/String|): R|kotlin/String| {
+            this@R|/Greeter|.R|/Greeter.lastGreeting| = <strcat>(String(Hello, ), R|<local>/name|)
+            ^greet this@R|/Greeter|.R|/Greeter.lastGreeting|
+        }
+
+        public final fun greetingBuilder(): R|Greeter.GreetingBuilder|
+
+        public open inner class GreetingBuilder : R|kotlin/Any| {
+            public open fun greet(): R|kotlin/String|
+
+            public open fun name(name: R|kotlin/String|): R|Greeter.GreetingBuilder|
+
+            private final var name: R|kotlin/String|
+                private get(): R|kotlin/String|
+                private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+            internal Greeter.constructor(): R|Greeter.GreetingBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Holder<E> : R|kotlin/Any| {
+        public constructor<E>(): R|Holder<E>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var value: R|E?| = Null(null)
+            public get(): R|E?|
+            public set(value: R|E?|): R|kotlin/Unit|
+
+        public final var tag: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        @R|lombok/Builder|() public final fun init(value: R|E|, tag: R|kotlin/String|): R|kotlin/Unit| {
+            this@R|/Holder|.R|/Holder.value| = R|<local>/value|
+            this@R|/Holder|.R|/Holder.tag| = R|<local>/tag|
+        }
+
+        public final fun builder(): R|Holder.UnitBuilder<E>|
+
+        public open inner class UnitBuilder<Outer(E)> : R|kotlin/Any| {
+            public open fun build(): R|kotlin/Unit|
+
+            public open fun value(value: R|E|): R|Holder.UnitBuilder<E>|
+
+            private final var value: R|E|
+                private get(): R|E|
+                private set(value: R|E|): R|kotlin/Unit|
+
+            public open fun tag(tag: R|kotlin/String|): R|Holder.UnitBuilder<E>|
+
+            private final var tag: R|kotlin/String|
+                private get(): R|kotlin/String|
+                private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+            internal Holder<E>.constructor<E>(): R|Holder.UnitBuilder<E>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Mixed<E> : R|kotlin/Any| {
+        public constructor<E>(): R|Mixed<E>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var last: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        @R|lombok/Builder|(builderClassName = String(MixedBuilder) [evaluated = String(MixedBuilder)], builderMethodName = String(mixedBuilder) [evaluated = String(mixedBuilder)], buildMethodName = String(run) [evaluated = String(run)]) public final fun <P> combine(e: R|E|, p: R|P|): R|kotlin/String| {
+            this@R|/Mixed|.R|/Mixed.last| = <strcat>(R|<local>/e|, String(/), R|<local>/p|)
+            ^combine this@R|/Mixed|.R|/Mixed.last|
+        }
+
+        public final fun <P> mixedBuilder(): R|Mixed.MixedBuilder<P, E>|
+
+        public open inner class MixedBuilder<P, Outer(E)> : R|kotlin/Any| {
+            public open fun run(): R|kotlin/String|
+
+            public open fun e(e: R|E|): R|Mixed.MixedBuilder<P, E>|
+
+            private final var e: R|E|
+                private get(): R|E|
+                private set(value: R|E|): R|kotlin/Unit|
+
+            public open fun p(p: R|P|): R|Mixed.MixedBuilder<P, E>|
+
+            private final var p: R|P|
+                private get(): R|P|
+                private set(value: R|P|): R|kotlin/Unit|
+
+            internal Mixed<E>.constructor<P, E>(): R|Mixed.MixedBuilder<P, E>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Sink : R|kotlin/Any| {
+        public constructor(): R|Sink| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var got: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/emptyList|<R|kotlin/String|>()
+            public get(): R|kotlin/collections/List<kotlin/String>|
+            public set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
+
+        @R|lombok/Builder|() public final fun accept(@R|lombok/Singular|() items: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+            this@R|/Sink|.R|/Sink.got| = R|<local>/items|
+        }
+
+        public final fun builder(): R|Sink.UnitBuilder|
+
+        public open inner class UnitBuilder : R|kotlin/Any| {
+            public open fun build(): R|kotlin/Unit|
+
+            public open fun items(items: R|kotlin/collections/Collection<kotlin/String>|): R|Sink.UnitBuilder|
+
+            private final var items: R|kotlin/collections/MutableList<kotlin/String>?|
+                private get(): R|kotlin/collections/MutableList<kotlin/String>?|
+                private set(value: R|kotlin/collections/MutableList<kotlin/String>?|): R|kotlin/Unit|
+
+            public open fun item(item: R|kotlin/String|): R|Sink.UnitBuilder|
+
+            public open fun clearItems(): R|Sink.UnitBuilder|
+
+            internal Sink.constructor(): R|Sink.UnitBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/Builder|(builderClassName = String(CtorBuilder) [evaluated = String(CtorBuilder)], builderMethodName = String(ctorBuilder) [evaluated = String(ctorBuilder)]) public final class Multi : R|kotlin/Any| {
+        public constructor(id: R|kotlin/Int|): R|Multi| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val id: R|kotlin/Int| = R|<local>/id|
+            public get(): R|kotlin/Int|
+
+        @R|lombok/Builder|(builderClassName = String(TouchBuilder) [evaluated = String(TouchBuilder)], builderMethodName = String(touchBuilder) [evaluated = String(touchBuilder)]) public final fun touch(note: R|kotlin/String|): R|kotlin/String| {
+            ^touch <strcat>(String(touched ), this@R|/Multi|.R|/Multi.id|, String( with ), R|<local>/note|)
+        }
+
+        public final fun touchBuilder(): R|Multi.TouchBuilder|
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun ctorBuilder(): R|Multi.CtorBuilder|
+
+            private constructor(): R|Multi.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public open class CtorBuilder : R|kotlin/Any| {
+            public open fun build(): R|Multi|
+
+            public open fun id(id: R|kotlin/Int|): R|Multi.CtorBuilder|
+
+            private final var id: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            internal constructor(): R|Multi.CtorBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public open inner class TouchBuilder : R|kotlin/Any| {
+            public open fun build(): R|kotlin/String|
+
+            public open fun note(note: R|kotlin/String|): R|Multi.TouchBuilder|
+
+            private final var note: R|kotlin/String|
+                private get(): R|kotlin/String|
+                private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+            internal Multi.constructor(): R|Multi.TouchBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class TwoMethods : R|kotlin/Any| {
+        public constructor(): R|TwoMethods| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var touched: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        @R|lombok/Builder|(builderClassName = String(FirstBuilder) [evaluated = String(FirstBuilder)], builderMethodName = String(firstBuilder) [evaluated = String(firstBuilder)]) public final fun first(a: R|kotlin/String|): R|kotlin/Unit| {
+            this@R|/TwoMethods|.R|/TwoMethods.touched| = <strcat>(String(first:), R|<local>/a|)
+        }
+
+        @R|lombok/Builder|(builderClassName = String(SecondBuilder) [evaluated = String(SecondBuilder)], builderMethodName = String(secondBuilder) [evaluated = String(secondBuilder)]) public final fun second(b: R|kotlin/String|): R|kotlin/Unit| {
+            this@R|/TwoMethods|.R|/TwoMethods.touched| = <strcat>(String(second:), R|<local>/b|)
+        }
+
+        public final fun firstBuilder(): R|TwoMethods.FirstBuilder|
+
+        public final fun secondBuilder(): R|TwoMethods.SecondBuilder|
+
+        public open inner class FirstBuilder : R|kotlin/Any| {
+            public open fun build(): R|kotlin/Unit|
+
+            public open fun a(a: R|kotlin/String|): R|TwoMethods.FirstBuilder|
+
+            private final var a: R|kotlin/String|
+                private get(): R|kotlin/String|
+                private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+            internal TwoMethods.constructor(): R|TwoMethods.FirstBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public open inner class SecondBuilder : R|kotlin/Any| {
+            public open fun build(): R|kotlin/Unit|
+
+            public open fun b(b: R|kotlin/String|): R|TwoMethods.SecondBuilder|
+
+            private final var b: R|kotlin/String|
+                private get(): R|kotlin/String|
+                private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+            internal TwoMethods.constructor(): R|TwoMethods.SecondBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval user: R|User| = R|/User.User|()
+        lval userBuilder: R|User.UnitBuilder| = R|<local>/user|.R|/User.builder|()
+        R|<local>/userBuilder|.R|/User.UnitBuilder.name|(String(John)).R|/User.UnitBuilder.age|(Int(42)).R|/User.UnitBuilder.build|()
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(John), R|<local>/user|.R|/User.name|)
+        R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(42), R|<local>/user|.R|/User.age|)
+        lval greeter: R|Greeter| = R|/Greeter.Greeter|()
+        lval greetingBuilder: R|Greeter.GreetingBuilder| = R|<local>/greeter|.R|/Greeter.greetingBuilder|()
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(Hello, Ada), R|<local>/greetingBuilder|.R|/Greeter.GreetingBuilder.name|(String(Ada)).R|/Greeter.GreetingBuilder.greet|())
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(Hello, Ada), R|<local>/greeter|.R|/Greeter.lastGreeting|)
+        lval holder: R|Holder<kotlin/Int>| = R|/Holder.Holder|<R|kotlin/Int|>()
+        lval holderBuilder: R|Holder.UnitBuilder<kotlin/Int>| = R|<local>/holder|.R|SubstitutionOverride</Holder.builder: R|Holder.UnitBuilder<kotlin/Int>|>|()
+        R|<local>/holderBuilder|.R|SubstitutionOverride</Holder.UnitBuilder.value: R|Holder.UnitBuilder<kotlin/Int>|>|(Int(5)).R|SubstitutionOverride</Holder.UnitBuilder.tag: R|Holder.UnitBuilder<kotlin/Int>|>|(String(t)).R|SubstitutionOverride</Holder.UnitBuilder.build: R|kotlin/Unit|>|()
+        R|kotlin/test/assertEquals|<R|kotlin/Int?|>(Int(5), R|<local>/holder|.R|SubstitutionOverride</Holder.value: R|kotlin/Int?|>|)
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(t), R|<local>/holder|.R|SubstitutionOverride</Holder.tag: R|kotlin/String|>|)
+        lval mixed: R|Mixed<kotlin/Int>| = R|/Mixed.Mixed|<R|kotlin/Int|>()
+        lval mixedBuilder: R|Mixed.MixedBuilder<kotlin/String, kotlin/Int>| = R|<local>/mixed|.R|SubstitutionOverride</Mixed.mixedBuilder: R|Mixed.MixedBuilder<P, kotlin/Int>|>|<R|kotlin/String|>()
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(1/p), R|<local>/mixedBuilder|.R|SubstitutionOverride</Mixed.MixedBuilder.e: R|Mixed.MixedBuilder<kotlin/String, kotlin/Int>|>|(Int(1)).R|SubstitutionOverride</Mixed.MixedBuilder.p: R|Mixed.MixedBuilder<kotlin/String, kotlin/Int>|>|(String(p)).R|SubstitutionOverride</Mixed.MixedBuilder.run: R|kotlin/String|>|())
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(1/p), R|<local>/mixed|.R|SubstitutionOverride</Mixed.last: R|kotlin/String|>|)
+        lval sink: R|Sink| = R|/Sink.Sink|()
+        R|<local>/sink|.R|/Sink.builder|().R|/Sink.UnitBuilder.item|(String(a)).R|/Sink.UnitBuilder.item|(String(b)).R|/Sink.UnitBuilder.build|()
+        R|kotlin/test/assertEquals|<R|kotlin/collections/List<kotlin/String>|>(R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(a), String(b))), R|<local>/sink|.R|/Sink.got|)
+        lval multi: R|Multi| = Q|Multi|.R|/Multi.Companion.ctorBuilder|().R|/Multi.CtorBuilder.id|(Int(7)).R|/Multi.CtorBuilder.build|()
+        R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(7), R|<local>/multi|.R|/Multi.id|)
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(touched 7 with x), R|<local>/multi|.R|/Multi.touchBuilder|().R|/Multi.TouchBuilder.note|(String(x)).R|/Multi.TouchBuilder.build|())
+        lval twoMethods: R|TwoMethods| = R|/TwoMethods.TwoMethods|()
+        R|<local>/twoMethods|.R|/TwoMethods.firstBuilder|().R|/TwoMethods.FirstBuilder.a|(String(x)).R|/TwoMethods.FirstBuilder.build|()
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(first:x), R|<local>/twoMethods|.R|/TwoMethods.touched|)
+        R|<local>/twoMethods|.R|/TwoMethods.secondBuilder|().R|/TwoMethods.SecondBuilder.b|(String(y)).R|/TwoMethods.SecondBuilder.build|()
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(second:y), R|<local>/twoMethods|.R|/TwoMethods.touched|)
+        ^box String(OK)
+    }

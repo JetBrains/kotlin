@@ -244,7 +244,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             }
 
             builderDescriptionsCache.getValue(entitySymbol)?.forEach { (builder, ownerDeclarationSymbol) ->
-                builder.getBuilderFactoryName(ownerDeclarationSymbol, classSymbol)?.let(::add)
+                builder.getBuilderFactoryName(ownerDeclarationSymbol, containingClassSymbol = classSymbol)?.let(::add)
                 if (builder.generatesToBuilder(classSymbol)) {
                     add(TO_BUILDER)
                 }
@@ -393,16 +393,14 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             return (key as? BuilderGeneratorKey)?.takeIf { it.type is BuilderDeclarationType.Class.Builder }
         }
 
-    /**
-     * Whether [owner] needs a generated companion object to host its `builder()` factories. Only a static builder
-     * needs one — a `@Builder` method's factory is an instance method on the entity itself, so a class carrying
-     * nothing but method builders must not ask for an otherwise empty companion. Neither must one whose
-     * `builderMethodName` is empty: that suppresses the factory outright, leaving nothing to host.
-     */
-    override fun needsCompanionObject(owner: FirClassSymbol<*>): Boolean =
-        builderDescriptionsCache.getValue(owner)?.any {
-            it.ownerDeclarationSymbol.isStaticOrCompanionMemberDeclaration && it.builder.builderMethodName != null
-        } == true
+    override fun needsCompanionObject(owner: FirClassSymbol<*>): Boolean {
+        val builderDescriptions = builderDescriptionsCache.getValue(owner) ?: return false
+        return !builderDescriptions.all {
+            // Regular (non-"static") builder owners requires factory in a class, not in its companion
+            // null value of builderMethodName suppresses the factory creation at all
+            it.ownerDeclarationSymbol.isNamedNeitherStaticNorCompanionFunction || it.builder.builderMethodName == null
+        }
+    }
 
     /**
      * The same class can have both builder and entity methods in case of names clashing.
@@ -574,9 +572,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             val existingBuilder = entitySymbol.existingBuilder(builderClassName)
 
             fun createBuilderType(typeParameterSymbols: Collection<FirTypeParameter>): ConeClassLikeType {
-                // A builder generated for a non-static method is an inner class, so its type arguments are its
+                // A builder generated for a non-static/companion method is an inner class, so its type arguments are its
                 // own followed by the entity class's (see `createEmptyBuilderClass`) — `Entity<E>.Builder<P>`.
-                val outerTypeArguments = runIf(!ownerDeclarationSymbol.isStaticOrCompanionMemberDeclaration) {
+                val outerTypeArguments = runIf(ownerDeclarationSymbol.isNamedNeitherStaticNorCompanionFunction) {
                     @OptIn(SymbolInternals::class)
                     entitySymbol.typeParameterSymbols.map { it.fir.toConeType() }
                 }.orEmpty()
@@ -594,7 +592,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 }
             }
 
-            val isStaticBuilderFunction = ownerDeclarationSymbol.isStaticOrCompanionMemberDeclaration
+            val isNonStaticBuilderFunction = ownerDeclarationSymbol.isNamedNeitherStaticNorCompanionFunction
             val builderFactoryName = builder.getBuilderFactoryName(ownerDeclarationSymbol, containingClassSymbol)
             if (builderFactoryName != null) {
                 addIfNonClashing(builderFactoryName, existingFunctionNames) { name ->
@@ -615,8 +613,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             visibility = visibility,
                             modality = Modality.OPEN,
                             key = key,
-                            dispatchReceiverType = if (isStaticBuilderFunction) null else ownerDeclarationSymbol.dispatchReceiverType,
-                            isStatic = isStaticBuilderFunction,
+                            dispatchReceiverType = if (isNonStaticBuilderFunction) ownerDeclarationSymbol.dispatchReceiverType else null,
+                            isStatic = !isNonStaticBuilderFunction,
                             methodSymbol = methodSymbol,
                             methodTypeParameters = methodTypeParameters,
                         ).symbol
@@ -645,7 +643,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             }
                         ).apply {
                             remapTypeParameterBounds(typeParameters, builderTypeParameters, typeResolver, session)
-                            if (isStaticBuilderFunction) {
+                            if (!isNonStaticBuilderFunction) {
                                 replaceAnnotations(listOf(symbol.buildJvmStaticAnnotationCallOrError(session)))
                             }
                         }.symbol
@@ -706,14 +704,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * [ownerDeclarationSymbol], or `null` if it gets none.
      */
     private fun T.getBuilderFactoryName(ownerDeclarationSymbol: FirBasedSymbol<*>, containingClassSymbol: FirClassSymbol<*>): Name? {
-        // Where the `builder()` factory belongs: for a static builder it has to be callable without an
-        // instance, which in Kotlin means the entity's companion object and in Java a static method on the
-        // entity; for a `@Builder` method it is an instance method on the entity, since the builder it
-        // returns captures that very instance.
         val shouldAddBuilderFactory = when {
+            // inside Java, we always generate the factory in a containing Java class
             containingClassSymbol.hasJavaOrigin -> true
-            ownerDeclarationSymbol.isStaticOrCompanionMemberDeclaration -> containingClassSymbol.isCompanion
-            else -> !containingClassSymbol.isCompanion
+            // if a regular named function is annotated, we generate the factory outside the companion (non-"static" case)
+            ownerDeclarationSymbol.isNamedNeitherStaticNorCompanionFunction -> !containingClassSymbol.isCompanion
+            // if a class or a static / companion function is annotated, we generate the factory inside the companion ("static" case)
+            else -> containingClassSymbol.isCompanion
         }
 
         // A `null` name is `builderMethodName = ""`, which Lombok documents as suppressing the factory:
@@ -1202,9 +1199,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             ).apply {
                 // A builder for a non-static method is an inner class, mirroring Lombok: `build()` has to
                 // invoke the method on the very instance `builder()` was called on, and the method's
-                // parameters may refer to the entity class's own type parameters. Both come for free from
-                // the outer instance. Every other builder is a plain nested class.
-                this.isInner = !ownerDeclarationSymbol.isStaticOrCompanionMemberDeclaration
+                // parameters may refer to the entity class's own type parameters.
+                // Every other builder is a plain nested class.
+                this.isInner = ownerDeclarationSymbol.isNamedNeitherStaticNorCompanionFunction
                 isCompanion = false
                 isData = false
                 isInline = false
@@ -1442,15 +1439,20 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
     }
 
+    /**
+     * Being called on a builder owner declaration symbol, returns true if it's a named function that's neither static nor a companion member.
+     *
+     * The receiver of this function is always [BuilderDescription.ownerDeclarationSymbol], so a class/constructor/named function symbol.
+     * The function returns always false for classes and constructors; for named functions, it still returns false for companion members
+     * and static functions, and true otherwise. A typical use case is to determine if a corresponding builder factory method should be
+     * static or not; a similar case is about a corresponding builder class being inner or regular nested.
+     */
     @OptIn(ExperimentalContracts::class)
-    protected val FirBasedSymbol<*>.isStaticOrCompanionMemberDeclaration: Boolean
+    private val FirBasedSymbol<*>.isNamedNeitherStaticNorCompanionFunction: Boolean
         get() {
             contract {
-                returns(false) implies (this@isStaticOrCompanionMemberDeclaration is FirNamedFunctionSymbol)
+                returns(true) implies (this@isNamedNeitherStaticNorCompanionFunction is FirNamedFunctionSymbol)
             }
-            // A function declared directly inside a companion object is the Kotlin analogue of a Java
-            // static factory method, so it's treated as "static" too (e.g. for `@JvmStatic`-marking the
-            // generated `builder()`), even though Kotlin never sets `FirNamedFunction.isStatic` itself.
-            return this !is FirNamedFunctionSymbol || isStatic || getContainingClassSymbol()?.isCompanion == true
+            return this is FirNamedFunctionSymbol && !isStatic && getContainingClassSymbol()?.isCompanion == false
         }
 }
