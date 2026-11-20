@@ -8986,6 +8986,12 @@ private fun KaDiagnosticConverterBuilder.addConversions182() {
             token,
         )
     }
+    add(FirErrors.WILL_BECOME_VALUE_CLASS_OPEN) { firDiagnostic ->
+        WillBecomeValueClassOpenImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR) { firDiagnostic ->
         TailrecOnVirtualMemberErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,

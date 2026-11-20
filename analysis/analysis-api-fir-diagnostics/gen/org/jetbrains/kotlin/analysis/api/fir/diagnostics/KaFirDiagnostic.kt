@@ -3118,6 +3118,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassOpen : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass: KClass<WillBecomeValueClassOpen>
+            get() = WillBecomeValueClassOpen::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface AbsenceOfPrimaryConstructorForWillBecomeValueClass : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass: KClass<AbsenceOfPrimaryConstructorForWillBecomeValueClass>
             get() = AbsenceOfPrimaryConstructorForWillBecomeValueClass::class

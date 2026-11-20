@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
@@ -78,15 +77,13 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         if (!declaration.symbol.isValue && !isWillBecomeValueClass) {
             return
         }
-        val supportsFullValueClasses = LanguageFeature.FullValueClasses.isEnabled()
-        val valueObjectsAllowed = supportsFullValueClasses || isWillBecomeValueClass
+        val valueObjectsAllowed = LanguageFeature.FullValueClasses.isEnabled() || isWillBecomeValueClass
         if (declaration.classKind != ClassKind.CLASS && !(declaration.classKind == ClassKind.OBJECT && valueObjectsAllowed)) {
             return
         }
         val kind = ValueClassKind(
             isWillBecomeValueClass = isWillBecomeValueClass,
             isFullValueClass = declaration.symbol.isFullValueClass || isWillBecomeValueClass,
-            supportsFullValueClasses = supportsFullValueClasses,
         )
 
         checkPlacement(declaration, kind)
@@ -115,18 +112,19 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
     private class ValueClassKind(
         val isWillBecomeValueClass: Boolean,
         val isFullValueClass: Boolean,
-        val supportsFullValueClasses: Boolean,
     ) {
+        context(_: CheckerContext)
         val valueModifierPrefix: String
             get() = when {
-                !supportsFullValueClasses -> "Value"
+                LanguageFeature.FullValueClasses.isDisabled() -> "Value"
                 isFullValueClass -> "Final value"
                 else -> "Inline value"
             }
 
+        context(_: CheckerContext)
         val finalOrInlineClassPrefix: String
             get() = when {
-                !supportsFullValueClasses -> "value"
+                LanguageFeature.FullValueClasses.isDisabled() -> "value"
                 isFullValueClass -> "final value"
                 else -> "inline value"
             }
@@ -144,15 +142,20 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkModality(declaration: FirRegularClass, kind: ValueClassKind) {
-        if (kind.isFullValueClass) {
-            if (declaration.modality == Modality.OPEN) {
-                reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_OPEN)
-            }
-        } else if (declaration.modality != Modality.FINAL) {
+        if (!kind.isFullValueClass && declaration.modality != FINAL) {
             reporter.reportOn(
                 declaration.source,
                 FirErrors.VALUE_CLASS_NOT_FINAL,
                 kind.valueModifierPrefix,
+            )
+        }
+
+        if (kind.isFullValueClass && declaration.modality == OPEN) {
+            reportOn(
+                declaration.source,
+                kind.isWillBecomeValueClass,
+                FirErrors.VALUE_CLASS_OPEN,
+                FirErrors.WILL_BECOME_VALUE_CLASS_OPEN,
             )
         }
     }
@@ -384,7 +387,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     reportOn(
                         primaryConstructorParameter.source, kind.isWillBecomeValueClass,
                         FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-                        if (kind.supportsFullValueClasses) "Final value" else "Value",
+                        if (LanguageFeature.FullValueClasses.isEnabled()) "Final value" else "Value",
                         FirErrors.WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
                     )
                 kind.isFullValueClass && declaration.isAbstract && primaryConstructorPropertiesByName[name] != null -> reportOn(

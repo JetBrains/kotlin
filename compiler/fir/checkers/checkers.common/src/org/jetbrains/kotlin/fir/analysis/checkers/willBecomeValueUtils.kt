@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -16,9 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirWillBecomeValue
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isValue
-import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -36,22 +31,6 @@ private fun FirClassSymbol<*>.hasWillBecomeValueAnnotation(session: FirSession):
     hasAnnotation(StandardClassIds.Annotations.WillBecomeValue, session)
 
 /**
- * The presentable name of the target '@WillBecomeValue' cannot be applied to, or 'null' if it can be applied.
- *
- * A value class already has value semantics, interfaces are common for identity and value classes,
- * and neither enums, 'open' classes nor companion objects are going to become value classes.
- */
-fun FirRegularClassSymbol.willBecomeValueInapplicableTarget(): String? = when {
-    isValue -> "a value class"
-    classKind == ClassKind.INTERFACE -> "an interface"
-    classKind == ClassKind.ANNOTATION_CLASS -> "an annotation class"
-    classKind == ClassKind.ENUM_CLASS -> "an enum class"
-    modality == Modality.OPEN -> "an open class"
-    isCompanion -> "a companion object"
-    else -> null
-}
-
-/**
  * 'true' if the class is annotated with '@WillBecomeValue' and the annotation is applicable to it.
  *
  * Inapplicable annotations are reported by [FirWillBecomeValueDeclarationChecker], and the value class declaration
@@ -60,8 +39,7 @@ fun FirRegularClassSymbol.willBecomeValueInapplicableTarget(): String? = when {
  * Only the Kotlin annotation is taken into account; use [willBecomeKotlinOrJdkValueClass] to also accept the JDK
  * '@jdk.internal.ValueBased'.
  */
-fun FirRegularClassSymbol.willBecomeKotlinValueClass(session: FirSession): Boolean =
-    hasWillBecomeValueAnnotation(session) && willBecomeValueInapplicableTarget() == null
+fun FirRegularClassSymbol.willBecomeKotlinValueClass(session: FirSession): Boolean = hasWillBecomeValueAnnotation(session)
 
 /**
  * 'true' if the class has promised to become a value class: either with '@WillBecomeValue', or, being a JDK class, with

@@ -2214,6 +2214,11 @@ internal class WillBecomeValueClassNotTopLevelImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassNotTopLevel
 
+internal class WillBecomeValueClassOpenImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassOpen
+
 internal class AbsenceOfPrimaryConstructorForWillBecomeValueClassImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
