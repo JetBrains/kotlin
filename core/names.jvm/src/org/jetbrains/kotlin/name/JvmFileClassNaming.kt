@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.name
  */
 object JvmFileClassNaming {
     private const val FILE_CLASS_NAME_SUFFIX = "Kt"
+    private const val MULTIFILE_CLASS_PART_NAME_DELIMITER = "__"
 
     private val INVALID_JAVA_IDENTIFIER_CHARACTERS = "[^\\p{L}\\d]".toRegex()
 
@@ -38,6 +39,15 @@ object JvmFileClassNaming {
     @JvmOverloads
     fun fileClassFqName(packageFqName: FqName, fileName: String, isCompiled: Boolean = false): FqName {
         return packageFqName.child(Name.identifier(fileClassName(fileName, isCompiled)))
+    }
+
+    /**
+     * Returns the name of the class generated for a file that is a part of the [facadeClassName] multifile class: `Utils` and `foo.kt`
+     * give `Utils__FooKt`.
+     */
+    @JvmStatic
+    fun multifileClassPartName(facadeClassName: String, fileName: String): String {
+        return facadeClassName + MULTIFILE_CLASS_PART_NAME_DELIMITER + fileClassName(fileName)
     }
 
     private fun capitalizeAsJavaClassName(name: String): String {

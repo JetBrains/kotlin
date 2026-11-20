@@ -16,6 +16,7 @@ dependencies {
     compileOnly(libs.intellij.fastutil)
 
     implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":core:names.jvm"))
     runtimeOnly(project(":compiler:psi:psi-impl"))
 
     testFixturesApi(platform(libs.junit.bom))

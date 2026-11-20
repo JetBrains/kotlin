@@ -36,8 +36,5 @@
 # The platform interface uses compiler types which are shipped in 'kotlin-analysis-api-implementation'.
 # That artifact depends on this one, so the classes are missing from the runtime classpath.
 
-# From KotlinFileBasedDeclarationProvider
--dontwarn org.jetbrains.kotlin.fileClasses.JvmFileClassUtilKt
-
 # From KotlinPackagePartProviderFactory
 -dontwarn org.jetbrains.kotlin.load.kotlin.PackagePartProvider
