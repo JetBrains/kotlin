@@ -15,7 +15,6 @@ dependencies {
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":core:compiler.common"))
     implementation(project(":analysis:analysis-api"))
-    implementation(project(":analysis:analysis-internal-utils"))
     implementation(intellijCore())
     implementation(libs.opentelemetry.api)
     implementation(libs.caffeine)
