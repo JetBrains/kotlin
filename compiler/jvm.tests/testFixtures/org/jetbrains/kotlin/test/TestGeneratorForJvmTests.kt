@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.dsl.TestGroup.TestClass
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
-import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.*
@@ -147,7 +146,7 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLightTreeDiagnosticTestSpec> {
                 model(
                     "diagnostics",
-                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                    excludeDirs = listOf("helpers"),
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
                 )
             }
@@ -250,7 +249,7 @@ fun main(args: Array<String>) {
             testClass<AbstractFirBlackBoxCodegenTestSpec> {
                 model(
                     relativeRootPath = "codegen/box",
-                    excludeDirs = listOf("helpers", "templates") + detectDirsWithTestsMapFileOnly("codegen/box"),
+                    excludeDirs = listOf("helpers", "templates"),
                 )
             }
         }

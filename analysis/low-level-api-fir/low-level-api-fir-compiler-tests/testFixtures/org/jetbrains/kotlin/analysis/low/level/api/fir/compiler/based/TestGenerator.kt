@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.generators.tests.provider
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
-import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
-import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 
@@ -258,12 +256,12 @@ fun main(args: Array<String>) {
 
         testGroup(
             testsRoot = generatedTestRoot,
-            testDataRoot = GeneralConfiguration.SPEC_TESTDATA_PATH
+            testDataRoot = "compiler/tests-spec/testData"
         ) {
             fun TestGroup.TestClass.modelInit() {
                 model(
                     "diagnostics",
-                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                    excludeDirs = listOf("helpers"),
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 )
             }
