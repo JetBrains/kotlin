@@ -1,0 +1,43 @@
+KaType
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: A.Companion.B.C.D
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: A
+      symbol: KaNamedClassSymbol(A)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: Companion
+      symbol: KaNamedClassSymbol(A.Companion)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: B
+      symbol: KaNamedClassSymbol(A.Companion.B)
+      typeArguments: [
+        *
+      ]
+    KaResolvedClassTypeQualifier:
+      name: C
+      symbol: KaNamedClassSymbol(A.Companion.B.C)
+      typeArguments: [
+        *
+      ]
+    KaResolvedClassTypeQualifier:
+      name: D
+      symbol: KaNamedClassSymbol(A.Companion.B.C.D)
+      typeArguments: [
+        *
+      ]
+  ]
+  symbol: KaNamedClassSymbol(A.Companion.B.C.D)
+  typeArguments: [
+    *
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+A.Companion.B<*>.C<*>.D<*>
