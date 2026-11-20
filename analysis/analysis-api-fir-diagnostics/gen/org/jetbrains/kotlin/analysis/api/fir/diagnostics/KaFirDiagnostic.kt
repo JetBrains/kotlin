@@ -9,32 +9,29 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import kotlin.reflect.KClass
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
+import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractInvocationKind
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecation
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaFunctionTypeFamily
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.MavenComparableVersion
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.RelationToType
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement.Version
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -89,12 +86,6 @@ import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.psi.KtWhenCondition
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
-import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
-import org.jetbrains.kotlin.resolve.ReturnValueStatus
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility.Mismatch
-import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.types.Variance
 
 /*
@@ -507,7 +498,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = InvisibleReference::class
 
         public val reference: KaSymbol
-        public val visible: Visibility
+        public val visible: KaSymbolVisibility
         public val containingDeclaration: ClassId?
     }
 
@@ -518,7 +509,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = InvisibleReferenceWarning::class
 
         public val reference: KaSymbol
-        public val visible: Visibility
+        public val visible: KaSymbolVisibility
         public val containingDeclaration: ClassId?
     }
 
@@ -529,7 +520,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = InvisibleSetter::class
 
         public val property: KaVariableSymbol
-        public val visibility: Visibility
+        public val visibility: KaSymbolVisibility
         public val callableId: CallableId
     }
 
@@ -1050,7 +1041,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = SealedSupertypeInLocalClass::class
 
         public val declarationType: String
-        public val sealedClassKind: ClassKind
+        public val sealedClassKind: KaClassKind
     }
 
     @KaUnstableDiagnosticApi
@@ -1568,7 +1559,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = OverrideDeprecation::class
 
         public val overridenSymbol: KaSymbol
-        public val deprecationInfo: FirDeprecationInfo
+        public val deprecationInfo: KaDeprecation
     }
 
     @KaUnstableDiagnosticApi
@@ -1618,7 +1609,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = VersionRequirementDeprecationError::class
 
         public val reference: KaSymbol
-        public val version: Version
+        public val version: MavenComparableVersion
         public val currentVersion: String
         public val message: String
     }
@@ -1630,7 +1621,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = VersionRequirementDeprecation::class
 
         public val reference: KaSymbol
-        public val version: Version
+        public val version: MavenComparableVersion
         public val currentVersion: String
         public val message: String
     }
@@ -1665,7 +1656,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = WrongAnnotationTarget::class
 
         public val actualTarget: String
-        public val allowedTargets: List<KotlinTarget>
+        public val allowedTargets: List<KaAnnotationTarget>
     }
 
     @KaUnstableDiagnosticApi
@@ -1675,7 +1666,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = WrongAnnotationTargetWarning::class
 
         public val actualTarget: String
-        public val allowedTargets: List<KotlinTarget>
+        public val allowedTargets: List<KaAnnotationTarget>
     }
 
     @KaUnstableDiagnosticApi
@@ -1686,7 +1677,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
         public val actualTarget: String
         public val useSiteTarget: String
-        public val allowedTargets: List<KotlinTarget>
+        public val allowedTargets: List<KaAnnotationTarget>
     }
 
     @KaUnstableDiagnosticApi
@@ -2432,10 +2423,10 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ExposedTypealiasExpandedType>
             get() = ExposedTypealiasExpandedType::class
 
-        public val elementVisibility: EffectiveVisibility
+        public val elementVisibility: KaSymbolVisibility
         public val restrictingDeclaration: KaClassLikeSymbol
-        public val relationToType: RelationToType
-        public val restrictingVisibility: EffectiveVisibility
+        public val relationToType: KaRelationToType
+        public val restrictingVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -2444,10 +2435,10 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ExposedFunctionReturnType>
             get() = ExposedFunctionReturnType::class
 
-        public val elementVisibility: EffectiveVisibility
+        public val elementVisibility: KaSymbolVisibility
         public val restrictingDeclaration: KaClassLikeSymbol
-        public val relationToType: RelationToType
-        public val restrictingVisibility: EffectiveVisibility
+        public val relationToType: KaRelationToType
+        public val restrictingVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -2456,10 +2447,10 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ExposedReceiverType>
             get() = ExposedReceiverType::class
 
-        public val elementVisibility: EffectiveVisibility
+        public val elementVisibility: KaSymbolVisibility
         public val restrictingDeclaration: KaClassLikeSymbol
-        public val relationToType: RelationToType
-        public val restrictingVisibility: EffectiveVisibility
+        public val relationToType: KaRelationToType
+        public val restrictingVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -2468,10 +2459,10 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ExposedPropertyType>
             get() = ExposedPropertyType::class
 
-        public val elementVisibility: EffectiveVisibility
+        public val elementVisibility: KaSymbolVisibility
         public val restrictingDeclaration: KaClassLikeSymbol
-        public val relationToType: RelationToType
-        public val restrictingVisibility: EffectiveVisibility
+        public val relationToType: KaRelationToType
+        public val restrictingVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -2480,10 +2471,10 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ExposedPropertyTypeInConstructorError>
             get() = ExposedPropertyTypeInConstructorError::class
 
-        public val elementVisibility: EffectiveVisibility
+        public val elementVisibility: KaSymbolVisibility
         public val restrictingDeclaration: KaClassLikeSymbol
-        public val relationToType: RelationToType
-        public val restrictingVisibility: EffectiveVisibility
+        public val relationToType: KaRelationToType
+        public val restrictingVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -2492,10 +2483,10 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ExposedParameterType>
             get() = ExposedParameterType::class
 
-        public val elementVisibility: EffectiveVisibility
+        public val elementVisibility: KaSymbolVisibility
         public val restrictingDeclaration: KaClassLikeSymbol
-        public val relationToType: RelationToType
-        public val restrictingVisibility: EffectiveVisibility
+        public val relationToType: KaRelationToType
+        public val restrictingVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -2504,10 +2495,10 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ExposedSuperInterface>
             get() = ExposedSuperInterface::class
 
-        public val elementVisibility: EffectiveVisibility
+        public val elementVisibility: KaSymbolVisibility
         public val restrictingDeclaration: KaClassLikeSymbol
-        public val relationToType: RelationToType
-        public val restrictingVisibility: EffectiveVisibility
+        public val relationToType: KaRelationToType
+        public val restrictingVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -2516,10 +2507,10 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ExposedSuperClass>
             get() = ExposedSuperClass::class
 
-        public val elementVisibility: EffectiveVisibility
+        public val elementVisibility: KaSymbolVisibility
         public val restrictingDeclaration: KaClassLikeSymbol
-        public val relationToType: RelationToType
-        public val restrictingVisibility: EffectiveVisibility
+        public val relationToType: KaRelationToType
+        public val restrictingVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -2528,10 +2519,10 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ExposedTypeParameterBound>
             get() = ExposedTypeParameterBound::class
 
-        public val elementVisibility: EffectiveVisibility
+        public val elementVisibility: KaSymbolVisibility
         public val restrictingDeclaration: KaClassLikeSymbol
-        public val relationToType: RelationToType
-        public val restrictingVisibility: EffectiveVisibility
+        public val relationToType: KaRelationToType
+        public val restrictingVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -2540,10 +2531,10 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ExposedTypeParameterBoundDeprecationWarning>
             get() = ExposedTypeParameterBoundDeprecationWarning::class
 
-        public val elementVisibility: EffectiveVisibility
+        public val elementVisibility: KaSymbolVisibility
         public val restrictingDeclaration: KaClassLikeSymbol
-        public val relationToType: RelationToType
-        public val restrictingVisibility: EffectiveVisibility
+        public val relationToType: KaRelationToType
+        public val restrictingVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -2759,7 +2750,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<InconsistentVisibilityInOfOverloads>
             get() = InconsistentVisibilityInOfOverloads::class
 
-        public val mainVisibility: Visibility
+        public val mainVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -3337,7 +3328,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<NamedArgumentsNotAllowed>
             get() = NamedArgumentsNotAllowed::class
 
-        public val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget
+        public val forbiddenNamedArgumentsTarget: KaForbiddenNamedArgumentsTarget
     }
 
     @KaUnstableDiagnosticApi
@@ -3675,7 +3666,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<AmbiguousFunctionTypeKind>
             get() = AmbiguousFunctionTypeKind::class
 
-        public val kinds: List<FunctionTypeKind>
+        public val kinds: List<KaFunctionTypeFamily>
     }
 
     @KaUnstableDiagnosticApi
@@ -4747,7 +4738,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<CannotWeakenAccessPrivilege>
             get() = CannotWeakenAccessPrivilege::class
 
-        public val overridingVisibility: Visibility
+        public val overridingVisibility: KaSymbolVisibility
         public val overridden: KaCallableSymbol
         public val containingClassName: Name
     }
@@ -4758,7 +4749,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<CannotWeakenAccessPrivilegeWarning>
             get() = CannotWeakenAccessPrivilegeWarning::class
 
-        public val overridingVisibility: Visibility
+        public val overridingVisibility: KaSymbolVisibility
         public val overridden: KaCallableSymbol
         public val containingClassName: Name
     }
@@ -4769,7 +4760,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<CannotChangeAccessPrivilege>
             get() = CannotChangeAccessPrivilege::class
 
-        public val overridingVisibility: Visibility
+        public val overridingVisibility: KaSymbolVisibility
         public val overridden: KaCallableSymbol
         public val containingClassName: Name
     }
@@ -4780,7 +4771,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<CannotChangeAccessPrivilegeWarning>
             get() = CannotChangeAccessPrivilegeWarning::class
 
-        public val overridingVisibility: Visibility
+        public val overridingVisibility: KaSymbolVisibility
         public val overridden: KaCallableSymbol
         public val containingClassName: Name
     }
@@ -6265,7 +6256,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = ActualWithoutExpect::class
 
         public val declaration: KaSymbol
-        public val compatibility: Map<ExpectActualMatchingCompatibility, List<KaSymbol>>
+        public val compatibility: Map<KaExpectActualMatchingCompatibility, List<KaSymbol>>
     }
 
     @KaUnstableDiagnosticApi
@@ -6602,7 +6593,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = AmbiguousExpects::class
 
         public val declaration: KaSymbol
-        public val modules: List<FirModuleData>
+        public val modules: List<KaModule>
     }
 
     @KaUnstableDiagnosticApi
@@ -6612,7 +6603,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = NoActualClassMemberForExpectedClass::class
 
         public val declaration: KaSymbol
-        public val members: List<Pair<KaSymbol, Map<Mismatch, List<KaSymbol>>>>
+        public val members: List<Pair<KaSymbol, Map<KaExpectActualMatchingCompatibility, List<KaSymbol>>>>
     }
 
     @KaUnstableDiagnosticApi
@@ -6668,7 +6659,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         public val expectSymbol: KaSymbol
         public val actualSymbol: KaSymbol
         public val actualAnnotationTargetSourceElement: PsiElement?
-        public val incompatibilityType: ExpectActualAnnotationsIncompatibilityType<FirAnnotation>
+        public val incompatibilityType: KaExpectActualAnnotationsIncompatibilityType
     }
 
     @KaUnstableDiagnosticApi
@@ -6678,9 +6669,9 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = ActualIgnorabilityNotMatchExpect::class
 
         public val expectDeclaration: KaSymbol
-        public val expectIgnorability: ReturnValueStatus
+        public val expectIgnorability: KaReturnValueStatus
         public val actualDeclaration: KaSymbol
-        public val actualIgnorability: ReturnValueStatus
+        public val actualIgnorability: KaReturnValueStatus
     }
 
     @KaUnstableDiagnosticApi
@@ -6803,8 +6794,8 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = WrongInvocationKind::class
 
         public val declaration: KaSymbol
-        public val requiredRange: EventOccurrencesRange
-        public val actualRange: EventOccurrencesRange
+        public val requiredRange: KaContractInvocationKind
+        public val actualRange: KaContractInvocationKind
     }
 
     @KaUnstableDiagnosticApi
@@ -8120,9 +8111,9 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<LessVisibleTypeAccessInInlineError>
             get() = LessVisibleTypeAccessInInlineError::class
 
-        public val typeVisibility: EffectiveVisibility
+        public val typeVisibility: KaSymbolVisibility
         public val type: KaType
-        public val inlineVisibility: EffectiveVisibility
+        public val inlineVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -8131,9 +8122,9 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<LessVisibleTypeAccessInInlineWarning>
             get() = LessVisibleTypeAccessInInlineWarning::class
 
-        public val typeVisibility: EffectiveVisibility
+        public val typeVisibility: KaSymbolVisibility
         public val type: KaType
-        public val inlineVisibility: EffectiveVisibility
+        public val inlineVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -8143,9 +8134,9 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = LessVisibleTypeInInlineAccessedSignatureError::class
 
         public val symbol: KaSymbol
-        public val typeVisibility: EffectiveVisibility
+        public val typeVisibility: KaSymbolVisibility
         public val type: KaType
-        public val inlineVisibility: EffectiveVisibility
+        public val inlineVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -8155,9 +8146,9 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = LessVisibleTypeInInlineAccessedSignatureWarning::class
 
         public val symbol: KaSymbol
-        public val typeVisibility: EffectiveVisibility
+        public val typeVisibility: KaSymbolVisibility
         public val type: KaType
-        public val inlineVisibility: EffectiveVisibility
+        public val inlineVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -8167,8 +8158,8 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = CallableReferenceToLessVisibleDeclarationInInlineError::class
 
         public val symbol: KaSymbol
-        public val visibility: EffectiveVisibility
-        public val inlineVisibility: EffectiveVisibility
+        public val visibility: KaSymbolVisibility
+        public val inlineVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -8178,8 +8169,8 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = CallableReferenceToLessVisibleDeclarationInInlineWarning::class
 
         public val symbol: KaSymbol
-        public val visibility: EffectiveVisibility
-        public val inlineVisibility: EffectiveVisibility
+        public val visibility: KaSymbolVisibility
+        public val inlineVisibility: KaSymbolVisibility
     }
 
     @KaUnstableDiagnosticApi
@@ -8356,7 +8347,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<MixingFunctionalKindsInSupertypes>
             get() = MixingFunctionalKindsInSupertypes::class
 
-        public val kinds: List<FunctionTypeKind>
+        public val kinds: List<KaFunctionTypeFamily>
     }
 
     @KaUnstableDiagnosticApi
@@ -8429,7 +8420,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = IncompatibleClass::class
 
         public val presentableString: String
-        public val incompatibility: IncompatibleVersionErrorData<*>
+        public val incompatibility: KaIncompatibleVersionErrorData
     }
 
     @KaUnstableDiagnosticApi

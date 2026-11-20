@@ -5,8 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirDeprecation
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecation
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecationLevel
+import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+
+internal fun FirDeprecationInfo.toKaDeprecation(): KaDeprecation {
+    return KaFirDeprecation(deprecationLevel.toKaLevel(), propagatesToOverrides)
+}
 
 internal fun DeprecationLevelValue.toKaLevel(): KaDeprecationLevel {
     return when (this) {

@@ -7,13 +7,9 @@ plugins {
 
 dependencies {
     implementation(project(":analysis:analysis-api"))
-    implementation(project(":compiler:fir:tree"))
-    implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:psi:psi-api"))
-    implementation(project(":core:compiler.common"))
     implementation(project(":core:language.model"))
     implementation(project(":core:language.version-settings"))
-    implementation(project(":core:metadata"))
     implementation(project(":core:names"))
     implementation(intellijCore())
 }

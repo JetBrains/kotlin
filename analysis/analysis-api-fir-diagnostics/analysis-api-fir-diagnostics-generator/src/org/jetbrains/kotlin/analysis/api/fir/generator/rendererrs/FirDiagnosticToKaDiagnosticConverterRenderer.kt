@@ -95,4 +95,7 @@ object FirDiagnosticToKaDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
         "org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors",
     )
+
+    // The converters build the values of unstable diagnostic parameters.
+    override val optInMarkers = listOf("org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaUnstableDiagnosticApi")
 }
