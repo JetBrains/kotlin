@@ -619,6 +619,39 @@ class CompositionTests {
         eligible.value = false
         advance()
     }
+
+    // Regression test for b/588316326
+    @Test
+    fun testNestedInlineSwitchReturnsValue() = compositionTest {
+        var a by mutableStateOf(true)
+        var b by mutableStateOf(true)
+        var constResult: String? = null
+        var nonConstResult: String? = null
+
+        compose {
+            constResult = nestedPickConst(a, b)
+            nonConstResult = nestedPickNonConst(a, b)
+        }
+
+        assertEquals("y", constResult)
+        assertEquals("true:y", nonConstResult)
+
+        b = false
+        advance()
+        assertEquals("y", constResult)
+        assertEquals("true:y", nonConstResult)
+
+        a = false
+        b = true
+        advance()
+        assertEquals("z", constResult)
+        assertEquals("false:true:z", nonConstResult)
+
+        b = false
+        advance()
+        assertEquals("w", constResult)
+        assertEquals("false:false:w", nonConstResult)
+    }
 }
 
 @Composable
@@ -827,3 +860,13 @@ class FakeResult(val value: Exception?) {
         }
     }
 }
+
+private inline fun <R> pick(c: Boolean, t: () -> R, f: () -> R): R = if (c) t() else f()
+
+@Composable
+private fun nestedPickConst(a: Boolean, b: Boolean): String =
+    pick(a, { "y" }, { pick(b, { "z" }, { "w" }) })
+
+@Composable
+private fun nestedPickNonConst(a: Boolean, b: Boolean): String =
+    pick(a, { "$a:y" }, { pick(b, { "$a:$b:z" }, { "$a:$b:w" }) })
