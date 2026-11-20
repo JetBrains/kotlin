@@ -49,8 +49,9 @@ abstract class WasmEnvironmentConfigurator(
         get() = listOf(WasmEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
 
     companion object {
-        fun getRuntimePathsForModule(target: WasmTarget, testServices: TestServices): List<String> {
-            return listOf(stdlibPath(target, testServices), kotlinTestPath(target, testServices))
+        fun getRuntimePathsForModule(module: TestModule, target: WasmTarget, testServices: TestServices): List<String> {
+            val runtimeClasspaths = testServices.runtimeClasspathProviders.flatMap { it.runtimeClassPaths(module) }
+            return listOf(stdlibPath(target, testServices), kotlinTestPath(target, testServices)) + runtimeClasspaths.map { it.absolutePath }
         }
 
         fun kotlinTestPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.kotlin.test.path")!!
@@ -117,7 +118,7 @@ class WasmFirstStageEnvironmentConfigurator(
 
         val dependencies = module.regularDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }
         val friends = module.friendDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }
-        val libraries = getRuntimePathsForModule(wasmTarget, testServices) + dependencies + friends
+        val libraries = getRuntimePathsForModule(module, wasmTarget, testServices) + dependencies + friends
 
         configuration.libraries = libraries
         configuration.friendLibraries = friends
@@ -155,7 +156,7 @@ open class WasmSecondStageEnvironmentConfigurator(
 
         val wasmTarget = configuration.wasmTarget
 
-        val runtimeKlibs: List<String> = getRuntimePathsForModule(wasmTarget, testServices)
+        val runtimeKlibs: List<String> = getRuntimePathsForModule(module, wasmTarget, testServices)
         val klibDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
             .map { it.absolutePath }
         val klibFriendDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)

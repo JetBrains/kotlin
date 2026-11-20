@@ -28,6 +28,9 @@ fun main() {
             testClass<AbstractJsLightTreePluginBlackBoxCodegenForComposeTest> {
                 model("js")
             }
+            testClass<AbstractWasmJsBoxTestForCompose> {
+                model("wasm")
+            }
             testClass<AbstractComposeWithSerializationBoxTest> {
                 model("withSerialization")
             }

@@ -104,7 +104,7 @@ class WasmInProcessSecondStageFacade {
             configuration.includes = launcherKlibFile.absolutePath
             configuration.friendLibraries = settings.friendDependencies.toList()
 
-            val runtimeKlibs = WasmEnvironmentConfigurator.getRuntimePathsForModule(configuration.wasmTarget, services)
+            val runtimeKlibs = WasmEnvironmentConfigurator.getRuntimePathsForModule(launcherModule, configuration.wasmTarget, services)
             configuration.libraries = runtimeKlibs + cleanedRegularDependencies.toList() + settings.friendDependencies.toList() +
                     perTestKlibPaths + listOf(launcherKlibFile.absolutePath)
 
@@ -161,7 +161,7 @@ class WasmInProcessSecondStageFacade {
             val configuration = services.compilerConfigurationProvider.getCompilerConfiguration(mainModule, CompilationStage.SECOND)
             configuration.includes = includedLibrary
             configuration.friendLibraries = deps.friend.toList()
-            val runtimeKlibs = WasmEnvironmentConfigurator.getRuntimePathsForModule(configuration.wasmTarget, services)
+            val runtimeKlibs = WasmEnvironmentConfigurator.getRuntimePathsForModule(mainModule, configuration.wasmTarget, services)
             configuration.libraries = runtimeKlibs + deps.regular.toList() + deps.friend.toList() + libraries + listOf(includedLibrary)
             val outputDir = services.getWasmTestOutputDirectory()
             outputDir.mkdirs()

@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 
 plugins {
     id("common-configuration")
@@ -30,6 +31,15 @@ val testJsRuntime: Configuration = configurations.create("testJsRuntime") {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+    }
+}
+
+val testWasmRuntime: Configuration = configurations.create("testWasmRuntime") {
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
+        attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, KotlinWasmTargetAttribute.js)
     }
 }
 
@@ -71,6 +81,7 @@ dependencies {
     testImplementation(project(":compiler:plugin-api"))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(testFixtures(project(":js:js.tests")))
+    testImplementation(testFixtures(project(":wasm:wasm.tests")))
 
 
     testImplementation(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
@@ -95,6 +106,12 @@ dependencies {
     }
     testJsRuntime(libs.kotlinx.coroutines.core) { isTransitive = false }
     testJsRuntime("org.jetbrains.kotlinx:atomicfu-js:0.25.0") { isTransitive = false }
+
+    // wasm runtimes for tests
+    testWasmRuntime(composeRuntime()) {
+        // Kotlin/Wasm stdlib is provided by the test infrastructure
+        exclude(group = "org.jetbrains.kotlin")
+    }
 
     // native runtimes for tests
     testNativeRuntime(composeRuntime()) {
@@ -179,7 +196,12 @@ projectTests {
     ) {
         addClasspathProperty(runtimeJar.get().outputs.files, "compose.compiler.hosted.jar.path")
         addClasspathProperty(testJsRuntime, "compose.compiler.test.js.classpath")
+        addClasspathProperty(testWasmRuntime, "compose.compiler.test.wasm.classpath")
         useJsIrBoxTests(buildDir = layout.buildDirectory)
+        withWasmRuntime()
+        addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
+        // Used only by TypeScript checks (CHECK_TYPESCRIPT_DECLARATIONS), which Compose tests don't run
+        addAbsoluteDirectoryProperty(layout.buildDirectory.dir("node"), "kotlin.wasm.test.node.dir")
 
         useJUnitPlatform {
             // Kotlin/Native tests are launched by the `nativeTest` task.

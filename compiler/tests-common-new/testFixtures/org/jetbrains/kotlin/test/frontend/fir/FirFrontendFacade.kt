@@ -452,6 +452,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         }
                         targetPlatform.isWasm() -> {
                             val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule(
+                                mainModule,
                                 configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS),
                                 testServices
                             )
