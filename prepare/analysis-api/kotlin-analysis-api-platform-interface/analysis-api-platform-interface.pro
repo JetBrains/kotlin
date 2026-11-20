@@ -39,9 +39,6 @@
 # From KotlinFileBasedDeclarationProvider
 -dontwarn org.jetbrains.kotlin.fileClasses.JvmFileClassUtilKt
 
-# From KotlinJavaModuleJavaAnnotationsProvider
--dontwarn org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-
 # From KotlinPackagePartProviderFactory
 -dontwarn org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 

@@ -8,19 +8,14 @@ package org.jetbrains.kotlin.analysis.api.platform.java
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiAnnotation
-import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.name.ClassId
 
 /**
  * Provides annotations for Java modules.
  *
- * The platform must define one of the following annotation providers:
- *
- * - [KotlinJavaModulePsiAnnotationsProvider] (recommended)
- * - [KotlinJavaModuleJavaAnnotationsProvider]
+ * The platform must define a [KotlinJavaModulePsiAnnotationsProvider].
  */
 @KaPlatformInterface
 public sealed interface KotlinJavaModuleAnnotationsProvider<T> : KotlinPlatformComponent {
@@ -57,11 +52,3 @@ public sealed interface KotlinJavaModuleAnnotationsProvider<T> : KotlinPlatformC
  */
 @KaPlatformInterface
 public interface KotlinJavaModulePsiAnnotationsProvider : KotlinJavaModuleAnnotationsProvider<PsiAnnotation>
-
-/**
- * Directly provides [JavaAnnotation]s, which is the representation that the Kotlin compiler expects internally. However, [JavaAnnotation]
- * is a compiler-internal API, so this provider should only be preferred if the implementation directly accesses [JavaAnnotation]s.
- */
-@KaNonPublicApi
-@KaPlatformInterface
-public interface KotlinJavaModuleJavaAnnotationsProvider : KotlinJavaModuleAnnotationsProvider<JavaAnnotation>
