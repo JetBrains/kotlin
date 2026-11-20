@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Builder
@@ -72,21 +73,21 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
         val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
         val buildMethodName = Name.identifier(builder.buildMethodName)
-        addFunctionIfNotClashingWithSources(buildMethodName, existingFunctionNames, allowGeneratedClash = false) { name ->
-            val declaredReturnTypeRef = when (ownerDeclarationSymbol) {
-                is FirRegularClassSymbol -> ownerDeclarationSymbol.defaultType().toFirResolvedTypeRef()
-                is FirNamedFunctionSymbol -> ownerDeclarationSymbol.resolvedOrJavaTypeRef()
-                is FirConstructorSymbol -> ownerDeclarationSymbol.resolvedOrJavaTypeRef()
-                else -> buildErrorTypeRef {
-                    source = ownerDeclarationSymbol.source
-                    diagnostic =
-                        ConeUnsupported(
-                            "Unsupported builder declaration ${ownerDeclarationSymbol::class.simpleName}",
-                            ownerDeclarationSymbol.source
-                        )
-                }
+        val declaredReturnTypeRef = when (ownerDeclarationSymbol) {
+            is FirRegularClassSymbol -> ownerDeclarationSymbol.defaultType().toFirResolvedTypeRef()
+            is FirNamedFunctionSymbol -> ownerDeclarationSymbol.implicitResolvedOrJavaTypeRef()
+            is FirConstructorSymbol -> ownerDeclarationSymbol.implicitResolvedOrJavaTypeRef()
+            else -> buildErrorTypeRef {
+                source = ownerDeclarationSymbol.source
+                diagnostic =
+                    ConeUnsupported(
+                        "Unsupported builder declaration ${ownerDeclarationSymbol::class.simpleName}",
+                        ownerDeclarationSymbol.source
+                    )
             }
-
+        }
+        if (declaredReturnTypeRef is FirImplicitTypeRef) return
+        addFunctionIfNotClashingWithSources(buildMethodName, existingFunctionNames, allowGeneratedClash = false) { name ->
             // Rebind the type to the builder class's own type parameters, which are fresh copies of the annotated
             // declaration's ones (see `extractTypeParametersMapping`), instead of the originals.
             // Java type refs need no substitution: their type variables are resolved by name through the owning

@@ -334,8 +334,8 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE,
-            "'@Builder' infers the builder class name from the function's return type. " +
-                    "Specify the return type explicitly, or name the builder class with '@Builder(builderClassName = \"...\")'."
+            "It's prohibited to use '@Builder' on functions without explicitly given return type. " +
+                    "Specify the return type explicitly."
         )
         map.put(
             BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS,

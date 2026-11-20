@@ -2,8 +2,11 @@
 
 import lombok.Builder
 
-// `BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE` is only about inferring the builder class name, which is spelled out here,
-// so a builder is generated, and its `build()` takes the annotated function's implicit return type.
+// `BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE` is still reported here.
+// In this particular case it can be suppressed and works just by chance
+// (we shouldn't infer builderClassName, and function itself does nothing dangerous),
+// but it's not recommended to do so.
+@Suppress("BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE")
 class Product(val x: Int) {
     companion object {
         @Builder(builderClassName = "FactoryBuilder")

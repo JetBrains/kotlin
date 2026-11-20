@@ -1006,12 +1006,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         existingFunctionNames: Set<Name>,
         allowSetterClashes: Boolean,
     ) {
-        val typeRef = item.resolvedOrJavaTypeRef()
+        val typeRef = item.implicitResolvedOrJavaTypeRef()
 
         val typeId = when (typeRef) {
             is FirJavaTypeRef -> ((typeRef.type as? JavaClassifierType)?.classifier as? JavaClass)?.fqName?.let(ClassId::topLevel)
             is FirResolvedTypeRef -> typeRef.coneType.classId
-            else -> return
+            else -> return // possible e.g. with implicit type
         }
 
         // Early return and report `CANNOT_SINGULARIZE_NAME` if explicit name isn't specified and singularization fails
@@ -1144,9 +1144,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
     }
 
-    @OptIn(SymbolInternals::class)
-    protected fun FirCallableSymbol<*>.resolvedOrJavaTypeRef(): FirTypeRef =
-        if (hasJavaOrigin) fir.returnTypeRef else resolvedReturnTypeRef
+    protected fun FirCallableSymbol<*>.implicitResolvedOrJavaTypeRef(): FirTypeRef =
+        when (val returnTypeRef = @OptIn(SymbolInternals::class) fir.returnTypeRef) {
+            is FirImplicitTypeRef -> returnTypeRef
+            else -> if (hasJavaOrigin) returnTypeRef else resolvedReturnTypeRef
+        }
 
     /**
      * Add new Lombok-generated function, if it doesn't clash with existing source functions by name,

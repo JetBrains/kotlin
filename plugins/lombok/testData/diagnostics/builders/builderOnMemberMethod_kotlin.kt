@@ -19,9 +19,10 @@ class UnitReturnType {
     }
 }
 
-// No diagnostic: there is nothing to infer, the builder class name is given explicitly.
+// The builder class name is given explicitly, but function with implicit return type is still dangerous
+// as we can't predict what is done inside
 class ImplicitReturnTypeWithBuilderClassName {
-    @Builder(builderClassName = "ExplicitBuilder")
+    <!BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE!>@Builder(builderClassName = "ExplicitBuilder")<!>
     fun create(id: Int) = id.toString()
 }
 
