@@ -119,7 +119,7 @@ internal class LLFirSessionFactory(
         components.session = session
 
         val moduleData = createModuleData(session)
-        val resolutionScope = resolutionScopeProvider.getResolutionScope(module)
+        val resolutionScope = lazyResolutionScope(module)
 
         return session.apply {
             registerModuleData(moduleData)
@@ -215,7 +215,7 @@ internal class LLFirSessionFactory(
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
-            registerAllCommonComponents(languageVersionSettings, binaryContentScope)
+            registerAllCommonComponents(languageVersionSettings, lazyOf(binaryContentScope))
             registerCommonComponentsAfterExtensionsAreConfigured()
 
             val firProvider = LLFirProvider(
@@ -231,7 +231,7 @@ internal class LLFirSessionFactory(
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
             // We need FirRegisteredPluginAnnotations during extensions' registration process
-            val annotationsResolver = project.createAnnotationResolver(binaryContentScope)
+            val annotationsResolver = lazyOf(project.createAnnotationResolver(binaryContentScope))
             register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
 
@@ -304,7 +304,7 @@ internal class LLFirSessionFactory(
         return session.apply {
             val languageVersionSettings = KotlinProjectStructureProvider.getInstance(project).libraryLanguageVersionSettings
             registerModuleData(moduleData)
-            registerIdeComponents(project, languageVersionSettings, contentScope)
+            registerIdeComponents(project, languageVersionSettings, lazyOf(contentScope))
             register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
             registerCommonComponents(languageVersionSettings, isMetadataCompilation = session.isMetadataSession)
             registerCommonComponentsAfterExtensionsAreConfigured()
@@ -364,7 +364,7 @@ internal class LLFirSessionFactory(
         components.session = session
 
         val moduleData = createModuleData(session)
-        val resolutionScope = resolutionScopeProvider.getResolutionScope(module)
+        val resolutionScope = lazyResolutionScope(module)
 
         return session.apply {
             registerModuleData(moduleData)
@@ -463,7 +463,7 @@ internal class LLFirSessionFactory(
         components.session = session
 
         val moduleData = createModuleData(session)
-        val resolutionScope = resolutionScopeProvider.getResolutionScope(module)
+        val resolutionScope = lazyResolutionScope(module)
 
         return session.apply {
             registerModuleData(moduleData)
@@ -529,7 +529,7 @@ internal class LLFirSessionFactory(
         components.session = session
 
         val moduleData = createModuleData(session)
-        val resolutionScope = resolutionScopeProvider.getResolutionScope(module)
+        val resolutionScope = lazyResolutionScope(module)
 
         return session.apply {
             registerModuleData(moduleData)
@@ -750,7 +750,7 @@ internal class LLFirSessionFactory(
 
     private fun LLFirSession.registerAllCommonComponents(
         languageVersionSettings: LanguageVersionSettings,
-        annotationSearchScope: GlobalSearchScope,
+        annotationSearchScope: Lazy<GlobalSearchScope>,
     ) {
         registerIdeComponents(project, languageVersionSettings, annotationSearchScope)
         registerCommonComponents(languageVersionSettings, isMetadataCompilation = isMetadataSession)
@@ -770,6 +770,16 @@ internal class LLFirSessionFactory(
             registerAdditionalComponents(registration)
         }
     }
+
+    /**
+     * Returns the resolution scope of [module] as a lazy value.
+     *
+     * The resolution scope is lazy because computing it can be expensive, and the resolution scopes of dependency sessions are often not
+     * needed. The scope is still fully computed by the time it's used for an index query, as session components resolve the lazy value
+     * before they use the scope.
+     */
+    private fun lazyResolutionScope(module: KaModule): Lazy<GlobalSearchScope> =
+        lazy(LazyThreadSafetyMode.PUBLICATION) { resolutionScopeProvider.getResolutionScope(module) }
 
     /**
      * Merges dependency symbol providers of the same kind, and adds the result to the receiver [MutableList].
