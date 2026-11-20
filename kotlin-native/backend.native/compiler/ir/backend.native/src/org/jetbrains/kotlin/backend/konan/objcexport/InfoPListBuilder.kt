@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.platformName
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
 
 internal enum class BundleType {
@@ -30,7 +31,8 @@ internal enum class BundleType {
  */
 internal class InfoPListBuilder(
         private val config: NativeSecondStageCompilationConfig,
-        private val bundleType: BundleType = BundleType.FRAMEWORK
+        private val klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor>,
+        private val bundleType: BundleType = BundleType.FRAMEWORK,
 ) {
     private val configuration = config.configuration
 
@@ -170,8 +172,8 @@ internal class InfoPListBuilder(
 
         val mainPackage = mainPackageGuesser.guess(
                 moduleDescriptor,
-                moduleDescriptor.getIncludedLibraryDescriptors(config),
-                moduleDescriptor.getExportedDependencies(config),
+                klibModuleDescriptors.getIncludedLibraryDescriptors(config),
+                klibModuleDescriptors.getExportedDependencies(config),
         )
         // Bundle ID must contain only alphanumerics, `-` and `.`: https://developer.apple.com/documentation/bundleresources/information-property-list/cfbundleidentifier#Discussion
         // Replace any other character with `-`.
