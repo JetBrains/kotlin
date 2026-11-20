@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
@@ -157,7 +158,11 @@ object NativePreSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact,
         loweredResult: Fir2IrOutput,
     ) {
         val irDiagnosticReporter =
-            KtDiagnosticReporterWithImplicitIrBasedContext(configuration.diagnosticsCollector, configuration.languageVersionSettings)
+            KtDiagnosticReporterWithImplicitIrBasedContext(
+                configuration.diagnosticsCollector,
+                configuration.languageVersionSettings,
+                configuration.parseTreeKind,
+            )
         val checker = NativeKlibCheckers.makeChecker(
             irDiagnosticReporter,
             configuration

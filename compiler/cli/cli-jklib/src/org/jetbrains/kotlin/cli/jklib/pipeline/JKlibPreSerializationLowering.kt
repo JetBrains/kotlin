@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
@@ -350,6 +351,7 @@ object JKlibPreSerializationLoweringPhase : PipelinePhase<JKlibFir2IrPipelineArt
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             configuration.diagnosticsCollector,
             configuration.languageVersionSettings,
+            configuration.parseTreeKind,
         )
         val result = PhaseEngine(
             configuration.phaseConfig ?: PhaseConfig(),

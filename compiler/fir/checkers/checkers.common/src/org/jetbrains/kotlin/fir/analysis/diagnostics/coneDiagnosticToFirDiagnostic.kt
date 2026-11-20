@@ -1191,6 +1191,9 @@ private fun FirSession.toDiagnosticContext(): DiagnosticBaseContext {
     ) : DiagnosticBaseContext, SessionHolder {
         override val languageVersionSettings: LanguageVersionSettings
             get() = session.languageVersionSettings
+
+        override val parseTreeKind: ParseTreeKind
+            get() = session.syntaxComponent.parseTreeKind
     }
 
     return SessionWrapper(this)

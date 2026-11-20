@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.pipeline.web
 
 import org.jetbrains.kotlin.backend.common.serialization.getSerializedData
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -31,7 +32,8 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifa
         (val fir2IrResult = result, val firResult = frontendOutput, val configuration) = input
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             configuration.diagnosticsCollector,
-            configuration.languageVersionSettings
+            configuration.languageVersionSettings,
+            configuration.parseTreeKind,
         )
 
         val outputKlibPath = configuration.computeOutputKlibPath()
