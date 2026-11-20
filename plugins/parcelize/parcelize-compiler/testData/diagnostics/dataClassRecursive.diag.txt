@@ -1,0 +1,27 @@
+/dataClassRecursive.kt:14:32: error: Recursive data class 'Node' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<Node, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:44:15: error: Recursive data class 'Node' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<Node, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:45:23: error: Recursive data class 'Node' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<Node, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:46:16: error: Recursive data class 'Node' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<Node, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:47:23: error: Recursive data class 'Node' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<Node, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:48:12: error: Recursive data class 'A' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<A, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:49:12: error: Recursive data class 'B' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<B, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:50:15: error: Recursive data class 'Tree' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<Tree, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:51:27: error: Recursive data class 'SerializableTree' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<SerializableTree, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:52:33: error: Recursive data class 'SerializableNode' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<SerializableNode, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:53:22: error: Recursive data class 'GenericNode<String>' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<GenericNode<String>, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:54:22: error: Recursive data class 'GrowingNode<String>' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<GrowingNode<String>, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:55:20: error: Recursive data class 'BoxedNode' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<BoxedNode, ...>' annotation to provide the serialization logic.
+
+/dataClassRecursive.kt:56:15: error: Recursive data class 'Loop' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<Loop, ...>' annotation to provide the serialization logic.

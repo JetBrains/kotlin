@@ -1,0 +1,13 @@
+/dataClassInRawValue.kt:17:22: error: Type is not directly supported by 'Parcelize' because it contains an instance of PrivateNode. Add the '@TypeParceler<PrivateNode, ...>' annotation to provide the missing serialization logic.
+
+/dataClassInRawValue.kt:28:23: error: Type is not directly supported by 'Parcelize' because it contains an instance of PrivateField. Add the '@TypeParceler<PrivateField, ...>' annotation to provide the missing serialization logic.
+
+/dataClassInRawValue.kt:29:34: error: Type is not directly supported by 'Parcelize' because it contains an instance of PrivateField. Add the '@TypeParceler<PrivateField, ...>' annotation to provide the missing serialization logic.
+
+/dataClassInRawValue.kt:30:34: error: Type is not directly supported by 'Parcelize' because it contains an instance of PrivateField. Add the '@TypeParceler<PrivateField, ...>' annotation to provide the missing serialization logic.
+
+/dataClassInRawValue.kt:33:20: error: Recursive data class 'Node' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<Node, ...>' annotation to provide the serialization logic.
+
+/dataClassInRawValue.kt:34:31: error: Recursive data class 'Node' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<Node, ...>' annotation to provide the serialization logic.
+
+/dataClassInRawValue.kt:35:35: error: Recursive data class 'RawValueNode' is not supported by 'Parcelize'. Make the data class 'Parcelable' or add the '@TypeParceler<RawValueNode, ...>' annotation to provide the serialization logic.
