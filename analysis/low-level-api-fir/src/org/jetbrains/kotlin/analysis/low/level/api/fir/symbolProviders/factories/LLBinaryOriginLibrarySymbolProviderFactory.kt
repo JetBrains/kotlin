@@ -67,7 +67,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
 
     override fun createMetadataLibrarySymbolProvider(
         session: LLFirSession,
-        packagePartProvider: PackagePartProvider,
+        packagePartProvider: PackageAndMetadataPartProvider,
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider> {
         val moduleData = session.moduleData
@@ -79,7 +79,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
                     session,
                     moduleDataProvider,
                     kotlinScopeProvider,
-                    packagePartProvider as PackageAndMetadataPartProvider,
+                    packagePartProvider,
                     VirtualFileFinderFactory.getInstance(session.project).create(scope),
                 )
             )

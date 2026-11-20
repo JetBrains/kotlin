@@ -6,28 +6,29 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.configuration
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinModuleMappingFileProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.AnalysisApiOnly
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirNonErrorSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal fun createSymbolProvidersWithOptionalAnnotationClassesProvider(
     session: LLFirSession,
     scope: GlobalSearchScope,
-    createSymbolProviders: (PackagePartProvider) -> List<FirSymbolProvider>,
+    createSymbolProviders: (PackageAndMetadataPartProvider) -> List<FirSymbolProvider>,
 ): List<FirSymbolProvider> {
-    val project = session.project
     val moduleDataProvider = SingleModuleDataProvider(session.moduleData)
-    val packagePartProvider = project.createPackagePartProvider(scope)
+    val moduleMappingFiles = KotlinModuleMappingFileProvider.getInstance(session.project)?.findModuleMappingFiles(scope).orEmpty()
+    val packagePartProvider = LLPackagePartProvider(moduleMappingFiles, session.languageVersionSettings)
 
     return buildList {
         addAll(createSymbolProviders(packagePartProvider))

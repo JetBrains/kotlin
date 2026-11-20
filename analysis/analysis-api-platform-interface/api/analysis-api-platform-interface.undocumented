@@ -60,8 +60,7 @@ org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvid
 org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider.Companion.factory
 org.jetbrains.kotlin.analysis.api.platform.packages.KotlinEmptyPackageProvider
 org.jetbrains.kotlin.analysis.api.platform.packages.KotlinForwardDeclarationsPackageProviderFactory.Companion.getInstance(Project)
-org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
-org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.packages.KotlinModuleMappingFileProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderBase
 org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory.createPackageProvider(GlobalSearchScope)

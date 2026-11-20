@@ -625,17 +625,13 @@ public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinFor
 	public static final fun createForwardDeclarationsPackageProvider (Lcom/intellij/openapi/project/Project;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider;
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactory : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
-	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactory$Companion;
-	public abstract fun createPackagePartProvider (Lcom/intellij/psi/search/GlobalSearchScope;)Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinModuleMappingFileProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinModuleMappingFileProvider$Companion;
+	public abstract fun findModuleMappingFiles (Lcom/intellij/psi/search/GlobalSearchScope;)Ljava/util/Collection;
 }
 
-public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactory$Companion {
-	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactory;
-}
-
-public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackagePartProviderFactoryKt {
-	public static final fun createPackagePartProvider (Lcom/intellij/openapi/project/Project;Lcom/intellij/psi/search/GlobalSearchScope;)Lorg/jetbrains/kotlin/load/kotlin/PackagePartProvider;
+public final class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinModuleMappingFileProvider$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/platform/packages/KotlinModuleMappingFileProvider;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/packages/KotlinPackageProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinComposableProvider {

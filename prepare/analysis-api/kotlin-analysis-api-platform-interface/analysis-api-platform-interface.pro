@@ -26,15 +26,3 @@
 
 # The IntelliJ 'util' JAR bundles 'org.apache.log4j.Level' alone; the rest of log4j is an implementation component as well
 -dontwarn org.apache.log4j.**
-
-# ======================================================================================================================
-# Known problems
-#
-# Sic! Don't add more entries here. The entries below have to be fixed and removed.
-# ======================================================================================================================
-
-# The platform interface uses compiler types which are shipped in 'kotlin-analysis-api-implementation'.
-# That artifact depends on this one, so the classes are missing from the runtime classpath.
-
-# From KotlinPackagePartProviderFactory
--dontwarn org.jetbrains.kotlin.load.kotlin.PackagePartProvider

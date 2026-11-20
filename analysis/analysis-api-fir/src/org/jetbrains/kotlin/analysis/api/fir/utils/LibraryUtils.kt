@@ -27,7 +27,8 @@ object LibraryUtils {
      *   resulting in potential hash mismatch (e.g., if used in scope membership check).
      *
      * By default, given [jar], the root, will be included. Pass [includeRoot = false] if not needed.
-     *   Note that, thought, [JvmPackagePartProvider#addRoots] is checking if the root file is in the scope when loading Kotlin modules.
+     *   Note that, thought, `KotlinStandaloneModuleMappingFileProvider` is checking if the root file is in the scope when loading Kotlin
+     *   modules.
      *   Thus, if this util is used to populate files for the scope of the Kotlin module as a library, the root should be added too.
      */
     fun getAllVirtualFilesFromJar(
