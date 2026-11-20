@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.JvmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -30,6 +31,21 @@ class NativeImageCompilationSmokeTest : BaseCompilationTest() {
 
         jvmProject(kotlinToolchains to policy) {
             val module = module("basic-multimodule-project/module-1")
+            module.compile {
+                assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Compiles a project with spaces in its path using the native image process execution policy")
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun testProcessPolicyCompilationWithSpacesInProjectPath() {
+        val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
+        val policy = kotlinToolchains.createNativeImageProcessExecutionPolicy(nativeImageDistPath)
+
+        JvmProject(kotlinToolchains, policy, workingDirectory.resolve("project with spaces")).use { project ->
+            val module = project.module("basic-multimodule-project/module-1")
             module.compile {
                 assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
             }

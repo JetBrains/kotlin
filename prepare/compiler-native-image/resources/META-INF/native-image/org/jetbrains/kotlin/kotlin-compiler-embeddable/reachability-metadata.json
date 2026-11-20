@@ -98,6 +98,20 @@
         {
           "name": "serialVersionUID"
         }
+      ],
+      "methods": [
+        {
+          "name": "readObject",
+          "parameterTypes": [
+            "java.io.ObjectInputStream"
+          ]
+        },
+        {
+          "name": "writeObject",
+          "parameterTypes": [
+            "java.io.ObjectOutputStream"
+          ]
+        }
       ]
     },
     {
@@ -198,6 +212,15 @@
           "parameterTypes": []
         }
       ]
+    },
+    {
+      "type": "java.lang.ReflectiveOperationException",
+      "fields": [
+        {
+          "name": "serialVersionUID"
+        }
+      ],
+      "serializable": true
     },
     {
       "type": "java.lang.Short"
@@ -403,6 +426,21 @@
     },
     {
       "type": "kotlin.Boolean"
+    },
+    {
+      "type": "kotlin.collections.EmptyList",
+      "fields": [
+        {
+          "name": "serialVersionUID"
+        }
+      ],
+      "methods": [
+        {
+          "name": "readResolve",
+          "parameterTypes": []
+        }
+      ],
+      "serializable": true
     },
     {
       "type": "kotlin.Metadata",
