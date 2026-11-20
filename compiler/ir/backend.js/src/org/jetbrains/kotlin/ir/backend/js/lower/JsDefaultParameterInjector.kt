@@ -52,7 +52,8 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
         }
     }
 
-    override fun IrBlockBuilder.argumentsForCall(
+    override fun argumentsForCall(
+        builder: IrBlockBuilder,
         expression: IrFunctionAccessExpression,
         stubFunction: IrFunction,
     ): Map<IrValueParameter, IrExpression?> {

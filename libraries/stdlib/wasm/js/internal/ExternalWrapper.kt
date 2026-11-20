@@ -195,8 +195,13 @@ internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): Externa
     // We deliberately avoid usage of `takeIf` here as type erase on the inlining stage leads to infinite recursion
     if (isNullish(x)) null else x
 
+//TODO Remove after bootstrap
 @UsedFromCompilerGeneratedCode
 internal fun jsIsUndefinedAdapter(x: ExternalInterfaceType?): Boolean =
+    js("x === undefined")
+
+@UsedFromCompilerGeneratedCode
+internal fun jsIsUndefined(x: ExternalInterfaceType?): Boolean =
     js("x === undefined")
 
 @UsedFromCompilerGeneratedCode
