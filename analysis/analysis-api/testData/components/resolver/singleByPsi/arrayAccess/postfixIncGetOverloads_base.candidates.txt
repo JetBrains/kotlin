@@ -34,3 +34,76 @@ KtArrayAccessExpression(232,236): 'b[0]'
           callableId = null)
       }
     isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = b
+        isSafeNavigation = false
+        type = B
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = B
+        symbol = /B.get(<dispatch receiver>: B, i: kotlin.Number): B
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Number
+            symbol = i: kotlin.Number
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /B.get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Number
+          symbol = i: kotlin.Number
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = b
+        isSafeNavigation = false
+        type = B
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = B
+        symbol = /B.get(<dispatch receiver>: B, i: kotlin.String): B
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.String
+            symbol = i: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /B.get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        0 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.String
+          symbol = i: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    isInBestCandidates = false

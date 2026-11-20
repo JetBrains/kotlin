@@ -31,6 +31,20 @@ KtArrayAccessExpression(185,195): 'b[1, 2, 3]'
           returnType = kotlin.Int
           symbol = vararg indices: kotlin.Int
           contextParameters = []
+          callableId = null),
+        2 -> (KaVariableSignature:
+          name = indices
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = vararg indices: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        3 -> (KaVariableSignature:
+          name = indices
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = vararg indices: kotlin.Int
+          contextParameters = []
           callableId = null)
       }
     isInBestCandidates = true

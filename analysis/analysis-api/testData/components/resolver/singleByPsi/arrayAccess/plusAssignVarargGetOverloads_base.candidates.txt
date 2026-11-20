@@ -1,4 +1,41 @@
 KtArrayAccessExpression(179,186): 'b[1, 2]'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = b
+        isSafeNavigation = false
+        type = B
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /B.get(<dispatch receiver>: B, index: kotlin.Any): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Any
+            symbol = index: kotlin.Any
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /B.get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = index
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = index: kotlin.Any
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun get(index: Any): Int'.>
+    isInBestCandidates = false
+
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -26,6 +63,13 @@ KtArrayAccessExpression(179,186): 'b[1, 2]'
       typeArgumentsMapping = {}
       valueArgumentMapping = {
         1 -> (KaVariableSignature:
+          name = indices
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = vararg indices: kotlin.Int
+          contextParameters = []
+          callableId = null),
+        2 -> (KaVariableSignature:
           name = indices
           receiverType = null
           returnType = kotlin.Int
