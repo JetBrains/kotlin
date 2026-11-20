@@ -16,6 +16,8 @@ data class Generic<T>(val x: T)
 data class GenericOut<out T>(val x: T)
 data class GenericBounded<T : Parcelable>(val x: T)
 data class BadButSerializable(val x: Any) : java.io.Serializable
+data class BadButSerializableList(val items: List<BadButSerializable>)
+data class GenericBoundedByDataClass<T : Generic<String>>(val x: T)
 
 @Parcelize
 class C(
@@ -29,4 +31,6 @@ class C(
     val g: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass Generic<Any><!>,
     val h: @DataClass GenericBounded<*>,
     val i: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass BadButSerializable<!>,
+    val j: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass BadButSerializableList<!>,
+    val k: @DataClass GenericBoundedByDataClass<*>,
 ) : Parcelable
