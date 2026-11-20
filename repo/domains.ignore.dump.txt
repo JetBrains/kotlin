@@ -135,6 +135,7 @@ ignored:
  - libraries/tools/kotlin-gradle-plugin/ReadMe.md
  - libraries/tools/kotlin-gradle-plugin/kotlin-npm-tooling/README.md
  - libraries/tools/kotlin-gradle-statistics/ReadMe.md
+ - libraries/tools/kotlin-import-models/README.md
  - libraries/tools/kotlin-stdlib-docs/README.md
  - libraries/tools/kotlin-stdlib-docs/templates/README.md
  - libraries/tools/kotlin-stdlib-gen/ReadMe.md

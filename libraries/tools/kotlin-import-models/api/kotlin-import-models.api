@@ -1,0 +1,878 @@
+public abstract interface class org/jetbrains/kotlin/importmodels/KotlinGradleModel : java/io/Serializable {
+	public abstract fun getKotlinModelResult ()[B
+}
+
+public final class org/jetbrains/kotlin/importmodels/KotlinImportModelIds {
+	public static final field BASE Ljava/lang/String;
+	public static final field INSTANCE Lorg/jetbrains/kotlin/importmodels/KotlinImportModelIds;
+	public static final field PROJECT_INFORMATION Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/importmodels/ModelRequest {
+	public abstract fun getKotlinModelId ()Ljava/lang/String;
+	public abstract fun getKotlinModelParameters ()[B
+	public abstract fun setKotlinModelId (Ljava/lang/String;)V
+	public abstract fun setKotlinModelParameters ([B)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/BaseModel : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage, org/jetbrains/kotlin/importmodels/proto/BaseModelOrBuilder {
+	public static final field CAPABILITIES_FIELD_NUMBER I
+	public static final field ID_FIELD_NUMBER I
+	public static final field PLUGIN_VERSION_FIELD_NUMBER I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getCapabilities (I)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;
+	public fun getCapabilitiesCount ()I
+	public fun getCapabilitiesList ()Ljava/util/List;
+	public fun getCapabilitiesValue (I)I
+	public fun getCapabilitiesValueList ()Ljava/util/List;
+	public static fun getDefaultInstance ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getId ()Ljava/lang/String;
+	public fun getIdBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public fun getParserForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Parser;
+	public fun getPluginVersion ()Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public fun getPluginVersionOrBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/VersionOrBuilder;
+	public fun getSerializedSize ()I
+	public fun hasId ()Z
+	public fun hasPluginVersion ()Z
+	public fun hashCode ()I
+	public final fun isInitialized ()Z
+	public static fun newBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public static fun newBuilder (Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public synthetic fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public static fun parseDelimitedFrom (Ljava/io/InputStream;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static fun parseDelimitedFrom (Ljava/io/InputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static fun parseFrom (Ljava/io/InputStream;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static fun parseFrom (Ljava/io/InputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static fun parseFrom (Ljava/nio/ByteBuffer;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static fun parseFrom (Ljava/nio/ByteBuffer;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static fun parseFrom ([B)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static fun parseFrom ([BLorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static fun parser ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Parser;
+	public synthetic fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun writeTo (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedOutputStream;)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/BaseModel$Builder : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage$Builder, org/jetbrains/kotlin/importmodels/proto/BaseModelOrBuilder {
+	public fun addAllCapabilities (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun addAllCapabilitiesValue (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun addCapabilities (Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun addCapabilitiesValue (I)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public synthetic fun build ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun build ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun build ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public synthetic fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun clear ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun clearCapabilities ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun clearId ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun clearPluginVersion ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun getCapabilities (I)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;
+	public fun getCapabilitiesCount ()I
+	public fun getCapabilitiesList ()Ljava/util/List;
+	public fun getCapabilitiesValue (I)I
+	public fun getCapabilitiesValueList ()Ljava/util/List;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getDescriptorForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getId ()Ljava/lang/String;
+	public fun getIdBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public fun getPluginVersion ()Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public fun getPluginVersionBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun getPluginVersionOrBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/VersionOrBuilder;
+	public fun hasId ()Z
+	public fun hasPluginVersion ()Z
+	public final fun isInitialized ()Z
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessageLite$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun mergePluginVersion (Lorg/jetbrains/kotlin/importmodels/proto/Version;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun setCapabilities (ILorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun setCapabilitiesValue (II)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun setId (Ljava/lang/String;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun setIdBytes (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun setPluginVersion (Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+	public fun setPluginVersion (Lorg/jetbrains/kotlin/importmodels/proto/Version;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/BaseModel$Capability : java/lang/Enum, org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ProtocolMessageEnum {
+	public static final field CAPABILITY_KOTLIN_JVM Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;
+	public static final field CAPABILITY_KOTLIN_JVM_VALUE I
+	public static final field CAPABILITY_UNSPECIFIED Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;
+	public static final field CAPABILITY_UNSPECIFIED_VALUE I
+	public static final field UNRECOGNIZED Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;
+	public static fun forNumber (I)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$EnumDescriptor;
+	public final fun getDescriptorForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$EnumDescriptor;
+	public final fun getNumber ()I
+	public final fun getValueDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$EnumValueDescriptor;
+	public static fun internalGetValueMap ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Internal$EnumLiteMap;
+	public static fun valueOf (I)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;
+	public static fun valueOf (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$EnumValueDescriptor;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;
+	public static fun values ()[Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/BaseModelKt {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/importmodels/proto/BaseModelKt;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/BaseModelKt$Dsl {
+	public static final field Companion Lorg/jetbrains/kotlin/importmodels/proto/BaseModelKt$Dsl$Companion;
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final synthetic fun _build ()Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public final synthetic fun addAllCapabilities (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;Ljava/lang/Iterable;)V
+	public final synthetic fun addCapabilities (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;)V
+	public final synthetic fun clearCapabilities (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;)V
+	public final fun clearId ()V
+	public final fun clearPluginVersion ()V
+	public final synthetic fun getCapabilities ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getPluginVersion ()Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public final fun getPluginVersionOrNull (Lorg/jetbrains/kotlin/importmodels/proto/BaseModelKt$Dsl;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public final fun hasId ()Z
+	public final fun hasPluginVersion ()Z
+	public final synthetic fun plusAssignAllCapabilities (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;Ljava/lang/Iterable;)V
+	public final synthetic fun plusAssignCapabilities (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;)V
+	public final synthetic fun setCapabilities (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;ILorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;)V
+	public final fun setId (Ljava/lang/String;)V
+	public final fun setPluginVersion (Lorg/jetbrains/kotlin/importmodels/proto/Version;)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/BaseModelKt$Dsl$CapabilitiesProxy : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslProxy {
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/BaseModelKt$Dsl$Companion {
+	public final synthetic fun _create (Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Builder;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModelKt$Dsl;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/BaseModelKtKt {
+	public static final fun -initializebaseModel (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static final synthetic fun copy (Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel;
+	public static final fun getPluginVersionOrNull (Lorg/jetbrains/kotlin/importmodels/proto/BaseModelOrBuilder;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+}
+
+public abstract interface class org/jetbrains/kotlin/importmodels/proto/BaseModelOrBuilder : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageOrBuilder {
+	public abstract fun getCapabilities (I)Lorg/jetbrains/kotlin/importmodels/proto/BaseModel$Capability;
+	public abstract fun getCapabilitiesCount ()I
+	public abstract fun getCapabilitiesList ()Ljava/util/List;
+	public abstract fun getCapabilitiesValue (I)I
+	public abstract fun getCapabilitiesValueList ()Ljava/util/List;
+	public abstract fun getId ()Ljava/lang/String;
+	public abstract fun getIdBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public abstract fun getPluginVersion ()Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public abstract fun getPluginVersionOrBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/VersionOrBuilder;
+	public abstract fun hasId ()Z
+	public abstract fun hasPluginVersion ()Z
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/CompilationUnitId : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage, org/jetbrains/kotlin/importmodels/proto/CompilationUnitIdOrBuilder {
+	public static final field VALUE_FIELD_NUMBER I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun getDefaultInstance ()Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getParserForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Parser;
+	public fun getSerializedSize ()I
+	public fun getValue ()Ljava/lang/String;
+	public fun getValueBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public fun hasValue ()Z
+	public fun hashCode ()I
+	public final fun isInitialized ()Z
+	public static fun newBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public static fun newBuilder (Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public synthetic fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public static fun parseDelimitedFrom (Ljava/io/InputStream;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static fun parseDelimitedFrom (Ljava/io/InputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static fun parseFrom (Ljava/io/InputStream;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static fun parseFrom (Ljava/io/InputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static fun parseFrom (Ljava/nio/ByteBuffer;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static fun parseFrom (Ljava/nio/ByteBuffer;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static fun parseFrom ([B)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static fun parseFrom ([BLorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static fun parser ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Parser;
+	public synthetic fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public fun writeTo (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedOutputStream;)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage$Builder, org/jetbrains/kotlin/importmodels/proto/CompilationUnitIdOrBuilder {
+	public synthetic fun build ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun build ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun build ()Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public synthetic fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun clear ()Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public fun clearValue ()Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getDescriptorForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getValue ()Ljava/lang/String;
+	public fun getValueBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public fun hasValue ()Z
+	public final fun isInitialized ()Z
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessageLite$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public fun setValue (Ljava/lang/String;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public fun setValueBytes (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/CompilationUnitIdKt {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitIdKt;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/CompilationUnitIdKt$Dsl {
+	public static final field Companion Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitIdKt$Dsl$Companion;
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final synthetic fun _build ()Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public final fun clearValue ()V
+	public final fun getValue ()Ljava/lang/String;
+	public final fun hasValue ()Z
+	public final fun setValue (Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/CompilationUnitIdKt$Dsl$Companion {
+	public final synthetic fun _create (Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitIdKt$Dsl;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/CompilationUnitIdKtKt {
+	public static final fun -initializecompilationUnitId (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public static final synthetic fun copy (Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+}
+
+public abstract interface class org/jetbrains/kotlin/importmodels/proto/CompilationUnitIdOrBuilder : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageOrBuilder {
+	public abstract fun getValue ()Ljava/lang/String;
+	public abstract fun getValueBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public abstract fun hasValue ()Z
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/Error : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage, org/jetbrains/kotlin/importmodels/proto/ErrorOrBuilder {
+	public static final field ERROR_MESSAGE_FIELD_NUMBER I
+	public static final field ERROR_TYPE_FIELD_NUMBER I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun getDefaultInstance ()Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getErrorMessage ()Ljava/lang/String;
+	public fun getErrorMessageBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public fun getErrorType ()Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public fun getErrorTypeValue ()I
+	public fun getParserForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Parser;
+	public fun getSerializedSize ()I
+	public fun hasErrorMessage ()Z
+	public fun hasErrorType ()Z
+	public fun hashCode ()I
+	public final fun isInitialized ()Z
+	public static fun newBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public static fun newBuilder (Lorg/jetbrains/kotlin/importmodels/proto/Error;)Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public synthetic fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public static fun parseDelimitedFrom (Ljava/io/InputStream;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static fun parseDelimitedFrom (Ljava/io/InputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static fun parseFrom (Ljava/io/InputStream;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static fun parseFrom (Ljava/io/InputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static fun parseFrom (Ljava/nio/ByteBuffer;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static fun parseFrom (Ljava/nio/ByteBuffer;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static fun parseFrom ([B)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static fun parseFrom ([BLorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static fun parser ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Parser;
+	public synthetic fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public fun writeTo (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedOutputStream;)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/Error$Builder : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage$Builder, org/jetbrains/kotlin/importmodels/proto/ErrorOrBuilder {
+	public synthetic fun build ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun build ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun build ()Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public synthetic fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun clear ()Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public fun clearErrorMessage ()Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public fun clearErrorType ()Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getDescriptorForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getErrorMessage ()Ljava/lang/String;
+	public fun getErrorMessageBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public fun getErrorType ()Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public fun getErrorTypeValue ()I
+	public fun hasErrorMessage ()Z
+	public fun hasErrorType ()Z
+	public final fun isInitialized ()Z
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessageLite$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/proto/Error;)Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public fun setErrorMessage (Ljava/lang/String;)Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public fun setErrorMessageBytes (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;)Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public fun setErrorType (Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;)Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public fun setErrorTypeValue (I)Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/Error$Type : java/lang/Enum, org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ProtocolMessageEnum {
+	public static final field ERROR_TYPE_GENERIC_ERROR Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public static final field ERROR_TYPE_GENERIC_ERROR_VALUE I
+	public static final field ERROR_TYPE_INTERNAL_ERROR Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public static final field ERROR_TYPE_INTERNAL_ERROR_VALUE I
+	public static final field ERROR_TYPE_UNKNOWN_MODEL_ID Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public static final field ERROR_TYPE_UNKNOWN_MODEL_ID_VALUE I
+	public static final field ERROR_TYPE_UNKNOWN_MODEL_PARAMS Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public static final field ERROR_TYPE_UNKNOWN_MODEL_PARAMS_VALUE I
+	public static final field ERROR_TYPE_UNSPECIFIED Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public static final field ERROR_TYPE_UNSPECIFIED_VALUE I
+	public static final field ERROR_TYPE_UNSUPPORTED_MODEL_ID Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public static final field ERROR_TYPE_UNSUPPORTED_MODEL_ID_VALUE I
+	public static final field ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public static final field ERROR_TYPE_UNSUPPORTED_MODEL_PARAMS_VALUE I
+	public static final field UNRECOGNIZED Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public static fun forNumber (I)Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$EnumDescriptor;
+	public final fun getDescriptorForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$EnumDescriptor;
+	public final fun getNumber ()I
+	public final fun getValueDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$EnumValueDescriptor;
+	public static fun internalGetValueMap ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Internal$EnumLiteMap;
+	public static fun valueOf (I)Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public static fun valueOf (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$EnumValueDescriptor;)Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public static fun values ()[Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ErrorKt {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/importmodels/proto/ErrorKt;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ErrorKt$Dsl {
+	public static final field Companion Lorg/jetbrains/kotlin/importmodels/proto/ErrorKt$Dsl$Companion;
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final synthetic fun _build ()Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public final fun clearErrorMessage ()V
+	public final fun clearErrorType ()V
+	public final fun getErrorMessage ()Ljava/lang/String;
+	public final fun getErrorType ()Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public final fun getErrorTypeValue ()I
+	public final fun hasErrorMessage ()Z
+	public final fun hasErrorType ()Z
+	public final fun setErrorMessage (Ljava/lang/String;)V
+	public final fun setErrorType (Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;)V
+	public final fun setErrorTypeValue (I)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ErrorKt$Dsl$Companion {
+	public final synthetic fun _create (Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;)Lorg/jetbrains/kotlin/importmodels/proto/ErrorKt$Dsl;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ErrorKtKt {
+	public static final fun -initializeerror (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static final synthetic fun copy (Lorg/jetbrains/kotlin/importmodels/proto/Error;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+}
+
+public abstract interface class org/jetbrains/kotlin/importmodels/proto/ErrorOrBuilder : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageOrBuilder {
+	public abstract fun getErrorMessage ()Ljava/lang/String;
+	public abstract fun getErrorMessageBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public abstract fun getErrorType ()Lorg/jetbrains/kotlin/importmodels/proto/Error$Type;
+	public abstract fun getErrorTypeValue ()I
+	public abstract fun hasErrorMessage ()Z
+	public abstract fun hasErrorType ()Z
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/KotlinImportModels {
+	public static fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$FileDescriptor;
+	public static fun registerAllExtensions (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistry;)V
+	public static fun registerAllExtensions (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ProjectModel : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage, org/jetbrains/kotlin/importmodels/proto/ProjectModelOrBuilder {
+	public static final field COMPILATION_UNIT_IDS_FIELD_NUMBER I
+	public static final field ID_FIELD_NUMBER I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getCompilationUnitIds (I)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public fun getCompilationUnitIdsCount ()I
+	public fun getCompilationUnitIdsList ()Ljava/util/List;
+	public fun getCompilationUnitIdsOrBuilder (I)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitIdOrBuilder;
+	public fun getCompilationUnitIdsOrBuilderList ()Ljava/util/List;
+	public static fun getDefaultInstance ()Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getId ()Ljava/lang/String;
+	public fun getIdBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public fun getParserForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Parser;
+	public fun getSerializedSize ()I
+	public fun hasId ()Z
+	public fun hashCode ()I
+	public final fun isInitialized ()Z
+	public static fun newBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public static fun newBuilder (Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public synthetic fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public static fun parseDelimitedFrom (Ljava/io/InputStream;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static fun parseDelimitedFrom (Ljava/io/InputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static fun parseFrom (Ljava/io/InputStream;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static fun parseFrom (Ljava/io/InputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static fun parseFrom (Ljava/nio/ByteBuffer;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static fun parseFrom (Ljava/nio/ByteBuffer;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static fun parseFrom ([B)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static fun parseFrom ([BLorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static fun parser ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Parser;
+	public synthetic fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun writeTo (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedOutputStream;)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage$Builder, org/jetbrains/kotlin/importmodels/proto/ProjectModelOrBuilder {
+	public fun addAllCompilationUnitIds (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun addCompilationUnitIds (ILorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun addCompilationUnitIds (ILorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun addCompilationUnitIds (Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun addCompilationUnitIds (Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun addCompilationUnitIdsBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public fun addCompilationUnitIdsBuilder (I)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public synthetic fun build ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun build ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun build ()Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public synthetic fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun clear ()Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun clearCompilationUnitIds ()Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun clearId ()Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun getCompilationUnitIds (I)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public fun getCompilationUnitIdsBuilder (I)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;
+	public fun getCompilationUnitIdsBuilderList ()Ljava/util/List;
+	public fun getCompilationUnitIdsCount ()I
+	public fun getCompilationUnitIdsList ()Ljava/util/List;
+	public fun getCompilationUnitIdsOrBuilder (I)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitIdOrBuilder;
+	public fun getCompilationUnitIdsOrBuilderList ()Ljava/util/List;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getDescriptorForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getId ()Ljava/lang/String;
+	public fun getIdBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public fun hasId ()Z
+	public final fun isInitialized ()Z
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessageLite$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun removeCompilationUnitIds (I)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun setCompilationUnitIds (ILorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId$Builder;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun setCompilationUnitIds (ILorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun setId (Ljava/lang/String;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+	public fun setIdBytes (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ProjectModelKt {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/importmodels/proto/ProjectModelKt;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ProjectModelKt$Dsl {
+	public static final field Companion Lorg/jetbrains/kotlin/importmodels/proto/ProjectModelKt$Dsl$Companion;
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final synthetic fun _build ()Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public final synthetic fun addAllCompilationUnitIds (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;Ljava/lang/Iterable;)V
+	public final synthetic fun addCompilationUnitIds (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;)V
+	public final synthetic fun clearCompilationUnitIds (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;)V
+	public final fun clearId ()V
+	public final synthetic fun getCompilationUnitIds ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;
+	public final fun getId ()Ljava/lang/String;
+	public final fun hasId ()Z
+	public final synthetic fun plusAssignAllCompilationUnitIds (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;Ljava/lang/Iterable;)V
+	public final synthetic fun plusAssignCompilationUnitIds (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;)V
+	public final synthetic fun setCompilationUnitIds (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslList;ILorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;)V
+	public final fun setId (Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ProjectModelKt$Dsl$Companion {
+	public final synthetic fun _create (Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel$Builder;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModelKt$Dsl;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ProjectModelKt$Dsl$CompilationUnitIdsProxy : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/kotlin/DslProxy {
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ProjectModelKtKt {
+	public static final fun -initializeprojectModel (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+	public static final synthetic fun copy (Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/importmodels/proto/ProjectModel;
+}
+
+public abstract interface class org/jetbrains/kotlin/importmodels/proto/ProjectModelOrBuilder : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageOrBuilder {
+	public abstract fun getCompilationUnitIds (I)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitId;
+	public abstract fun getCompilationUnitIdsCount ()I
+	public abstract fun getCompilationUnitIdsList ()Ljava/util/List;
+	public abstract fun getCompilationUnitIdsOrBuilder (I)Lorg/jetbrains/kotlin/importmodels/proto/CompilationUnitIdOrBuilder;
+	public abstract fun getCompilationUnitIdsOrBuilderList ()Ljava/util/List;
+	public abstract fun getId ()Ljava/lang/String;
+	public abstract fun getIdBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public abstract fun hasId ()Z
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/Result : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage, org/jetbrains/kotlin/importmodels/proto/ResultOrBuilder {
+	public static final field ERROR_FIELD_NUMBER I
+	public static final field MODEL_FIELD_NUMBER I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun getDefaultInstance ()Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getError ()Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public fun getErrorOrBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/ErrorOrBuilder;
+	public fun getModel ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Any;
+	public fun getModelOrBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AnyOrBuilder;
+	public fun getParserForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Parser;
+	public fun getResultCase ()Lorg/jetbrains/kotlin/importmodels/proto/Result$ResultCase;
+	public fun getSerializedSize ()I
+	public fun hasError ()Z
+	public fun hasModel ()Z
+	public fun hashCode ()I
+	public final fun isInitialized ()Z
+	public static fun newBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public static fun newBuilder (Lorg/jetbrains/kotlin/importmodels/proto/Result;)Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public synthetic fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public static fun parseDelimitedFrom (Ljava/io/InputStream;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static fun parseDelimitedFrom (Ljava/io/InputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static fun parseFrom (Ljava/io/InputStream;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static fun parseFrom (Ljava/io/InputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static fun parseFrom (Ljava/nio/ByteBuffer;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static fun parseFrom (Ljava/nio/ByteBuffer;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static fun parseFrom ([B)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static fun parseFrom ([BLorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static fun parser ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Parser;
+	public synthetic fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public fun writeTo (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedOutputStream;)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/Result$Builder : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage$Builder, org/jetbrains/kotlin/importmodels/proto/ResultOrBuilder {
+	public synthetic fun build ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun build ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun build ()Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public synthetic fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun clear ()Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public fun clearError ()Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public fun clearModel ()Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public fun clearResult ()Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getDescriptorForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getError ()Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public fun getErrorBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;
+	public fun getErrorOrBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/ErrorOrBuilder;
+	public fun getModel ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Any;
+	public fun getModelBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Any$Builder;
+	public fun getModelOrBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AnyOrBuilder;
+	public fun getResultCase ()Lorg/jetbrains/kotlin/importmodels/proto/Result$ResultCase;
+	public fun hasError ()Z
+	public fun hasModel ()Z
+	public final fun isInitialized ()Z
+	public fun mergeError (Lorg/jetbrains/kotlin/importmodels/proto/Error;)Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessageLite$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/proto/Result;)Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public fun mergeModel (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Any;)Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public fun setError (Lorg/jetbrains/kotlin/importmodels/proto/Error$Builder;)Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public fun setError (Lorg/jetbrains/kotlin/importmodels/proto/Error;)Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public fun setModel (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Any$Builder;)Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+	public fun setModel (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Any;)Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/Result$ResultCase : java/lang/Enum, org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessageLite$InternalOneOfEnum, org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Internal$EnumLite {
+	public static final field ERROR Lorg/jetbrains/kotlin/importmodels/proto/Result$ResultCase;
+	public static final field MODEL Lorg/jetbrains/kotlin/importmodels/proto/Result$ResultCase;
+	public static final field RESULT_NOT_SET Lorg/jetbrains/kotlin/importmodels/proto/Result$ResultCase;
+	public static fun forNumber (I)Lorg/jetbrains/kotlin/importmodels/proto/Result$ResultCase;
+	public fun getNumber ()I
+	public static fun valueOf (I)Lorg/jetbrains/kotlin/importmodels/proto/Result$ResultCase;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/importmodels/proto/Result$ResultCase;
+	public static fun values ()[Lorg/jetbrains/kotlin/importmodels/proto/Result$ResultCase;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ResultKt {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/importmodels/proto/ResultKt;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ResultKt$Dsl {
+	public static final field Companion Lorg/jetbrains/kotlin/importmodels/proto/ResultKt$Dsl$Companion;
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final synthetic fun _build ()Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public final fun clearError ()V
+	public final fun clearModel ()V
+	public final fun clearResult ()V
+	public final fun getError ()Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public final fun getModel ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Any;
+	public final fun getResultCase ()Lorg/jetbrains/kotlin/importmodels/proto/Result$ResultCase;
+	public final fun hasError ()Z
+	public final fun hasModel ()Z
+	public final fun setError (Lorg/jetbrains/kotlin/importmodels/proto/Error;)V
+	public final fun setModel (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Any;)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ResultKt$Dsl$Companion {
+	public final synthetic fun _create (Lorg/jetbrains/kotlin/importmodels/proto/Result$Builder;)Lorg/jetbrains/kotlin/importmodels/proto/ResultKt$Dsl;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/ResultKtKt {
+	public static final fun -initializeresult (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static final synthetic fun copy (Lorg/jetbrains/kotlin/importmodels/proto/Result;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/importmodels/proto/Result;
+	public static final fun getErrorOrNull (Lorg/jetbrains/kotlin/importmodels/proto/ResultOrBuilder;)Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public static final fun getModelOrNull (Lorg/jetbrains/kotlin/importmodels/proto/ResultOrBuilder;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Any;
+}
+
+public abstract interface class org/jetbrains/kotlin/importmodels/proto/ResultOrBuilder : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageOrBuilder {
+	public abstract fun getError ()Lorg/jetbrains/kotlin/importmodels/proto/Error;
+	public abstract fun getErrorOrBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/ErrorOrBuilder;
+	public abstract fun getModel ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Any;
+	public abstract fun getModelOrBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AnyOrBuilder;
+	public abstract fun getResultCase ()Lorg/jetbrains/kotlin/importmodels/proto/Result$ResultCase;
+	public abstract fun hasError ()Z
+	public abstract fun hasModel ()Z
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/Version : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage, org/jetbrains/kotlin/importmodels/proto/VersionOrBuilder {
+	public static final field CLASSIFIER_FIELD_NUMBER I
+	public static final field MAJOR_FIELD_NUMBER I
+	public static final field MINOR_FIELD_NUMBER I
+	public static final field PATCH_FIELD_NUMBER I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getClassifier ()Ljava/lang/String;
+	public fun getClassifierBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public static fun getDefaultInstance ()Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getMajor ()I
+	public fun getMinor ()I
+	public fun getParserForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Parser;
+	public fun getPatch ()I
+	public fun getSerializedSize ()I
+	public fun hasClassifier ()Z
+	public fun hasMajor ()Z
+	public fun hasMinor ()Z
+	public fun hasPatch ()Z
+	public fun hashCode ()I
+	public final fun isInitialized ()Z
+	public static fun newBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public static fun newBuilder (Lorg/jetbrains/kotlin/importmodels/proto/Version;)Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public synthetic fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun newBuilderForType ()Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public static fun parseDelimitedFrom (Ljava/io/InputStream;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static fun parseDelimitedFrom (Ljava/io/InputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static fun parseFrom (Ljava/io/InputStream;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static fun parseFrom (Ljava/io/InputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static fun parseFrom (Ljava/nio/ByteBuffer;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static fun parseFrom (Ljava/nio/ByteBuffer;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static fun parseFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static fun parseFrom ([B)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static fun parseFrom ([BLorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static fun parser ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Parser;
+	public synthetic fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun toBuilder ()Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun writeTo (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedOutputStream;)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/Version$Builder : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage$Builder, org/jetbrains/kotlin/importmodels/proto/VersionOrBuilder {
+	public synthetic fun build ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun build ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun build ()Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public synthetic fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun buildPartial ()Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/GeneratedMessage$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun clear ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun clear ()Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun clearClassifier ()Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun clearMajor ()Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun clearMinor ()Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun clearPatch ()Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun getClassifier ()Ljava/lang/String;
+	public fun getClassifierBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;
+	public synthetic fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite;
+	public fun getDefaultInstanceForType ()Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static final fun getDescriptor ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getDescriptorForType ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Descriptors$Descriptor;
+	public fun getMajor ()I
+	public fun getMinor ()I
+	public fun getPatch ()I
+	public fun hasClassifier ()Z
+	public fun hasMajor ()Z
+	public fun hasMinor ()Z
+	public fun hasPatch ()Z
+	public final fun isInitialized ()Z
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessageLite$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageLite$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/CodedInputStream;Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ExtensionRegistryLite;)Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/AbstractMessage$Builder;
+	public synthetic fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/Message;)Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun mergeFrom (Lorg/jetbrains/kotlin/importmodels/proto/Version;)Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun setClassifier (Ljava/lang/String;)Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun setClassifierBytes (Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;)Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun setMajor (I)Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun setMinor (I)Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+	public fun setPatch (I)Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/VersionKt {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/importmodels/proto/VersionKt;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/VersionKt$Dsl {
+	public static final field Companion Lorg/jetbrains/kotlin/importmodels/proto/VersionKt$Dsl$Companion;
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final synthetic fun _build ()Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public final fun clearClassifier ()V
+	public final fun clearMajor ()V
+	public final fun clearMinor ()V
+	public final fun clearPatch ()V
+	public final fun getClassifier ()Ljava/lang/String;
+	public final fun getMajor ()I
+	public final fun getMinor ()I
+	public final fun getPatch ()I
+	public final fun hasClassifier ()Z
+	public final fun hasMajor ()Z
+	public final fun hasMinor ()Z
+	public final fun hasPatch ()Z
+	public final fun setClassifier (Ljava/lang/String;)V
+	public final fun setMajor (I)V
+	public final fun setMinor (I)V
+	public final fun setPatch (I)V
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/VersionKt$Dsl$Companion {
+	public final synthetic fun _create (Lorg/jetbrains/kotlin/importmodels/proto/Version$Builder;)Lorg/jetbrains/kotlin/importmodels/proto/VersionKt$Dsl;
+}
+
+public final class org/jetbrains/kotlin/importmodels/proto/VersionKtKt {
+	public static final fun -initializeversion (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+	public static final synthetic fun copy (Lorg/jetbrains/kotlin/importmodels/proto/Version;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/importmodels/proto/Version;
+}
+
+public abstract interface class org/jetbrains/kotlin/importmodels/proto/VersionOrBuilder : org/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/MessageOrBuilder {
+	public abstract fun getClassifier ()Ljava/lang/String;
+	public abstract fun getClassifierBytes ()Lorg/jetbrains/kotlin/importmodels/internal/protobuf/com/google/protobuf/ByteString;
+	public abstract fun getMajor ()I
+	public abstract fun getMinor ()I
+	public abstract fun getPatch ()I
+	public abstract fun hasClassifier ()Z
+	public abstract fun hasMajor ()Z
+	public abstract fun hasMinor ()Z
+	public abstract fun hasPatch ()Z
+}
+
