@@ -284,7 +284,7 @@ abstract class AbstractAtomicfuTransformer(
 
         private fun IrSimpleFunction.delegateToVolatileAccessors(delegateVolatileField: IrField) {
             val accessor = this
-            val dispatchReceiver = dispatchReceiverParameter?.capture()
+            val dispatchReceiver = if (delegateVolatileField.isStatic) null else dispatchReceiverParameter?.capture()
             with(atomicfuSymbols.createBuilder(symbol)) {
                 body = irBlockBody {
                     +irReturn(

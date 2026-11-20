@@ -63,8 +63,7 @@ class CompanionBlockMint {
     }
 
     private val coinsAtomicInstance = atomic(0)
-    //TODO(KT-91662) This should stop being an error.
-    var <!INSTANCE_PROPERTIES_DELEGATED_TO_ATOMICS_CAN_ONLY_ACCESS_SAME_INSTANCE!>companionSeen<!> by coinsAtomic
+    var companionSeen by coinsAtomic
 }
 
 enum class EnumMint {
@@ -96,8 +95,8 @@ fun mint() {
 class SameContainer {
     private val atomicProperty = atomic(0)
     var delegated: Int by atomicProperty
-    var delegatedWithThis by this.<!UNRESOLVED_REFERENCE!>coinsAtomic<!>
-    var delegatedWithExplicitThis by this<!UNRESOLVED_LABEL!>@ClassMint<!>.coinsAtomic
+    var delegatedWithThis by this.atomicProperty
+    var delegatedWithExplicitThis by this@SameContainer.atomicProperty
 }
 
 class SameContainerCompanionObject {

@@ -149,9 +149,10 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             return
         }
 
-        // Companion block members are static: there is no instance receiver to verify.
         // The container check has already established the common containing class.
-        if (declaration.isCompanionBlockMember && delegateProperty.isCompanionBlockMember) {
+        // If the delegate property is a companion block member, it's allowed for both
+        // instance & companion properties to delegate to it.
+        if (delegateProperty.isCompanionBlockMember) {
             return
         }
 

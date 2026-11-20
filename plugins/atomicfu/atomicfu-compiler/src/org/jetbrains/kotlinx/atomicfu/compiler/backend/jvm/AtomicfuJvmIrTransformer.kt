@@ -62,7 +62,8 @@ class AtomicfuJvmIrTransformer(
         private fun IrSimpleFunction.delegateToBoxedAtomicAccessors(boxedAtomic: IrProperty) {
             val accessor = this
             with(atomicfuSymbols.createBuilder(symbol)) {
-                val dispatchReceiver = dispatchReceiverParameter?.capture()
+                val dispatchReceiver =
+                    if (boxedAtomic.getter?.dispatchReceiverParameter == null) null else dispatchReceiverParameter?.capture()
                 val getBoxedAtomicProperty = irGetProperty(boxedAtomic, dispatchReceiver)
                 body = irBlockBody {
                     +irReturn(
