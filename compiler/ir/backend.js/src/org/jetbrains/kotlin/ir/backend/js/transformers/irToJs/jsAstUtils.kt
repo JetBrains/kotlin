@@ -253,7 +253,9 @@ fun translateFunction(
 
     declaration.nonDispatchParameters.forEach { param ->
         val name = functionContext.getNameForValueDeclaration(param)
-        function.parameters.add(JsParameter(name).withSource(param, functionContext, useNameOf = param))
+        val defaultValue = param.defaultValue?.expression
+        val jsDefaultValue = defaultValue?.accept(IrElementToJsExpressionTransformer(), functionContext)
+        function.parameters.add(JsParameter(JsDeclarable.Named(name), jsDefaultValue).withSource(param, functionContext, useNameOf = param))
     }
 
     check(!declaration.isSuspend) { "All Suspend functions should be lowered" }
