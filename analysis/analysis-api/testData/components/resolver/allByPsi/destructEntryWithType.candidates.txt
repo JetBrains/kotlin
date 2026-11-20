@@ -189,7 +189,7 @@ KtAnnotationEntry(159,178): '@Anno(0 + constant)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '0 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(160,164): 'Anno'
@@ -224,7 +224,7 @@ KtConstructorCalleeExpression(160,164): 'Anno'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '0 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
     isInBestCandidates = true
 
 KtTypeReference(160,164): 'Anno'
@@ -265,7 +265,7 @@ KtNameReferenceExpression(160,164): 'Anno'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '0 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
     isInBestCandidates = true
 
 KtValueArgumentList(164,178): '(0 + constant)'
@@ -309,7 +309,7 @@ KtBinaryExpression(165,177): '0 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -346,7 +346,7 @@ KtBinaryExpression(165,177): '0 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -383,7 +383,7 @@ KtBinaryExpression(165,177): '0 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Byte'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -456,7 +456,7 @@ KtBinaryExpression(165,177): '0 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Short'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -493,7 +493,7 @@ KtBinaryExpression(165,177): '0 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Long'.>
     isInBestCandidates = false
 
 KtConstantExpression(165,166): '0'
@@ -534,7 +534,7 @@ KtOperationReferenceExpression(167,168): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -571,7 +571,7 @@ KtOperationReferenceExpression(167,168): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -608,7 +608,7 @@ KtOperationReferenceExpression(167,168): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Byte'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -681,7 +681,7 @@ KtOperationReferenceExpression(167,168): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Short'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -718,7 +718,7 @@ KtOperationReferenceExpression(167,168): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Long'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(169,177): 'constant'
@@ -789,7 +789,7 @@ KtAnnotationEntry(184,203): '@Anno(1 + constant)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(185,189): 'Anno'
@@ -824,7 +824,7 @@ KtConstructorCalleeExpression(185,189): 'Anno'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
     isInBestCandidates = true
 
 KtTypeReference(185,189): 'Anno'
@@ -865,7 +865,7 @@ KtNameReferenceExpression(185,189): 'Anno'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
     isInBestCandidates = true
 
 KtValueArgumentList(189,203): '(1 + constant)'
@@ -909,7 +909,7 @@ KtBinaryExpression(190,202): '1 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -946,7 +946,7 @@ KtBinaryExpression(190,202): '1 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -983,7 +983,7 @@ KtBinaryExpression(190,202): '1 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Byte'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -1056,7 +1056,7 @@ KtBinaryExpression(190,202): '1 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Short'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1093,7 +1093,7 @@ KtBinaryExpression(190,202): '1 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Long'.>
     isInBestCandidates = false
 
 KtConstantExpression(190,191): '1'
@@ -1134,7 +1134,7 @@ KtOperationReferenceExpression(192,193): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1171,7 +1171,7 @@ KtOperationReferenceExpression(192,193): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1208,7 +1208,7 @@ KtOperationReferenceExpression(192,193): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Byte'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -1281,7 +1281,7 @@ KtOperationReferenceExpression(192,193): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Short'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1318,7 +1318,7 @@ KtOperationReferenceExpression(192,193): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Long'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(194,202): 'constant'
@@ -1389,7 +1389,7 @@ KtAnnotationEntry(209,228): '@Anno(2 + constant)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(210,214): 'Anno'
@@ -1424,7 +1424,7 @@ KtConstructorCalleeExpression(210,214): 'Anno'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
     isInBestCandidates = true
 
 KtTypeReference(210,214): 'Anno'
@@ -1465,7 +1465,7 @@ KtNameReferenceExpression(210,214): 'Anno'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
     isInBestCandidates = true
 
 KtValueArgumentList(214,228): '(2 + constant)'
@@ -1509,7 +1509,7 @@ KtBinaryExpression(215,227): '2 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1546,7 +1546,7 @@ KtBinaryExpression(215,227): '2 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1583,7 +1583,7 @@ KtBinaryExpression(215,227): '2 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Byte'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -1656,7 +1656,7 @@ KtBinaryExpression(215,227): '2 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Short'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1693,7 +1693,7 @@ KtBinaryExpression(215,227): '2 + constant'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Long'.>
     isInBestCandidates = false
 
 KtConstantExpression(215,216): '2'
@@ -1734,7 +1734,7 @@ KtOperationReferenceExpression(217,218): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1771,7 +1771,7 @@ KtOperationReferenceExpression(217,218): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Float'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1808,7 +1808,7 @@ KtOperationReferenceExpression(217,218): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Byte'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -1881,7 +1881,7 @@ KtOperationReferenceExpression(217,218): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Short'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -1918,7 +1918,7 @@ KtOperationReferenceExpression(217,218): '+'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constant' of type 'Int' does not conform to value parameter 'other' of type 'Long'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(219,227): 'constant'

@@ -118,7 +118,7 @@ KtBinaryExpression(40,49): 'list += 1'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Array<Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1' of type 'Int' does not conform to value parameter 'elements' of type 'Array<Int>'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -157,7 +157,7 @@ KtBinaryExpression(40,49): 'list += 1'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Iterable<Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1' of type 'Int' does not conform to value parameter 'elements' of type 'Iterable<Int>'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -196,7 +196,7 @@ KtBinaryExpression(40,49): 'list += 1'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Sequence<Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1' of type 'Int' does not conform to value parameter 'elements' of type 'Sequence<Int>'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(40,44): 'list'
@@ -292,7 +292,7 @@ KtOperationReferenceExpression(45,47): '+='
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Array<Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1' of type 'Int' does not conform to value parameter 'elements' of type 'Array<Int>'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -331,7 +331,7 @@ KtOperationReferenceExpression(45,47): '+='
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Iterable<Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1' of type 'Int' does not conform to value parameter 'elements' of type 'Iterable<Int>'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -370,7 +370,7 @@ KtOperationReferenceExpression(45,47): '+='
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Sequence<Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1' of type 'Int' does not conform to value parameter 'elements' of type 'Sequence<Int>'.>
     isInBestCandidates = false
 
 KtConstantExpression(48,49): '1'

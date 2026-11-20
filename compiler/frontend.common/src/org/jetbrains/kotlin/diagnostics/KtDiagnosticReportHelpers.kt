@@ -141,6 +141,36 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     report(factory.onOrFallback(source, a, b, c, d, positioningStrategy, context), context)
 }
 
+// #### KtDiagnosticFactory5 ####
+
+fun <A, B, C, D, E> DiagnosticReporter.reportOn(
+    source: AbstractKtSourceElement?,
+    factory: KtDiagnosticFactory5<A, B, C, D, E>,
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    context: DiagnosticContext,
+    positioningStrategy: AbstractSourceElementPositioningStrategy? = null
+) {
+    report(factory.onOrFallback(source, a, b, c, d, e, positioningStrategy, context), context)
+}
+
+context(context: DiagnosticContext)
+fun <A, B, C, D, E> DiagnosticReporter.reportOn(
+    source: AbstractKtSourceElement?,
+    factory: KtDiagnosticFactory5<A, B, C, D, E>,
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    positioningStrategy: AbstractSourceElementPositioningStrategy? = null
+) {
+    report(factory.onOrFallback(source, a, b, c, d, e, positioningStrategy, context), context)
+}
+
 // #### KtDiagnosticFactoryForDeprecation0 ####
 
 fun DiagnosticReporter.reportOn(
@@ -259,6 +289,36 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
     reportOn(source, factory.chooseFactory(), a, b, c, d, positioningStrategy)
+}
+
+// #### KtDiagnosticFactoryForDeprecation5 ####
+
+fun <A, B, C, D, E> DiagnosticReporter.reportOn(
+    source: AbstractKtSourceElement?,
+    factory: KtDiagnosticFactoryForDeprecation5<A, B, C, D, E>,
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    context: DiagnosticContext,
+    positioningStrategy: AbstractSourceElementPositioningStrategy? = null
+) {
+    with(context) { reportOn(source, factory.chooseFactory(), a, b, c, d, e, positioningStrategy) }
+}
+
+context(context: DiagnosticContext)
+fun <A, B, C, D, E> DiagnosticReporter.reportOn(
+    source: AbstractKtSourceElement?,
+    factory: KtDiagnosticFactoryForDeprecation5<A, B, C, D, E>,
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    positioningStrategy: AbstractSourceElementPositioningStrategy? = null
+) {
+    reportOn(source, factory.chooseFactory(), a, b, c, d, e, positioningStrategy)
 }
 
 context(context: DiagnosticContext)

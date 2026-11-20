@@ -1,5 +1,7 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 // MUTE_FOR_PSI_CLASS_FILES_READING
+// SOURCE_RETENTION_ANNOTATIONS
+// ^@ParameterName on function type parameters gets lost turning 'x' into 'p0'.
 // ^ KT-68389
 
 // FILE: ValueParameter.java
@@ -31,25 +33,25 @@ fun <K: Any> getArrayOfNotNullK() = null as Array<K>
 fun <K> getArrayOfNullableK() = null as Array<K?>
 
 fun <R> main(vp: ValueParameter<R>) {
-    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String, uninferred K (of fun <K> getNotNullStringAndKNullable)>; ValueParameter.A<String?, R? (of fun <R> main)>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
+    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String, uninferred K (of fun <K> getNotNullStringAndKNullable)>; ValueParameter.A<String?, R? (of fun <R> main)>!;  value parameter 'x' of")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
     vp.foo1(getNullableStringAndKNullable())
-    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String, uninferred K (of fun <K : Any> getNotNullStringAndNotNullK)>; ValueParameter.A<String?, R? (of fun <R> main)>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
-    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String?, uninferred K (of fun <K : Any> getNullableStringAndNotNullK)>; ValueParameter.A<String?, R? (of fun <R> main)>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
+    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String, uninferred K (of fun <K : Any> getNotNullStringAndNotNullK)>; ValueParameter.A<String?, R? (of fun <R> main)>!;  value parameter 'x' of;  'getNotNullStringAndNotNullK()'")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
+    vp.foo1(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String?, uninferred K (of fun <K : Any> getNullableStringAndNotNullK)>; ValueParameter.A<String?, R? (of fun <R> main)>!;  value parameter 'x' of")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
 
-    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String, uninferred K (of fun <K> getNotNullStringAndKNullable)>; ValueParameter.A<String?, R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
-    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String?, uninferred K (of fun <K> getNullableStringAndKNullable)>; ValueParameter.A<String?, R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
-    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String, uninferred K (of fun <K : Any> getNotNullStringAndNotNullK)>; ValueParameter.A<String?, R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
+    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String, uninferred K (of fun <K> getNotNullStringAndKNullable)>; ValueParameter.A<String?, R (of fun <R> main) & Any>!;  value parameter 'x' of")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
+    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String?, uninferred K (of fun <K> getNullableStringAndKNullable)>; ValueParameter.A<String?, R (of fun <R> main) & Any>!;  value parameter 'x' of")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
+    vp.foo2(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String, uninferred K (of fun <K : Any> getNotNullStringAndNotNullK)>; ValueParameter.A<String?, R (of fun <R> main) & Any>!;  value parameter 'x' of;  'getNotNullStringAndNotNullK()'")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndNotNullK<!>()<!>)
     vp.foo2(getNullableStringAndNotNullK())
 
-    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String, uninferred K (of fun <K> getNotNullStringAndKNullable)>; ValueParameter.A<String, R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
-    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String?, uninferred K (of fun <K> getNullableStringAndKNullable)>; ValueParameter.A<String, R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
+    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String, uninferred K (of fun <K> getNotNullStringAndKNullable)>; ValueParameter.A<String, R (of fun <R> main) & Any>!;  value parameter 'x' of")!><!CANNOT_INFER_PARAMETER_TYPE!>getNotNullStringAndKNullable<!>()<!>)
+    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String?, uninferred K (of fun <K> getNullableStringAndKNullable)>; ValueParameter.A<String, R (of fun <R> main) & Any>!;  value parameter 'x' of")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndKNullable<!>()<!>)
     vp.foo3(getNotNullStringAndNotNullK())
-    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String?, uninferred K (of fun <K : Any> getNullableStringAndNotNullK)>; ValueParameter.A<String, R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
+    vp.foo3(<!ARGUMENT_TYPE_MISMATCH("ValueParameter.A<String?, uninferred K (of fun <K : Any> getNullableStringAndNotNullK)>; ValueParameter.A<String, R (of fun <R> main) & Any>!;  value parameter 'x' of")!><!CANNOT_INFER_PARAMETER_TYPE!>getNullableStringAndNotNullK<!>()<!>)
 
-    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("Array<String>; Array<(out) R (of fun <R> main) & Any>!")!>getArrayOfNotNullString()<!>)
-    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("Array<String?>; Array<(out) R (of fun <R> main) & Any>!")!>getArrayOfNullableString()<!>)
+    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("Array<String>; Array<(out) R (of fun <R> main) & Any>!;  value parameter 'x' of;  'getArrayOfNotNullString()'")!>getArrayOfNotNullString()<!>)
+    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("Array<String?>; Array<(out) R (of fun <R> main) & Any>!;  value parameter 'x' of;  'getArrayOfNullableString()'")!>getArrayOfNullableString()<!>)
     vp.foo4(getArrayOfNotNullK())
-    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("Array<uninferred K (of fun <K> getArrayOfNullableK)>; Array<(out) R (of fun <R> main) & Any>!")!><!CANNOT_INFER_PARAMETER_TYPE!>getArrayOfNullableK<!>()<!>)
+    vp.foo4(<!ARGUMENT_TYPE_MISMATCH("Array<uninferred K (of fun <K> getArrayOfNullableK)>; Array<(out) R (of fun <R> main) & Any>!;  value parameter 'x' of;  'getArrayOfNullableK()'")!><!CANNOT_INFER_PARAMETER_TYPE!>getArrayOfNullableK<!>()<!>)
 
     vp.foo5(getArrayOfNotNullString())
     vp.foo5(getArrayOfNullableString())
@@ -57,5 +59,5 @@ fun <R> main(vp: ValueParameter<R>) {
     vp.foo5(getArrayOfNullableK())
 
     vp.foo41(getNotNullString())
-    vp.foo411(<!ARGUMENT_TYPE_MISMATCH("String; R! (of fun <R> main)")!>getNotNullString()<!>)
+    vp.foo411(<!ARGUMENT_TYPE_MISMATCH("String; R! (of fun <R> main);  value parameter 'x' of;  'getNotNullString()'")!>getNotNullString()<!>)
 }

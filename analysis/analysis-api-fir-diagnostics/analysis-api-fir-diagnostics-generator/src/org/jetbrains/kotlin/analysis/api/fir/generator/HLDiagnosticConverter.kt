@@ -238,6 +238,10 @@ internal object FirToKtConversionCreator {
         ConeReceiverInfo::class to HLFunctionCallConversion(
             "{0}?.let { firSymbolBuilder.typeBuilder.buildKtType(it.type) }",
             KaType::class.createType(nullable = true),
+        ),
+        FirBasedSymbol::class to HLFunctionCallConversion(
+            "{0}?.let { firSymbolBuilder.buildSymbol(it) }",
+            KaSymbol::class.createType(nullable = true),
         )
     )
 

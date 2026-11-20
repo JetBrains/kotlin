@@ -1,22 +1,22 @@
 compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.kt:2:15: error: [NONE_APPLICABLE] None of the following candidates is applicable:
 
 fun plus(other: Int): Int:
-  Argument type mismatch: actual type is 'String', but 'Int' was expected.
+  Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Int'.
 
 fun plus(other: Byte): Int:
-  Argument type mismatch: actual type is 'String', but 'Byte' was expected.
+  Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Byte'.
 
 fun plus(other: Short): Int:
-  Argument type mismatch: actual type is 'String', but 'Short' was expected.
+  Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Short'.
 
 fun plus(other: Long): Long:
-  Argument type mismatch: actual type is 'String', but 'Long' was expected.
+  Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Long'.
 
 fun plus(other: Float): Float:
-  Argument type mismatch: actual type is 'String', but 'Float' was expected.
+  Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Float'.
 
 fun plus(other: Double): Double:
-  Argument type mismatch: actual type is 'String', but 'Double' was expected.
+  Expression '""' of type 'String' does not conform to value parameter 'other' of type 'Double'.
     val x = 1 + ""
               ^
 COMPILATION_ERROR

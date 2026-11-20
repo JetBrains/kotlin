@@ -1033,7 +1033,7 @@ KtCallExpression(1092,1123): 'namedArgumentHolder(arg = prop)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1092,1111): 'namedArgumentHolder'
   KaSimpleCallResolutionError:
@@ -1069,7 +1069,7 @@ KtNameReferenceExpression(1092,1111): 'namedArgumentHolder'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(1111,1123): '(arg = prop)'
   null
@@ -1137,7 +1137,7 @@ KtCallExpression(1128,1164): 'namedArgumentHolder(arg = superProp)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1128,1147): 'namedArgumentHolder'
   KaSimpleCallResolutionError:
@@ -1173,7 +1173,7 @@ KtNameReferenceExpression(1128,1147): 'namedArgumentHolder'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(1147,1164): '(arg = superProp)'
   null
@@ -1423,7 +1423,7 @@ KtCallExpression(1250,1285): 'namedArgumentHolder(arg = lazyProp)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtNameReferenceExpression(1250,1269): 'namedArgumentHolder'
   KaSimpleCallResolutionError:
@@ -1459,7 +1459,7 @@ KtNameReferenceExpression(1250,1269): 'namedArgumentHolder'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
 
 KtValueArgumentList(1269,1285): '(arg = lazyProp)'
   null

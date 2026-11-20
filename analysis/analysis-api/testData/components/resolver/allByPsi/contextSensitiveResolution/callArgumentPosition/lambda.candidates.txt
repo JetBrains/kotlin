@@ -1380,7 +1380,7 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'NestedObject' of type 'MyClass.NestedObject' does not conform to type 'MyClass'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(954,962): 'lMyClass'
@@ -1461,7 +1461,7 @@ KtCallExpression(981,995): 'lMyClass(prop)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'prop' of type 'String' does not conform to type 'MyClass'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(981,989): 'lMyClass'
@@ -1544,7 +1544,7 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'superProp' of type 'String' does not conform to type 'MyClass'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1000,1008): 'lMyClass'
@@ -1627,7 +1627,7 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'constProp' of type 'String' does not conform to type 'MyClass'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1024,1032): 'lMyClass'
@@ -1710,7 +1710,7 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lazyProp' of type 'String' does not conform to type 'MyClass'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1048,1056): 'lMyClass'
@@ -1793,7 +1793,7 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'lambdaProp' of type '() -> MyClass.InheritorObject' does not conform to type 'MyClass'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1071,1079): 'lMyClass'

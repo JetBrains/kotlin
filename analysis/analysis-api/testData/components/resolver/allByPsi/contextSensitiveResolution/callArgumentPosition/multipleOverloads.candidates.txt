@@ -677,7 +677,7 @@ KtCallExpression(321,335): 'foo(MyEnum1.X)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyEnum1', but 'MyEnum2' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'MyEnum1.X' of type 'MyEnum1' does not conform to value parameter 'x' of type 'MyEnum2'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(321,324): 'foo'
@@ -745,7 +745,7 @@ KtNameReferenceExpression(321,324): 'foo'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyEnum1', but 'MyEnum2' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'MyEnum1.X' of type 'MyEnum1' does not conform to value parameter 'x' of type 'MyEnum2'.>
     isInBestCandidates = false
 
 KtValueArgumentList(324,335): '(MyEnum1.X)'
@@ -880,7 +880,7 @@ KtCallExpression(340,358): 'foo(id(MyEnum1.X))'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyEnum1', but 'MyEnum2' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'id(MyEnum1.X)' of type 'MyEnum1' does not conform to value parameter 'x' of type 'MyEnum2'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(340,343): 'foo'
@@ -948,7 +948,7 @@ KtNameReferenceExpression(340,343): 'foo'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyEnum1', but 'MyEnum2' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'id(MyEnum1.X)' of type 'MyEnum1' does not conform to value parameter 'x' of type 'MyEnum2'.>
     isInBestCandidates = false
 
 KtValueArgumentList(343,358): '(id(MyEnum1.X))'
@@ -1976,7 +1976,7 @@ KtCallExpression(489,503): 'bar(MyEnum3.X)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyEnum3', but 'MyEnum1' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'MyEnum3.X' of type 'MyEnum3' does not conform to value parameter 'x' of type 'MyEnum1'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2010,7 +2010,7 @@ KtCallExpression(489,503): 'bar(MyEnum3.X)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyEnum3', but 'MyEnum2' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'MyEnum3.X' of type 'MyEnum3' does not conform to value parameter 'x' of type 'MyEnum2'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(489,492): 'bar'
@@ -2078,7 +2078,7 @@ KtNameReferenceExpression(489,492): 'bar'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyEnum3', but 'MyEnum1' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'MyEnum3.X' of type 'MyEnum3' does not conform to value parameter 'x' of type 'MyEnum1'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -2112,7 +2112,7 @@ KtNameReferenceExpression(489,492): 'bar'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyEnum3', but 'MyEnum2' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'MyEnum3.X' of type 'MyEnum3' does not conform to value parameter 'x' of type 'MyEnum2'.>
     isInBestCandidates = false
 
 KtValueArgumentList(492,503): '(MyEnum3.X)'

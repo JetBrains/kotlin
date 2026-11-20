@@ -201,7 +201,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'this@iterator.end' of type 'Int' does not conform to value parameter 'other' of type 'Byte'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -238,7 +238,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'this@iterator.end' of type 'Int' does not conform to value parameter 'other' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -275,7 +275,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'this@iterator.end' of type 'Int' does not conform to value parameter 'other' of type 'Float'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -348,7 +348,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'this@iterator.end' of type 'Int' does not conform to value parameter 'other' of type 'Long'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -385,7 +385,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'this@iterator.end' of type 'Int' does not conform to value parameter 'other' of type 'Short'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(196,203): 'current'
@@ -443,7 +443,7 @@ KtOperationReferenceExpression(204,206): '<='
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'this@iterator.end' of type 'Int' does not conform to value parameter 'other' of type 'Byte'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -480,7 +480,7 @@ KtOperationReferenceExpression(204,206): '<='
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'this@iterator.end' of type 'Int' does not conform to value parameter 'other' of type 'Double'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -517,7 +517,7 @@ KtOperationReferenceExpression(204,206): '<='
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'this@iterator.end' of type 'Int' does not conform to value parameter 'other' of type 'Float'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
@@ -590,7 +590,7 @@ KtOperationReferenceExpression(204,206): '<='
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'this@iterator.end' of type 'Int' does not conform to value parameter 'other' of type 'Long'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -627,7 +627,7 @@ KtOperationReferenceExpression(204,206): '<='
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression 'this@iterator.end' of type 'Int' does not conform to value parameter 'other' of type 'Short'.>
     isInBestCandidates = false
 
 KtDotQualifiedExpression(207,224): 'this@iterator.end'

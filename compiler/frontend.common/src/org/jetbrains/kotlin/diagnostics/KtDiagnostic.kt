@@ -112,3 +112,16 @@ data class KtDiagnosticWithParameters4<A, B, C, D>(
     override val positioningStrategy: AbstractSourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
 ) : KtDiagnosticWithSource()
+
+data class KtDiagnosticWithParameters5<A, B, C, D, E>(
+    override val element: AbstractKtSourceElement,
+    val a: A,
+    val b: B,
+    val c: C,
+    val d: D,
+    val e: E,
+    override val severity: Severity,
+    override val factory: KtDiagnosticFactory5<A, B, C, D, E>,
+    override val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    override val context: DiagnosticBaseContext,
+) : KtDiagnosticWithSource()

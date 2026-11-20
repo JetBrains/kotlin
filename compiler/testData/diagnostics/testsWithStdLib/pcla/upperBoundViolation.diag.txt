@@ -1,3 +1,3 @@
 /upperBoundViolation.kt:10:9: error: Cannot infer type for type parameter 'T'. Specify it explicitly.
 
-/upperBoundViolation.kt:10:28: error: Argument type mismatch: actual type is 'String', but 'Number' was expected.
+/upperBoundViolation.kt:10:28: error: Expression 'this[0]' of type 'String' does not conform to value parameter 't' of type 'Number'.

@@ -90,7 +90,11 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
         // with an exception about a non-existing type variable.
         if (expectedType != null && candidate.symbol !is FirErrorCallableSymbol<*>) {
             candidate.system.addSubtypeConstraint(
-                resultingType, expectedType, ConeArgumentConstraintPosition(candidate.callInfo.callSite)
+                resultingType, expectedType,
+                ConeArgumentConstraintPosition(
+                    candidate.callInfo.callSite as? FirExpression
+                        ?: error("The call site is not an expression: ${candidate.callInfo.callSite}")
+                )
             )
         }
 

@@ -190,7 +190,7 @@ KtAnnotationEntry(159,178): '@Anno(0 + constant)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '0 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtConstructorCalleeExpression(160,164): 'Anno'
   KaSimpleCallResolutionError:
@@ -226,7 +226,7 @@ KtConstructorCalleeExpression(160,164): 'Anno'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '0 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtTypeReference(160,164): 'Anno'
   null
@@ -268,7 +268,7 @@ KtNameReferenceExpression(160,164): 'Anno'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '0 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtValueArgumentList(164,178): '(0 + constant)'
   null
@@ -420,7 +420,7 @@ KtAnnotationEntry(184,203): '@Anno(1 + constant)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtConstructorCalleeExpression(185,189): 'Anno'
   KaSimpleCallResolutionError:
@@ -456,7 +456,7 @@ KtConstructorCalleeExpression(185,189): 'Anno'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtTypeReference(185,189): 'Anno'
   null
@@ -498,7 +498,7 @@ KtNameReferenceExpression(185,189): 'Anno'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '1 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtValueArgumentList(189,203): '(1 + constant)'
   null
@@ -650,7 +650,7 @@ KtAnnotationEntry(209,228): '@Anno(2 + constant)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtConstructorCalleeExpression(210,214): 'Anno'
   KaSimpleCallResolutionError:
@@ -686,7 +686,7 @@ KtConstructorCalleeExpression(210,214): 'Anno'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtTypeReference(210,214): 'Anno'
   null
@@ -728,7 +728,7 @@ KtNameReferenceExpression(210,214): 'Anno'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Expression '2 + constant' of type 'Int' does not conform to value parameter 'str' of type 'String'.>
 
 KtValueArgumentList(214,228): '(2 + constant)'
   null

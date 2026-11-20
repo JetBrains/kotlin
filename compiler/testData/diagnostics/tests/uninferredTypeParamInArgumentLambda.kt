@@ -6,11 +6,11 @@
 fun expectString() {
     fun foo(str: String) { }
 
-    foo <!ARGUMENT_TYPE_MISMATCH("() -> Unit; String")!>{}<!>
-    foo <!ARGUMENT_TYPE_MISMATCH("() -> Int; String")!>{ 42 }<!>
-    foo <!ARGUMENT_TYPE_MISMATCH("(??? (Unknown lambda parameter type)) -> ??? (Unknown lambda return type); String")!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>it<!> -> 42 }<!>
-    foo <!ARGUMENT_TYPE_MISMATCH("(??? (Unknown lambda parameter type)) -> ??? (Unknown lambda return type); String")!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>it<!> -> }<!>
-    foo <!ARGUMENT_TYPE_MISMATCH("(??? (Unknown lambda parameter type)) -> ??? (Unknown lambda return type); String")!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>it<!> -> it }<!>
+    foo <!ARGUMENT_TYPE_MISMATCH("() -> Unit; String;  value parameter 'str' of;  '{}'")!>{}<!>
+    foo <!ARGUMENT_TYPE_MISMATCH("() -> Int; String;  value parameter 'str' of;  '{ 42 }'")!>{ 42 }<!>
+    foo <!ARGUMENT_TYPE_MISMATCH("(??? (Unknown lambda parameter type)) -> ??? (Unknown lambda return type); String;  value parameter 'str' of;  '{ it -> 42 }'")!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>it<!> -> 42 }<!>
+    foo <!ARGUMENT_TYPE_MISMATCH("(??? (Unknown lambda parameter type)) -> ??? (Unknown lambda return type); String;  value parameter 'str' of;  '{ it -> }'")!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>it<!> -> }<!>
+    foo <!ARGUMENT_TYPE_MISMATCH("(??? (Unknown lambda parameter type)) -> ??? (Unknown lambda return type); String;  value parameter 'str' of;  '{ it -> it }'")!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>it<!> -> it }<!>
 }
 
 fun free() {

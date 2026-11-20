@@ -21,7 +21,7 @@ fun test(
     invOut.onlyOut(42)
     invOut.onlyOut(1L)
 
-    invOut.onlyOutUB(<!ARGUMENT_TYPE_MISMATCH("String; Number")!>"str"<!>)
+    invOut.onlyOutUB(<!ARGUMENT_TYPE_MISMATCH("String; Number;  value parameter 'e' of;  '\"str\"'")!>"str"<!>)
     invStar.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>onlyOutUB<!>(0)
     invOut.onlyOutUB(42)
     invOut.onlyOutUB(1L)

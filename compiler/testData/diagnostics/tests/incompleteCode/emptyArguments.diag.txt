@@ -132,7 +132,7 @@
 
 /emptyArguments.kt:56:17: error: Syntax error: Expecting an argument.
 
-/emptyArguments.kt:56:19: error: Argument type mismatch: actual type is 'A', but 'B' was expected.
+/emptyArguments.kt:56:19: error: Expression 'a' of type 'A' does not conform to value parameter 'b' of type 'B'.
 
 /emptyArguments.kt:56:22: error: Argument already passed for this parameter.
 
@@ -140,7 +140,7 @@
 
 /emptyArguments.kt:57:17: error: Syntax error: Expecting an argument.
 
-/emptyArguments.kt:57:28: error: Argument type mismatch: actual type is 'A', but 'C' was expected.
+/emptyArguments.kt:57:28: error: Expression 'a' of type 'A' does not conform to value parameter 'c' of type 'C'.
 
 /emptyArguments.kt:57:31: error: Too many arguments for 'fun asTypedFunc(a: A, b: B, c: C): Unit'.
 

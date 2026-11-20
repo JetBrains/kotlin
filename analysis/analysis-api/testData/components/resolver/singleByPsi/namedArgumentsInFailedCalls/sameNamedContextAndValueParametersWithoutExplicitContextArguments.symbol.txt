@@ -10,8 +10,8 @@ KtNameReferenceExpression(151,152): 'x'
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
     context(x: String) fun foo(x: Int): Unit:
-      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+      Expression '""' of type 'String' does not conform to type 'Int'.
       No context argument for 'x: String' found.
 
     fun foo(x: Boolean): Unit:
-      Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>
+      Expression '""' of type 'String' does not conform to type 'Boolean'.>

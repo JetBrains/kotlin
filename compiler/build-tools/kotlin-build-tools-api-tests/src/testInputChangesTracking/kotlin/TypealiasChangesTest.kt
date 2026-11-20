@@ -35,7 +35,7 @@ class TypealiasChangesTest : BaseCompilationTest() {
                         // TODO(KT-89851): the klib IC cache does not track typealiases, so `Service.kt` does not get into
                         //  the dirty set, and `ServiceUsage.kt` is checked against the stale expansion.
                         expectFailWithError(
-                            ".*ServiceUsage\\.kt:\\d+:\\d+ Argument type mismatch: actual type is 'Int', but 'String' was expected.*".toRegex()
+                            ".*ServiceUsage\\.kt:\\d+:\\d+ Expression '10' of type 'Int' does not conform to value parameter 'value' of type 'String'.*".toRegex()
                         )
                         assertCompiledSources("alias.kt", "ServiceUsage.kt", "AliasUsage.kt")
                     }
@@ -62,7 +62,7 @@ class TypealiasChangesTest : BaseCompilationTest() {
                         // TODO(KT-89851): the klib IC cache does not track typealiases, so `Service.kt` does not get into
                         //  the dirty set, and `ServiceUsage.kt` is checked against the stale expansion.
                         expectFailWithError(
-                            ".*ServiceUsage\\.kt:\\d+:\\d+ Argument type mismatch: actual type is 'Int', but 'String' was expected.*".toRegex()
+                            ".*ServiceUsage\\.kt:\\d+:\\d+ Expression '10' of type 'Int' does not conform to value parameter 'value' of type 'String'.*".toRegex()
                         )
                         assertCompiledSources("alias.kt", "ServiceUsage.kt")
                     }
@@ -84,7 +84,7 @@ class TypealiasChangesTest : BaseCompilationTest() {
 
             mod.compile {
                 expectFailWithError(
-                    ".*ServiceUsage\\.kt:\\d+:\\d+ Argument type mismatch: actual type is 'Int', but 'String' was expected.*".toRegex()
+                    ".*ServiceUsage\\.kt:\\d+:\\d+ Expression '10' of type 'Int' does not conform to value parameter 'value' of type 'String'.*".toRegex()
                 )
                 when (this@scenario) {
                     // TODO(KT-91450): the error recovery round retries only the sources that look up the typealias, so it adds
@@ -116,7 +116,7 @@ class TypealiasChangesTest : BaseCompilationTest() {
                         // TODO(KT-89851): the klib IC cache does not track typealiases, so `Bar.kt` does not get into
                         //  the dirty set, and `Oof.kt` is checked against the stale `bar(HashMap<String, String>)`.
                         expectFailWithError(
-                            ".*Oof\\.kt:\\d+:\\d+ Argument type mismatch: actual type is 'Foo', but 'HashMap<String, String>' was expected.*".toRegex()
+                            ".*Oof\\.kt:\\d+:\\d+ Expression of type 'Foo' does not conform to value parameter 'foo' of type 'HashMap<String, String>'.*".toRegex()
                         )
                         assertCompiledSources("Foo.kt", "Oof.kt")
                     }

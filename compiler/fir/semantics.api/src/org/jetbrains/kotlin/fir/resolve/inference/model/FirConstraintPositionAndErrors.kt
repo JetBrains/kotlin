@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.inference.model
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -27,7 +28,7 @@ class ConeFixVariableConstraintPosition(variable: TypeVariableMarker) : FixVaria
     override fun toString(): String = "Fix variable ${variable.asCone().typeConstructor.name}"
 }
 
-class ConeArgumentConstraintPosition(argument: FirElement) : RegularArgumentConstraintPosition<FirElement>(argument) {
+class ConeArgumentConstraintPosition(argument: FirExpression) : RegularArgumentConstraintPosition<FirExpression>(argument) {
     override fun toString(): String {
         return "Argument ${argument.render()}"
     }
@@ -43,24 +44,24 @@ class ConeExplicitTypeParameterConstraintPosition(
     override fun toString(): String = "TypeParameter ${typeArgument.render()}"
 }
 
-sealed class ConeLambdaArgumentConstraintPosition(anonymousFunction: FirAnonymousFunction) :
-    LambdaArgumentConstraintPosition<FirAnonymousFunction>(anonymousFunction) {
+sealed class ConeLambdaArgumentConstraintPosition(val lambdaExpression: FirAnonymousFunctionExpression) :
+    LambdaArgumentConstraintPosition<FirAnonymousFunction>(lambdaExpression.anonymousFunction) {
     abstract val anonymousFunctionReturnExpression: FirExpression?
 
     override fun toString(): String = "LambdaArgument"
 }
 
 class ConeRegularLambdaArgumentConstraintPosition(
-    anonymousFunction: FirAnonymousFunction,
+    lambdaExpression: FirAnonymousFunctionExpression,
     override val anonymousFunctionReturnExpression: FirExpression,
-) : ConeLambdaArgumentConstraintPosition(anonymousFunction), OnlyInputTypeConstraintPosition
+) : ConeLambdaArgumentConstraintPosition(lambdaExpression), OnlyInputTypeConstraintPosition
 
 // TODO: This class is different from `ConeRegularLambdaArgumentConstraintPosition` to not inherit it from `OnlyInputTypesConstraintPosition`
 //  marker. Most probably, it actually should be inherited as well (see KT-80079). If so, these classes should be merged.
 class ConeLambdaArgumentConstraintPositionWithCoercionToUnit(
-    anonymousFunction: FirAnonymousFunction,
+    lambdaExpression: FirAnonymousFunctionExpression,
     override val anonymousFunctionReturnExpression: FirExpression?,
-) : ConeLambdaArgumentConstraintPosition(anonymousFunction)
+) : ConeLambdaArgumentConstraintPosition(lambdaExpression)
 
 class ConeReceiverConstraintPosition(
     receiver: FirExpression,
