@@ -82,6 +82,7 @@ interface Configurables : TargetableExternalStorage, RelocationModeFlags {
 
     val targetCpu get() = targetString("targetCpu")
     val targetCpuFeatures get() = targetString("targetCpuFeatures")
+    val llvmInstructionSelector get() = targetString("llvmInstructionSelector")
     val llvmInlineThreshold get() = targetString("llvmInlineThreshold")
 
     val runtimeDefinitions get() = targetList("runtimeDefinitions")

@@ -88,6 +88,36 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         }
     }
 
+    @Test
+    fun testLlvmIsel() {
+        // No need to test with different GC schedulers
+        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE)
+
+        compileSimpleFile(listOf("-Xllvm-isel=global", "-Xverbose-phases=ObjectFiles")).let {
+            assertTrue(
+                    it.stderr.contains("-global-isel=true"),
+                    "'-global-isel=true' must be passed to clang with -Xllvm-isel=global.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
+            )
+        }
+        compileSimpleFile(listOf("-Xllvm-isel=selection-dag", "-Xverbose-phases=ObjectFiles")).let {
+            assertTrue(
+                    "-fast-isel=false" in it.stderr && "-global-isel=false" in it.stderr,
+                    "Both other selectors must be disabled for clang with -Xllvm-isel=selection-dag.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
+            )
+        }
+        runKonanc(
+                source.absolutePath,
+                "-output", buildDir.resolve("kexe.kexe").absolutePath,
+                "-target", targets.testTarget.visibleName,
+                "-Xllvm-isel=bogus",
+        ).let {
+            assertTrue(
+                    it.stderr.contains("Unsupported -Xllvm-isel=bogus"),
+                    "An unsupported -Xllvm-isel value must be reported as an error.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
+            )
+        }
+    }
+
     private fun compileSimpleFile(flags: List<String>): RunProcessResult {
         val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
         val args = mutableListOf("-output", kexe.absolutePath).apply {
