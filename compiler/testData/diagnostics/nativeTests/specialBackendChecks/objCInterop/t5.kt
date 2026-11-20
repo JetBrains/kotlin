@@ -44,10 +44,13 @@ fun typeAliasedArguments(handler: NSAssertionHandler, detail: MyString, nullable
     NSLog("%@", *arrayOf(<!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>))
     printf("%s", <!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>)
 
-    handler.handleFailureInFunction("zzz", "zzz", 0, null, <!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>)
+    handler.handleFailureInFunction("zzz", "zzz", 0, null, <!STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS!>detail<!>)
     handler.handleFailureInFunction("zzz", "zzz", 0, null, <!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>nullableDetail<!>)
     handler.handleFailureInFunction("zzz", "zzz", 0, null, *arrayOf(<!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>))
     handler.handleFailureInFunction("zzz", "zzz", 0, null, *arrayOf(*arrayOf(<!STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT!>detail<!>)))
+
+    val myString: MyString = "abc"
+    handler.handleFailureInFunction("zzz", "zzz", 0, null, <!STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS!>myString<!>)
 }
 
 fun explicitConversions(detail: String, nsString: NSString) {

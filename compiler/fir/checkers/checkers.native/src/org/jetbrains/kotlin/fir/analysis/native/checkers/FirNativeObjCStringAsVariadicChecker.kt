@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.isNullableString
 import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -56,7 +55,7 @@ internal object FirNativeObjCStringAsVariadicChecker : FirFunctionCallChecker(Mp
                 val type = element.resolvedType.fullyExpandedType()
                 if (!type.isString && !type.isNullableString) continue
 
-                val diagnostic = if (reportStringAsError && element.resolvedType.abbreviatedTypeOrSelf.isString) {
+                val diagnostic = if (reportStringAsError && element.resolvedType.isString) {
                     FirNativeErrors.STRING_AS_VARIADIC_OBJC_PARAM_IS_AMBIGUOUS
                 } else {
                     FirNativeErrors.STRING_AS_C_OR_OBJC_VARIADIC_ARGUMENT
