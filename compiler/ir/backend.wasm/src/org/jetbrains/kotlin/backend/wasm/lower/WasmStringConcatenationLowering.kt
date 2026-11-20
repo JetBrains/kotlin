@@ -35,29 +35,39 @@ class WasmStringConcatenationLowering(context: CommonBackendContext) : FileLower
 
         builder.at(expression)
         val arguments = expression.arguments
-        return when {
-            arguments.isEmpty() -> builder.irString("")
 
-            else -> {
-                var concatenatedString: IrExpression
-                if (!arguments[0].type.isStringClassType() || arguments[0].type.isNullable()) {
-                    val functionSymbol =
-                        if (arguments[0].type.isNullable()) symbols.extensionToString
-                        else symbols.memberToString
-                    concatenatedString = builder.irCall(functionSymbol).apply {
-                        this.arguments[0] = arguments[0]
-                    }
-                } else {
-                    concatenatedString = arguments[0]
-                }
+        if (arguments.isEmpty()) return builder.irString("")
 
-                arguments.drop(1).forEach { arg ->
-                    concatenatedString = builder.irCall(symbols.memberStringPlus).apply {
-                        this.arguments[0] = concatenatedString
-                        this.arguments[1] = arg
-                    }
+        var firstArgument: IrExpression
+        if (!arguments[0].type.isStringClassType() || arguments[0].type.isNullable()) {
+            val functionSymbol =
+                if (arguments[0].type.isNullable()) symbols.extensionToString
+                else symbols.memberToString
+            firstArgument = builder.irCall(functionSymbol).apply {
+                this.arguments[0] = arguments[0]
+            }
+        } else {
+            firstArgument = arguments[0]
+        }
+
+        return when (arguments.size) {
+            1 -> firstArgument
+            2 -> builder.irCall(symbols.memberStringPlus).also {
+                it.arguments[0] = firstArgument
+                it.arguments[1] = arguments[1]
+            }
+            else -> builder.irComposite {
+                val temporary = irTemporary(firstArgument, "concat_acc", context.irBuiltIns.stringType)
+                for (index in 1 until arguments.size) {
+                    +irSet(
+                        temporary,
+                        builder.irCall(symbols.memberStringPlus).also {
+                            it.arguments[0] = irGet(temporary)
+                            it.arguments[1] = arguments[index]
+                        }
+                    )
                 }
-                concatenatedString
+                +irGet(temporary)
             }
         }
     }
