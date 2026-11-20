@@ -64,21 +64,17 @@ Name: JDK_1_8, Value: path-to-jdk-1_8
 Name: JDK_17_0, Value: path-to-jdk-17
 ```
 
-If you're having issues with unresolved symbols in code, run this command and then "Reload All Maven Projects" in the Maven tool window:
+If you're having issues with unresolved symbols in code, run this command and then "Reload All Maven Projects" in the Maven tool window (see KT-85580 for a detailed explanation):
 
 ```shell
-# Maven caches failed resolution attempts in .lastUpdated files and records which repository an artifact was fetched from in 
-# _remote.repositories. When the initial sync fails (artifact not yet available), these files prevent Maven from retrying — even 
-# after the artifact is installed locally. The _remote.repositories file is particularly important: if it records central as the 
-# source (from the failed attempt), Maven won't look in other repositories like bootstrap. Deleting both files forces Maven to 
-# resolve artifacts from scratch. See KT-85580.
-
 find ~/.m2/repository/org/jetbrains/kotlin \
   -type f \
-  -path "*/2.5.0-dev-*/*" \  # replace with current version prefix
+  -path "*/2.5.20-dev-XXXX/*" \
   \( -name "_remote.repositories" -o -name "*.lastUpdated" \) \
   -delete
 ```
+
+Replace XXXX with the build number from kotlin.bootstrap.version in libraries/pom.xml, and replace "2.5.20" with the current version prefix.
 
 ### Working with Maven Integration Tests
 
