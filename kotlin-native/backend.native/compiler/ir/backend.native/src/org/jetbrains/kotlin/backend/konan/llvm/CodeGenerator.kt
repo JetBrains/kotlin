@@ -330,8 +330,11 @@ internal val IrSimpleFunction.needsCacheEntryPointForFinalFakeOverride: Boolean
 /*
  * Special trampoline function that performs the vtable/itable lookup and dispatches to the actual virtual
  * implementation (which lives at `<name>-impl`). The trampoline occupies the public symbol name,
- * so virtual call sites emit a plain `call @<name>` and stay decoupled from concrete vtable layouts:
- * a change to a class's vtable/itable does not invalidate cached callers in other files.
+ * so virtual call sites emit a plain `call @<name>` and stay decoupled from concrete vtable layouts.
+ *
+ * Note: incremental compilation doesn't exploit this decoupling at the moment: the cached callers in other files
+ * are still rebuilt whenever the file of the class changes. Skipping that (with "weak", link-time only, dependencies)
+ * turned out to be unsound: the changed file may stop providing the trampoline at all (KT-89876, KT-91381).
  */
 internal fun CodeGenerator.getVirtualFunctionTrampoline(irFunction: IrSimpleFunction): LlvmFunction {
     /*
@@ -352,8 +355,7 @@ private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrSimpleF
             val proto = LlvmFunctionProto(
                     name = targetName,
                     signature = LlvmFunctionSignature(irFunction, this),
-                    // A link-time dependency only: recompilation is not needed if only the trampoline's impl has changed.
-                    origin = FunctionOrigin.OwnedBy(irFunction.parentAsClass, weak = true),
+                    origin = FunctionOrigin.OwnedBy(irFunction.parentAsClass),
                     linkage = linkageOf(irFunction)
             )
             if (isExternal(irFunction))

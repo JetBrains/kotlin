@@ -267,7 +267,6 @@ class CacheBuilder(
         val removedFiles = mutableListOf<LibraryFile>()
         val addedFiles = mutableListOf<LibraryFile>()
         val reversedPerFileDependencies = mutableMapOf<LibraryFile, MutableList<LibraryFile>>()
-        val reversedWeakPerFileDependencies = mutableMapOf<LibraryFile, MutableList<LibraryFile>>()
         val reversedWholeLibraryDependencies = mutableMapOf<KotlinLibrary, MutableList<LibraryFile>>()
         // The libraries from [needFullRebuild] are analyzed as well, even though all of their files are rebuilt anyway:
         // their dependents are not necessarily rebuilt (a stale per-file cache goes to [needFullRebuild] alone), so the changed
@@ -313,9 +312,8 @@ class CacheBuilder(
                             is DependenciesTracker.DependencyKind.WholeModule ->
                                 reversedWholeLibraryDependencies.getOrPut(dependentLibrary) { mutableListOf() }.add(libraryFile)
                             is DependenciesTracker.DependencyKind.CertainFiles ->
-                                kind.files.forEach { (name, weak) ->
-                                    (if (weak) reversedWeakPerFileDependencies else reversedPerFileDependencies)
-                                            .getOrPut(LibraryFile(dependentLibrary, name)) { mutableListOf() }.add(libraryFile)
+                                kind.files.forEach {
+                                    reversedPerFileDependencies.getOrPut(LibraryFile(dependentLibrary, it.fileId)) { mutableListOf() }.add(libraryFile)
                                 }
                         }
                     }
@@ -350,11 +348,6 @@ class CacheBuilder(
 
         removedFiles.forEach {
             if (it !in dirtyFiles) dfs(it)
-            // A weak dependency is link-time only, but the walk over cached dependencies still resolves it,
-            // so a file that weakly depends on a removed file must be rebuilt to drop the stale edge.
-            reversedWeakPerFileDependencies[it]?.forEach { weakDependent ->
-                if (weakDependent !in dirtyFiles) dfs(weakDependent)
-            }
         }
         changedFiles.forEach {
             if (it !in dirtyFiles) dfs(it)
