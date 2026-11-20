@@ -213,6 +213,46 @@ public abstract interface Parent<A extends java.lang.CharSequence, B extends jav
 package test;
 
 /**
+ * public final class test/SomeHolder : test/ValueHolder<error/NonExistentClass> {
+ *
+ *   // signature: <init>(Lerror/NonExistentClass;)V
+ *   public constructor(foo: error/NonExistentClass)
+ *
+ *   // field: foo:Lerror/NonExistentClass;
+ *   // getter: getFoo()Lerror/NonExistentClass;
+ *   // setter: setFoo(Lerror/NonExistentClass;)V
+ *   public final var foo: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class SomeHolder extends test.ValueHolder<GeneratedClass> {
+
+    public SomeHolder(@org.jetbrains.annotations.NotNull()
+    GeneratedClass foo) {
+        super(null);
+    }
+    @org.jetbrains.annotations.NotNull()
+    private GeneratedClass foo;
+
+    @org.jetbrains.annotations.NotNull()
+    public final GeneratedClass getFoo() {
+        return null;
+    }
+
+    public final void setFoo(@org.jetbrains.annotations.NotNull()
+    GeneratedClass p0) {
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
  * public final class test/TBarBazCl : test/Cl {
  *
  *   // signature: <init>()V
@@ -493,4 +533,35 @@ public final class TxFooxBarxBaz2 {
     public TxFooxBarxBaz2() {
         super();
     }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public open class test/ValueHolder<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/Object;)V
+ *   public constructor(value: T#0)
+ *
+ *   // field: value:Ljava/lang/Object;
+ *   // getter: getValue()Ljava/lang/Object;
+ *   public final val value: T#0
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public class ValueHolder<T extends java.lang.Object> {
+
+    public ValueHolder(T value) {
+        super();
+    }
+
+    public final T getValue() {
+        return null;
+    }
+    private final T value = null;
 }

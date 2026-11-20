@@ -359,33 +359,33 @@ public final class Test<G extends java.lang.Object> {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Function2<ABC, java.util.List<BCD>, CDE> getI() {
+    public final kotlin.jvm.functions.Function2<ABC, java.util.List<BCD>, CDE> getI() {
         return null;
     }
-    public Function2<ABC, java.util.List<BCD>, CDE> i;
+    public kotlin.jvm.functions.Function2<ABC, java.util.List<BCD>, CDE> i;
 
     public final void setI(@org.jetbrains.annotations.NotNull()
-    Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
+    kotlin.jvm.functions.Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Function0<CDE> getJ() {
+    public final kotlin.jvm.functions.Function0<CDE> getJ() {
         return null;
     }
-    public Function0<CDE> j;
+    public kotlin.jvm.functions.Function0<CDE> j;
 
     public final void setJ(@org.jetbrains.annotations.NotNull()
-    Function0<CDE> p0) {
+    kotlin.jvm.functions.Function0<CDE> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Function2<ABC, java.util.List<BCD>, CDE> getK() {
+    public final kotlin.jvm.functions.Function2<ABC, java.util.List<BCD>, CDE> getK() {
         return null;
     }
-    public Function2<ABC, java.util.List<BCD>, CDE> k;
+    public kotlin.jvm.functions.Function2<ABC, java.util.List<BCD>, CDE> k;
 
     public final void setK(@org.jetbrains.annotations.NotNull()
-    Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
+    kotlin.jvm.functions.Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -516,7 +516,7 @@ public final class Test<G extends java.lang.Object> {
     }
 
     public final <T extends java.lang.Object>void f2(@org.jetbrains.annotations.NotNull()
-    ABC<java.lang.String, java.lang.Integer, Function0<BCD>> a) {
+    ABC<java.lang.String, java.lang.Integer, kotlin.jvm.functions.Function0<BCD>> a) {
     }
 
     public final <T extends java.lang.Object>long f3(@org.jetbrains.annotations.NotNull()
