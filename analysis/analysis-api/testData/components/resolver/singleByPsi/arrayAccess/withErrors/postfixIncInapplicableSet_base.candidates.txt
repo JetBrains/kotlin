@@ -1,5 +1,5 @@
 KtArrayAccessExpression(153,157): 'b[0]'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -33,5 +33,4 @@ KtArrayAccessExpression(153,157): 'b[0]'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'B', but 'String' was expected.>
     isInBestCandidates = true
