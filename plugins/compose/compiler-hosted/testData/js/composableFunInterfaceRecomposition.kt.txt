@@ -143,7 +143,7 @@ private fun App(/* var */ $composer: Composer?, $changed: Int) {
         isTraceInProgress() -> traceEventStart(key = -187022559, dirty1 = $changed, dirty2 = -1, info = "App (composableFunInterfaceRecomposition.kt:86)")
       }
       ItemList(itemRenderer = { // BLOCK
-        local class <no name provided> : ItemRenderer {
+        local object <no name provided> : ItemRenderer {
           constructor() /* primary */ {
             super/*Any*/()
             /* <init>() */
@@ -200,14 +200,14 @@ private fun App(/* var */ $composer: Composer?, $changed: Int) {
 
         }
 
-        <no name provided>()
+        <no name provided>
       }, $composer = $composer, $changed = 0)
       ItemList(itemRenderer = inlineRenderer(transform = local fun <anonymous>(it: String): String {
         return uppercase(/* <this> = it */)
       }
 ), $composer = $composer, $changed = 0)
       Labelled(label = { // BLOCK
-        local class <no name provided> : Label {
+        local object <no name provided> : Label {
           constructor() /* primary */ {
             super/*Any*/()
             /* <init>() */
@@ -264,7 +264,7 @@ private fun App(/* var */ $composer: Composer?, $changed: Int) {
 
         }
 
-        <no name provided>()
+        <no name provided>
       }, $composer = $composer, $changed = 0)
       when {
         isTraceInProgress() -> traceEventEnd()
@@ -552,3 +552,4 @@ private inline fun inlineRenderer(crossinline transform: Function1<String, Strin
     <no name provided>()
   }
 }
+

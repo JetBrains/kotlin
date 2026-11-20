@@ -21,6 +21,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
@@ -53,6 +54,7 @@ class FunctionReferenceBuilder(
     private val irTypeSystemContext: IrTypeSystemContext,
     // The JS and Wasm backends treat a class of the JVM origins, matched by name, as their own lambda class
     private val isJvm: Boolean,
+    private val singleton: Boolean,
 ) {
     private val callee = irFunctionExpression.function
     private val superMethod =
@@ -61,7 +63,11 @@ class FunctionReferenceBuilder(
     private val functionReferenceClass = generatorContext.irFactory.buildClass {
         setSourceRange(irFunctionExpression)
         visibility = DescriptorVisibilities.LOCAL
-        if (isJvm) origin = JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+        when {
+            isJvm -> origin = JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+            // A local object: not expressible in Kotlin, but it references nothing outside
+            singleton -> kind = ClassKind.OBJECT
+        }
         name = SpecialNames.NO_NAME_PROVIDED
     }.apply {
         parent = currentDeclarationParent
@@ -80,7 +86,7 @@ class FunctionReferenceBuilder(
             createInvokeMethod()
             functionReferenceClass.addFakeOverrides(irTypeSystemContext)
             +functionReferenceClass
-            +irCall(constructor.symbol)
+            +if (functionReferenceClass.isObject) irGetObject(functionReferenceClass.symbol) else irCall(constructor.symbol)
         }
     }
 
