@@ -1015,7 +1015,7 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
           valueArgumentMapping = {
-            javaClass.something -> (KaVariableSignature:
+            1 -> (KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Int
@@ -1180,7 +1180,7 @@ KtOperationReferenceExpression(157,159): '+='
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
           valueArgumentMapping = {
-            javaClass.something -> (KaVariableSignature:
+            1 -> (KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Int

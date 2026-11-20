@@ -29,7 +29,7 @@ KtBinaryExpression(31,37): 'i += 1'
             callableId = kotlin/Int.plus
           typeArgumentsMapping = {}
           valueArgumentMapping = {
-            i -> (KaVariableSignature:
+            1 -> (KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Int

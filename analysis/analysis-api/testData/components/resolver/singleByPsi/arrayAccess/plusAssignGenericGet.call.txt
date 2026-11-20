@@ -29,7 +29,7 @@ KtOperationReferenceExpression(173,175): '+='
             callableId = /B.plus
           typeArgumentsMapping = {}
           valueArgumentMapping = {
-            b["key"] -> (KaVariableSignature:
+            1 -> (KaVariableSignature:
               name = other
               receiverType = null
               returnType = kotlin.Int
@@ -106,10 +106,10 @@ KtOperationReferenceExpression(173,175): '+='
         typeArgumentsMapping = {}
         valueArgumentMapping = {
           "key" -> (KaVariableSignature:
-            name = value
+            name = i
             receiverType = null
-            returnType = B
-            symbol = value: B
+            returnType = kotlin.String
+            symbol = i: kotlin.String
             contextParameters = []
             callableId = null)
         }
