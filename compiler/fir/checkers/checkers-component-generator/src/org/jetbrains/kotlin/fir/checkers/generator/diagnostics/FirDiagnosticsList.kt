@@ -1583,6 +1583,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CLASSIFIER_REDECLARATION by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
             parameter<Collection<Symbol>>("conflictingDeclarations")
         }
+        val COMPILER_PLUGIN_REDECLARATION by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
+            parameter<Collection<Symbol>>("conflictingDeclarations")
+        }
         val PACKAGE_CONFLICTS_WITH_CLASSIFIER by error<KtPackageDirective>(PositioningStrategy.PACKAGE_DIRECTIVE_NAME_EXPRESSION) {
             parameter<ClassId>("conflictingClassId")
         }

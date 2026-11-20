@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.PACKAGE_MEMBER
+import org.jetbrains.kotlin.fir.scopes.impl.isCompilerGeneratedCompanion
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -49,6 +50,7 @@ interface PlatformConflictDeclarationsDiagnosticDispatcher : FirSessionComponent
         ): KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> {
             return when (conflictingDeclaration) {
                 is FirNamedFunctionSymbol, is FirConstructorSymbol -> FirErrors.CONFLICTING_OVERLOADS
+                is FirClassLikeSymbol<*> if conflictingDeclaration.isCompilerGeneratedCompanion() -> FirErrors.COMPILER_PLUGIN_REDECLARATION
                 is FirClassLikeSymbol<*>
                     if conflictingDeclaration.getContainingClassSymbol() == null && symbols.any { it is FirClassLikeSymbol<*> }
                     -> FirErrors.CLASSIFIER_REDECLARATION

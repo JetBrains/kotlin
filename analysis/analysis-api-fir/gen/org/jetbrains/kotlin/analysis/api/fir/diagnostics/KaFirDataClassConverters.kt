@@ -6344,6 +6344,15 @@ private fun KaDiagnosticConverterBuilder.addConversions125() {
             token,
         )
     }
+    add(FirErrors.COMPILER_PLUGIN_REDECLARATION) { firDiagnostic ->
+        CompilerPluginRedeclarationImpl(
+            firDiagnostic.a.map { firBasedSymbol ->
+                firSymbolBuilder.buildSymbol(firBasedSymbol)
+            },
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions126() {

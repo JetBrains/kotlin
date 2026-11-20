@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -304,7 +305,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
     ) {
         class CacheContext(
             val extensionsByClassifierName: Map<Name, List<FirDeclarationGenerationExtension>>,
-            val companionObjectKeys: MutableSet<GeneratedDeclarationKey>,
+            val companionObjectKeys: Set<GeneratedDeclarationKey>,
         )
 
         val classifiersCache: FirCache<Name, FirRegularClassSymbol?, NestedClassGenerationContext> =
@@ -337,10 +338,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                 }
             }
 
-            if (
-                name == DEFAULT_NAME_FOR_COMPANION_OBJECT && needsCompanionObject &&
-                (classSymbol !is FirRegularClassSymbol || classSymbol.companionObjectSymbol == null)
-            ) {
+            if (name == DEFAULT_NAME_FOR_COMPANION_OBJECT && needsCompanionObject) {
                 if (generatedClasses.isNotEmpty()) {
                     error(
                         """
@@ -351,7 +349,18 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                     )
                 }
 
-                return generateCompanionObjectForPlugins(classSymbol, context.companionObjectKeys, session).symbol
+                return when (classSymbol) {
+                    // Check if class already has a companion object already and skip generating one if it does.
+                    is FirRegularClassSymbol if classSymbol.companionObjectSymbol != null -> null
+
+                    // No need to check if class already contains a "Companion" named classifier which conflicts with a default companion object.
+                    // This will be reported as an error by 'FirConflictsDeclarationChecker'.
+                    else -> generateCompanionObjectForPlugins(
+                        owner = classSymbol,
+                        keys = context.companionObjectKeys,
+                        session = session
+                    ).symbol
+                }
             }
 
             val generatedClass = when (generatedClasses.size) {
@@ -386,12 +395,12 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
 
 private val FirSession.generatedDeclarationsStorage: FirGeneratedMemberDeclarationsStorage by FirSession.sessionComponentAccessor()
 
-fun FirClassSymbol<*>.isCompilerGeneratedCompanion(): Boolean {
+fun FirBasedSymbol<*>.isCompilerGeneratedCompanion(): Boolean {
     return origin is FirDeclarationOrigin.Plugin.SharedCompanion
 }
 
 private fun generateCompanionObjectForPlugins(
-    owner: FirClassSymbol<*>,
+    owner: FirClassLikeSymbol<*>,
     keys: Set<GeneratedDeclarationKey>,
     session: FirSession,
 ): FirRegularClass {
