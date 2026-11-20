@@ -1,0 +1,5 @@
+KtArrayAccessExpression(164,172): 'b["key"]'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /B.get(<dispatch receiver>: B, i: I): B
+    ]

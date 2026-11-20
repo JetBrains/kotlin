@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // FILE: 1.kt
 
 package test

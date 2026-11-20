@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // LANGUAGE: +ContextParameters
 
 class Box(var value: Int)
