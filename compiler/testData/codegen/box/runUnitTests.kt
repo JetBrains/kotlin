@@ -7,7 +7,7 @@
 //       Expected exactly one executed testcase in the batch mode, but 5 outcomes were reported for [...]
 
 // A box test driven through `kotlin.test`: every Native, JS, Wasm-js, WASI VM, including the standalone WasmEdge and Wasmtime,
-// must run the `@Test` functions through the compiler's `startUnitTests` export.
+// must run the `@Test` functions through the compiler's `startUnitTests` export (`startunittests` on WASI).
 // `kotlin.test` runs the suites of a file, and the tests of a class, in declaration order.
 
 import kotlin.test.Test
