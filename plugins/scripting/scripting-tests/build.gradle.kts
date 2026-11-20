@@ -28,6 +28,7 @@ dependencies {
 
     testFixturesApi(platform(libs.junit.bom))
     testCompileOnly(project(":compiler:plugin-api"))
+    testCompileOnly(project(":compiler:frontend.common-psi"))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))

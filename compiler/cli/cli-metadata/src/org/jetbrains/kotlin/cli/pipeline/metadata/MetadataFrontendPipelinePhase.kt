@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -43,7 +43,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         val (configuration, rootDisposable) = input
         val diagnosticsReporter = configuration.diagnosticsCollector
         val rootModuleName = Name.special("<${configuration.moduleName!!}>")
-        val parserMode = configuration.parserMode
+        val parseTreeKind = configuration.parseTreeKind
 
         val libraryList = DependencyListForCliModule.build(rootModuleName) {
             val refinedPaths = configuration.get(K2MetadataConfigurationKeys.REFINES_PATHS)?.map { File(it) }.orEmpty()
@@ -77,7 +77,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         val groupedSources = collectSources(configuration, projectEnvironment)
 
         val sourceFiles = when {
-            parserMode.treeBased -> groupedSources.let { it.commonSources + it.platformSources }.toList()
+            !parseTreeKind.isPsi -> groupedSources.let { it.commonSources + it.platformSources }.toList()
             else -> projectEnvironment.computeKtSources(configuration).also { ktFiles ->
                 perfManager?.addSourcesStats(ktFiles.size, ktFiles.countLinesOfCode())
                 for (ktFile in ktFiles) {
@@ -102,9 +102,9 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
 
         val outputs = sessionsWithSources.map { (session, files) ->
             val firFiles = when {
-                parserMode.treeBased -> {
+                !parseTreeKind.isPsi -> {
                     session.buildFirViaLightTree(
-                        files, diagnosticsReporter, useMultiplatformParsing = parserMode == KmpTree
+                        files, diagnosticsReporter, useMultiplatformParsing = parseTreeKind.isKmp
                     ) { files, lines ->
                         perfManager?.addSourcesStats(files, lines)
                     }

@@ -77,7 +77,8 @@ internal class KaFirCompilerFacility(
     }
 
     override fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
-        return KaFirCompilationOptionsBuilder(token, CompilerConfiguration.create()).apply(init).build()
+        // The Analysis API always works with PSI
+        return KaFirCompilationOptionsBuilder(token, CompilerConfiguration.create(parseTreeKind = PsiParseTreeKind)).apply(init).build()
     }
 
     override fun modify(options: KaCompilationOptions, init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {

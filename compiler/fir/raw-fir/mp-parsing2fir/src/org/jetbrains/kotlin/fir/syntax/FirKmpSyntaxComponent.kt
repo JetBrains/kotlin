@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.syntax
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.ParserMode
+import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.name.Name
 
@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.name.Name
  */
 @NoMutableState
 object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
-    override val parserMode: ParserMode
-        get() = KmpTree
+    override val parseTreeKind: ParseTreeKind
+        get() = KmpParseTreeKind
 
     override fun KtSourceElement.unwrap(): Any {
         notYetImplemented()
