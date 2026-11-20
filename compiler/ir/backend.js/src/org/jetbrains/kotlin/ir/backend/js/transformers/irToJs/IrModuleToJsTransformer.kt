@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportModelToJsStatements
-import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedDeclaration
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedModule
 import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
 import org.jetbrains.kotlin.ir.util.irError
-import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.artifacts.CachedTestFunctionsWithTheirPackage
@@ -43,7 +41,6 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.NameTable
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import java.io.File
@@ -51,6 +48,7 @@ import java.util.*
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportModelGenerator as JsExportModelGenerator
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelGenerator as TsExportModelGenerator
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedDeclaration as TsExportedDeclaration
+import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedDeclaration as JsExportedDeclaration
 
 val IrModuleFragment.safeName: String
     get() = name.asString().safeModuleName
@@ -78,7 +76,7 @@ private fun IrDeclaration.findOwningSliceClass(): IrClass? {
 private val IrClass.isPerClassSliceRoot: Boolean
     get() = origin != IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION &&
             correspondingEnumEntry == null &&
-            (extractedFromContainer == null || !isAnonymousObject)
+            (extractedFromContainer == null || localClassName == null)
 
 // A class artifact must never reuse this postfix: its name would collide with the file-level exporter artifact
 // (`<file>.export`), and duplicate artifact names are silently overwritten on write.
@@ -236,7 +234,7 @@ class IrModuleToJsTransformer(
     private class IrFileExports(
         val file: IrFile,
         val externalDeclarations: List<IrDeclaration>,
-        val declarationExports: Map<IrDeclaration, List<ExportedDeclaration>>,
+        val declarationExports: Map<IrDeclaration, List<JsExportedDeclaration>>,
         val tsDeclarationExports: Map<IrDeclaration, List<TsExportedDeclaration>>,
     )
 
@@ -466,7 +464,7 @@ class IrModuleToJsTransformer(
                 }
 
                 return buildList {
-                    val usedPostfixes = mutableSetOf<String>()
+                    val usedPostfixes = HashSet<String>()
 
                     for ([klass, classDeclarations] in classFragments) {
                         val fragments = generateProgramFragment(classDeclarations, isPrimary = false, mode)
@@ -504,10 +502,10 @@ class IrModuleToJsTransformer(
 
             private fun IrFileExports.generatePerFileArtifacts(module: IrAndExportedDeclarations): List<JsIrModules> {
                 val fragments = generateProgramFragment(file.declarations, isPrimary = true, mode)
-                return listOf(JsIrModules(
+                return [JsIrModules(
                     file.toJsIrModule(module, fragments.mainFragment),
                     fragments.exportFragment?.run { file.toJsIrModuleForExport(module, this) }
-                ))
+                )]
             }
         }
     }

@@ -20,6 +20,10 @@ class Holder {
 }
 
 class Foo {
+    class `<no name provided>` {
+        val tag = "pathological-nested"
+    }
+
     fun callLocal(): String {
         class Foo {
             val tag = "local-Foo"
@@ -47,6 +51,7 @@ fun box(): String {
     if (makeLocal() != "top-level-local-Foo") return "fail: top-level local class"
     if (Holder().handler.run() != "from-anonymous") return "fail: anonymous object"
     if (Foo().callLocal() != "local-Foo") return "fail: local class Foo"
+    if (Foo.`<no name provided>`().tag != "pathological-nested") return "fail: pathological nested class name"
     if (`A B`().name() != "A B") return "fail: backticked class name"
     return "OK"
 }
