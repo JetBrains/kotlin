@@ -2604,6 +2604,19 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object KotlinCompilerVersionNotAppliedToNativeTargets : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(compilerVersion: String, pluginVersion: String, nativeTargets: List<String>) = build {
+            title { "Kotlin compiler version cannot be applied to all targets" }
+                .description {
+                    "Kotlin compiler version '$compilerVersion' set via 'kotlin.compilerVersion' cannot be applied " +
+                            "to Kotlin/Native targets: ${nativeTargets.joinToString { "'$it'" }}.\n" +
+                            "Kotlin/Native compilation does not run through the Build Tools API, so these targets compile " +
+                            "with Kotlin compiler version '$pluginVersion' of the Kotlin Gradle Plugin."
+                }
+                .solution { "Remove 'kotlin.compilerVersion' to compile all targets with the same Kotlin compiler version." }
+        }
+    }
+
     internal object DuplicateJsBrowserTestFrameworkConfiguration : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
