@@ -923,25 +923,73 @@ class ObjCCacheTest : ObjCCacheTestBase() {
 
     @Test
     fun testCollisionOnlyBetweenCachesIsReported() {
-        fun entryPoints(name: String, vararg callables: String): List<String> {
-            val file = buildDir.resolve("$name.entryPoints").apply { writeText(callables.joinToString("\n") { "callable $it" }) }
-            return listOf("-Xbinary=objcExportEntryPointsPath=${file.absolutePath}")
-        }
         val libraries = compileLibraries(
             Library(
-                "libA", "package liba\nopen class Parent {\n    fun clash(x: String): Int = 1\n}",
-                objCCacheArgs = entryPoints("libA", "liba.Parent.<init>", "liba.Parent.clash"),
+                "libA",
+                """
+                @file:OptIn(kotlin.experimental.ExperimentalObjCName::class)
+                package liba
+                open class Parent {
+                    @ObjCName("clash")
+                    fun hidden(x: String): Int = 1
+                }
+                """,
+                objCCacheArgs = entryPoints("libA", "liba.Parent.<init>", "liba.Parent.hidden"),
             ),
             Library(
                 "libB", "package libb\nimport liba.Parent\nclass Child : Parent() {\n    fun clash(x: Int): Int = 2\n}", listOf("libA"),
                 objCCacheArgs = entryPoints("libB", "libb.Child.<init>", "libb.Child.clash"),
             ),
         )
-        val framework = linkFramework(
+        val [uncached, cached] = linkWithAndWithoutCaches(
             libraries, extraArgs = entryPoints("framework", "liba.Parent.<init>", "libb.Child.<init>", "libb.Child.clash"),
         )
+        uncached.result.assertSuccess()
         val expectedError = "cached Objective-C names collide: selector name 'clashX:' of libb/Child.clash, but a build without the caches"
-        assertTrue(framework.result !is TestCompilationResult.Success && expectedError in framework.output) { framework.output }
+        assertTrue(cached.result !is TestCompilationResult.Success && expectedError in cached.output) { cached.output }
+    }
+
+    @Test
+    fun testFakeOverrideFailsLikeWithoutCaches() = assertFailsLikeWithoutCaches(
+        "conflicts with fun greet(x: Int): Int",
+        Library(
+            "libA",
+            """
+            package liba
+            interface PublicRoot {
+                fun greet(x: String): String = x
+            }
+            @Deprecated("", level = DeprecationLevel.HIDDEN)
+            interface HiddenMid : PublicRoot
+            @Suppress("DEPRECATION_ERROR")
+            class Impl : HiddenMid {
+                fun greet(x: Int): Int = x
+            }
+            """,
+        ),
+    )
+
+    @Test
+    fun testFakeOverrideOfNonExportedInterfaceFailsLikeWithoutCaches() {
+        val libraries = compileLibraries(
+            Library("libG", "package libg\ninterface Greeter {\n    fun clash(x: String): Int = 1\n}", isExported = false),
+            Library("libA", "package liba\nimport libg.Greeter\nopen class Parent : Greeter", listOf("libG")),
+            Library(
+                "libB", "package libb\nimport liba.Parent\nclass Child : Parent() {\n    fun clash(x: Int): Int = 2\n}",
+                listOf("libG", "libA"), objCCacheArgs = entryPoints("libB", "libb.Child.<init>", "libb.Child.clash"),
+            ),
+        )
+        assertFailsLikeWithoutCaches(
+            "conflicts with fun clash(x: Int): Int defined in libb.Child",
+            linkWithAndWithoutCaches(
+                libraries, extraArgs = entryPoints("framework", "liba.Parent.<init>", "libb.Child.<init>", "libb.Child.clash"),
+            ),
+        )
+    }
+
+    private fun entryPoints(name: String, vararg callables: String): List<String> {
+        val file = buildDir.resolve("$name.entryPoints").apply { writeText(callables.joinToString("\n") { "callable $it" }) }
+        return listOf("-Xbinary=objcExportEntryPointsPath=${file.absolutePath}")
     }
 
     private val overloadedAlpha = """
@@ -972,14 +1020,20 @@ class ObjCCacheTest : ObjCCacheTestBase() {
         listOf("libA"),
     )
 
-    private fun linkWithAndWithoutCaches(vararg libraries: Library, source: String = frameworkMarkerSource): Pair<Framework, Framework> {
-        val compiled = compileLibraries(*libraries)
-        return linkFramework(compiled, withCaches = false, source = source, dir = buildDir.resolve("uncached")) to
-                linkFramework(compiled, source = source, dir = buildDir.resolve("cached"))
-    }
+    private fun linkWithAndWithoutCaches(vararg libraries: Library, source: String = frameworkMarkerSource): Pair<Framework, Framework> =
+        linkWithAndWithoutCaches(compileLibraries(*libraries), source = source)
 
-    private fun assertFailsLikeWithoutCaches(expectedError: String, vararg libraries: Library, source: String = frameworkMarkerSource) {
-        val [uncached, cached] = linkWithAndWithoutCaches(*libraries, source = source)
+    private fun linkWithAndWithoutCaches(
+        libraries: Libraries, source: String = frameworkMarkerSource, extraArgs: List<String> = emptyList(),
+    ): Pair<Framework, Framework> =
+        linkFramework(libraries, withCaches = false, extraArgs = extraArgs, source = source, dir = buildDir.resolve("uncached")) to
+                linkFramework(libraries, extraArgs = extraArgs, source = source, dir = buildDir.resolve("cached"))
+
+    private fun assertFailsLikeWithoutCaches(expectedError: String, vararg libraries: Library, source: String = frameworkMarkerSource) =
+        assertFailsLikeWithoutCaches(expectedError, linkWithAndWithoutCaches(*libraries, source = source))
+
+    private fun assertFailsLikeWithoutCaches(expectedError: String, frameworks: Pair<Framework, Framework>) {
+        val [uncached, cached] = frameworks
         assertTrue(uncached.result !is TestCompilationResult.Success && expectedError in uncached.output) {
             "Expected the build without caches to fail with '$expectedError':\n${uncached.output}"
         }

@@ -136,6 +136,7 @@ internal fun produceObjCExportInterface(
         config.produce.isObjCCache -> {
             val units = headerGenerator.translateUnits().single()
             headerGenerator.assembleHeader(listOf(ObjCExportModuleUnits(0, units)))
+            headerGenerator.assignCodeSpecSelectors()
             val cacheUnits = namer.withRecordedNames(units)
             return headerGenerator.buildInterface(objCCacheUnits = cacheUnits)
         }
@@ -147,6 +148,7 @@ internal fun produceObjCExportInterface(
             headerGenerator.assembleHeader(cachedUnits, localModules) { classId ->
                 runCatching { ClassId.fromString(classId) }.getOrNull()?.let { moduleDescriptor.findClassAcrossModuleDependencies(it) }
             }
+            headerGenerator.assignCodeSpecSelectors()
             if (namer.hasCollisions) {
                 val uncachedProblems = ObjCExportProblemBuffer()
                 produceObjCExportInterface(context, moduleDescriptor, uncachedProblems, useObjCCaches = false)
@@ -167,7 +169,10 @@ internal fun produceObjCExportInterface(
             }
             cachedProblems?.replayTo(reporter)
         }
-        else -> headerGenerator.translateModuleDeclarations()
+        else -> {
+            headerGenerator.translateModuleDeclarations()
+            if (!useObjCCaches) headerGenerator.assignCodeSpecSelectors()
+        }
     }
 
     return headerGenerator.buildInterface()
@@ -198,27 +203,26 @@ internal fun objCExportNamingConfiguration(configuration: CompilerConfiguration)
 
 private class ObjCExportProblemBuffer : ObjCExportProblemCollector {
     private val reports = mutableListOf<(ObjCExportProblemCollector) -> Unit>()
+    private var target: ObjCExportProblemCollector? = null
 
     var hasErrors = false
         private set
 
-    override fun reportWarning(text: String) {
-        reports += { it.reportWarning(text) }
+    private fun report(isError: Boolean, report: (ObjCExportProblemCollector) -> Unit) {
+        if (isError) hasErrors = true
+        val target = target
+        if (target != null) report(target) else reports += report
     }
 
-    override fun reportWarning(declaration: DeclarationDescriptor, text: String) {
-        reports += { it.reportWarning(declaration, text) }
-    }
+    override fun reportWarning(text: String) = report(isError = false) { it.reportWarning(text) }
 
-    override fun reportError(text: String) {
-        hasErrors = true
-        reports += { it.reportError(text) }
-    }
+    override fun reportWarning(declaration: DeclarationDescriptor, text: String) =
+        report(isError = false) { it.reportWarning(declaration, text) }
 
-    override fun reportError(declaration: DeclarationDescriptor, text: String) {
-        hasErrors = true
-        reports += { it.reportError(declaration, text) }
-    }
+    override fun reportError(text: String) = report(isError = true) { it.reportError(text) }
+
+    override fun reportError(declaration: DeclarationDescriptor, text: String) =
+        report(isError = true) { it.reportError(declaration, text) }
 
     override fun reportException(throwable: Throwable) {
         throw throwable
@@ -226,6 +230,8 @@ private class ObjCExportProblemBuffer : ObjCExportProblemCollector {
 
     fun replayTo(collector: ObjCExportProblemCollector) {
         reports.forEach { it(collector) }
+        reports.clear()
+        target = collector
     }
 }
 
