@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 class KlibSnapshotShrinkerTest : KlibSnapshotTestCommon() {
 
     private val allSnapshots: List<KlibSnapshot> by lazy {
-        listOf(snapshotKlib(File(klibTestDataDir, "KlibSnapshotShrinkerTest/src"))).toKlibSnapshots()
+        snapshotKlib(File(klibTestDataDir, "KlibSnapshotShrinkerTest/src")).klibSnapshots.toList()
     }
 
     private fun shrink(vararg lookupSymbols: LookupSymbolKey): Set<String> =

@@ -202,7 +202,7 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
     )
 
     private fun snapshot(testName: String, version: String, granularity: ClassSnapshotGranularity): List<KlibSnapshot> =
-        listOf(snapshotKlib(File(testDataDir, "$testName/src/$version"), granularity)).toKlibSnapshots()
+        snapshotKlib(File(testDataDir, "$testName/src/$version"), granularity).klibSnapshots.toList()
 
     private fun computeChanges(testName: String, granularity: ClassSnapshotGranularity = CLASS_MEMBER_LEVEL): Changes =
         computeChanges(snapshot(testName, "current", granularity), snapshot(testName, "previous", granularity))

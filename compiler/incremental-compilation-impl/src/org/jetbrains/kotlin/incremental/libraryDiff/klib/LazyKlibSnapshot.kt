@@ -5,31 +5,61 @@
 
 package org.jetbrains.kotlin.incremental.libraryDiff.klib
 
+import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.snapshots.LazySnapshotLoadingMetrics
+import org.jetbrains.kotlin.incremental.storage.ListExternalizer
+import org.jetbrains.kotlin.incremental.storage.loadFromFile
 import java.io.File
 
 /**
- * Loads and caches the klib snapshots needed before and after compilation. The klib counterpart of `LazyClasspathSnapshot`.
+ * Loads and caches the klib snapshots needed before and after compilation, so that the current snapshot is loaded and shrunk only
+ * once per build.
  *
  * @param currentSnapshotFiles files with the current [KlibEntrySnapshot]s, one per klib
  * @param shrunkPreviousSnapshotFile file with the shrunk snapshot saved by the previous build
  */
-@Suppress("unused")
 internal class LazyKlibSnapshot(
     private val currentSnapshotFiles: List<File>,
     private val shrunkPreviousSnapshotFile: File,
     private val reporter: ClasspathSnapshotBuildReporter,
 ) {
-    fun getCurrentKlibSnapshot(metricToReportIfComputing: LazySnapshotLoadingMetrics): List<KlibSnapshot> =
-        TODO("KT-90559: load current klib snapshots")
+    private var currentSnapshot: List<KlibSnapshot>? = null
+    private var computedShrunkSnapshotAgainstPreviousLookups: List<KlibSnapshot>? = null
+    private var savedShrunkSnapshot: List<KlibSnapshot>? = null
+
+    fun getCurrentKlibSnapshot(metricToReportIfComputing: LazySnapshotLoadingMetrics): List<KlibSnapshot> {
+        currentSnapshot?.let { return it }
+
+        return reporter.measure(metricToReportIfComputing.loadClasspathSnapshotTag) {
+            val entrySnapshots = currentSnapshotFiles.map { KlibEntrySnapshotExternalizer.loadFromFile(it) }
+            reporter.measure(metricToReportIfComputing.removeDuplicateClassesTag) {
+                entrySnapshots.toKlibSnapshots()
+            }
+        }.also { currentSnapshot = it }
+    }
 
     fun getComputedShrunkKlibSnapshotAgainstPreviousLookups(
         lookupStorage: LookupStorage,
         metricToReportIfComputing: LazySnapshotLoadingMetrics,
-    ): List<KlibSnapshot> = TODO("KT-90559: shrink current klib snapshots")
+    ): List<KlibSnapshot> {
+        computedShrunkSnapshotAgainstPreviousLookups?.let { return it }
 
-    fun getSavedShrunkKlibSnapshotAgainstPreviousLookups(metricToReportIfComputing: LazySnapshotLoadingMetrics): List<KlibSnapshot> =
-        TODO("KT-90559: load shrunk previous klib snapshots")
+        val currentSnapshot = getCurrentKlibSnapshot(metricToReportIfComputing)
+        return reporter.measure(metricToReportIfComputing.calculateShrunkClasspathTag) {
+            KlibSnapshotShrinker.shrink(currentSnapshot, lookupStorage)
+        }.also { computedShrunkSnapshotAgainstPreviousLookups = it }
+    }
+
+    fun getSavedShrunkKlibSnapshotAgainstPreviousLookups(metricToReportIfComputing: LazySnapshotLoadingMetrics): List<KlibSnapshot> {
+        savedShrunkSnapshot?.let { return it }
+
+        return reporter.measure(metricToReportIfComputing.loadShrunkClasspathTag) {
+            ListExternalizer(KlibSnapshotExternalizer).loadFromFile(shrunkPreviousSnapshotFile)
+        }.also { savedShrunkSnapshot = it }
+    }
 }
+
+/** Flattens the snapshots of all klibs. Duplicate ids are not handled yet (see KT-90559 progress doc). */
+internal fun List<KlibEntrySnapshot>.toKlibSnapshots(): List<KlibSnapshot> = flatMap { it.klibSnapshots }

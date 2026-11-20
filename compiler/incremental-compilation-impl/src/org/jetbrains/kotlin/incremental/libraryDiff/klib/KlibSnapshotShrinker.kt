@@ -68,6 +68,3 @@ internal object KlibSnapshotShrinker {
         is PackageFragmentSnapshot -> classInfos.map { it.classId }
     }
 }
-
-/** Flattens the snapshots of all klibs. Duplicate ids are not handled yet (see KT-90559 progress doc). */
-internal fun List<KlibEntrySnapshot>.toKlibSnapshots(): List<KlibSnapshot> = flatMap { it.klibSnapshots }
