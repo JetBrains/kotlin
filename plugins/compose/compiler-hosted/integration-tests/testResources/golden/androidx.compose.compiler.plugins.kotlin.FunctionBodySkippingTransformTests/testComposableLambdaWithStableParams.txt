@@ -25,17 +25,17 @@ internal object ComposableSingletons%TestKt {
           sourceInformation(%composer, "invalid source info at 1: 'CN(x,y)6@199L4,7@208L4:Test.kt'")
           val %dirty = %changed
           if (%changed and 0b0110 == 0) {
-            %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
+            %dirty = %dirty or %composer.changed(x) as Int + 1 shl 1
           }
           if (%changed and 0b00110000 == 0) {
-            %dirty = %dirty or if (%composer.changed(y)) 0b00100000 else 0b00010000
+            %dirty = %dirty or %composer.changed(y) as Int + 1 shl 4
           }
           if (%composer.shouldExecute(%dirty and 0b10010011 != 0b10010010, %dirty and 0b0001)) {
             if (isTraceInProgress()) {
               traceEventStart(<>, %dirty, -1, <>)
             }
             A(x, %composer, 0b1110 and %dirty)
-            B(y, %composer, 0b1110 and %dirty shr 0b0011)
+            B(y, %composer, 0b1110 and %dirty shr 3)
             if (isTraceInProgress()) {
               traceEventEnd()
             }

@@ -31,17 +31,17 @@ fun A(y: Int, x: Foo, %composer: Composer?, %changed: Int) {
   sourceInformation(%composer, "C(A)N(y,x)<B(x)>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(y)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(y) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(x)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changedInstance(x) as Int + 1 shl 4
   }
   if (%composer.shouldExecute(%dirty and 0b00010011 != 0b00010010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     used(y)
-    B(x, %composer, 0b1110 and %dirty shr 0b0011)
+    B(x, %composer, 0b1110 and %dirty shr 3)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
@@ -59,7 +59,7 @@ fun B(x: Any, %composer: Composer?, %changed: Int) {
   sourceInformation(%composer, "C(B)N(x):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(x)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changedInstance(x) as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {

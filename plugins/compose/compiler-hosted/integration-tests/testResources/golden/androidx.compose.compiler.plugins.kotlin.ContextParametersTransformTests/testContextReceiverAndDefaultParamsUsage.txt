@@ -61,22 +61,22 @@ fun Test(a: String?, b: Int, %composer: Composer?, %changed: Int, %default: Int)
   sourceInformation(%composer, "C(Test)N(foo,a,b):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+    %dirty = %dirty or if (%changed and 0b1000 == 0) {
       %composer.changed(foo)
     } else {
       %composer.changedInstance(foo)
     }
-    ) 0b0100 else 0b0010
+     as Int + 1 shl 1
   }
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b00110000
   } else if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%composer.changed(a)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %composer.changed(a) as Int + 1 shl 4
   }
   if (%default and 0b0010 != 0) {
     %dirty = %dirty or 0b000110000000
   } else if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(b)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(b) as Int + 1 shl 7
   }
   if (%composer.shouldExecute(%dirty and 0b10010011 != 0b10010010, %dirty and 0b0001)) {
     if (%default and 0b0001 != 0) {

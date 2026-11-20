@@ -25,7 +25,7 @@ fun SimpleBox(modifier: Modifier?, %composer: Composer?, %changed: Int, %default
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
   } else if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(modifier)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(modifier) as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (%default and 0b0001 != 0) {

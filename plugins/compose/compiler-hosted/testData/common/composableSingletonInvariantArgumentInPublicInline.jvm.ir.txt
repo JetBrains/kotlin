@@ -170,15 +170,14 @@ FILE fqName:<root> fileName:/composableSingletonInvariantArgumentInPublicInline.
           then: SET_VAR 'val $dirty: kotlin.Int declared in <root>.Consume' type=kotlin.Unit origin=null
             CALL 'public final fun or (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
               ARG <this>: GET_VAR 'val $dirty: kotlin.Int declared in <root>.Consume' type=kotlin.Int origin=null
-              ARG other: WHEN type=kotlin.Int origin=IF
-                BRANCH
-                  if: CALL 'public open fun changedInstance (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
-                    ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.Consume' type=androidx.compose.runtime.Composer? origin=null
-                    ARG value: GET_VAR 'content: kotlin.Function3<kotlin.collections.MutableList<S of <root>.Consume>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>.Consume' type=kotlin.Function3<kotlin.collections.MutableList<S of <root>.Consume>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
-                  then: CONST Int type=kotlin.Int value=4
-                BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CONST Int type=kotlin.Int value=2
+              ARG other: CALL 'public final fun shl (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                ARG <this>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                  ARG <this>: TYPE_OP type=kotlin.Int origin=REINTERPRET_CAST typeOperand=kotlin.Int
+                    CALL 'public open fun changedInstance (value: kotlin.Any?): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+                      ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in <root>.Consume' type=androidx.compose.runtime.Composer? origin=null
+                      ARG value: GET_VAR 'content: kotlin.Function3<kotlin.collections.MutableList<S of <root>.Consume>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>.Consume' type=kotlin.Function3<kotlin.collections.MutableList<S of <root>.Consume>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
+                  ARG other: CONST Int type=kotlin.Int value=1
+                ARG bitCount: CONST Int type=kotlin.Int value=1
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public abstract fun shouldExecute (parametersChanged: kotlin.Boolean, flags: kotlin.Int): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null

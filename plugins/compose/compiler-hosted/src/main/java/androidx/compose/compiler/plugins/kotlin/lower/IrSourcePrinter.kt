@@ -417,6 +417,9 @@ class IrSourcePrinterVisitor(
                 printIntsAsBinary = true
             }
             expression.printReceiver()
+            if (name == "shl" || name == "shr" || name == "ushr") {
+                printIntsAsBinary = false
+            }
             print(" $name ")
             expression.printFirstParameter()
             printIntsAsBinary = prev
@@ -634,7 +637,11 @@ class IrSourcePrinterVisitor(
                 print(" !is ")
                 print(expression.type.renderSrc())
             }
-            IrTypeOperator.CAST, IrTypeOperator.SAFE_CAST, IrTypeOperator.IMPLICIT_CAST -> {
+            IrTypeOperator.CAST,
+            IrTypeOperator.SAFE_CAST,
+            IrTypeOperator.IMPLICIT_CAST,
+            IrTypeOperator.REINTERPRET_CAST,
+                -> {
                 expression.argument.print()
                 print(" as ")
                 print(expression.type.renderSrc())
