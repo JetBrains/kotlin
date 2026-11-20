@@ -10,13 +10,9 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ImpactedSymbolsResolver
 import org.jetbrains.kotlin.incremental.classpathDiff.ImpactingClassesResolver
 import org.jetbrains.kotlin.name.ClassId
 
-/** The klib counterpart of `classpathDiff.Impact`: describes how a change of one symbol impacts other symbols. */
+/** Describes how a change of one symbol impacts other symbols. */
 internal sealed interface KlibImpact {
-
-    /** Returns an [ImpactedSymbolsResolver] for the given snapshots. */
     fun getResolver(allSnapshots: Iterable<KlibSnapshot>): ImpactedSymbolsResolver
-
-    /** Returns an [ImpactingClassesResolver] for the given snapshots. */
     fun getReverseResolver(allSnapshots: Iterable<KlibSnapshot>): ImpactingClassesResolver
 }
 

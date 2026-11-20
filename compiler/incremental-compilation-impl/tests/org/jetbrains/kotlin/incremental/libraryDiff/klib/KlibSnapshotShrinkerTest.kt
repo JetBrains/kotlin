@@ -10,10 +10,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 
-/**
- * The klib counterpart of `ClasspathSnapshotShrinkerTest`. The JVM test covers `package-info` / `module-info`, which klibs don't
- * have, so these tests cover the basic shrinking rules instead.
- */
+/** Unlike `ClasspathSnapshotShrinkerTest`, there are no `package-info` / `module-info` cases: klibs don't have them. */
 class KlibSnapshotShrinkerTest : KlibSnapshotTestCommon() {
 
     private val allSnapshots: List<KlibSnapshot> by lazy {

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findReachableNodes
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassMembers
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathChangesComputer
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ProgramSymbolSet
 import org.jetbrains.kotlin.incremental.snapshots.LazySnapshotLoadingMetrics
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import kotlin.math.max
 
-/** Computes changes between two klib snapshots. The klib counterpart of [ClasspathChangesComputer]. */
+/** Computes changes between two klib snapshots. */
 internal object KlibChangesComputer {
 
     /**

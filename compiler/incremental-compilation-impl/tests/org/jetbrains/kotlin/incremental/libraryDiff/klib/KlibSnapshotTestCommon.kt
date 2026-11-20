@@ -18,7 +18,6 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Files
 
-/** The klib counterpart of `ClasspathSnapshotTestCommon`. */
 abstract class KlibSnapshotTestCommon {
 
     @field:TempDir

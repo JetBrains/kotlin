@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.incremental.storage.LookupSymbolKey
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.filterToSetOrEmpty
 
-/** The klib counterpart of `ClasspathSnapshotShrinker`. */
 internal object KlibSnapshotShrinker {
 
     /** Retains only the snapshots referenced, directly or transitively, by the lookup symbols stored in [lookupStorage]. */
