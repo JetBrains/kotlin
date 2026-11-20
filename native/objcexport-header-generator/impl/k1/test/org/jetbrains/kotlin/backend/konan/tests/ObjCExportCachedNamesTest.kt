@@ -336,7 +336,7 @@ class ObjCExportCachedNamesTest : InlineSourceTestEnvironment {
 
     @Test
     fun `units keep backslashes and control characters`() {
-        val text = "a\tb\\nc\rd\r\ne\\"
+        val text = "a\tb\\nc\rd\r\ne\u001Ef\\"
         val claim = ObjCExportMemberClaim(
             owner = "/$text", isTopLevel = false, isConstructor = false, hasNoDispatchReceiver = false, isSetter = false,
             kotlinName = text, extensionReceiverType = text, parameterTypes = text, bridge = text,
