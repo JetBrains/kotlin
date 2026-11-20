@@ -303,11 +303,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         isConstructor: Boolean,
         hasExtensionParameter: Boolean,
     ) {
-        // Constructors that include parameters of inline class types contain an extra trailing DEFAULT_CONSTRUCTOR_MARKER parameter,
+        // Constructors that include parameters of inline class types contain extra trailing DEFAULT_CONSTRUCTOR_MARKER parameters,
         // which should be excluded when calculating mask size.
-        val withoutMarker =
-            if (parameters.lastOrNull() == DEFAULT_CONSTRUCTOR_MARKER) parameters.subList(0, parameters.size - 1)
-            else parameters
+        val withoutMarker = parameters.dropLastWhile { it == DEFAULT_CONSTRUCTOR_MARKER }
 
         val allocatedBitsForDefaultMask = if (hasExtensionParameter) withoutMarker.size - 1 else withoutMarker.size
 
@@ -320,7 +318,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     companion object {
-        private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
+        internal val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
 
         @JvmField
         val LOCAL_PROPERTY_SIGNATURE = "<v#(\\d+)>".toRegex()

@@ -2752,6 +2752,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     }
 
     @Test
+    @TestMetadata("valueClassConstructor.kt")
+    public void testValueClassConstructor() {
+      run("valueClassConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("withJvmOverloads.kt")
     public void testWithJvmOverloads() {
       run("withJvmOverloads.kt");

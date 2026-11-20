@@ -60,44 +60,12 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
         target.generateVersions(irParent, versionParamRawIndexes)
     }
 
-    private fun getVersionParameterRawIndexes(function: IrFunction): Map<String?, MutableList<Int>> =
-        buildMap {
-            put(null, mutableListOf()) // we always have the 'no annotation' case
-            for ([index, parameter] in function.parameters.withIndex()) {
-                val version = when {
-                    parameter.kind != IrParameterKind.Regular -> null
-                    !parameter.hasDefaultValue() -> null
-                    else -> {
-                        val annotation = parameter.getAnnotation(StandardNames.FqNames.introducedAt)
-                        annotation?.getConstArgument<String>("version")
-                    }
-                }
-                getOrPut(version) { mutableListOf() }.add(index)
-            }
-        }
-
     private fun IrFunction.generateVersions(
         container: IrDeclarationContainer,
         versionParamRawIndexes: Map<String?, MutableList<Int>>
     ) = irFactory.stageController.restrictTo(this) {
-        val versionParamIndexes = buildSortedMap {
-            for ([version, indexes] in versionParamRawIndexes) {
-                getOrPut(version?.let(::MavenComparableVersion)) { mutableListOf() }.addAll(indexes)
-            }
-        }
-
-        val lastIncludedParameters = BooleanArray(parameters.size) { true }
-        var first = true
-        for ([version, params] in versionParamIndexes) {
-            if (!first) {
-                val newWrapper = generateWrapper(this, version, lastIncludedParameters)
-                container.declarations.add(newWrapper)
-            } else {
-                first = false
-            }
-            for (paramIndex in params) {
-                lastIncludedParameters[paramIndex] = false
-            }
+        for ([version, includedParams] in versionOverloadParameters(versionParamRawIndexes, parameters.size)) {
+            container.declarations.add(generateWrapper(this, version, includedParams))
         }
     }
 
@@ -228,6 +196,57 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
             }
         }
         return call
+    }
+}
+
+/**
+ * For each version overload of [function], which of its parameters the overload keeps, from the newest overload to the oldest.
+ */
+fun versionOverloadParameters(function: IrFunction): List<BooleanArray> {
+    val versionParamRawIndexes = getVersionParameterRawIndexes(function)
+    if (versionParamRawIndexes.size <= 1) return emptyList()
+    return versionOverloadParameters(versionParamRawIndexes, function.parameters.size).map { it.second }
+}
+
+private fun getVersionParameterRawIndexes(function: IrFunction): Map<String?, MutableList<Int>> =
+    buildMap {
+        put(null, mutableListOf()) // we always have the 'no annotation' case
+        for ([index, parameter] in function.parameters.withIndex()) {
+            val version = when {
+                parameter.kind != IrParameterKind.Regular -> null
+                !parameter.hasDefaultValue() -> null
+                else -> {
+                    val annotation = parameter.getAnnotation(StandardNames.FqNames.introducedAt)
+                    annotation?.getConstArgument<String>("version")
+                }
+            }
+            getOrPut(version) { mutableListOf() }.add(index)
+        }
+    }
+
+private fun versionOverloadParameters(
+    versionParamRawIndexes: Map<String?, List<Int>>,
+    parameterCount: Int,
+): List<Pair<MavenComparableVersion?, BooleanArray>> {
+    val versionParamIndexes = buildSortedMap {
+        for ([version, indexes] in versionParamRawIndexes) {
+            getOrPut(version?.let(::MavenComparableVersion)) { mutableListOf() }.addAll(indexes)
+        }
+    }
+
+    val lastIncludedParameters = BooleanArray(parameterCount) { true }
+    var first = true
+    return buildList {
+        for ([version, params] in versionParamIndexes) {
+            if (!first) {
+                add(version to lastIncludedParameters.copyOf())
+            } else {
+                first = false
+            }
+            for (paramIndex in params) {
+                lastIncludedParameters[paramIndex] = false
+            }
+        }
     }
 }
 

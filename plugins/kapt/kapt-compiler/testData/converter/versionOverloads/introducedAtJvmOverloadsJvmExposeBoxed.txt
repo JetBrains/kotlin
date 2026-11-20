@@ -1,7 +1,7 @@
 /**
  * public final class EverythingC : kotlin/Any {
  *
- *   // signature: <init>(IIZ)V
+ *   // signature: <init>(IIZLkotlin/jvm/internal/DefaultConstructorMarker;)V
  *   @kotlin/jvm/JvmExposeBoxed(jvmName = "exposed_constructor")
  *   public constructor(a: kotlin/Int (* = ... *), @kotlin/IntroducedAt(version = "2") a1: kotlin/UInt (* = ... *), @kotlin/IntroducedAt(version = "3") b: kotlin/Boolean (* = ... *))
  *
@@ -38,15 +38,11 @@ public final class EverythingC {
         super();
     }
 
-    @java.lang.Deprecated()
-    public EverythingC(int a, @kotlin.IntroducedAt(version = "2")
-    int a1) {
+    private EverythingC(int a, int a1) {
         super();
     }
 
-    public EverythingC(int a, @kotlin.IntroducedAt(version = "2")
-    int a1, @kotlin.IntroducedAt(version = "3")
-    boolean b) {
+    private EverythingC(int a, int a1, boolean b) {
         super();
     }
 

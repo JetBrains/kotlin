@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.lower.inline.SyntheticAccessorGenerator
+import org.jetbrains.kotlin.backend.common.lower.versionOverloadParameters
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -26,8 +27,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 
 class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
     SyntheticAccessorGenerator<JvmBackendContext, List<ScopeWithIr>>(context) {
@@ -58,11 +59,13 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
 
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
-            accessor.addValueParameter(
-                CONSTRUCTOR_MARKER_PARAMETER_NAME.synthesizedString,
-                context.symbols.defaultConstructorMarker.defaultType.makeNullable(),
-                IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER,
-            )
+            repeat(if (source.accessorClashesWithVersionOverloadDefaultStub()) 2 else 1) {
+                accessor.addValueParameter(
+                    CONSTRUCTOR_MARKER_PARAMETER_NAME.synthesizedString,
+                    context.symbols.defaultConstructorMarker.defaultType.makeNullable(),
+                    IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER,
+                )
+            }
 
             accessor.body = context.irFactory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -205,14 +208,29 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
                 !DescriptorVisibilities.isPrivate(constructor.visibility) &&
                 !constructor.constructedClass.isInlineClass &&
                 constructor.hasMangledParameters() &&
-                !constructor.hasIntroducedAtAnnotatedParameter() &&
                 !constructor.constructedClass.isAnonymousObject
     }
 
-    // @IntroducedAt already creates default constructor if some parameters are inline classes
-    // no need to duplicate it.
-    private fun IrConstructor.hasIntroducedAtAnnotatedParameter(): Boolean =
-        parameters.any { it.hasAnnotation(StandardClassIds.Annotations.IntroducedAt) }
+    // In `C(s: String = "", @IntroducedAt("2") u: UInt = 0u)`, the accessor `(String, int, DefaultConstructorMarker)`
+    // would clash with the `$default` stub of the overload `C(s: String = "")`, so it gets one more marker.
+    // Computed from the constructor alone: overloads of external classes are not in IR.
+    private fun IrConstructor.accessorClashesWithVersionOverloadDefaultStub(): Boolean {
+        val versionOverloads = versionOverloadParameters(this)
+        if (versionOverloads.isEmpty()) return false
+        val parameterTypes = parameters.map { context.defaultTypeMapper.mapType(it.type) }
+        return versionOverloads.any { includedParameters ->
+            val overloadParameters = parameters.filterIndexed { index, _ -> includedParameters[index] }
+            if (overloadParameters.none { it.defaultValue != null }) return@any false
+            val maskCount = (overloadParameters.count { it.isCountedInDefaultMask() } + 31) / 32
+            parameterTypes == overloadParameters.map { context.defaultTypeMapper.mapType(it.type) } + List(maskCount) { Type.INT_TYPE }
+        }
+    }
+
+    // As counted by `DefaultArgumentStubGenerator`, which runs before the outer `this` becomes a parameter.
+    private fun IrValueParameter.isCountedInDefaultMask(): Boolean =
+        kind != IrParameterKind.DispatchReceiver && kind != IrParameterKind.ExtensionReceiver &&
+                origin != IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER && origin != IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER &&
+                origin != JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS
 
     fun isOrShouldBeHiddenAsSealedClassConstructor(constructor: IrConstructor): Boolean {
         if (constructor.hiddenConstructorOfSealedClass != null) return true
