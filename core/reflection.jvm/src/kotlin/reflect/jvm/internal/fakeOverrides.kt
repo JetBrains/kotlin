@@ -72,7 +72,7 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
     val javaSignatureMode = EqualityMode.JavaSignature(isKotlinClass = kClass.isKotlin)
     val result: MutableMembersJavaSignatureMap = HashMap()
     for (supertype in kClass.supertypes) {
-        val supertypeKClass = supertype.classifier as? MemberContainer<*>
+        val supertypeKClass = supertype.memberContainer
             ?: error(
                 "Non-denotable supertypes are not possible. " +
                         "Supertype '$supertype' appears non-denotable in class '$kClass'"
@@ -114,7 +114,7 @@ internal fun computeFakeOverrideMembersForName(kClass: MemberContainer<*>, name:
 
 internal fun MemberContainer<*>.getFunctionsFromSupertypes(name: String): List<ReflectKFunction> = buildList {
     for (supertype in supertypes) {
-        val supertypeKClass = supertype.classifier as? MemberContainer<*> ?: continue
+        val supertypeKClass = supertype.memberContainer ?: continue
         val substitutor = KTypeSubstitutor.create(supertype)
         for (supertypeMember in getSupertypeMembersByName(supertype, supertypeKClass, name)) {
             if (supertypeMember is ReflectKFunction && !supertypeMember.isStatic) {
@@ -213,7 +213,7 @@ internal fun <T : ReflectKCallable<*>> computeOverriddenCallables(
 ): Collection<T> {
     val result = mutableListOf<T>()
     for (supertype in container.supertypes) {
-        val supertypeKClass = supertype.classifier as? MemberContainer<*> ?: continue
+        val supertypeKClass = supertype.memberContainer ?: continue
         val substitutor = KTypeSubstitutor.create(supertype)
         for (supertypeMember in getSupertypeMembersByName(supertype, supertypeKClass, signature.name)) {
             val isSameKind = when (signature.kind) {
@@ -230,6 +230,9 @@ internal fun <T : ReflectKCallable<*>> computeOverriddenCallables(
     }
     return result
 }
+
+internal val KType.memberContainer: MemberContainer<*>?
+    get() = classifier as? MemberContainer<*>
 
 private fun getSupertypeMembersByName(
     supertype: KType,

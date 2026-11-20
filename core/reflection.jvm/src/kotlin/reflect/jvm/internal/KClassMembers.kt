@@ -64,7 +64,7 @@ private fun MemberContainer<*>.collectDeclaredMemberNamesTransitively(
     if (!visited.add(this)) return
     result.addAll(declaredMemberNames)
     for (supertype in supertypes) {
-        (supertype.classifier as? MemberContainer<*>)?.collectDeclaredMemberNamesTransitively(result, visited)
+        supertype.memberContainer?.collectDeclaredMemberNamesTransitively(result, visited)
     }
 }
 
@@ -213,7 +213,7 @@ internal fun KClassImpl<*>.computeDeclaredMemberNames(): Set<String> =
             // Declared method `getX` in a Java class won't be loaded as a KFunction if it overrides a property getter from the base Kotlin
             // class (see `isVisibleAsFunctionInCurrentClass`), it will be loaded as a property getter instead. We cannot deduce the name
             // of the property from the name of the getter (`getX` -> `x` or `X`?), so we get all property names from supertypes.
-            (supertype.classifier as? MemberContainer<*>)?.collectDeclaredMemberNamesTransitively(this, visited)
+            supertype.memberContainer?.collectDeclaredMemberNamesTransitively(this, visited)
         }
         if (jClass.isEnum) {
             add(ENUM_ENTRIES_PROPERTY_NAME)
