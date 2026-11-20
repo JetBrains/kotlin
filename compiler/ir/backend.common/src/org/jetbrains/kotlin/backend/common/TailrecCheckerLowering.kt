@@ -78,7 +78,7 @@ open class TailrecCheckerLowering<Context : LoweringContext>(val context: Contex
 private fun IrCall.referencedNameSourceElement(): KtOffsetsOnlySourceElement? {
     if (startOffset < 0) return null
     val sourceEndOffset = when (origin) {
-        IrStatementOrigin.COLLECTION_LITERAL -> endOffset // mimics `PositioningStrategies.FindReferencePositioningStrategy.mark()`
+        IrStatementOrigin.COLLECTION_LITERAL -> endOffset // mimics `PsiPositioningStrategies.FindReferencePositioningStrategy.mark()`
         else -> {
             val nameLength = symbol.owner.name.asString().length
             (startOffset + nameLength).coerceAtMost(endOffset)

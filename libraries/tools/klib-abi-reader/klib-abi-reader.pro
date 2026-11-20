@@ -34,7 +34,7 @@
 -dontwarn org.jetbrains.kotlin.type.MapPsiToAsmDesc
 -dontwarn org.jetbrains.kotlin.lexer.**
 -dontwarn org.jetbrains.kotlin.parsing.**
--dontwarn org.jetbrains.kotlin.diagnostics.PositioningStrategies*
+-dontwarn org.jetbrains.kotlin.diagnostics.PsiPositioningStrategies*
 -dontwarn org.jetbrains.kotlin.library.metadata.impl.**
 -dontwarn org.jetbrains.kotlin.backend.common.serialization.metadata.**
 -dontwarn com.intellij.**
