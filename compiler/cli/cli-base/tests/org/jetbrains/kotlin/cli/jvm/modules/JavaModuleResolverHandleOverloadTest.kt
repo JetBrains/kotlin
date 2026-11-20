@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import org.jetbrains.kotlin.cli.jvm.index.InMemoryClassFileHandleForTests
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.VfsClassFileHandle
+import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.VirtualFileBasedApi
@@ -55,7 +56,7 @@ class JavaModuleResolverHandleOverloadTest {
         val classFile = checkNotNull(rootFile.findChild("A.class"))
         val resolver = VirtualFileOnlyResolver()
 
-        val result = resolver.checkAccessibility(null, VfsClassFileHandle(classFile, JavaRoot(rootFile, JavaRoot.RootType.BINARY)), null)
+        val result = resolver.checkAccessibility(null, VfsClassFileHandle(classFile, JavaRoot(rootFile.asJvmClasspathRootId(), JavaRoot.RootType.BINARY)), null)
 
         assertEquals(JavaModuleResolver.AccessError.ModuleDoesNotReadUnnamedModule, result)
         assertEquals(listOf(classFile), resolver.checkedFiles)

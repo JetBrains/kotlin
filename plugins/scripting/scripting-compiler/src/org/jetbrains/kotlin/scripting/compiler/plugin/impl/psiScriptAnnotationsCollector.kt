@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.JvmIndexKotlinClassFinder
@@ -39,7 +40,6 @@ import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.jvm.environment.JvmCompilationEnvironment
-import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -147,6 +147,7 @@ private fun createAnnotationResolutionSession(
     val fileManager = VirtualFileManager.getInstance()
     val jarFileSystem = fileManager.getFileSystem(StandardFileSystems.JAR_PROTOCOL)
     val localFileSystem = fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+    val rootRegistry = JavaRootRegistry()
     val roots = classpath.mapNotNull { path ->
         val file = path.toFile()
         val id = JvmClasspathRootId.of(path).id
@@ -155,12 +156,12 @@ private fun createAnnotationResolutionSession(
             file.isFile -> jarFileSystem?.findFileByPath(id + URLUtil.JAR_SEPARATOR)
             else -> null
         }
-    }.map { JavaRoot(it, JavaRoot.RootType.BINARY) }
-    val librariesClasspath = JvmClasspath.Roots(roots.map { it.file.asJvmClasspathRootId() })
+    }.map { rootRegistry.javaRoot(it, JavaRoot.RootType.BINARY) }
+    val librariesClasspath = JvmClasspath.Roots(roots.map { it.id })
     val projectEnvironment = AnnotationResolutionProjectEnvironment(
-        JvmDependenciesIndexImpl(roots),
+        JvmDependenciesIndexImpl(roots, rootRegistry.vfsEntries),
     ) { classpath ->
-        JvmPackagePartProvider(configuration.languageVersionSettings, classpath).apply { addRoots(roots, configuration) }
+        JvmPackagePartProvider(configuration.languageVersionSettings, rootRegistry.vfsEntries, classpath).apply { addRoots(roots, configuration) }
     }
     val sessionFactoryContext = FirJvmSessionFactory.Context(
         configuration = configuration,

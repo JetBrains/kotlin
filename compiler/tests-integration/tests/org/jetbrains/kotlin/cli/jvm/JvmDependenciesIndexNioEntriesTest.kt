@@ -33,7 +33,7 @@ class JvmDependenciesIndexNioEntriesTest : JvmDependenciesIndexContractTestBase(
     @AfterEach
     fun closeJarPool() = jarPool.close()
 
-    private fun nioIndex(vararg roots: JavaRoot) = JvmDependenciesIndexImpl(roots.asList(), NioRootEntryFactory(jarPool))
+    private fun nioIndex(vararg roots: JavaRoot) = JvmDependenciesIndexImpl(roots.asList(), NioRootEntryFactory(jarPool, rootRegistry))
 
     @Test
     fun directoryAndJarRootsGetNioEntries() {
@@ -47,7 +47,7 @@ class JvmDependenciesIndexNioEntriesTest : JvmDependenciesIndexContractTestBase(
     @Test
     fun jarRootsGetVfsEntriesWithoutAJarPool() {
         val lib = jar("lib.jar", "q/B.class")
-        val index = JvmDependenciesIndexImpl(listOf(lib.jarRoot()), NioRootEntryFactory(jarPool = null))
+        val index = JvmDependenciesIndexImpl(listOf(lib.jarRoot()), NioRootEntryFactory(jarPool = null, roots = rootRegistry))
         assertInstanceOf(VfsClassFileHandle::class.java, index.findClassFiles(classId("q/B"), CLASS).single())
     }
 

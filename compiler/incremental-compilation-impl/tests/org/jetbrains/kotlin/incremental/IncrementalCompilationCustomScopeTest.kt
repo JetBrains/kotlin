@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.index.VfsClassFileHandle
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.JvmIndexKotlinClassFinder
@@ -92,6 +93,9 @@ class IncrementalCompilationCustomScopeTest {
 
     private val disposable: Disposable = Disposer.newDisposable("${IncrementalCompilationCustomScopeTest::class.simpleName}.disposable")
 
+    /** Registers the roots this test creates, so that the indexes and package part providers read their files through it. */
+    private val rootRegistry = JavaRootRegistry()
+
     /**
      * Disposing a project disposes its `PsiManager`, which the platform allows in a write action only.
      * `CoreJarFileSystem` retains archive handles that prevent Windows `@TempDir` cleanup.
@@ -144,9 +148,10 @@ class IncrementalCompilationCustomScopeTest {
             FixedJvmDependenciesIndex(
                 listOf(previousOutputClass, localOutputClass),
                 sequenceOf(
-                    JavaRoot(outputFileSystem.root, JavaRoot.RootType.BINARY),
-                    JavaRoot(localOutputRoot, JavaRoot.RootType.BINARY),
+                    rootRegistry.javaRoot(outputFileSystem.root, JavaRoot.RootType.BINARY),
+                    rootRegistry.javaRoot(localOutputRoot, JavaRoot.RootType.BINARY),
                 ),
+                rootRegistry,
             ),
             classpath,
             enableSearchInCtSym = false,
@@ -183,9 +188,10 @@ class IncrementalCompilationCustomScopeTest {
         }
         val index = JvmDependenciesIndexImpl(
             listOf(
-                JavaRoot(localVirtualFile(firstRoot), JavaRoot.RootType.BINARY),
-                JavaRoot(localVirtualFile(secondRoot), JavaRoot.RootType.BINARY),
-            )
+                rootRegistry.javaRoot(localVirtualFile(firstRoot), JavaRoot.RootType.BINARY),
+                rootRegistry.javaRoot(localVirtualFile(secondRoot), JavaRoot.RootType.BINARY),
+            ),
+            rootRegistry.vfsEntries,
         )
         val classpath = JvmClasspath.Roots(listOf(JvmClasspathRootId.of(secondRoot.toPath())))
         val finder = JvmIndexKotlinClassFinder(index, classpath, enableSearchInCtSym = false, perfManager = null)
@@ -229,7 +235,8 @@ class IncrementalCompilationCustomScopeTest {
         val javaClassFile = localVirtualFile(platformOnlyClass)
         val index = FixedJvmDependenciesIndex(
             listOf(javaClassFile),
-            sequenceOf(JavaRoot(localVirtualFile(platformLibraryRoot), JavaRoot.RootType.BINARY)),
+            sequenceOf(rootRegistry.javaRoot(localVirtualFile(platformLibraryRoot), JavaRoot.RootType.BINARY)),
+            rootRegistry,
         )
         val classId = ClassId.fromString("p/JavaOnly")
         val commonKotlinFinder = JvmIndexKotlinClassFinder(
@@ -269,19 +276,22 @@ class IncrementalCompilationCustomScopeTest {
         val jarPath = jar.toAbsolutePath().normalize().toString().replace('\\', '/')
         val jarRoot = checkNotNull(CoreJarFileSystem().findFileByPath(jarPath + JAR_SEPARATOR))
         val roots = listOf(
-            JavaRoot(localVirtualFile(listedDirectory.toFile()), JavaRoot.RootType.BINARY),
-            JavaRoot(localVirtualFile(nestedDirectory.toFile()), JavaRoot.RootType.BINARY),
-            JavaRoot(jarRoot, JavaRoot.RootType.BINARY),
+            rootRegistry.javaRoot(localVirtualFile(listedDirectory.toFile()), JavaRoot.RootType.BINARY),
+            rootRegistry.javaRoot(localVirtualFile(nestedDirectory.toFile()), JavaRoot.RootType.BINARY),
+            rootRegistry.javaRoot(jarRoot, JavaRoot.RootType.BINARY),
         )
         val classpathRoot = JvmClasspathRootId.of(listedDirectory)
         val configuration = CompilerConfiguration.create(messageCollector = MessageCollector.NONE)
 
-        val rootProvider = JvmPackagePartProvider(configuration.languageVersionSettings, JvmClasspath.Roots(listOf(classpathRoot)))
+        val rootProvider = JvmPackagePartProvider(
+            configuration.languageVersionSettings, rootRegistry.vfsEntries, JvmClasspath.Roots(listOf(classpathRoot))
+        )
         rootProvider.addRoots(roots, configuration)
         assertEquals(setOf("listed", "nested"), rootProvider.computePackageSetWithNonClassDeclarations())
 
         val libraryProvider = JvmPackagePartProvider(
             configuration.languageVersionSettings,
+            rootRegistry.vfsEntries,
             JvmClasspath.ProjectLibraries(excludedRoots = listOf(classpathRoot)),
         )
         libraryProvider.addRoots(roots, configuration)
@@ -373,6 +383,7 @@ class IncrementalCompilationCustomScopeTest {
     private class FixedJvmDependenciesIndex(
         private val classFiles: List<VirtualFile>,
         override val indexedRoots: Sequence<JavaRoot> = emptySequence(),
+        private val rootRegistry: JavaRootRegistry,
     ) : JvmDependenciesIndex {
 
         override fun findClassFiles(classId: ClassId, acceptedExtensions: JavaFileExtensions): Collection<BinaryClassFileHandle> =
@@ -382,8 +393,8 @@ class IncrementalCompilationCustomScopeTest {
         /** The listed root containing the file, or else the root of its file system, as `JvmDependenciesIndexImpl` would attribute it. */
         private fun rootOf(file: VirtualFile): JavaRoot {
             val ancestors = generateSequence(file) { it.parent }
-            return ancestors.firstNotNullOfOrNull { ancestor -> indexedRoots.firstOrNull { it.file == ancestor } }
-                ?: JavaRoot(ancestors.last(), JavaRoot.RootType.BINARY)
+            return ancestors.firstNotNullOfOrNull { ancestor -> indexedRoots.firstOrNull { rootRegistry.virtualFile(it) == ancestor } }
+                ?: rootRegistry.javaRoot(ancestors.last(), JavaRoot.RootType.BINARY)
         }
 
         override fun traverseFilesInPackage(

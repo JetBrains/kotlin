@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.Standal
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
@@ -26,10 +27,13 @@ class AnalysisApiTestCompilerConfiguratorProvider(
 ) : CompilerConfigurationProvider(testServices) {
     private val configurationCache: MutableMap<Pair<TestModule, CompilationStage>, CompilerConfiguration> = mutableMapOf()
 
+    private val rootRegistry = JavaRootRegistry()
+
     private val allProjectBinaryRoots by lazy {
         StandaloneProjectFactory.getAllBinaryRoots(
             testServices.ktTestModuleStructure.mainAndBinaryKtModules,
-            testServices.environmentManager.getApplicationEnvironment()
+            testServices.environmentManager.getApplicationEnvironment(),
+            rootRegistry,
         )
     }
 
@@ -52,7 +56,7 @@ class AnalysisApiTestCompilerConfiguratorProvider(
         val configuration = getCompilerConfiguration(module, CompilationStage.FIRST)
 
         return { scope ->
-            JvmPackagePartProvider(configuration.languageVersionSettings) { it in scope }.apply {
+            JvmPackagePartProvider(configuration.languageVersionSettings, rootRegistry) { it in scope }.apply {
                 addRoots(allProjectBinaryRoots, configuration)
             }
         }

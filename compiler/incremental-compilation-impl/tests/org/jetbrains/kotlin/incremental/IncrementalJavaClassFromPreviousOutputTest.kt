@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.JvmIndexKotlinClassFinder
 import org.jetbrains.kotlin.cli.jvm.index.virtualFile
@@ -61,11 +62,13 @@ class IncrementalJavaClassFromPreviousOutputTest : AbstractIncrementalJvmCompile
 
         val outputRootFile = localVirtualFile(outputRoot)
         val libraryRootFile = localVirtualFile(libraryRoot)
+        val rootRegistry = JavaRootRegistry()
         val index = JvmDependenciesIndexImpl(
             listOf(
-                JavaRoot(outputRootFile, JavaRoot.RootType.BINARY),
-                JavaRoot(libraryRootFile, JavaRoot.RootType.BINARY),
-            )
+                rootRegistry.javaRoot(outputRootFile, JavaRoot.RootType.BINARY),
+                rootRegistry.javaRoot(libraryRootFile, JavaRoot.RootType.BINARY),
+            ),
+            rootRegistry.vfsEntries,
         )
         val classId = ClassId.fromString("p/Shadow")
         val outputRootId = JvmClasspathRootId.of(outputRoot.toPath())

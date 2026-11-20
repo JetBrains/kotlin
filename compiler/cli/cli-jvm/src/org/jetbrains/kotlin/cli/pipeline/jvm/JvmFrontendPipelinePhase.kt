@@ -612,11 +612,15 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val jdkRelease = configuration.jdkRelease
 
+        val classpathIndexes = JvmClasspathIndexes(configuration).also { Disposer.register(parentDisposable, it::close) }
+        val rootRegistry = classpathIndexes.roots
+
         val javaModuleFinder = CliJavaModuleFinder(
             configuration.jdkHome,
             configuration,
             javaFileManager,
-            jdkRelease
+            jdkRelease,
+            rootRegistry,
         )
 
         val outputDirectory = configuration.modules.singleOrNull()?.getOutputDirectory()
@@ -624,7 +628,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val contentRoots = configuration.contentRoots
 
-        val classpathIndexes = JvmClasspathIndexes(configuration).also { Disposer.register(parentDisposable, it::close) }
 
         val classpathRootsResolver = ClasspathRootsResolver(
             configuration,
@@ -636,6 +639,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             javaFileManager::findClassOnClasspath,
             jdkRelease,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
+            rootRegistry = rootRegistry,
             rootEntries = classpathIndexes.rootEntryFactory,
         )
 
@@ -643,7 +647,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         // REPL updates classpath dynamically
         classpathIndexes.addRoots(roots).indexedRoots.forEach {
-            projectEnvironment.addSourcesToClasspath(it.file)
+            projectEnvironment.addSourcesToClasspath(rootRegistry.virtualFile(it))
         }
         val rootsIndex = classpathIndexes.javaFileManagerIndex
 
@@ -656,6 +660,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             CliJavaModuleResolver(
                 classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(),
                 fileFinderFactory.create(JvmClasspath.ProjectLibraries()),
+                rootRegistry,
             )
         )
 
@@ -673,11 +678,11 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             classpathRootsResolver,
             classpathIndexes,
         ).also {
-            it.registerIndexedClasspathRoots(rootsIndex.indexedRoots.map { it.file }.asIterable())
+            it.registerIndexedClasspathRoots(rootsIndex.indexedRoots.map(rootRegistry::virtualFile).asIterable())
             javaFileManager.initialize(
                 rootsIndex,
                 it.packagePartProviders,
-                SingleJavaFileRootsIndex(singleJavaFileRoots),
+                SingleJavaFileRootsIndex(singleJavaFileRoots, rootRegistry),
                 configuration.usePsiClassFilesReading,
                 javaModuleFinder,
                 perfManager,
@@ -716,10 +721,11 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             if (unindexedRoots.isEmpty()) return
 
             val newIndex = classpathIndexes.addRoots(unindexedRoots)
+            val rootRegistry = classpathIndexes.roots
             newIndex.indexedRoots.forEach {
-                projectEnvironment.addSourcesToClasspath(it.file)
+                projectEnvironment.addSourcesToClasspath(rootRegistry.virtualFile(it))
             }
-            registerIndexedClasspathRoots(newIndex.indexedRoots.map { it.file }.asIterable())
+            registerIndexedClasspathRoots(newIndex.indexedRoots.map(rootRegistry::virtualFile).asIterable())
 
             currentRoots.addAll(newRoots)
             for (packagePartProvider in packagePartProviders) {

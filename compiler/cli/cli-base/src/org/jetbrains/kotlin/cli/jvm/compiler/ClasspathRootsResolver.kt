@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntry
 import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntryFactory
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
@@ -59,8 +60,9 @@ import kotlin.LazyThreadSafetyMode.NONE
  *  classpath index is built from the roots computed here, so the lookup fails if it runs while the roots are computed.
  * @param outputDirectory The identity of the output directory, which is a root of the compiled source module if it is also on the
  *  classpath or module path.
- * @param rootEntries The entries through which `module-info` files and manifests of the roots are read; the modules themselves keep
- *  the [VirtualFile]s of their roots and descriptors.
+ * @param rootRegistry Where the roots computed here are registered.
+ * @param rootEntries The entries through which `module-info` files and manifests of the roots are read; the explicit modules keep the
+ *  [VirtualFile]s of their descriptors.
  */
 class ClasspathRootsResolver(
     private val configuration: CompilerConfiguration,
@@ -72,7 +74,8 @@ class ClasspathRootsResolver(
     private val findClassOnClasspath: ClassIdToJavaClass,
     private val jdkRelease: Int?,
     hasKotlinSources: Boolean,
-    private val rootEntries: JvmRootEntryFactory = JvmRootEntryFactory.VFS,
+    private val rootRegistry: JavaRootRegistry,
+    private val rootEntries: JvmRootEntryFactory = rootRegistry.vfsEntries,
 ) {
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
@@ -141,7 +144,7 @@ class ClasspathRootsResolver(
             if (modularRoot != null) {
                 modules += modularRoot
             } else {
-                result += JavaRoot(root, JavaRoot.RootType.SOURCE, packagePrefix?.let { prefix ->
+                result += rootRegistry.javaRoot(root, JavaRoot.RootType.SOURCE, packagePrefix?.let { prefix ->
                     if (isValidJavaFqName(prefix)) FqName(prefix)
                     else null.also {
                         reportWarning("Invalid package prefix name is ignored: $prefix")
@@ -151,7 +154,7 @@ class ClasspathRootsResolver(
         }
 
         for (root in jvmClasspathRoots) {
-            result += JavaRoot(root, JavaRoot.RootType.BINARY)
+            result += rootRegistry.javaRoot(root, JavaRoot.RootType.BINARY)
         }
 
         val outputDirectoryAddedAsPartOfModule =
@@ -172,7 +175,7 @@ class ClasspathRootsResolver(
         } else {
             //TODO: see also `addJvmSdkRoots` usages, some refactoring is required with moving such logic into one place
             javaModuleFinder.nonModuleRoot?.let { nonModuleRoot ->
-                result += JavaRoot(nonModuleRoot.file, JavaRoot.RootType.BINARY_SIG, id = nonModuleRoot.id)
+                result += JavaRoot(nonModuleRoot.id, JavaRoot.RootType.BINARY_SIG)
             }
         }
 
@@ -182,10 +185,10 @@ class ClasspathRootsResolver(
 
     private fun isSingleJavaFileRoot(root: JavaRoot): Boolean =
         root.type == JavaRoot.RootType.SOURCE &&
-                root.file.let { file -> !file.isDirectory && file.extension == JavaFileType.DEFAULT_EXTENSION }
+                rootRegistry.virtualFile(root).let { file -> !file.isDirectory && file.extension == JavaFileType.DEFAULT_EXTENSION }
 
     private fun findSourceModuleInfo(root: VirtualFile): Pair<VirtualFile, JavaModuleInfo>? {
-        val javaRoot = JavaRoot(root, JavaRoot.RootType.SOURCE)
+        val javaRoot = rootRegistry.javaRoot(root, JavaRoot.RootType.SOURCE)
         val rootEntry = rootEntries.createRootEntry(javaRoot)
         val moduleInfoEntry =
             when {
@@ -219,17 +222,17 @@ class ClasspathRootsResolver(
 
     private fun modularSourceRoot(root: VirtualFile, outputDirectoryRoot: VirtualFile?): JavaModule.Explicit? {
         val [moduleInfoFile, moduleInfo] = findSourceModuleInfo(root) ?: return null
-        val sourceRoot = JavaModule.Root(root, isBinary = false)
+        val sourceRoot = rootRegistry.moduleRoot(root, isBinary = false)
         val roots =
             if (outputDirectoryRoot != null)
-                listOf(sourceRoot, JavaModule.Root(outputDirectoryRoot, isBinary = true))
+                listOf(sourceRoot, rootRegistry.moduleRoot(outputDirectoryRoot, isBinary = true))
             else listOf(sourceRoot)
         return JavaModule.Explicit(moduleInfo, roots, moduleInfoFile)
     }
 
     private fun modularBinaryRoot(modulePathRoot: ModulePathRoot): JavaModule? {
         val [root, contentRoot, isJar] = modulePathRoot
-        val javaRoot = JavaRoot(root, JavaRoot.RootType.BINARY)
+        val javaRoot = rootRegistry.javaRoot(root, JavaRoot.RootType.BINARY)
         val rootEntry = rootEntries.createRootEntry(javaRoot)
         val metaInf by lazy(NONE) { rootEntry.findChild(META_INF) }
         val manifest = lazy(NONE) { readManifestAttributes(metaInf, javaRoot) }
@@ -250,12 +253,12 @@ class ClasspathRootsResolver(
             } catch (_: IOException) {
                 null
             } ?: return null
-            return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
+            return JavaModule.Explicit(moduleInfo, listOf(rootRegistry.moduleRoot(root, isBinary = true)), moduleInfoFile)
         }
 
         // Only .jar files can be automatic modules
         if (isJar) {
-            val moduleRoot = listOf(JavaModule.Root(root, isBinary = true))
+            val moduleRoot = listOf(rootRegistry.moduleRoot(root, isBinary = true))
 
             val automaticModuleName = manifest.value?.getValue(AUTOMATIC_MODULE_NAME)
             if (automaticModuleName != null) {
@@ -312,7 +315,7 @@ class ClasspathRootsResolver(
                 javaModuleFinder.addUserModule(module)
             } else if (module.moduleRoots != existing.moduleRoots) {
                 fun JavaModule.getRootFile() =
-                    moduleRoots.firstOrNull()?.file?.let { VfsUtilCore.getVirtualFileForJar(it) ?: it }
+                    moduleRoots.firstOrNull()?.let(rootRegistry::virtualFile)?.let { VfsUtilCore.getVirtualFileForJar(it) ?: it }
 
                 val thisFile = module.getRootFile()
                 val existingFile = existing.getRootFile()

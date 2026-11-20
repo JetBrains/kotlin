@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm
 
+import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmClasspathIndexes
 import org.jetbrains.kotlin.cli.jvm.index.VfsClassFileHandle
 import org.jetbrains.kotlin.cli.jvm.index.nio.PathClassFileHandle
@@ -66,7 +67,7 @@ class NioRootEntriesSwitchTest : JvmDependenciesIndexContractTestBase() {
         val indexes = JvmClasspathIndexes(configuration(nio = true, fastJar = true))
         assertNotSame(indexes.javaFileManagerIndex, indexes.classFinderIndex)
 
-        val vfsIndex = indexes.addRoots(listOf(out.dirRoot()))
+        val vfsIndex = indexes.addRoots(listOf(indexes.roots.javaRoot(out.asLocalVirtualFile(), JavaRoot.RootType.BINARY)))
         assertInstanceOf(VfsClassFileHandle::class.java, vfsIndex.findClassFiles(classId("p/A"), CLASS).single())
         assertInstanceOf(
             VfsClassFileHandle::class.java, indexes.javaFileManagerIndex.findClassFiles(classId("p/A"), CLASS).single()

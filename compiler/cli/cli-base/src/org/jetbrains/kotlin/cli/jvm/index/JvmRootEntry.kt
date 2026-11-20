@@ -43,9 +43,4 @@ interface JvmRootEntry {
 /** Creates the top [JvmRootEntry] of each [JavaRoot] of an index, and so selects the file-system backend of the root. */
 fun interface JvmRootEntryFactory {
     fun createRootEntry(root: JavaRoot): JvmRootEntry
-
-    companion object {
-        /** Entries over [JavaRoot.file]. */
-        val VFS: JvmRootEntryFactory = JvmRootEntryFactory { VfsRootEntry(it.file) }
-    }
 }

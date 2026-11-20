@@ -22,7 +22,7 @@ import java.io.Closeable
  *
  * [javaFileManagerIndex] serves the PSI Java view and always has VFS entries. With NIO entries enabled, [classFinderIndex] is a separate
  * index over the same roots whose roots get NIO entries where available ([NioRootEntryFactory]); otherwise it is [javaFileManagerIndex].
- * The archives of the NIO entries belong to [jarPool], which [close] releases; the owner closes the indexes when its environment is
+ * The roots of both are registered in [roots]. The archives of the NIO entries belong to [jarPool], which [close] releases; the owner closes the indexes when its environment is
  * disposed. Handles stay usable afterwards: a later read opens its archive again.
  */
 class JvmClasspathIndexes(
@@ -37,6 +37,9 @@ class JvmClasspathIndexes(
         configuration.languageVersionSettings,
     )
 
+    /** What the roots of the indexes point to; the code creating a root registers it here. */
+    val roots = JavaRootRegistry()
+
     val javaFileManagerIndex = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true)
 
     val classFinderIndex: JvmDependenciesDynamicCompoundIndex =
@@ -45,17 +48,17 @@ class JvmClasspathIndexes(
     /** The archives of the NIO entries; `null` without NIO entries or if mapped archives cannot be released on this JVM. */
     val jarPool: JarFilePool? = if (useNioEntries) JarFilePool.createIfUnmappingPossible() else null
 
-    private val nioRootEntryFactory = NioRootEntryFactory(jarPool)
+    private val nioRootEntryFactory = NioRootEntryFactory(jarPool, roots)
 
     /** The entries of the roots of [classFinderIndex], also for reading root content outside the index (e.g. module descriptors). */
-    val rootEntryFactory: JvmRootEntryFactory = if (useNioEntries) nioRootEntryFactory else JvmRootEntryFactory.VFS
+    val rootEntryFactory: JvmRootEntryFactory = if (useNioEntries) nioRootEntryFactory else roots.vfsEntries
 
     /** The `.kotlin_module` mappings of the roots, read through [rootEntryFactory]. */
     val moduleMappings = JvmModuleMappings(languageVersionSettings, rootEntryFactory)
 
     /** Adds [roots] to both indexes and returns the index over them with VFS entries. */
     fun addRoots(roots: List<JavaRoot>): JvmDependenciesIndex {
-        val index = JvmDependenciesIndexImpl(roots)
+        val index = JvmDependenciesIndexImpl(roots, this.roots.vfsEntries)
         javaFileManagerIndex.addIndex(index)
         if (classFinderIndex !== javaFileManagerIndex) classFinderIndex.addIndex(JvmDependenciesIndexImpl(roots, nioRootEntryFactory))
         return index

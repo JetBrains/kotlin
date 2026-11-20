@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCliJavaFileManagerImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
@@ -232,10 +233,11 @@ class KotlinCliJavaFileManagerTest {
         val coreJavaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
         val root = StandardFileSystems.local().findFileByPath(javaFilesDir.path)!!
+        val rootRegistry = JavaRootRegistry()
         coreJavaFileManager.initialize(
-            JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))),
+            JvmDependenciesIndexImpl(listOf(rootRegistry.javaRoot(root, JavaRoot.RootType.SOURCE)), rootRegistry.vfsEntries),
             emptyList(),
-            SingleJavaFileRootsIndex(emptyList()),
+            SingleJavaFileRootsIndex(emptyList(), rootRegistry),
             usePsiClassFilesReading = false,
             javaModuleFinder = object : JavaModuleFinder {
                 // Should not matter for those tests

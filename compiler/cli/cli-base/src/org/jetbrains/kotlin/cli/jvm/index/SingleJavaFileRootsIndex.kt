@@ -33,9 +33,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 
-class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
+/** @param rootFiles Where the files of [roots] are registered. */
+class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>, private val rootFiles: JavaRootRegistry) {
     init {
-        for ((file) in roots) {
+        for (root in roots) {
+            val file = rootFiles.virtualFile(root)
             assert(!file.isDirectory) { "Should not be a directory: $file" }
         }
     }
@@ -77,8 +79,9 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
 
     private fun indexNextRoot() {
         val root = roots[nextRootIndex++]
-        for (classId in JavaSourceClassIdReader(root.file).readClassIds()) {
-            classes.putIfAbsent(classId, VfsClassFileHandle(root.file, root))
+        val file = rootFiles.virtualFile(root)
+        for (classId in JavaSourceClassIdReader(file).readClassIds()) {
+            classes.putIfAbsent(classId, VfsClassFileHandle(file, root))
             classesByPackage.getOrPut(classId.packageFqName) { SmartList() }.add(classId)
             var pkg = classId.packageFqName
             while (!pkg.isRoot && allPackages.add(pkg)) {

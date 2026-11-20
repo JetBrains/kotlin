@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainer
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -176,13 +177,15 @@ internal class StandaloneAnalysisAPISessionBuilderImpl(
         )
 
         val sourceKtFiles = projectStructureProvider.allSourceFiles.filterIsInstance<KtFile>()
+        val rootRegistry = JavaRootRegistry()
         val libraryRoots = StandaloneProjectFactory.getAllBinaryRoots(
             projectStructureProvider.allModules,
             kotlinCoreProjectEnvironment.environment,
+            rootRegistry,
         )
 
-        val createPackagePartProvider = StandaloneProjectFactory.createPackagePartsProvider(libraryRoots)
-        registerProjectServices(sourceKtFiles, libraryRoots.map { it.file }, createPackagePartProvider)
+        val createPackagePartProvider = StandaloneProjectFactory.createPackagePartsProvider(libraryRoots, rootRegistry)
+        registerProjectServices(sourceKtFiles, libraryRoots.map(rootRegistry::virtualFile), createPackagePartProvider)
 
         val allModules = projectStructureProvider.allModules
         return StandaloneAnalysisAPISessionImpl(kotlinCoreProjectEnvironment, allModules) {

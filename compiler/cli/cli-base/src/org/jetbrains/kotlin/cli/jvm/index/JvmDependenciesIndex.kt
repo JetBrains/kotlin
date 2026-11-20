@@ -114,15 +114,17 @@ fun interface ClassFileFilter {
 }
 
 /**
- * @param id The identity of this root for class-file attribution and Java module membership. It is derived from [file] unless
- *  several roots share one virtual file path, as the `ct.sym` roots of `-Xjdk-release` do, in which case the creator passes a unique
- *  synthetic id.
+ * A classpath root: its identity, type and package prefix. What the root points to is registered in the [JavaRootRegistry] of the
+ * environment by the code creating the root.
+ *
+ * @param id The identity of this root for class-file attribution and Java module membership. It is derived from the virtual file of
+ *  the root unless several roots share one virtual file path, as the `ct.sym` roots of `-Xjdk-release` do, in which case the creator
+ *  passes a unique synthetic id.
  */
 data class JavaRoot(
-    val file: VirtualFile,
+    val id: JvmClasspathRootId,
     val type: RootType,
     val prefixFqName: FqName? = null,
-    val id: JvmClasspathRootId = file.asJvmClasspathRootId(),
 ) {
     /**
      * The library this root belongs to, as a local path: the `.jar` file, the directory, the JDK home for a `jrt://` root, or

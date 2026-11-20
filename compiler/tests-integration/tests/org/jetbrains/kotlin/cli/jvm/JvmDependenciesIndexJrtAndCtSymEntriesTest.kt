@@ -36,9 +36,9 @@ class JvmDependenciesIndexJrtAndCtSymEntriesTest : JvmDependenciesIndexContractT
     @AfterEach
     fun closePool() = pool.close()
 
-    /** A root whose entry is [entry]; the VFS file of the root only serves as its identity. */
+    /** A root whose entry is [entry]; the id of the root only serves as its identity. */
     private fun rootWithEntry(id: String, type: JavaRoot.RootType, entry: JvmRootEntry): Pair<JavaRoot, JvmRootEntry> =
-        JavaRoot(dir("vfs-${id.hashCode()}").asLocalVirtualFile(), type, id = JvmClasspathRootId(id)) to entry
+        JavaRoot(JvmClasspathRootId(id), type) to entry
 
     private fun index(vararg roots: Pair<JavaRoot, JvmRootEntry>): JvmDependenciesIndexImpl {
         val entries = roots.toMap()

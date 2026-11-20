@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
@@ -240,13 +241,15 @@ object StandaloneProjectFactory {
     ) {
         val project = environment.project
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
-        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, null)
+        val rootRegistry = JavaRootRegistry()
+        val javaModuleFinder =
+            CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, null, rootRegistry)
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
-        val allSourceFileRoots = sourceFiles.map { JavaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
+        val allSourceFileRoots = sourceFiles.map { rootRegistry.javaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
         val jdkRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
 
-        val libraryRoots = getAllBinaryRoots(modules, environment.environment)
+        val libraryRoots = getAllBinaryRoots(modules, environment.environment, rootRegistry)
 
         val rootsWithSingleJavaFileRoots = buildList {
             addAll(libraryRoots)
@@ -255,7 +258,10 @@ object StandaloneProjectFactory {
         }
 
         val [roots, singleJavaFileRoots] =
-            rootsWithSingleJavaFileRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+            rootsWithSingleJavaFileRoots.partition { root ->
+                val file = rootRegistry.virtualFile(root)
+                file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION
+            }
 
         val corePackageIndex = project.getService(PackageIndex::class.java) as CorePackageIndex
 
@@ -265,9 +271,10 @@ object StandaloneProjectFactory {
          * with a scope. See [org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex.findClassFiles] for a more detailed explanation.
          */
         val rootsIndex = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = false).apply {
-            addIndex(KotlinStandaloneJvmDependenciesIndex(roots))
+            addIndex(KotlinStandaloneJvmDependenciesIndex(roots, rootRegistry.vfsEntries))
             indexedRoots.forEach { javaRoot ->
-                if (javaRoot.file.isDirectory) {
+                val rootFile = rootRegistry.virtualFile(javaRoot)
+                if (rootFile.isDirectory) {
                     if (javaRoot.type == JavaRoot.RootType.SOURCE) {
                         // NB: [JavaCoreProjectEnvironment#addSourcesToClasspath] calls:
                         //   1) [CoreJavaFileManager#addToClasspath], which is used to look up Java roots;
@@ -277,10 +284,10 @@ object StandaloneProjectFactory {
                         //   1) create [PsiPackage] as a package resolution result; and
                         //   2) find directories by package name.
                         // With both supports, annotations defined in package-info.java can be properly propagated.
-                        javaFileManager.addToClasspath(javaRoot.file)
-                        corePackageIndex.addToClasspath(javaRoot.file)
+                        javaFileManager.addToClasspath(rootFile)
+                        corePackageIndex.addToClasspath(rootFile)
                     } else {
-                        environment.addSourcesToClasspath(javaRoot.file)
+                        environment.addSourcesToClasspath(rootFile)
                     }
                 }
             }
@@ -289,10 +296,10 @@ object StandaloneProjectFactory {
         javaFileManager.initialize(
             rootsIndex,
             listOf(
-                createPackagePartsProvider(libraryRoots + jdkRoots, languageVersionSettings)
+                createPackagePartsProvider(libraryRoots + jdkRoots, rootRegistry, languageVersionSettings)
                     .invoke(ProjectScope.getLibrariesScope(project))
             ),
-            SingleJavaFileRootsIndex(singleJavaFileRoots),
+            SingleJavaFileRootsIndex(singleJavaFileRoots, rootRegistry),
             usePsiClassFilesReading = true,
             javaModuleFinder = javaModuleFinder,
             perfManager = null, // Don't care about pure compiler performance in Analysis API
@@ -315,6 +322,7 @@ object StandaloneProjectFactory {
             emptyList(),
             javaModuleFinder.systemModules.toList(),
             classpathFinder = fileFinderFactory.create(JvmClasspath.ProjectLibraries()),
+            rootFiles = rootRegistry,
         )
         project.registerService(
             KotlinJavaModuleAccessibilityChecker::class.java,
@@ -331,11 +339,13 @@ object StandaloneProjectFactory {
         jdkHome: Path?,
     ): List<Path> {
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
-        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, null)
+        val rootRegistry = JavaRootRegistry()
+        val javaModuleFinder =
+            CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, null, rootRegistry)
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val javaRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
-        return javaRoots.map { getBinaryPath(it.file) }
+        return javaRoots.map { getBinaryPath(rootRegistry.virtualFile(it)) }
     }
 
     /**
@@ -384,12 +394,17 @@ object StandaloneProjectFactory {
         }
     }
 
-    fun getAllBinaryRoots(modules: List<KaModule>, environment: CoreApplicationEnvironment): List<JavaRoot> {
+    /** The binary roots of [modules] and their dependencies, registered in [rootRegistry]. */
+    fun getAllBinaryRoots(
+        modules: List<KaModule>,
+        environment: CoreApplicationEnvironment,
+        rootRegistry: JavaRootRegistry,
+    ): List<JavaRoot> {
         return buildList {
             for (module in withAllTransitiveDependencies(modules)) {
                 val roots = when (module) {
-                    is KaLibraryModule -> module.getJavaRoots(environment)
-                    is KaLibrarySourceModule -> module.binaryLibrary.getJavaRoots(environment)
+                    is KaLibraryModule -> module.getJavaRoots(environment, rootRegistry)
+                    is KaLibrarySourceModule -> module.binaryLibrary.getJavaRoots(environment, rootRegistry)
                     else -> emptyList()
                 }
 
@@ -486,10 +501,10 @@ object StandaloneProjectFactory {
         }
     }
 
-    private fun KaLibraryModule.getJavaRoots(environment: CoreApplicationEnvironment): List<JavaRoot> {
+    private fun KaLibraryModule.getJavaRoots(environment: CoreApplicationEnvironment, rootRegistry: JavaRootRegistry): List<JavaRoot> {
         val binaryRootsAsVirtualFiles = getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
         return binaryRootsAsVirtualFiles.map { root ->
-            JavaRoot(root, JavaRoot.RootType.BINARY)
+            rootRegistry.javaRoot(root, JavaRoot.RootType.BINARY)
         }
     }
 
@@ -532,11 +547,13 @@ object StandaloneProjectFactory {
         }
     }
 
+    /** @param rootRegistry Where [libraryRoots] are registered. */
     fun createPackagePartsProvider(
         libraryRoots: List<JavaRoot>,
+        rootRegistry: JavaRootRegistry,
         languageVersionSettings: LanguageVersionSettings = latestLanguageVersionSettings,
     ): (GlobalSearchScope) -> JvmPackagePartProvider = { scope ->
-        JvmPackagePartProvider(languageVersionSettings) { it in scope }.apply {
+        JvmPackagePartProvider(languageVersionSettings, rootRegistry) { it in scope }.apply {
             addRoots(libraryRoots, createStubConfigurationForReporting())
         }
     }

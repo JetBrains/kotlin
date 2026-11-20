@@ -35,7 +35,7 @@ import kotlin.concurrent.withLock
  */
 abstract class JvmDependenciesIndexBase(
     protected val roots: List<JavaRoot>,
-    private val rootEntryFactory: JvmRootEntryFactory = JvmRootEntryFactory.VFS,
+    private val rootEntryFactory: JvmRootEntryFactory,
 ) : JvmDependenciesIndex {
     protected val lock = ReentrantLock()
 

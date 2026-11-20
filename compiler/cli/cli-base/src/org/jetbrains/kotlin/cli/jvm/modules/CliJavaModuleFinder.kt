@@ -24,6 +24,7 @@ import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCliJavaFileManagerImpl
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
@@ -37,12 +38,14 @@ import java.io.File
  * @param javaFileManager Resolves the annotation classes of a `module-info` anywhere on the classpath, lazily: the
  *  classpath index is built after the modules are, so the lookup must not run while a module is being read. `null` leaves
  *  the annotation classes unresolved.
+ * @param rootRegistry Where the roots of the system modules are registered.
  */
 class CliJavaModuleFinder(
     private val jdkHome: File?,
     private val configuration: CompilerConfiguration,
     private val javaFileManager: KotlinCliJavaFileManagerImpl?,
-    private val jdkRelease: Int?
+    private val jdkRelease: Int?,
+    private val rootRegistry: JavaRootRegistry,
 ) : JavaModuleFinder {
 
     private val jrtFileSystemRoot = jdkHome?.path?.let { path ->
@@ -133,7 +136,7 @@ class CliJavaModuleFinder(
             JavaModule.Explicit(
                 moduleInfo,
                 when {
-                    useLastJdkApi -> listOf(JavaModule.Root(moduleRoot, isBinary = true, isBinarySignature = useSig))
+                    useLastJdkApi -> listOf(rootRegistry.moduleRoot(moduleRoot, isBinary = true, isBinarySignature = useSig))
                     useSig -> createModuleFromSignature(moduleInfo)
                     else -> error("Can't find ${moduleRoot.path} module")
                 },
@@ -177,7 +180,7 @@ class CliJavaModuleFinder(
         // Every ct.sym module root reports the same path (`.../ct.sym!//`), so their identity cannot come from the path.
         val rootId = JvmClasspathRootId("${ctSymFile.path}${URLUtil.JAR_SEPARATOR}$jdkRelease/${moduleInfo.moduleName}")
 
-        return JavaModule.Root(
+        return rootRegistry.moduleRoot(
             CtSymDirectoryContainer(
                 ctSymRootFolder ?: ctSymFile,
                 moduleFolders,

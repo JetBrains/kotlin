@@ -21,6 +21,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.cli.jvm.index.JvmIndexKotlinClassFinder
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
@@ -34,12 +35,14 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 /**
  * @param classpathFinder Finds the file declaring a class anywhere on the classpath, to tell which module owns the class.
+ * @param rootFiles Where the roots of the modules are registered, to tell which module owns a virtual file.
  */
 class CliJavaModuleResolver(
     private val moduleGraph: JavaModuleGraph,
     private val userModules: List<JavaModule>,
     private val systemModules: List<JavaModule.Explicit>,
     private val classpathFinder: JvmIndexKotlinClassFinder,
+    private val rootFiles: JavaRootRegistry,
 ) : JavaModuleResolver {
     init {
         assert(userModules.count(JavaModule::isSourceModule) <= 1) {
@@ -52,7 +55,7 @@ class CliJavaModuleResolver(
             for (root in module.moduleRoots) {
                 val systemModuleName = systemModuleNames[root.id] ?: continue
                 check(systemModuleName == module.name) {
-                    "The classpath root ${root.file} belongs to the system module $systemModuleName and the user module ${module.name}"
+                    "The classpath root ${root.id.id} belongs to the system module $systemModuleName and the user module ${module.name}"
                 }
             }
         }
@@ -81,7 +84,7 @@ class CliJavaModuleResolver(
     }
 
     private operator fun JavaModule.contains(file: VirtualFile): Boolean =
-        moduleRoots.any { (val root = file, val isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
+        moduleRoots.any { root -> root.isBinary && VfsUtilCore.isAncestor(rootFiles.virtualFile(root), file, false) }
 
     /** The module owning the binary classpath root [rootId], looked up in the user modules first. */
     private fun findJavaModule(rootId: JvmClasspathRootId): JavaModule? =

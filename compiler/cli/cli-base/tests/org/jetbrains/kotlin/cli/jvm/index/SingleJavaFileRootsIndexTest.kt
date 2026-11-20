@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.cli.jvm.index
 
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -29,8 +31,18 @@ class SingleJavaFileRootsIndexTest {
         }
     }
 
+    private val rootRegistry = JavaRootRegistry()
+
+    // Files of the same name have the same path, so each root gets an id of its own.
     private fun javaRoot(name: String, content: String): JavaRoot =
-        JavaRoot(TestJavaFile(name, content), JavaRoot.RootType.SOURCE)
+        rootRegistry.javaRoot(
+            TestJavaFile(name, content), JavaRoot.RootType.SOURCE, id = JvmClasspathRootId("/${rootRegistryIds++}/$name"),
+        )
+
+    private var rootRegistryIds = 0
+
+    private val JavaRoot.file: VirtualFile
+        get() = rootRegistry.virtualFile(this)
 
     private val JavaRoot.reads: Int
         get() = (file as TestJavaFile).reads
@@ -86,7 +98,7 @@ class SingleJavaFileRootsIndexTest {
 
     @Test
     fun `empty roots list`() {
-        val index = SingleJavaFileRootsIndex(emptyList())
+        val index = SingleJavaFileRootsIndex(emptyList(), rootRegistry)
 
         assertNull(index.findJavaSourceClass(classA))
         assertFalse(index.hasPackage(FqName("com.example")))
@@ -97,7 +109,7 @@ class SingleJavaFileRootsIndexTest {
 
     @Test
     fun `findJavaSourceClass finds top-level classes and package-info`() {
-        val index = SingleJavaFileRootsIndex(allRoots)
+        val index = SingleJavaFileRootsIndex(allRoots, rootRegistry)
 
         assertSame(rootFirst.file, index.findJavaSourceClass(classA))
         assertSame(rootFirst.file, index.findJavaSourceClass(classExtra))
@@ -110,7 +122,7 @@ class SingleJavaFileRootsIndexTest {
 
     @Test
     fun `findJavaSourceClass prefers the first root declaring a class`() {
-        val index = SingleJavaFileRootsIndex(listOf(rootDuplicateA, rootFirst))
+        val index = SingleJavaFileRootsIndex(listOf(rootDuplicateA, rootFirst), rootRegistry)
 
         assertSame(rootDuplicateA.file, index.findJavaSourceClass(classA))
         assertSame(rootFirst.file, index.findJavaSourceClass(classExtra))
@@ -119,7 +131,7 @@ class SingleJavaFileRootsIndexTest {
 
     @Test
     fun `findJavaSourceClass returns null for nested and unknown classes`() {
-        val index = SingleJavaFileRootsIndex(allRoots)
+        val index = SingleJavaFileRootsIndex(allRoots, rootRegistry)
 
         assertNull(index.findJavaSourceClass(classA.createNestedClassId(Name.identifier("Nested"))))
         assertNull(index.findJavaSourceClass(ClassId(FqName("com.example.foo.bar"), Name.identifier("Missing"))))
@@ -128,7 +140,7 @@ class SingleJavaFileRootsIndexTest {
 
     @Test
     fun `hasPackage matches declared packages and their parents`() {
-        val index = SingleJavaFileRootsIndex(allRoots)
+        val index = SingleJavaFileRootsIndex(allRoots, rootRegistry)
 
         assertTrue(index.hasPackage(FqName("com")))
         assertTrue(index.hasPackage(FqName("com.example")))
@@ -147,7 +159,7 @@ class SingleJavaFileRootsIndexTest {
 
     @Test
     fun `findJavaSourceClasses returns classes of exactly that package in root order`() {
-        val index = SingleJavaFileRootsIndex(allRoots)
+        val index = SingleJavaFileRootsIndex(allRoots, rootRegistry)
 
         assertEquals(listOf(classA, classExtra, classA), index.findJavaSourceClasses(FqName("com.example.foo.bar")))
         assertEquals(listOf(interfaceI, enumE, recordR), index.findJavaSourceClasses(FqName("com.example.foo.baz")))
@@ -159,7 +171,7 @@ class SingleJavaFileRootsIndexTest {
 
     @Test
     fun `roots are lexed lazily and at most once`() {
-        val index = SingleJavaFileRootsIndex(allRoots)
+        val index = SingleJavaFileRootsIndex(allRoots, rootRegistry)
         fun reads() = allRoots.map { it.reads }
 
         assertEquals(listOf(0, 0, 0, 0, 0), reads())

@@ -183,7 +183,8 @@ class KotlinCoreEnvironment private constructor(
             jdkHome,
             configuration,
             javaFileManager,
-            releaseTarget
+            releaseTarget,
+            classpathIndexes.roots,
         )
 
         val outputDirectory =
@@ -202,6 +203,7 @@ class KotlinCoreEnvironment private constructor(
             javaFileManager::findClassOnClasspath,
             releaseTarget,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
+            rootRegistry = classpathIndexes.roots,
             rootEntries = classpathIndexes.rootEntryFactory,
         )
 
@@ -216,7 +218,7 @@ class KotlinCoreEnvironment private constructor(
         javaFileManager.initialize(
             classpathIndexes.javaFileManagerIndex,
             packagePartProviders,
-            SingleJavaFileRootsIndex(singleJavaFileRoots),
+            SingleJavaFileRootsIndex(singleJavaFileRoots, classpathIndexes.roots),
             configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING),
             javaModuleFinder,
             perfManager,
@@ -229,6 +231,7 @@ class KotlinCoreEnvironment private constructor(
             CliJavaModuleResolver(
                 classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(),
                 fileFinderFactory.create(JvmClasspath.ProjectLibraries()),
+                classpathIndexes.roots,
             )
         )
 
@@ -261,11 +264,11 @@ class KotlinCoreEnvironment private constructor(
      * system; see `VfsBasedProjectEnvironment.registerIndexedClasspathRoots`.
      */
     val indexedClasspathRoots: List<VirtualFile>
-        get() = classpathIndexes.javaFileManagerIndex.indexedRoots.map { it.file }.toList()
+        get() = classpathIndexes.javaFileManagerIndex.indexedRoots.map(classpathIndexes.roots::virtualFile).toList()
 
     private fun updateClasspathFromRootsIndex(index: JvmDependenciesIndex) {
         index.indexedRoots.forEach {
-            projectEnvironment.addSourcesToClasspath(it.file)
+            projectEnvironment.addSourcesToClasspath(classpathIndexes.roots.virtualFile(it))
         }
     }
 
@@ -289,7 +292,7 @@ class KotlinCoreEnvironment private constructor(
 
         configuration.addAll(CLIConfigurationKeys.CONTENT_ROOTS, contentRoots - configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
 
-        return newIndex.indexedRoots.map { (file) ->
+        return newIndex.indexedRoots.map(classpathIndexes.roots::virtualFile).map { file ->
             VfsUtilCore.virtualToIoFile(VfsUtilCore.getVirtualFileForJar(file) ?: file)
         }.toList()
     }

@@ -18,7 +18,7 @@ import kotlin.concurrent.withLock
  */
 class JvmDependenciesIndexImpl(
     roots: List<JavaRoot>,
-    rootEntryFactory: JvmRootEntryFactory = JvmRootEntryFactory.VFS,
+    rootEntryFactory: JvmRootEntryFactory,
 ) : JvmDependenciesIndexBase(roots, rootEntryFactory) {
     // holds the request and the result last time we searched for class
     // helps improve several scenarios, LazyJavaResolverContext.findClassInJava being the most important

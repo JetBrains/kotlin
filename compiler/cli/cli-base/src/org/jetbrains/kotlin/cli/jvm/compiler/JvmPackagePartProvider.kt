@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.JAVA_MODULE_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmClasspathRootMatcher
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntryFactory
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
@@ -38,14 +39,14 @@ class JvmPackagePartProvider(
     private val moduleMappings: JvmModuleMappings,
     private val acceptsRoot: (JavaRoot) -> Boolean,
 ) : JvmPackagePartProviderBase<JvmClasspathRootId>() {
-    constructor(languageVersionSettings: LanguageVersionSettings, acceptsRoot: (VirtualFile) -> Boolean) :
-            this(JvmModuleMappings(languageVersionSettings), { root: JavaRoot -> acceptsRoot(root.file) })
+    constructor(languageVersionSettings: LanguageVersionSettings, rootFiles: JavaRootRegistry, acceptsRoot: (VirtualFile) -> Boolean) :
+            this(JvmModuleMappings(languageVersionSettings, rootFiles.vfsEntries), { root: JavaRoot -> acceptsRoot(rootFiles.virtualFile(root)) })
 
     constructor(moduleMappings: JvmModuleMappings, classpath: JvmClasspath) :
             this(moduleMappings, classpath.rootFilter())
 
-    constructor(languageVersionSettings: LanguageVersionSettings, classpath: JvmClasspath) :
-            this(JvmModuleMappings(languageVersionSettings), classpath)
+    constructor(languageVersionSettings: LanguageVersionSettings, rootEntries: JvmRootEntryFactory, classpath: JvmClasspath) :
+            this(JvmModuleMappings(languageVersionSettings, rootEntries), classpath)
 
     override val deserializationConfiguration: CommonCompilerDeserializationConfiguration
         get() = moduleMappings.deserializationConfiguration
@@ -82,7 +83,7 @@ class JvmPackagePartProvider(
  */
 class JvmModuleMappings(
     languageVersionSettings: LanguageVersionSettings,
-    private val rootEntries: JvmRootEntryFactory = JvmRootEntryFactory.VFS,
+    private val rootEntries: JvmRootEntryFactory,
 ) {
     val deserializationConfiguration: CommonCompilerDeserializationConfiguration =
         CommonCompilerDeserializationConfiguration(languageVersionSettings)

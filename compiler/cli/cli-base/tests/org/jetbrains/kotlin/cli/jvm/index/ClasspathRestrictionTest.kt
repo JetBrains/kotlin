@@ -214,7 +214,7 @@ class ClasspathRestrictionTest {
         for (classpath in classpaths) {
             val filter = JvmClasspathRootFilter(classpath)
             for (root in roots) {
-                val handle = VfsClassFileHandle(root, JavaRoot(root, JavaRoot.RootType.BINARY))
+                val handle = VfsClassFileHandle(root, JavaRoot(root.asJvmClasspathRootId(), JavaRoot.RootType.BINARY))
                 assertEquals(classpath.containsRoot(root), filter.accepts(handle), "$classpath accepting $root")
             }
         }

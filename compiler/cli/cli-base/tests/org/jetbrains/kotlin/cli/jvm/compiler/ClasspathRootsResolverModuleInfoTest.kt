@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntryFactory
 import org.jetbrains.kotlin.cli.jvm.index.nio.NioRootEntryFactory
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
@@ -83,11 +84,12 @@ class ClasspathRootsResolverModuleInfoTest {
             texts += text.toString()
             JavaModuleInfo("m", emptyList(), emptyList(), emptyList())
         }
-        val nioEntries = NioRootEntryFactory(jarPool = null)
+        val rootRegistry = JavaRootRegistry()
+        val nioEntries = NioRootEntryFactory(jarPool = null, rootRegistry)
         val entryRoots = mutableListOf<JavaRoot>()
         val rootEntries = JvmRootEntryFactory { root -> entryRoots += root; nioEntries.createRootEntry(root) }
 
-        val result = configuration.resolver(findClassOnClasspath = { null }, rootEntries = rootEntries)
+        val result = configuration.resolver(findClassOnClasspath = { null }, rootRegistry = rootRegistry, rootEntries = rootEntries)
             .convertClasspathRoots(sourceRoot.asSourceRoots())
 
         assertEquals(listOf("module m { }\n"), texts)
@@ -132,19 +134,21 @@ class ClasspathRootsResolverModuleInfoTest {
     private fun CompilerConfiguration.resolver(
         findClassOnClasspath: ClassIdToJavaClass,
         outputDirectory: JvmClasspathRootId? = null,
-        rootEntries: JvmRootEntryFactory = JvmRootEntryFactory.VFS,
+        rootRegistry: JavaRootRegistry = JavaRootRegistry(),
+        rootEntries: JvmRootEntryFactory = rootRegistry.vfsEntries,
     ): ClasspathRootsResolver {
         val localFileSystem = CoreLocalFileSystem()
         return ClasspathRootsResolver(
             this,
             additionalModules = emptyList(),
             contentRootToVirtualFile = { localFileSystem.findFileByIoFile((it as JvmContentRoot).file) },
-            javaModuleFinder = CliJavaModuleFinder(jdkHome = null, this, javaFileManager = null, jdkRelease = 8),
+            javaModuleFinder = CliJavaModuleFinder(jdkHome = null, this, javaFileManager = null, jdkRelease = 8, rootRegistry),
             requireStdlibModule = false,
             outputDirectory = outputDirectory,
             findClassOnClasspath = findClassOnClasspath,
             jdkRelease = 8,
             hasKotlinSources = true,
+            rootRegistry = rootRegistry,
             rootEntries = rootEntries,
         )
     }

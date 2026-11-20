@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexBase
+import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntryFactory
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -26,7 +27,10 @@ import java.util.EnumSet
  * necessarily operate under a single-module view. Since class virtual files are cached, the performance impact from finding all files
  * instead of only the first is negligible.
  */
-internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : JvmDependenciesIndexBase(roots) {
+internal class KotlinStandaloneJvmDependenciesIndex(
+    roots: List<JavaRoot>,
+    rootEntryFactory: JvmRootEntryFactory,
+) : JvmDependenciesIndexBase(roots, rootEntryFactory) {
     /**
      * Contains a list of virtual files for every class in a package. The [String] key represents each class's relative name, separated by
      * dots (see the section below for more detail).

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.cli.jvm.index.JvmClasspathRootFilter
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
@@ -61,6 +62,9 @@ abstract class JvmDependenciesIndexContractTestBase {
     lateinit var tempDir: Path
 
     private val testRootDisposable: Disposable = Disposer.newDisposable()
+
+    /** Registers the roots the tests create; the indexes and root entry factories below read their files through it. */
+    protected val rootRegistry = JavaRootRegistry()
 
     @BeforeEach
     fun setUpApplication() {
@@ -117,10 +121,10 @@ abstract class JvmDependenciesIndexContractTestBase {
     protected fun Path.pathForVfs(): String = toAbsolutePath().normalize().toString().replace('\\', '/')
 
     protected fun Path.dirRoot(type: JavaRoot.RootType = JavaRoot.RootType.BINARY, prefix: FqName? = null): JavaRoot =
-        JavaRoot(asLocalVirtualFile(), type, prefix)
+        rootRegistry.javaRoot(asLocalVirtualFile(), type, prefix)
 
     protected fun Path.jarRoot(type: JavaRoot.RootType = JavaRoot.RootType.BINARY): JavaRoot =
-        JavaRoot(asJarRootVirtualFile(), type)
+        rootRegistry.javaRoot(asJarRootVirtualFile(), type)
 
     protected companion object {
         val CLASS = JavaFileExtensions(JavaFileExtension.CLASS)
@@ -691,7 +695,7 @@ abstract class AbstractJvmDependenciesIndexContractTest : JvmDependenciesIndexCo
 }
 
 class JvmDependenciesIndexImplContractTest : AbstractJvmDependenciesIndexContractTest() {
-    override fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex = JvmDependenciesIndexImpl(roots)
+    override fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex = JvmDependenciesIndexImpl(roots, rootRegistry.vfsEntries)
 }
 
 /** The same contract holds for a [JvmDependenciesIndexImpl] whose roots have NIO entries ([NioRootEntryFactory]). */
@@ -702,13 +706,13 @@ class JvmDependenciesIndexNioEntriesContractTest : AbstractJvmDependenciesIndexC
     fun closeJarPool() = jarPool.close()
 
     override fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex =
-        JvmDependenciesIndexImpl(roots, NioRootEntryFactory(jarPool))
+        JvmDependenciesIndexImpl(roots, NioRootEntryFactory(jarPool, rootRegistry))
 }
 
 /** The same contract holds for a first-only [JvmDependenciesDynamicCompoundIndex] wrapping a single [JvmDependenciesIndexImpl]. */
 class JvmDependenciesIndexOverDynamicCompoundContractTest : AbstractJvmDependenciesIndexContractTest() {
     override fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex =
-        JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true).apply { addIndex(JvmDependenciesIndexImpl(roots)) }
+        JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true).apply { addIndex(JvmDependenciesIndexImpl(roots, rootRegistry.vfsEntries)) }
 }
 
 /** Behavior specific to [JvmDependenciesDynamicCompoundIndex] composed of several sub-indices. */
@@ -717,11 +721,11 @@ class JvmDependenciesIndexDynamicCompoundContractTest : JvmDependenciesIndexCont
     fun versionIncrementsOnEveryAddIndex() {
         val compound = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true)
         assertEquals(0, compound.version)
-        compound.addIndex(JvmDependenciesIndexImpl(listOf(dir("a").dirRoot())))
+        compound.addIndex(JvmDependenciesIndexImpl(listOf(dir("a").dirRoot()), rootRegistry.vfsEntries))
         assertEquals(1, compound.version)
-        compound.addIndex(JvmDependenciesIndexImpl(emptyList()))
+        compound.addIndex(JvmDependenciesIndexImpl(emptyList(), rootRegistry.vfsEntries))
         assertEquals(2, compound.version)
-        assertEquals(0, JvmDependenciesIndexImpl(emptyList()).version)
+        assertEquals(0, JvmDependenciesIndexImpl(emptyList(), rootRegistry.vfsEntries).version)
         assertEquals(2, CliBinaryClassFileIndex(compound, enableSearchInCtSym = false).classpathVersion)
     }
 
@@ -730,12 +734,12 @@ class JvmDependenciesIndexDynamicCompoundContractTest : JvmDependenciesIndexCont
         val first = dir("first", "p/A.class")
         val second = jar("second.jar", "p/B.class", "q/C.class", content = mapOf("q/q.kotlin_builtins" to byteArrayOf(5)))
         val compound = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true)
-        compound.addIndex(JvmDependenciesIndexImpl(listOf(first.dirRoot())))
+        compound.addIndex(JvmDependenciesIndexImpl(listOf(first.dirRoot()), rootRegistry.vfsEntries))
         assertTrue(compound.findClassFiles(classId("p/B"), CLASS).isEmpty())
         assertFalse(compound.hasPackage(fq("q")))
         assertNull(compound.findBuiltInsFile(fq("q")))
 
-        compound.addIndex(JvmDependenciesIndexImpl(listOf(second.jarRoot())))
+        compound.addIndex(JvmDependenciesIndexImpl(listOf(second.jarRoot()), rootRegistry.vfsEntries))
         assertEquals(JvmClasspathRootId.of(second), compound.findClassFiles(classId("p/B"), CLASS).single().rootId)
         assertTrue(compound.hasPackage(fq("q")))
         assertArrayEquals(byteArrayOf(5), compound.findBuiltInsFile(fq("q"))!!.readBytes())
@@ -764,7 +768,7 @@ class JvmDependenciesIndexDynamicCompoundContractTest : JvmDependenciesIndexCont
         val first = dir("first", "p/A.class")
         val second = dir("second", "p/A.class")
         val compound = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = false)
-        compound.addIndex(JvmDependenciesIndexImpl(listOf(first.dirRoot(), second.dirRoot())))
+        compound.addIndex(JvmDependenciesIndexImpl(listOf(first.dirRoot(), second.dirRoot()), rootRegistry.vfsEntries))
         assertEquals(1, compound.findClassFiles(classId("p/A"), CLASS).size)
     }
 
@@ -775,30 +779,31 @@ class JvmDependenciesIndexDynamicCompoundContractTest : JvmDependenciesIndexCont
         val c = dir("c").dirRoot()
         val compound = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true)
         assertEquals(listOf(a, b), compound.getUnindexedRoots(listOf(a, b)))
-        compound.addIndex(JvmDependenciesIndexImpl(listOf(a)))
-        compound.addIndex(JvmDependenciesIndexImpl(listOf(b)))
+        compound.addIndex(JvmDependenciesIndexImpl(listOf(a), rootRegistry.vfsEntries))
+        compound.addIndex(JvmDependenciesIndexImpl(listOf(b), rootRegistry.vfsEntries))
         assertEquals(listOf(c), compound.getUnindexedRoots(listOf(a, b, c)))
         assertEquals(
-            listOf(JavaRoot(a.file, JavaRoot.RootType.SOURCE)),
-            compound.getUnindexedRoots(listOf(JavaRoot(a.file, JavaRoot.RootType.SOURCE))),
+            listOf(rootRegistry.javaRoot(rootRegistry.virtualFile(a), JavaRoot.RootType.SOURCE)),
+            compound.getUnindexedRoots(listOf(rootRegistry.javaRoot(rootRegistry.virtualFile(a), JavaRoot.RootType.SOURCE))),
             "roots are compared as a whole, including their type"
         )
     }
 
     @Test
-    fun currentBehavior_getUnindexedRootsComparesVirtualFilesNotRootIds() {
+    fun getUnindexedRootsComparesRootIds() {
         val a = dir("a")
         val lib = jar("lib.jar", "p/A.class")
         val indexedDir = a.dirRoot()
         val indexedJar = lib.jarRoot()
         val compound = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true)
-        compound.addIndex(JvmDependenciesIndexImpl(listOf(indexedDir, indexedJar)))
+        compound.addIndex(JvmDependenciesIndexImpl(listOf(indexedDir, indexedJar), rootRegistry.vfsEntries))
 
         val sameDirectoryAgain = a.dirRoot()
         val sameJarAgain = lib.jarRoot()
         assertEquals(indexedDir.id, sameDirectoryAgain.id)
         assertEquals(indexedJar.id, sameJarAgain.id)
-        assertEquals(listOf(sameJarAgain), compound.getUnindexedRoots(listOf(sameDirectoryAgain, sameJarAgain)))
+        // Roots are identities: a root resolved again (e.g. by a classpath update) is indexed already, even with another `VirtualFile`.
+        assertEquals(emptyList<JavaRoot>(), compound.getUnindexedRoots(listOf(sameDirectoryAgain, sameJarAgain)))
     }
 
     @Test
@@ -819,8 +824,8 @@ class JvmDependenciesIndexDynamicCompoundContractTest : JvmDependenciesIndexCont
         val first = dir("first", "p/A.class")
         val second = jar("second.jar", "p/A.class")
         return JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass).apply {
-            addIndex(JvmDependenciesIndexImpl(listOf(first.dirRoot())))
-            addIndex(JvmDependenciesIndexImpl(listOf(second.jarRoot())))
+            addIndex(JvmDependenciesIndexImpl(listOf(first.dirRoot()), rootRegistry.vfsEntries))
+            addIndex(JvmDependenciesIndexImpl(listOf(second.jarRoot()), rootRegistry.vfsEntries))
         }
     }
 }
@@ -859,7 +864,7 @@ class JvmDependenciesIndexRootIdContractTest : JvmDependenciesIndexContractTestB
         assertEquals(JvmClasspathRootId.of(jar), jarFile.asJvmClasspathRootId(), "`!/` is removed")
 
         assertEquals(JvmClasspathRootId.of(tempDir.resolve("lib/x/../classes")), dirFile.asJvmClasspathRootId(), "`..` is normalized")
-        assertEquals(JavaRoot(dirFile, JavaRoot.RootType.BINARY).id, JvmClasspathRootId.of(dir))
-        assertEquals(JavaRoot(jarFile, JavaRoot.RootType.BINARY).id, JvmClasspathRootId.of(jar))
+        assertEquals(rootRegistry.javaRoot(dirFile, JavaRoot.RootType.BINARY).id, JvmClasspathRootId.of(dir))
+        assertEquals(rootRegistry.javaRoot(jarFile, JavaRoot.RootType.BINARY).id, JvmClasspathRootId.of(jar))
     }
 }

@@ -35,7 +35,7 @@ class JvmDependenciesIndexJarEntriesTest : JvmDependenciesIndexContractTestBase(
     @AfterEach
     fun closePool() = pool.close()
 
-    private fun index(vararg roots: JavaRoot) = JvmDependenciesIndexImpl(roots.asList(), NioRootEntryFactory(pool))
+    private fun index(vararg roots: JavaRoot) = JvmDependenciesIndexImpl(roots.asList(), NioRootEntryFactory(pool, rootRegistry))
 
     @Test
     fun readsDeflatedAndStoredEntries() {
@@ -86,7 +86,7 @@ class JvmDependenciesIndexJarEntriesTest : JvmDependenciesIndexContractTestBase(
         val lib = jar("lib.jar", "p/A.class")
         val first = index(lib.jarRoot()).findClassFiles(classId("p/A"), CLASS).single()
         val second = JvmDependenciesIndexImpl(
-            listOf(lib.jarRoot()), NioRootEntryFactory(checkNotNull(JarFilePool.createIfUnmappingPossible()))
+            listOf(lib.jarRoot()), NioRootEntryFactory(checkNotNull(JarFilePool.createIfUnmappingPossible()), rootRegistry)
         ).findClassFiles(classId("p/A"), CLASS).single()
         assertEquals(first, second)
         assertEquals(first.hashCode(), second.hashCode())

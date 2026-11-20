@@ -123,8 +123,8 @@ open class JvmClasspathIndexRootsTest {
         val jdkRoots = roots.drop(4)
         assertTrue(jdkRoots.isNotEmpty(), "the modules of the JDK are expected after the classpath: $roots")
         assertTrue(jdkRoots.all { it.isJrtRoot() && it.type == JavaRoot.RootType.BINARY }, "all JDK roots are jrt BINARY roots: $jdkRoots")
-        assertEquals(jdkRoots.size, jdkRoots.mapTo(HashSet()) { it.file.path }.size, "every JDK module has its own root")
-        val javaBase = jdkRoots.single { it.file.path.endsWith("/modules/java.base") }
+        assertEquals(jdkRoots.size, jdkRoots.mapTo(HashSet()) { it.id.id }.size, "every JDK module has its own root")
+        val javaBase = jdkRoots.single { it.id.id.endsWith("/modules/java.base") }
         val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), CLASS_FILES).single()
         assertEquals(javaBase.id, objectClass.rootId)
         assertBackend(objectClass)
@@ -211,7 +211,7 @@ open class JvmClasspathIndexRootsTest {
         assertEquals(listOf(classes.localPath() to JavaRoot.RootType.BINARY), roots.take(1).map { it.localPath() to it.type })
         val ctSymRoot = roots.drop(1).single()
         assertEquals(JavaRoot.RootType.BINARY_SIG, ctSymRoot.type)
-        assertTrue("ct.sym" in ctSymRoot.file.path, "the release root lies in ct.sym: ${ctSymRoot.file.path}")
+        assertTrue("ct.sym" in ctSymRoot.id.id, "the release root lies in ct.sym: ${ctSymRoot.id.id}")
         assertTrue(roots.none { it.isJrtRoot() }, "no jrt roots with -Xjdk-release: $roots")
 
         val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), SIG_FILES).single()
@@ -238,7 +238,7 @@ open class JvmClasspathIndexRootsTest {
         assertTrue(jdkRoots.size > 1, "several JDK modules are expected: $jdkRoots")
         assertTrue(jdkRoots.all { it.type == JavaRoot.RootType.BINARY_SIG }, "all JDK roots are BINARY_SIG: $jdkRoots")
         assertEquals(jdkRoots.size, jdkRoots.mapTo(HashSet()) { it.id }.size, "every ct.sym root has its own id")
-        assertEquals(1, jdkRoots.mapTo(HashSet()) { it.file.path }.size, "...although they all share one path")
+        assertEquals(1, jdkRoots.mapTo(HashSet()) { it.libraryPath() }.size, "...although they all share one path")
         assertTrue(roots.none { it.isJrtRoot() }, "no jrt roots with -Xjdk-release: $roots")
 
         val objectClass = index.findClassFiles(ClassId.fromString("java/lang/Object"), SIG_FILES).single()
@@ -362,9 +362,9 @@ open class JvmClasspathIndexRootsTest {
         return candidates.firstOrNull { File(it, "jre/lib/rt.jar").isFile }
     }
 
-    private fun JavaRoot.isJrtRoot(): Boolean = file.url.startsWith("jrt://")
+    private fun JavaRoot.isJrtRoot(): Boolean = "!/modules/" in id.id
 
-    private fun JavaRoot.localPath(): String = file.path.removeSuffix("!/")
+    private fun JavaRoot.localPath(): String = id.id
 
     private fun Path.localPath(): String = toFile().absolutePath.replace('\\', '/')
 

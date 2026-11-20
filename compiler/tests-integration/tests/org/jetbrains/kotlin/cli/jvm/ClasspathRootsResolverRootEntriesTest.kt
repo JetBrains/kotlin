@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.jvm
 
 import org.jetbrains.kotlin.cli.jvm.compiler.ClasspathRootsResolver
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
+import org.jetbrains.kotlin.cli.jvm.index.JavaRootRegistry
 import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntryFactory
 import org.jetbrains.kotlin.cli.jvm.index.nio.JarFilePool
 import org.jetbrains.kotlin.cli.jvm.index.nio.NioRootEntryFactory
@@ -42,19 +43,21 @@ class ClasspathRootsResolverRootEntriesTest : JvmDependenciesIndexContractTestBa
         (listOf("Manifest-Version: 1.0") + attributes.map { "${it.first}: ${it.second}" }).joinToString("\r\n", postfix = "\r\n\r\n")
             .toByteArray()
 
-    private fun resolveModules(jars: List<Path>, rootEntries: JvmRootEntryFactory): List<String> {
+    private fun resolveModules(jars: List<Path>, rootEntries: (JavaRootRegistry) -> JvmRootEntryFactory): List<String> {
         val configuration = KotlinTestUtils.newConfiguration()
+        val rootRegistry = JavaRootRegistry()
         val resolver = ClasspathRootsResolver(
             configuration,
             additionalModules = emptyList(),
             contentRootToVirtualFile = { (it as JvmModulePathRoot).file.toPath().asJarRootVirtualFile() },
-            javaModuleFinder = CliJavaModuleFinder(jdkHome = null, configuration, javaFileManager = null, jdkRelease = 8),
+            javaModuleFinder = CliJavaModuleFinder(jdkHome = null, configuration, javaFileManager = null, jdkRelease = 8, rootRegistry),
             requireStdlibModule = false,
             outputDirectory = null,
             findClassOnClasspath = { null },
             jdkRelease = 8,
             hasKotlinSources = true,
-            rootEntries = rootEntries,
+            rootRegistry = rootRegistry,
+            rootEntries = rootEntries(rootRegistry),
         )
         return resolver.convertClasspathRoots(jars.map { JvmModulePathRoot(it.toFile()) }).modules.map { module ->
             when (module) {
@@ -82,7 +85,7 @@ class ClasspathRootsResolverRootEntriesTest : JvmDependenciesIndexContractTestBa
             jar("derived-name-1.2.jar", "q/B.class"),
             jar("not-multi-release.jar", content = mapOf("META-INF/versions/11/module-info.class" to moduleInfo("m.unselected"))),
         )
-        val vfs = resolveModules(jars, JvmRootEntryFactory.VFS)
+        val vfs = resolveModules(jars) { it.vfsEntries }
         assertEquals(
             listOf(
                 "m.explicit: module-info.class, requires [java.base, m.other]",
@@ -93,6 +96,6 @@ class ClasspathRootsResolverRootEntriesTest : JvmDependenciesIndexContractTestBa
             ),
             vfs,
         )
-        assertEquals(vfs, resolveModules(jars, NioRootEntryFactory(jarPool)))
+        assertEquals(vfs, resolveModules(jars) { NioRootEntryFactory(jarPool, it) })
     }
 }
