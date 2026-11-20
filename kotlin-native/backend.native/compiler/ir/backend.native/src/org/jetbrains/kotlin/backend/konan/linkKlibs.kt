@@ -42,6 +42,8 @@ internal interface LinkKlibsContext : NativeBackendPhaseContext {
 
 data class LinkKlibsInput(
         val moduleDescriptor: ModuleDescriptor,
+        val klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor>,
+        val forwardDeclarationsModule: ModuleDescriptor,
 )
 
 /**
@@ -76,7 +78,8 @@ internal fun LinkKlibsContext.linkKlibs(
 
     scheduleDependenciesForDeserialization(
             loadedKlibs = config.loadedKlibs,
-            moduleDescriptors = moduleDescriptor.allDependencyModules,
+            klibModuleDescriptors = input.klibModuleDescriptors,
+            forwardDeclarationsModule = input.forwardDeclarationsModule,
             linker = irLinker
     )
 
@@ -174,7 +177,8 @@ private fun LinkKlibsContext.createIrLinker(): KonanIrLinker {
 
 private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
         loadedKlibs: LoadedNativeKlibs,
-        moduleDescriptors: List<ModuleDescriptor>,
+        klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor>,
+        forwardDeclarationsModule: ModuleDescriptor,
         linker: KonanIrLinker,
 ) {
     val exportedDependencies: Set<KotlinLibrary> = (config.loadedKlibs.exported + config.loadedKlibs.included + config.librariesToCache.keys).toSet()
@@ -185,17 +189,9 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
             else
                 emptySet()
 
-    val libraryToModuleDescriptor: Map<KotlinLibrary, ModuleDescriptor> = moduleDescriptors
-            .filterNot {
-                // The forward declarations module and the current (source-based) modules do not have
-                // associated KLIBs. Also, the current module is not supposed to ever participate in the deserialization process.
-                it.isForwardDeclarationModule || it.klibModuleOrigin is CurrentKlibModuleOrigin
-            }
-            .associateBy { (it.klibModuleOrigin as DeserializedKlibModuleOrigin).library }
-
     // First, schedule all the dependencies for the deserialization using the CLI-order.
     for (library in loadedKlibs.all) {
-        val dependencyModuleDescriptor: ModuleDescriptor = libraryToModuleDescriptor[library]
+        val dependencyModuleDescriptor: ModuleDescriptor = klibModuleDescriptors[library]
                 ?: error("Could not resolve module descriptor for $library")
 
         val isFullyCachedLibrary = config.cachedLibraries.isLibraryCached(library) && library !in config.librariesToCache
@@ -215,10 +211,8 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
     // Note: a batched build never contains C-interop libraries, so it has nothing to load here.
     ensureCStructsAndEnumsAreLoadedForCaching(linker, config.librariesToCache.keys.singleOrNull())
 
-    // Finally, add the forward declarations module (if there is any). It does not have any associated KLIB.
-    moduleDescriptors.firstOrNull { it.isForwardDeclarationModule }?.let {
-        linker.createAndRegisterModuleDeserializer(it, kotlinLibrary = null, DeserializationStrategy.ALL)
-    }
+    // Finally, add the forward declarations module. It does not have any associated KLIB.
+    linker.createAndRegisterModuleDeserializer(forwardDeclarationsModule, kotlinLibrary = null, DeserializationStrategy.ALL)
 }
 
 private fun ensureCStructsAndEnumsAreLoadedForCaching(linker: KonanIrLinker, libraryToCache: KotlinLibrary?) {
