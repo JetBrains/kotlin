@@ -269,7 +269,7 @@ fun createParametersSubstitutor(
         val mappedType =
             mappedProjection.type
                 .updateNullabilityIfNeeded(type)
-                .let { mappedType -> mappedType.withAttributes(type.attributes.add(mappedType.attributes)) }
+                .withCombinedAttributesFrom(type)
 
         if (mappedProjection.kind == projection.kind || projection.kind == ProjectionKind.INVARIANT) {
             return wrapProjection(mappedProjection, mappedType)
