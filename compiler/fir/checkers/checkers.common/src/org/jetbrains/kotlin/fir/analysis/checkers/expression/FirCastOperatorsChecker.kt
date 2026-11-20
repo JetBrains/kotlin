@@ -78,8 +78,8 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                     else -> APPLICABLE
                 }
                 AS, SAFE_AS -> when {
-                    USELESS_CAST in applicabilities -> USELESS_CAST
                     CAST_ERASED in applicabilities -> CAST_ERASED
+                    applicabilities.all { it == USELESS_CAST } -> USELESS_CAST
                     else -> APPLICABLE
                 }
                 else -> error("Invalid operator of FirTypeOperatorCall")
