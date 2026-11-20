@@ -39,7 +39,11 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
+import org.jetbrains.kotlin.konan.target.isObjCCache
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.skipNext
@@ -279,6 +283,16 @@ internal class ObjCExportCodeGenerator(
         val mapper: ObjCExportMapper
 ) : ObjCExportCodeGeneratorBase(codegen) {
 
+    private val objCCaches by lazy {
+        generationState.config.objCCaches
+    }
+
+    private fun isFromObjCCache(klib: KotlinLibrary?): Boolean = klib != null && klib in objCCaches
+
+    internal val objCCacheClassAdapters = mutableListOf<ObjCCacheAdapterEntry>()
+    internal val objCCacheProtocolAdapters = mutableListOf<ObjCCacheAdapterEntry>()
+    internal val objCCacheCategoryAdapters = mutableListOf<ObjCCacheAdapterEntry>()
+
     inline fun <reified T: IrFunction> T.getLowered(): T = when (this) {
         is IrSimpleFunction -> when {
             isSuspend -> this.getOrCreateFunctionWithContinuationStub(context) as T
@@ -395,9 +409,25 @@ internal class ObjCExportCodeGenerator(
     private fun generateTypeAdaptersForKotlinTypes(spec: ObjCExportCodeSpec?): List<ObjCTypeAdapter> {
         val types = spec?.types.orEmpty() + objCClassForAny
 
-        val allReverseAdapters = createReverseAdapters(types)
+        val isObjCCache = generationState.config.produce.isObjCCache
+        val libraryToCache = generationState.config.librariesToCache.keys.singleOrNull()
 
-        return types.map {
+        val typesToGenerate = types.filter { type ->
+            if (type == objCClassForAny) {
+                !isObjCCache
+            } else {
+                val klib = type.owningLibrary
+                if (isObjCCache) {
+                    klib != null && klib.uniqueName == libraryToCache?.uniqueName
+                } else {
+                    !isFromObjCCache(klib)
+                }
+            }
+        }
+
+        val allReverseAdapters = createReverseAdapters(types, typesToGenerate.toSet())
+
+        return typesToGenerate.map {
             val reverseAdapters = allReverseAdapters.getValue(it).adapters
             when (it) {
                 objCClassForAny -> {
@@ -406,8 +436,13 @@ internal class ObjCExportCodeGenerator(
 
                 is ObjCClassForKotlinClass -> {
                     val superClass = it.superClassNotAny ?: objCClassForAny
+                    val irClass = it.irClassSymbol.owner
+                    val klib = irClass.moduleFragment.kotlinLibrary
+                    val isAlreadyEmittedInCache = isFromObjCCache(klib)
 
-                    dataGenerator.emitEmptyClass(it.binaryName, superClass.binaryName)
+                    if (!isAlreadyEmittedInCache) {
+                        dataGenerator.emitEmptyClass(it.binaryName, superClass.binaryName)
+                    }
                     // Note: it is generated only to be visible for linker.
                     // Methods will be added at runtime.
 
@@ -424,18 +459,40 @@ internal class ObjCExportCodeGenerator(
 
         objCTypeAdapters += generateTypeAdaptersForKotlinTypes(spec)
 
-        spec?.files?.forEach {
+        val isObjCCache = generationState.config.produce.isObjCCache
+        val libraryToCache = generationState.config.librariesToCache.keys.singleOrNull()
+
+        val filesToGenerate = spec?.files.orEmpty().filter { file ->
+            val klib = file.owningLibrary
+            if (isObjCCache) {
+                klib != null && klib.uniqueName == libraryToCache?.uniqueName
+            } else {
+                !isFromObjCCache(klib)
+            }
+        }
+
+        filesToGenerate.forEach {
             objCTypeAdapters += createTypeAdapterForFileClass(it)
             dataGenerator.emitEmptyClass(it.binaryName, namer.kotlinAnyName.binaryName)
         }
 
-        val categoryAdapters = spec?.categories.orEmpty().map { createCategoryAdapter(it) }
+        val categoriesToGenerate = spec?.categories.orEmpty().filter { category ->
+            val klib = category.owningLibrary
+            if (isObjCCache) {
+                klib != null && klib.uniqueName == libraryToCache?.uniqueName
+            } else {
+                !isFromObjCCache(klib)
+            }
+        }
+        val categoryAdapters = categoriesToGenerate.map { createCategoryAdapter(it) }
 
         emitTypeAdapters(objCTypeAdapters, categoryAdapters)
     }
 
     internal fun generate(spec: ObjCExportCodeSpec?) {
         generateTypeAdapters(spec)
+
+        if (generationState.config.produce.isObjCCache) return
 
         NSNumberKind.entries.mapNotNull { it.mappedKotlinClassId }.forEach {
             dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
@@ -457,16 +514,48 @@ internal class ObjCExportCodeGenerator(
         emitKt42254Hint()
     }
 
-    private fun emitTypeAdapters(objCTypeAdapters: List<ObjCTypeAdapter>, objCCategoryAdapters: List<ObjCTypeAdapter>) {
+    private val ObjCTypeForKotlinType.owningLibrary: KotlinLibrary?
+        get() = irClassSymbol.owner.moduleFragment.kotlinLibrary
+
+    private val ObjCClassForKotlinFile.owningLibrary: KotlinLibrary?
+        get() = (sourceFile as? DeserializedSourceFile)?.library
+
+    private val ObjCCategoryForKotlinClass.owningLibrary: KotlinLibrary?
+        get() = methods.firstOrNull()?.baseMethod?.symbol?.owner?.moduleFragment?.kotlinLibrary
+
+    private fun emitTypeAdapters(
+            objCTypeAdapters: List<ObjCTypeAdapter>,
+            objCCategoryAdapters: List<ObjCTypeAdapter>,
+    ) {
+        val isObjCCache = generationState.config.produce.isObjCCache
         val placedClassAdapters = mutableMapOf<String, ConstPointer>()
         val placedInterfaceAdapters = mutableMapOf<String, ConstPointer>()
-        val placedCategoryAdapters = objCCategoryAdapters.map { it.objCName to staticData.placeGlobal("", it).pointer }
+
+        val placedCategoryAdapters = mutableListOf<Pair<String, ConstPointer>>()
+
+        objCCategoryAdapters.forEach { adapter ->
+            val pointer = if (isObjCCache) {
+                val entry = ObjCCacheAdapterEntry.categoryAdapter(adapter.objCName, generationState.config.librariesToCache.keys.single())
+                objCCacheCategoryAdapters.add(entry)
+                staticData.placeGlobal(entry.symbolName, adapter, isExported = true).pointer
+            } else {
+                staticData.placeGlobal("", adapter).pointer
+            }
+            placedCategoryAdapters += adapter.objCName to pointer
+        }
 
         objCTypeAdapters.forEach { adapter ->
-            val typeAdapter = staticData.placeGlobal("", adapter).pointer
             val irClass = adapter.irClass
+            val isInterface = irClass?.isInterface == true
+            val typeAdapter = if (isObjCCache) {
+                val entry = ObjCCacheAdapterEntry.typeAdapter(adapter.objCName, isInterface)
+                if (isInterface) objCCacheProtocolAdapters.add(entry) else objCCacheClassAdapters.add(entry)
+                staticData.placeGlobal(entry.symbolName, adapter, isExported = true).pointer
+            } else {
+                staticData.placeGlobal("", adapter).pointer
+            }
 
-            val descriptorToAdapter = if (irClass?.isInterface == true) {
+            val descriptorToAdapter = if (isInterface) {
                 placedInterfaceAdapters
             } else {
                 // Objective-C class for Kotlin class or top-level declarations.
@@ -474,7 +563,7 @@ internal class ObjCExportCodeGenerator(
             }
             descriptorToAdapter[adapter.objCName] = typeAdapter
 
-            if (irClass != null) {
+            if (!isObjCCache && irClass != null && !isFromObjCCache(irClass.moduleFragment.kotlinLibrary)) {
                 if (!generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
                     try {
                         codegen.bindObjCExportTypeAdapterTo(irClass, typeAdapter)
@@ -486,6 +575,27 @@ internal class ObjCExportCodeGenerator(
                     // handled with "Kotlin_ObjCExport_initTypeAdapters" below.
                 }
             }
+        }
+
+        if (isObjCCache) return
+
+        fun externalAdapterGlobal(symbolName: String): ConstPointer {
+            val global = LLVMGetNamedGlobal(llvm.module, symbolName)
+                ?: LLVMAddGlobal(llvm.module, llvm.runtime.objCTypeAdapter, symbolName)!!.also {
+                    LLVMSetLinkage(it, LLVMLinkage.LLVMExternalLinkage)
+                }
+            return constPointer(global)
+        }
+
+        fun MutableMap<String, ConstPointer>.placeExternal(entry: ObjCCacheAdapterEntry) {
+            if (entry.objcName !in this) this[entry.objcName] = externalAdapterGlobal(entry.symbolName)
+        }
+
+        objCCaches.values.forEach { cache ->
+            val metadata = cache.metadata
+            metadata.classAdapters.forEach { placedClassAdapters.placeExternal(it) }
+            metadata.protocolAdapters.forEach { placedInterfaceAdapters.placeExternal(it) }
+            metadata.categoryAdapters.forEach { placedCategoryAdapters += it.objcName to externalAdapterGlobal(it.symbolName) }
         }
 
         // The following two also contain stuff from swift-export
@@ -515,7 +625,7 @@ internal class ObjCExportCodeGenerator(
         emitSortedAdapters(placedInterfaceAdapters.toList(), "Kotlin_ObjCExport_sortedProtocolAdapters")
         emitSortedAdapters(placedCategoryAdapters, "Kotlin_ObjCExport_sortedCategoryAdapters")
 
-        if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
+        if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries() || objCCaches.isNotEmpty()) {
             codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
                     "Kotlin_ObjCExport_initTypeAdapters",
                     llvm.constInt1(true)
@@ -1564,7 +1674,8 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
 }
 
 private fun ObjCExportCodeGenerator.createReverseAdapters(
-        types: List<ObjCTypeForKotlinType>
+        types: List<ObjCTypeForKotlinType>,
+        typesToGenerate: Set<ObjCTypeForKotlinType> = types.toSet()
 ): Map<ObjCTypeForKotlinType, ReverseAdapters> {
     val irClassSymbolToType = types.associateBy { it.irClassSymbol }
 
@@ -1588,12 +1699,26 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
 
         val inheritedAdapters = inheritsAdaptersFrom.map { getOrCreateFor(it) }
 
-        createReverseAdapters(type, inheritedAdapters)
+        val superClassesWithAdaptersElsewhere = allSuperClasses.filterTo(mutableSetOf()) {
+            it !in irClassSymbolToType && hasAdaptersElsewhere(it.owner)
+        }
+
+        createReverseAdapters(type, inheritedAdapters, superClassesWithAdaptersElsewhere, generateAdapters = type in typesToGenerate)
     }
 
-    types.forEach { getOrCreateFor(it) }
+    typesToGenerate.forEach { getOrCreateFor(it) }
 
     return result
+}
+
+private fun ObjCExportCodeGenerator.hasAdaptersElsewhere(irClass: IrClass): Boolean {
+    val library = irClass.moduleFragment.kotlinLibrary ?: return false
+    val config = generationState.config
+    return if (config.produce.isObjCCache) {
+        library != config.librariesToCache.keys.singleOrNull() && library in config.exportedLibrariesForObjCCache
+    } else {
+        library in config.objCCaches
+    }
 }
 
 private class ReverseAdapters(
@@ -1603,7 +1728,9 @@ private class ReverseAdapters(
 
 private fun ObjCExportCodeGenerator.createReverseAdapters(
         type: ObjCTypeForKotlinType,
-        inheritedAdapters: List<ReverseAdapters>
+        inheritedAdapters: List<ReverseAdapters>,
+        superClassesWithAdaptersElsewhere: Set<IrClassSymbol>,
+        generateAdapters: Boolean = true,
 ): ReverseAdapters {
     val result = mutableListOf<KotlinToObjCMethodAdapter>()
     val coveredMethods = mutableSetOf<IrSimpleFunction>()
@@ -1628,7 +1755,7 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
             val allOverriddenMethods = method.allOverriddenFunctions
 
             val [inherited, uninherited] = allOverriddenMethods.partition {
-                it in methodsCoveredByInheritedAdapters
+                it in methodsCoveredByInheritedAdapters || it.parentClassOrNull?.symbol in superClassesWithAdaptersElsewhere
             }
 
             inherited.forEach {
@@ -1647,15 +1774,19 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
                     presentVtableBridges += vtableIndex
                     presentMethodTableBridges += functionName
                     presentItableBridges += itablePlace
-                    result += createReverseAdapter(it, baseMethod, vtableIndex, itablePlace)
+                    if (generateAdapters) {
+                        result += createReverseAdapter(it, baseMethod, vtableIndex, itablePlace)
+                    }
                     coveredMethods += it
                 }
             }
 
         } else {
             // Mark it as non-overridable:
-            baseMethods.map { it.selector }.distinct().forEach {
-                result += nonOverridableAdapter(it, hasSelectorAmbiguity)
+            if (generateAdapters) {
+                baseMethods.map { it.selector }.distinct().forEach {
+                    result += nonOverridableAdapter(it, hasSelectorAmbiguity)
+                }
             }
         }
     }

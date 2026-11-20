@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.valueName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
+import org.jetbrains.kotlin.konan.target.isObjCCache
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 import kotlin.sequences.forEach
@@ -187,7 +188,9 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
         }
         it.runAndMeasurePhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
         it.runAndMeasurePhase(ModuleBitcodeOptimizationPhase, module)
-        it.runAndMeasurePhase(LTOBitcodeOptimizationPhase, module)
+        if (!context.config.produce.isObjCCache) {
+            it.runAndMeasurePhase(LTOBitcodeOptimizationPhase, module)
+        }
         when (context.config.sanitizer) {
             SanitizerKind.THREAD -> it.runAndMeasurePhase(ThreadSanitizerPhase, module)
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")

@@ -248,6 +248,7 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
             objcExportBlockExplicitParameterNames: Boolean,
             shouldExportKDoc: Boolean,
             additionalImports: List<String>,
+            restrictToLocalModules: Boolean = false,
         ): ObjCExportHeaderGenerator = ObjCExportHeaderGeneratorImpl(
             moduleDescriptors,
             mapper,
@@ -256,7 +257,8 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
             objcGenerics,
             objcExportBlockExplicitParameterNames,
             shouldExportKDoc,
-            additionalImports
+            additionalImports,
+            restrictToLocalModules,
         )
     }
 }

@@ -323,7 +323,7 @@ internal class ObjCProtocolForKotlinInterface(
 
 internal class ObjCClassForKotlinFile(
         binaryName: String,
-        private val sourceFile: SourceFile,
+        val sourceFile: SourceFile,
         val methods: List<ObjCMethodForKotlinMethod>
 ) : ObjCTypeSpec(binaryName) {
     override fun toString(): String =

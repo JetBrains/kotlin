@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.isCache
 import org.jetbrains.kotlin.konan.target.isHeaderCache
+import org.jetbrains.kotlin.konan.target.isObjCCache
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_COMPILER_VERSION
 import org.jetbrains.kotlin.library.components.irOrFail
@@ -148,7 +149,7 @@ class KonanDriver(
                 return
         }
 
-        if (!config.produce.isHeaderCache) {
+        if (!config.produce.isHeaderCache && !config.produce.isObjCCache) {
             config.cacheSupport.checkConsistency()
         }
 

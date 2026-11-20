@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
 import org.jetbrains.kotlin.backend.konan.library.deserialize
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
+import org.jetbrains.kotlin.backend.konan.objcexport.hasObjCCacheBinaryOptions
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.serialization.PartialLinkageIssueCollector
@@ -33,6 +34,9 @@ import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Path
@@ -643,6 +647,24 @@ class NativeSecondStageCompilationConfig(
 
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries
+
+    internal val exportedLibrariesForObjCCache: Set<KotlinLibrary> by lazy {
+        val includedPaths = loadedKlibs.included.map { it.canonicalPath }.toSet()
+        loadedKlibs.exported
+            .filter {
+                !it.isNativeStdlib && !it.isCInteropLibrary() && !it.isCommonizedCInteropLibrary() && it.canonicalPath !in includedPaths
+            }
+            .toSet()
+    }
+
+    internal val objCCaches: Map<KotlinLibrary, CachedLibraries.ObjCCache> by lazy {
+        if (produce != CompilerOutputKind.FRAMEWORK || swiftExport || dumpObjcSelectorToSignatureMapping != null ||
+                !configuration.hasObjCCacheBinaryOptions()) {
+            emptyMap()
+        } else {
+            cachedLibraries.getObjCCaches(exportedLibrariesForObjCCache, fullExportedNamePrefix)
+        }
+    }
 
     internal val librariesToCache: Map<KotlinLibrary, PartialCacheInfo>
         get() = cacheSupport.librariesToCache
