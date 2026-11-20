@@ -31,5 +31,12 @@ KtArrayAccessExpression(179,186): 'b[1, 2]'
           returnType = kotlin.Int
           symbol = vararg indices: kotlin.Int
           contextParameters = []
+          callableId = null),
+        2 -> (KaVariableSignature:
+          name = indices
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = vararg indices: kotlin.Int
+          contextParameters = []
           callableId = null)
       }

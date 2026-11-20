@@ -217,10 +217,9 @@ private fun createCompoundArrayAccessCall(
         getterAttempt = getterError
     } else {
         val getPartiallyAppliedSymbol = firGetCall.toPartiallyAppliedSymbol(arrayExpression) ?: return null
-        val getArgumentMapping = indexExpressions.zip(getPartiallyAppliedSymbol.signature.valueParameters).toMap()
         val getCall = KaFirSimpleFunctionCall(
             backingPartiallyAppliedSymbol = getPartiallyAppliedSymbol,
-            backingArgumentMapping = getArgumentMapping,
+            backingArgumentMapping = firGetCall.createArgumentMapping(getPartiallyAppliedSymbol.signature),
             backingTypeArgumentsMapping = firGetCall
                 .toFirTypeArgumentsMapping(symbol = getPartiallyAppliedSymbol.symbol.firSymbol)
                 .asKaTypeParametersMapping(),
@@ -268,10 +267,10 @@ private fun createCompoundArrayAccessCall(
         setterAttempt = setterError
     } else {
         val setPartiallyAppliedSymbol = firCall.toPartiallyAppliedSymbol(arrayExpression) ?: return null
-        val setArgumentsMapping = indexExpressions.zip(setPartiallyAppliedSymbol.signature.valueParameters).toMap()
         val setCall = KaFirSimpleFunctionCall(
             backingPartiallyAppliedSymbol = setPartiallyAppliedSymbol,
-            backingArgumentMapping = setArgumentsMapping,
+            // The value argument is the result of the operation call, which has no PSI of its own
+            backingArgumentMapping = firCall.createArgumentMapping(setPartiallyAppliedSymbol.signature),
             backingTypeArgumentsMapping = firCall
                 .toFirTypeArgumentsMapping(symbol = setPartiallyAppliedSymbol.symbol.firSymbol)
                 .asKaTypeParametersMapping(),
