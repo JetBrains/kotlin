@@ -1,7 +1,7 @@
 FILE: errorReference.kt
     public final fun box(): R|kotlin/String| {
         lval l: R|kotlin/collections/List<kotlin/Int>?| = when () {
-            Q|kotlin/random/Random|.R|kotlin/random/Random.Default.nextBoolean|() ->  {
+            Q|kotlin/random/Random(.<companion>)|.R|kotlin/random/Random.Default.nextBoolean|() ->  {
                 R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(123))
             }
             else ->  {

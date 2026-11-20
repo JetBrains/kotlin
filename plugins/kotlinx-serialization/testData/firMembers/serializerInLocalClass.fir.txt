@@ -39,7 +39,7 @@ FILE: serializerInLocalClass.kt
 
         }
 
-        ^local Q|<local>/Carrier|.R|<local>/Carrier.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlin/Any.toString|()
+        ^local Q|<local>/Carrier(.<companion>)|.R|<local>/Carrier.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlin/Any.toString|()
     }
     public final fun box(): R|kotlin/String| {
         lval expected: R|kotlin/String| = String(local.Carrier(i: kotlin.Int))

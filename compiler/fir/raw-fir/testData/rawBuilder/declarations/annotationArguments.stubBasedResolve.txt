@@ -35,13 +35,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
-    @R|test/VarArg|[Types](v = vararg(Int(1), Int(2), Q|test/VarArg|.R|test/VarArg.Companion.CONSTANT|) [evaluated = vararg(Int(1), Int(2), Int(3))]) public final [ResolvedTo(BODY_RESOLVE)] class ThreeVararg : R|kotlin/Any| {
+    @R|test/VarArg|[Types](v = vararg(Int(1), Int(2), Q|test/VarArg(.<companion>)|.R|test/VarArg.Companion.CONSTANT|) [evaluated = vararg(Int(1), Int(2), Int(3))]) public final [ResolvedTo(BODY_RESOLVE)] class ThreeVararg : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ThreeVararg] constructor(): R|test/ThreeVararg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|test/VarArg|[Types](v = vararg(*<collectionLiteralCall>(Int(1), Int(2), Q|test/VarArg|.R|test/VarArg.Companion.CONSTANT|, Int(4))) [evaluated = vararg(Int(1), Int(2), Int(3), Int(4))]) public final [ResolvedTo(BODY_RESOLVE)] class SpreadVararg : R|kotlin/Any| {
+    @R|test/VarArg|[Types](v = vararg(*<collectionLiteralCall>(Int(1), Int(2), Q|test/VarArg(.<companion>)|.R|test/VarArg.Companion.CONSTANT|, Int(4))) [evaluated = vararg(Int(1), Int(2), Int(3), Int(4))]) public final [ResolvedTo(BODY_RESOLVE)] class SpreadVararg : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SpreadVararg] constructor(): R|test/SpreadVararg| {
             super<R|kotlin/Any|>()
         }
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
-    @R|test/Simple|[Types](i = Q|test/Simple.Companion|.R|test/Simple.Companion.CONST1|.R|kotlin/Int.plus|(Q|test/Simple|.R|test/Simple.Companion.CONST2|) [evaluated = Int(3)]) public final [ResolvedTo(BODY_RESOLVE)] class Sum : R|kotlin/Any| {
+    @R|test/Simple|[Types](i = Q|test/Simple.Companion|.R|test/Simple.Companion.CONST1|.R|kotlin/Int.plus|(Q|test/Simple(.<companion>)|.R|test/Simple.Companion.CONST2|) [evaluated = Int(3)]) public final [ResolvedTo(BODY_RESOLVE)] class Sum : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sum] constructor(): R|test/Sum| {
             super<R|kotlin/Any|>()
         }

@@ -45,13 +45,13 @@ FILE: companions.kt
         public static get(): R|kotlin/Byte|
     public final fun box(): R|kotlin/String| {
         when () {
-            !=(Q|A|.R|/A.Companion.x|.R|/id|<R|kotlin/Byte|>(), Int(3).R|kotlin/Int.toByte|()) ->  {
+            !=(Q|A(.<companion>)|.R|/A.Companion.x|.R|/id|<R|kotlin/Byte|>(), Int(3).R|kotlin/Int.toByte|()) ->  {
                 ^box String(Fail A.x)
             }
         }
 
         when () {
-            !=(Q|A|.R|/A.Companion.y|.R|/id|<R|kotlin/Byte|>(), Int(2).R|kotlin/Int.toByte|()) ->  {
+            !=(Q|A(.<companion>)|.R|/A.Companion.y|.R|/id|<R|kotlin/Byte|>(), Int(2).R|kotlin/Int.toByte|()) ->  {
                 ^box String(Fail A.y)
             }
         }

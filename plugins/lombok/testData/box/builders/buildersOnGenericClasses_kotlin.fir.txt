@@ -82,13 +82,13 @@ FILE: buildersOnGenericClasses_kotlin.kt
 
     }
     public final fun testBuilder(): R|kotlin/Unit| {
-        lval builderObj1: R|GenericBuilder<kotlin/String>| = Q|GenericBuilder|.R|/GenericBuilder.Companion.builder|<R|kotlin/String|>().R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.value: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>|>|(String(x)).R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.list: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>|>|(R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(s1), String(s2), String(s3)))).R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.build: R|GenericBuilder<kotlin/String>|>|()
-        lval builder: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>| = Q|GenericBuilder|.R|/GenericBuilder.Companion.builder|<R|kotlin/String|>()
+        lval builderObj1: R|GenericBuilder<kotlin/String>| = Q|GenericBuilder(.<companion>)|.R|/GenericBuilder.Companion.builder|<R|kotlin/String|>().R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.value: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>|>|(String(x)).R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.list: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>|>|(R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(s1), String(s2), String(s3)))).R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.build: R|GenericBuilder<kotlin/String>|>|()
+        lval builder: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>| = Q|GenericBuilder(.<companion>)|.R|/GenericBuilder.Companion.builder|<R|kotlin/String|>()
         lval builder2: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>| = R|<local>/builder|.R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.value: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>|>|(String(y)).R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.list: R|GenericBuilder.GenericBuilderBuilder<kotlin/String>|>|(R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(s11), String(s22), String(s33))))
         lval builderObj2: R|GenericBuilder<kotlin/String>| = R|<local>/builder2|.R|SubstitutionOverride</GenericBuilder.GenericBuilderBuilder.build: R|GenericBuilder<kotlin/String>|>|()
     }
     public final fun testNested(): R|kotlin/Unit| {
-        lval builder: R|Outer.Nested.NestedBuilder<kotlin/String>| = Q|Outer.Nested|.R|/Outer.Nested.Companion.builder|<R|kotlin/String|>()
+        lval builder: R|Outer.Nested.NestedBuilder<kotlin/String>| = Q|Outer.Nested(.<companion>)|.R|/Outer.Nested.Companion.builder|<R|kotlin/String|>()
         lval builder2: R|Outer.Nested.NestedBuilder<kotlin/String>| = R|<local>/builder|.R|SubstitutionOverride</Outer.Nested.NestedBuilder.value: R|Outer.Nested.NestedBuilder<kotlin/String>|>|(String(x))
         lval obj: R|Outer.Nested<kotlin/String>| = R|<local>/builder2|.R|SubstitutionOverride</Outer.Nested.NestedBuilder.build: R|Outer.Nested<kotlin/String>|>|()
     }

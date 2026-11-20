@@ -20,8 +20,8 @@ FILE: qualifierWithCompanion.kt
     public final val xx: R|my/A| = R|my/A.A|()
         public get(): R|my/A|
     public final fun test(): R|kotlin/Unit| {
-        lval x: R|my/A.X| = Q|my/A|
-        Q|my/A|.R|my/A.X.foo|()
+        lval x: R|my/A.X| = Q|my/A(.<companion>)|
+        Q|my/A(.<companion>)|.R|my/A.X.foo|()
         Q|my/A.X|.R|my/A.X.foo|()
         local final fun R|my/A|.invoke(): R|kotlin/Unit| {
         }

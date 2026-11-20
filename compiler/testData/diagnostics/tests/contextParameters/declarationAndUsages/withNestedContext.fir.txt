@@ -85,7 +85,7 @@ FILE: withNestedContext.kt
             context(this@R|special/anonymous|) R|/test2|()
         }
         )
-        R|kotlin/with|<R|NestedContext.Companion|, R|kotlin/Unit|>(Q|NestedContext|, <L> = with@fun R|NestedContext.Companion|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|kotlin/with|<R|NestedContext.Companion|, R|kotlin/Unit|>(Q|NestedContext(.<companion>)|, <L> = with@fun R|NestedContext.Companion|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             context(this@R|special/anonymous|) R|/test2|()
         }
         )

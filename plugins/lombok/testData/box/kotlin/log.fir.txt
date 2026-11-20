@@ -257,8 +257,8 @@ FILE: log.kt
 
     }
     public final fun box(): R|kotlin/String| {
-        Q|LogExample|.R|/LogExample.Companion.log|.R|java/util/logging/Logger.addHandler|(R|/logHandler|)
-        Q|LogExample|.R|/LogExample.Companion.log|.R|java/util/logging/Logger.info|(String(Call from public log))
+        Q|LogExample(.<companion>)|.R|/LogExample.Companion.log|.R|java/util/logging/Logger.addHandler|(R|/logHandler|)
+        Q|LogExample(.<companion>)|.R|/LogExample.Companion.log|.R|java/util/logging/Logger.info|(String(Call from public log))
         R|/LogExample.LogExample|().R|/LogExample.test|()
         R|/LogExampleWithExistingCompanion.LogExampleWithExistingCompanion|().R|/LogExampleWithExistingCompanion.test|()
         R|kotlin/test/assertEquals|<R|kotlin/String|>(String(No log), R|/LogExampleWithExistingCompanionAndLogField.LogExampleWithExistingCompanionAndLogField|().R|/LogExampleWithExistingCompanionAndLogField.test|())
@@ -267,8 +267,8 @@ FILE: log.kt
         R|/LogOnInnerClass.LogOnInnerClass|<R|kotlin/String|>().R|SubstitutionOverride</LogOnInnerClass.Inner.Inner>|().R|SubstitutionOverride</LogOnInnerClass.Inner.test: R|kotlin/Unit|>|()
         Q|LogOnObject|.R|/LogOnObject.test|()
         Q|LogOnEnum|.R|/LogOnEnum.ExampleEntry|.R|/LogOnEnum.test|()
-        Q|LogWhenNonConflictingExtensionProperty|.R|/LogWhenNonConflictingExtensionProperty.Companion.test|()
-        Q|LogWhenNonConflictingContextualProperty|.R|/LogWhenNonConflictingContextualProperty.Companion.test|()
+        Q|LogWhenNonConflictingExtensionProperty(.<companion>)|.R|/LogWhenNonConflictingExtensionProperty.Companion.test|()
+        Q|LogWhenNonConflictingContextualProperty(.<companion>)|.R|/LogWhenNonConflictingContextualProperty.Companion.test|()
         lval expected: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(INFO: Call from public log), String(INFO: Test LogExample), String(WARNING: Test LogExampleWithExistingCompanion), String(INFO: Test LogExampleWithTopic), String(INFO: Check @Log on nested class), String(INFO: Check @Log on inner class), String(INFO: Check @Log on object), String(INFO: Check @Log on enum), String(INFO: Check LogWhenNonConflictingExtensionProperty), String(INFO: Check LogWhenNonConflictingContextualProperty)))
         R|kotlin/test/assertEquals|<R|kotlin/collections/List<kotlin/String>|>(R|<local>/expected|, R|/logMessages|)
         ^box String(OK)

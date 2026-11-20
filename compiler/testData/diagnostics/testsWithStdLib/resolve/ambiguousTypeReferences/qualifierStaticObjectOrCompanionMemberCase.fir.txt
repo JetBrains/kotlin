@@ -35,5 +35,5 @@ FILE: Some.kt
     }
 FILE: main.kt
     public final fun test(): R|kotlin/String| {
-        ^test Q|some2/Some|.R|some2/Some.Companion.foo|
+        ^test Q|some2/Some(.<companion>)|.R|some2/Some.Companion.foo|
     }

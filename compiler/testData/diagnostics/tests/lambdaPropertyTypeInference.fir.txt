@@ -8,7 +8,7 @@ FILE: KotlinClass.kt
 
             }
             else ->  {
-                Q|BooCase1|.R|/BooCase1.Companion.FILTER|
+                Q|BooCase1(.<companion>)|.R|/BooCase1.Companion.FILTER|
             }
         }
 
@@ -20,7 +20,7 @@ FILE: KotlinClass.kt
 
             }
             else ->  {
-                Q|BooCase1|.R|/BooCase1.Companion.FILTER|
+                Q|BooCase1(.<companion>)|.R|/BooCase1.Companion.FILTER|
             }
         }
 
@@ -53,7 +53,7 @@ FILE: KotlinClass.kt
 
             }
             else ->  {
-                Q|BooCase2|.R|/BooCase2.Companion.FILTER|
+                Q|BooCase2(.<companion>)|.R|/BooCase2.Companion.FILTER|
             }
         }
 
@@ -101,7 +101,7 @@ FILE: KotlinClass.kt
 
             }
             else ->  {
-                Q|BooCase2|.R|/BooCase2.Companion.FILTER|
+                Q|BooCase2(.<companion>)|.R|/BooCase2.Companion.FILTER|
             }
         }
 
@@ -113,7 +113,7 @@ FILE: KotlinClass.kt
 
             }
             else ->  {
-                Q|BooCase2|.R|/BooCase2.Companion.FILTER|
+                Q|BooCase2(.<companion>)|.R|/BooCase2.Companion.FILTER|
             }
         }
 
@@ -146,7 +146,7 @@ FILE: KotlinClass.kt
 
             }
             else ->  {
-                Q|BooCase2|.R|/BooCase2.Companion.FILTER|
+                Q|BooCase2(.<companion>)|.R|/BooCase2.Companion.FILTER|
             }
         }
 

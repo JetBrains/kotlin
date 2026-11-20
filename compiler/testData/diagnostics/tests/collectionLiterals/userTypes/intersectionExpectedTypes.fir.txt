@@ -90,7 +90,7 @@ FILE: intersectionExpectedTypes.kt
             lval x: R|A| = this@R|special/anonymous|.R|SubstitutionOverride<<local>/Box.get: R|A|>|()
             (R|<local>/x| as R|B|)
             R|/expectThroughTV<Inapplicable(INAPPLICABLE): /expectThroughTV>#|<R|A|>(Q|kotlin/collections|.<Unresolved name: listOf>#(Int(42)), R|<local>/x|)
-            this@R|special/anonymous|.R|SubstitutionOverride<<local>/Box.put: R|kotlin/Unit|>|(Q|A|.R|/A.Companion.of|())
+            this@R|special/anonymous|.R|SubstitutionOverride<<local>/Box.put: R|kotlin/Unit|>|(Q|A(.<companion>)|.R|/A.Companion.of|())
         }
         )
         R|<local>/buildBox<CS errors: <local>/buildBox>#|<<ERROR TYPE REF: Cannot infer argument for type parameter X>>(<L> = buildBox@fun R|<local>/Box<ERROR CLASS: Cannot infer argument for type parameter X>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {

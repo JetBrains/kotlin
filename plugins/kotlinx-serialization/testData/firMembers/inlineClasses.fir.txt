@@ -69,12 +69,12 @@ FILE: inlineClasses.kt
     }
     public final fun box(): R|kotlin/String| {
         when () {
-            Q|Foo|.R|/Foo.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.isInline|.R|kotlin/Boolean.not|() ->  {
+            Q|Foo(.<companion>)|.R|/Foo.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.isInline|.R|kotlin/Boolean.not|() ->  {
                 ^box String(Incorrect descriptor)
             }
         }
 
-        lval s: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|Holder|>(Q|Holder|.R|/Holder.Companion.serializer|(), R|/Holder.Holder|(R|/Foo.Foo|(Int(42))))
+        lval s: R|kotlin/String| = Q|kotlinx/serialization/json/Json(.<companion>)|.R|kotlinx/serialization/json/Json.encodeToString|<R|Holder|>(Q|Holder(.<companion>)|.R|/Holder.Companion.serializer|(), R|/Holder.Holder|(R|/Foo.Foo|(Int(42))))
         when () {
             !=(R|<local>/s|, String({"f":42})) ->  {
                 ^box R|<local>/s|

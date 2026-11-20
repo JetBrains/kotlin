@@ -6,8 +6,8 @@ FILE: interface.kt
 
         public final fun test(): R|kotlin/Unit| {
             Q|IW|.R|/IW.invoke*s|()
-            Q|IE1|.R|/IE1.Companion.invoke|()
-            Q|IE2|.R|/IE2.Companion.invoke|()
+            Q|IE1(.<companion>)|.R|/IE1.Companion.invoke|()
+            Q|IE2(.<companion>)|.R|/IE2.Companion.invoke|()
             <Resolution to classifier>#()
             <HIDDEN: /Outer.IH2.Companion.invoke is deprecated with DeprecationLevel.HIDDEN>#()
             R|/IH3|()

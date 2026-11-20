@@ -126,9 +126,9 @@ FILE: constructorWithStaticName.kt
     }
     public final fun test(outer: R|Outer|, genericOuter: R|GenericOuter<kotlin/String>|): R|kotlin/Unit| {
         R|/DataWithStatic.DataWithStatic<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /DataWithStatic.DataWithStatic>#|()
-        Q|DataWithStatic|.R|/DataWithStatic.Companion.of|(String(name))
+        Q|DataWithStatic(.<companion>)|.R|/DataWithStatic.Companion.of|(String(name))
         R|/NoArgsWithStatic<HIDDEN: /NoArgsWithStatic is invisible>#|()
-        Q|NoArgsWithStatic|.R|/NoArgsWithStatic.Companion.of|()
+        Q|NoArgsWithStatic(.<companion>)|.R|/NoArgsWithStatic.Companion.of|()
         Q|Outer.InnerNoArgs|.<Unresolved name: of>#()
         Q|Outer.InnerData|.<Unresolved name: of>#(Int(1))
         Q|GenericOuter.InnerNoArgs|.<Unresolved name: of>#()

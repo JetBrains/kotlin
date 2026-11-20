@@ -48,7 +48,7 @@ FILE: lambdaWithoutExpectedType.kt
     }
     public final fun test(): R|kotlin/Unit| {
         lval array: R|kotlin/Array<kotlin/Any>| = R|kotlin/arrayOf|<R|kotlin/Any|>(vararg(String(Project), arrayOf@fun <anonymous>(): R|XdProject?| <inline=NoInline>  {
-            ^ Q|XdProject|.R|/filter|<R|XdProject|>(<L> = filter@fun R|FilteringContext|.<anonymous>(it: R|XdProject|): R|XdSearchingNode| <inline=NoInline>  {
+            ^ Q|XdProject(.<companion>)|.R|/filter|<R|XdProject|>(<L> = filter@fun R|FilteringContext|.<anonymous>(it: R|XdProject|): R|XdSearchingNode| <inline=NoInline>  {
                 ^ (this@R|special/anonymous|, R|<local>/it|.R|/XdProject.name|).R|/FilteringContext.eq|<R|kotlin/String|>(String(foo))
             }
             ).R|/firstOrNull|<R|XdProject|>()

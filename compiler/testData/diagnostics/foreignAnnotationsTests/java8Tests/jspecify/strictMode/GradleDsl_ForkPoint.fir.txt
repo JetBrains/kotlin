@@ -12,7 +12,7 @@ FILE: dsl.kt
     }
     public final val <RT : R|kotlin/Any|, RC : R|api/NamedDomainObjectContainer<RT>|> R|RC|.registering: R|dsl/RegisteringDomainObjectDelegateProvider<out RC>|
         public inline get(): R|dsl/RegisteringDomainObjectDelegateProvider<out RC>| {
-            ^ Q|dsl/RegisteringDomainObjectDelegateProvider|.R|dsl/RegisteringDomainObjectDelegateProvider.Companion.of|<R|RC|>(this@R|dsl/registering|)
+            ^ Q|dsl/RegisteringDomainObjectDelegateProvider(.<companion>)|.R|dsl/RegisteringDomainObjectDelegateProvider.Companion.of|<R|RC|>(this@R|dsl/registering|)
         }
     public final class RegisteringDomainObjectDelegateProvider<RP> : R|kotlin/Any| {
         private constructor<RP>(delegateProvider: R|RP|): R|dsl/RegisteringDomainObjectDelegateProvider<RP>| {
@@ -97,7 +97,7 @@ FILE: dsl.kt
 
     }
     public final operator fun <PDT : R|kotlin/Any|, PDC : R|api/NamedDomainObjectContainer<PDT>|> R|dsl/RegisteringDomainObjectDelegateProvider<PDC>|.provideDelegate(receiver: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|dsl/ExistingDomainObjectDelegate<@EnhancedNullability api/NamedDomainObjectProvider<@EnhancedNullability PDT>>| {
-        ^provideDelegate Q|dsl/ExistingDomainObjectDelegate|.R|dsl/ExistingDomainObjectDelegate.Companion.of|<R|@EnhancedNullability api/NamedDomainObjectProvider<@EnhancedNullability PDT>|>(this@R|dsl/provideDelegate|.R|SubstitutionOverride<dsl/RegisteringDomainObjectDelegateProvider.delegateProvider: R|PDC|>|.R|SubstitutionOverride<api/NamedDomainObjectContainer.register: R|@EnhancedNullability api/NamedDomainObjectProvider<@EnhancedNullability PDT>|>|(R|<local>/property|.R|SubstitutionOverride<kotlin/reflect/KProperty.name: R|kotlin/String|>|))
+        ^provideDelegate Q|dsl/ExistingDomainObjectDelegate(.<companion>)|.R|dsl/ExistingDomainObjectDelegate.Companion.of|<R|@EnhancedNullability api/NamedDomainObjectProvider<@EnhancedNullability PDT>|>(this@R|dsl/provideDelegate|.R|SubstitutionOverride<dsl/RegisteringDomainObjectDelegateProvider.delegateProvider: R|PDC|>|.R|SubstitutionOverride<api/NamedDomainObjectContainer.register: R|@EnhancedNullability api/NamedDomainObjectProvider<@EnhancedNullability PDT>|>|(R|<local>/property|.R|SubstitutionOverride<kotlin/reflect/KProperty.name: R|kotlin/String|>|))
     }
     public final operator fun <GV> R|dsl/ExistingDomainObjectDelegate<out GV>|.getValue(receiver: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|GV| {
         ^getValue this@R|dsl/getValue|.R|SubstitutionOverride<dsl/ExistingDomainObjectDelegate.delegate: R|CapturedType(out GV)|>|

@@ -30,15 +30,15 @@ FILE: contextInCompanionObject.kt
     public final fun usageOutside(): R|kotlin/Unit| {
         R|/context|<R|Test.Named|, R|kotlin/String|>(Q|Test.Named|, <L> = context(<unused var>: R|Test.Named|) context@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             context(R|<local>/<unused var>|) Q|Test.Named|.R|/Test.Named.foo|()
-            context(R|<local>/<unused var>|) Q|Test|.R|/Test.Named.foo|()
+            context(R|<local>/<unused var>|) Q|Test(.<companion>)|.R|/Test.Named.foo|()
             context(R|<local>/<unused var>|) Q|Test.Named|.R|/Test.Named.b|
-            ^ context(R|<local>/<unused var>|) Q|Test|.R|/Test.Named.b|
+            ^ context(R|<local>/<unused var>|) Q|Test(.<companion>)|.R|/Test.Named.b|
         }
         )
         Q|Test.Named|.R|/Test.Named.foo<Inapplicable(INAPPLICABLE): /Test.Named.foo>#|()
-        Q|Test|.R|/Test.Named.foo<Inapplicable(INAPPLICABLE): /Test.Named.foo>#|()
+        Q|Test(.<companion>)|.R|/Test.Named.foo<Inapplicable(INAPPLICABLE): /Test.Named.foo>#|()
         Q|Test.Named|.R|/Test.Named.b<Inapplicable(INAPPLICABLE): /Test.Named.b>#|
-        Q|Test|.R|/Test.Named.b<Inapplicable(INAPPLICABLE): /Test.Named.b>#|
+        Q|Test(.<companion>)|.R|/Test.Named.b<Inapplicable(INAPPLICABLE): /Test.Named.b>#|
     }
     public final fun <A, R> context(context: R|A|, block: R|context(A) () -> R|): R|R| {
         ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/context|)
