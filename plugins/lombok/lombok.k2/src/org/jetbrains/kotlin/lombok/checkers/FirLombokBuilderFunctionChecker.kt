@@ -77,21 +77,14 @@ object FirLombokBuilderFunctionChecker : FirFunctionChecker(MppCheckerKind.Platf
 
         checkFunctionParameters(containingClassSymbol, functionSymbol, classBuilder, functionBuilder)
         if (functionBuilder != null && functionSymbol is FirNamedFunctionSymbol) {
-            checkBuilderClassNameIsInferable(functionSymbol, functionBuilder)
+            checkBuilderFunctionHasExplicitTypeRef(functionSymbol, functionBuilder)
         }
     }
 
     private val UNINSTANTIABLE_CLASS_MODIFIERS = setOf(KtTokens.INNER_KEYWORD, KtTokens.ABSTRACT_KEYWORD, KtTokens.SEALED_KEYWORD)
 
-    /**
-     * Unless it is spelled out via `builderClassName`, the builder class name is inferred from the annotated
-     * function's return type. That name is needed as early as the SUPERTYPES stage, so it can only be read off
-     * the *syntactic* return type (see `AbstractBuilderGenerator.getBuilderClassShortName`) — an implicitly
-     * typed function leaves nothing to infer it from, and no builder would be generated at all.
-     */
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkBuilderClassNameIsInferable(function: FirNamedFunctionSymbol, builder: ConeLombokAnnotations.Builder) {
-        if (builder.hasSpecifiedBuilderClassName) return
+    private fun checkBuilderFunctionHasExplicitTypeRef(function: FirNamedFunctionSymbol, builder: ConeLombokAnnotations.Builder) {
         if (function.resolvedReturnTypeRef.source?.kind != KtFakeSourceElementKind.ImplicitTypeRef) return
 
         reporter.reportOn(builder.annotation.source, LombokFirDiagnostics.BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE, context)
