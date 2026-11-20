@@ -323,7 +323,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
 
                     classTypeParameterSymbols.copyTypeParametersTo(typeParameters, methodSymbol)
-                    remapTypeParameterBounds(typeParameters, targetClassSymbol.fir.typeParameters, context.typeResolver, session)
+                    remapTypeParameterBounds(typeParameters, targetClassSymbol.typeParameterSymbols, context.typeResolver, session)
 
                     val functionTypeParameterSymbols = typeParameters.map { it.symbol }
                     kotlinTypeSubstitutor = substitutorByMap(

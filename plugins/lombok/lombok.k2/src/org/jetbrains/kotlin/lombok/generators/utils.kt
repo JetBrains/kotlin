@@ -392,17 +392,17 @@ fun ConeLombokAnnotations.CallSuper.shouldCallSuper(
 abstract class LombokDeclarationKey : GeneratedDeclarationKey()
 
 /**
- * Rewrites the bounds of [newTypeParameters], copied from [originalTypeParameters] (matched by index), so that they
+ * Rewrites the bounds of [newTypeParameters], copied from [originalTypeParameterSymbols] (matched by index), so that they
  * refer to the copies instead of the originals.
  */
 fun remapTypeParameterBounds(
     newTypeParameters: Collection<FirTypeParameter>,
-    originalTypeParameters: Collection<FirTypeParameterRef>,
+    originalTypeParameterSymbols: Collection<FirTypeParameterSymbol>,
     typeResolver: PluginTypeResolver?,
     session: FirSession,
 ) {
     val substitution = buildMap {
-        originalTypeParameters.forEachZipped(newTypeParameters) { original, copy -> this[original.symbol] = copy.symbol.toConeType() }
+        originalTypeParameterSymbols.forEachZipped(newTypeParameters) { original, copy -> this[original] = copy.symbol.toConeType() }
     }
     val substitutor = substitutorByMap(substitution, session)
 

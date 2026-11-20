@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
@@ -68,7 +67,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
     override fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
         builder: SuperBuilder,
         builderSymbol: FirClassSymbol<*>,
-        ownerDeclaration: FirDeclaration,
+        ownerDeclarationSymbol: FirBasedSymbol<*>,
         substitutor: ConeSubstitutor,
         existingFunctionNames: Set<Name>,
     ) {
@@ -98,7 +97,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
                 modality = Modality.ABSTRACT,
                 key = BuilderGeneratorKey(
                     BuilderDeclarationType.Function.Build(
-                        ownerDeclaration.symbol, lombokService.config.singularUseGuava
+                        ownerDeclarationSymbol, lombokService.config.singularUseGuava
                     )
                 )
             ).symbol
