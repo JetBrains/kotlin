@@ -1,12 +1,3 @@
-org.jetbrains.kotlin.psi.CopyablePsiUserDataProperty
-org.jetbrains.kotlin.psi.CopyablePsiUserDataProperty.getValue(R, KProperty<*>)
-org.jetbrains.kotlin.psi.CopyablePsiUserDataProperty.setValue(R, KProperty<*>, T?)
-org.jetbrains.kotlin.psi.NotNullablePsiCopyableUserDataProperty
-org.jetbrains.kotlin.psi.NotNullablePsiCopyableUserDataProperty.getValue(R, KProperty<*>)
-org.jetbrains.kotlin.psi.NotNullablePsiCopyableUserDataProperty.setValue(R, KProperty<*>, T)
-org.jetbrains.kotlin.psi.NotNullableUserDataProperty
-org.jetbrains.kotlin.psi.NotNullableUserDataProperty.getValue(R, KProperty<*>)
-org.jetbrains.kotlin.psi.NotNullableUserDataProperty.setValue(R, KProperty<*>, T)
 org.jetbrains.kotlin.psi.annotationEntryRecursiveVisitor((KtAnnotationEntry) -> Unit)
 org.jetbrains.kotlin.psi.annotationEntryVisitor((KtAnnotationEntry) -> Unit)
 org.jetbrains.kotlin.psi.binaryExpressionRecursiveVisitor((KtBinaryExpression) -> Unit)

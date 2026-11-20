@@ -1,6 +1,3 @@
-com/intellij/openapi/util/Key
-com/intellij/openapi/util/UserDataHolder
-com/intellij/psi/PsiElement
 org/jetbrains/kotlin/psi/KtAnnotationEntry
 org/jetbrains/kotlin/psi/KtBinaryExpression
 org/jetbrains/kotlin/psi/KtBinaryExpressionWithTypeRHS
