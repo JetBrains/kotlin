@@ -409,6 +409,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FLOAT_LITERAL_OUT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_IDENTITY_EQUALS_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FOR_LOOP_OPERATOR_WILL_BECOME_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_EXPECTED
@@ -3710,6 +3711,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ITERATOR_MISSING, "For-loop range must have an 'iterator()' method.")
         map.put(HAS_NEXT_MISSING, "'hasNext()' cannot be called on 'iterator()'.")
         map.put(NEXT_MISSING, "Method 'next()' cannot be called on 'iterator()'.")
+        map.put(
+            FOR_LOOP_OPERATOR_WILL_BECOME_ERROR,
+            "{0}".toDeprecationWarningMessage(ReportMissingErrorsOnForLoopOperatorCalls, assumeEndsWithPeriod = true),
+            STRING
+        )
         map.put(
             COMPONENT_FUNCTION_MISSING,
             "Destructuring of type ''{1}'' requires operator function ''{0}()''.",
