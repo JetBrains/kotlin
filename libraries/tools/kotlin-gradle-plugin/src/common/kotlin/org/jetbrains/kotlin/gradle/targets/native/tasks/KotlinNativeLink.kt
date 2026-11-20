@@ -21,7 +21,6 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
-import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheSettings
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
-import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesForTargetWithKonanDistribution
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
@@ -108,19 +106,13 @@ constructor(
     private val objects = project.objects
     private val simpleKotlinNativeVersion = project.nativeProperties.kotlinNativeVersion
 
-    @get:Internal
-    internal val excludeDependencies
-        get() = objects.getOriginalPlatformLibrariesForTargetWithKonanDistribution(actualNativeHomeDirectory.map {
-            KonanDistribution(it)
-        }, konanTarget)
-
     @get:Classpath
     @get:NormalizeLineEndings
     override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
             @Suppress("DEPRECATION_ERROR")
-            if (konanTarget.enabledOnCurrentHostForBinariesCompilation) compilation.compileDependencyFiles.exclude(excludeDependencies)
+            if (konanTarget.enabledOnCurrentHostForBinariesCompilation) compilation.compileDependencyFiles
             else objectFactory.fileCollection()
         }
     )
@@ -336,7 +328,7 @@ constructor(
 
         dependencyClasspath { args ->
             args.libraries = runSafe {
-                libraries.exclude(excludeDependencies).files.filterKlibsPassedToCompiler(this@KotlinNativeLink)
+                libraries.files.filterKlibsPassedToCompiler(this@KotlinNativeLink)
             }?.toPathsArray() ?: emptyArray()
             args.exportedLibraries = runSafe { exportLibraries.files.filterKlibsPassedToCompiler(this@KotlinNativeLink) }?.toPathsArray() ?: emptyArray()
             args.friendModules = runSafe { friendModule.files.toList().takeIf { it.isNotEmpty() } }
