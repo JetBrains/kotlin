@@ -14,7 +14,6 @@ All tests run in master builds, even if they were not required for merging the c
 - [Running individual tests on changes in another domain](#running-individual-tests-on-changes-in-another-domain)
 - [Always running tests](#always-running-tests)
 - [`^test:` commit command](#test-commit-command)
-- [Nightly tests](#nightly-tests)
 - [Running a subset of a test task](#running-a-subset-of-a-test-task)
 - [Local testing](#local-testing)
     - [Checking which files belong to each domain](#checking-which-files-belong-to-each-domain)
@@ -31,7 +30,7 @@ A domain is **changed** when at least one file belonging to it is changed or it 
 A Domain is a **CI ownership and impact unit**, not an architecture concept.
 
 A test task belongs to the domains of its project directory. When a domain is changed, all its tests must run and pass
-before the commit can be merged to master. Other test filters, such as `@NightlyTest`, still apply.
+before the commit can be merged to master.
 
 ## Which tests are required for merging to master?
 
@@ -43,8 +42,6 @@ The following tests must run and pass before a commit can be merged to master:
 - Tests annotated with `@MustRunAlways`, regardless of which domains are changed.
 - All tests in domains listed in the `^test:` commit command.
 - Tests selected by `testFederation { smokeTests { includeAutoSamples(percentage = ...) } }`
-
-Other test filters still apply. In particular, `@NightlyTest` tests are not required for merging to master.
 
 Running all tests in a domain does **not** make that domain changed. Changed files and the `^test:` commit command mark domains as changed.
 `mustRunAllTestsOnChangesIn` does **not** make a domain changed, so it does not trigger `@MustRunOnChangesInXYZ` tests in other domains.
@@ -147,7 +144,6 @@ class MyImportantJsTests {
 ```
 
 The annotation can be placed on a test method, a test class, an abstract test class, or another annotation.
-Other test filters, such as `@NightlyTest`, still apply.
 
 This annotation adds a reason to run a test. The test still runs whenever all tests in its own domain must run.
 
@@ -157,7 +153,8 @@ See [Extra: Contract tests](#extra-contract-tests) for why these tests are usefu
 ## Always running tests
 
 Use `@MustRunAlways` to require a test to run and pass regardless of which domains are changed.
-These tests are required for merging to master unless all changed files are ignored. Other test filters, such as `@NightlyTest`, still apply.
+These tests are required for merging to master unless all changed files are ignored.
+
 With JUnit 5 (or higher), the annotation can be placed:
 
 - on the test method directly
@@ -209,7 +206,7 @@ Tests annotated with `@MustRunAlways` must be fast and stable, because they run 
 ## `^test:` commit command
 
 Add `^test:` to a commit message to require all tests in the listed domains to run and pass before merging to master.
-Use `^test: *` to require all tests in all domains. Other test filters, such as `@NightlyTest`, still apply.
+Use `^test: *` to require all tests in all domains.
 
 ```
 ^test: Gradle, AnalysisApi
@@ -225,33 +222,6 @@ To require all tests in all domains:
 The command marks the listed domains as changed, so it triggers `@MustRunOnChangesInXYZ` tests when domain `XYZ` is listed.
 Unlike file-based changes, command-listed domains are added after `mustRunAllTestsOnChangesIn` expansion, so they do not require
 all tests in domains that declare a dependency on them.
-
-## Nightly tests
-
-Use `@NightlyTest` for tests that run only when nightly tests are enabled. These tests are not required for merging to master.
-The annotation can be placed on a test method or a test class.
-
-Nightly tests are enabled by default in local Gradle runs. Use `-Pnightly=false` to disable them locally.
-
-```kotlin
-class MyTests {
-    @NightlyTest
-    @Test
-    fun `my long nightly test`() {
-        superLongOperation()
-    }
-
-    @Test
-    fun `my regular test`() {
-        // ...
-    }
-}
-```
-
-When all tests in this class are selected, `my regular test` runs before merging to master. `my long nightly test` runs only when
-nightly tests are enabled. `@MustRunAlways` and `@MustRunOnChangesInXYZ` do not override this restriction.
-
-Long-running tests or tests that have not yet proven stable can be marked with `@NightlyTest` if they are not required for merging to master.
 
 ## Running a subset of a test task
 
@@ -274,8 +244,6 @@ relevant `ContractTestsFor<Domain>` subsets otherwise.
 
 Test subsets may overlap. For example, the same test may declare both `@MustRunOnChangesInJs` and `@MustRunOnChagesInWasm`, so it would be
 selected by both `ContractTestsForJs` and `ContractTestsForWasm`.
-
-Other test filters, such as `@NightlyTest`, still apply regardless of the requested subsets.
 
 ### Customizing test subsets
 

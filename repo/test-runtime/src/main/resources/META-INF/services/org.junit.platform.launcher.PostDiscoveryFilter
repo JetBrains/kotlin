@@ -2,5 +2,7 @@
 # Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
 # Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
 #
+# NightlyTestPostDiscoveryFilter should go before any filtering that might remove @NightlyTag tests (it's actually an assert, not a filter)
+org.jetbrains.kotlin.test.nightly.NightlyTestAssertPostDiscoveryFilter
 org.jetbrains.kotlin.testFederation.TestFederationPostDiscoveryFilter
 org.jetbrains.kotlin.test.sharding.TestShardingPostDiscoveryFilter

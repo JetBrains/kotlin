@@ -318,6 +318,11 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsBrowserTestsGroupedByGradleVersion")
     }
 
+    // Temp. Should be moved to gradlePluginIntegrationNightlyTest later
+    testLifecycleTask("kgpAndroidTestsGroupedByGradleVersionNightlyTemp", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAndroidTestsGroupedByGradleVersionNightly")
+    }
+
     // Nightly Gradle Plugin Integration Tests
     //   grouped by Gradle Version
     //   experimental: Tested against 'gradlePluginIntegrationNightlyTest' for simplicity latency and resource usage
@@ -754,7 +759,7 @@ tasks {
     fun registerSpecialPublishingTasks(
         nameSuffix: String,
         artifactProjectList: List<String>,
-        latch: Project.(() -> Unit) -> Unit = { block -> block() }
+        latch: Project.(() -> Unit) -> Unit = { block -> block() },
     ) {
         register("publish$nameSuffix") {
             latch {

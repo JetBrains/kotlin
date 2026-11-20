@@ -206,14 +206,3 @@ val Test.testFederationExtension: TestFederationExtension
 fun Test.testFederation(configure: TestFederationExtension.() -> Unit) {
     testFederationExtension.configure()
 }
-
-/**
- * Provides whether nightly tests are enabled for the current build.
- *
- * The value is `true` for nightly aggregates and `false` for non-nightly remote builds, such as master-based runs, regular aggregates, and
- * safe-merge builds. It defaults to `true` so that nightly tests can be run locally without additional configuration.
- */
-val Project.areNightlyTestsEnabled: Provider<Boolean>
-    get() = project.providers.gradleProperty("nightly").map { it.toBooleanStrict() }
-        .orElse(providers.environmentVariable("NIGHTLY").map { it.toBooleanStrict() })
-        .orElse(true)
