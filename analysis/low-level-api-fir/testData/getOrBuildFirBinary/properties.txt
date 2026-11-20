@@ -41,7 +41,6 @@ public abstract class Foo public constructor(fromConstructor: kotlin.String) {
     public abstract val abstractProperty: kotlin.Int
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public abstract [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {

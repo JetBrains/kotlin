@@ -3,7 +3,6 @@ KT element text:
 context(context: A)
 public inline fun <A> myContextOf(): A { /* compiled code */ }
 FIR element: FirNamedFunctionImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 context([ResolvedTo(BODY_RESOLVE)] context: R|A|)

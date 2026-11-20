@@ -4,7 +4,6 @@ KT element text:
 public final class Cls public constructor() {
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 @R|Y|() public final [ResolvedTo(BODY_RESOLVE)] class Cls : R|kotlin/Any| {

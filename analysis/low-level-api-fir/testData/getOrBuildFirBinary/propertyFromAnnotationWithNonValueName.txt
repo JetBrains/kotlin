@@ -5,7 +5,6 @@ public final annotation class Anno public constructor(
 ) : kotlin.Annotation {
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {

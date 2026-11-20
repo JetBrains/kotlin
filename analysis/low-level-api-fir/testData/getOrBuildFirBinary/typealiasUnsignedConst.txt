@@ -2,7 +2,6 @@ KT element: KtProperty
 KT element text:
 public const val aMin: kotlin.UInt = 0u
 FIR element: FirPropertyImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val aMin: R|kotlin/UInt| = UInt(0)

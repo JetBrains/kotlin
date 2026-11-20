@@ -48,7 +48,6 @@ public final class Foo public constructor(withDefaultGetter: kotlin.Int, withDef
     public final fun @receiver:MyAnnotation7 @MyAnnotation8 kotlin.Int?.memberFunctionWithReceiverWithNullableReceiver(l: kotlin.Long): kotlin.Unit { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {

@@ -16,7 +16,6 @@ public final class I public constructor(p: A) : A {
     public open fun kotlin.Int.smth(): kotlin.Short { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class I : R|A| {

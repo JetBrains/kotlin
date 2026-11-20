@@ -22,7 +22,6 @@ public final class OuterClass public constructor() {
     }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class OuterClass : R|kotlin/Any| {

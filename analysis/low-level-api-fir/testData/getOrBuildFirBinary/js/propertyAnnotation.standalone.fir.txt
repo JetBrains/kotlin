@@ -7,7 +7,6 @@ public var prop: kotlin.Int /* compiled code */
     @Y
     public final set(value: kotlin.Int) { /* compiled code */ }
 FIR element: FirPropertyImpl
-FIR source kind: null
 
 FIR element rendered:
 @PROPERTY:R|Y|() public final [ResolvedTo(BODY_RESOLVE)] var prop: R|kotlin/Int|

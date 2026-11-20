@@ -220,7 +220,8 @@ internal fun renderActualFir(
         appendLine(ktElement.text)
     }
     appendLine("FIR element: ${fir?.let { it::class.simpleName }}")
-    appendLine("FIR source kind: ${fir?.source?.kind}")
+    if (renderingOptions.renderSourceKind)
+        appendLine("FIR source kind: ${fir?.source?.kind}")
     if (renderingOptions.renderContainerSource)
         appendLine("FIR container source: ${fir.renderContainerSource()}")
     if (renderingOptions.renderKtFileName)

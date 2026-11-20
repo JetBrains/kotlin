@@ -2,7 +2,6 @@ KT element: KtNamedFunction
 KT element text:
 public external fun foo(): kotlin.Unit { /* compiled code */ }
 FIR element: FirNamedFunctionImpl
-FIR source kind: null
 
 FIR element rendered:
 @FILE:R|kotlin/js/JsModule|(import = String(extModule))

@@ -12,7 +12,6 @@ public final inline value class AnnotatedValue public constructor(value: kotlin.
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: null
 
 FIR element rendered:
 @R|pack/Anno|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/String), HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class AnnotatedValue : R|kotlin/Any| {

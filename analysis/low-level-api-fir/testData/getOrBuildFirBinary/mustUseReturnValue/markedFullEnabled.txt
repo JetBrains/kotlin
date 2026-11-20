@@ -25,7 +25,6 @@ public final class Marked public constructor() {
     }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 @R|kotlin/MustUseReturnValues|() public final [ResolvedTo(BODY_RESOLVE)] class Marked : R|kotlin/Any| {
