@@ -7425,6 +7425,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ForLoopOperatorWillBecomeError : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass: KClass<ForLoopOperatorWillBecomeError>
+            get() = ForLoopOperatorWillBecomeError::class
+
+        public val message: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ComponentFunctionMissing : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<ComponentFunctionMissing>
             get() = ComponentFunctionMissing::class

@@ -5247,6 +5247,12 @@ internal class NextMissingImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.NextMissing
 
+internal class ForLoopOperatorWillBecomeErrorImpl(
+    override val message: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ForLoopOperatorWillBecomeError
+
 internal class ComponentFunctionMissingImpl(
     override val missingFunctionName: Name,
     override val destructingType: KaType,

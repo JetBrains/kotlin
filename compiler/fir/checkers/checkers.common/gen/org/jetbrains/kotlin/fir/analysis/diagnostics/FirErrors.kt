@@ -1027,6 +1027,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val ITERATOR_MISSING: KtDiagnosticFactory0 = KtDiagnosticFactory0("ITERATOR_MISSING", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
     val HAS_NEXT_MISSING: KtDiagnosticFactory0 = KtDiagnosticFactory0("HAS_NEXT_MISSING", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
     val NEXT_MISSING: KtDiagnosticFactory0 = KtDiagnosticFactory0("NEXT_MISSING", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
+    val FOR_LOOP_OPERATOR_WILL_BECOME_ERROR: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("FOR_LOOP_OPERATOR_WILL_BECOME_ERROR", WARNING, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
     val COMPONENT_FUNCTION_MISSING: KtDiagnosticFactory2<Name, ConeKotlinType> = KtDiagnosticFactory2("COMPONENT_FUNCTION_MISSING", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val DELEGATE_SPECIAL_FUNCTION_MISSING: KtDiagnosticFactory3<String, ConeKotlinType, String> = KtDiagnosticFactory3("DELEGATE_SPECIAL_FUNCTION_MISSING", ERROR, SourceElementPositioningStrategies.PROPERTY_DELEGATE_BY_KEYWORD, KtExpression::class, getRendererFactory())
     val UNDERSCORE_IS_RESERVED: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNDERSCORE_IS_RESERVED", ERROR, SourceElementPositioningStrategies.NAME_IDENTIFIER, PsiElement::class, getRendererFactory())

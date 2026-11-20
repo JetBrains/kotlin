@@ -6516,6 +6516,13 @@ private fun KaDiagnosticConverterBuilder.addConversions134() {
             token,
         )
     }
+    add(FirErrors.FOR_LOOP_OPERATOR_WILL_BECOME_ERROR) { firDiagnostic ->
+        ForLoopOperatorWillBecomeErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.EXPECTED_TYPEALIAS) { firDiagnostic ->
         ExpectedTypealiasImpl(
             firDiagnostic as KtDiagnosticWithSource,

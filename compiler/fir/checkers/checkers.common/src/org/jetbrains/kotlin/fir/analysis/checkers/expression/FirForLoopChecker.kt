@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
@@ -122,8 +124,14 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
                 } else {
                     val fallbackDiagnostics =
                         calleeReference.diagnostic.toFirDiagnostics(context.session, reportSource, callOrAssignmentSource = null)
+                    val missingErrorsDisabled = LanguageFeature.ReportMissingErrorsOnForLoopOperatorCalls.isDisabled()
+
                     for (ktDiagnostic in fallbackDiagnostics) {
-                        reporter.report(ktDiagnostic, context)
+                        if (ktDiagnostic.severity == ERROR && missingErrorsDisabled) {
+                            reporter.reportOn(reportSource, FirErrors.FOR_LOOP_OPERATOR_WILL_BECOME_ERROR, ktDiagnostic.renderMessage())
+                        } else {
+                            reporter.report(ktDiagnostic, context)
+                        }
                     }
                 }
                 return true

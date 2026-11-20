@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-91430
+// LANGUAGE_FEATURE_TOGGLED: ReportMissingErrorsOnForLoopOperatorCalls
 // WITH_STDLIB
 class Trio
 context(s: String) operator fun Trio.iterator(): Iterator<String> = listOf(s).iterator()
