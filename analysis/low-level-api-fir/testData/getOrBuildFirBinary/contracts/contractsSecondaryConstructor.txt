@@ -4,7 +4,6 @@ public final class MyClass {
     public constructor(x: kotlin.Boolean) { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {

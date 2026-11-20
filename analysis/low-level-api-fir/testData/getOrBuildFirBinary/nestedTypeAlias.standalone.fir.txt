@@ -1,0 +1,14 @@
+KT element: KtClass
+KT element text:
+public final class Foo public constructor() {
+    public typealias TA = kotlin.String
+}
+FIR element: FirRegularClassImpl
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo|
+
+    public final [ResolvedTo(BODY_RESOLVE)] typealias TA = R|kotlin/String|
+
+}

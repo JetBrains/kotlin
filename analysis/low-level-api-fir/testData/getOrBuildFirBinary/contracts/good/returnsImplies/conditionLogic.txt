@@ -28,7 +28,6 @@ public final class Foo public constructor() {
     public final fun test13(x: kotlin.Any?): kotlin.Any? { contract { /* compiled contract */ }; /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {

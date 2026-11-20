@@ -6,6 +6,7 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder
 
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiManager
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -427,6 +429,46 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
             }
         }
         checkOtherModuleUsage(session, sourceModule)
+    }
+
+    @Test
+    fun testDecompiledLibraryFunctionReturnType() {
+        val root = "otherModuleUsage"
+        lateinit var sourceModule: KaSourceModule
+        lateinit var libraryRoot: VirtualFile
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                val compiledJar = compileToJar(testDataPath(root).resolve("dependent"), tempDir)
+                libraryRoot = StandaloneProjectFactory
+                    .getVirtualFilesForLibraryRoots(listOf(compiledJar), coreApplicationEnvironment)
+                    .single()
+                val dep = addModule(
+                    buildKtLibraryModule {
+                        addBinaryRoot(compiledJar)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        libraryName = "dependent"
+                    }
+                )
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("main"))
+                        addRegularDependency(dep)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "main"
+                    }
+                )
+            }
+        }
+
+        val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
+        val decompiledFile = PsiManager.getInstance(session.project).findFile(libraryRoot.findChild("DependentKt.class")!!) as KtFile
+        val decompiledFunction = decompiledFile.declarations.filterIsInstance<KtNamedFunction>().single()
+
+        val returnTypeClassId = analyze(ktFile) {
+            (decompiledFunction.symbol.returnType as KaClassType).classId
+        }
+        assertEquals(StandardClassIds.Unit, returnTypeClassId)
     }
 
     private fun checkOtherModuleUsage(

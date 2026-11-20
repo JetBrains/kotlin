@@ -20,7 +20,6 @@ public object Consts {
     public const val aliasedUInt: kotlin.UInt /* from: one.UIntAlias */ = 4294967295u
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] object Consts : R|kotlin/Any| {

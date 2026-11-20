@@ -6,7 +6,6 @@ public final class A public constructor() {
     public final fun bar(action: Inv<@androidx.compose.runtime.Composable () -> kotlin.Unit>): @androidx.compose.runtime.Composable () -> kotlin.Unit { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {

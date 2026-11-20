@@ -1,3 +1,6 @@
+// IGNORE_STANDALONE
+// KT-91917
+// `LLStandaloneFirElementByPsiElementChooser` doesn't find the FIR declaration of `myContext`
 // LANGUAGE: +ContextParameters
 // DECLARATION_TYPE: org.jetbrains.kotlin.psi.KtNamedFunction
 // MAIN_FILE_NAME: MyFileName

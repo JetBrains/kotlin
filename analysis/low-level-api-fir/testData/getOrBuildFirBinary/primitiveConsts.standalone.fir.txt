@@ -1,0 +1,55 @@
+KT element: KtObjectDeclaration
+KT element text:
+public object Consts {
+    public const val boolean: kotlin.Boolean = true
+
+    public const val char: kotlin.Char = 'c'
+
+    public const val byte: kotlin.Byte = -1
+
+    public const val short: kotlin.Short = 2
+
+    public const val uByte: kotlin.UByte = 255u
+
+    public const val uShort: kotlin.UShort = 65535u
+
+    public const val uInt: kotlin.UInt = 4294967295u
+
+    public const val uLong: kotlin.ULong = 18446744073709551615uL
+
+    public const val aliasedUInt: kotlin.UInt /* from: one.UIntAlias */ = 4294967295u
+}
+FIR element: FirRegularClassImpl
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] object Consts : R|kotlin/Any| {
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val boolean: R|kotlin/Boolean| = Boolean(true)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Boolean|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val char: R|kotlin/Char| = Char(c)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Char|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val byte: R|kotlin/Byte| = Byte(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Byte|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val short: R|kotlin/Short| = Short(2)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Short|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val uByte: R|kotlin/UByte| = UByte(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/UByte|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val uShort: R|kotlin/UShort| = UShort(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/UShort|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val uInt: R|kotlin/UInt| = UInt(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/UInt|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val uLong: R|kotlin/ULong| = ULong(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/ULong|
+
+    public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val aliasedUInt: R|{one/UIntAlias=} kotlin/UInt| = UInt(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|{one/UIntAlias=} kotlin/UInt|
+
+    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] constructor(): R|one/Consts|
+
+}

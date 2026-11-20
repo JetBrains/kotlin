@@ -12,6 +12,9 @@ internal data class FirRenderingOptions(
     val renderKtText: Boolean = false,
     val renderKtFileName: Boolean = false,
     val renderContainerSource: Boolean = false,
+    val renderSourceKind: Boolean = true,
+    /** Simple names of the declaration attribute keys that are not rendered. */
+    val ignoredDeclarationAttributes: Set<String> = emptySet(),
 ) : TestService {
     companion object {
         val DEFAULT = FirRenderingOptions()
@@ -21,11 +24,15 @@ internal data class FirRenderingOptions(
         var renderKtText: Boolean = false
         var renderKtFileName: Boolean = false
         var renderContainerSource: Boolean = false
+        var renderSourceKind: Boolean = true
+        var ignoredDeclarationAttributes: Set<String> = emptySet()
 
         fun build(): FirRenderingOptions = FirRenderingOptions(
             renderKtText,
             renderKtFileName,
             renderContainerSource,
+            renderSourceKind,
+            ignoredDeclarationAttributes,
         )
     }
 }

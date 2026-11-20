@@ -1,0 +1,10 @@
+KT element: KtNamedFunction
+KT element text:
+public final fun fn(): kotlin.Unit { /* compiled code */ }
+FIR element: FirNamedFunctionImpl
+FIR source kind: null
+FIR container source: KotlinJvmBinarySourceElement Class 'test.MyClass'
+File name: MyClass.class
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] fun fn(): R|kotlin/Unit|

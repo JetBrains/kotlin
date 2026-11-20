@@ -1,0 +1,11 @@
+KT element: KtClass
+KT element text:
+public sealed value class ValueClass protected constructor() {
+}
+FIR element: FirRegularClassImpl
+
+FIR element rendered:
+public sealed value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null), SealedClassInheritorsKey=[]] class ValueClass : R|kotlin/Any| {
+    protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ValueClass] constructor(): R|pack/ValueClass|
+
+}

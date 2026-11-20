@@ -1,0 +1,31 @@
+KT element: KtClass
+KT element text:
+public final annotation class Defaults public constructor(
+    public final val ub: kotlin.UByte = 255u,
+
+    public final val us: kotlin.UShort = 65535u,
+
+    public final val ui: kotlin.UInt = 4294967295u,
+
+    public final val ul: kotlin.ULong = 18446744073709551615uL,
+) : kotlin.Annotation {
+}
+FIR element: FirRegularClassImpl
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] annotation class Defaults : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val ub: R|kotlin/UByte| = UByte(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Defaults] get(): R|kotlin/UByte|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val us: R|kotlin/UShort| = UShort(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Defaults] get(): R|kotlin/UShort|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val ui: R|kotlin/UInt| = UInt(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Defaults] get(): R|kotlin/UInt|
+
+    public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val ul: R|kotlin/ULong| = ULong(-1)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Defaults] get(): R|kotlin/ULong|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Defaults] constructor([ResolvedTo(BODY_RESOLVE)] ub: R|kotlin/UByte| = UByte(-1), [ResolvedTo(BODY_RESOLVE)] us: R|kotlin/UShort| = UShort(-1), [ResolvedTo(BODY_RESOLVE)] ui: R|kotlin/UInt| = UInt(-1), [ResolvedTo(BODY_RESOLVE)] ul: R|kotlin/ULong| = ULong(-1)): R|one/Defaults|
+
+}

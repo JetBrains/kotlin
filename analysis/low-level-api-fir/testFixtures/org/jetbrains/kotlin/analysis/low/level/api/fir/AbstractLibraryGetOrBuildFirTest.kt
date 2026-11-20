@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompiler
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleDecompilerDirectory
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -25,10 +26,22 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.*
 
 abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
-    override val configurator = AnalysisApiFirLibraryBinaryDecompiledTestConfigurator()
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirLibraryBinaryDecompiledTestConfigurator()
 
     override fun configureTest(builder: TestConfigurationBuilder) {
-        val renderingOptionsBuilder = FirRenderingOptions.Builder().apply { renderKtText = true }
+        val renderingOptionsBuilder = FirRenderingOptions.Builder().apply {
+            renderKtText = true
+
+            // The FIR source kind of a library declaration only depends on the test mode: the IDE mode builds FIR from stubs, which
+            // have a source, while the Standalone mode deserializes FIR from library files without one. It's only rendered for the
+            // tests that check where library declarations come from, so that the Standalone tests share the results of the IDE mode
+            // tests otherwise.
+            renderSourceKind = false
+
+            // Classes deserialized from library files have these attributes, but classes built from stubs mostly don't, so they also
+            // depend on the test mode. They don't help to check which declaration is found.
+            ignoredDeclarationAttributes = setOf("HasNoEnumEntriesKey", "IsNewPlaceForBodyGeneration")
+        }
 
         builder.forTestsMatching("*/js/*") {
             this.defaultsProviderBuilder.targetPlatform = JsPlatforms.defaultJsPlatform
@@ -43,6 +56,7 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest()
         builder.forTestsMatching("*/containerSource/*") {
             renderingOptionsBuilder.renderKtFileName = true
             renderingOptionsBuilder.renderContainerSource = true
+            renderingOptionsBuilder.renderSourceKind = true
         }
         super.configureTest(builder)
         with(builder) {

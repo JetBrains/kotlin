@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.cache.createEmptySession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
@@ -260,7 +261,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
     private fun KtTypeReference.toKotlinTypeReference(): FirTypeRef {
         // Maybe resolve all types here to not to work with FirTypeRef directly
         return PsiRawFirBuilder(
-            createEmptySession(),
+            createEmptySession(LanguageVersionSettingsImpl.DEFAULT),
             DummyScopeProvider,
             bodyBuildingMode = BodyBuildingMode.NORMAL
         ).buildTypeReference(this)

@@ -21,7 +21,6 @@ public open class Outer<T> public constructor() {
     }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public open [ResolvedTo(BODY_RESOLVE)] class Outer<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {

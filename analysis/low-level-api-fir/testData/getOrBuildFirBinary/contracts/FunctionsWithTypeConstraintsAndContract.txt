@@ -6,7 +6,6 @@ public final class Main public constructor() {
     public final fun <D : SuperType, T : SomeType> anotherFunctionWithTypeConstraints(data: D?, arg: T?, block: () -> kotlin.Unit): kotlin.Unit { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
-FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public final [ResolvedTo(BODY_RESOLVE)] class Main : R|kotlin/Any| {

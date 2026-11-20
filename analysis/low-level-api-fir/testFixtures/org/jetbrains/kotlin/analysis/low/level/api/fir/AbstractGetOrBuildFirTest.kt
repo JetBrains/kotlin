@@ -220,26 +220,27 @@ internal fun renderActualFir(
         appendLine(ktElement.text)
     }
     appendLine("FIR element: ${fir?.let { it::class.simpleName }}")
-    appendLine("FIR source kind: ${fir?.source?.kind}")
+    if (renderingOptions.renderSourceKind)
+        appendLine("FIR source kind: ${fir?.source?.kind}")
     if (renderingOptions.renderContainerSource)
         appendLine("FIR container source: ${fir.renderContainerSource()}")
     if (renderingOptions.renderKtFileName)
         appendLine("File name: ${ktElement.containingKtFile.name}")
     appendLine("\nFIR element rendered:")
-    appendLine(render(fir).trimEnd())
+    appendLine(render(fir, renderingOptions).trimEnd())
     for (firFile in firFiles) {
         appendLine("\nFIR FILE:")
-        append(render(firFile).trimEnd())
+        append(render(firFile, renderingOptions).trimEnd())
     }
 }
 
-private fun render(firElement: FirElement?): String = when (firElement) {
+private fun render(firElement: FirElement?, renderingOptions: FirRenderingOptions): String = when (firElement) {
     null -> "null"
     is FirImport -> "import ${firElement.importedFqName}"
     else -> FirRenderer(
         packageDirectiveRenderer = FirPackageDirectiveRenderer(),
         resolvePhaseRenderer = FirResolvePhaseRenderer(),
-        declarationRenderer = FirDeclarationRendererWithFilteredAttributes(),
+        declarationRenderer = FirDeclarationRendererWithFilteredAttributes(renderingOptions.ignoredDeclarationAttributes),
     ).renderElementAsString(firElement)
 }
 
