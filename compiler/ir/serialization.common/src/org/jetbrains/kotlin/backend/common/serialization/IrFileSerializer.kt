@@ -1658,20 +1658,7 @@ open class IrFileSerializer(
     }
 
     private fun IrFileEntry.matchAndNormalizeFilePath(): String =
-        tryMatchPath(name).replace(File.separatorChar, '/')
-
-    private fun tryMatchPath(fileName: String): String {
-        val file = File(fileName)
-        val path = file.toPath()
-
-        for (base in settings.sourceBaseDirs) {
-            if (path.startsWith(base)) {
-                return file.toRelativeString(File(base))
-            }
-        }
-
-        return fileName
-    }
+        computeFileRelativePath(name, settings.sourceBaseDirs).replace(File.separatorChar, '/')
 
     @Suppress("unused")
     private inline fun <T : IrElement> requireAbiAtLeast(

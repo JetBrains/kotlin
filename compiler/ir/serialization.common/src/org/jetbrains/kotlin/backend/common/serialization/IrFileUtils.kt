@@ -33,3 +33,16 @@ private fun File.directlyReadLineStartOffsets(): List<Int> {
     buffer.add(currentOffset)
     return buffer
 }
+
+fun computeFileRelativePath(fileName: String, baseDirs: Collection<String>): String {
+    val file = File(fileName)
+    val path = file.toPath()
+
+    for (base in baseDirs) {
+        if (path.startsWith(base)) {
+            return file.toRelativeString(File(base))
+        }
+    }
+
+    return fileName
+}
