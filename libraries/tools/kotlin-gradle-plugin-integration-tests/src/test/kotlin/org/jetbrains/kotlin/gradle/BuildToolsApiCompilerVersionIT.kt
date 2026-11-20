@@ -13,15 +13,16 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Kotlin compiler version resolution via the Build Tools API")
-@JvmGradlePluginTests
 @MustRunOnChangesInGradle
 @MustRunOnChangesInBuildToolsApi
 class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
+    @JvmGradlePluginTests
     @GradleTest
     @DisplayName("Non-existent compiler version reports KotlinCompilerVersionNotFound")
     fun compileWithNonExistentCompilerVersion(gradleVersion: GradleVersion) =
         testNonExistentCompilerVersion(gradleVersion, defaultBuildOptions)
 
+    @JvmGradlePluginTests
     @GradleTest
     @DisplayName("Non-existent compiler version reports KotlinCompilerVersionNotFound without configuration cache")
     fun compileWithNonExistentCompilerVersionWithoutConfigurationCache(gradleVersion: GradleVersion) =
@@ -46,6 +47,7 @@ class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @GradleTest
     @DisplayName("Non-existent compiler version from a resolution rule reports KotlinCompilerVersionNotFound")
     fun compileWithNonExistentCompilerVersionFromResolutionRule(gradleVersion: GradleVersion) {
@@ -62,6 +64,7 @@ class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @GradleTest
     @DisplayName("Switching between non-existent and existing compiler versions reports KotlinCompilerVersionNotFound only for the missing one")
     fun compileAfterSwitchingCompilerVersion(gradleVersion: GradleVersion) {
@@ -92,6 +95,23 @@ class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
             }
             """.trimIndent()
         )
+    }
+
+    @JsGradlePluginTests
+    @GradleTest
+    @DisplayName("Compiler version with the Build Tools API disabled for JS reports KotlinCompilerVersionWithoutBuildToolsApi")
+    fun compileJsWithCompilerVersionWithoutBuildToolsApi(gradleVersion: GradleVersion) {
+        project("js-per-file", gradleVersion, compilerVersion = TestVersions.Kotlin.STABLE_RELEASE) {
+            gradleProperties.append("kotlin.js.runViaBuildToolsApi=false")
+            buildAndFail("compileKotlinJs") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.KotlinCompilerVersionWithoutBuildToolsApi,
+                    withSubstring = "Task ':compileKotlinJs' cannot use Kotlin compiler version '${TestVersions.Kotlin.STABLE_RELEASE}'",
+                )
+                // Build fails while the task graph is calculated, before :compileKotlinJs is scheduled.
+                assertTasksAreNotInTaskGraph(":compileKotlinJs")
+            }
+        }
     }
 }
 
