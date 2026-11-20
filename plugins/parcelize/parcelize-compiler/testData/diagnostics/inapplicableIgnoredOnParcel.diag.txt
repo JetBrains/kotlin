@@ -1,0 +1,7 @@
+/inapplicableIgnoredOnParcel.kt:10:1: warning: '@IgnoredOnParcel' is only applicable to class properties.
+
+/inapplicableIgnoredOnParcel.kt:13:1: warning: '@IgnoredOnParcel' is only applicable to class properties.
+
+/inapplicableIgnoredOnParcel.kt:16:1: warning: '@IgnoredOnParcel' is only applicable to class properties.
+
+/inapplicableIgnoredOnParcel.kt:20:1: warning: '@IgnoredOnParcel' is only applicable to class properties.

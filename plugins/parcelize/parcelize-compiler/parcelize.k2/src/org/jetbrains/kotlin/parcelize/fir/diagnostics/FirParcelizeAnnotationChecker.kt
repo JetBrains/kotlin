@@ -53,6 +53,7 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
             }
             in IGNORED_ON_PARCEL_CLASS_IDS -> {
                 checkDeprecatedAnnotations(expression, annotationClassId, context, reporter, isForbidden = false)
+                checkIgnoredOnParcelUsage(expression, context, reporter)
             }
             in parcelizeAnnotationClassIds, in RAW_VALUE_ANNOTATION_CLASS_IDS -> {
                 checkDeprecatedAnnotations(expression, annotationClassId, context, reporter, isForbidden = false)
@@ -76,6 +77,16 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
             return false
         }
         return true
+    }
+
+    /**
+     * `@IgnoredOnParcel` targets [AnnotationTarget.PROPERTY], which also admits top-level properties, but the annotation is only
+     * meaningful for class properties.
+     */
+    private fun checkIgnoredOnParcelUsage(annotationCall: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
+        val property = context.annotationContainers.lastOrNull() as? FirProperty ?: return
+        if (property.isLocal || property.dispatchReceiverType != null) return
+        reporter.reportOn(annotationCall.source, KtErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL, context)
     }
 
     private fun checkTypeParcelerUsage(annotationCall: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
