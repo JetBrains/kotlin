@@ -29,7 +29,7 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
             callableId = /MyClass.plus
           typeArgumentsMapping = {}
           valueArgumentMapping = {
-            variable[0] -> (KaVariableSignature:
+            MyClass() -> (KaVariableSignature:
               name = v
               receiverType = null
               returnType = MyClass
@@ -106,10 +106,10 @@ KtBinaryExpression(238,262): 'variable[0] += MyClass()'
         typeArgumentsMapping = {}
         valueArgumentMapping = {
           0 -> (KaVariableSignature:
-            name = v
+            name = i
             receiverType = null
-            returnType = MyClass
-            symbol = v: MyClass
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
             contextParameters = []
             callableId = null)
         }
