@@ -1,0 +1,88 @@
+fragment main
+fun varargs(values: String): Unit [example/JavaTypes/varargs/#java.lang.String.../PointingToDeclaration/].valueParameters[0].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "String",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/String///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+fun varargs(values: String): Unit [example/JavaTypes/varargs/#java.lang.String.../PointingToDeclaration/].returnType:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Unit",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Unit///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+var primitiveArray: IntArray [example/JavaTypes/primitiveArray/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "IntArray",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/IntArray///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+var referenceArray: Array<Array<String>> [example/JavaTypes/referenceArray/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Array",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "Array",
+                "typeArguments": [
+                  {
+                    "kind": "invariant",
+                    "type": {
+                      "kind": "classLike",
+                      "qualifiers": [
+                        {
+                          "name": "String",
+                          "typeArguments": []
+                        }
+                      ],
+                      "classLikeId": "kotlin/String///PointingToDeclaration/",
+                      "isMarkedNullable": false,
+                      "annotations": []
+                    }
+                  }
+                ]
+              }
+            ],
+            "classLikeId": "kotlin/Array///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin/Array///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+

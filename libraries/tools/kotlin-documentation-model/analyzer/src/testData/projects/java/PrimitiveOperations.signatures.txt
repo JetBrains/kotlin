@@ -1,0 +1,10 @@
+main:
+  interface PrimitiveOperations (declared)
+    abstract fun accept(enabled: Boolean, value: Byte, count: Short, marker: Char): Boolean (declared)
+    abstract fun acceptBoxed(enabled: Boolean, value: Byte, count: Short, marker: Char): Boolean (declared)
+    abstract fun calculate(value: Float, scale: Double): Double (declared)
+    abstract fun calculateBoxed(value: Float, scale: Double): Double (declared)
+    abstract fun count(value: Int, total: Long): Long (declared)
+    abstract fun countBoxed(value: Int, total: Long): Long (declared)
+    abstract fun reset(): Unit (declared)
+    abstract fun resetBoxed(): Void (declared)

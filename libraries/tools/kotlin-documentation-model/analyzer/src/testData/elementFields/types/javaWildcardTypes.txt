@@ -1,0 +1,132 @@
+fragment main
+constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Any",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+var unbounded: MutableList<*> [example/JavaTypes/unbounded/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "MutableList",
+      "typeArguments": [
+        {
+          "kind": "star"
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+var upperBound: MutableList<out T> [example/JavaTypes/upperBound/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "MutableList",
+      "typeArguments": [
+        {
+          "kind": "out",
+          "type": {
+            "kind": "typeParameter",
+            "name": "T",
+            "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+var lowerBound: MutableList<in String> [example/JavaTypes/lowerBound/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "MutableList",
+      "typeArguments": [
+        {
+          "kind": "in",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "String",
+                "typeArguments": []
+              }
+            ],
+            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+var raw: MutableList<Any?> [example/JavaTypes/raw/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "MutableList",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "Any",
+                "typeArguments": []
+              }
+            ],
+            "classLikeId": "kotlin/Any///PointingToDeclaration/",
+            "isMarkedNullable": true,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Any",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+

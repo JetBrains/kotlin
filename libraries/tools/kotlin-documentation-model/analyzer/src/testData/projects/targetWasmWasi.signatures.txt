@@ -1,0 +1,7 @@
+wasmWasiMain:
+  class WasiClock(val resolution: Long) (declared)
+    constructor(resolution: Long) (declared)
+    val resolution: Long (declared)
+    var _hashCode: Int (external)
+  external fun randomGet(address: Int, length: Int): Int (declared)
+  fun add(a: Int, b: Int): Int (declared)

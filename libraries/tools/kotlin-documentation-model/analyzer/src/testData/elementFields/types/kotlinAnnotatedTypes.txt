@@ -1,0 +1,20 @@
+fragment main
+val annotated: String [example/Types/annotated/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "String",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/String///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": [
+    {
+      "classLikeId": "example/TypeLabel///PointingToDeclaration/",
+      "arguments": {}
+    }
+  ]
+}
+

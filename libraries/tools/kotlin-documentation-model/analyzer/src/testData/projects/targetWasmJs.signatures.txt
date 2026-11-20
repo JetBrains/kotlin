@@ -1,0 +1,8 @@
+wasmJsMain:
+  external fun jsConsoleLog(message: JsString): Unit (declared)
+  fun exportedSum(a: Int, b: Int): Int (declared)
+  fun toJs(value: String): JsString (declared)
+  fun toJsArray(values: List<Int>): JsArray<JsNumber> (declared)
+  interface WasmJsOptions : JsAny (declared)
+    abstract external val title: String (declared)
+    var _hashCode: Int (external)

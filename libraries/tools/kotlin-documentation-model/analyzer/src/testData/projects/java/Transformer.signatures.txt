@@ -1,0 +1,4 @@
+main:
+  interface Transformer<T : Any> (declared)
+    abstract fun <R : Any> convert(value: T, fallback: R): R (declared)
+    abstract fun transform(value: T): T (declared)

@@ -764,6 +764,7 @@ internal class DokkaSymbolVisitor(
             isExpectActual = (isExpect || isActual),
             extra = PropertyContainer.withAll(
                 getDokkaAnnotationsFrom(constructorSymbol)?.toSourceSetDependent()?.toAnnotations(),
+                getCheckedExceptions(constructorSymbol),
                 takeIf { constructorSymbol.isPrimary }?.let { PrimaryConstructorExtra }
             )
         )
@@ -826,7 +827,7 @@ internal class DokkaSymbolVisitor(
         return psiHelper.getConstantExpression(psiField)
     }
 
-    private fun getCheckedExceptions(functionSymbol: KaNamedFunctionSymbol): CheckedExceptions? {
+    private fun getCheckedExceptions(functionSymbol: KaFunctionSymbol): CheckedExceptions? {
         val psiMethod = functionSymbol.psi as? PsiMethod ?: return null
         val driList = psiHelper.getCheckedExceptionDRIs(psiMethod)
         return driList.takeIf { it.isNotEmpty() }?.let { CheckedExceptions(it.toSourceSetDependent()) }

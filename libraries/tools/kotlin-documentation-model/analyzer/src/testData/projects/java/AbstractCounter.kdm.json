@@ -1,0 +1,136 @@
+{
+    "schemaVersion": "2.5.255",
+    "fragments": [
+        {
+            "name": "main",
+            "elements": {
+                "example/AbstractCounter/AbstractCounter/#/PointingToDeclaration/": {
+                    "kind": "constructor",
+                    "isPrimary": true,
+                    "isExternal": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "valueParameters": [],
+                    "visibility": "PUBLIC",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "example/AbstractCounter/count/#/PointingToDeclaration/": {
+                    "kind": "function",
+                    "name": "count",
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isOperator": false,
+                    "isInfix": false,
+                    "isInline": false,
+                    "isTailRec": false,
+                    "mappedTo": null,
+                    "returnType": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "Int",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/Int///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "valueParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "ABSTRACT",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "example/AbstractCounter/reset/#/PointingToDeclaration/": {
+                    "kind": "function",
+                    "name": "reset",
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isOperator": false,
+                    "isInfix": false,
+                    "isInline": false,
+                    "isTailRec": false,
+                    "mappedTo": null,
+                    "returnType": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "Unit",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/Unit///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "valueParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PACKAGE_PROTECTED",
+                    "modality": "ABSTRACT",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "example/AbstractCounter///PointingToDeclaration/": {
+                    "kind": "class",
+                    "name": "AbstractCounter",
+                    "classKind": "CLASS",
+                    "isCompanion": false,
+                    "isData": false,
+                    "isValue": false,
+                    "isFun": false,
+                    "isInner": false,
+                    "isExternal": false,
+                    "isError": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "superTypes": [],
+                    "declarations": [
+                        "example/AbstractCounter/AbstractCounter/#/PointingToDeclaration/",
+                        "example/AbstractCounter/count/#/PointingToDeclaration/",
+                        "example/AbstractCounter/reset/#/PointingToDeclaration/"
+                    ],
+                    "visibility": "PUBLIC",
+                    "modality": "ABSTRACT",
+                    "since": null,
+                    "deprecated": null,
+                    "annotations": []
+                },
+                "example////PointingToDeclaration/": {
+                    "kind": "package",
+                    "name": "example",
+                    "declarations": [
+                        "example/AbstractCounter///PointingToDeclaration/"
+                    ],
+                    "annotations": []
+                },
+                "////PointingToDeclaration/": {
+                    "kind": "module",
+                    "name": "AbstractCounter",
+                    "packages": [
+                        "example////PointingToDeclaration/"
+                    ],
+                    "annotations": []
+                }
+            },
+            "embeddedElements": {}
+        }
+    ],
+    "expectActualMappings": []
+}

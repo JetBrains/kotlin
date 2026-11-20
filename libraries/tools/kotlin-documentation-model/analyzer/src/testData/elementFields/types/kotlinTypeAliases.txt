@@ -1,0 +1,45 @@
+fragment main
+val alias: Names [example//alias/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Names",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "example/Names///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+typealias Names = List<String?> [example/Names///PointingToDeclaration/].underlyingType:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "List",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "String",
+                "typeArguments": []
+              }
+            ],
+            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "isMarkedNullable": true,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin.collections/List///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+

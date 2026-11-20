@@ -1,0 +1,304 @@
+fragment main
+constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "CharSequence",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+constructor(value: T) [example/Types/Types/#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].valueParameters[0].type:
+{
+  "kind": "typeParameter",
+  "name": "T",
+  "containerElementId": "example/Types///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Any",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/].valueParameters[0].type:
+{
+  "kind": "typeParameter",
+  "name": "R",
+  "containerElementId": "example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/",
+  "isMarkedNullable": true,
+  "annotations": []
+}
+fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/].valueParameters[1].type:
+{
+  "kind": "functional",
+  "returnType": {
+    "kind": "invariant",
+    "type": {
+      "kind": "typeParameter",
+      "name": "R",
+      "containerElementId": "example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/",
+      "isMarkedNullable": false,
+      "annotations": []
+    }
+  },
+  "receiverType": null,
+  "valueParameterTypes": [
+    {
+      "kind": "invariant",
+      "type": {
+        "kind": "typeParameter",
+        "name": "T",
+        "containerElementId": "example/Types///PointingToDeclaration/",
+        "isMarkedNullable": false,
+        "annotations": []
+      }
+    }
+  ],
+  "contextParameterTypes": [],
+  "isSuspend": false,
+  "isMarkedNullable": false,
+  "annotations": []
+}
+fun convert(input: R?, block: (T) -> R): R [example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/].returnType:
+{
+  "kind": "typeParameter",
+  "name": "R",
+  "containerElementId": "example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+fun extension(other: T): String [example/Types/extension/kotlin.String#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].extensionReceiverParameter.type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "String",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/String///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+fun extension(other: T): String [example/Types/extension/kotlin.String#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].valueParameters[0].type:
+{
+  "kind": "typeParameter",
+  "name": "T",
+  "containerElementId": "example/Types///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+fun extension(other: T): String [example/Types/extension/kotlin.String#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/].returnType:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "String",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/String///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+val value: T [example/Types/value/#/PointingToDeclaration/].type:
+{
+  "kind": "typeParameter",
+  "name": "T",
+  "containerElementId": "example/Types///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+val function: (T) -> String [example/Types/function/#/PointingToDeclaration/].type:
+{
+  "kind": "functional",
+  "returnType": {
+    "kind": "invariant",
+    "type": {
+      "kind": "classLike",
+      "qualifiers": [
+        {
+          "name": "String",
+          "typeArguments": []
+        }
+      ],
+      "classLikeId": "kotlin/String///PointingToDeclaration/",
+      "isMarkedNullable": false,
+      "annotations": []
+    }
+  },
+  "receiverType": null,
+  "valueParameterTypes": [
+    {
+      "kind": "invariant",
+      "type": {
+        "kind": "typeParameter",
+        "name": "T",
+        "containerElementId": "example/Types///PointingToDeclaration/",
+        "isMarkedNullable": false,
+        "annotations": []
+      }
+    }
+  ],
+  "contextParameterTypes": [],
+  "isSuspend": false,
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+val nullableFunction: ((T) -> String)? [example/Types/nullableFunction/#/PointingToDeclaration/].type:
+{
+  "kind": "functional",
+  "returnType": {
+    "kind": "invariant",
+    "type": {
+      "kind": "classLike",
+      "qualifiers": [
+        {
+          "name": "String",
+          "typeArguments": []
+        }
+      ],
+      "classLikeId": "kotlin/String///PointingToDeclaration/",
+      "isMarkedNullable": false,
+      "annotations": []
+    }
+  },
+  "receiverType": null,
+  "valueParameterTypes": [
+    {
+      "kind": "invariant",
+      "type": {
+        "kind": "typeParameter",
+        "name": "T",
+        "containerElementId": "example/Types///PointingToDeclaration/",
+        "isMarkedNullable": false,
+        "annotations": []
+      }
+    }
+  ],
+  "contextParameterTypes": [],
+  "isSuspend": false,
+  "isMarkedNullable": true,
+  "annotations": []
+}
+
+val extensionFunction: String.(T) -> Int [example/Types/extensionFunction/#/PointingToDeclaration/].type:
+{
+  "kind": "functional",
+  "returnType": {
+    "kind": "invariant",
+    "type": {
+      "kind": "classLike",
+      "qualifiers": [
+        {
+          "name": "Int",
+          "typeArguments": []
+        }
+      ],
+      "classLikeId": "kotlin/Int///PointingToDeclaration/",
+      "isMarkedNullable": false,
+      "annotations": []
+    }
+  },
+  "receiverType": {
+    "kind": "invariant",
+    "type": {
+      "kind": "classLike",
+      "qualifiers": [
+        {
+          "name": "String",
+          "typeArguments": []
+        }
+      ],
+      "classLikeId": "kotlin/String///PointingToDeclaration/",
+      "isMarkedNullable": false,
+      "annotations": []
+    }
+  },
+  "valueParameterTypes": [
+    {
+      "kind": "invariant",
+      "type": {
+        "kind": "typeParameter",
+        "name": "T",
+        "containerElementId": "example/Types///PointingToDeclaration/",
+        "isMarkedNullable": false,
+        "annotations": []
+      }
+    }
+  ],
+  "contextParameterTypes": [],
+  "isSuspend": false,
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+val suspendFunction: suspend (T) -> Unit [example/Types/suspendFunction/#/PointingToDeclaration/].type:
+{
+  "kind": "functional",
+  "returnType": {
+    "kind": "invariant",
+    "type": {
+      "kind": "classLike",
+      "qualifiers": [
+        {
+          "name": "Unit",
+          "typeArguments": []
+        }
+      ],
+      "classLikeId": "kotlin/Unit///PointingToDeclaration/",
+      "isMarkedNullable": false,
+      "annotations": []
+    }
+  },
+  "receiverType": null,
+  "valueParameterTypes": [
+    {
+      "kind": "invariant",
+      "type": {
+        "kind": "typeParameter",
+        "name": "T",
+        "containerElementId": "example/Types///PointingToDeclaration/",
+        "isMarkedNullable": false,
+        "annotations": []
+      }
+    }
+  ],
+  "contextParameterTypes": [],
+  "isSuspend": true,
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+class Types [example/Types///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "CharSequence",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+

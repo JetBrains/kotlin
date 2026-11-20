@@ -1,0 +1,280 @@
+fragment main
+constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "CharSequence",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+constructor() [example/JavaTypes/JavaTypes/#/PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Comparable",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "typeParameter",
+            "name": "T",
+            "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Number",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Number///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Comparable",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "typeParameter",
+            "name": "R",
+            "containerElementId": "example/JavaTypes/convert/#R/PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].valueParameters[0].type:
+{
+  "kind": "typeParameter",
+  "name": "R",
+  "containerElementId": "example/JavaTypes/convert/#R/PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+fun convert(input: R): R [example/JavaTypes/convert/#R/PointingToDeclaration/].returnType:
+{
+  "kind": "typeParameter",
+  "name": "R",
+  "containerElementId": "example/JavaTypes/convert/#R/PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+var typeParameter: T [example/JavaTypes/typeParameter/#/PointingToDeclaration/].type:
+{
+  "kind": "typeParameter",
+  "name": "T",
+  "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+var parameterized: MutableList<String> [example/JavaTypes/parameterized/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "MutableList",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "String",
+                "typeArguments": []
+              }
+            ],
+            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+var nested: MutableMap<String, MutableList<T>> [example/JavaTypes/nested/#/PointingToDeclaration/].type:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "MutableMap",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "String",
+                "typeArguments": []
+              }
+            ],
+            "classLikeId": "kotlin/String///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        },
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "MutableList",
+                "typeArguments": [
+                  {
+                    "kind": "invariant",
+                    "type": {
+                      "kind": "typeParameter",
+                      "name": "T",
+                      "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+                      "isMarkedNullable": false,
+                      "annotations": []
+                    }
+                  }
+                ]
+              }
+            ],
+            "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin.collections/MutableMap///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "CharSequence",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/CharSequence///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+class JavaTypes [example/JavaTypes///PointingToDeclaration/].typeParameters[0].upperBounds[1]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Comparable",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "typeParameter",
+            "name": "T",
+            "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "kotlin/Comparable///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+class JavaTypes [example/JavaTypes///PointingToDeclaration/].superTypes[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Base",
+      "typeArguments": [
+        {
+          "kind": "invariant",
+          "type": {
+            "kind": "classLike",
+            "qualifiers": [
+              {
+                "name": "MutableList",
+                "typeArguments": [
+                  {
+                    "kind": "invariant",
+                    "type": {
+                      "kind": "typeParameter",
+                      "name": "T",
+                      "containerElementId": "example/JavaTypes///PointingToDeclaration/",
+                      "isMarkedNullable": false,
+                      "annotations": []
+                    }
+                  }
+                ]
+              }
+            ],
+            "classLikeId": "kotlin.collections/MutableList///PointingToDeclaration/",
+            "isMarkedNullable": false,
+            "annotations": []
+          }
+        }
+      ]
+    }
+  ],
+  "classLikeId": "example/Base///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
+interface Base [example/Base///PointingToDeclaration/].typeParameters[0].upperBounds[0]:
+{
+  "kind": "classLike",
+  "qualifiers": [
+    {
+      "name": "Any",
+      "typeArguments": []
+    }
+  ],
+  "classLikeId": "kotlin/Any///PointingToDeclaration/",
+  "isMarkedNullable": false,
+  "annotations": []
+}
+
