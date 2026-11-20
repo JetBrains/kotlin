@@ -444,7 +444,7 @@ internal fun buildKaptSubpluginOptions(
     )
     pluginOptions += SubpluginOption("stripMetadata", "${kaptExtension.stripMetadata}")
     pluginOptions += SubpluginOption("stubGenerationScheme", kaptExtension.stubGenerationScheme.get().optionValue)
-    pluginOptions += SubpluginOption("showProcessorTimings", "${kaptExtension.showProcessorStats}")
+    pluginOptions += SubpluginOption("showProcessorStats", "${kaptExtension.showProcessorStats}")
     pluginOptions += SubpluginOption("detectMemoryLeaks", kaptExtension.detectMemoryLeaks)
     pluginOptions += SubpluginOption("infoAsWarnings", "${KaptProperties.isInfoAsWarnings(project).get()}")
     pluginOptions += FilesSubpluginOption("stubs", kaptStubsDir)

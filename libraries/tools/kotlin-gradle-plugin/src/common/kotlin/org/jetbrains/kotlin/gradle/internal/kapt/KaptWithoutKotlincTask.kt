@@ -63,6 +63,9 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     var mapDiagnosticLocations: Boolean = false
 
     @get:Input
+    var showProcessorStats: Boolean = false
+
+    @get:Input
     val stubGenerationScheme: Property<KaptStubGenerationScheme> =
         objectFactory.propertyWithConvention(KaptStubGenerationScheme.DIRECT)
 
@@ -140,6 +143,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         val kaptFlagsForWorker = mutableSetOf<String>().apply {
             if (verbose.get()) add("VERBOSE")
             if (mapDiagnosticLocations) add("MAP_DIAGNOSTIC_LOCATIONS")
+            if (showProcessorStats) add("SHOW_PROCESSOR_STATS")
             if (includeCompileClasspath.get()) add("INCLUDE_COMPILE_CLASSPATH")
             if (incrementalChanges is KaptIncrementalChanges.Known) add("INCREMENTAL_APT")
             if (isolateProcessorsFromBuildClasspath.get()) add("ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH")
