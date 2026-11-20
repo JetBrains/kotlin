@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
+import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
@@ -61,6 +62,35 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     fun buildInterface(objCCacheUnits: ObjCExportUnits? = null): ObjCExportedInterface {
         val headerLines = build()
         return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, namer, mapper, objCCacheUnits)
+    }
+
+    @InternalKotlinNativeApi
+    fun assignCodeSpecSelectors() {
+        fun assign(members: List<CallableMemberDescriptor>) = members.forEach {
+            when (it) {
+                is PropertyDescriptor -> {
+                    it.getter?.let(namer::getSelector)
+                    it.setter?.takeIf(mapper::shouldBeExposed)?.let(namer::getSelector)
+                }
+                is FunctionDescriptor -> namer.getSelector(it)
+            }
+        }
+
+        val assignedClasses = mutableSetOf<ClassDescriptor>()
+        fun assign(descriptor: ClassDescriptor) {
+            if (!assignedClasses.add(descriptor)) return
+            descriptor.contributedMethods.filter { mapper.shouldBeExposed(it) }
+                .flatMap { mapper.getBaseMethods(it) }.distinct()
+                .forEach { namer.getSelector(it) }
+            if (!descriptor.isInterface) {
+                descriptor.constructors.filter { mapper.shouldBeExposed(it) }.forEach { namer.getSelector(it) }
+                descriptor.getSuperClassNotAny()?.let(::assign)
+            }
+        }
+
+        topLevel.values.forEach(::assign)
+        generatedClasses.forEach(::assign)
+        extensions.values.forEach { members -> members.groupBy { it.module }.values.forEach(::assign) }
     }
 
     fun getExportStubs(): ObjCExportedStubs =
