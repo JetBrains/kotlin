@@ -204,15 +204,8 @@ private fun createCompoundArrayAccessCall(
     resolveFragmentOfCall: Boolean,
     compoundOperationProvider: (KaFunctionCall<KaNamedFunctionSymbol>) -> KaCompoundOperation,
 ): KaCallResolutionAttempt? {
-    // The last argument of `set` is the new value to be set. This value should be a call to the respective `plus`, `minus`,
-    // `times`, `div`, or `rem` function.
-    val firOperationCall = firCall.arguments.lastOrNull() as? FirFunctionCall ?: return null
-
-    // The explicit receiver for both `get` and `set` call should be the array expression.
-    val firExplicitReceiver = firOperationCall.explicitReceiver ?: return null
-    val firGetCall = firExplicitReceiver as? FirFunctionCall // case for array access and prefix
-        ?: getInitializerOfReferencedLocalVariable(firExplicitReceiver) // case for postfix
-        ?: return null
+    val firOperationCall = firCall.compoundArrayAccessOperationCall() ?: return null
+    val firGetCall = firOperationCall.operationReceiverGetCall() ?: return null
 
     val indexExpressions = lhsArrayAccessExpression.indexExpressions
     val arrayExpression = lhsArrayAccessExpression.arrayExpression
@@ -297,6 +290,32 @@ private fun createCompoundArrayAccessCall(
         backingOperationCallAttempt = operationAttempt,
         backingSetterCallAttempt = setterAttempt,
     )
+}
+
+/**
+ * The operation call (`inc`, `plus`, ...) of the compound array access whose `set` call is [this].
+ */
+private fun FirFunctionCall.compoundArrayAccessOperationCall(): FirFunctionCall? {
+    // The last argument of `set` is the new value to be set, the result of the operation call
+    return arguments.lastOrNull() as? FirFunctionCall
+}
+
+/**
+ * The `get` call of the compound array access whose operation call is [this]: the receiver of the operation.
+ */
+context(resolver: KaFirResolver)
+private fun FirFunctionCall.operationReceiverGetCall(): FirFunctionCall? {
+    val firExplicitReceiver = explicitReceiver ?: return null
+    return firExplicitReceiver as? FirFunctionCall // case for array access and prefix
+        ?: getInitializerOfReferencedLocalVariable(firExplicitReceiver) // case for postfix
+}
+
+/**
+ * The `get` call of the compound array access whose `set` call is [setCall].
+ */
+context(resolver: KaFirResolver)
+internal fun compoundArrayAccessGetCall(setCall: FirFunctionCall): FirFunctionCall? {
+    return setCall.compoundArrayAccessOperationCall()?.operationReceiverGetCall()
 }
 
 context(resolver: KaFirResolver)

@@ -36,3 +36,40 @@ KtArrayAccessExpression(200,208): 'b["key"]'
           callableId = null)
       }
     isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = b
+        isSafeNavigation = false
+        type = B
+      signature = KaFunctionSignature:
+        receiverType = B
+        returnType = B
+        symbol = /get(<extension receiver>: B, i: kotlin.CharSequence): B
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.CharSequence
+            symbol = i: kotlin.CharSequence
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "key" -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.CharSequence
+          symbol = i: kotlin.CharSequence
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for 'fun B.get(i: CharSequence): B'.>
+    isInBestCandidates = false

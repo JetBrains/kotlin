@@ -54,8 +54,13 @@ internal fun FirElement.collectCallCandidates(
 
     return when (this) {
         // The candidates of a compound array access come from its sub-calls, not from the overloads of its `set` call
-        is FirFunctionCall if isCompoundArrayAccessSetCall(psi, this) -> {
-            toKaResolutionAttempt(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKaCallCandidates()
+        is FirFunctionCall if isCompoundArrayAccessSetCall(psi, this) -> when {
+            // The array access is the `get` call
+            resolveFragmentOfCall -> compoundArrayAccessGetCall(setCall = this)
+                ?.collectCallCandidates(psi, resolveFragmentOfCall = false)
+                .orEmpty()
+
+            else -> toKaResolutionAttempt(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall = false).toKaCallCandidates()
         }
 
         is FirFunctionCall, is FirPropertyAccessExpression -> collectCallCandidates(psi, resolveFragmentOfCall)
