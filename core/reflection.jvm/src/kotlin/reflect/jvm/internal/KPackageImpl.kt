@@ -47,7 +47,7 @@ internal class KPackageImpl(
 ) : KDeclarationContainerImpl() {
     private inner class Data : KDeclarationContainerImpl.Data() {
         val kmPackages: List<KmPackage> by lazy(PUBLICATION) {
-            if (loadMetadataDirectly) {
+            if (!useK1Implementation) {
                 // There are four possible cases:
                 return@lazy when (val metadata = jClass.getAnnotation(Metadata::class.java)?.let(KotlinClassMetadata::readLenient)) {
                     // 1. Single-file facade.

@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
 import org.jetbrains.kotlin.descriptors.runtime.structure.*
@@ -56,6 +56,7 @@ import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.metadata.*
 import kotlin.metadata.ClassKind
 import kotlin.metadata.Modality
+import kotlin.metadata.Visibility
 import kotlin.metadata.internal.toKmClass
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.localDelegatedProperties
@@ -72,7 +73,7 @@ internal class KClassImpl<T : Any>(
 ) : MemberContainer<T>(), KotlinGenericDeclaration {
     inner class Data : KDeclarationContainerImpl.Data() {
         val kmClass: KmClass? by lazy(PUBLICATION) {
-            if (loadMetadataDirectly) {
+            if (!useK1Implementation && !isComplicatedBuiltinSubclass) {
                 val metadata = jClass.getAnnotation(Metadata::class.java)
                 if (metadata != null && classId.outerClassId !in CompanionObjectMapping.classIds) {
                     val metadata = KotlinClassMetadata.readLenient(metadata)
@@ -585,7 +586,11 @@ internal class KClassImpl<T : Any>(
     override val sealedSubclasses: List<KClass<out T>> get() = data.value.sealedSubclasses
 
     override val visibility: KVisibility?
-        get() = descriptor.visibility.toKVisibility()
+        get() = if (useK1Implementation) descriptor.visibility.toKVisibility()
+        else when (val kmClass = kmClass) {
+            null -> jClass.modifiers.computeVisibilityForJavaModifiers()
+            else -> kmClass.visibility.toKVisibility()
+        }
 
     private val modality: Modality
         get() = kmClass?.modality ?: when {
@@ -708,6 +713,7 @@ internal class KClassImpl<T : Any>(
     private fun createEmptyKmClass(): KmClass =
         KmClass().apply {
             name = classId.asString()
+            visibility = Visibility.PUBLIC
         }
 
     companion object {

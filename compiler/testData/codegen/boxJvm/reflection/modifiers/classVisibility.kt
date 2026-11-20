@@ -14,6 +14,10 @@ public class PublicClass {
 internal class InternalClass
 private class PrivateClass
 
+enum class EnumEntry {
+    ENTRY { fun f() {} }
+}
+
 fun box(): String {
     assertEquals(KVisibility.PUBLIC, DefaultVisibilityClass::class.visibility)
     assertEquals(KVisibility.PUBLIC, PublicClass::class.visibility)
@@ -29,6 +33,13 @@ fun box(): String {
 
     assertEquals(KVisibility.PUBLIC, Function1::class.visibility)
     assertEquals(KVisibility.PUBLIC, SuspendFunction2::class.visibility)
+
+    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
+        // K1 incorrectly loaded enum entry visibility as public instead of local (see EnumEntrySyntheticClassDescriptor).
+        assertEquals(KVisibility.PUBLIC, EnumEntry.ENTRY::class.visibility)
+    } else {
+        assertEquals(null, EnumEntry.ENTRY::class.visibility)
+    }
 
     return "OK"
 }

@@ -183,11 +183,6 @@ fun main(args: Array<String>) {
                 model("box/reflection")
                 model("boxJvm/reflection")
             }
-
-            testClass<AbstractReflectionLoadMetadataDirectlyTest> {
-                model("box/reflection")
-                model("boxJvm/reflection")
-            }
         }
 
         testGroup(testRoot, testDataRoot = "compiler/testData") {

@@ -28,9 +28,6 @@ interface KotlinStandardLibrariesPathProvider : TestService {
         private var reflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
 
         @Volatile
-        private var reflectWithLoadMetadataDirectlyClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
-
-        @Volatile
         private var k1ReflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
 
         private fun createClassLoader(vararg files: File): ClassLoader {
@@ -135,9 +132,6 @@ interface KotlinStandardLibrariesPathProvider : TestService {
 
     fun getRuntimeAndK1ReflectJarClassLoader(): ClassLoader =
         getOrCreateClassLoader(::k1ReflectJarClassLoader, "useK1Implementation")
-
-    fun getRuntimeAndReflectWithLoadMetadataDirectlyClassLoader(): ClassLoader =
-        getOrCreateClassLoader(::reflectWithLoadMetadataDirectlyClassLoader, "loadMetadataDirectly")
 
     private fun getOrCreateClassLoader(
         property: KMutableProperty0<SoftReference<ClassLoader?>>,
