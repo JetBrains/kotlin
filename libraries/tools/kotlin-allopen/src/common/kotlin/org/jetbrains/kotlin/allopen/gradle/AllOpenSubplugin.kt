@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.allopen.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import javax.inject.Inject
 
@@ -33,7 +36,7 @@ class AllOpenGradleSubplugin
         private const val ALLOPEN_ARTIFACT_NAME = "kotlin-allopen-compiler-plugin-embeddable"
 
         private const val ANNOTATION_ARG_NAME = "annotation"
-        private const val PRESET_ARG_NAME = "preset"
+        internal const val PRESET_ARG_NAME = "preset"
     }
 
     override fun apply(target: Project) {
@@ -42,12 +45,15 @@ class AllOpenGradleSubplugin
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
 
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     override fun applyToCompilation(
         kotlinCompilation: KotlinCompilation<*>
     ): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
 
         val allOpenExtension = project.extensions.getByType(AllOpenExtension::class.java)
+
+        val compilerVersion = project.extensions.getByType(KotlinBaseExtension::class.java).compilerVersion
 
         return project.provider {
             val options = mutableListOf<SubpluginOption>()
@@ -60,7 +66,7 @@ class AllOpenGradleSubplugin
                 options += SubpluginOption(PRESET_ARG_NAME, preset)
             }
 
-            options
+            options.filterSupportedBy(compilerVersion)
         }
     }
 

@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeCompilerArgumentsResolver
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.junit.jupiter.api.DisplayName
+import kotlin.test.assertEquals
 
 @DisplayName("Other plugins tests")
 @MustRunOnChangesInCompilerPlugins
@@ -140,6 +142,34 @@ class SubpluginsIT : KGPBaseTest() {
 
                 checkClass("Test")
                 checkClass("Test2")
+            }
+        }
+    }
+
+    @TestMetadata("noArgJpa")
+    @OtherGradlePluginTests
+    @DisplayName("KT-85936: Jpa plugin does not pass allopen jpa preset to IDE with compiler 2.3.0")
+    @GradleWithCompilerVersionTest
+    @CompilerVersions(versions = ["2.3.0"])
+    fun testKotlinJpaPluginDropsAllOpenJpaPresetForOlderCompiler(gradleVersion: GradleVersion, compilerVersion: String) {
+        project("noArgJpa", gradleVersion, compilerVersion = compilerVersion) {
+            buildScriptInjection {
+                project.tasks.register("printIdeAllOpenOptions") { task ->
+                    val allOpenOptions = project.provider {
+                        IdeCompilerArgumentsResolver.instance(project)
+                            .resolveCompilerArguments(project.tasks.getByName("compileKotlin"))
+                            .orEmpty()
+                            .flatMap { it.split(",") }
+                            .filter { it.startsWith("plugin:org.jetbrains.kotlin.allopen:") }
+                    }
+                    task.doFirst { println("ideAllOpenOptions=${allOpenOptions.get()}") }
+                }
+            }
+
+            build("compileKotlin", "printIdeAllOpenOptions") {
+                // Allopen 2.3.0 ignores "jpa" preset, so build keeps @Entity class final
+                checkBytecodeContains(kotlinClassesDir().resolve("test/Test.class").toFile(), "public final class test/Test {")
+                assertEquals("[]", findParameterInOutput("ideAllOpenOptions", output))
             }
         }
     }
