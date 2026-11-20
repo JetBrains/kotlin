@@ -228,6 +228,7 @@ internal sealed class SirSealedTypeFunction : SirFunction(), SirFromKtSymbol<KaN
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val origin: SirOrigin get() = SirOrigin.SealedType(KotlinSource(ktSymbol))
     override val name: String = "sealedType"
+    override val typeParameters: List<SirTypeParameter> get() = emptyList()
     override val contextParameter: SirParameter? = null
     override val extensionReceiverParameter: SirParameter? = null
     override val parameters: List<SirParameter> get() = emptyList()

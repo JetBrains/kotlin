@@ -17,15 +17,13 @@ import org.jetbrains.kotlin.sir.providers.SirTypeProvider.ErrorTypeStrategy
 import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.KotlinType
+import org.jetbrains.kotlin.sir.providers.source.KotlinTypeParameterOrigin
 import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
-import org.jetbrains.kotlin.sir.providers.utils.resolveUpperBound
 import org.jetbrains.kotlin.sir.util.SirCinteropModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.expandedType
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 public class SirTypeProviderImpl(
@@ -41,6 +39,7 @@ public class SirTypeProviderImpl(
         val reportUnsupportedType: () -> Nothing,
         val processTypeImports: (List<SirImport>) -> Unit,
         val requiresHashableAsAny: Boolean,
+        val resolveToUpperBounds: Boolean,
     ) {
         public fun anyRepresentativeType(): SirType =
             if (requiresHashableAsAny) SirType.anyHashable else KotlinRuntimeSupportModule.kotlinBridgeableType
@@ -53,6 +52,7 @@ public class SirTypeProviderImpl(
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
         requiresHashableAsAny: Boolean,
+        resolveToUpperBounds: Boolean,
     ): SirType = translateType(
         TypeTranslationCtx(
             currentPosition = position,
@@ -60,6 +60,7 @@ public class SirTypeProviderImpl(
             reportUnsupportedType = reportUnsupportedType,
             processTypeImports = processTypeImports,
             requiresHashableAsAny = requiresHashableAsAny,
+            resolveToUpperBounds = resolveToUpperBounds,
         )
     )
 
@@ -168,7 +169,7 @@ public class SirTypeProviderImpl(
         val symbol = type.symbol
         val fallbackType = SirUnsupportedType
         if (symbol.isReified) return@withSessions fallbackType
-        return@withSessions when (symbol.upperBounds.size) {
+        val constraint = when (symbol.upperBounds.size) {
             0 -> anyRepresentativeType().optional()
             1 -> {
                 val upperBound = symbol.upperBounds.single().translateType(this@translateTypeParameterType)
@@ -180,6 +181,11 @@ public class SirTypeProviderImpl(
             }
             else -> fallbackType
         }
+        if (resolveToUpperBounds) return@withSessions constraint
+        val origin = KotlinTypeParameterOrigin(symbol)
+        val typeParameter = SirTypeParameter(type.name.asString(), constraint.nonOptional(), origin)
+        val type = SirTypeParameterType(typeParameter)
+        if (constraint is SirOptionalType) type.optional() else type
     }
 
     private fun SirType.handleErrors(
@@ -250,6 +256,9 @@ public class SirTypeProviderImpl(
             is SirTupleType -> {
                 types.forEach { [_, type] -> type.handleImports(processTypeImports) }
             }
+            is SirTypeParameterType -> {
+                typeParameter.constraint?.handleImports(processTypeImports)
+            }
             is SirType.Metatype -> {
                 type.handleImports(processTypeImports)
             }
@@ -290,9 +299,9 @@ public class SirTypeProviderImpl(
         }.filterIsInstance<KaClassType>().firstOrNull { it.classId in listClassIds } ?: return null
         val elementArg = listType.typeArguments.singleOrNull() as? KaTypeArgumentWithVariance ?: return null
         // TODO: Consider handling star projections KT-88831
-        val elementType = elementArg.type.resolveUpperBound().let {
+        val elementType = elementArg.type.let {
             when {
-                it !is KaClassType -> return null
+                it is KaCapturedType -> return null
                 it.classId == KaStandardTypeClassIds.UNIT -> ctx.anyRepresentativeType().optionalIfNeeded(it)
                 else -> it.translateType(ctx)
             }

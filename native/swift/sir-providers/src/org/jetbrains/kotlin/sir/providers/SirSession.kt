@@ -90,6 +90,7 @@ public interface SirSession :
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
         requiresHashableAsAny: Boolean,
+        resolveToUpperBounds: Boolean,
     ): SirType =
         with(typeProvider) {
             this@translateType.translateType(
@@ -99,6 +100,7 @@ public interface SirSession :
                 reportUnsupportedType,
                 processTypeImports,
                 requiresHashableAsAny,
+                resolveToUpperBounds,
             )
         }
 
@@ -414,6 +416,7 @@ public interface SirTypeProvider {
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
         requiresHashableAsAny: Boolean = false,
+        resolveToUpperBounds: Boolean = true,
     ): SirType
 }
 
@@ -423,7 +426,13 @@ public fun KaType.translateType(
     reportErrorType: (String) -> Nothing,
     reportUnsupportedType: () -> Nothing,
     processTypeImports: (List<SirImport>) -> Unit,
-): SirType = with(sir) { translateType(ka, position, reportErrorType, reportUnsupportedType, processTypeImports) }
+    resolveToUpperBounds: Boolean = true,
+): SirType = with(sir) {
+    translateType(
+        ka, position, reportErrorType, reportUnsupportedType, processTypeImports,
+        resolveToUpperBounds = resolveToUpperBounds
+    )
+}
 
 context(kaSession: KaSession, sir: SirSession)
 public fun KaUsualClassType.toSirTypeBridge(ctx: TypeTranslationCtx): SirCustomTypeTranslator.BridgeWrapper? =
@@ -511,7 +520,7 @@ public interface SirTypeNamer {
         FQN, PARAMETRIZED
     }
 
-    public fun swiftFqName(type: SirType): String
+    public fun swiftFqName(type: SirType, resolveToUpperBounds: Boolean = false): String
 
     context(session: SirSession)
     public fun kotlinFqName(sirType: SirType, nameType: KotlinNameType): String

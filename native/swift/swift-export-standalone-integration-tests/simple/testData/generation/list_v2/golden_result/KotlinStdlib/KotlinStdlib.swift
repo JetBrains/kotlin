@@ -614,28 +614,28 @@ extension ExportedKotlinPackages.kotlin.collections {
     ) -> any ExportedKotlinPackages.kotlin.collections.List_Typed<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
         return ExportedKotlinPackages.kotlin.collections.List_TypedImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_List__TypesOfArguments__Swift_Int32_U28Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(size, Unmanaged.passRetained((`init` as (Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: { $0 is any KotlinRuntimeSupport._KotlinBridgeable })
     }
-    public static func listOf() -> any ExportedKotlinPackages.kotlin.collections.List_Typed<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return ExportedKotlinPackages.kotlin.collections.List_TypedImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_listOf(), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: { $0 is any KotlinRuntimeSupport._KotlinBridgeable })
+    public static func listOf<T: KotlinRuntimeSupport._KotlinBridgeable>() -> any ExportedKotlinPackages.kotlin.collections.List_Typed<Swift.Optional<T>> {
+        return ExportedKotlinPackages.kotlin.collections.List_TypedImpl<Swift.Optional<T>>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_listOf(), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: { $0 is T })
     }
-    public static func listOf(
-        element: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> any ExportedKotlinPackages.kotlin.collections.List_Typed<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return ExportedKotlinPackages.kotlin.collections.List_TypedImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_listOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(element.map { it in it.__externalRCRef() } ?? nil), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: { $0 is any KotlinRuntimeSupport._KotlinBridgeable })
+    public static func listOf<T: KotlinRuntimeSupport._KotlinBridgeable>(
+        element: T?
+    ) -> any ExportedKotlinPackages.kotlin.collections.List_Typed<Swift.Optional<T>> {
+        return ExportedKotlinPackages.kotlin.collections.List_TypedImpl<Swift.Optional<T>>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_listOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(element.map { it in it.__externalRCRef() } ?? nil), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: { $0 is T })
     }
-    public static func listOf(
-        elements: (any KotlinRuntimeSupport._KotlinBridgeable)?...
-    ) -> any ExportedKotlinPackages.kotlin.collections.List_Typed<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return ExportedKotlinPackages.kotlin.collections.List_TypedImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_listOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: { $0 is any KotlinRuntimeSupport._KotlinBridgeable })
+    public static func listOf<T: KotlinRuntimeSupport._KotlinBridgeable>(
+        elements: T?...
+    ) -> any ExportedKotlinPackages.kotlin.collections.List_Typed<Swift.Optional<T>> {
+        return ExportedKotlinPackages.kotlin.collections.List_TypedImpl<Swift.Optional<T>>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_listOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: { $0 is T })
     }
-    public static func listOfNotNull(
-        element: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> any ExportedKotlinPackages.kotlin.collections.List_Typed<any KotlinRuntimeSupport._KotlinBridgeable> {
-        return ExportedKotlinPackages.kotlin.collections.List_TypedImpl<any KotlinRuntimeSupport._KotlinBridgeable>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_listOfNotNull__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(element.map { it in it.__externalRCRef() } ?? nil), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: { $0 is any KotlinRuntimeSupport._KotlinBridgeable })
+    public static func listOfNotNull<T: KotlinRuntimeSupport._KotlinBridgeable>(
+        element: T?
+    ) -> any ExportedKotlinPackages.kotlin.collections.List_Typed<T> {
+        return ExportedKotlinPackages.kotlin.collections.List_TypedImpl<T>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_listOfNotNull__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(element.map { it in it.__externalRCRef() } ?? nil), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: { $0 is T })
     }
-    public static func listOfNotNull(
-        elements: (any KotlinRuntimeSupport._KotlinBridgeable)?...
-    ) -> any ExportedKotlinPackages.kotlin.collections.List_Typed<any KotlinRuntimeSupport._KotlinBridgeable> {
-        return ExportedKotlinPackages.kotlin.collections.List_TypedImpl<any KotlinRuntimeSupport._KotlinBridgeable>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_listOfNotNull__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: { $0 is any KotlinRuntimeSupport._KotlinBridgeable })
+    public static func listOfNotNull<T: KotlinRuntimeSupport._KotlinBridgeable>(
+        elements: T?...
+    ) -> any ExportedKotlinPackages.kotlin.collections.List_Typed<T> {
+        return ExportedKotlinPackages.kotlin.collections.List_TypedImpl<T>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_listOfNotNull__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: { $0 is T })
     }
     public static func mutableList(
         size: Swift.Int32,
@@ -643,13 +643,13 @@ extension ExportedKotlinPackages.kotlin.collections {
     ) -> any ExportedKotlinPackages.kotlin.collections.MutableList_Typed<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
         return ExportedKotlinPackages.kotlin.collections.MutableList_TypedImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableList__TypesOfArguments__Swift_Int32_U28Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(size, Unmanaged.passRetained((`init` as (Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList, conformsTo: { $0 is any KotlinRuntimeSupport._KotlinBridgeable })
     }
-    public static func mutableListOf() -> any ExportedKotlinPackages.kotlin.collections.MutableList_Typed<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return ExportedKotlinPackages.kotlin.collections.MutableList_TypedImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableListOf(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList, conformsTo: { $0 is any KotlinRuntimeSupport._KotlinBridgeable })
+    public static func mutableListOf<T: KotlinRuntimeSupport._KotlinBridgeable>() -> any ExportedKotlinPackages.kotlin.collections.MutableList_Typed<Swift.Optional<T>> {
+        return ExportedKotlinPackages.kotlin.collections.MutableList_TypedImpl<Swift.Optional<T>>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableListOf(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList, conformsTo: { $0 is T })
     }
-    public static func mutableListOf(
-        elements: (any KotlinRuntimeSupport._KotlinBridgeable)?...
-    ) -> any ExportedKotlinPackages.kotlin.collections.MutableList_Typed<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
-        return ExportedKotlinPackages.kotlin.collections.MutableList_TypedImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableListOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList, conformsTo: { $0 is any KotlinRuntimeSupport._KotlinBridgeable })
+    public static func mutableListOf<T: KotlinRuntimeSupport._KotlinBridgeable>(
+        elements: T?...
+    ) -> any ExportedKotlinPackages.kotlin.collections.MutableList_Typed<Swift.Optional<T>> {
+        return ExportedKotlinPackages.kotlin.collections.MutableList_TypedImpl<Swift.Optional<T>>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_mutableListOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements.map { it in it as! NSObject? ?? NSNull() }), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList, conformsTo: { $0 is T })
     }
 }
 @_cdecl("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")

@@ -22,6 +22,7 @@ abstract class SirSubscript : SirElementBase(), SirDeclaration, SirDeclarationPa
     abstract override val isOverride: Boolean
     abstract override val isInstance: Boolean
     abstract override val modality: SirModality
+    abstract val typeParameters: List<SirTypeParameter>
     abstract val parameters: List<SirParameter>
     abstract val returnType: SirType
     abstract val getter: SirGetter

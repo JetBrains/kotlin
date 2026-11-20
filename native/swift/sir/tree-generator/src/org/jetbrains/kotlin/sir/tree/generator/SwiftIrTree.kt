@@ -191,6 +191,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(classMemberDeclaration)
 
         +field("name", string)
+        +listField("typeParameters", typeParameterType)
         +field("contextParameter", parameterType, nullable = true)
         +field("extensionReceiverParameter", parameterType, nullable = true)
         +listField("parameters", parameterType)
@@ -259,6 +260,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declarationParent)
         parent(classMemberDeclaration)
 
+        +listField("typeParameters", typeParameterType)
         +listField("parameters", parameterType)
         +field("returnType", typeType)
 

@@ -156,6 +156,28 @@ class SirTupleType(
     }
 }
 
+class SirTypeParameterType(
+    val typeParameter: SirTypeParameter,
+    override val origin: SirType.Origin = SirType.Origin.Unknown,
+    override val attributes: List<SirAttribute> = emptyList(),
+) : SirType {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || other !is SirTypeParameterType) return false
+
+        if (typeParameter != other.typeParameter) return false
+        if (attributes != other.attributes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = typeParameter.hashCode()
+        result = 31 * result + attributes.hashCode()
+        return result
+    }
+}
+
 open class SirNominalType(
     val typeDeclaration: SirScopeDefiningDeclaration,
     val typeArguments: List<SirType> = emptyList(),

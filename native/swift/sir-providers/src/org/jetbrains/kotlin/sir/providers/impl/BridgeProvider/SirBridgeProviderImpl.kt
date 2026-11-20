@@ -121,6 +121,7 @@ internal fun isSupported(type: SirType): Boolean = when (type) {
         protocolSupported && typeArguments.all { isSupported(it) }
     }
     is SirTupleType -> type.types.all { isSupported(it.second) }
+    is SirTypeParameterType -> type.typeParameter.constraint?.let { isSupported(it) } ?: return true
     is SirType.Metatype -> isSupported(type.type)
     is SirErrorType, SirUnsupportedType -> false
 }
@@ -358,6 +359,7 @@ private class BridgeFunctionDescriptor(
 
     context(sir: SirSession)
     private fun reverseSwiftCallArguments(): List<String> {
+        val typeNamer = Bridge.AsTypeParameter.ReverseBridgeTypeName(typeNamer)
         val exprs = parameters.map { param ->
             val bridge = param.bridge
             require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
@@ -511,9 +513,9 @@ private class BridgeFunctionDescriptor(
         val swiftSource = """
             |$deprecationPrefix@_cdecl("$swiftBridgeName")
             |package func $swiftBridgeName($swiftCParams) -> Swift.Bool {
-            |$selfDeclaration    let __continuation: ${typeNamer.swiftFqName(continuation.swiftType)} = ${continuation.inSwiftSources.kotlinToSwift(typeNamer, "continuation")}
-            |    let __exception: ${typeNamer.swiftFqName(exception.swiftType)} = ${exception.inSwiftSources.kotlinToSwift(typeNamer, "exception")}
-            |    let __cancellation: ${typeNamer.swiftFqName(cancellation.swiftType)} = ${cancellation.inSwiftSources.kotlinToSwift(typeNamer, "cancellation")}
+            |$selfDeclaration    let __continuation: ${typeNamer.swiftFqName(continuation.swiftType, true)} = ${continuation.inSwiftSources.kotlinToSwift(typeNamer, "continuation")}
+            |    let __exception: ${typeNamer.swiftFqName(exception.swiftType, true)} = ${exception.inSwiftSources.kotlinToSwift(typeNamer, "exception")}
+            |    let __cancellation: ${typeNamer.swiftFqName(cancellation.swiftType, true)} = ${cancellation.inSwiftSources.kotlinToSwift(typeNamer, "cancellation")}
             |    withKotlinTask(__continuation, __exception, __cancellation) {
             |        $callExpr
             |    }
@@ -631,7 +633,7 @@ private class BridgeFunctionDescriptor(
 
         val convertedParamExprs = reverseSwiftCallArguments()
         val callExpr = swiftDynamicCall(if (selfBridge != null) "_self" else selfConversion, convertedParamExprs)
-        val swiftReturnTypeName = typeNamer.swiftFqName(returnType.swiftType)
+        val swiftReturnTypeName = typeNamer.swiftFqName(returnType.swiftType, true)
 
         val returnBridge = returnType
         require(returnBridge is BidirectionalBridge) { "Return type bridge must be bidirectional" }
@@ -778,7 +780,7 @@ private fun bridgeDeclarationName(
 ): String {
     val suffixString = if (parameterBridges.isNotEmpty()) {
         val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_") {
-            typeNamer.swiftFqName(it.bridge.swiftType)
+            typeNamer.swiftFqName(it.bridge.swiftType, true)
                 .replace(".", "_")
                 .replace(",", "_")
                 .replace("<", "_")

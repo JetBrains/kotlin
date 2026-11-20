@@ -23,6 +23,7 @@ class SirSubscriptBuilder {
     var isOverride: Boolean = false
     var isInstance: Boolean = true
     var modality: SirModality = SirModality.UNSPECIFIED
+    val typeParameters: MutableList<SirTypeParameter> = []
     val parameters: MutableList<SirParameter> = []
     lateinit var returnType: SirType
     lateinit var getter: SirGetter
@@ -37,6 +38,7 @@ class SirSubscriptBuilder {
             isOverride,
             isInstance,
             modality,
+            typeParameters,
             parameters,
             returnType,
             getter,

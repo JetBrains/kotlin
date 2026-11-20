@@ -332,6 +332,7 @@ private class SirRelocatedFunction(
     override val modality: SirModality get() = SirModality.UNSPECIFIED
     override val fixity: SirFixity? get() = source.fixity
     override val attributes: List<SirAttribute> get() = source.attributes
+    override val typeParameters: List<SirTypeParameter> get() = source.typeParameters
     override val contextParameter: SirParameter? get() = source.contextParameter
     override val extensionReceiverParameter: SirParameter? get() = source.extensionReceiverParameter
     override val parameters: List<SirParameter> get() = source.parameters
@@ -391,6 +392,7 @@ private class SirRelocatedSubscript(
     override val isOverride: Boolean get() = source.isOverride
     override val isInstance: Boolean get() = source.isInstance
     override val modality: SirModality get() = source.modality
+    override val typeParameters: List<SirTypeParameter> get() = source.typeParameters
     override val parameters: List<SirParameter> get() = source.parameters
     override val returnType: SirType get() = source.returnType
     override val getter: SirGetter get() = source.getter
