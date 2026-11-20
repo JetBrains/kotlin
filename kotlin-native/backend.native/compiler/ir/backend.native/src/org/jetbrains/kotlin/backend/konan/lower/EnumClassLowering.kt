@@ -71,9 +71,9 @@ internal val DECLARATION_ORIGIN_ENUM = IrDeclarationOriginImpl("ENUM")
 internal class NativeEnumWhenLowering(private val generationState: NativeGenerationState) : EnumWhenLowering(generationState.context) {
     override fun mapConstEnumEntry(entry: IrEnumEntry): Int {
         // The ordinal is baked into the caller's bitcode as a constant, so the lowered IR
-        // will no longer reference `entry` or its enum class. Record a strong per-file dependency now
+        // will no longer reference `entry` or its enum class. Record a per-file dependency now
         // so that incremental compilation invalidates this caller when the enum's source file changes.
-        generationState.dependenciesTracker.add(entry, weak = false)
+        generationState.dependenciesTracker.add(entry)
 
         return super.mapConstEnumEntry(entry)
     }
