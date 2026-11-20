@@ -37,9 +37,6 @@ package test;
  */
 @kotlin.Metadata()
 public final class MyEntity {
-    @Related(mappedBy = SecondEntity_.FIRST)
-    @org.jetbrains.annotations.NotNull()
-    private final java.util.List<test.SecondEntity> second = null;
 
     public MyEntity() {
         super();
@@ -49,6 +46,9 @@ public final class MyEntity {
     public final java.util.List<test.SecondEntity> getSecond() {
         return null;
     }
+    @Related(mappedBy = SecondEntity_.FIRST)
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<test.SecondEntity> second = null;
 }
 
 ////////////////////
@@ -98,13 +98,13 @@ package test;
  */
 @kotlin.Metadata()
 public final class SecondEntity {
-    @org.jetbrains.annotations.Nullable()
-    private final test.MyEntity first = null;
 
     public SecondEntity(@org.jetbrains.annotations.Nullable()
     test.MyEntity first) {
         super();
     }
+    @org.jetbrains.annotations.Nullable()
+    private final test.MyEntity first = null;
 
     @org.jetbrains.annotations.Nullable()
     public final test.MyEntity getFirst() {
