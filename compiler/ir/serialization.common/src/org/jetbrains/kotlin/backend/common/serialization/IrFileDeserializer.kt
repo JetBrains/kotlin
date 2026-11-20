@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation as ProtoAnnotation
@@ -32,37 +31,18 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFi
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
 
-abstract class IrFileDeserializer {
-    abstract val file: IrFile
-    abstract val symbolDeserializer: IrSymbolDeserializer
-    abstract val declarationDeserializer: IrDeclarationDeserializer
-    abstract val reversedSignatureIndex: Map<IdSignature, Int>
-
-    abstract fun deserializeDeclaration(idSig: IdSignature): IrDeclaration?
-
-    /**
-     * Deserializes file-level annotations for the current [IrFile].
-     *
-     * The actual deserialization happens just once on the first invocation.
-     * The subsequent invocations have no effect.
-     *
-     * @return If the annotations have been actually deserialized on this invocation.
-     */
-    abstract fun deserializeFileImplicitDataIfFirstUse(): Boolean
-
-    abstract fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature>
-}
-
-class IrFileDeserializerImpl(
-    override val file: IrFile,
+class IrFileDeserializer(
+    val file: IrFile,
     private val libraryFile: IrLibraryFile,
     fileProto: ProtoFile,
-    override val symbolDeserializer: IrSymbolDeserializer,
-    override val declarationDeserializer: IrDeclarationDeserializer,
-) : IrFileDeserializer() {
-    override val reversedSignatureIndex = fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
+    val symbolDeserializer: IrSymbolDeserializer,
+    private val declarationDeserializer: IrDeclarationDeserializer,
+) {
+    val reversedSignatureIndex: Map<IdSignature, Int> = fileProto.declarationIdList.associateBy { topLevelDeclarationIndex ->
+        symbolDeserializer.deserializeIdSignature(topLevelDeclarationIndex)
+    }
 
-    private val callableIdToSignature = buildMap<CallableId, MutableList<IdSignature>> {
+    private val callableIdToSignature: Map<CallableId, List<IdSignature>> = buildMap<CallableId, MutableList<IdSignature>> {
         reversedSignatureIndex.keys.forEach { idSig ->
             if (idSig !is IdSignature.CommonSignature) return@forEach
             if (idSig.isClassSignature()) return@forEach
@@ -74,7 +54,7 @@ class IrFileDeserializerImpl(
     /** Once deserialized this property is set to `null`. */
     private var protoAnnotationsPendingDeserialization: List<ProtoAnnotation>? = fileProto.annotationList
 
-    override fun deserializeDeclaration(idSig: IdSignature): IrDeclaration? {
+    internal fun deserializeDeclaration(idSig: IdSignature): IrDeclaration? {
         val proto = loadTopLevelDeclarationProto(idSig)
         if (!declarationDeserializer.deserializeTypeAliases && proto.declaratorCase == ProtoDeclaration.DeclaratorCase.IR_TYPE_ALIAS)
             return null
@@ -88,7 +68,15 @@ class IrFileDeserializerImpl(
         return libraryFile.declaration(idSigIndex)
     }
 
-    override fun deserializeFileImplicitDataIfFirstUse(): Boolean {
+    /**
+     * Deserializes file-level annotations for the current [IrFile].
+     *
+     * The actual deserialization happens just once on the first invocation.
+     * The subsequent invocations have no effect.
+     *
+     * @return If the annotations have been actually deserialized on this invocation.
+     */
+    fun deserializeFileImplicitDataIfFirstUse(): Boolean {
         protoAnnotationsPendingDeserialization?.let {
             file.annotations += declarationDeserializer.deserializeAnnotations(it, file.startOffset)
             protoAnnotationsPendingDeserialization = null
@@ -99,7 +87,7 @@ class IrFileDeserializerImpl(
         return false
     }
 
-    override fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
+    internal fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
         val topLevelCallableSignature = callableIdToSignature[callableId] ?: return emptyList()
         return buildList {
             for (topLevelSignature in topLevelCallableSignature) {
@@ -117,39 +105,15 @@ class IrFileDeserializerImpl(
     }
 }
 
-abstract class FileDeserializationState {
-    abstract val fileIndex: Int
-    abstract val file: IrFile
-    abstract val fileReader: IrLibraryFileFromBytes
-    abstract val declarationDeserializer: IrDeclarationDeserializer
-    abstract val fileDeserializer: IrFileDeserializer
-
-    /**
-     * Schedule deserialization of a top-level declaration with the given signature.
-     */
-    abstract fun addIdSignature(topLevelDeclarationSignature: IdSignature)
-
-    /**
-     * Schedule deserialization of all top-level declarations in this file.
-     */
-    abstract fun enqueueAllDeclarations()
-
-    /**
-     * Deserialize all top-level declarations previously scheduled for deserialization in the current file.
-     */
-    abstract fun deserializeAllFileReachableTopLevel()
-}
-
-class FileDeserializationStateImpl(
+class FileDeserializationState(
     private val linker: KotlinIrLinker,
-    override val fileIndex: Int,
-    override val file: IrFile,
-    override val fileReader: IrLibraryFileFromBytes,
+    val fileIndex: Int,
+    val file: IrFile,
+    val fileReader: IrLibraryFileFromBytes,
     fileProto: ProtoFile,
     settings: IrDeserializationSettings,
     moduleDeserializer: IrModuleDeserializer
-): FileDeserializationState() {
-
+) {
     private val symbolDeserializer = IrSymbolDeserializer(
         symbolTable = linker.symbolTable,
         libraryFile = fileReader,
@@ -162,7 +126,7 @@ class FileDeserializationStateImpl(
             linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(idSignature, symbolKind, moduleDeserializer)
         })
 
-    override val declarationDeserializer = IrDeclarationDeserializer(
+    val declarationDeserializer = IrDeclarationDeserializer(
         linker.unitClass.defaultTypeWithoutArguments,
         linker.nothingClass.defaultTypeWithoutArguments,
         linker.symbolTable,
@@ -190,7 +154,7 @@ class FileDeserializationStateImpl(
         fileEntryDeserializer = linker.fileEntryDeserializer,
     )
 
-    override val fileDeserializer = IrFileDeserializerImpl(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)
+    val fileDeserializer = IrFileDeserializer(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)
 
     /**
      * This is the queue of top-level declarations in the current file to be deserialized.
@@ -218,15 +182,24 @@ class FileDeserializationStateImpl(
         }
     }
 
-    override fun addIdSignature(topLevelDeclarationSignature: IdSignature) {
+    /**
+     * Schedule deserialization of a top-level declaration with the given signature.
+     */
+    internal fun addIdSignature(topLevelDeclarationSignature: IdSignature) {
         reachableTopLevels.add(topLevelDeclarationSignature)
     }
 
-    override fun enqueueAllDeclarations() {
+    /**
+     * Schedule deserialization of all top-level declarations in this file.
+     */
+    internal fun enqueueAllDeclarations() {
         reachableTopLevels.addAll(fileDeserializer.reversedSignatureIndex.keys)
     }
 
-    override fun deserializeAllFileReachableTopLevel() {
+    /**
+     * Deserialize all top-level declarations previously scheduled for deserialization in the current file.
+     */
+    internal fun deserializeAllFileReachableTopLevel() {
         while (reachableTopLevels.isNotEmpty()) {
             val topLevelDeclarationSignature = reachableTopLevels.first()
 

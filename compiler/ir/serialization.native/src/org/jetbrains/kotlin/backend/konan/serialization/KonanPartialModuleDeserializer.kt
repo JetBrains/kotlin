@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.path
@@ -57,16 +56,6 @@ class KonanPartialModuleDeserializer(
         is IdSignature.FileSignature -> this
         is IdSignature.CompositeSignature -> this.container.fileSignature()
         else -> null
-    }
-
-    fun getFileNameOf(declaration: IrDeclaration): String {
-        val idSig = declaration.symbol.signature
-            ?: (declaration.parent as? IrDeclaration)?.symbol?.signature
-            ?: error("Can't find signature of ${declaration.render()}")
-        val topLevelIdSig = idSig.topLevelSignature()
-        return topLevelIdSig.fileSignature()?.fileName
-            ?: idSignatureToFile[topLevelIdSig]?.path
-            ?: error("No file for $idSig")
     }
 
     fun getKlibFileIndexOf(irFile: IrFile) = fileDeserializationStates.first { it.file == irFile }.fileIndex

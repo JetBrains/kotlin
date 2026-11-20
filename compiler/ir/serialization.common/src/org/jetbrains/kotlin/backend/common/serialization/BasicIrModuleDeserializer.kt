@@ -101,7 +101,7 @@ abstract class BasicIrModuleDeserializer(
     ): FileDeserializationState {
         val fileStrategy = strategyResolver(file.fileEntry.name)
 
-        val fileDeserializationState = FileDeserializationStateImpl(
+        val fileDeserializationState = FileDeserializationState(
             linker,
             fileIndex,
             file,
