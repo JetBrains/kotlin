@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Com
 import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.ProtoData
+import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findReachableNodes
+import org.jetbrains.kotlin.incremental.classpathDiff.ClassMembers
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathChangesComputer
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ProgramSymbolSet
@@ -84,7 +86,7 @@ internal object KlibChangesComputer {
         val changedAndImpactedSet = reporter.measure(COMPUTE_IMPACTED_SET) {
             // Over-approximate like on the JVM: compute the impact over the previous snapshots plus the changed current ones
             // (see `ClasspathChangesComputer.computeChangedAndImpactedSet`).
-            KlibImpactedSymbolsComputer.computeImpactedSymbols(
+            computeImpactedSymbols(
                 changes = changedSet,
                 allSnapshots = (previousSnapshots.asSequence() + changedCurrentSnapshots.asSequence()).asIterable(),
             )
@@ -254,16 +256,28 @@ internal object KlibChangesComputer {
             }
         }
     }
-}
-
-private object KlibImpactedSymbolsComputer {
 
     /**
      * Computes the set of symbols that are *transitively* impacted by [changes], e.g. subclasses of a changed class.
      *
      * The returned set is *inclusive* (it contains [changes] + the impacted symbols).
      */
-    @Suppress("unused")
-    fun computeImpactedSymbols(changes: ProgramSymbolSet, allSnapshots: Iterable<KlibSnapshot>): ProgramSymbolSet =
-        TODO("KT-90559: impacted symbols for klibs")
+    private fun computeImpactedSymbols(changes: ProgramSymbolSet, allSnapshots: Iterable<KlibSnapshot>): ProgramSymbolSet {
+        val impactedSymbolsResolver = KlibAllImpacts.getResolver(allSnapshots)
+
+        return ProgramSymbolSet.Collector().apply {
+            addClasses(findReachableNodes(changes.classes, impactedSymbolsResolver::getImpactedClasses))
+
+            val classMembers = changes.classMembers.map { [classId, memberNames] -> ClassMembers(classId, memberNames) }
+            findReachableNodes(classMembers, impactedSymbolsResolver::getImpactedClassMembers).forEach {
+                addClassMembers(it.classId, it.memberNames)
+            }
+
+            // Changed package members do not impact other symbols. Unlike the JVM, klibs have no package facade classes, so
+            // impacted classes never imply impacted package members.
+            changes.packageMembers.forEach { [packageFqName, memberNames] ->
+                addPackageMembers(packageFqName, memberNames)
+            }
+        }.getResult()
+    }
 }

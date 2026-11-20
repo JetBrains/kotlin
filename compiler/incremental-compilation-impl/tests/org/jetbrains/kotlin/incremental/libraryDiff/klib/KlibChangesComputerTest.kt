@@ -14,25 +14,21 @@ import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ProgramSymbolSet
 import org.jetbrains.kotlin.incremental.classpathDiff.toChangesEither
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.fail
 
 /**
- * The klib counterpart of `KotlinOnlyClasspathChangesComputerTest`. The testData sources are copied from its testData.
- *
- * Differences from the JVM expectations:
- *   - No `<SAM-CONSTRUCTOR>` lookups: on the JVM they come from `DirtyData`, which the klib diff does not use (see progress doc).
- *   - Coarse-grained snapshots cover a whole source file, so all classes of a changed file are reported (e.g. `Outer` together
- *     with `Outer.Companion`).
+ * The testData sources are copied from `KotlinOnlyClasspathChangesComputerTest`. Differences from its expectations:
+ *   - No `<SAM-CONSTRUCTOR>` lookups: on the JVM they come from `DirtyData`, which the klib diff does not use.
+ *   - Coarse-grained snapshots cover a whole source file, so all classes and top-level members of a changed file are reported
+ *     (e.g. `Outer` together with `Outer.Companion`).
  */
 class KlibChangesComputerTest : KlibSnapshotTestCommon() {
 
     private val testDataDir = File(klibTestDataDir, "KlibChangesComputerTest")
 
     @Test
-    @Disabled("KT-90559: needs item 3 (fine-grained changes)")
     fun testAbiVersusNonAbiChanges() {
         Changes(
             lookupSymbols = setOf(
@@ -44,7 +40,6 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
     }
 
     @Test
-    @Disabled("KT-90559: needs item 3 (fine-grained changes)")
     fun testModifiedAddedRemovedElements() {
         Changes(
             lookupSymbols = setOf(
@@ -75,7 +70,6 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
     }
 
     @Test
-    @Disabled("KT-90559: needs item 2 (coarse-grained changes)")
     fun testModifiedAddedRemovedElements_ClassLevelSnapshot() {
         Changes(
             lookupSymbols = setOf(
@@ -94,11 +88,7 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
     }
 
     @Test
-    @Disabled("KT-90559: needs items 2 and 3")
     fun testMixedGranularities() {
-        val current = snapshotWithMixedGranularities("current")
-        val previous = snapshotWithMixedGranularities("previous")
-
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "CoarseGrainedFirstBuild_CoarseGrainedSecondBuild_Class", scope = "com.example"),
@@ -113,11 +103,10 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
                 "com.example.FineGrainedFirstBuild_CoarseGrainedSecondBuild_Class",
                 "com.example.FineGrainedFirstBuild_FineGrainedSecondBuild_Class",
             )
-        ).assertEquals(computeChanges(current, previous))
+        ).assertEquals(computeChanges(snapshotWithMixedGranularities("current"), snapshotWithMixedGranularities("previous")))
     }
 
     @Test
-    @Disabled("KT-90559: needs item 3 (fine-grained changes)")
     fun testTopLevelMembers() {
         Changes(
             lookupSymbols = setOf(
@@ -136,7 +125,6 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
 
     /** A change of a class member must not be reported as a change of the top-level members of the same file, and vice versa. */
     @Test
-    @Disabled("KT-90559: needs item 3 (fine-grained changes)")
     fun testClassAndTopLevelMembersInOneFile() {
         Changes(
             lookupSymbols = setOf(
@@ -147,9 +135,7 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
         ).assertEquals(computeChanges("testClassAndTopLevelMembersInOneFile"))
     }
 
-    /** A coarse-grained snapshot covers the whole file, so all its classes and top-level members are reported. */
     @Test
-    @Disabled("KT-90559: needs item 2 (coarse-grained changes)")
     fun testClassAndTopLevelMembersInOneFile_ClassLevelSnapshot() {
         Changes(
             lookupSymbols = setOf(
@@ -163,7 +149,6 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
     }
 
     @Test
-    @Disabled("KT-90559: needs items 4 and 5 (impact)")
     fun testImpactComputation_SupertypesInheritors() {
         Changes(
             lookupSymbols = setOf(
@@ -183,23 +168,6 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
     }
 
     @Test
-    @Disabled("KT-90559: needs item 2 (coarse-grained changes)")
-    fun testGranularityTransition_CoarseToFine() {
-        val previous = snapshot("testGranularityTransition", "previous", CLASS_LEVEL)
-        val current = snapshot("testGranularityTransition", "current", CLASS_MEMBER_LEVEL)
-        coarseGrainedOuterChanges.assertEquals(computeChanges(current, previous))
-    }
-
-    @Test
-    @Disabled("KT-90559: needs item 2 (coarse-grained changes)")
-    fun testGranularityTransition_FineToCoarse() {
-        val previous = snapshot("testGranularityTransition", "previous", CLASS_MEMBER_LEVEL)
-        val current = snapshot("testGranularityTransition", "current", CLASS_LEVEL)
-        coarseGrainedOuterChanges.assertEquals(computeChanges(current, previous))
-    }
-
-    @Test
-    @Disabled("KT-90559: needs items 2 and 3")
     fun testGranularityTransition_CoarseToFineToFine() {
         val build1 = snapshot("testGranularityTransition", "previous", CLASS_LEVEL)
         val build2 = snapshot("testGranularityTransition", "current", CLASS_MEMBER_LEVEL)
@@ -213,7 +181,6 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
     }
 
     @Test
-    @Disabled("KT-90559: needs item 2 (coarse-grained changes)")
     fun testGranularityTransition_FineToCoarseToCoarseToFine() {
         val build1 = snapshot("testGranularityTransition", "previous", CLASS_MEMBER_LEVEL)
         val build2 = snapshot("testGranularityTransition", "current", CLASS_LEVEL)
@@ -226,7 +193,6 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
         coarseGrainedOuterChanges.assertEquals(computeChanges(build4, build3))
     }
 
-    /** `Outer` and `Outer.Companion` are in the same source file, so a coarse-grained change reports both. */
     private val coarseGrainedOuterChanges = Changes(
         lookupSymbols = setOf(
             LookupSymbol(name = "Outer", scope = "com.example"),
@@ -247,23 +213,19 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
      */
     private fun snapshotWithMixedGranularities(version: String): List<KlibSnapshot> {
         val coarse = snapshot("testMixedClassSnapshotGranularities", version, CLASS_LEVEL).associateBy { it.id }
-        val fine = snapshot("testMixedClassSnapshotGranularities", version, CLASS_MEMBER_LEVEL).associateBy { it.id }
-        return fine.keys.map { id ->
-            val [firstBuild, secondBuild] = id.substringAfterLast('/').split('_')
-            val granularity = if (version == "previous") firstBuild else secondBuild
-            if (granularity.startsWith("FineGrained")) fine.getValue(id) else coarse.getValue(id)
-        }
+        val fineMarker = if (version == "previous") "FineGrainedFirstBuild" else "FineGrainedSecondBuild"
+        return snapshot("testMixedClassSnapshotGranularities", version, CLASS_MEMBER_LEVEL)
+            .map { if (fineMarker in it.id) it else coarse.getValue(it.id) }
     }
 
     private fun computeChanges(current: List<KlibSnapshot>, previous: List<KlibSnapshot>): Changes =
         KlibChangesComputer.computeChangedAndImpactedSet(current, previous, ClasspathSnapshotBuildReporter(DoNothingBuildReporter))
-            .normalize()
+            .toChanges()
 }
 
-/** Adapted version of [ChangesEither.Known] for readability in this test. */
 private data class Changes(val lookupSymbols: Set<LookupSymbol>, val fqNames: Set<String>)
 
-private fun ProgramSymbolSet.normalize(): Changes {
+private fun ProgramSymbolSet.toChanges(): Changes {
     val changes: ChangesEither.Known = toChangesEither()
     return Changes(changes.lookupSymbols.toSet(), changes.fqNames.map { it.asString() }.toSet())
 }
