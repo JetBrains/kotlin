@@ -177,6 +177,10 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmJsInterop")
             }
 
+            testClass<AbstractFirWasmJsCodegenIrCheckTest> {
+                model("codegen/wasmIrChecks")
+            }
+
             testClass<AbstractFirWasmJsCodegenSingleModuleInteropTest> {
                 model("codegen/boxWasmJsInterop")
             }
