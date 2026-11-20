@@ -1,4 +1,3 @@
-// IGNORE_FIR
 class B {
     operator fun get(i: String): B = this
     operator fun set(i: Int, value: String) {}
