@@ -1,0 +1,4 @@
+FILE: test.kt
+    public final fun test(): R|kotlin/Unit| {
+        Q|SingularConflict|.R|/SingularConflict.builder*s|().<Ambiguity: oneSheep, [/SingularConflict.SingularConflictBuilder.oneSheep, /SingularConflict.SingularConflictBuilder.oneSheep]>#(String(a)).<Unresolved name: build>#()
+    }

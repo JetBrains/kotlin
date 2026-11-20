@@ -24,6 +24,8 @@ FILE: builderSingularSameNameAsOtherProperty_kotlin.kt
 
             public open fun oneSheep(oneSheep: R|kotlin/String|): R|SingularConflict.SingularConflictBuilder|
 
+            public open fun oneSheep(oneSheep: R|kotlin/String|): R|SingularConflict.SingularConflictBuilder|
+
             private final var oneSheep: R|kotlin/String|
                 private get(): R|kotlin/String|
                 private set(value: R|kotlin/String|): R|kotlin/Unit|
@@ -42,4 +44,7 @@ FILE: builderSingularSameNameAsOtherProperty_kotlin.kt
 
         }
 
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|SingularConflict|.R|/SingularConflict.Companion.builder|().<Ambiguity: oneSheep, [/SingularConflict.SingularConflictBuilder.oneSheep, /SingularConflict.SingularConflictBuilder.oneSheep]>#(String(a)).<Unresolved name: build>#()
     }

@@ -32,6 +32,7 @@ class FirLombokCheckersExtension(session: FirSession) : FirAdditionalCheckersExt
             FirLombokBuilderClassChecker,
             FirLombokCompanionObjectChecker,
             FirLombokSerializableCompanionObjectChecker,
+            FirLombokConflictingDeclarationsChecker,
         )
 
         override val propertyCheckers: Set<FirPropertyChecker> = setOf(

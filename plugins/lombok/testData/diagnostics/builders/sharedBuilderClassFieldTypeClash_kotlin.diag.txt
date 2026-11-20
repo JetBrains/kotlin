@@ -1,0 +1,3 @@
+/sharedBuilderClassFieldTypeClash_kotlin.kt:12:7: error: Some Lombok-generated declarations have conflicting signatures:
+var x: String
+var x: Int
