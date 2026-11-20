@@ -1,0 +1,4 @@
+KtArrayAccessExpression(119,123): 'b[0]'
+  KaSimpleCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference '+='.>

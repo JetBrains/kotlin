@@ -1,0 +1,15 @@
+KtOperationReferenceExpression(33,35): '++'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaCompoundSymbolResolutionError:
+    simpleAttempts = [
+      KaSimpleSymbolResolutionError:
+        candidateSymbols = []
+        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'inc' for operator '++' on receiver of type 'MatchGroup?'.>,
+      KaSimpleSymbolResolutionError:
+        candidateSymbols = [
+          kotlin/text/set(<extension receiver>: {kotlin.text.StringBuilder=} java.lang.StringBuilder, index: kotlin.Int, value: kotlin.Char): kotlin.Unit
+        ]
+        diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    ]

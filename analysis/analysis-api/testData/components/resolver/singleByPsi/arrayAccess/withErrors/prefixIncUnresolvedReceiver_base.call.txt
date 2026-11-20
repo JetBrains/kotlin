@@ -1,0 +1,35 @@
+KtArrayAccessExpression(35,43): 'obj["a"]'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = obj
+        isSafeNavigation = false
+        type = ERROR CLASS: Unresolved name: obj
+      signature = KaFunctionSignature:
+        receiverType = kotlin.text.MatchGroupCollection
+        returnType = kotlin.text.MatchGroup?
+        symbol = kotlin/text/get(<extension receiver>: kotlin.text.MatchGroupCollection, name: kotlin.String): kotlin.text.MatchGroup?
+        valueParameters = [
+          KaVariableSignature:
+            name = name
+            receiverType = null
+            returnType = kotlin.String
+            symbol = name: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/get
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "a" -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }

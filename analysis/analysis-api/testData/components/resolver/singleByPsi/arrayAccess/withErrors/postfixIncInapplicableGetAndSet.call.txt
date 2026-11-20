@@ -1,0 +1,85 @@
+KtOperationReferenceExpression(160,162): '++'
+  KaCompoundArrayAccessCallResolutionAttempt:
+    getterCallAttempt = KaSimpleCallResolutionError:
+      candidateCalls = [
+        KaSimpleFunctionCall:
+          contextArgumentMapping = {}
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = b
+            isSafeNavigation = false
+            type = B
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = B
+            symbol = /B.get(<dispatch receiver>: B, i: kotlin.String): B
+            valueParameters = [
+              KaVariableSignature:
+                name = i
+                receiverType = null
+                returnType = kotlin.String
+                symbol = i: kotlin.String
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = /B.get
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
+      ]
+      diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    operationCallAttempt = KaSimpleCallResolutionSuccess:
+      call = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = b[0]
+          isSafeNavigation = false
+          type = B
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = B
+          symbol = /B.inc(<dispatch receiver>: B): B
+          valueParameters = []
+          contextParameters = []
+          callableId = /B.inc
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    setterCallAttempt = KaSimpleCallResolutionError:
+      candidateCalls = [
+        KaSimpleFunctionCall:
+          contextArgumentMapping = {}
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = b
+            isSafeNavigation = false
+            type = B
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /B.set(<dispatch receiver>: B, i: kotlin.Int, value: kotlin.String): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = i
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = i: kotlin.Int
+                contextParameters = []
+                callableId = null,
+              KaVariableSignature:
+                name = value
+                receiverType = null
+                returnType = kotlin.String
+                symbol = value: kotlin.String
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = /B.set
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
+      ]
+      diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'B', but 'String' was expected.>

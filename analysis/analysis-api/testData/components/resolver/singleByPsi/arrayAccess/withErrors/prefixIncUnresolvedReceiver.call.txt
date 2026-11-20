@@ -1,0 +1,75 @@
+KtOperationReferenceExpression(33,35): '++'
+  KaCompoundArrayAccessCallResolutionAttempt:
+    getterCallAttempt = KaSimpleCallResolutionSuccess:
+      call = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = obj
+          isSafeNavigation = false
+          type = ERROR CLASS: Unresolved name: obj
+        signature = KaFunctionSignature:
+          receiverType = kotlin.text.MatchGroupCollection
+          returnType = kotlin.text.MatchGroup?
+          symbol = kotlin/text/get(<extension receiver>: kotlin.text.MatchGroupCollection, name: kotlin.String): kotlin.text.MatchGroup?
+          valueParameters = [
+            KaVariableSignature:
+              name = name
+              receiverType = null
+              returnType = kotlin.String
+              symbol = name: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/text/get
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          "a" -> (KaVariableSignature:
+            name = name
+            receiverType = null
+            returnType = kotlin.String
+            symbol = name: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
+    operationCallAttempt = KaSimpleCallResolutionError:
+      candidateCalls = []
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'inc' for operator '++' on receiver of type 'MatchGroup?'.>
+    setterCallAttempt = KaSimpleCallResolutionError:
+      candidateCalls = [
+        KaSimpleFunctionCall:
+          contextArgumentMapping = {}
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = obj
+            isSafeNavigation = false
+            type = ERROR CLASS: Unresolved name: obj
+          signature = KaFunctionSignature:
+            receiverType = {kotlin.text.StringBuilder=} java.lang.StringBuilder
+            returnType = kotlin.Unit
+            symbol = kotlin/text/set(<extension receiver>: {kotlin.text.StringBuilder=} java.lang.StringBuilder, index: kotlin.Int, value: kotlin.Char): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = index
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = index: kotlin.Int
+                contextParameters = []
+                callableId = null,
+              KaVariableSignature:
+                name = value
+                receiverType = null
+                returnType = kotlin.Char
+                symbol = value: kotlin.Char
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = kotlin/text/set
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
+      ]
+      diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>

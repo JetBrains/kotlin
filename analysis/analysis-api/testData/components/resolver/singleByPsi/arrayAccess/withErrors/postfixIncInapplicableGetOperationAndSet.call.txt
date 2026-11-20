@@ -1,0 +1,70 @@
+KtOperationReferenceExpression(131,133): '++'
+  KaCompoundArrayAccessCallResolutionAttempt:
+    getterCallAttempt = KaSimpleCallResolutionError:
+      candidateCalls = [
+        KaSimpleFunctionCall:
+          contextArgumentMapping = {}
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = b
+            isSafeNavigation = false
+            type = B
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = B
+            symbol = /B.get(<dispatch receiver>: B, i: kotlin.String): B
+            valueParameters = [
+              KaVariableSignature:
+                name = i
+                receiverType = null
+                returnType = kotlin.String
+                symbol = i: kotlin.String
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = /B.get
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
+      ]
+      diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    operationCallAttempt = KaSimpleCallResolutionError:
+      candidateCalls = []
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'inc' for operator '++' on receiver of type 'B'.>
+    setterCallAttempt = KaSimpleCallResolutionError:
+      candidateCalls = [
+        KaSimpleFunctionCall:
+          contextArgumentMapping = {}
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = b
+            isSafeNavigation = false
+            type = B
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /B.set(<dispatch receiver>: B, i: kotlin.Boolean, value: kotlin.String): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = i
+                receiverType = null
+                returnType = kotlin.Boolean
+                symbol = i: kotlin.Boolean
+                contextParameters = []
+                callableId = null,
+              KaVariableSignature:
+                name = value
+                receiverType = null
+                returnType = kotlin.String
+                symbol = value: kotlin.String
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = /B.set
+          typeArgumentsMapping = {}
+          valueArgumentMapping = {}
+      ]
+      diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Boolean' was expected.>
