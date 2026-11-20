@@ -112,8 +112,7 @@ The default value is 1.""",
     @Argument(
         value = "-Xdebug",
         description = """Enable debug mode for compilation.
-Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
-If API Level >= 2.2 -- no-op.""",
+Currently, this option has no effect.""",
     )
     var enableDebugMode: Boolean = false
         set(value) {

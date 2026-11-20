@@ -213,8 +213,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
 
             // A lambda without suspension points cannot leak its parameters, so keep the unused ones for the debugger.
             val keepUnusedParameters =
-                (context.config.nullOutSpilledCoroutineLocalsUsingStdlibFunction || context.config.enableDebugMode) &&
-                        !function.hasSuspendCalls()
+                context.config.nullOutSpilledCoroutineLocalsUsingStdlibFunction && !function.hasSuspendCalls()
 
             addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaDescriptorVisibilities.PACKAGE_VISIBILITY)
             val varsCountByType = HashMap<Type, Int>()

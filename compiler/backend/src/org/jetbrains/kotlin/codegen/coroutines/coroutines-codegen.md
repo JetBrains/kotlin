@@ -671,8 +671,7 @@ pushing the return value to the continuation field. By default, it just returns 
 of the function with one returning its arguments, so the variable will be visible even when it is dead. This way, we both avoid 
 memory leaks and make the code debuggable.
 
-If API Version < 2.2, the compiler just pushes `null` to continuations, unless `-Xdebug` flag is used. When the flag is used,
-the compiler does nothing in terms of variable cleanup. Without the flag, the compiler does not spill dead variables, including
+If API Version < 2.2, the compiler just pushes `null` to continuations. It does not spill dead variables, including
 arguments, removes LVT records for them, and shrinks LVT records for alive variables, so the debugger will not see dead variables.
 
 Generally, the compiler generates spilling and unspilling code so that it uses only the first fields. If there are M fields for references,
