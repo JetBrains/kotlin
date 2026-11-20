@@ -25,8 +25,10 @@ sealed class ClangArgs(
         private val forJni: Boolean
 ) {
 
-    private val absoluteTargetToolchain = configurables.absoluteTargetToolchain
-    private val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
+    // An Apple target on a host without Xcode has neither.
+    private val hasToolchainAndSysRoot = configurables !is AppleConfigurables || configurables.hasXcode
+    private val absoluteTargetToolchain by lazy { configurables.absoluteTargetToolchain }
+    private val absoluteTargetSysRoot by lazy { configurables.absoluteTargetSysRoot }
     private val absoluteLlvmHome = configurables.absoluteLlvmHome
     private val target = configurables.target
     private val targetTriple = configurables.targetTriple
@@ -69,7 +71,7 @@ sealed class ClangArgs(
             return (konanOptions + otherOptions).map { "-D$it" }
         }
 
-    private val binDir = "$absoluteTargetToolchain/bin"
+    private val binDir by lazy { "$absoluteTargetToolchain/bin" }
     // TODO: Use buildList
     private val commonClangArgs: List<String> = mutableListOf<List<String>>().apply {
         // Currently, MinGW toolchain contains old LLVM 8, and -fuse-ld=lld picks linker from there.
@@ -77,7 +79,7 @@ sealed class ClangArgs(
         // That's why we just don't add $absoluteTargetToolchain/bin to binary search path in case of JNI compilation.
         // TODO: Can be removed after MinGW sysroot update.
         if (!argsForWindowsJni) {
-            add(listOf("-B$binDir"))
+            if (hasToolchainAndSysRoot) add(listOf("-B$binDir"))
         } else {
             require(configurables is MingwConfigurables)
             add(configurables.msvc.compilerFlags())
@@ -105,7 +107,7 @@ sealed class ClangArgs(
             when (configurables) {
                 // isysroot and sysroot on darwin are _almost_ synonyms.
                 // The first one parses SDKSettings.json while second one is not.
-                is AppleConfigurables -> {
+                is AppleConfigurables -> if (hasToolchainAndSysRoot) {
                     add(listOf("-isysroot", absoluteTargetSysRoot))
                     if (targetTriple.isMacabi) {
                         add(
@@ -116,6 +118,9 @@ sealed class ClangArgs(
                             )
                         )
                     }
+                } else {
+                    // Without an SDK, keep the host's own headers out as well.
+                    add(listOf("-nostdlibinc"))
                 }
                 else -> add(listOf("--sysroot=$absoluteTargetSysRoot"))
             }
@@ -154,7 +159,7 @@ sealed class ClangArgs(
         else -> emptyList()
     }
 
-    val clangPaths = listOf("$absoluteLlvmHome/bin", binDir)
+    val clangPaths = listOfNotNull("$absoluteLlvmHome/bin", if (hasToolchainAndSysRoot) binDir else null)
 
     /**
      * Clang args for Objectice-C and plain C compilation.

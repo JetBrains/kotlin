@@ -103,6 +103,12 @@ interface AppleConfigurables : Configurables, ClangFlags {
     val stripFlags get() = targetList("stripFlags")
     val additionalToolsDir get() = hostString("additionalToolsDir")
     val absoluteAdditionalToolsDir get() = absolute(additionalToolsDir)
+
+    /**
+     * Whether this host has Xcode's toolchain and SDK, which only macOS hosts do. Without them, the absolute paths to
+     * those are unavailable, and the target is one of [PlatformManager.cacheOnlyTargets] at most.
+     */
+    val hasXcode: Boolean get() = HostManager.hostIsMac
 }
 
 interface MingwConfigurables : Configurables, ClangFlags {

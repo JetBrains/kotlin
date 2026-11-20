@@ -231,11 +231,12 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
 class MacOSBasedLinker(targetProperties: AppleConfigurables)
     : LinkerFlags(targetProperties), AppleConfigurables by targetProperties {
 
-    private val libtool = "$absoluteTargetToolchain/bin/libtool"
+    private val libtool by lazy { "$absoluteTargetToolchain/bin/libtool" }
     private val llvmLibtoolDarwin = "$absoluteLlvmHome/bin/llvm-libtool-darwin"
-    private val linker = "$absoluteTargetToolchain/bin/ld"
-    private val strip = "$absoluteTargetToolchain/bin/strip"
-    private val dsymutil = "$absoluteTargetToolchain/bin/dsymutil"
+    private val linker by lazy { "$absoluteTargetToolchain/bin/ld" }
+    private val strip by lazy { "$absoluteTargetToolchain/bin/strip" }
+    private val dsymutil by lazy { "$absoluteTargetToolchain/bin/dsymutil" }
+    private val llvmAr = "$absoluteLlvmHome/bin/llvm-ar"
 
     private val compilerRtDir: String? by lazy {
         val dir = Path("$absoluteTargetToolchain/lib/clang/").listDirectoryEntries().firstOrNull()?.absolutePathString()
@@ -300,6 +301,14 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
     }.toList()
 
     override fun LinkerArguments.finalLinkCommands(): List<Command> {
+        if (!hasXcode) {
+            // Such a host only builds caches, and llvm-ar archives them like libtool does.
+            require(kind == LinkerOutputKind.STATIC_LIBRARY && sanitizer == null) {
+                "Only static libraries without sanitizers can be produced for $target on a ${HostManager.hostName} host"
+            }
+            return llvmArStaticLibraryCommands(llvmAr, executable, objectFiles, staticLibraries, tempFiles)
+        }
+
         val staticLibrariesArgs = if (staticLibraries.isEmpty())
             staticLibraries
         else tempFiles.create("libraries").let { librariesListFile ->
