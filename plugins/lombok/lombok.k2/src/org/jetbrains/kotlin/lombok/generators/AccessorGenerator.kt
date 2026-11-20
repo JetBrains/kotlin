@@ -99,7 +99,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                     setterVisibility != null
                 ) {
                     val fluentAccessors = fieldAccessors?.fluent ?: classAccessors?.fluent ?: config.accessorsFluent
-                    val chainedAccessors = fieldAccessors?.chain ?: classAccessors?.chain ?: config.accessorsChain || fluentAccessors
+                    val chainedAccessors = fieldAccessors?.chain ?: classAccessors?.chain ?: config.accessorsChain ?: fluentAccessors
                     val returnTypeRef = if (chainedAccessors) {
                         buildResolvedTypeRef { coneType = classSymbol.defaultType() }
                     } else {
