@@ -33,7 +33,7 @@ internal abstract class KotlinWasmDevServerTaskImpl
 
     @TaskAction
     fun start() {
-        val serverPort = port.getOrElse(findFreePort())
+        val serverPort = port.orNull ?: findFreePort()
 
         val lockFile = temporaryDir.resolve("server.lock")
 
