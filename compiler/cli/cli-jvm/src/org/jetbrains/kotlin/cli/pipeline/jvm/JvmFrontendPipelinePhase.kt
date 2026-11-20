@@ -7,7 +7,6 @@
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import com.intellij.core.CoreJavaFileManager
-import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -633,18 +632,14 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             contentRootToVirtualFile = { contentRootToVirtualFile(it, localFileSystem, projectEnvironment.jarFileSystem, configuration) },
             javaModuleFinder,
             requireStdlibModule = !configuration.allowKotlinPackage,
-            outputDirectory?.let { localFileSystem.findFileByPath(it) },
+            outputDirectory?.let { JvmClasspathRootId.of(Path(it)) },
             javaFileManager::findClassOnClasspath,
             jdkRelease,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
             rootEntries = classpathIndexes.rootEntryFactory,
         )
 
-        (val initialRoots = roots, val javaModules = modules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
-
-        val [roots, singleJavaFileRoots] = initialRoots.partition { (file) ->
-            file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION
-        }
+        (val roots, val javaModules = modules, val singleJavaFileRoots) = classpathRootsResolver.convertClasspathRoots(contentRoots)
 
         // REPL updates classpath dynamically
         classpathIndexes.addRoots(roots).indexedRoots.forEach {
@@ -673,7 +668,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             project,
             listOfNotNull(projectEnvironment.jarFileSystem, projectEnvironment.environment.jrtFileSystem, localFileSystem),
             { JvmPackagePartProvider(classpathIndexes.moduleMappings, it) },
-            initialRoots, configuration,
+            roots, configuration,
             projectEnvironment,
             classpathRootsResolver,
             classpathIndexes,

@@ -125,7 +125,8 @@ class JvmModuleMappings(
 
 private fun JvmClasspath.rootFilter(): (JavaRoot) -> Boolean {
     val matcher = JvmClasspathRootMatcher(this)
-    return { root -> matcher.accepts(root.file) }
+    // By identity and library path, as the class files of the root are filtered (`JvmClasspathRootFilter`).
+    return { root -> matcher.accepts(root.id, root.libraryPath()) }
 }
 
 fun tryLoadModuleMapping(

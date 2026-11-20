@@ -12,7 +12,6 @@ import com.intellij.codeInsight.InferredAnnotationsManager
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.CoreApplicationEnvironment.registerExtensionPoint
 import com.intellij.core.CoreJavaFileManager
-import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.lang.jvm.facade.JvmElementProvider
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.*
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
+import java.nio.file.Paths
 
 @OptIn(K1Deprecation::class, CoreEnvironmentDeprecation::class)
 class KotlinCoreEnvironment private constructor(
@@ -197,18 +198,15 @@ class KotlinCoreEnvironment private constructor(
             this::contentRootToVirtualFile,
             javaModuleFinder,
             !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
-            outputDirectory?.let(this::findLocalFile),
+            outputDirectory?.let { JvmClasspathRootId.of(Paths.get(it)) },
             javaFileManager::findClassOnClasspath,
             releaseTarget,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
             rootEntries = classpathIndexes.rootEntryFactory,
         )
 
-        (val initialRoots = roots, val javaModules = modules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
-        this.initialRoots.addAll(initialRoots)
-
-        val [roots, singleJavaFileRoots] =
-            initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+        (val roots, val javaModules = modules, val singleJavaFileRoots) = classpathRootsResolver.convertClasspathRoots(contentRoots)
+        initialRoots.addAll(roots)
 
         // REPL updates classpath dynamically
         updateClasspathFromRootsIndex(classpathIndexes.addRoots(roots))
