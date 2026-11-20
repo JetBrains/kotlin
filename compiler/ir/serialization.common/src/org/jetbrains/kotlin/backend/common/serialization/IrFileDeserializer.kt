@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation as ProtoAnnotation
@@ -117,38 +116,15 @@ class IrFileDeserializerImpl(
     }
 }
 
-abstract class FileDeserializationState {
-    abstract val fileIndex: Int
-    abstract val file: IrFile
-    abstract val fileReader: IrLibraryFileFromBytes
-    abstract val declarationDeserializer: IrDeclarationDeserializer
-    abstract val fileDeserializer: IrFileDeserializer
-
-    /**
-     * Schedule deserialization of a top-level declaration with the given signature.
-     */
-    abstract fun addIdSignature(topLevelDeclarationSignature: IdSignature)
-
-    /**
-     * Schedule deserialization of all top-level declarations in this file.
-     */
-    abstract fun enqueueAllDeclarations()
-
-    /**
-     * Deserialize all top-level declarations previously scheduled for deserialization in the current file.
-     */
-    abstract fun deserializeAllFileReachableTopLevel()
-}
-
-class FileDeserializationStateImpl(
+class FileDeserializationState(
     private val linker: KotlinIrLinker,
-    override val fileIndex: Int,
-    override val file: IrFile,
-    override val fileReader: IrLibraryFileFromBytes,
+    val fileIndex: Int,
+    val file: IrFile,
+    val fileReader: IrLibraryFileFromBytes,
     fileProto: ProtoFile,
     settings: IrDeserializationSettings,
     moduleDeserializer: IrModuleDeserializer
-): FileDeserializationState() {
+) {
 
     private val symbolDeserializer = IrSymbolDeserializer(
         symbolTable = linker.symbolTable,
@@ -162,7 +138,7 @@ class FileDeserializationStateImpl(
             linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(idSignature, symbolKind, moduleDeserializer)
         })
 
-    override val declarationDeserializer = IrDeclarationDeserializer(
+    val declarationDeserializer = IrDeclarationDeserializer(
         linker.unitClass.defaultTypeWithoutArguments,
         linker.nothingClass.defaultTypeWithoutArguments,
         linker.symbolTable,
@@ -190,7 +166,7 @@ class FileDeserializationStateImpl(
         fileEntryDeserializer = linker.fileEntryDeserializer,
     )
 
-    override val fileDeserializer = IrFileDeserializerImpl(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)
+    val fileDeserializer = IrFileDeserializerImpl(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)
 
     /**
      * This is the queue of top-level declarations in the current file to be deserialized.
@@ -218,15 +194,24 @@ class FileDeserializationStateImpl(
         }
     }
 
-    override fun addIdSignature(topLevelDeclarationSignature: IdSignature) {
+    /**
+     * Schedule deserialization of a top-level declaration with the given signature.
+     */
+    fun addIdSignature(topLevelDeclarationSignature: IdSignature) {
         reachableTopLevels.add(topLevelDeclarationSignature)
     }
 
-    override fun enqueueAllDeclarations() {
+    /**
+     * Schedule deserialization of all top-level declarations in this file.
+     */
+    fun enqueueAllDeclarations() {
         reachableTopLevels.addAll(fileDeserializer.reversedSignatureIndex.keys)
     }
 
-    override fun deserializeAllFileReachableTopLevel() {
+    /**
+     * Deserialize all top-level declarations previously scheduled for deserialization in the current file.
+     */
+    fun deserializeAllFileReachableTopLevel() {
         while (reachableTopLevels.isNotEmpty()) {
             val topLevelDeclarationSignature = reachableTopLevels.first()
 
