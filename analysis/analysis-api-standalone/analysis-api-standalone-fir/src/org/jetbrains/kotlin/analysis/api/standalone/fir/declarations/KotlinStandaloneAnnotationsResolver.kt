@@ -35,8 +35,11 @@ private class KotlinStandaloneAnnotationsResolver(
     private val allDeclarations: List<KtDeclaration> by lazy {
         val result = mutableListOf<KtDeclaration>()
 
-        val visitor = declarationRecursiveVisitor {
-            result += it
+        val visitor = object : KtTreeVisitorVoid() {
+            override fun visitDeclaration(declaration: KtDeclaration) {
+                super.visitDeclaration(declaration)
+                result += declaration
+            }
         }
 
         filesInScope.forEach { it.accept(visitor) }
