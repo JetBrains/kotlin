@@ -21,8 +21,6 @@ object TestGeneratorUtil {
     @Language("RegExp") const val KT_WITHOUT_UNDERSCORE_PREFIX = """^([^_](.+))\.kt$"""
     @Language("RegExp") const val WITHOUT_UNDERSCORE_PREFIX = """^([^_](.+))$"""
 
-    @Language("RegExp") const val KT_OR_KTS_WITH_FIR_PREFIX = """^(.+)\.fir\.kts?$"""
-
     // about the .can-freeze-ide test data extension:
     // in some cases, IDE analysis of problematic code can freeze older IDEA versions,
     // so we temporarily mark them with a special fake file extension to avoid IDE analysis

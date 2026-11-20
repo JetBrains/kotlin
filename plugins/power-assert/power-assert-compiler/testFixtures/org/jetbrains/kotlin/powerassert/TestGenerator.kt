@@ -6,22 +6,20 @@
 package org.jetbrains.kotlin.powerassert
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun main(args: Array<String>) {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "plugins/power-assert/power-assert-compiler/testData") {
             testClass<AbstractPowerAssertPluginFirPsiDiagnosticTest> {
-                model("diagnostic", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("diagnostic")
             }
             testClass<AbstractPowerAssertBlackBoxCodegenTest> {
-                model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("codegen")
             }
             testClass<AbstractPowerAssertMissingRuntimeBlackBoxCodegenTest> {
                 model(
                     relativeRootPath = "codegen",
-                    excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX,
                     excludeDirsRecursively = listOf("annotated"),
                 )
             }

@@ -24,7 +24,7 @@ public class SerializationJsDiagnosticTestGenerated extends AbstractSerializatio
 
   @Test
   public void testAllFilesPresentInDiagnosticsJs() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/diagnosticsJs"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/diagnosticsJs"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test

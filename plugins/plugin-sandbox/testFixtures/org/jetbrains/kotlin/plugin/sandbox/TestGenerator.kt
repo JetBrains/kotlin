@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.generators.tests.standalone
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
-import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -20,45 +19,45 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "plugins/plugin-sandbox/testData") {
             testClass<AbstractFirLightTreePluginDiagnosticTest> {
-                model("diagnostics", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("diagnostics")
                 model("intentionallyEmpty")
                 model("intentionallyNonExistent")
             }
 
             testClass<AbstractFirLightTreeJvmPluginIrTextTest> {
-                model("irText", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("irText")
             }
 
             testClass<AbstractFirLightTreeJvmPluginIrTextTestWithoutPlugins> {
-                model("irText", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("irText")
             }
 
             testClass<AbstractLightTreeJsPluginIrTextTest> {
-                model("irText", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("irText")
             }
 
             testClass<AbstractLightTreeJsPluginIrTextTestWithoutPlugins> {
-                model("irText", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("irText")
             }
 
             testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenTest> {
-                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("box")
             }
 
             testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenTestWithoutPlugins> {
-                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("box")
             }
 
             testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTest> {
-                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("box")
             }
 
             testClass<AbstractJsLightTreePluginBlackBoxCodegenTest> {
-                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("box")
             }
 
             testClass<AbstractJsLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTest> {
-                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("box")
             }
 
             testClass<AbstractFirLoadK2CompiledWithPluginJvmKotlinTest> {
