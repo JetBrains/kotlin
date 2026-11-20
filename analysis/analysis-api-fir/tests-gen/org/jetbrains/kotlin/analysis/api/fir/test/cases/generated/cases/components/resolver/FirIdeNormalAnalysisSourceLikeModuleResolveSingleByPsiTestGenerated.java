@@ -1831,6 +1831,150 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveSingleByPsiTestGenerated
       }
 
       @Test
+      @TestMetadata("plusAssignInapplicableGetAndPlus.kt")
+      public void testPlusAssignInapplicableGetAndPlus() {
+        run("plusAssignInapplicableGetAndPlus.kt");
+      }
+
+      @Test
+      @TestMetadata("plusAssignInapplicableGetAndPlus_base.kt")
+      public void testPlusAssignInapplicableGetAndPlus_base() {
+        run("plusAssignInapplicableGetAndPlus_base.kt");
+      }
+
+      @Test
+      @TestMetadata("plusAssignInapplicablePlus.kt")
+      public void testPlusAssignInapplicablePlus() {
+        run("plusAssignInapplicablePlus.kt");
+      }
+
+      @Test
+      @TestMetadata("plusAssignInapplicablePlus_base.kt")
+      public void testPlusAssignInapplicablePlus_base() {
+        run("plusAssignInapplicablePlus_base.kt");
+      }
+
+      @Test
+      @TestMetadata("plusAssignInapplicableSet.kt")
+      public void testPlusAssignInapplicableSet() {
+        run("plusAssignInapplicableSet.kt");
+      }
+
+      @Test
+      @TestMetadata("plusAssignInapplicableSet_base.kt")
+      public void testPlusAssignInapplicableSet_base() {
+        run("plusAssignInapplicableSet_base.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncInapplicableGet.kt")
+      public void testPostfixIncInapplicableGet() {
+        run("postfixIncInapplicableGet.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncInapplicableGetAndOperation.kt")
+      public void testPostfixIncInapplicableGetAndOperation() {
+        run("postfixIncInapplicableGetAndOperation.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncInapplicableGetAndOperation_base.kt")
+      public void testPostfixIncInapplicableGetAndOperation_base() {
+        run("postfixIncInapplicableGetAndOperation_base.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncInapplicableGetAndSet.kt")
+      public void testPostfixIncInapplicableGetAndSet() {
+        run("postfixIncInapplicableGetAndSet.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncInapplicableGetAndSet_base.kt")
+      public void testPostfixIncInapplicableGetAndSet_base() {
+        run("postfixIncInapplicableGetAndSet_base.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncInapplicableGetOperationAndSet.kt")
+      public void testPostfixIncInapplicableGetOperationAndSet() {
+        run("postfixIncInapplicableGetOperationAndSet.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncInapplicableGetOperationAndSet_base.kt")
+      public void testPostfixIncInapplicableGetOperationAndSet_base() {
+        run("postfixIncInapplicableGetOperationAndSet_base.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncInapplicableGet_base.kt")
+      public void testPostfixIncInapplicableGet_base() {
+        run("postfixIncInapplicableGet_base.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncInapplicableSet.kt")
+      public void testPostfixIncInapplicableSet() {
+        run("postfixIncInapplicableSet.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncInapplicableSet_base.kt")
+      public void testPostfixIncInapplicableSet_base() {
+        run("postfixIncInapplicableSet_base.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncNoneApplicableSet.kt")
+      public void testPostfixIncNoneApplicableSet() {
+        run("postfixIncNoneApplicableSet.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncNoneApplicableSet_base.kt")
+      public void testPostfixIncNoneApplicableSet_base() {
+        run("postfixIncNoneApplicableSet_base.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncSetOverloads.kt")
+      public void testPostfixIncSetOverloads() {
+        run("postfixIncSetOverloads.kt");
+      }
+
+      @Test
+      @TestMetadata("postfixIncSetOverloads_base.kt")
+      public void testPostfixIncSetOverloads_base() {
+        run("postfixIncSetOverloads_base.kt");
+      }
+
+      @Test
+      @TestMetadata("prefixIncInapplicableSet.kt")
+      public void testPrefixIncInapplicableSet() {
+        run("prefixIncInapplicableSet.kt");
+      }
+
+      @Test
+      @TestMetadata("prefixIncInapplicableSet_base.kt")
+      public void testPrefixIncInapplicableSet_base() {
+        run("prefixIncInapplicableSet_base.kt");
+      }
+
+      @Test
+      @TestMetadata("prefixIncUnresolvedReceiver.kt")
+      public void testPrefixIncUnresolvedReceiver() {
+        run("prefixIncUnresolvedReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("prefixIncUnresolvedReceiver_base.kt")
+      public void testPrefixIncUnresolvedReceiver_base() {
+        run("prefixIncUnresolvedReceiver_base.kt");
+      }
+
+      @Test
       @TestMetadata("setFunction.kt")
       public void testSetFunction() {
         run("setFunction.kt");

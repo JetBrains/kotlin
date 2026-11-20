@@ -1,0 +1,2 @@
+KtArrayAccessExpression(165,169): 'b[0]'
+  NO_CANDIDATES

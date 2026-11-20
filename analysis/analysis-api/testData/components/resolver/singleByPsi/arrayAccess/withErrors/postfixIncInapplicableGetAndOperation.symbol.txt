@@ -1,0 +1,14 @@
+KtOperationReferenceExpression(122,124): '++'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaCompoundSymbolResolutionError:
+    simpleAttempts = [
+      KaSimpleSymbolResolutionSuccess:
+        symbols = [
+          /B.set(<dispatch receiver>: B, i: kotlin.Int, value: B): kotlin.Unit
+        ],
+      KaSimpleSymbolResolutionError:
+        candidateSymbols = []
+        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'inc' for operator '++' on receiver of type 'B'.>
+    ]
