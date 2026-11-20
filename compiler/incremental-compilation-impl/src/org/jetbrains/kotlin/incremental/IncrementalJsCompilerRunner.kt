@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
@@ -50,19 +53,11 @@ fun makeJsIncrementally(
     }
 }
 
-@Suppress("DEPRECATION")
 inline fun <R> withJsIC(args: CommonCompilerArguments, enabled: Boolean = true, fn: () -> R): R {
-    val isJsEnabledBackup = IncrementalCompilation.isEnabledForJs()
-    IncrementalCompilation.setIsEnabledForJs(true)
-
-    try {
-        if (args.incrementalCompilation == null) {
-            args.incrementalCompilation = enabled
-        }
-        return fn()
-    } finally {
-        IncrementalCompilation.setIsEnabledForJs(isJsEnabledBackup)
+    if (args.incrementalCompilation == null) {
+        args.incrementalCompilation = enabled
     }
+    return fn()
 }
 
 private fun parseLibrariesArgument(libraries: String?): List<File> =
