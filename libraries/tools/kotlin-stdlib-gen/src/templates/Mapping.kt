@@ -308,6 +308,9 @@ object Mapping : TemplateGroupBase() {
         }
 
         sample("${sampleClass(f)}.flatMap")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.flatMap")
+        }
         typeParam("R")
         returns("List<R>")
         body {

@@ -498,6 +498,25 @@ class Strings {
     }
 
     @Sample
+    fun flatMap() {
+        val text = "ab"
+
+        val fragments = text.flatMap { char -> listOf("$char", "$char$char") }
+
+        assertPrints(fragments, "[a, aa, b, bb]")
+    }
+
+    @Sample
+    fun flatMapTo() {
+        val text = "ab"
+        val destination = mutableListOf<String>()
+
+        text.flatMapTo(destination) { char -> listOf("$char", "$char$char") }
+
+        assertPrints(destination, "[a, aa, b, bb]")
+    }
+
+    @Sample
     fun allWithPredicate() {
         val string = "Kotlin"
         // All characters are letters
