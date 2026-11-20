@@ -24,6 +24,7 @@ object SwcConfig {
         add(outputDirectory)
         add("--out-file-extension=${fileExtension.removePrefix(".")}")
         add("--extensions=${fileExtension.removePrefix(".")}")
+        add("--copy-files")
     }
 
     public fun getConfigWhen(
@@ -35,7 +36,6 @@ object SwcConfig {
         set("\$schema", "https://swc.rs/schema.json")
         set("sourceMaps", sourceMapEnabled)
         set("inputSourceMap", sourceMapEnabled)
-        set("exclude", arrayOf(".*\\.d\\.m?ts$"))
         set("jsc", buildMap {
             set("parser", buildMap {
                 set("syntax", "ecmascript")

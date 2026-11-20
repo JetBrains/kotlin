@@ -356,11 +356,6 @@ internal constructor(
                                 linkTask.compilerOptions.freeCompilerArgs.add(GENERATE_D_TS)
                                 linkTask.finalizedBy(tsValidationTask)
                             }
-                            binary.typeScriptDeclarations.from(
-                                binary.defaultLinkSyncTaskInput.map { dir ->
-                                    dir.asFileTree.matching { it.include("**/*.d.ts", "**/*.d.mts") }
-                                }
-                            )
                         }
                     }
             }
