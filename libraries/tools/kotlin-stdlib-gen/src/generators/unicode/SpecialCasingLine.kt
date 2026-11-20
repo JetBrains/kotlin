@@ -5,23 +5,24 @@
 
 package generators.unicode
 
-internal class SpecialCasingLine(properties: List<String>) {
-    init {
-        require(properties.size in 5..6)
-    }
-
-    val char: String = properties[0]
-    val lowercaseMapping: List<String> = properties[1].split(" ")
-    val titlecaseMapping: List<String> = properties[2].split(" ")
-    val uppercaseMapping: List<String> = properties[3].split(" ")
-    val conditionList: List<String> = if (properties.size == 6) properties[4].split(" ") else emptyList()
-
-    override fun toString(): String {
-        return "SpecialCasingLine{char=$char" +
-                ", lowercaseMapping=$lowercaseMapping" +
-                ", uppercaseMapping=$uppercaseMapping" +
-                ", titlecaseMapping=$titlecaseMapping" +
-                ", conditionList=$conditionList" +
-                "}"
+internal data class SpecialCasingLine(
+    val char: String,
+    val lowercaseMapping: List<String>,
+    val titlecaseMapping: List<String>,
+    val uppercaseMapping: List<String>,
+    val conditionList: List<String>,
+) {
+    companion object {
+        fun parse(line: String): SpecialCasingLine {
+            val properties = line.substringBefore('#').split(";").map { it.trim() }
+            require(properties.size in 5..6) { "Invalid special casing line: $line" }
+            return SpecialCasingLine(
+                char = properties[0],
+                lowercaseMapping = properties[1].split(" "),
+                titlecaseMapping = properties[2].split(" "),
+                uppercaseMapping = properties[3].split(" "),
+                conditionList = if (properties.size == 6) properties[4].split(" ") else emptyList()
+            )
+        }
     }
 }
