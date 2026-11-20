@@ -11,11 +11,20 @@ data class Color(val r: Int, val g: Int, val b: Int)
 
 data class Box<T>(internal val x: T)
 
+data class Palette(val colors: List<Color>)
+
+data class BoundedBox<T : Box<String>>(val box: T)
+
 @Parcelize
-data class Test(val name: @DataClass Box<String>, val color: @DataClass Color) : Parcelable
+data class Test(
+    val name: @DataClass Box<String>,
+    val color: @DataClass Color,
+    val palette: @DataClass Palette,
+    val bounded: @DataClass BoundedBox<*>,
+) : Parcelable
 
 fun box() = parcelTest { parcel ->
-    val test = Test(Box("John"), Color(0, 255, 0))
+    val test = Test(Box("John"), Color(0, 255, 0), Palette(listOf(Color(1, 2, 3), Color(4, 5, 6))), BoundedBox(Box("Jane")))
     test.writeToParcel(parcel, 0)
 
     val bytes = parcel.marshall()
