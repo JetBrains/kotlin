@@ -5,11 +5,9 @@ import Testing
 import KotlinRuntimeSupport
 
 func assertReversed<T: Equatable>(reversed: any KotlinRuntimeSupport.List<T>, original: any KotlinRuntimeSupport.List<T>) throws {
-    try #require(reversed.count == original.count)
-    let expected: [T] = original.reversed() // TODO: This is O(n) KT-88831
-    for i in reversed.indices {
-        try #require(reversed[i] == expected[Int(i)])
-    }
+    let expected = original.reversed()
+    try #require(expected is ReversedCollection<AnyList<T>>)
+    try #require(reversed.elementsEqual(expected))
 }
 
 func assertEquals<T: Equatable>(actual: any KotlinRuntimeSupport.List<T>, expected: any KotlinRuntimeSupport.List<T>) throws {
