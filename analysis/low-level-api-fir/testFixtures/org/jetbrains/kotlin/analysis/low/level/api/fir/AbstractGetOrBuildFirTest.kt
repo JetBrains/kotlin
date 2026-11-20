@@ -227,20 +227,20 @@ internal fun renderActualFir(
     if (renderingOptions.renderKtFileName)
         appendLine("File name: ${ktElement.containingKtFile.name}")
     appendLine("\nFIR element rendered:")
-    appendLine(render(fir).trimEnd())
+    appendLine(render(fir, renderingOptions).trimEnd())
     for (firFile in firFiles) {
         appendLine("\nFIR FILE:")
-        append(render(firFile).trimEnd())
+        append(render(firFile, renderingOptions).trimEnd())
     }
 }
 
-private fun render(firElement: FirElement?): String = when (firElement) {
+private fun render(firElement: FirElement?, renderingOptions: FirRenderingOptions): String = when (firElement) {
     null -> "null"
     is FirImport -> "import ${firElement.importedFqName}"
     else -> FirRenderer(
         packageDirectiveRenderer = FirPackageDirectiveRenderer(),
         resolvePhaseRenderer = FirResolvePhaseRenderer(),
-        declarationRenderer = FirDeclarationRendererWithFilteredAttributes(),
+        declarationRenderer = FirDeclarationRendererWithFilteredAttributes(renderingOptions.ignoredDeclarationAttributes),
     ).renderElementAsString(firElement)
 }
 

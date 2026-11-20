@@ -5,9 +5,16 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
-class FirDeclarationRendererWithFilteredAttributes : FirDeclarationRendererWithAttributes() {
+/**
+ * Renders declaration attributes, except for a fixed set of ignored attributes and [additionalIgnoredAttributes].
+ *
+ * @param additionalIgnoredAttributes simple names of additional attribute keys that are not rendered.
+ */
+class FirDeclarationRendererWithFilteredAttributes(
+    private val additionalIgnoredAttributes: Set<String> = emptySet(),
+) : FirDeclarationRendererWithAttributes() {
     override fun attributeTypesToIds(): List<Pair<String, Int>> {
-        return super.attributeTypesToIds().filter { it.first !in IGNORED_ATTRIBUTES }
+        return super.attributeTypesToIds().filter { it.first !in IGNORED_ATTRIBUTES && it.first !in additionalIgnoredAttributes }
     }
 
     private companion object {

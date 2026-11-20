@@ -37,6 +37,10 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest()
             // tests that check where library declarations come from, so that the Standalone tests share the results of the IDE mode
             // tests otherwise.
             renderSourceKind = false
+
+            // Classes deserialized from library files have these attributes, but classes built from stubs mostly don't, so they also
+            // depend on the test mode. They don't help to check which declaration is found.
+            ignoredDeclarationAttributes = setOf("HasNoEnumEntriesKey", "IsNewPlaceForBodyGeneration")
         }
 
         builder.forTestsMatching("*/js/*") {

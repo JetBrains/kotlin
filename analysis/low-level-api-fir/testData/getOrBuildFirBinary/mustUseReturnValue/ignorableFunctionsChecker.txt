@@ -17,7 +17,7 @@ public interface X {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public abstract [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=true] interface X : R|kotlin/Any| {
+public abstract [ResolvedTo(BODY_RESOLVE)] interface X : R|kotlin/Any| {
     @R|kotlin/MustUseReturnValues|() public final [ResolvedTo(BODY_RESOLVE)] class Y : R|kotlin/Any| {
         @R|kotlin/IgnorableReturnValue|() public final [ResolvedTo(BODY_RESOLVE)] fun ignorable(): R|kotlin/String|
 
