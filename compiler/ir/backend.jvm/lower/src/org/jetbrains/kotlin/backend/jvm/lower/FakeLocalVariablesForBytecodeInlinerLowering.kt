@@ -30,7 +30,10 @@ interface FakeInliningLocalVariables<Container : IrElement> {
 
     fun Container.addFakeLocalVariableForFun(declaration: IrDeclaration) {
         if (declaration !is IrFunction) return
-        if (declaration.isInline && !declaration.origin.isSynthetic && declaration.body != null && !declaration.isInlineOnly()) {
+        // A callable reference to an inline function passed as an inline lambda is inline itself, but it only gets a lambda marker.
+        if (declaration.isInline && !declaration.origin.isSynthetic && declaration.origin != IrDeclarationOrigin.INLINE_LAMBDA &&
+            declaration.body != null && !declaration.isInlineOnly()
+        ) {
             val currentFunctionName = context.defaultMethodSignatureMapper.mapFunctionName(declaration)
             val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION}$currentFunctionName"
             this.addFakeLocalVariable(localName)

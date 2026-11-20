@@ -1,0 +1,130 @@
+public abstract interface A : java/lang/Object {
+
+}
+
+public abstract interface B : java/lang/Object {
+
+}
+
+public abstract class Base : java/lang/Object, A {
+    public void <init>()
+}
+
+public abstract interface C : java/lang/Object {
+
+}
+
+public abstract interface D : java/lang/Object {
+
+}
+
+public final class Impl$$serializer$annotationImpl$Tag$0 : java/lang/Object, Tag {
+    private final java.lang.String value
+
+    public void <init>(java.lang.String value)
+
+    public final java.lang.Class annotationType()
+
+    public final boolean equals(java.lang.Object other)
+
+    public final int hashCode()
+
+    public final java.lang.String toString()
+
+    public final java.lang.String value()
+}
+
+public final class Impl$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
+    public final static Impl$$serializer INSTANCE
+
+    private final static kotlinx.serialization.descriptors.SerialDescriptor descriptor
+
+    static void <clinit>() {
+          NEW (Impl$$serializer)
+          DUP
+          INVOKESPECIAL (Impl$$serializer, <init>, ()V)
+          PUTSTATIC (Impl$$serializer, INSTANCE, LImpl$$serializer;)
+        LABEL (L0)
+        LINENUMBER (26)
+          NEW (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor)
+          DUP
+          LDC (Impl)
+          GETSTATIC (Impl$$serializer, INSTANCE, LImpl$$serializer;)
+          CHECKCAST (kotlinx/serialization/internal/GeneratedSerializer)
+          ICONST_0
+          INVOKESPECIAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
+          ASTORE (0)
+          ALOAD (0)
+        LABEL (L1)
+        LINENUMBER (23)
+          NEW (Impl$$serializer$annotationImpl$Tag$0)
+          DUP
+          LDC (a)
+          INVOKESPECIAL (Impl$$serializer$annotationImpl$Tag$0, <init>, (Ljava/lang/String;)V)
+          CHECKCAST (java/lang/annotation/Annotation)
+        LABEL (L2)
+        LINENUMBER (26)
+          INVOKEVIRTUAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, pushClassAnnotation, (Ljava/lang/annotation/Annotation;)V)
+          ALOAD (0)
+          CHECKCAST (kotlinx/serialization/descriptors/SerialDescriptor)
+          PUTSTATIC (Impl$$serializer, descriptor, Lkotlinx/serialization/descriptors/SerialDescriptor;)
+        LABEL (L3)
+        LINENUMBER (27)
+          RETURN
+    }
+
+    private void <init>()
+
+    public final kotlinx.serialization.KSerializer[] childSerializers()
+
+    public final Impl deserialize(kotlinx.serialization.encoding.Decoder decoder)
+
+    public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder)
+
+    public final kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
+
+    public final void serialize(kotlinx.serialization.encoding.Encoder encoder, Impl value)
+
+    public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value)
+
+    public kotlinx.serialization.KSerializer[] typeParametersSerializers()
+}
+
+public final class Impl$Companion : java/lang/Object {
+    private void <init>()
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+
+    public final kotlinx.serialization.KSerializer serializer()
+}
+
+public final class Impl : Base, B, C, D {
+    public final static Impl$Companion Companion
+
+    static void <clinit>() {
+          NEW (Impl$Companion)
+          DUP
+          ACONST_NULL
+          INVOKESPECIAL (Impl$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          PUTSTATIC (Impl, Companion, LImpl$Companion;)
+          RETURN
+    }
+
+    public void <init>()
+
+    public void <init>(int seen0, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker)
+
+    public final static void write$Self$main(Impl self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc)
+}
+
+public final class Tag$Impl : java/lang/Object, Tag {
+    private final java.lang.String value
+
+    public void <init>(java.lang.String value)
+
+    public final java.lang.String value()
+}
+
+public abstract interface Tag : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String value()
+}

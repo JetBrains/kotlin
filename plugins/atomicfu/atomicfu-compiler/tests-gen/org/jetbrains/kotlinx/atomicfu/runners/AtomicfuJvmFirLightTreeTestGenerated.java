@@ -200,6 +200,12 @@ public class AtomicfuJvmFirLightTreeTestGenerated extends AbstractAtomicfuJvmFir
     }
 
     @Test
+    @TestMetadata("LoopWithInlineScopesNumbers.kt")
+    public void testLoopWithInlineScopesNumbers() {
+      run("LoopWithInlineScopesNumbers.kt");
+    }
+
+    @Test
     @TestMetadata("MultiInitTest.kt")
     public void testMultiInitTest() {
       run("MultiInitTest.kt");

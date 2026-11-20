@@ -212,6 +212,12 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("LoopWithInlineScopesNumbers.kt")
+    public void testLoopWithInlineScopesNumbers() {
+      run("LoopWithInlineScopesNumbers.kt");
+    }
+
+    @Test
     @TestMetadata("MultiInitTest.kt")
     public void testMultiInitTest() {
       run("MultiInitTest.kt");

@@ -149,6 +149,8 @@ class MethodInliner(
 
     private fun doInline(node: MethodNode, inlinedFunctionMarkerVariableName: String?): MethodNode {
         val currentInvokes = LinkedList(invokeCalls)
+        // Lambdas called before the first line number of the inlined method, e.g., in a synthetic one, get its call site.
+        val callSiteLineNumberOfInlinedMethod = inliningContext.inlineScopesGenerator?.currentCallSiteLineNumber ?: 0
 
         val resultNode = MethodNode(node.access, node.name, node.desc, node.signature, null)
 
@@ -330,29 +332,28 @@ class MethodInliner(
 
                     val inlineScopesGenerator = inliningContext.inlineScopesGenerator
 
-                    val label = currentLabel
-
-                    // When regenerating anonymous objects we may inline a crossinline lambda before some
-                    // already inlined functions. For these functions their scope numbers should be incremented.
-                    // We also need to temporarily increment the already inlined scopes number by the number of
-                    // inline marker variables that we have found before the crossinline lambda call to assign
-                    // the scope number for this lambda correctly.
-                    val inlineScopeNumberIncrement =
-                        if (inlineScopesGenerator != null && label != null && isRegeneratingAnonymousObject()) {
-                            incrementScopeNumbersOfVariables(node, label)
+                    // When regenerating anonymous objects we may inline a crossinline lambda in between the scopes
+                    // that are already inlined into the method. The scopes of the lambda get the numbers following
+                    // the scopes that start before the call, and the numbers of the other scopes are shifted past them.
+                    val scopeNumberBeforeLambda =
+                        if (inlineScopesGenerator != null && isRegeneratingAnonymousObject()) {
+                            maxOf(inlineScopesGenerator.inlinedScopes, maxScopeNumberStartedBefore(node, currentLabel))
                         } else {
-                            0
+                            null
                         }
 
                     inlineScopesGenerator?.apply {
-                        inlinedScopes += inlineScopeNumberIncrement
+                        if (scopeNumberBeforeLambda != null) {
+                            inlinedScopes = scopeNumberBeforeLambda
+                        }
                         currentCallSiteLineNumber =
                             if (currentLineNumber == -1)
-                                0
+                                callSiteLineNumberOfInlinedMethod
                             else if (isInlineOnlyMethod) {
                                 currentLineNumber
                             } else {
-                                sourceMapper.mapLineNumber(currentLineNumber)
+                                // A line that can't be mapped becomes unknown.
+                                sourceMapper.mapLineNumber(currentLineNumber).coerceAtLeast(0)
                             }
                     }
 
@@ -360,7 +361,9 @@ class MethodInliner(
                     val lambdaResult =
                         inliner.doInline(localVariablesSorter, varRemapper, true, info.returnLabels, invokeCall.finallyDepthShift)
 
-                    inlineScopesGenerator?.apply { inlinedScopes -= inlineScopeNumberIncrement }
+                    if (inlineScopesGenerator != null && scopeNumberBeforeLambda != null) {
+                        shiftScopeNumbersOfVariables(node, scopeNumberBeforeLambda, inlineScopesGenerator.inlinedScopes - scopeNumberBeforeLambda)
+                    }
                     result.mergeWithNotChangeInfo(lambdaResult)
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
                     result.reifiedTypeParametersUsages.mergeAll(info.reifiedTypeParametersUsages)
@@ -488,7 +491,11 @@ class MethodInliner(
 
         for (variable in resultNodeLocalVariables) {
             val name = variable.name
-            if (JvmAbi.isFakeLocalVariableForInline(name) && name in markerVariableNamesFromInlinedNode) {
+            // Mapping a line registers it in the SMAP. The markers of code that was removed, e.g., as dead code after
+            // a call returning `Nothing`, are dropped before emitting, so their call site lines must not be mapped.
+            if (JvmAbi.isFakeLocalVariableForInline(name) && name in markerVariableNamesFromInlinedNode &&
+                InsnSequence(variable.start, variable.end).any { it.isMeaningful }
+            ) {
                 variable.name = updateCallSiteLineNumber(name) { sourceMapper.mapLineNumber(it) }
             }
         }
@@ -519,8 +526,13 @@ class MethodInliner(
             node.signature, node.exceptions?.toTypedArray()
         )
 
-        val inlinedFunctionMarkerVariableName =
+        // The local variables of an `@InlineOnly` function are dropped, so its scopes don't get numbers.
+        val keepsLocalVariables = nodeRemapper.isInsideInliningLambda || GENERATE_SMAP && !isInlineOnlyMethod
+        val inlinedFunctionMarkerVariableName = if (keepsLocalVariables) {
             inliningContext.inlineScopesGenerator?.addInlineScopesInfo(node, isRegeneratingAnonymousObject())
+        } else {
+            null
+        }
 
         val skippedParameterLocalVariablesEnd =
             if (skipParameterLocalVariables) argumentsSize(node.desc, node.access and Opcodes.ACC_STATIC != 0) else 0
@@ -609,7 +621,7 @@ class MethodInliner(
             }
 
             private fun calculateNewNameUsingScopeNumbers(name: String): String {
-                if (name.startsWith(AsmUtil.THIS)) {
+                if (name.dropInlineScopeInfo() == AsmUtil.THIS) {
                     val scopeNumber = name.getInlineScopeInfo()?.scopeNumber ?: return AsmUtil.INLINE_DECLARATION_SITE_THIS
                     return "${AsmUtil.INLINE_DECLARATION_SITE_THIS}$INLINE_SCOPE_NUMBER_SEPARATOR$scopeNumber"
                 }
@@ -1262,50 +1274,34 @@ class MethodInliner(
         inliningContext.parent is RegeneratedClassContext
 }
 
-private fun incrementScopeNumbersOfVariables(node: MethodNode, label: Label): Int {
-    val localVariables = node.localVariables ?: return 0
-    if (localVariables.isEmpty()) {
-        return 0
-    }
-
+// The highest scope number of the marker variables that start at or before the label.
+private fun maxScopeNumberStartedBefore(node: MethodNode, label: Label?): Int {
+    if (label == null) return 0
     val labelToIndex = node.getLabelToIndexMap()
     val currentIndex = labelToIndex[label] ?: return 0
-    var inlineScopeNumberIncrement = 0
-    for (variable in localVariables) {
-        val variableStartIndex = labelToIndex[variable.start.label] ?: continue
-        if (variableStartIndex <= currentIndex && JvmAbi.isFakeLocalVariableForInline(variable.name)) {
-            inlineScopeNumberIncrement += 1
+    return node.localVariables.orEmpty().maxOfOrNull { variable ->
+        val startIndex = labelToIndex[variable.start.label]
+        if (startIndex != null && startIndex <= currentIndex && JvmAbi.isFakeLocalVariableForInline(variable.name)) {
+            variable.name.getInlineScopeInfo()?.scopeNumber ?: 0
+        } else {
+            0
         }
-
-        if (variableStartIndex > currentIndex) {
-            variable.name = incrementScopeNumbers(variable.name)
-        }
-    }
-
-    return inlineScopeNumberIncrement
+    } ?: 0
 }
 
-private fun incrementScopeNumbers(name: String): String {
-    val (scopeNumber, callSiteLineNumber, surroundingScopeNumber) = name.getInlineScopeInfo() ?: return name
-    return buildString {
-        append(name.dropInlineScopeInfo())
-        append(INLINE_SCOPE_NUMBER_SEPARATOR)
-        append(scopeNumber + 1)
-
+// Shifts the scope numbers (and the surrounding scope numbers) greater than `threshold` by `shift`.
+private fun shiftScopeNumbersOfVariables(node: MethodNode, threshold: Int, shift: Int) {
+    if (shift == 0) return
+    fun Int.shifted(): Int = if (this > threshold) this + shift else this
+    for (variable in node.localVariables.orEmpty()) {
+        val (scopeNumber, callSiteLineNumber, surroundingScopeNumber) = variable.name.getInlineScopeInfo() ?: continue
+        var newName = variable.name.dropInlineScopeInfo().addScopeInfo(scopeNumber.shifted())
         if (callSiteLineNumber != null) {
-            append(INLINE_SCOPE_NUMBER_SEPARATOR)
-            append(callSiteLineNumber)
+            newName = newName.addScopeInfo(callSiteLineNumber)
+            if (surroundingScopeNumber != null) {
+                newName = newName.addScopeInfo(surroundingScopeNumber.shifted())
+            }
         }
-
-        if (surroundingScopeNumber != null) {
-            val resultingSurroundingScopeNumber =
-                if (surroundingScopeNumber != 0) {
-                    surroundingScopeNumber + 1
-                } else {
-                    0
-                }
-            append(INLINE_SCOPE_NUMBER_SEPARATOR)
-            append(resultingSurroundingScopeNumber)
-        }
+        variable.name = newName
     }
 }

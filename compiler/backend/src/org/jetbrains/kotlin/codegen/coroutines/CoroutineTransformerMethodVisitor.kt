@@ -202,7 +202,7 @@ class CoroutineTransformerMethodVisitor(
             val lineNumber = findSuspensionPointLineNumber(suspensionPoint)?.line ?: 0
 
             val visibleLocals = localVariables.filter { variableNode ->
-                variableNode.name != SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME &&
+                !variableNode.isCompletion() &&
                         (instructions.indexOf(variableNode.start) < instructions.indexOf(suspensionPoint.suspensionCallBegin) &&
                                 instructions.indexOf(suspensionPoint.suspensionCallBegin) < instructions.indexOf(variableNode.end))
             }
@@ -1811,10 +1811,12 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
             continue
         }
         // $completion is used for stepping
-        if (variable.name == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME) {
+        if (variable.isCompletion()) {
             // There can be multiple $completion variables because of inlining, do not duplicate them
-            if (method.localVariables.any { it.name == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME }) continue
+            if (method.localVariables.any { it.isCompletion() }) continue
 
+            // An inlined lambda's `$completion` carries a scope number with inline scopes, but here it becomes the method's own.
+            variable.name = SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
             method.extendCompletionsRange(variable, getLastParameterIndex(method.desc, method.access))
             continue
         }
@@ -1825,6 +1827,10 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
         }
     }
 }
+
+// With inline scopes, the `$completion` of an inlined lambda carries a scope number.
+private fun LocalVariableNode.isCompletion(): Boolean =
+    name.dropInlineScopeInfo() == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 
 // $completion should behave like ordinary parameter - span the whole function,
 // unlike other parameters, it is safe to do so, since it always will have some value

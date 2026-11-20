@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
 import org.jetbrains.org.objectweb.asm.tree.LocalVariableNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 
 class InlineScopesGenerator {
     var inlinedScopes = 0
@@ -28,6 +32,9 @@ class InlineScopesGenerator {
 
         val variables = mutableListOf<LocalVariableNode>()
         val children = mutableListOf<InlineScopeNode>()
+
+        // The other LVT ranges of the marker variable if it is split.
+        val markerVariablePieces = mutableListOf<LocalVariableNode>()
 
         val isRoot: Boolean
             get() = parent == null
@@ -47,11 +54,20 @@ class InlineScopesGenerator {
         open fun inlineNesting(): Int = -1
 
         fun renameVariables(methodNode: MethodNode): Int {
-            val rootNode = computeInlineScopesTree(methodNode)
-            return renameVariables(rootNode)
+            val pieces = mutableListOf<Pair<LocalVariableNode, LocalVariableNode>>()
+            val rootNode = computeInlineScopesTree(methodNode, pieces)
+            val maxScopeNumber = renameVariables(rootNode)
+            for ([piece, firstPiece] in pieces) {
+                piece.name = firstPiece.name
+            }
+            return maxScopeNumber
         }
 
-        private fun computeInlineScopesTree(methodNode: MethodNode): InlineScopeNode {
+        // `pieces` receives the later LVT ranges of split variables together with their first ranges.
+        private fun computeInlineScopesTree(
+            methodNode: MethodNode,
+            pieces: MutableList<Pair<LocalVariableNode, LocalVariableNode>>
+        ): InlineScopeNode {
             val rootNode = InlineScopeNode(null, 0, inlineNesting(), null)
             val localVariables = methodNode.localVariables ?: return rootNode
 
@@ -62,9 +78,52 @@ class InlineScopesGenerator {
             val labelToIndex = methodNode.getLabelToIndexMap()
             val sortedVariables = localVariables.sortedBy { labelToIndex[it.start.label] }
 
+            // A lambda parameter has the same depth as the scope the lambda is called from, so it can only be told apart
+            // from the variables of that scope by its range (KT-91573): it starts right before the marker variable of the
+            // lambda, with only the initialization of the marker in between, and ends together with it.
+            val markersByEnd = sortedVariables
+                .filter { JvmAbi.isFakeLocalVariableForInline(it.name) }
+                .groupBy { it.end.label }
+
+            fun LocalVariableNode.isParameterOfFollowingScope(): Boolean =
+                markersByEnd[end.label]?.any { it.startsRightAfter(this) } == true
+
+            // A non-local return through a `finally` block splits the LVT ranges of the variables around the copied `finally`
+            // code (KT-91572). The later ranges of a variable belong to the scope of its first range. Unlike for a new variable
+            // with the same name and slot, nothing is stored into the slot between such a range and the previous one.
+            val storesBySlot = mutableMapOf<Int, MutableList<Int>>()
+            for ([index, insn] in methodNode.instructions.withIndex()) {
+                if (insn is VarInsnNode && insn.opcode in Opcodes.ISTORE..Opcodes.ASTORE) {
+                    storesBySlot.getOrPut(insn.`var`) { mutableListOf() } += index
+                }
+            }
+
+            fun LocalVariableNode.continues(previous: LocalVariableNode): Boolean {
+                val from = methodNode.instructions.indexOf(previous.end)
+                val to = methodNode.instructions.indexOf(start)
+                return from <= to && storesBySlot[index].orEmpty().none { it in from..<to }
+            }
+
+            val firstPieces = mutableMapOf<Triple<String, String, Int>, LocalVariableNode>()
+            val lastPieces = mutableMapOf<Triple<String, String, Int>, LocalVariableNode>()
+            val nodesOfMarkerVariables = mutableMapOf<LocalVariableNode, InlineScopeNode>()
+
             var seenInlineScopesNumber = 0
             var currentNode = rootNode
             for (variable in sortedVariables) {
+                val key = Triple(variable.name, variable.desc, variable.index)
+                val previousPiece = lastPieces.put(key, variable)
+                if (previousPiece != null && variable.continues(previousPiece)) {
+                    val firstPiece = firstPieces.getValue(key)
+                    pieces += variable to firstPiece
+                    nodesOfMarkerVariables[firstPiece]?.let {
+                        it.markerVariablePieces += variable
+                        currentNode = it
+                    }
+                    continue
+                }
+                firstPieces[key] = variable
+
                 currentNode = currentNode.findClosestSurroundingScope(variable, labelToIndex)
 
                 val name = variable.name
@@ -72,13 +131,14 @@ class InlineScopesGenerator {
                     seenInlineScopesNumber += 1
 
                     val newNode = InlineScopeNode(variable, seenInlineScopesNumber, currentNode.inlineNesting, currentNode)
+                    nodesOfMarkerVariables[variable] = newNode
                     computeInlineScopeInfo(newNode)
                     currentNode = newNode
 
                     currentNode.variables.addAll(variablesWithNotMatchingDepth)
                     variablesWithNotMatchingDepth.clear()
                 } else if (!currentNode.isRoot || !shouldSkipVariable(variable)) {
-                    if (variable.belongsToInlineScope(currentNode)) {
+                    if (variable.belongsToInlineScope(currentNode) && !variable.isParameterOfFollowingScope()) {
                         currentNode.variables.add(variable)
                     } else {
                         variablesWithNotMatchingDepth.add(variable)
@@ -89,13 +149,15 @@ class InlineScopesGenerator {
             return rootNode
         }
 
+        // Returns the highest scope number given out, relative to `inlinedScopes`. It may exceed the number of markers:
+        // the scope numbers of an already inlined body have gaps where markers were dropped, e.g. in `@InlineOnly` functions.
         private fun renameVariables(rootNode: InlineScopeNode): Int {
-            var seenInlineScopesNumber = 0
+            var maxScopeNumber = 0
             val nodeStack = mutableListOf<InlineScopeNode>()
             nodeStack.addAll(rootNode.children)
             while (nodeStack.isNotEmpty()) {
                 val node = nodeStack.removeLast()
-                seenInlineScopesNumber += 1
+                maxScopeNumber = maxOf(maxScopeNumber, node.scopeNumber)
                 with(node) {
                     markerVariable!!.name = computeNewVariableName(
                         markerVariable.name,
@@ -117,7 +179,7 @@ class InlineScopesGenerator {
                 nodeStack.addAll(node.children)
             }
 
-            return seenInlineScopesNumber
+            return maxScopeNumber
         }
 
         private fun InlineScopeNode.findClosestSurroundingScope(
@@ -132,8 +194,11 @@ class InlineScopesGenerator {
                 return startIndex < otherStartIndex && endIndex >= otherEndIndex
             }
 
+            fun InlineScopeNode.containsVariable(): Boolean =
+                markerVariable!!.contains(variable) || markerVariablePieces.any { it.contains(variable) }
+
             var node = this
-            while (!node.isRoot && !node.markerVariable!!.contains(variable)) {
+            while (!node.isRoot && !node.containsVariable()) {
                 node = node.parent!!
             }
             return node
@@ -165,6 +230,10 @@ class InlineScopesGenerator {
             // have not been introduced.
             markerVariablesWithoutScopeInfoNum == 1 ->
                 addInlineScopesInfoFromScopeNumbers(node)
+            localVariables.none { JvmAbi.isFakeLocalVariableForInline(it.name) } -> {
+                addInlineScopesInfoWithoutMarkers(node)
+                null
+            }
             else -> {
                 addInlineScopesInfoFromIVSuffixes(node)
                 null
@@ -172,57 +241,58 @@ class InlineScopesGenerator {
         }
     }
 
+    // The inlined method has no marker variables at all: it is synthetic (e.g., generated by the atomicfu plugin) or was
+    // compiled by an old compiler. Its variables must still not look like the variables of the method it is inlined into
+    // (KT-91570), so they get scope numbers that no marker variable introduces, one per inline depth.
+    private fun addInlineScopesInfoWithoutMarkers(node: MethodNode) {
+        var maxDepth = 0
+        for (variable in node.localVariables) {
+            val depth = getInlineDepth(variable.name)
+            maxDepth = maxOf(maxDepth, depth)
+            variable.name = computeNewVariableName(variable.name, inlinedScopes + 1 + depth, null, null)
+        }
+        inlinedScopes += maxDepth + 1
+    }
+
     private fun addInlineScopesInfoFromScopeNumbers(node: MethodNode): String {
         val inlinedFunctionMarkerVariable = node.localVariables.find {
             JvmAbi.isFakeLocalVariableForInline(it.name) && !it.name.contains(INLINE_SCOPE_NUMBER_SEPARATOR)
         } ?: error("Expected to find fake inline variable without inline scope suffix in ${node.name}")
-        val renamer = object : VariableRenamer() {
-            override fun computeInlineScopeInfo(node: InlineScopeNode) {
-                val name = node.markerVariable!!.name
-                val info = name.getInlineScopeInfo()
-                node.inlineNesting = info?.scopeNumber ?: 0
-                // The only marker variable without scope info is the marker of the method being
-                // inlined (this code path is only taken when there is exactly one such variable).
-                // It is not necessarily the bytecode-first marker: in a $default stub of an inline
-                // function the markers created while inlining default argument values precede the
-                // stub's own marker (KT-88995). Scope numbers of already inlined scopes are shifted
-                // by 1 to keep the numbering consistent with the surrounding scope number update below.
-                if (info == null) {
-                    node.scopeNumber = 1
-                    node.callSiteLineNumber = currentCallSiteLineNumber
-                } else {
-                    node.scopeNumber = info.scopeNumber + 1
-                    node.callSiteLineNumber = info.callSiteLineNumber ?: 0
-                }
 
-                if (name.isInlineLambdaName) {
-                    val surroundingScopeNumber = info?.surroundingScopeNumber
-                    node.surroundingScopeNumber =
-                        when {
-                            // A lambda being inlined belongs to the function it is inlined into.
-                            info == null -> 0
-                            // Every lambda that is already inlined must have a surrounding scope number.
-                            // If it doesn't, then it means that we are inlining the code compiled by
-                            // the older versions of the Kotlin compiler, where surrounding scope numbers
-                            // haven't been introduced yet.
-                            surroundingScopeNumber != null -> surroundingScopeNumber + inlinedScopes + 1
-                            // This situation shouldn't happen, so add invalid info here
-                            else -> -1
-                        }
-                }
+        // The variables already carry scope numbers, so they are renamed by these numbers and not by the LVT ranges.
+        // The ranges of one variable may be split, e.g., by `finally` blocks copied for non-local returns (KT-91572).
+        // The only marker variable without scope info is the marker of the method being inlined (this code path is
+        // only taken when there is exactly one such variable), and the variables without scope info are the locals of
+        // that method. It is not necessarily the bytecode-first marker: in a $default stub of an inline function the
+        // markers created while inlining default argument values precede the stub's own marker (KT-88995).
+        // The method gets scope 1, so the scope numbers of the already inlined scopes are shifted by 1.
+        var maxScopeNumber = 1
+        for (variable in node.localVariables) {
+            val name = variable.name
+            val info = name.getInlineScopeInfo()
+            val scopeNumber = (info?.scopeNumber ?: 0) + 1
+            maxScopeNumber = maxOf(maxScopeNumber, scopeNumber)
+
+            if (!JvmAbi.isFakeLocalVariableForInline(name)) {
+                variable.name = computeNewVariableName(name, scopeNumber + inlinedScopes, null, null)
+                continue
             }
 
-            override fun LocalVariableNode.belongsToInlineScope(node: InlineScopeNode): Boolean {
-                val scopeNumber = name.getInlineScopeInfo()?.scopeNumber
-                val oldScopeNumberOfCurrentMarkerVariable = node.inlineNesting
-                if (scopeNumber != null) {
-                    return scopeNumber == oldScopeNumberOfCurrentMarkerVariable
-                }
-                return !node.isRoot
+            val callSiteLineNumber = if (info == null) currentCallSiteLineNumber else info.callSiteLineNumber ?: 0
+            val surroundingScopeNumber = when {
+                !name.isInlineLambdaName -> null
+                // A lambda being inlined belongs to the function it is inlined into.
+                info == null -> 0
+                // Every lambda that is already inlined must have a surrounding scope number.
+                // If it doesn't, then it means that we are inlining the code compiled by
+                // the older versions of the Kotlin compiler, where surrounding scope numbers
+                // haven't been introduced yet. This situation shouldn't happen, so add invalid info here.
+                else -> info.surroundingScopeNumber?.let { it + inlinedScopes + 1 } ?: -1
             }
+            variable.name = computeNewVariableName(name, scopeNumber + inlinedScopes, callSiteLineNumber, surroundingScopeNumber)
         }
 
-        inlinedScopes += renamer.renameVariables(node)
+        inlinedScopes += maxScopeNumber
         return inlinedFunctionMarkerVariable.name
     }
 
@@ -356,11 +426,13 @@ class InlineScopesGenerator {
 
 fun updateCallSiteLineNumber(name: String, calculate: (Int) -> Int): String {
     val (scopeNumber, callSiteLineNumber, surroundingScopeNumber) = name.getInlineScopeInfo() ?: return name
-    if (callSiteLineNumber == null) {
+    // 0 stands for an unknown call site line number, there is nothing to map.
+    if (callSiteLineNumber == null || callSiteLineNumber == 0) {
         return name
     }
 
-    val newLineNumber = calculate(callSiteLineNumber)
+    // A line that can't be mapped becomes unknown.
+    val newLineNumber = calculate(callSiteLineNumber).coerceAtLeast(0)
     if (newLineNumber == callSiteLineNumber) {
         return name
     }
@@ -374,6 +446,18 @@ fun updateCallSiteLineNumber(name: String, calculate: (Int) -> Int): String {
         return newName
     }
     return newName.addScopeInfo(surroundingScopeNumber)
+}
+
+// Only the initialization of this marker variable lies between the start of `variable` and the start of this marker.
+private fun LocalVariableNode.startsRightAfter(variable: LocalVariableNode): Boolean {
+    var insn: AbstractInsnNode? = variable.start
+    while (insn != null && insn != start) {
+        val isMarkerInitialization =
+            insn.opcode == Opcodes.ICONST_0 || insn is VarInsnNode && insn.opcode == Opcodes.ISTORE && insn.`var` == index
+        if (insn.isMeaningful && !isMarkerInitialization) return false
+        insn = insn.next
+    }
+    return insn == start
 }
 
 internal fun MethodNode.getLabelToIndexMap(): Map<Label, Int> =

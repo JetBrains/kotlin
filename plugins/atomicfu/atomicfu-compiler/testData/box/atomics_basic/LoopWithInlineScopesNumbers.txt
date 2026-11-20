@@ -1,0 +1,19 @@
+@kotlin.Metadata
+public final class Box {
+    // source: 'LoopWithInlineScopesNumbers.kt'
+    private synthetic final static field state$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field state$volatile: int
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method getState$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getState$volatile(): int
+    private synthetic final method loop$atomicfu$ATOMIC_FIELD_UPDATER$Int(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: java.lang.Object, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method setState$volatile(p0: int): void
+    public final method waitPositive(): int
+}
+
+@kotlin.Metadata
+public final class LoopWithInlineScopesNumbersKt {
+    // source: 'LoopWithInlineScopesNumbers.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
