@@ -404,6 +404,7 @@ internal val diagnosticFactoryToPsiElementMap: Map<KtDiagnosticFactoryN, Class<o
     FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE to KtElement::class.java,
     FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS to KtElement::class.java,
     FirErrors.WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL to KtDeclaration::class.java,
+    FirErrors.WILL_BECOME_VALUE_CLASS_OPEN to KtDeclaration::class.java,
     FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS to KtDeclaration::class.java,
     FirErrors.EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY to KtDeclaration::class.java,
     FirErrors.WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR to KtElement::class.java,

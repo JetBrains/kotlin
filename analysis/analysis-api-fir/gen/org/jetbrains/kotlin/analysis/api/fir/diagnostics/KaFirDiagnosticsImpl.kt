@@ -2051,7 +2051,6 @@ internal class ValueClassNotTopLevelImpl(
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassNotTopLevel
 
 internal class ValueClassNotFinalImpl(
-    override val prefix: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassNotFinal
@@ -2211,6 +2210,11 @@ internal class WillBecomeValueClassNotTopLevelImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassNotTopLevel
+
+internal class WillBecomeValueClassOpenImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassOpen
 
 internal class AbsenceOfPrimaryConstructorForWillBecomeValueClassImpl(
     firDiagnostic: KtDiagnosticWithSource,

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.checkers.willBecomeKotlinValueClass
-import org.jetbrains.kotlin.fir.analysis.checkers.willBecomeValueInapplicableTarget
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -25,8 +24,10 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.isMethodOfAny
 import org.jetbrains.kotlin.fir.declarations.utils.expandedClassLikeType
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -54,6 +55,15 @@ object FirWillBecomeValueDeclarationChecker : FirClassChecker(MppCheckerKind.Com
         if (inapplicableTarget != null) {
             reporter.reportOn(annotation.source, FirErrors.WILL_BECOME_VALUE_NOT_APPLICABLE, inapplicableTarget)
         }
+    }
+
+    private fun FirRegularClassSymbol.willBecomeValueInapplicableTarget(): String? = when (classKind) {
+        INTERFACE -> "an interface"
+        ANNOTATION_CLASS -> "an annotation class"
+        ENUM_CLASS -> "an enum class"
+        else if isValue -> "a value class"
+        else if isCompanion -> "a companion object"
+        else -> null
     }
 }
 

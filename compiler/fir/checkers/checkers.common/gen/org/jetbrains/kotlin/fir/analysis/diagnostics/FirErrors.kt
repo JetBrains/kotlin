@@ -418,7 +418,7 @@ object FirErrors : KtDiagnosticsContainer() {
 
     // Value classes
     val VALUE_CLASS_NOT_TOP_LEVEL: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_NOT_TOP_LEVEL", ERROR, SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER, getRendererFactory())
-    val VALUE_CLASS_NOT_FINAL: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("VALUE_CLASS_NOT_FINAL", ERROR, SourceElementPositioningStrategies.MODALITY_MODIFIER, getRendererFactory())
+    val VALUE_CLASS_NOT_FINAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_NOT_FINAL", ERROR, SourceElementPositioningStrategies.MODALITY_MODIFIER, getRendererFactory())
     val VALUE_CLASS_OPEN: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_OPEN", ERROR, SourceElementPositioningStrategies.MODALITY_MODIFIER, getRendererFactory())
     val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS", ERROR, SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER, getRendererFactory())
     val EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
@@ -446,6 +446,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
     val IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
     val WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL: KtDiagnosticFactory0 = KtDiagnosticFactory0("WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL", ERROR, SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER, getRendererFactory())
+    val WILL_BECOME_VALUE_CLASS_OPEN: KtDiagnosticFactory0 = KtDiagnosticFactory0("WILL_BECOME_VALUE_CLASS_OPEN", ERROR, SourceElementPositioningStrategies.MODALITY_MODIFIER, getRendererFactory())
     val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS", ERROR, SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER, getRendererFactory())
     val EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
     val WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR: KtDiagnosticFactory0 = KtDiagnosticFactory0("WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())

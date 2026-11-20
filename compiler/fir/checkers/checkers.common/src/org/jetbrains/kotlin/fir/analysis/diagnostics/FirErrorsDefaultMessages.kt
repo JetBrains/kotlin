@@ -1006,6 +1006,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_OPEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_NOT_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRAPPED_LHS_IN_ASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET
@@ -2568,7 +2569,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         // Value classes
         map.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value class cannot be local or inner.")
-        map.put(VALUE_CLASS_NOT_FINAL, "{0} class can only be final.", STRING)
+        map.put(VALUE_CLASS_NOT_FINAL, "Inline value class can only be final.")
         map.put(VALUE_CLASS_OPEN, "Value class cannot be open.")
         map.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, "Primary constructor is required for {0} classes.", STRING)
         map.put(
@@ -2600,6 +2601,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_CLASS_CANNOT_BE_RECURSIVE, "Value class cannot be recursive.")
         map.put(VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS, "Value class cannot be recursive.")
         map.put(WILL_BECOME_VALUE_NOT_APPLICABLE, "''@WillBecomeValue'' is not applicable to {0}.", STRING)
+        map.put(WILL_BECOME_VALUE_CLASS_OPEN, "Class annotated with '@WillBecomeValue' cannot be open.")
         map.put(
             IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS,
             "Class annotated with ''@WillBecomeValue'' must override ''{0}''. The identity-based implementation inherited from ''Any'' will not be used once the class becomes a ''value'' class.",

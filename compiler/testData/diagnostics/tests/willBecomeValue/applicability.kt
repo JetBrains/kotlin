@@ -62,8 +62,8 @@ annotation class Anno
 <!WILL_BECOME_VALUE_NOT_APPLICABLE!>@WillBecomeValue<!>
 enum class E { A }
 
-<!WILL_BECOME_VALUE_NOT_APPLICABLE!>@WillBecomeValue<!>
-open class Open
+@WillBecomeValue
+<!WILL_BECOME_VALUE_CLASS_OPEN!>open<!> class Open
 
 /* GENERATED_FIR_TAGS: andExpression, annotationDeclaration, classDeclaration, data, enumDeclaration, enumEntry,
 equalityExpression, functionDeclaration, interfaceDeclaration, isExpression, nullableType, objectDeclaration, operator,
