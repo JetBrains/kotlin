@@ -29,56 +29,56 @@ fun infoWithoutSource(): SourcelessDiagnosticFactoryDelegateProvider {
 
 context(container: KtDiagnosticsContainer)
 fun warning0(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory0DelegateProvider {
     return DiagnosticFactory0DelegateProvider(Severity.WARNING, positioningStrategy, container)
 }
 
 context(container: KtDiagnosticsContainer)
 fun strongWarning0(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory0DelegateProvider {
     return DiagnosticFactory0DelegateProvider(Severity.STRONG_WARNING, positioningStrategy, container)
 }
 
 context(container: KtDiagnosticsContainer)
 fun <A> strongWarning1(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(Severity.STRONG_WARNING, positioningStrategy, container)
 }
 
 context(container: KtDiagnosticsContainer)
 fun <A> warning1(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(Severity.WARNING, positioningStrategy, container)
 }
 
 context(container: KtDiagnosticsContainer)
 fun <A, B> strongWarning2(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory2DelegateProvider<A, B> {
     return DiagnosticFactory2DelegateProvider(Severity.STRONG_WARNING, positioningStrategy, container)
 }
 
 context(container: KtDiagnosticsContainer)
 fun <A, B> warning2(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory2DelegateProvider<A, B> {
     return DiagnosticFactory2DelegateProvider(Severity.WARNING, positioningStrategy, container)
 }
 
 context(container: KtDiagnosticsContainer)
 fun <A, B, C> warning3(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory3DelegateProvider<A, B, C> {
     return DiagnosticFactory3DelegateProvider(Severity.WARNING, positioningStrategy, container)
 }
 
 context(container: KtDiagnosticsContainer)
 fun <A, B, C, D> warning4(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory4DelegateProvider<A, B, C, D> {
     return DiagnosticFactory4DelegateProvider(Severity.WARNING, positioningStrategy, container)
 }
@@ -90,35 +90,35 @@ fun errorWithoutSource(): SourcelessDiagnosticFactoryDelegateProvider {
 
 context(container: KtDiagnosticsContainer)
 fun error0(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory0DelegateProvider {
     return DiagnosticFactory0DelegateProvider(Severity.ERROR, positioningStrategy, container)
 }
 
 context(container: KtDiagnosticsContainer)
 fun <A> error1(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(Severity.ERROR, positioningStrategy, container)
 }
 
 context(container: KtDiagnosticsContainer)
 fun <A, B> error2(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory2DelegateProvider<A, B> {
     return DiagnosticFactory2DelegateProvider(Severity.ERROR, positioningStrategy, container)
 }
 
 context(container: KtDiagnosticsContainer)
 fun <A, B, C> error3(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory3DelegateProvider<A, B, C> {
     return DiagnosticFactory3DelegateProvider(Severity.ERROR, positioningStrategy, container)
 }
 
 context(container: KtDiagnosticsContainer)
 fun <A, B, C, D> error4(
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory4DelegateProvider<A, B, C, D> {
     return DiagnosticFactory4DelegateProvider(Severity.ERROR, positioningStrategy, container)
 }
@@ -126,7 +126,7 @@ fun <A, B, C, D> error4(
 context(container: KtDiagnosticsContainer)
 fun deprecationError0(
     featureForError: LanguageFeature,
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DeprecationDiagnosticFactory0DelegateProvider {
     return DeprecationDiagnosticFactory0DelegateProvider(featureForError, positioningStrategy, container)
 }
@@ -134,7 +134,7 @@ fun deprecationError0(
 context(container: KtDiagnosticsContainer)
 fun <A> deprecationError1(
     featureForError: LanguageFeature,
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DeprecationDiagnosticFactory1DelegateProvider<A> {
     return DeprecationDiagnosticFactory1DelegateProvider(featureForError, positioningStrategy, container)
 }
@@ -142,7 +142,7 @@ fun <A> deprecationError1(
 context(container: KtDiagnosticsContainer)
 fun <A, B> deprecationError2(
     featureForError: LanguageFeature,
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DeprecationDiagnosticFactory2DelegateProvider<A, B> {
     return DeprecationDiagnosticFactory2DelegateProvider(featureForError, positioningStrategy, container)
 }
@@ -150,7 +150,7 @@ fun <A, B> deprecationError2(
 context(container: KtDiagnosticsContainer)
 fun <A, B, C> deprecationError3(
     featureForError: LanguageFeature,
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DeprecationDiagnosticFactory3DelegateProvider<A, B, C> {
     return DeprecationDiagnosticFactory3DelegateProvider(featureForError, positioningStrategy, container)
 }
@@ -158,7 +158,7 @@ fun <A, B, C> deprecationError3(
 context(container: KtDiagnosticsContainer)
 fun <A, B, C, D> deprecationError4(
     featureForError: LanguageFeature,
-    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+    positioningStrategy: SourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DeprecationDiagnosticFactory4DelegateProvider<A, B, C, D> {
     return DeprecationDiagnosticFactory4DelegateProvider(featureForError, positioningStrategy, container)
 }
@@ -176,7 +176,7 @@ class SourcelessDiagnosticFactoryDelegateProvider(
 
 class DiagnosticFactory0DelegateProvider(
     private val severity: Severity,
-    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory0> {
@@ -186,7 +186,7 @@ class DiagnosticFactory0DelegateProvider(
 
 class DiagnosticFactory1DelegateProvider<A>(
     private val severity: Severity,
-    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory1<A>> {
@@ -196,7 +196,7 @@ class DiagnosticFactory1DelegateProvider<A>(
 
 class DiagnosticFactory2DelegateProvider<A, B>(
     private val severity: Severity,
-    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory2<A, B>> {
@@ -206,7 +206,7 @@ class DiagnosticFactory2DelegateProvider<A, B>(
 
 class DiagnosticFactory3DelegateProvider<A, B, C>(
     private val severity: Severity,
-    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory3<A, B, C>> {
@@ -216,7 +216,7 @@ class DiagnosticFactory3DelegateProvider<A, B, C>(
 
 class DiagnosticFactory4DelegateProvider<A, B, C, D>(
     private val severity: Severity,
-    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactory4<A, B, C, D>> {
@@ -226,7 +226,7 @@ class DiagnosticFactory4DelegateProvider<A, B, C, D>(
 
 class DeprecationDiagnosticFactory0DelegateProvider(
     private val featureForError: LanguageFeature,
-    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation0> {
@@ -236,7 +236,7 @@ class DeprecationDiagnosticFactory0DelegateProvider(
 
 class DeprecationDiagnosticFactory1DelegateProvider<A>(
     private val featureForError: LanguageFeature,
-    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation1<A>> {
@@ -246,7 +246,7 @@ class DeprecationDiagnosticFactory1DelegateProvider<A>(
 
 class DeprecationDiagnosticFactory2DelegateProvider<A, B>(
     private val featureForError: LanguageFeature,
-    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation2<A, B>> {
@@ -256,7 +256,7 @@ class DeprecationDiagnosticFactory2DelegateProvider<A, B>(
 
 class DeprecationDiagnosticFactory3DelegateProvider<A, B, C>(
     private val featureForError: LanguageFeature,
-    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation3<A, B, C>> {
@@ -266,7 +266,7 @@ class DeprecationDiagnosticFactory3DelegateProvider<A, B, C>(
 
 class DeprecationDiagnosticFactory4DelegateProvider<A, B, C, D>(
     private val featureForError: LanguageFeature,
-    private val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    private val positioningStrategy: SourceElementPositioningStrategy,
     private val container: KtDiagnosticsContainer,
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtDiagnosticFactoryForDeprecation4<A, B, C, D>> {
