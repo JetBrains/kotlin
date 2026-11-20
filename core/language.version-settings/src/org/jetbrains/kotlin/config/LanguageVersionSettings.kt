@@ -595,6 +595,10 @@ enum class LanguageFeature(
     ProhibitVarInJsModuleFile(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-88343"),
     ProhibitJsQualifierOnMembersAndNonExternals(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-90277"),
 
+    // 2.7
+
+    ForbidValueParameterTargetForOptInMarkers(sinceVersion = KOTLIN_2_7, enabledInProgressiveMode = true, "KT-47590"),
+
     // End of 2.* language features --------------------------------------------------
 
     ExpectActualClasses(sinceVersion = null, "KT-62885", enabledInLatestLVTests = false),

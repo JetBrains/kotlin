@@ -15,7 +15,6 @@ import kotlin.annotation.AnnotationTarget.PROPERTY
 import kotlin.annotation.AnnotationTarget.PROPERTY_GETTER
 import kotlin.annotation.AnnotationTarget.PROPERTY_SETTER
 import kotlin.annotation.AnnotationTarget.TYPEALIAS
-import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
 
 /**
  * This annotation marks the experimental kotlin.test API.
@@ -38,7 +37,6 @@ import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
     PROPERTY,
     FIELD,
     LOCAL_VARIABLE,
-    VALUE_PARAMETER,
     CONSTRUCTOR,
     FUNCTION,
     PROPERTY_GETTER,

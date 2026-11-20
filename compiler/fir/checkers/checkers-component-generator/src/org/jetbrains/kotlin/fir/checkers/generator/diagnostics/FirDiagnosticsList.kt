@@ -623,6 +623,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val OPT_IN_MARKER_WITH_WRONG_TARGET by error<KtAnnotationEntry> {
             parameter<String>("target")
         }
+        val OPT_IN_MARKER_WITH_WRONG_TARGET_WARNING by warning<KtAnnotationEntry> {
+            parameter<String>("target")
+        }
         val OPT_IN_MARKER_WITH_WRONG_RETENTION by error<KtAnnotationEntry>()
 
         val OPT_IN_MARKER_ON_WRONG_TARGET by error<KtAnnotationEntry> {
