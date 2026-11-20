@@ -102,4 +102,7 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     val generateDebugMetadataV2: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_3
 
     val implicitJvmExposeBoxed: Boolean = languageVersionSettings.getFlag(JvmAnalysisFlags.implicitJvmExposeBoxed)
+
+    val prohibitWeakeningAccessPrivilegeForStatics: Boolean
+        get() = languageVersionSettings.supportsFeature(JvmProhibitWeakeningAccessPrivilegeForStatics)
 }
