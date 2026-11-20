@@ -105,10 +105,9 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
                 // We shouldn't run SWC if the configured target is the latest compiler supported target
                 .flatMap {
                     if (it == JsPlatforms.latestSupportedTarget) {
-                        project.providers.provider { null }
+                        binary.defaultLinkSyncTaskInput
                     } else swcTask.flatMap(SwcExec::outputDirectory)
                 }
-                .orElse(binary.defaultLinkSyncTaskInput)
 
             // TODO(KT-83097): think to move this setup to JsIrBinary
             // Override the 'from' of the linkSync task to consume JS files post-processed by SWC, instead of the files from link task

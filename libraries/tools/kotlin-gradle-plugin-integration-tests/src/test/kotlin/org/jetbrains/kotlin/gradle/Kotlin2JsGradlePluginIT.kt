@@ -487,6 +487,49 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     }
 
     @TestMetadata("kotlin-js-multiplatform-library-project")
+    @DisplayName("legacy TS declarations are synced once with delegated transpilation and es2020 target")
+    @GradleTest
+    fun testLibraryLegacyDtsSyncedOnceWithDelegatedTranspilationAndEs2020Target(gradleVersion: GradleVersion) {
+        testLibraryDtsSyncedOnceWithDelegatedTranspilationAndEs2020Target(gradleVersion, richTypeScriptDeclarations = false)
+    }
+
+    @TestMetadata("kotlin-js-multiplatform-library-project")
+    @DisplayName("rich TS declarations are synced once with delegated transpilation and es2020 target")
+    @GradleTest
+    fun testLibraryRichDtsSyncedOnceWithDelegatedTranspilationAndEs2020Target(gradleVersion: GradleVersion) {
+        testLibraryDtsSyncedOnceWithDelegatedTranspilationAndEs2020Target(gradleVersion, richTypeScriptDeclarations = true)
+    }
+
+    private fun testLibraryDtsSyncedOnceWithDelegatedTranspilationAndEs2020Target(
+        gradleVersion: GradleVersion,
+        richTypeScriptDeclarations: Boolean,
+    ) {
+        project("kotlin-js-multiplatform-library-project", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.js.delegated.transpilation=true
+                |kotlin.js.generateRichTypeScriptDeclarations=$richTypeScriptDeclarations
+                """.trimMargin()
+            )
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions.target.set("es2020")
+                    generateTypeScriptDefinitions()
+                }
+            }
+
+            build("jsBrowserDevelopmentLibraryDistribution") {
+                assertOutputDoesNotContain("has already been copied there")
+
+                val dts = projectPath.resolve("build/dist/js/developmentLibrary/kotlin-js-multiplatform-library-project.d.mts")
+                assertFileExists(dts)
+                assertFileContains(dts, "function best(): number")
+            }
+        }
+    }
+
+    @TestMetadata("kotlin-js-multiplatform-library-project")
     @DisplayName("delegated transpilation works for library project if it's turned on")
     @GradleTest
     fun testLibraryProjectWorkWithTheDelegatedTranspilation(gradleVersion: GradleVersion) {
