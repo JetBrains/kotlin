@@ -36,6 +36,7 @@ module kotlin.stdlib {
     exports kotlin.internal;
     exports kotlin.jvm.internal;
     exports kotlin.jvm.internal.markers;
+    exports kotlin.properties.internal;
 
     // JDK 7
     exports kotlin.jdk7;
