@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.plugin.createDefaultConstructor
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
@@ -78,6 +79,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.Name.identifier
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -171,7 +173,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         session.firCachesFactory.createCache(::extractBuilderDescriptions)
 
     protected class GeneratedCallables(
-        val functions: Map<Name, FirNamedFunctionSymbol>,
+        val functions: Map<Name, List<FirNamedFunctionSymbol>>,
         val variables: Map<Name, FirVariableSymbol<*>>,
     )
 
@@ -192,7 +194,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     /**
      * Returns (name to symbol) mapping for functions that are specific to a particular builder (`@Builder` or `@SuperBuilder`)
      */
-    protected abstract fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
+    protected abstract fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addSpecialBuilderMethods(
         builder: T,
         builderSymbol: FirClassSymbol<*>,
         ownerDeclarationSymbol: FirBasedSymbol<*>,
@@ -334,7 +336,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val classSymbol = context?.owner ?: return emptyList()
         return callablesCache.getValue(classSymbol, context)?.let {
-            it.functions[callableId.callableName]?.let { function -> listOf(function) }
+            it.functions[callableId.callableName]
         } ?: emptyList()
     }
 
@@ -424,7 +426,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             }
         }
 
-        val generatedFunctions = mutableMapOf<Name, FirNamedFunctionSymbol>()
+        val generatedFunctions = mutableMapOf<Name, MutableList<FirNamedFunctionSymbol>>()
         val generatedVariables = mutableMapOf<Name, FirVariableSymbol<*>>()
 
         if (!classSymbol.isCompanion) {
@@ -450,7 +452,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     }
 
     @OptIn(SymbolInternals::class)
-    context(generatedFunctions: MutableMap<Name, FirNamedFunctionSymbol>, generatedVariables: MutableMap<Name, FirVariableSymbol<*>>)
+    context(generatedFunctions: MutableMap<Name, MutableList<FirNamedFunctionSymbol>>, generatedVariables: MutableMap<Name, FirVariableSymbol<*>>)
     private fun addBuilderCallables(
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
@@ -480,7 +482,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 val singular = item.singular
                 val newSource = item.variable.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
 
-                generatedVariables.addIfNonClashing(itemName, existingVariableNames) {
+                generatedVariables.addVariableIfNonClashing(itemName, existingVariableNames) {
                     val key = BuilderGeneratorKey(BuilderDeclarationType.Field)
                     if (builderSymbol.hasJavaOrigin) {
                         buildJavaField {
@@ -526,7 +528,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 }
 
                 if (item.hasDefaultField(builderSymbol)) {
-                    generatedVariables.addIfNonClashing(itemName.toDefaultFieldName(), existingVariableNames) {
+                    generatedVariables.addVariableIfNonClashing(itemName.toDefaultFieldName(), existingVariableNames) {
                         createMemberProperty(
                             owner = builderSymbol,
                             key = BuilderGeneratorKey(BuilderDeclarationType.DefaultFlagField(itemName)),
@@ -556,7 +558,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
     }
 
-    private fun MutableMap<Name, FirNamedFunctionSymbol>.addEntityMethods(
+    private fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addEntityMethods(
         builderDescriptions: List<BuilderDescription<T>>,
         entitySymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
@@ -595,7 +597,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             val isNonStaticBuilderFunction = ownerDeclarationSymbol.isNamedNeitherStaticNorCompanionFunction
             val builderFactoryName = builder.getBuilderFactoryName(ownerDeclarationSymbol, containingClassSymbol)
             if (builderFactoryName != null) {
-                addIfNonClashing(builderFactoryName, existingFunctionNames) { name ->
+                addFunctionIfNotClashing(builderFactoryName, existingFunctionNames) { name ->
                     val key = BuilderGeneratorKey(BuilderDeclarationType.Function.Builder)
                     if (containingClassSymbol.hasJavaOrigin) {
                         val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name))
@@ -652,7 +654,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             }
 
             if (builder.generatesToBuilder(containingClassSymbol)) {
-                addIfNonClashing(TO_BUILDER, existingFunctionNames) { name ->
+                addFunctionIfNotClashing(TO_BUILDER, existingFunctionNames) { name ->
                     // toBuilder() is always an instance method, so the class type parameters are
                     // already provided by the dispatch receiver. The method must not introduce its
                     // own independent type parameters — otherwise call-site inference would fail.
@@ -890,7 +892,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             !builderSymbol.hasJavaOrigin && hasBuilderDefault && singular == null
     }
 
-    private fun MutableMap<Name, FirNamedFunctionSymbol>.addSetterMethod(
+    private fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addSetterMethod(
         builder: AbstractBuilder,
         item: FirVariableSymbol<*>,
         substitutor: ConeSubstitutor,
@@ -902,7 +904,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderType = getBuilderType(builderSymbol) ?: return
         val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
-        addIfNonClashing(setterName, existingFunctionNames) {
+        addFunctionIfNotClashing(setterName, existingFunctionNames) {
             @OptIn(SymbolInternals::class)
             createJavaOrKotlinMemberFunction(
                 owner = builderSymbol,
@@ -975,7 +977,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         ) ?: this
     }
 
-    private fun MutableMap<Name, FirNamedFunctionSymbol>.addMethodsForSingularFields(
+    private fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addMethodsForSingularFields(
         builder: AbstractBuilder,
         singular: Singular,
         item: FirVariableSymbol<*>,
@@ -1049,7 +1051,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         // Early return in case of `AccessLevel.NONE` is used (it means not generating anything at all)
         val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
-        addIfNonClashing(nameInSingularForm.toMethodName(builder), existingFunctionNames) {
+        val singularSetterName = nameInSingularForm.toMethodName(builder)
+        addFunctionIfNotClashing(singularSetterName, existingFunctionNames) {
             createJavaOrKotlinMemberFunction(
                 owner = builderSymbol,
                 name = it,
@@ -1062,7 +1065,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             )
         }
 
-        addIfNonClashing(item.name.toMethodName(builder), existingFunctionNames) { name ->
+        val pluralSetterName = item.name.toMethodName(builder)
+        addFunctionIfNotClashing(pluralSetterName, existingFunctionNames) { name ->
             val addMultipleParameterTypeRef: FirTypeRef = if (builderSymbol.hasJavaOrigin) {
                 // Lombok uses runtime checks instead of @Nullable/@NotNull annotations.
                 // We include these annotations to enable static analysis and improve the developer experience.
@@ -1104,7 +1108,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             )
         }
 
-        addIfNonClashing(item.name.toClearMethodName(), existingFunctionNames) {
+        val clearMethodName = item.name.toClearMethodName()
+        addFunctionIfNotClashing(clearMethodName, existingFunctionNames) {
             createJavaOrKotlinMemberFunction(
                 owner = builderSymbol,
                 name = it,
@@ -1123,16 +1128,50 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         if (hasJavaOrigin) fir.returnTypeRef else resolvedReturnTypeRef
 
     /**
-     * Lombok doesn't add a generated function/field if a class already has a declaration with the same name.
+     * Add new Lombok-generated function, if it doesn't clash with existing source functions by name,
+     * or with existing Lombok-generated functions by parameter list.
+     *
+     * Lombok doesn't add a generated function if a class already has a declaration with the same name.
+     * The number and types of parameters don't matter, see https://projectlombok.org/features/Builder#overview
+     * "Each listed generated element will be silently skipped if that element already exists
+     * (disregarding parameter counts and looking only at names)"
+     *
+     * However, Lombok is allowed to add more than one generated functions with the same names
+     * if their signatures differ, e.g. different setters in singular case (see KT-91440).
+     */
+    @JvmName("addIfNonClashingList")
+    protected inline fun MutableMap<Name, MutableList<FirNamedFunctionSymbol>>.addFunctionIfNotClashing(
+        name: Name,
+        existingSourceNames: Set<Name>,
+        createCallable: (name: Name) -> FirNamedFunctionSymbol
+    ) {
+        if (name !in existingSourceNames) {
+            getOrPut(name) { mutableListOf() }.apply {
+                val functionSymbol = createCallable(name)
+                if (none {
+                        it.clashesByParametersWith(session, functionSymbol)
+                    }
+                ) {
+                    add(functionSymbol)
+                }
+            }
+        }
+    }
+
+    /**
+     * Add new Lombok-generated field/property, if it doesn't clash with existing fields/properties by name,
+     * no matter if they are from source or also Lombok-generated.
+     *
+     * Lombok doesn't add a generated field if a class already has a declaration with the same name.
      * The number and types of parameters don't matter, see https://projectlombok.org/features/Builder#overview
      * "Each listed generated element will be silently skipped if that element already exists (disregarding parameter counts and looking only at names)"
      */
-    protected inline fun <K : FirCallableSymbol<*>> MutableMap<Name, K>.addIfNonClashing(
+    protected inline fun MutableMap<Name, FirVariableSymbol<*>>.addVariableIfNonClashing(
         name: Name,
-        existingNames: Set<Name>,
-        createCallable: (name: Name) -> K
+        existingSourceNames: Set<Name>,
+        createCallable: (name: Name) -> FirVariableSymbol<*>
     ) {
-        if (name !in existingNames) {
+        if (name !in existingSourceNames) {
             val _ = getOrPut(name) { createCallable(name) }
         }
     }

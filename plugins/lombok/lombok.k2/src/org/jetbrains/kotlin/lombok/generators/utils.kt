@@ -20,9 +20,11 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.extensions.PluginTypeResolver
+import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
+import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.AbstractTypeChecker.equalTypes
 import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -424,4 +427,29 @@ internal fun FirClassSymbol<*>.primaryConstructorParameters(): List<FirValuePara
 @OptIn(DirectDeclarationsAccess::class)
 internal fun containsExplicitConstructor(classSymbol: FirClassSymbol<*>): Boolean {
     return classSymbol.declarationSymbols.any { it is FirConstructorSymbol && it.source?.kind is KtRealSourceElementKind }
+}
+
+fun FirNamedFunctionSymbol.clashesByParametersWith(session: FirSession, other: FirNamedFunctionSymbol): Boolean {
+    return valueParameterSymbols.size == other.valueParameterSymbols.size &&
+            valueParameterSymbols.zip(other.valueParameterSymbols).all { [oldSymbol, newSymbol] ->
+                @OptIn(SymbolInternals::class)
+                oldSymbol.fir.returnTypeRef.equalWhenResolved(session, newSymbol.fir.returnTypeRef)
+            }
+}
+
+fun FirTypeRef.equalWhenResolved(session: FirSession, other: FirTypeRef): Boolean {
+    return when (this) {
+        is FirResolvedTypeRef if other is FirResolvedTypeRef -> {
+            equalTypes(session.typeContext, coneType, other.coneType)
+        }
+        is FirJavaTypeRef if other is FirJavaTypeRef -> {
+            val javaTypeParameterStack = MutableJavaTypeParameterStack()
+            equalTypes(
+                session.typeContext,
+                resolveIfJavaType(session, javaTypeParameterStack, source = null).coneType,
+                other.resolveIfJavaType(session, javaTypeParameterStack, source = null).coneType
+            )
+        }
+        else -> false
+    }
 }
