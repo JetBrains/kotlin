@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-90387
 // FILE: ChainFalseProbe.java
 
@@ -40,8 +40,8 @@ fun callFluentOnly(): String? {
     return probe.name()
 }
 
-fun compileTimeMismatch(probe: ChainFalseProbe) {
-    val result: Unit = probe.<!INITIALIZER_TYPE_MISMATCH!>name<!>("x")
+fun chainFalseShouldProduceUnit(probe: ChainFalseProbe) {
+    val result: Unit = probe.name("x")
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, nullableType,
