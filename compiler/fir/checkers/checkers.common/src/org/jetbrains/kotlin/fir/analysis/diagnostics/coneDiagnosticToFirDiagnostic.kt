@@ -1213,7 +1213,7 @@ private fun FirSession.toDiagnosticContext(): DiagnosticBaseContext {
 internal fun KtDiagnosticFactory0.createOn(
     element: KtSourceElement?,
     session: FirSession,
-    positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
+    positioningStrategy: SourceElementPositioningStrategy? = null,
 ): KtDiagnostic? {
     return onOrFallback(element, positioningStrategy, session.toDiagnosticContext())
 }
@@ -1223,7 +1223,7 @@ internal fun <A> KtDiagnosticFactory1<A>.createOn(
     element: KtSourceElement?,
     a: A,
     session: FirSession,
-    positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
+    positioningStrategy: SourceElementPositioningStrategy? = null,
 ): KtDiagnostic? {
     return onOrFallback(element, a, positioningStrategy, session.toDiagnosticContext())
 }
@@ -1234,7 +1234,7 @@ internal fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
     a: A,
     b: B,
     session: FirSession,
-    positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
+    positioningStrategy: SourceElementPositioningStrategy? = null,
 ): KtDiagnostic? {
     return onOrFallback(element, a, b, positioningStrategy, session.toDiagnosticContext())
 }
@@ -1246,7 +1246,7 @@ internal fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
     b: B,
     c: C,
     session: FirSession,
-    positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
+    positioningStrategy: SourceElementPositioningStrategy? = null,
 ): KtDiagnostic? {
     return onOrFallback(element, a, b, c, positioningStrategy, session.toDiagnosticContext())
 }
@@ -1259,7 +1259,7 @@ internal fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
     c: C,
     d: D,
     session: FirSession,
-    positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
+    positioningStrategy: SourceElementPositioningStrategy? = null,
 ): KtDiagnostic? {
     return onOrFallback(element, a, b, c, d, positioningStrategy, session.toDiagnosticContext())
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 class SourceElementPositioningStrategy(
     private val lightTreeStrategy: LightTreePositioningStrategy,
     psiStrategy: PsiPositioningStrategy<*>,
-) : AbstractSourceElementPositioningStrategy() {
+) {
     // The strategy is only applied to the elements it's registered for, so the erased element type is safe
     @Suppress("UNCHECKED_CAST")
     private val psiStrategy = psiStrategy as PsiPositioningStrategy<PsiElement>
@@ -26,7 +26,7 @@ class SourceElementPositioningStrategy(
         private val improperTextRanges = listOf(PossiblyImproperTextRange(-1, -1))
     }
 
-    override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
+    fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
         return when (val element = diagnostic.element) {
             is KtMissingSourceElement -> improperTextRanges
             is KtOffsetsOnlySourceElement -> listOf(PossiblyImproperTextRange(element.startOffset, element.endOffset))
@@ -35,7 +35,7 @@ class SourceElementPositioningStrategy(
         }
     }
 
-    override fun isValid(element: AbstractKtSourceElement): Boolean {
+    fun isValid(element: AbstractKtSourceElement): Boolean {
         return when (element) {
             is KtMissingSourceElement -> true
             is KtOffsetsOnlySourceElement -> true
