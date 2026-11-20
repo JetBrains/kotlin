@@ -1,4 +1,4 @@
-expression: null
+expression: null (by PSI)
 constant: null
 constantValueKind: NullValue
 constantValueSource: NULL

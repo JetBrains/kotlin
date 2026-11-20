@@ -1,0 +1,6 @@
+expression: '\n' (by PSI)
+constant: `
+`
+constantValueKind: CharValue
+constantValueSource: CHARACTER_CONSTANT
+constantValueSourceText: '\n'

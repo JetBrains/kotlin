@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.fir.builder.appliesToPrimaryConstructorParameter
 import org.jetbrains.kotlin.fir.builder.parseCharacter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.inferClassIdByPsi
+import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 
 /**
@@ -21,23 +25,8 @@ import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 context(analysisSession: KaFirSession)
 internal fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
     val singleExpression = when (this) {
-        is KtNamedFunction -> when {
-            hasDeclaredReturnType() -> return null
-
-            // A function with a block body returns `Unit` unless it declares the return type
-            hasBlockBody() -> return analysisSession.builtinTypes.unit
-
-            // An anonymous function takes its return type from the expected type, like a lambda
-            isAnonymous -> return null
-
-            else -> bodyExpression
-        }
-
-        // FIR takes the type of the initializer first
-        is KtProperty -> when {
-            typeReference != null || getter?.typeReference != null -> return null
-            else -> initializer ?: getter?.bodyExpression
-        }
+        // A function with a block body returns `Unit` unless it declares the return type
+        is KtNamedFunction if !hasDeclaredReturnType() && hasBlockBody() -> return analysisSession.builtinTypes.unit
 
         // A setter parameter without a declared type has the type of its property
         is KtParameter -> return when (val accessor = ownerFunction) {
@@ -45,34 +34,58 @@ internal fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
             else -> null
         }
 
-        else -> return null
+        else -> implicitTypeSource ?: return null
     }
 
     // Depending on the loop, FIR infers an error type or Unit for a declaration with a loop body
-    if (singleExpression?.unwrapParenthesesLabelsAndAnnotations() is KtLoopExpression) return null
+    if (singleExpression.unwrapParenthesesLabelsAndAnnotations() is KtLoopExpression) return null
 
     // The body of a declaration with an implicit type has no expected type
-    return singleExpression?.getExpressionTypeByPsiOrNull(noExpectedType = true)
+    return singleExpression.inferExpressionTypeByPsi(mayHaveExpectedType = false)
 }
+
+/**
+ * The initializer or the body that defines the implicit type of this declaration.
+ */
+internal val KtDeclaration.implicitTypeSource: KtExpression?
+    get() = when (this) {
+        is KtNamedFunction -> when {
+            hasDeclaredReturnType() -> null
+            hasBlockBody() -> null
+
+            // An anonymous function takes its return type from the expected type, like a lambda
+            isAnonymous -> null
+
+            else -> bodyExpression
+        }
+
+        // FIR takes the type of the initializer first
+        is KtProperty -> when {
+            typeReference != null || getter?.typeReference != null -> null
+            else -> initializer ?: getter?.bodyExpression
+        }
+
+        else -> null
+    }
 
 /**
  * Optimization: try to determine the type of the expression by its PSI, so FIR doesn't have to be built.
  *
- * @param noExpectedType whether the expression definitely has no expected type, which defines the type of some literals.
+ * @param mayHaveExpectedType whether the expression may have an expected type, which defines the type of some literals.
  */
 context(analysisSession: KaFirSession)
-internal fun KtExpression.getExpressionTypeByPsiOrNull(noExpectedType: Boolean): KaType? {
+internal fun KtExpression.inferExpressionTypeByPsi(mayHaveExpectedType: Boolean): KaType? {
     val unwrappedExpression = unwrapParenthesesLabelsAndAnnotations()
-    return with(analysisSession.builtinTypes) {
+    val type = with(analysisSession.builtinTypes) {
         when (unwrappedExpression) {
             is KtStringTemplateExpression -> string
 
             // A loop statement has the Unit type, but a declaration with a loop body is left to FIR
-            is KtConstructorDelegationReferenceExpression, is KtLoopExpression -> unit
+            is KtLoopExpression -> unit
 
             is KtBinaryExpression -> {
                 when (unwrappedExpression.operationToken) {
-                    // Not overloadable, always boolean
+                    // Not overloadable, always boolean, although FIR gives `Any` for an equality in a call whose inference fails (KT-91816)
                     KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ, KtTokens.EQEQ, KtTokens.EXCLEQ,
                     KtTokens.LT, KtTokens.GT, KtTokens.LTEQ, KtTokens.GTEQ,
                         -> boolean
@@ -84,8 +97,7 @@ internal fun KtExpression.getExpressionTypeByPsiOrNull(noExpectedType: Boolean):
 
             is KtIsExpression -> boolean
 
-            is KtContinueExpression, is KtBreakExpression, is KtThrowExpression, is KtReturnExpression, is KtLabelReferenceExpression,
-                -> nothing
+            is KtContinueExpression, is KtBreakExpression, is KtThrowExpression, is KtReturnExpression -> nothing
 
             is KtConstantExpression -> {
                 val classId = unwrappedExpression.inferClassIdByPsi()
@@ -102,11 +114,11 @@ internal fun KtExpression.getExpressionTypeByPsiOrNull(noExpectedType: Boolean):
                  * ```
                  *
                  * Computing the expected type may require building FIR, which defeats this optimization, so the inference returns
-                 * [int] only when [noExpectedType] is `true`. Unsigned literals are always left to FIR, which also infers an error
-                 * type for them if any unsigned type is missing.
+                 * [int] only when [mayHaveExpectedType] is `false`. Unsigned literals are always left to FIR, which also infers an
+                 * error type for them if any unsigned type is missing.
                  */
                 when (classId) {
-                    StandardClassIds.Int -> int.takeIf { noExpectedType }
+                    StandardClassIds.Int -> int.takeUnless { mayHaveExpectedType }
                     StandardClassIds.Long -> long
                     StandardClassIds.Float -> float
                     StandardClassIds.Double -> double
@@ -119,4 +131,53 @@ internal fun KtExpression.getExpressionTypeByPsiOrNull(noExpectedType: Boolean):
             else -> null
         }
     }
+
+    return type?.takeUnless { mayBeDroppedByRawFir }
 }
+
+/**
+ * Whether this expression may be in code that FIR doesn't keep, such as invalid code that raw FIR drops or the effects of
+ * `contract [...]`.
+ *
+ * The check is conservative: it is also `true` for some parts of the enclosing declarations that FIR keeps.
+ */
+internal val KtExpression.mayBeDroppedByRawFir: Boolean
+    get() = parents.any(PsiElement::mayHaveInvalidCodeDroppedByRawFir)
+
+private val PsiElement.mayHaveInvalidCodeDroppedByRawFir: Boolean
+    get() = when (this) {
+        is KtParameter -> when {
+            // Raw FIR keeps only the name and the type of a function type parameter, including a context one
+            isFunctionTypeParameter -> true
+
+            // Raw FIR drops the default value of a catch or context parameter
+            isCatchParameter -> true
+            isContextParameter -> true
+
+            // Raw FIR drops the annotations of the parameter of a setter without a body
+            ownerFunction.let { it is KtPropertyAccessor && !it.hasBody() } -> true
+
+            // A primary constructor parameter without `val` or `var` has no property, so raw FIR drops its annotations for one, such
+            // as `@field:` ones (KT-91817)
+            ownerFunction is KtPrimaryConstructor && !hasValOrVar() -> annotationEntries.any {
+                val useSiteTarget = it.useSiteTarget?.getAnnotationUseSiteTarget()
+                !useSiteTarget.appliesToPrimaryConstructorParameter()
+            }
+
+            else -> false
+        }
+
+        // Raw FIR drops the arguments of the entries of an `expect` enum class
+        is KtEnumEntry -> isExpectDeclaration()
+
+        // Raw FIR drops a `where` constraint without a type parameter name
+        is KtTypeConstraint -> subjectTypeParameterName == null
+
+        // FIR resolves the effects of `contract [...]` in a synthetic `contract { ... }` call that isn't part of the declaration
+        is KtContractEffectList -> true
+
+        // Raw FIR drops the annotations of a placeholder type argument, `_`
+        is KtTypeReference -> isPlaceholder
+
+        else -> false
+    }
