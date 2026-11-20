@@ -35,6 +35,19 @@
 
 using namespace kotlin;
 
+namespace {
+
+// Use the direction of the whole move, including when the native pointer aliases a Kotlin array.
+void copyInteropChunk(void* dest, const void* src, KLong byteCount, KLong bytesDone, KInt chunkBytes) {
+    auto dstAddress = reinterpret_cast<uintptr_t>(dest);
+    auto srcAddress = reinterpret_cast<uintptr_t>(src);
+    bool copyBackwards = dstAddress > srcAddress && dstAddress - srcAddress < static_cast<uint64_t>(byteCount);
+    auto offset = static_cast<size_t>(copyBackwards ? byteCount - bytesDone - chunkBytes : bytesDone);
+    std::memmove(static_cast<unsigned char*>(dest) + offset, static_cast<const unsigned char*>(src) + offset, chunkBytes);
+}
+
+} // namespace
+
 extern "C" {
 
 KInt Kotlin_Any_hashCode(KConstRef thiz) {
@@ -113,6 +126,30 @@ RUNTIME_NOTHROW const void* Kotlin_Any_getTypeInfo(KConstRef obj) {
 
 void Kotlin_CPointer_CopyMemory(KNativePtr to, KNativePtr from, KInt count) {
   memcpy(to, from, count);
+}
+
+void Kotlin_interop_getByteArrayChunk(KNativePtr source, KRef dest, KLong byteCount, KLong bytesDone, KInt chunkBytes) {
+    copyInteropChunk(PrimitiveArrayAddressOfElementAt<KByte>(dest->array(), 0), source, byteCount, bytesDone, chunkBytes);
+}
+
+void Kotlin_interop_putByteArrayChunk(KConstRef source, KNativePtr dest, KLong byteCount, KLong bytesDone, KInt chunkBytes) {
+    copyInteropChunk(dest, PrimitiveArrayAddressOfElementAt<KByte>(source->array(), 0), byteCount, bytesDone, chunkBytes);
+}
+
+void Kotlin_interop_getCharArrayChunk(KNativePtr source, KRef dest, KLong byteCount, KLong bytesDone, KInt chunkBytes) {
+    copyInteropChunk(PrimitiveArrayAddressOfElementAt<KChar>(dest->array(), 0), source, byteCount, bytesDone, chunkBytes);
+}
+
+void Kotlin_interop_putCharArrayChunk(KConstRef source, KNativePtr dest, KLong byteCount, KLong bytesDone, KInt chunkBytes) {
+    copyInteropChunk(dest, PrimitiveArrayAddressOfElementAt<KChar>(source->array(), 0), byteCount, bytesDone, chunkBytes);
+}
+
+void Kotlin_interop_zeroMemoryChunk(KNativePtr dest, KInt chunkBytes) {
+    std::memset(dest, 0, chunkBytes);
+}
+
+void Kotlin_interop_copyMemoryChunk(KNativePtr dest, KNativePtr src, KLong byteCount, KLong bytesDone, KInt chunkBytes) {
+    copyInteropChunk(dest, src, byteCount, bytesDone, chunkBytes);
 }
 
 RUNTIME_NOTHROW RUNTIME_PURE KRef* Kotlin_arrayGetElementAddress(KRef array, KInt index) {
