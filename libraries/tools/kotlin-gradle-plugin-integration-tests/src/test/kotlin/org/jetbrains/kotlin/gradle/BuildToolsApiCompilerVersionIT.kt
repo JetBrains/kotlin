@@ -83,6 +83,33 @@ class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @DisplayName("KT-72247: API version unsupported by the default compiler can be used with an older compiler version")
+    fun unsupportedApiVersionWithOlderCompilerVersion(gradleVersion: GradleVersion) {
+        project("sourceSetsKotlinDsl", gradleVersion, compilerVersion = COMPILER_SUPPORTING_1_8) {
+            setUnsupportedApiVersion()
+            build("compileKotlin")
+        }
+    }
+
+    @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_14) // KT-91195: Gradle 9+ does not report deprecated enum entries
+    @DisplayName("KT-72247: API version unsupported by the default compiler is reported as deprecated")
+    fun unsupportedApiVersionDeprecation(gradleVersion: GradleVersion) {
+        project("sourceSetsKotlinDsl", gradleVersion) {
+            gradleProperties.append("org.gradle.kotlin.dsl.allWarningsAsErrors=true")
+            setUnsupportedApiVersion()
+            buildAndFail("help") {
+                assertOutputContains("'KOTLIN_1_8' is deprecated. Unsupported by the default compiler")
+                assertOutputContains("Requires a 'kotlin.compilerVersion' that supports it.")
+            }
+        }
+    }
+
+    private fun TestProject.setUnsupportedApiVersion() {
+        buildGradleKts.append("kotlin.compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8)")
+    }
+
     private fun TestProject.forceNonExistentCompilerVersion() {
         buildGradle.append(
             // language=Gradle
@@ -96,3 +123,4 @@ class BuildToolsApiCompilerVersionIT : KGPBaseTest() {
 }
 
 private const val NON_EXISTENT_COMPILER = "Version.Does.Not.Exist"
+private const val COMPILER_SUPPORTING_1_8 = "2.2.21"

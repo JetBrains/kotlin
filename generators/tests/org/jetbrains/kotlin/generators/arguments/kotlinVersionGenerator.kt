@@ -28,7 +28,7 @@ internal fun generateKotlinVersion(
         ) {
             for (languageVersion in LanguageVersion.entries) {
                 val prefix = when {
-                    languageVersion.isUnsupported -> "@Deprecated(\"Unsupported\", level = DeprecationLevel.ERROR) "
+                    languageVersion.isUnsupported -> "@Deprecated(\"Unsupported by the default compiler ${LanguageVersion.LATEST_STABLE.versionString}. Requires a 'kotlin.compilerVersion' that supports it.\") "
                     languageVersion.isDeprecated -> "@Deprecated(\"Will be removed soon\") "
                     else -> ""
                 }
