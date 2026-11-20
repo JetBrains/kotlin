@@ -41,6 +41,11 @@ enum class BuildAttribute(val kind: BuildAttributeKind, val readableString: Stri
     INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED(BuildAttributeKind.REBUILD_REASON, "Incremental compilation configuration changed"),
     MODULE_INFO_CHANGED(BuildAttributeKind.REBUILD_REASON, "module-info.java changed"),
     PACKAGE_INFO_CHANGED(BuildAttributeKind.REBUILD_REASON, "a package-info.java changed"),
+    JAVA_MODULE_PATCH_WITH_CLASSES(BuildAttributeKind.REBUILD_REASON, "Classes in a path given with -Xpatch-module"),
+    JAVA_MODULE_PATCH_WITH_SOURCES_OUTSIDE(
+        BuildAttributeKind.REBUILD_REASON, "Sources outside the paths of the module given with -Xpatch-module"
+    ),
+    JAVA_MODULE_PATCH_CHANGED(BuildAttributeKind.REBUILD_REASON, "Module of the sources given with -Xpatch-module changed"),
     ;
 
     companion object {
