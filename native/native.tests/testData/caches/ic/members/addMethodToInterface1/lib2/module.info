@@ -6,4 +6,5 @@ STEP 0:
 
 STEP 1:
     dependencies: lib1
-    unchanged cache: lib2.file1.kt
+    // TODO(OSIP-1297): must be "unchanged cache". It relied on the "weak" (link-time only) dependencies, which are removed for now.
+    modified cache: lib2.file1.kt
