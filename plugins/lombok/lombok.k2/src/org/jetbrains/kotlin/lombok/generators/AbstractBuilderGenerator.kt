@@ -180,7 +180,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     private val callablesCache: FirCache<FirClassSymbol<*>, GeneratedCallables?, MemberGenerationContext> =
         session.firCachesFactory.createCache(::createCallables)
 
-    protected abstract val builderModality: Modality
+    /**
+     * Modality of a builder class that should instantiate [owner]
+     */
+    protected abstract fun getBuilderModality(owner: FirClassSymbol<*>): Modality
 
     protected abstract fun getBuilder(symbol: FirBasedSymbol<*>): T?
 
@@ -724,6 +727,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      */
     private fun T.getBuilderFactoryName(ownerDeclarationSymbol: FirBasedSymbol<*>, containingClassSymbol: FirClassSymbol<*>): Name? {
         val shouldAddBuilderFactory = when {
+            // For abstract builder class, we don't generate builder factory
+            getBuilderModality(containingClassSymbol.entitySymbolForCallables() ?: containingClassSymbol) == Modality.ABSTRACT -> false
             // inside Java, we always generate the factory in a containing Java class
             containingClassSymbol.hasJavaOrigin -> true
             // if a regular named function is annotated, we generate the factory outside the companion (non-"static" case)
@@ -803,7 +808,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     /**
      * Check if a builder annotation (`@Builder`, `@SuperBuilder`) is applicable for the current class.
      *
-     * Consider `builderModality` because it should be allowed to call an abstract constructor in the case of
+     * Consider [builderModality] because it should be allowed to call an abstract constructor in the case of
      * `@SuperBuilder` stuff generation (not yet implemented).
      *
      * Read off the raw status rather than the resolved one: this runs inside a generation callback, where
@@ -819,7 +824,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      */
     protected val FirClassSymbol<*>.canBeInstantiatedByBuilder: Boolean
         get() = !isInner &&
-                (builderModality == Modality.ABSTRACT || rawStatus.modality.let { it != Modality.ABSTRACT && it != Modality.SEALED })
+                (getBuilderModality(this) == Modality.ABSTRACT || rawStatus.modality.let { it != Modality.ABSTRACT && it != Modality.SEALED })
 
     /**
      * All `@Builder` parts relevant to [classSymbol] as an entity:
@@ -1275,7 +1280,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             status = FirResolvedDeclarationStatusImpl(
                 visibility,
-                builderModality,
+                getBuilderModality(entitySymbolForCallables() ?: this@createEmptyBuilderClass),
                 effectiveVisibility
             ).apply {
                 // A builder for a non-static method is an inner class, mirroring Lombok: `build()` has to

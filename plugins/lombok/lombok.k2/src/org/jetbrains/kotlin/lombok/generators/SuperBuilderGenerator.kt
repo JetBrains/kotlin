@@ -48,7 +48,17 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
     private val processedSymbolsForClassesWithBuilders: FirCache<FirClassSymbol<*>, Boolean, Nothing?> =
         session.firCachesFactory.createCache { true }
 
-    override val builderModality: Modality = Modality.ABSTRACT
+    /**
+     * Builder class for @SuperBuilder is abstract for abstract/sealed class to instantiate,
+     * or open for open/final class to instantiate
+     */
+    override fun getBuilderModality(owner: FirClassSymbol<*>): Modality {
+        return when (val modality = owner.rawStatus.modality) {
+            null, Modality.FINAL -> Modality.OPEN
+            Modality.SEALED -> Modality.ABSTRACT
+            else -> modality
+        }
+    }
 
     override fun getBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? {
         // There is also a build impl class, but it's private, and it's used only for internal purposes. Not relevant for API.
