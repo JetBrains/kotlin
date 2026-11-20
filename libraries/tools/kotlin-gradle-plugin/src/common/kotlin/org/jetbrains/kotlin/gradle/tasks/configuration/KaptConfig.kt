@@ -187,6 +187,7 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
             task.usesService(toolingDiagnosticsCollector)
             task.setupKotlinToolingDiagnosticsParameters(toolingDiagnosticsCollector, toolingDiagnosticsContext)
             task.mapDiagnosticLocations = ext.mapDiagnosticLocations
+            task.showProcessorStats = ext.showProcessorStats
             task.stubGenerationScheme.convention(ext.stubGenerationScheme)
             if (ext is KaptExtension) {
                 task.annotationProcessorFqNames.set(providers.provider {
