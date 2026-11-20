@@ -8,13 +8,19 @@ package org.jetbrains.kotlin.backend.konan
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointerVar
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.cstr
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
+import kotlinx.cinterop.set
 import kotlinx.cinterop.toKString
 import kotlinx.cinterop.value
 import llvm.LLVMCodeGenFileType
 import llvm.LLVMDisposeMessage
 import llvm.LLVMModuleRef
+import llvm.LLVMKotlinEmitObjectFiles
+import llvm.LLVMGetErrorMessage
+import llvm.LLVMDisposeErrorMessage
 import llvm.LLVMTargetMachineEmitToFile
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmBackendContext
 import java.nio.file.Path
@@ -29,6 +35,26 @@ import kotlin.io.path.absolutePathString
 internal class LlvmBitcodeCompiler(
         private val llvmBackendContext: LlvmBackendContext,
 ) : BitcodeCompiler {
+
+    override fun makeObjectFiles(llvmModule: LLVMModuleRef, outputPaths: List<Path>) {
+        if (outputPaths.size == 1) {
+            makeObjectFile(llvmModule, outputPaths.single())
+            return
+        }
+        memScoped {
+            val paths = allocArray<CPointerVar<ByteVar>>(outputPaths.size)
+            outputPaths.forEachIndexed { index, path -> paths[index] = path.absolutePathString().cstr.getPointer(this) }
+            val failure = LLVMKotlinEmitObjectFiles(llvmModule, llvmBackendContext.targetMachine, outputPaths.size, paths)
+            if (failure != null) {
+                val message = LLVMGetErrorMessage(failure)!!
+                try {
+                    error("Failed to emit object files: ${message.toKString()}")
+                } finally {
+                    LLVMDisposeErrorMessage(message)
+                }
+            }
+        }
+    }
 
     override fun makeObjectFile(llvmModule: LLVMModuleRef, outputFilePath: Path) = memScoped {
         val llvmError = alloc<CPointerVar<ByteVar>>()

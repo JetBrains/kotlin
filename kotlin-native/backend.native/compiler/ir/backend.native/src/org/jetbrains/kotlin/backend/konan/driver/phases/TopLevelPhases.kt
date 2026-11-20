@@ -1,11 +1,17 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+
+import llvm.LLVMDisposeErrorMessage
+import llvm.LLVMGetErrorMessage
+import llvm.LLVMKotlinCheckParallelObjectEmission
 import llvm.LLVMModuleRef
+import kotlinx.cinterop.toKString
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.RedundantCastsRemoverLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
@@ -25,7 +31,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.withLlvmBackendContext
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
@@ -419,7 +427,7 @@ private fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runInsertEntryPointAl
 }
 
 internal class ModuleCompilationOutput(
-        val objectFile: Path,
+        val objectFiles: List<Path>,
         val dependenciesTrackingResult: DependenciesTrackingResult,
 )
 
@@ -458,9 +466,49 @@ private fun <C : NativeBackendPhaseContext> PhaseEngine<C>.emitObjectFileWith(
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
 ): ModuleCompilationOutput {
-    val objectFile = temporaryFiles.createObjectFile(Path(outputFiles.nativeBinaryFile).name)
-    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesInput(llvmModule, bitcodeCompiler, objectFile))
-    return ModuleCompilationOutput(objectFile, dependenciesTrackingResult)
+    val requested = (context.config.configuration[BinaryOptions.objectFileThreads] ?: 1u).toInt()
+    require(requested > 0) { "objectFileThreads must be between 1 and ${Int.MAX_VALUE}" }
+    require(requested == 1 || context.config.inProcessObjEmission) { "objectFileThreads requires -Xin-process-obj-emission" }
+    // Static archives extract members selectively; multiple parallel parts as separate
+    // archive members are unsafe. Where relocatable link (`ld -r`) is available, emit in
+    // parallel then merge into one .o before ar/libtool. Otherwise stay single-threaded.
+    val archiveLike = context.config.produce == CompilerOutputKind.STATIC ||
+            context.config.produce == CompilerOutputKind.STATIC_CACHE
+    val canRelocateLink = when (context.config.target.family) {
+        Family.OSX, Family.IOS, Family.TVOS, Family.WATCHOS,
+        Family.LINUX, Family.ANDROID -> true
+        else -> false
+    }
+    // Parallel path: see ParallelObjectEmission.cpp.
+    // ELF: .kn.<id> rename + SplitModule(PreserveLocals=false); Mach-O: Keep.
+    // Only parallel when the target-specific safety check passes; else N=1.
+    var count = if (archiveLike && !canRelocateLink) 1 else requested
+    if (count > 1 && context.config.inProcessObjEmission) {
+        val unsafe = LLVMKotlinCheckParallelObjectEmission(llvmModule)
+        if (unsafe != null) {
+            val message = LLVMGetErrorMessage(unsafe)!!
+            try {
+                context.config.configuration.report(
+                        CliDiagnostics.KONAN_ARGUMENT_WARNING,
+                        "Falling back to serial object emission: ${message.toKString()}",
+                )
+            } finally {
+                LLVMDisposeErrorMessage(message)
+            }
+            count = 1
+        }
+    }
+    val name = Path(outputFiles.nativeBinaryFile).name
+    val objectFiles = List(count) { index -> temporaryFiles.createObjectFile(if (count == 1) name else "$name-part$index") }
+    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesInput(llvmModule, bitcodeCompiler, objectFiles))
+    val linkerInputs = if (archiveLike && objectFiles.size > 1) {
+        val merged = temporaryFiles.createObjectFile(name)
+        runAndMeasurePhase(RelocateLinkObjectFilesPhase, RelocateLinkObjectFilesInput(objectFiles, merged))
+        listOf(merged)
+    } else {
+        objectFiles
+    }
+    return ModuleCompilationOutput(linkerInputs, dependenciesTrackingResult)
 }
 
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.linkModule(
@@ -470,7 +518,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.linkModule(
         temporaryFiles: TempFiles,
         cacheInfo: PartialCacheInfo?,
 ) {
-    val compilationResult = moduleCompilationOutput.objectFile
+    val compilationResult = moduleCompilationOutput.objectFiles
     val linkerOutputKind = context.config.linkerOutputKind
     val [linkerInput, cacheBinaries] = run {
         val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
@@ -480,9 +528,9 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.linkModule(
             }
             shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
                 val prelinkResult = temporaryFiles.createObjectFile("withStaticCaches")
-                runAndMeasurePhase(PreLinkCachesPhase, PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
+                runAndMeasurePhase(PreLinkCachesPhase, PreLinkCachesInput(compilationResult, resolvedCacheBinaries, prelinkResult))
                 // Static caches are linked into binary, so we don't need to pass them.
-                prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
+                listOf(prelinkResult) to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
             }
             else -> {
                 compilationResult to resolvedCacheBinaries
@@ -492,7 +540,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.linkModule(
     val linkerPhaseInput = LinkerPhaseInput(
             linkerOutputFile,
             linkerOutputKind,
-            listOf(linkerInput.canonicalPathString()),
+            linkerInput.map { it.canonicalPathString() },
             moduleCompilationOutput.dependenciesTrackingResult,
             outputFiles,
             temporaryFiles,

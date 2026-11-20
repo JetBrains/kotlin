@@ -76,6 +76,9 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val compileBitcodeWithXcodeLlvm by booleanOption()
 
+    /** Number of partitions emitted concurrently after LLVM optimization. Requires in-process emission. */
+    val objectFileThreads by uintOption()
+
     val objcDisposeOnMain by booleanOption()
 
     val objcDisposeWithRunLoop by booleanOption()
