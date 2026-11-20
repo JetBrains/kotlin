@@ -1,11 +1,11 @@
+// LANGUAGE: -JvmOptimizedNullCastMessages
 // TARGET_BACKEND: JVM
-
 // WITH_STDLIB
-
-import java.util.ArrayList
 
 // KT-2823 TypeCastException has no message
 // KT-5121 Better error message in on casting null to non-null type
+
+private inline fun <reified T> reifiedCast(value: Any?): T = value as T
 
 fun box(): String {
     try {
@@ -25,6 +25,16 @@ fun box(): String {
     catch (e: NullPointerException) {
         if (e.message != "null cannot be cast to non-null type kotlin.String") {
             return "Fail 2: $e"
+        }
+    }
+
+    try {
+        reifiedCast<String>(null)
+        return "Fail 3: no exception"
+    }
+    catch (e: NullPointerException) {
+        if (e.message != "null cannot be cast to non-null type kotlin.String") {
+            return "Fail 4: $e"
         }
     }
 

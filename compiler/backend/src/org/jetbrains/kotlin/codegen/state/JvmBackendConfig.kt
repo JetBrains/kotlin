@@ -53,6 +53,10 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
         languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
                 !configuration.getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS)
 
+    fun useOptimizedNullCastMessages(inInlineScope: Boolean): Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.JvmOptimizedNullCastMessages) &&
+                (!inInlineScope || languageVersionSettings.supportsFeature(LanguageFeature.JvmOptimizedNullCastMessagesInInlineFunctions))
+
     val generateSmapCopyToAnnotation: Boolean = !configuration.getBoolean(JVMConfigurationKeys.NO_SOURCE_DEBUG_EXTENSION)
 
     val shouldValidateBytecode: Boolean = configuration.getBoolean(JVMConfigurationKeys.VALIDATE_BYTECODE)

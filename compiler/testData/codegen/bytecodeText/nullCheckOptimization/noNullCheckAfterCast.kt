@@ -1,3 +1,4 @@
+// LANGUAGE: -JvmOptimizedNullCastMessages
 // KT-27427
 
 interface A {

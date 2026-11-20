@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckExpressionValueIsNotNull
+import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckNotNullInCast
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckNotNullWithMessage
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.utils.SmartList
@@ -284,10 +285,15 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
                     val ldcInsn = aLoad1Insn.next
                     val invokeStaticInsn = ldcInsn.next
                     val aLoad2Insn = invokeStaticInsn.next
+                    val isCheckNotNullWithConstant = when {
+                        invokeStaticInsn.isCheckNotNullInCast() -> (ldcInsn as LdcInsnNode).cst is Type
+                        invokeStaticInsn.isCheckExpressionValueIsNotNull() || invokeStaticInsn.isCheckNotNullWithMessage() ->
+                            (ldcInsn as LdcInsnNode).cst is String
+                        else -> false
+                    }
 
                     if ((aLoad1Insn as VarInsnNode).`var` == tmp.index &&
-                        (ldcInsn as LdcInsnNode).cst is String &&
-                        (invokeStaticInsn.isCheckExpressionValueIsNotNull() || invokeStaticInsn.isCheckNotNullWithMessage()) &&
+                        isCheckNotNullWithConstant &&
                         (aLoad2Insn as VarInsnNode).`var` == tmp.index
                     ) {
                         // Replace instruction sequence:
