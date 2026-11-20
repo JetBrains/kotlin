@@ -103,12 +103,10 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             prettyRenderingMode.transformation(acc)
         }
 
-        fun safePointer(ktSymbol: KaSymbol): KaSymbolPointer<*>? = when {
-            else -> ktSymbol.runCatching {
-                createPointerForTest(disablePsiBasedLogic = disablePsiBasedLogic)
-            }.getOrNull()?.also {
-                assertSymbolPointer(it, testServices)
-            }
+        fun safePointer(ktSymbol: KaSymbol): Result<KaSymbolPointer<*>> = ktSymbol.runCatching {
+            createPointerForTest(disablePsiBasedLogic = disablePsiBasedLogic)
+        }.onSuccess {
+            assertSymbolPointer(it, testServices)
         }
 
         val pointersWithRendered = executeOnPooledThreadInReadAction {
@@ -137,7 +135,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                     .distinctBy { it.first }
                     .map { [symbol, shouldBeRendered] ->
                         PointerWithRenderedSymbol(
-                            pointer = safePointer(symbol),
+                            pointerResult = safePointer(symbol),
                             rendered = renderSymbolForComparison(symbol, directives),
                             shouldBeRendered = shouldBeRendered,
                             psiOnly = symbol.supportsOnlyPsiBasedPointersByDesign,
@@ -149,7 +147,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
                 val pointerWithPrettyRenderedSymbol = symbolForPrettyRendering.map { symbol ->
                     PointerWithRenderedSymbol(
-                        pointer = safePointer(symbol),
+                        pointerResult = safePointer(symbol),
                         rendered = when (symbol) {
                             is KaReceiverParameterSymbol -> KaDebugRenderer().render(useSiteSession, symbol)
                             is KaPackageSymbol -> "package ${symbol.fqName}"
@@ -226,7 +224,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
      * A test has at most a few hundred pointers, so this is cheap.
      */
     private fun List<PointerWithRenderedSymbol>.findSymbolsWithSamePointers(): Pair<String, String>? {
-        val pointers = mapNotNull { (val pointer, val rendered) -> pointer?.let { it to rendered } }
+        val pointers = mapNotNull { (val pointerResult, val rendered) -> pointerResult.getOrNull()?.let { it to rendered } }
         for ([index, pointerWithRendered] in pointers.withIndex()) {
             val [firstPointer, firstRendered] = pointerWithRendered
             for ([secondPointer, secondRendered] in pointers.subList(index + 1, pointers.size)) {
@@ -386,14 +384,16 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         var hasRenderedWrongRestore = false
 
         val restored = analyzeForTest(analyzeContext ?: ktFile) {
-            pointersWithRendered.mapNotNull { (val pointer, val expectedRender = rendered, val shouldBeRendered, val psiOnly) ->
-                fun addNonRestoredSymbol() {
+            pointersWithRendered.mapNotNull { (val pointerResult, val expectedRender = rendered, val shouldBeRendered, val psiOnly) ->
+                fun addNonRestoredSymbol(exceptionRender: String? = null) {
                     if (!psiOnly || !disablePsiBasedLogic) {
-                        nonRestoredSymbols += expectedRender
+                        nonRestoredSymbols += listOfNotNull(exceptionRender, expectedRender).joinToString(separator = "\n")
                     }
                 }
 
-                val restored = pointer?.let { restoreSymbol(it, disablePsiBasedLogic) }
+                val pointer = pointerResult.getOrNull()
+                val restoredResult = pointer?.let { runCatching { restoreSymbol(it, disablePsiBasedLogic) } }
+                val restored = restoredResult?.getOrNull()
                 val actualRender = restored?.let { renderSymbolForComparison(it, directives) }
                 if (restored != null) {
                     if (psiOnly && disablePsiBasedLogic) {
@@ -411,7 +411,15 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                         else -> addNonRestoredSymbol()
                     }
                 } else {
-                    addNonRestoredSymbol()
+                    val creationException = pointerResult.exceptionOrNull()
+                    val restorationException = restoredResult?.exceptionOrNull()
+                    addNonRestoredSymbol(
+                        exceptionRender = when {
+                            creationException != null -> creationException.renderPointerException(EXCEPTION_ON_CREATION)
+                            restorationException != null -> restorationException.renderPointerException(EXCEPTION_ON_RESTORATION)
+                            else -> null
+                        }
+                    )
                 }
 
                 if (shouldBeRendered) actualRender ?: expectedRender else null
@@ -597,11 +605,33 @@ private data class SymbolPointersData(
 )
 
 private data class PointerWithRenderedSymbol(
-    val pointer: KaSymbolPointer<*>?,
+    /**
+     * The pointer created for the symbol, or the exception thrown on its creation.
+     */
+    val pointerResult: Result<KaSymbolPointer<*>>,
     val rendered: String,
     val shouldBeRendered: Boolean = true,
     val psiOnly: Boolean,
 )
+
+private const val EXCEPTION_ON_CREATION = "EXCEPTION_ON_CREATION"
+private const val EXCEPTION_ON_RESTORATION = "EXCEPTION_ON_RESTORATION"
+
+/**
+ * Matches identity hash codes from the default [Object.toString] implementation, e.g., `KaFirAnonymousObjectSymbol@5d67e91e`.
+ */
+private val IDENTITY_HASH_CODE_REGEX = Regex("""(?<=[\w$])@\p{XDigit}+\b""")
+
+/**
+ * Renders an exception thrown by a symbol pointer on its creation or restoration,
+ * so the cause of a non-restorable symbol is visible in the test data.
+ *
+ * Identity hash codes are masked since they differ between runs.
+ */
+private fun Throwable.renderPointerException(kind: String): String {
+    val stableMessage = message?.replace(IDENTITY_HASH_CODE_REGEX, "@HASH")
+    return "$kind: ${this::class.java.name}: $stableMessage"
+}
 
 /**
  * Whether the symbol is expected to be non-restorable without the underlying PSI element.
