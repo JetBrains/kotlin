@@ -125,7 +125,7 @@ class SwiftPackageExportIT : KGPBaseTest() {
             )
 
             val manifest = describeSwiftPackage(exportedPackage)
-            assertEquals(mapOf("ios" to "18.0", "macos" to "15.0"), manifest.platforms.associate { it.name to it.version })
+            assertEquals(mapOf("ios" to "16.0", "macos" to "13.0"), manifest.platforms.associate { it.name to it.version })
             assertEquals(listOf("SharedLibrary"), manifest.products.map { it.name })
             val targets = manifest.targets.associateBy { it.name }
             assertEquals("binary", targets.getValue("SharedKotlin").type)
@@ -625,7 +625,7 @@ class SwiftPackageExportIT : KGPBaseTest() {
                 import PackageDescription
                 let package = Package(
                     name: "Consumer",
-                    platforms: [.iOS("18.0")],
+                    platforms: [.iOS("16.0")],
                     dependencies: [.package(name: "Shared", path: "../package/Debug")],
                     targets: [
                         .executableTarget(name: "Consumer", dependencies: [.product(name: "SharedLibrary", package: "Shared")])
@@ -853,7 +853,7 @@ class SwiftPackageExportIT : KGPBaseTest() {
                     import PackageDescription
                     let package = Package(
                         name: "Consumer",
-                        platforms: [.iOS("18.0")],
+                        platforms: [.iOS("16.0")],
                         dependencies: [.package(name: "Shared", path: "../package/Debug")],
                         targets: [
                             .executableTarget(name: "Consumer", dependencies: [.product(name: "SharedLibrary", package: "Shared")])
@@ -880,9 +880,9 @@ class SwiftPackageExportIT : KGPBaseTest() {
 
     /** A destination a Swift package is built for: the target triple and the SDK of `swift build`. */
     private enum class SwiftDestination(val triple: String, val sdk: String) {
-        MACOS("arm64-apple-macosx15.0", "macosx"),
-        IOS_SIMULATOR("arm64-apple-ios18.0-simulator", "iphonesimulator"),
-        IOS("arm64-apple-ios18.0", "iphoneos"),
+        MACOS("arm64-apple-macosx13.0", "macosx"),
+        IOS_SIMULATOR("arm64-apple-ios16.0-simulator", "iphonesimulator"),
+        IOS("arm64-apple-ios16.0", "iphoneos"),
     }
 
     /** A consumer package that depends on the exported package at [packagePath] and runs [main]. */
@@ -895,7 +895,7 @@ class SwiftPackageExportIT : KGPBaseTest() {
             import PackageDescription
             let package = Package(
                 name: "Consumer",
-                platforms: [.iOS("18.0"), .macOS("15.0")],
+                platforms: [.iOS("16.0"), .macOS("13.0")],
                 dependencies: [.package(name: "Shared", path: "${packagePath.toAbsolutePath()}")],
                 targets: [
                     .executableTarget(name: "Consumer", dependencies: [.product(name: "$productName", package: "Shared")])

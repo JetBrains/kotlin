@@ -134,7 +134,7 @@ class SwiftExportManifestGeneratorTest {
             "KotlinRuntime",
             sharedModulesFixture("Shared").inPackage(),
             kotlinBinaryTarget = "SharedKotlin",
-            platforms = listOf(SwiftPackagePlatform("iOS", "18.0"), SwiftPackagePlatform("macOS", "15.0")),
+            platforms = listOf(SwiftPackagePlatform("iOS", "16.0"), SwiftPackagePlatform("macOS", "13.0")),
         )
 
         assertEquals(platformsManifestGold(), manifest)
@@ -236,8 +236,8 @@ class SwiftExportManifestGeneratorTest {
         let package = Package(
             name: "Shared",
             platforms: [
-                .iOS("18.0"),
-                .macOS("15.0")
+                .iOS("16.0"),
+                .macOS("13.0")
             ],
             products: [
                 .library(

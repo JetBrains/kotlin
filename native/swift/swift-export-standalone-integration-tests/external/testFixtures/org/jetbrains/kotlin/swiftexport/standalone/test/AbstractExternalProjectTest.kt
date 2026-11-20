@@ -48,7 +48,7 @@ abstract class AbstractExternalProjectTest : AbstractSwiftExportTest() {
 
     @Test
     fun `kotlinx-coroutines-core`() {
-        minOSVersion = "15.0"
+        minOSVersion = "13.0"
         val atomicFuCinterop = KlibExportSettings(
             testLibraryAtomicFuCinteropInteropKlibFile,
             targets.testTarget,
