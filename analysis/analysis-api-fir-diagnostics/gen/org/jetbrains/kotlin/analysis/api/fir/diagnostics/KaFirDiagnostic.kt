@@ -3107,6 +3107,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = IdentitySensitiveOperationOnWillBecomeValueClass::class
 
         public val type: KaType
+        public val willBecomeValueLikeAnnotation: ClassId
     }
 
     @KaUnstableDiagnosticApi
@@ -9648,15 +9649,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = InapplicableJvmFieldWarning::class
 
         public val message: String
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface SynchronizedBlockOnJavaValueBasedClass : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<SynchronizedBlockOnJavaValueBasedClass>
-            get() = SynchronizedBlockOnJavaValueBasedClass::class
-
-        public val type: KaType
     }
 
     @KaUnstableDiagnosticApi

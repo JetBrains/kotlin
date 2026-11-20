@@ -2595,8 +2595,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS,
-            "Identity-sensitive operation on ''{0}'', which is annotated with ''@WillBecomeValue''. It will be forbidden once the class becomes a value class.",
+            "Identity-sensitive operation on ''{0}'', which is annotated with ''@{1}''. It will be forbidden once the class becomes a value class.",
             RENDER_TYPE,
+            CLASS_ID,
         )
         map.put(WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL, "Class annotated with '@WillBecomeValue' cannot be local or inner.")
         map.put(

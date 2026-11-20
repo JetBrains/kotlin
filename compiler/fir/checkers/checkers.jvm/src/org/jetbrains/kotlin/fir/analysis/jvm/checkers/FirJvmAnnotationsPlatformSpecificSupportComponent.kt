@@ -54,6 +54,10 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
         JvmStandardClassIds.Annotations.JvmRepeatable,
     )
 
+    override val willBecomeValueAnnotations: Set<ClassId> = [
+        JvmStandardClassIds.Annotations.ValueBased,
+    ]
+
     @LegacyJvmInlineHandling
     override val hasJvmInlineAnnotation: Boolean = true
 

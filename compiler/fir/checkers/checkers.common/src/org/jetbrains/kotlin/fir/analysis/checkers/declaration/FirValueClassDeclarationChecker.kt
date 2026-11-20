@@ -73,7 +73,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        val isWillBecomeValueClass = !declaration.symbol.isValue && declaration.symbol.willBecomeKotlinValueClass(context.session)
+        val isWillBecomeValueClass = !declaration.symbol.isValue && declaration.symbol.hasWillBecomeValueAnnotation()
         if (!declaration.symbol.isValue && !isWillBecomeValueClass) {
             return
         }
@@ -173,7 +173,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     kind.valueModifierPrefix,
                 )
             } else if (!supertypeSymbol.isValueClassSupertype() &&
-                !(kind.isWillBecomeValueClass && supertypeSymbol.willBecomeKotlinOrJdkValueClass(context.session))
+                !(kind.isWillBecomeValueClass && supertypeSymbol.findWillBecomeValueLikeAnnotation() != null)
             ) {
                 reportOn(
                     supertypeEntry.source, kind.isWillBecomeValueClass,
@@ -381,7 +381,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
     ) {
         for ([name, primaryConstructorParameter] in primaryConstructorParametersByName) {
             val parameterTypeRef = primaryConstructorParameter.resolvedReturnTypeRef
-            val recursionType = parameterTypeRef.coneType.getValueClassTypeRecursionType(context.session)
+            val recursionType = parameterTypeRef.coneType.getValueClassTypeRecursionType()
             when {
                 declaration.isFinal && primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
                     reportOn(

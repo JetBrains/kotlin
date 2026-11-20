@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.reportIdentitySensitiveOperationIfWillBecomeValueClasses
+import org.jetbrains.kotlin.fir.analysis.checkers.ifFutureValueType
+import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.types.isNullableNothing
@@ -24,6 +27,18 @@ object FirIdentityEqualsOnWillBecomeValueClassChecker : FirEqualityOperatorCallC
         val arguments = expression.argumentList.arguments
         // Comparison with 'null' is a nullability check rather than an identity one.
         if (arguments.any { it.resolvedType.isNullableNothing }) return
-        reportIdentitySensitiveOperationIfWillBecomeValueClasses(expression.source, arguments.map { it.resolvedType })
+        if (arguments.any { it.resolvedType.isValueClass(context.session) }) return
+
+        val leftOperand = ifFutureValueType(arguments[0].resolvedType) { it }
+        val rightOperand = ifFutureValueType(arguments[1].resolvedType) { it }
+
+        val futureValueType = leftOperand ?: rightOperand ?: return
+
+        reporter.reportOn(
+            expression.source,
+            FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS,
+            futureValueType.valueType,
+            futureValueType.willBecomeValueLikeAnnotation,
+        )
     }
 }

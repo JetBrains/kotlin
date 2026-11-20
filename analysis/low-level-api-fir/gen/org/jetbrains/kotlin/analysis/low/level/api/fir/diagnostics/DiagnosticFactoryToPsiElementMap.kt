@@ -1186,7 +1186,6 @@ internal val diagnosticFactoryToPsiElementMap: Map<KtDiagnosticFactoryN, Class<o
     FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION to PsiElement::class.java,
     FirJvmErrors.INAPPLICABLE_JVM_FIELD to KtAnnotationEntry::class.java,
     FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING to KtAnnotationEntry::class.java,
-    FirJvmErrors.SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS to KtElement::class.java,
     FirJvmErrors.SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE.warningFactory to PsiElement::class.java,
     FirJvmErrors.SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE.errorFactory to PsiElement::class.java,
     FirJvmErrors.JVM_SYNTHETIC_ON_DELEGATE to KtAnnotationEntry::class.java,
