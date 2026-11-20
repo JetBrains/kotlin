@@ -1,0 +1,5 @@
+KtArrayAccessExpression(181,186): 'b[fn]'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /B.get(<dispatch receiver>: B, i: IFoo): kotlin.Int
+    ]
