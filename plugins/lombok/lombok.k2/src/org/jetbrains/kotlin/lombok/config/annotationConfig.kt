@@ -126,7 +126,7 @@ fun parseCallSuperMode(config: LombokConfig, configKey: String, default: CallSup
 
 class GlobalConfig(
     val accessorsFluent: Boolean,
-    val accessorsChain: Boolean,
+    val accessorsChain: Boolean?,
     val accessorsPrefix: List<String>,
     val getterNoIsPrefix: Boolean,
     val builderClassName: String,
@@ -165,7 +165,7 @@ class GlobalConfig(
         fun extract(config: LombokConfig): GlobalConfig {
             return GlobalConfig(
                 accessorsFluent = config.getBoolean(ACCESSORS_FLUENT_CONFIG) ?: false,
-                accessorsChain = config.getBoolean(ACCESSORS_CHAIN_CONFIG) ?: false,
+                accessorsChain = config.getBoolean(ACCESSORS_CHAIN_CONFIG),
                 accessorsPrefix = config.getMultiString(ACCESSORS_PREFIX_CONFIG) ?: emptyList(),
                 getterNoIsPrefix = config.getBoolean(GETTER_NO_IS_PREFIX_CONFIG) ?: false,
                 builderClassName = config.getString(BUILDER_CLASS_NAME_CONFIG) ?: "*Builder",
