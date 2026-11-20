@@ -8,5 +8,9 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 
-@PhasePrerequisites(JsStaticInitializersDeclarationLowering::class)
+@PhasePrerequisites(
+    JsStaticInitializersDeclarationLowering::class,
+    InteropCallableReferenceLowering::class,
+    JsDefaultArgumentStubGenerator::class,
+)
 class JsStaticInitializersUsageLowering(context: JsCommonBackendContext) : WebStaticInitializersUsageLowering(context)
