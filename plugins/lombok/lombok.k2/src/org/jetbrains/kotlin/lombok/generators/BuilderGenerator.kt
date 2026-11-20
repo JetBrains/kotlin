@@ -8,10 +8,6 @@ package org.jetbrains.kotlin.lombok.generators
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
@@ -69,23 +65,23 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
     override fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
         builder: Builder,
         builderSymbol: FirClassSymbol<*>,
-        ownerDeclaration: FirDeclaration,
+        ownerDeclarationSymbol: FirBasedSymbol<*>,
         substitutor: ConeSubstitutor,
         existingFunctionNames: Set<Name>,
     ) {
         val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
         addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) { name ->
-            val declaredReturnTypeRef = when (ownerDeclaration) {
-                is FirRegularClass -> ownerDeclaration.defaultType().toFirResolvedTypeRef()
-                is FirNamedFunction -> ownerDeclaration.returnTypeRef
-                is FirConstructor -> ownerDeclaration.returnTypeRef
+            val declaredReturnTypeRef = when (ownerDeclarationSymbol) {
+                is FirRegularClassSymbol -> ownerDeclarationSymbol.defaultType().toFirResolvedTypeRef()
+                is FirNamedFunctionSymbol -> ownerDeclarationSymbol.resolvedOrJavaTypeRef()
+                is FirConstructorSymbol -> ownerDeclarationSymbol.resolvedOrJavaTypeRef()
                 else -> buildErrorTypeRef {
-                    source = ownerDeclaration.source
+                    source = ownerDeclarationSymbol.source
                     diagnostic =
                         ConeUnsupported(
-                            "Unsupported builder declaration ${ownerDeclaration::class.simpleName}",
-                            ownerDeclaration.source
+                            "Unsupported builder declaration ${ownerDeclarationSymbol::class.simpleName}",
+                            ownerDeclarationSymbol.source
                         )
                 }
             }
@@ -109,7 +105,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
                 visibility = visibility,
                 modality = Modality.OPEN,
                 key = BuilderGeneratorKey(
-                    BuilderDeclarationType.Function.Build(ownerDeclaration.symbol, lombokService.config.singularUseGuava)
+                    BuilderDeclarationType.Function.Build(ownerDeclarationSymbol, lombokService.config.singularUseGuava)
                 ),
             )
         }
@@ -129,7 +125,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
     @OptIn(DirectDeclarationsAccess::class, SymbolInternals::class)
     override fun MutableList<BuilderDescription<Builder>>.addAnnotatedCallables(owner: FirRegularClassSymbol) {
         for (declarationSymbol in owner.declarationSymbols) {
-            if (declarationSymbol is FirConstructorSymbol || declarationSymbol is FirFunctionSymbol<*>) {
+            if (declarationSymbol is FirFunctionSymbol<*>) {
                 // Left alone; `FirLombokBuilderChecker` reports it as
                 // `BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS`.
                 if (declarationSymbol.hasReceiverOrContextParameters) continue
@@ -138,9 +134,8 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
                 // whatever the function returns, which need not be this class.
                 if (declarationSymbol is FirConstructorSymbol && !owner.canBeInstantiatedByBuilder) continue
                 getBuilder(declarationSymbol)?.let { builder ->
-                    val declaration = declarationSymbol.fir
-                    val items = calculateBuilderItems(owner.fir, declaration, emptyMap())
-                    add(BuilderDescription(builder, declaration, items))
+                    val items = calculateBuilderItems(owner.fir, declarationSymbol, emptyMap())
+                    add(BuilderDescription(builder, declarationSymbol, items))
                 }
             }
         }

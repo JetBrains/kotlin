@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
@@ -197,7 +195,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     protected abstract fun MutableMap<Name, FirNamedFunctionSymbol>.addSpecialBuilderMethods(
         builder: T,
         builderSymbol: FirClassSymbol<*>,
-        ownerDeclaration: FirDeclaration,
+        ownerDeclarationSymbol: FirBasedSymbol<*>,
         substitutor: ConeSubstitutor,
         existingFunctionNames: Set<Name>,
     )
@@ -245,8 +243,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 }
             }
 
-            builderDescriptionsCache.getValue(entitySymbol)?.forEach { (builder, ownerDeclaration) ->
-                builder.getBuilderFactoryName(ownerDeclaration, classSymbol)?.let(::add)
+            builderDescriptionsCache.getValue(entitySymbol)?.forEach { (builder, ownerDeclarationSymbol) ->
+                builder.getBuilderFactoryName(ownerDeclarationSymbol, classSymbol)?.let(::add)
                 if (builder.generatesToBuilder(classSymbol)) {
                     add(TO_BUILDER)
                 }
@@ -274,16 +272,16 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     }
 
     @OptIn(DirectDeclarationsAccess::class)
-    private fun calculateBuilderVariables(entityClass: FirRegularClass, declaration: FirDeclaration): List<FirVariable> {
+    private fun calculateBuilderVariables(entityClass: FirRegularClass, declaration: FirBasedSymbol<*>): List<FirVariableSymbol<*>> {
         return when (declaration) {
-            is FirRegularClass -> {
+            is FirRegularClassSymbol -> {
                 // Only a plain Java class builds from its fields, the way real Lombok does. A record has none
                 // to speak of, and a Kotlin class is built from its primary constructor's value parameters:
                 // `build()` has that constructor to call and nothing else (no body vals and vars).
                 if (entityClass is FirJavaClass && !entityClass.isRecord) {
                     entityClass.declarations.mapNotNull { declaration ->
                         // A `static` field is never a builder field, which real Lombok leaves out just the same.
-                        (declaration as? FirJavaField)?.takeIf { !it.isStatic }
+                        (declaration as? FirJavaField)?.takeIf { !it.isStatic }?.symbol
                     }
                 } else {
                     // Looked up among the raw declarations, not via `primaryConstructorIfAny`: the latter builds the
@@ -292,25 +290,25 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     val primaryConstructor = entityClass.declarations.firstNotNullOfOrNull { declaration ->
                         (declaration as? FirConstructor)?.takeIf { it.isPrimary }
                     }
-                    val valueParameters = primaryConstructor?.valueParameters.orEmpty()
-                    val parameterNames = valueParameters.mapTo(mutableSetOf()) { it.name }
+                    val valueParameterSymbols = primaryConstructor?.symbol?.valueParameterSymbols.orEmpty()
+                    val parameterNames = valueParameterSymbols.mapTo(mutableSetOf()) { it.name }
 
-                    valueParameters + entityClass.declarations.mapNotNull { declaration ->
+                    valueParameterSymbols + entityClass.declarations.mapNotNull { declaration ->
                         (declaration as? FirProperty)?.takeIf {
                             it.symbol.whyNotIncludedInBuilder(parameterNames, resolveInProcess = true) == null
-                        }
+                        }?.symbol
                     }
                 }
             }
-            is FirConstructor -> declaration.valueParameters
-            is FirNamedFunction -> declaration.valueParameters
+            is FirConstructorSymbol -> declaration.valueParameterSymbols
+            is FirNamedFunctionSymbol -> declaration.valueParameterSymbols
             else -> emptyList()
         }
     }
 
     protected fun calculateBuilderItems(
         entityClass: FirRegularClass,
-        declaration: FirDeclaration,
+        declaration: FirBasedSymbol<*>,
         promotedProperties: Map<Name, FirPropertySymbol>,
     ): List<BuilderItem> {
         return calculateBuilderVariables(entityClass, declaration).mapNotNull { variable ->
@@ -321,9 +319,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             // the way `FirLombokBuilderChecker` skips it when reporting.
             if (variable.name.isSpecial) return@mapNotNull null
 
-            val variableSymbol = variable.symbol
-            val property = (variableSymbol as? FirPropertySymbol) ?: promotedProperties[variable.name]
-            val singularAnnotation = variableSymbol.getCompilerRequiredAnnotationByClassId(LombokNames.SINGULAR_ID)
+            val property = (variable as? FirPropertySymbol) ?: promotedProperties[variable.name]
+            val singularAnnotation = variable.getCompilerRequiredAnnotationByClassId(LombokNames.SINGULAR_ID)
                 ?: property?.findAnnotationOnPropertyOrField(LombokNames.SINGULAR_ID)
             BuilderItem(
                 variable,
@@ -404,7 +401,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      */
     override fun needsCompanionObject(owner: FirClassSymbol<*>): Boolean =
         builderDescriptionsCache.getValue(owner)?.any {
-            it.ownerDeclaration.isStaticDeclaration && it.builder.builderMethodName != null
+            it.ownerDeclarationSymbol.isStaticOrCompanionMemberDeclaration && it.builder.builderMethodName != null
         } == true
 
     /**
@@ -465,10 +462,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderFir = builderSymbol.fir as? FirRegularClass
         val isExplicitBuilder = builderSymbol.generatedBuilderClassKey == null
 
-        for ((builder, ownerDeclaration, items) in builderSymbol.getDescriptionsOfBuilderClass()) {
-            val typeParametersMapping =
-                ownerDeclaration.extractTypeParametersMapping(newContainingDeclarationSymbol = builderSymbol, typeResolver, existingDeclaration = true)
-            val substitutor = substitutorByMap(typeParametersMapping.entries.associate { it.key.symbol to it.value.toConeType() }, session)
+        for ((builder, ownerDeclarationSymbol, items) in builderSymbol.getDescriptionsOfBuilderClass()) {
+            val typeParametersMapping = ownerDeclarationSymbol.extractTypeParametersMapping(
+                newContainingDeclarationSymbol = builderSymbol, typeResolver, existingDeclaration = true
+            )
+            val substitutor = substitutorByMap(typeParametersMapping.entries.associate { it.key to it.value.toConeType() }, session)
 
             if (isExplicitBuilder && builderFir is FirJavaClass) {
                 // For already existing explicit builders, initialize and populate type parameters to link generated functions with them.
@@ -477,10 +475,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 builderFir.classJavaTypeParameterStack.populateTypeParametersMapping(typeParametersMapping)
             }
 
-            generatedFunctions.addSpecialBuilderMethods(builder, builderSymbol, ownerDeclaration, substitutor, existingFunctionNames)
+            generatedFunctions.addSpecialBuilderMethods(builder, builderSymbol, ownerDeclarationSymbol, substitutor, existingFunctionNames)
             for (item in items) {
                 val itemName = item.name
-                val itemSymbol = item.variable.symbol
+                val itemSymbol = item.variable
                 val singular = item.singular
                 val newSource = item.variable.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
 
@@ -498,7 +496,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                                 Visibilities.Private, Modality.OPEN, Visibilities.Private.toEffectiveVisibility(builderSymbol)
                             )
                             isLocal = false
-                            returnTypeRef = item.variable.returnTypeRef
+                            returnTypeRef = item.variable.fir.returnTypeRef
                             name = it
                             isVar = false
                             symbol = FirFieldSymbol(CallableId(builderSymbol.classId, it))
@@ -567,10 +565,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         containingClassSymbol: FirClassSymbol<*>,
         typeResolver: PluginTypeResolver?,
     ) {
-        for ((builder, ownerDeclaration) in builderDescriptions) {
+        for ((builder, ownerDeclarationSymbol) in builderDescriptions) {
             val visibility = builder.accessLevel.toVisibility(containingClassSymbol) ?: continue
             val entityClassId = entitySymbol.classId
-            val builderClassName = identifier(builder.getBuilderClassShortName(ownerDeclaration) ?: continue)
+            val builderClassName = identifier(builder.getBuilderClassShortName(ownerDeclarationSymbol) ?: continue)
             val builderClassId = entityClassId.createNestedClassId(builderClassName)
 
             val existingBuilder = entitySymbol.existingBuilder(builderClassName)
@@ -578,7 +576,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             fun createBuilderType(typeParameterSymbols: Collection<FirTypeParameter>): ConeClassLikeType {
                 // A builder generated for a non-static method is an inner class, so its type arguments are its
                 // own followed by the entity class's (see `createEmptyBuilderClass`) — `Entity<E>.Builder<P>`.
-                val outerTypeArguments = runIf(!ownerDeclaration.isStaticDeclaration) {
+                val outerTypeArguments = runIf(!ownerDeclarationSymbol.isStaticOrCompanionMemberDeclaration) {
                     @OptIn(SymbolInternals::class)
                     entitySymbol.typeParameterSymbols.map { it.fir.toConeType() }
                 }.orEmpty()
@@ -596,15 +594,19 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 }
             }
 
-            val isStaticBuilderFunction = ownerDeclaration.isStaticDeclaration
-            val builderFactoryName = builder.getBuilderFactoryName(ownerDeclaration, containingClassSymbol)
+            val isStaticBuilderFunction = ownerDeclarationSymbol.isStaticOrCompanionMemberDeclaration
+            val builderFactoryName = builder.getBuilderFactoryName(ownerDeclarationSymbol, containingClassSymbol)
             if (builderFactoryName != null) {
                 addIfNonClashing(builderFactoryName, existingFunctionNames) { name ->
                     val key = BuilderGeneratorKey(BuilderDeclarationType.Function.Builder)
                     if (containingClassSymbol.hasJavaOrigin) {
                         val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name))
                         val methodTypeParameters =
-                            ownerDeclaration.extractTypeParametersMapping(methodSymbol, typeResolver, existingDeclaration = false).values
+                            ownerDeclarationSymbol.extractTypeParametersMapping(
+                                methodSymbol,
+                                typeResolver,
+                                existingDeclaration = false
+                            ).values
 
                         entitySymbol.createJavaMethod(
                             name,
@@ -613,16 +615,16 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             visibility = visibility,
                             modality = Modality.OPEN,
                             key = key,
-                            dispatchReceiverType = if (isStaticBuilderFunction) null else ownerDeclaration.dispatchReceiverType,
+                            dispatchReceiverType = if (isStaticBuilderFunction) null else ownerDeclarationSymbol.dispatchReceiverType,
                             isStatic = isStaticBuilderFunction,
                             methodSymbol = methodSymbol,
                             methodTypeParameters = methodTypeParameters,
                         ).symbol
                     } else {
-                        val builderTypeParameters = when (ownerDeclaration) {
-                            is FirClass -> ownerDeclaration.typeParameters
-                            is FirConstructor -> ownerDeclaration.typeParameters
-                            is FirNamedFunction -> ownerDeclaration.typeParameters
+                        val builderTypeParameters = when (ownerDeclarationSymbol) {
+                            is FirClassSymbol -> ownerDeclarationSymbol.typeParameterSymbols
+                            is FirConstructorSymbol -> ownerDeclarationSymbol.typeParameterSymbols
+                            is FirNamedFunctionSymbol -> ownerDeclarationSymbol.typeParameterSymbols
                             else -> emptyList() // Use the fallback just in case, although it's normally unreachable
                         }
 
@@ -636,9 +638,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             config = {
                                 this.visibility = visibility
                                 builderTypeParameters.forEach { typeParameter ->
-                                    val typeParameterSymbol = typeParameter.symbol
-                                    typeParameter(typeParameterSymbol.name, typeParameterSymbol.variance) {
-                                        typeParameterSymbol.resolvedBounds.forEach { bound(it.coneType) }
+                                    typeParameter(typeParameter.name, typeParameter.variance) {
+                                        typeParameter.resolvedBounds.forEach { bound(it.coneType) }
                                     }
                                 }
                             }
@@ -702,16 +703,16 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     /**
      * The name of the `builder()` factory generated into [containingClassSymbol] for this builder annotation on
-     * [ownerDeclaration], or `null` if it gets none.
+     * [ownerDeclarationSymbol], or `null` if it gets none.
      */
-    private fun T.getBuilderFactoryName(ownerDeclaration: FirDeclaration, containingClassSymbol: FirClassSymbol<*>): Name? {
+    private fun T.getBuilderFactoryName(ownerDeclarationSymbol: FirBasedSymbol<*>, containingClassSymbol: FirClassSymbol<*>): Name? {
         // Where the `builder()` factory belongs: for a static builder it has to be callable without an
         // instance, which in Kotlin means the entity's companion object and in Java a static method on the
         // entity; for a `@Builder` method it is an instance method on the entity, since the builder it
         // returns captures that very instance.
         val shouldAddBuilderFactory = when {
             containingClassSymbol.hasJavaOrigin -> true
-            ownerDeclaration.isStaticDeclaration -> containingClassSymbol.isCompanion
+            ownerDeclarationSymbol.isStaticOrCompanionMemberDeclaration -> containingClassSymbol.isCompanion
             else -> !containingClassSymbol.isCompanion
         }
 
@@ -727,9 +728,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderDescriptions = builderDescriptionsCache.getValue(classSymbol)
 
         if (builderDescriptions != null) {
-            for ((builder, ownerDeclaration) in builderDescriptions) {
+            for ((builder, ownerDeclarationSymbol) in builderDescriptions) {
                 if (builder.accessLevel.toVisibility(classSymbol) == null) continue
-                add(identifier(builder.getBuilderClassShortName(ownerDeclaration) ?: continue))
+                add(identifier(builder.getBuilderClassShortName(ownerDeclarationSymbol) ?: continue))
             }
         }
     }
@@ -763,16 +764,16 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         if (name in owner.existingNestedClassifierNames()) return null
         val builderDescriptions = builderDescriptionsCache.getValue(owner) ?: return null
 
-        for ((builder, ownerDeclaration) in builderDescriptions) {
+        for ((builder, ownerDeclarationSymbol) in builderDescriptions) {
             val visibility = builder.accessLevel.toVisibility(owner) ?: continue
-            val builderName = identifier(builder.getBuilderClassShortName(ownerDeclaration) ?: continue)
+            val builderName = identifier(builder.getBuilderClassShortName(ownerDeclarationSymbol) ?: continue)
 
             if (builderName == name) {
                 return owner.createEmptyBuilderClass(
                     session,
                     builderName,
                     visibility,
-                    ownerDeclaration,
+                    ownerDeclarationSymbol,
                     builder,
                     context,
                 ).symbol
@@ -834,8 +835,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     add(
                         BuilderDescription(
                             builder,
-                            classSymbol.fir,
-                            calculateBuilderItems(entityClass, classSymbol.fir, classSymbol.promotedPropertiesByName())
+                            classSymbol,
+                            calculateBuilderItems(entityClass, classSymbol, classSymbol.promotedPropertiesByName())
                         )
                     )
                 }
@@ -864,27 +865,28 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         // nests the builder under the entity — so this covers companion-declared `@Builder` functions too.
         val entitySymbol = getContainingClassSymbol() as? FirClassSymbol<*> ?: return emptyList()
         val builderClassName = name.asString()
-        return builderDescriptionsCache.getValue(entitySymbol).orEmpty().filter { (builder, ownerDeclaration) ->
-            builder.getBuilderClassShortName(ownerDeclaration) == builderClassName
+        return builderDescriptionsCache.getValue(entitySymbol).orEmpty().filter { (builder, ownerDeclarationSymbol) ->
+            builder.getBuilderClassShortName(ownerDeclarationSymbol) == builderClassName
         }
     }
 
     /**
-     * A builder annotation together with its [ownerDeclaration] and the [items] the builder is built from.
+     * A builder annotation together with its [ownerDeclarationSymbol] and the [items] the builder is built from.
      *
      * There is one description per annotated declaration, so several of them may populate the same builder class,
      * e.g. for `@Builder` on several constructors of a class.
      */
     protected data class BuilderDescription<T : AbstractBuilder>(
         val builder: T,
-        val ownerDeclaration: FirDeclaration,
+        // Either FirFunctionSymbol or FirClassSymbol
+        val ownerDeclarationSymbol: FirBasedSymbol<*>,
         val items: List<BuilderItem>,
     )
 
     /**
      * Just a description of an item (parameter/property/field) that a builder can set
      */
-    protected class BuilderItem(val variable: FirVariable, val singular: Singular?, val hasBuilderDefault: Boolean) {
+    protected class BuilderItem(val variable: FirVariableSymbol<*>, val singular: Singular?, val hasBuilderDefault: Boolean) {
         val name: Name get() = variable.name
 
         fun hasDefaultField(builderSymbol: FirClassSymbol<*>): Boolean =
@@ -984,7 +986,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
     ) {
-        @OptIn(SymbolInternals::class) val typeRef = if (builderSymbol.hasJavaOrigin) item.fir.returnTypeRef else item.resolvedReturnTypeRef
+        val typeRef = item.resolvedOrJavaTypeRef()
 
         val typeId = when (typeRef) {
             is FirJavaTypeRef -> ((typeRef.type as? JavaClassifierType)?.classifier as? JavaClass)?.fqName?.let(ClassId::topLevel)
@@ -1119,6 +1121,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
     }
 
+    @OptIn(SymbolInternals::class)
+    protected fun FirCallableSymbol<*>.resolvedOrJavaTypeRef(): FirTypeRef =
+        if (hasJavaOrigin) fir.returnTypeRef else resolvedReturnTypeRef
+
     /**
      * Lombok doesn't add a generated function/field if a class already has a declaration with the same name.
      * The number and types of parameters don't matter, see https://projectlombok.org/features/Builder#overview
@@ -1138,7 +1144,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         session: FirSession,
         name: Name,
         visibility: Visibility,
-        ownerDeclaration: FirDeclaration,
+        ownerDeclarationSymbol: FirBasedSymbol<*>,
         builder: T,
         context: NestedClassGenerationContext,
     ): FirRegularClass {
@@ -1147,7 +1153,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderSymbol = FirRegularClassSymbol(classId)
         val effectiveVisibility: EffectiveVisibility
 
-        val typeParametersMapping = ownerDeclaration.extractTypeParametersMapping(builderSymbol, context.typeResolver, existingDeclaration = false,)
+        val typeParametersMapping = ownerDeclarationSymbol.extractTypeParametersMapping(
+            builderSymbol, context.typeResolver, existingDeclaration = false
+        )
         val key = BuilderGeneratorKey(BuilderDeclarationType.Class.Builder)
 
         val builderBuilder = if (hasJavaOrigin) {
@@ -1196,7 +1204,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 // invoke the method on the very instance `builder()` was called on, and the method's
                 // parameters may refer to the entity class's own type parameters. Both come for free from
                 // the outer instance. Every other builder is a plain nested class.
-                this.isInner = !ownerDeclaration.isStaticDeclaration
+                this.isInner = !ownerDeclarationSymbol.isStaticOrCompanionMemberDeclaration
                 isCompanion = false
                 isData = false
                 isInline = false
@@ -1216,11 +1224,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }.build()
     }
 
+    @OptIn(SymbolInternals::class)
     private fun MutableJavaTypeParameterStack.populateTypeParametersMapping(
-        extractedTypeParameters: Map<FirTypeParameter, FirTypeParameter>
+        extractedTypeParameters: Map<FirTypeParameterSymbol, FirTypeParameter>
     ) {
         for ([oldTypeParameter, newTypeParameter] in extractedTypeParameters) {
-            addParameter((oldTypeParameter as FirJavaTypeParameter).javaTypeParameter, newTypeParameter.symbol)
+            addParameter((oldTypeParameter.fir as FirJavaTypeParameter).javaTypeParameter, newTypeParameter.symbol)
         }
     }
 
@@ -1311,22 +1320,22 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * @return a map used for remapping type parameters on a Java stack/substitutors
      */
     @OptIn(SymbolInternals::class)
-    private fun FirDeclaration.extractTypeParametersMapping(
+    private fun FirBasedSymbol<*>.extractTypeParametersMapping(
         newContainingDeclarationSymbol: FirBasedSymbol<*>,
         typeResolver: PluginTypeResolver?,
         existingDeclaration: Boolean,
-    ): Map<FirTypeParameter, FirTypeParameter> {
-        val typeParameters: List<FirTypeParameter> = when (this) {
-            is FirClass -> typeParameters.map { it.symbol.fir }
-            is FirConstructor -> typeParameters.map { it.symbol.fir }
-            is FirNamedFunction -> typeParameters
+    ): Map<FirTypeParameterSymbol, FirTypeParameter> {
+        val typeParameters: List<FirTypeParameterSymbol> = when (this) {
+            is FirClassSymbol -> typeParameterSymbols
+            is FirConstructorSymbol -> typeParameterSymbols
+            is FirNamedFunctionSymbol -> typeParameterSymbols
             else -> emptyList() // Use the fallback just in case, although it's normally unreachable
         }
         return buildMap {
             typeParameters.forEachIndexed { index, typeParameter ->
                 this[typeParameter] = runIf(existingDeclaration) {
                     newContainingDeclarationSymbol.typeParameterSymbols?.getOrNull(index)?.fir
-                } ?: buildTypeParameterCopy(typeParameter.symbol.fir) {
+                } ?: buildTypeParameterCopy(typeParameter.fir) {
                     symbol = FirTypeParameterSymbol()
                     containingDeclarationSymbol = newContainingDeclarationSymbol
                 }
@@ -1340,20 +1349,21 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     }
 
     /**
-     * The short name of the builder class to generate for [ownerDeclaration], or `null` if it cannot be
+     * The short name of the builder class to generate for [ownerDeclarationSymbol], or `null` if it cannot be
      * inferred at all — in which case no builder is generated.
      */
-    private fun T.getBuilderClassShortName(ownerDeclaration: FirDeclaration): String? {
+    @OptIn(SymbolInternals::class)
+    private fun T.getBuilderClassShortName(ownerDeclarationSymbol: FirBasedSymbol<*>): String? {
         val refinedBuilderClassName = builderClassName ?: session.lombokService.config.builderClassName
 
         if (hasSpecifiedBuilderClassName) {
             return refinedBuilderClassName
         }
 
-        val builderClassNamePart: String = when (ownerDeclaration) {
-            is FirRegularClass -> ownerDeclaration.name.asString()
-            is FirConstructor -> ownerDeclaration.nameOrSpecialName.asString()
-            is FirNamedFunction -> {
+        val builderClassNamePart: String = when (ownerDeclarationSymbol) {
+            is FirRegularClassSymbol -> ownerDeclarationSymbol.name.asString()
+            is FirConstructorSymbol -> ownerDeclarationSymbol.name.asString()
+            is FirNamedFunctionSymbol -> {
                 // If the builder class name is not specified explicitly, infer the name from the method's return type
                 // according to Lombok rules.
                 //
@@ -1363,7 +1373,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 // from `generateFunctions`, where it has been replaced by a `FirResolvedTypeRef`. Both runs must yield
                 // the same name — otherwise `builder()` would reference a builder class that was never generated under
                 // that name.
-                when (val returnTypeRef = ownerDeclaration.returnTypeRef) {
+                when (val returnTypeRef = ownerDeclarationSymbol.fir.returnTypeRef) {
                     is FirJavaTypeRef -> when (val returnType = returnTypeRef.type) {
                         is JavaPrimitiveType -> returnType.type?.typeName?.identifier ?: "Void"
                         is JavaClassifierType -> returnType.classifier?.name?.asString() ?: returnType.presentableText
@@ -1433,14 +1443,14 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     }
 
     @OptIn(ExperimentalContracts::class)
-    protected val FirDeclaration.isStaticDeclaration: Boolean
+    protected val FirBasedSymbol<*>.isStaticOrCompanionMemberDeclaration: Boolean
         get() {
             contract {
-                returns(false) implies (this@isStaticDeclaration is FirNamedFunction)
+                returns(false) implies (this@isStaticOrCompanionMemberDeclaration is FirNamedFunctionSymbol)
             }
             // A function declared directly inside a companion object is the Kotlin analogue of a Java
             // static factory method, so it's treated as "static" too (e.g. for `@JvmStatic`-marking the
             // generated `builder()`), even though Kotlin never sets `FirNamedFunction.isStatic` itself.
-            return this !is FirNamedFunction || isStatic || symbol.getContainingClassSymbol()?.isCompanion == true
+            return this !is FirNamedFunctionSymbol || isStatic || getContainingClassSymbol()?.isCompanion == true
         }
 }
