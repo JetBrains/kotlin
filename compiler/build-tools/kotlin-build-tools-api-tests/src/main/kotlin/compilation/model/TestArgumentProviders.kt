@@ -239,35 +239,11 @@ class BtaVersionsCompilationTestArgumentProvider : ArgumentsProvider {
 
     companion object {
         fun namedToolchainProviders(): List<Named<() -> KotlinToolchains>> {
-            return buildList {
-                val kotlinToolchainsProvider = { KotlinToolchains.loadImplementation(btaClassloader) }
-                val temporaryKotlinToolchains = kotlinToolchainsProvider()
-                val version = temporaryKotlinToolchains.getCompilerVersion()
-
-                @Suppress("DEPRECATION_ERROR") val kotlinToolchainV1Adapter =
-                    if (KotlinToolingVersion(version) < KotlinToolingVersion(2, 4, 0, null)) {
-                        {
-                            val asKotlinToolchainsMethod =
-                                btaClassloader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1AdapterKt")
-                                    .getDeclaredMethod("asKotlinToolchains", CompilationService::class.java)
-                            asKotlinToolchainsMethod.invoke(
-                                null, CompilationService.loadImplementation(
-                                    btaClassloader
-                                )
-                            ) as KotlinToolchains
-                        }
-                    } else null
-                if (kotlinToolchainV1Adapter != null) {
-                    add(
-                        named("[v1][$version]", kotlinToolchainV1Adapter)
-                    )
-                }
-                if (kotlinToolchainV1Adapter == null || kotlinToolchainV1Adapter().unwrap()::class != temporaryKotlinToolchains.unwrap()::class) {
-                    add(
-                        named("[v2][$version]", kotlinToolchainsProvider)
-                    )
-                }
-            }
+            val kotlinToolchainsProvider = { KotlinToolchains.loadImplementation(btaClassloader) }
+            val kotlinToolchains = kotlinToolchainsProvider()
+            // Compilers before 2.3.0 have no KotlinToolchains implementation, so loadImplementation falls back to the compat adapter
+            val variant = if (kotlinToolchains.unwrap()::class.simpleName == "KotlinToolchainsV1Adapter") "v1" else "v2"
+            return listOf(named("[$variant][${kotlinToolchains.getCompilerVersion()}]", kotlinToolchainsProvider))
         }
     }
 }

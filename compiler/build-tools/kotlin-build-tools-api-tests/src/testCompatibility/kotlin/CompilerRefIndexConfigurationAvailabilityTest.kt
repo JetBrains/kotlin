@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolch
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -27,13 +26,7 @@ class CompilerRefIndexConfigurationAvailabilityTest : BaseCompilationTest() {
 
     @DisplayName("The configuration builder is available from Kotlin compiler version 2.5.20 and fails with a clear message before it")
     @BtaVersionsOnlyCompilationTest
-    fun testCompilerRefIndexConfigurationAvailability(testToolchains: KotlinToolchains) {
-        // The [v1] toolchain is the bare compat adapter; consumers load it through loadImplementation, which adds the wrappers
-        val kotlinToolchains = if (testToolchains::class.simpleName == "KotlinToolchainsV1Adapter") {
-            KotlinToolchains.loadImplementation(btaClassloader)
-        } else {
-            testToolchains
-        }
+    fun testCompilerRefIndexConfigurationAvailability(kotlinToolchains: KotlinToolchains) {
         val compilerVersion = KotlinToolingVersion(kotlinToolchains.getCompilerVersion())
         for (builder in kotlinToolchains.compilationOperationBuilders(compilerVersion)) {
             if (compilerVersion < KotlinToolingVersion(2, 5, 20, "snapshot")) {
