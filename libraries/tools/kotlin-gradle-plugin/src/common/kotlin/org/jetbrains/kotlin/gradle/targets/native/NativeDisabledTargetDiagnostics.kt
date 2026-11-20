@@ -9,6 +9,8 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal fun Project.reportDisabledNativeTargetTaskWarningIfNeeded(
     isEnabledOnCurrentHost: Boolean,
@@ -24,7 +26,16 @@ internal fun Project.reportDisabledNativeTargetTaskWarningIfNeeded(
             taskName = taskName,
             targetName = targetName,
             currentHost = currentHost,
-            reason = reason,
+            reason = if (
+                targetName == KonanTarget.LINUX_ARM64.name &&
+                HostManager.hostOrNull == KonanTarget.LINUX_ARM64 && !HostManager.hostIsSupported
+            ) {
+                "experimental Linux ARM64 host support is disabled. " +
+                        "Set the JVM system property 'kotlin.native.experimental.linuxArm64Host=true' " +
+                        "and provide a local ARM compiler through 'kotlin.native.home'."
+            } else {
+                reason
+            },
         )
     )
 }

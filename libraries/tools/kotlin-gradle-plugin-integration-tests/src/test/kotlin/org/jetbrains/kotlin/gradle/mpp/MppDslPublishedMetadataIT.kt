@@ -59,13 +59,17 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
         ) {
-            val publishedVariants = (MPPNativeTargets.supported + MPPNativeTargets.unsupported).map { it.lowercase() }
+            val publishedVariants = MPPNativeTargets.publishable.map { it.lowercase() }
+            val nonPublishedVariants = (MPPNativeTargets.unsupported - MPPNativeTargets.crossCompilable).map { it.lowercase() }
 
             build("publish") {
 
                 assertTrue(publishedVariants.isNotEmpty(), "publishedVariants must not be empty")
                 publishedVariants.forEach {
                     assertFileExists(localRepoDir.resolve("com/example/sample-lib-$it/1.0/sample-lib-$it-1.0.klib"))
+                }
+                nonPublishedVariants.forEach {
+                    assertFileNotExists(localRepoDir.resolve("com/example/sample-lib-$it"))
                 }
 
                 // check that the module metadata contains all variants:

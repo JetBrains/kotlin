@@ -49,7 +49,7 @@ internal abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>
     protected abstract fun instantiateTarget(name: String): T
 
     override fun createTargetInternal(name: String): T {
-        if (!project.nativeProperties.isToolchainEnabled.get()) {
+        if (HostManager.hostIsSupported && !project.nativeProperties.isToolchainEnabled.get()) {
             @Suppress("DEPRECATION")
             project.setupNativeCompiler(konanTarget)
         }
@@ -111,7 +111,7 @@ internal open class KotlinNativeTargetWithSimulatorTestsPreset(name: String, pro
 }
 
 internal val KonanTarget.isCurrentHost: Boolean
-    get() = this == HostManager.hostOrNull
+    get() = HostManager.hostIsSupported && this == HostManager.hostOrNull
 
 /**
  * Returns whether klib compilation is allowed for [this]-target on the current host.
@@ -127,8 +127,8 @@ internal val KonanTarget.isCurrentHost: Boolean
 internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     provider: PropertiesProvider,
 ) = if (HostManager.hostIsSupported) {
-    if (provider.enableKlibsCrossCompilation) {
-        // If cross-compilation is enabled, allow compilation for all targets
+    if (provider.enableKlibsCrossCompilation && HostManager.hostOrNull in HostManager().hostsWithFullTargetSet) {
+        // Full hosts may compile cinterop-free klibs for other targets.
         true
     } else {
         // If cross-compilation is disabled use standard HostManager enablement check
@@ -158,11 +158,15 @@ internal val KotlinNativeTarget.publishableWithFallback: Boolean
 internal val KonanTarget.enabledOnCurrentHostForBinariesCompilation
     get() = if (HostManager.hostIsSupported) HostManager().isEnabled(this) else false
 
-internal val HostManager.supportedHosts: List<String> get() = enabledByHost.keys.map { it.formattedHostName }
+internal val HostManager.supportedHosts: List<String>
+    get() = enabledByHost.keys
+        .filter { it != KonanTarget.LINUX_ARM64 || (HostManager.hostOrNull == it && HostManager.hostIsSupported) }
+        .map { it.formattedHostName }
 
 private val KonanTarget.formattedHostName: String
     get() = when (this) {
         KonanTarget.LINUX_X64 -> "Linux (x86_64)"
+        KonanTarget.LINUX_ARM64 -> "Linux (arm64)"
         KonanTarget.MINGW_X64 -> "Windows (x86_64)"
         KonanTarget.MACOS_ARM64 -> "macOS (arm64)"
         // Fallback for any future hosts, though the 'when' should be exhaustive

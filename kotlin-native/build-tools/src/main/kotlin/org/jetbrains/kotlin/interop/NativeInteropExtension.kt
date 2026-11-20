@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.interop
 
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 abstract class NativeInteropExtension {
     abstract val defFileName: Property<String>
+    abstract val prebuiltSourcesDirectory: DirectoryProperty
     abstract val usePrebuiltSources: Property<Boolean>
     abstract val useBootstrapNativeDistribution: Property<Boolean>
     abstract val commonCompilerArgs: ListProperty<String>
