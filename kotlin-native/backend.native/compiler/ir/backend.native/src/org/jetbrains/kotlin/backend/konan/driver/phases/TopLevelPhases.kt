@@ -480,8 +480,8 @@ private fun <C : NativeBackendPhaseContext> PhaseEngine<C>.emitObjectFileWith(
         else -> false
     }
     // Parallel path: see ParallelObjectEmission.cpp.
-    // ELF: splitCodeGen-style full externalize + .kn./used/anchors; Mach-O: Keep.
-    // Path 2: only parallel when the target-specific safety check passes; else N=1.
+    // ELF: .kn.<id> rename + SplitModule(PreserveLocals=false); Mach-O: Keep.
+    // Only parallel when the target-specific safety check passes; else N=1.
     var count = if (archiveLike && !canRelocateLink) 1 else requested
     if (count > 1 && context.config.inProcessObjEmission) {
         val unsafe = LLVMKotlinCheckParallelObjectEmission(llvmModule)

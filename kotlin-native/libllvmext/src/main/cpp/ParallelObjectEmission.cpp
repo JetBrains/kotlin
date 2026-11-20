@@ -12,7 +12,6 @@
 #include "llvm/ADT/SmallString.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringMap.h"
-#include "llvm/ADT/StringSet.h"
 #include "llvm/Bitcode/BitcodeReader.h"
 #include "llvm/Bitcode/BitcodeWriter.h"
 #include "llvm/IR/Constants.h"
@@ -503,20 +502,21 @@ static Error checkMachOParallelEmissionSafety(Module &M) {
 }
 
 // Refuse parallel emission when the target-specific contract cannot hold.
-// ELF: unique module id + no module inline asm (splitCodeGen-style).
-// Mach-O: closed Keep/Together contract above; otherwise Kotlin falls back
-// to serial (N=1).
+// Both targets need a unique module id for .kn.<id> rename of promoted locals
+// (avoids clashing with system libs after externalize). Module inline asm is
+// refused: .kn. rename does not rewrite asm strings; serial N=1 keeps names.
+// Mach-O also requires a closed Keep/Together cluster; else Kotlin → N=1.
 Error checkParallelEmissionSafety(Module &M) {
-  if (!M.getModuleInlineAsm().empty())
-    return createStringError(
-        inconvertibleErrorCode(),
-        "module-level inline assembly is incompatible with parallel object "
-        "emission");
   if (getUniqueModuleId(&M).empty())
     return createStringError(
         inconvertibleErrorCode(),
         "parallel object emission requires a strong external definition for "
         "unique symbol names");
+
+  if (!M.getModuleInlineAsm().empty())
+    return createStringError(
+        inconvertibleErrorCode(),
+        "parallel object emission does not support module inline asm");
 
   if (M.getTargetTriple().isOSBinFormatELF())
     return Error::success();
@@ -563,14 +563,6 @@ struct PartitionTiming {
   int64_t startUs = 0;
   int64_t endUs = 0;
   int64_t wallUs = 0;
-};
-
-// Per-partition facts checked for the ELF splitCodeGen-style contract.
-struct PartitionManifest {
-  StringSet<> Defined;
-  StringSet<> UsedDefsPresent;
-  StringSet<> UsedDeclsPresent;
-  bool HasLocalDefinition = false;
 };
 
 using SteadyClock = std::chrono::steady_clock;
@@ -621,137 +613,75 @@ void externalizeLocal(GlobalValue &G, StringRef ID,
   G.setDSOLocal(true);
 }
 
-// ELF contract after split: no leftover locals, unique defs, used rebuilt on
-// owning partitions, renamed locals carry .kn.<moduleId>.
-Error checkElfPartitionManifests(ArrayRef<PartitionManifest> Manifests,
-                                 StringRef ModuleId,
-                                 const std::vector<UsedEntry> &UsedNames,
-                                 const std::vector<UsedEntry> &CompilerUsedNames) {
-  StringMap<unsigned> DefOwners;
-  for (unsigned I = 0; I < Manifests.size(); ++I) {
-    const PartitionManifest &Man = Manifests[I];
-    if (Man.HasLocalDefinition)
-      return createStringError(
-          inconvertibleErrorCode(),
-          ("ELF partition " + Twine(I) +
-           " still contains a local linkage definition after externalize")
-              .str());
-    for (const auto &Entry : Man.Defined) {
-      StringRef Name = Entry.getKey();
-      auto It = DefOwners.find(Name);
-      if (It != DefOwners.end())
-        return createStringError(
-            inconvertibleErrorCode(),
-            ("ELF partition duplicate definition of '" + Name + "' in parts " +
-             Twine(It->second) + " and " + Twine(I))
-                .str());
-      DefOwners[Name] = I;
-    }
-  }
-
-  auto CheckUsed = [&](const std::vector<UsedEntry> &Entries,
-                       StringRef Kind) -> Error {
-    for (const UsedEntry &Entry : Entries) {
-      if (Entry.Declaration) {
-        // Declaration-only retain must appear in at least one partition's
-        // rebuilt list (every carrier part rebuilds it; see RebuildUsed).
-        bool Any = false;
-        for (const PartitionManifest &Man : Manifests)
-          if (Man.UsedDeclsPresent.contains(Entry.Name)) {
-            Any = true;
-            break;
+// Emit one partition: bitcode → fresh LLVMContext → TargetMachine → .o
+void enqueuePartitionEmit(DefaultThreadPool &Pool, TargetMachine &Machine,
+                          unsigned I, std::unique_ptr<Module> Part,
+                          const char *OutputPath,
+                          std::vector<std::string> &Errors,
+                          std::vector<PartitionTiming> &Timings,
+                          SteadyClock::time_point Origin) {
+  SmallString<0> Buffer;
+  raw_svector_ostream Stream(Buffer);
+  WriteBitcodeToFile(*Part, Stream);
+  Pool.async(
+      [&, I, OutputPath](const SmallString<0> &Bytes) {
+        const auto Started = SteadyClock::now();
+        auto Finish = [&] {
+          const auto Ended = SteadyClock::now();
+          Timings[I].startUs = elapsedUs(Started - Origin);
+          Timings[I].endUs = elapsedUs(Ended - Origin);
+          Timings[I].wallUs = elapsedUs(Ended - Started);
+        };
+        LLVMContext Context;
+        auto Parsed =
+            parseBitcodeFile(MemoryBufferRef(Bytes, "codegen-part"), Context);
+        if (!Parsed) {
+          Errors[I] = toString(Parsed.takeError());
+          Finish();
+          return;
+        }
+        std::unique_ptr<TargetMachine> TM(Machine.getTarget().createTargetMachine(
+            Machine.getTargetTriple(), Machine.getTargetCPU(),
+            Machine.getTargetFeatureString(), Machine.Options,
+            Machine.getRelocationModel(), Machine.getCodeModel(),
+            Machine.getOptLevel()));
+        if (!TM) {
+          Errors[I] = "Failed to create partition target machine";
+          Finish();
+          return;
+        }
+        char *Error = nullptr;
+        if (LLVMTargetMachineEmitToFile(
+                reinterpret_cast<LLVMTargetMachineRef>(TM.get()),
+                wrap(Parsed->get()), const_cast<char *>(OutputPath),
+                LLVMObjectFile, &Error)) {
+          Errors[I] = Error ? Error : "Failed to emit codegen partition";
+          LLVMDisposeMessage(Error);
+        } else if (const char *KeepDir =
+                       std::getenv("KN_OBJECT_PARTITION_KEEP")) {
+          if (*KeepDir) {
+            SmallString<256> Dest(KeepDir);
+            sys::fs::create_directories(Dest);
+            sys::path::append(Dest, "part-" + std::to_string(I) + ".o");
+            sys::fs::copy_file(OutputPath, Dest);
           }
-        if (!Any)
-          return createStringError(
-              inconvertibleErrorCode(),
-              (Kind + " declaration-only entry '" + Entry.Name +
-               "' was not rebuilt into any partition's retain list")
-                  .str());
-        continue;
-      }
-      auto Owner = DefOwners.find(Entry.Name);
-      if (Owner == DefOwners.end())
-        continue; // definition may live outside this module
-      if (!Manifests[Owner->second].UsedDefsPresent.contains(Entry.Name))
-        return createStringError(
-            inconvertibleErrorCode(),
-            (Kind + " entry '" + Entry.Name +
-             "' is defined in a partition but missing from that partition's "
-             "rebuild")
-                .str());
-    }
-    return Error::success();
-  };
-  if (Error Err = CheckUsed(UsedNames, "llvm.used"))
-    return Err;
-  if (Error Err = CheckUsed(CompilerUsedNames, "llvm.compiler.used"))
-    return Err;
-
-  // Former locals are renamed with .kn.<moduleId> before SplitModule. Anchors
-  // are synthetic and exempt. Any other defined name may be a true external.
-  const std::string Suffix = (".kn." + ModuleId).str();
-  for (const PartitionManifest &Man : Manifests) {
-    for (const auto &Entry : Man.Defined) {
-      StringRef Name = Entry.getKey();
-      if (Name.starts_with("__kn_codegen_anchor_"))
-        continue;
-      if (Name.contains(".kn.") && !Name.ends_with(Suffix))
-        return createStringError(
-            inconvertibleErrorCode(),
-            ("ELF partition definition '" + Name +
-             "' has a .kn. marker but not this module's unique suffix")
-                .str());
-    }
-  }
-  return Error::success();
+        }
+        Finish();
+      },
+      std::move(Buffer));
 }
 
-void collectPartitionManifest(Module &Part, PartitionManifest &Out) {
-  for (GlobalValue &G : Part.global_values()) {
-    if (G.isDeclarationForLinker())
-      continue;
-    if (G.hasLocalLinkage())
-      Out.HasLocalDefinition = true;
-    if (G.hasName())
-      Out.Defined.insert(G.getName());
-  }
-
-  // Read the rebuilt retain lists from the partition IR itself.
-  SmallVector<GlobalValue *, 16> UsedHere, CompilerUsedHere;
-  collectUsedGlobalVariables(Part, UsedHere, /*CompilerUsed=*/false);
-  collectUsedGlobalVariables(Part, CompilerUsedHere, /*CompilerUsed=*/true);
-  auto RecordUsed = [&](ArrayRef<GlobalValue *> Entries) {
-    for (GlobalValue *G : Entries) {
-      if (!G->hasName())
-        continue;
-      if (G->isDeclarationForLinker())
-        Out.UsedDeclsPresent.insert(G->getName());
-      else
-        Out.UsedDefsPresent.insert(G->getName());
-    }
-  };
-  RecordUsed(UsedHere);
-  RecordUsed(CompilerUsedHere);
-}
-
-// ThinLTO-inspired split of an already-merged module (Path 2):
-//   ELF (splitCodeGen-isomorphic):
-//     0) unique module id + no module inline asm
-//     1) externalize every local with .kn.<id> (no Keep/Together/restore)
-//     2) optional ThinLTO-style function-bucket COMDATs only (no metadata mega
-//        COMDAT); language COMDATs stay atomic via SplitModule
-//     3) SplitModule (PreserveLocals=false, RoundRobin=false)
-//     4) rebuild llvm.used / llvm.compiler.used; emit anchors; assert manifest
+// ThinLTO-inspired split of an already-merged module:
+//   ELF (splitCodeGen-style + KN link fix):
+//     Promote locals with .kn.<id> + hidden (so bitcode-embedded copies of
+//     system symbols do not collide with libstdc++/libgcc at native link),
+//     then SplitModule(PreserveLocals=false). Leave llvm.used alone.
+//     Module inline asm is refused in checkParallelEmissionSafety (→ N=1).
 //   Mach-O:
-//     0) same-file cluster (Keep + relative hosts/locals + LocalStay users +
-//        all explicit sections); on failure Kotlin falls back to N=1
-//     1) keep LocalStay linkage local; externalize the rest with .kn.<id>
-//     2) weld MetaTogether (incl. all globals) into one COMDAT; remaining
-//        functions stay whole per source file (no within-file split); no-debug
-//        functions join MetaTogether
-//     3) SplitModule balances clusters across N parts
-//     4) restore LocalStay linkage in the owning partition
-//     5) bitcode → worker context → EmitToFile
+//     0) same-file cluster; on failure Kotlin falls back to N=1
+//     1) keep LocalStay local; externalize the rest with .kn.<id>
+//     2) weld MetaTogether; remaining functions whole per source file
+//     3) SplitModule; restore LocalStay; bitcode → EmitToFile
 LLVMErrorRef emitPartitions(Module &M, TargetMachine &Machine, unsigned Count,
                             const char *const *OutputPaths) {
   if (Count < 2)
@@ -764,18 +694,38 @@ LLVMErrorRef emitPartitions(Module &M, TargetMachine &Machine, unsigned Count,
 
   const bool IsELF = M.getTargetTriple().isOSBinFormatELF();
   const std::string ID = getUniqueModuleId(&M);
+  DefaultThreadPool Pool(heavyweight_hardware_concurrency(Count));
+  std::vector<std::string> Errors(Count);
+  std::vector<PartitionTiming> Timings(Count);
+  const auto Origin = SteadyClock::now();
+  unsigned Index = 0;
+  const auto SplitStart = SteadyClock::now();
 
-  SmallVector<GlobalValue *, 16> Used, CompilerUsed;
-  if (auto *G = collectUsedGlobalVariables(M, Used, false))
-    G->eraseFromParent();
-  if (auto *G = collectUsedGlobalVariables(M, CompilerUsed, true))
-    G->eraseFromParent();
+  if (IsELF) {
+    // Rename+externalize before SplitModule so promoted locals do not keep
+    // system mangled names (N=1 left them local; bare externalize would clash).
+    for (GlobalValue &G : M.global_values())
+      if (G.hasLocalLinkage())
+        externalizeLocal(G, ID, /*SkipObjCNameRewrite=*/false);
+    SplitModule(
+        M, Count,
+        [&](std::unique_ptr<Module> Part) {
+          const unsigned I = Index++;
+          enqueuePartitionEmit(Pool, Machine, I, std::move(Part),
+                               OutputPaths[I], Errors, Timings, Origin);
+        },
+        /*PreserveLocals=*/false, /*RoundRobin=*/false);
+  } else {
 
-  std::vector<LocalEntry> LocalsToRestore;
-  SmallPtrSet<GlobalValue *, 32> KeepLocal;
-  SmallPtrSet<GlobalValue *, 32> MetaTogether;
+    SmallVector<GlobalValue *, 16> Used, CompilerUsed;
+    if (auto *G = collectUsedGlobalVariables(M, Used, false))
+      G->eraseFromParent();
+    if (auto *G = collectUsedGlobalVariables(M, CompilerUsed, true))
+      G->eraseFromParent();
 
-  if (!IsELF) {
+    std::vector<LocalEntry> LocalsToRestore;
+    SmallPtrSet<GlobalValue *, 32> KeepLocal;
+    SmallPtrSet<GlobalValue *, 32> MetaTogether;
     SmallPtrSet<GlobalValue *, 32> Keep, LocalStay;
     buildMachOSameFileCluster(M, Keep, MetaTogether, LocalStay);
 
@@ -786,122 +736,84 @@ LLVMErrorRef emitPartitions(Module &M, TargetMachine &Machine, unsigned Count,
       LocalsToRestore.push_back({G->getName().str(), G->getLinkage(),
                                  G->getVisibility(), G->isDSOLocal()});
     }
-  }
 
-  // Externalize locals. ELF: all of them (splitCodeGen-style + .kn.<id>).
-  // Mach-O: keep metadata locals local for relative pointers.
-  for (GlobalValue &G : M.global_values()) {
-    if (!G.hasLocalLinkage()) {
-      if (!G.hasName())
-        G.setName("__kn_codegen_local");
-      continue;
+    for (GlobalValue &G : M.global_values()) {
+      if (!G.hasLocalLinkage()) {
+        if (!G.hasName())
+          G.setName("__kn_codegen_local");
+        continue;
+      }
+      if (KeepLocal.contains(&G))
+        continue;
+      externalizeLocal(G, ID, /*SkipObjCNameRewrite=*/true);
     }
-    if (!IsELF && KeepLocal.contains(&G))
-      continue;
-    externalizeLocal(G, ID, /*SkipObjCNameRewrite=*/!IsELF);
-  }
 
-  // --- COMDATs ---
-  // ELF: only ThinLTO-style function buckets (balancing). No metadata mega
-  // COMDAT. Existing language COMDATs are left alone for SplitModule atomicity.
-  // Mach-O: one welded pile for metadata + all globals + no-debug functions;
-  // other functions stay whole per source file (do not split one file across
-  // parts — that is the over-approx for late same-file codegen edges).
-  DenseMap<GlobalValue *, std::string> Assigned;
-  auto Assign = [&](GlobalValue *G, StringRef Key) {
-    Assigned[G] = Key.str();
-  };
-
-  const std::string MetaKey = "~meta:macho";
-  if (!IsELF) {
+    // Weld MetaTogether; remaining functions stay whole per source file.
+    DenseMap<GlobalValue *, std::string> Assigned;
+    auto Assign = [&](GlobalValue *G, StringRef Key) {
+      Assigned[G] = Key.str();
+    };
+    const std::string MetaKey = "~meta:macho";
     for (GlobalValue *G : MetaTogether)
       Assign(G, MetaKey);
-  }
-
-  for (Function &F : M) {
-    if (F.isDeclaration() || Assigned.count(&F))
-      continue;
-    if (IsELF && F.getComdat() &&
-        !F.getComdat()->getName().starts_with("__kn_thin_tu_"))
-      continue;
-    std::string File = tuKeyForFunction(F);
-    if (!IsELF) {
-      // No DI file ⇒ cannot tell which functions must stay together ⇒ same
-      // pile as metadata/globals.
+    for (Function &F : M) {
+      if (F.isDeclaration() || Assigned.count(&F))
+        continue;
+      std::string File = tuKeyForFunction(F);
       if (StringRef(File).starts_with("~fn:")) {
         Assign(&F, MetaKey);
         continue;
       }
       Assign(&F, File);
-      continue;
     }
-    unsigned Bucket =
-        static_cast<unsigned>(hash_value(F.getName())) % Count;
-    Assign(&F, File + "#" + std::to_string(Bucket));
-  }
 
-  const std::string Prefix = "__kn_thin_tu_" + ID + "_";
-  StringMap<Comdat *> Groups;
-  for (auto &KV : Assigned) {
-    GlobalValue *G = KV.first;
-    auto *Root = const_cast<GlobalObject *>(G->getAliaseeObject());
-    if (!Root || Root->isDeclaration())
-      continue;
-    if (Root->getComdat() &&
-        !Root->getComdat()->getName().starts_with("__kn_thin_tu_")) {
-      if (IsELF)
+    const std::string Prefix = "__kn_thin_tu_" + ID + "_";
+    StringMap<Comdat *> Groups;
+    for (auto &KV : Assigned) {
+      GlobalValue *G = KV.first;
+      auto *Root = const_cast<GlobalObject *>(G->getAliaseeObject());
+      if (!Root || Root->isDeclaration())
         continue;
+      Comdat *&Group = Groups[KV.second];
+      if (!Group) {
+        unsigned Hash = static_cast<unsigned>(hash_value(StringRef(KV.second)));
+        Group = M.getOrInsertComdat(Prefix + std::to_string(Hash));
+      }
+      Root->setComdat(Group);
     }
-    Comdat *&Group = Groups[KV.second];
-    if (!Group) {
-      unsigned Hash = static_cast<unsigned>(hash_value(StringRef(KV.second)));
-      Group = M.getOrInsertComdat(Prefix + std::to_string(Hash));
-    }
-    Root->setComdat(Group);
-  }
 
-  std::vector<UsedEntry> UsedNames, CompilerUsedNames;
-  for (auto *G : Used)
-    UsedNames.push_back({G->getName().str(), G->isDeclarationForLinker()});
-  for (auto *G : CompilerUsed)
-    CompilerUsedNames.push_back(
-        {G->getName().str(), G->isDeclarationForLinker()});
+    std::vector<UsedEntry> UsedNames, CompilerUsedNames;
+    for (auto *G : Used)
+      UsedNames.push_back({G->getName().str(), G->isDeclarationForLinker()});
+    for (auto *G : CompilerUsed)
+      CompilerUsedNames.push_back(
+          {G->getName().str(), G->isDeclarationForLinker()});
 
-  DefaultThreadPool Pool(heavyweight_hardware_concurrency(Count));
-  std::vector<std::string> Errors(Count);
-  std::vector<PartitionTiming> Timings(Count);
-  std::vector<PartitionManifest> Manifests(Count);
-  const auto Origin = SteadyClock::now();
-  unsigned Index = 0;
-  const auto SplitStart = SteadyClock::now();
-  const std::string Anchor = "__kn_codegen_anchor_" + ID + "_";
-  SplitModule(
-      M, Count,
-      [&](std::unique_ptr<Module> Part) {
-        const unsigned I = Index++;
-        stripThinLtoStyleTuComdats(*Part);
-        auto RebuildUsed = [&](const std::vector<UsedEntry> &Names,
-                               bool Compiler) {
-          SmallVector<GlobalValue *, 16> Here;
-          for (const UsedEntry &Entry : Names) {
-            auto *G = Part->getNamedValue(Entry.Name);
-            if (!G)
-              continue;
-            // Definitions: only the owning partition. Declaration-only: every
-            // partition that still carries the declaration (do not pin part 0).
-            if (Entry.Declaration ? G->isDeclarationForLinker()
-                                  : !G->isDeclarationForLinker())
-              Here.push_back(G);
-          }
-          if (Compiler)
-            appendToCompilerUsed(*Part, Here);
-          else
-            appendToUsed(*Part, Here);
-        };
-        RebuildUsed(UsedNames, false);
-        RebuildUsed(CompilerUsedNames, true);
+    const std::string Anchor = "__kn_codegen_anchor_" + ID + "_";
+    SplitModule(
+        M, Count,
+        [&](std::unique_ptr<Module> Part) {
+          const unsigned I = Index++;
+          stripThinLtoStyleTuComdats(*Part);
+          auto RebuildUsed = [&](const std::vector<UsedEntry> &Names,
+                                 bool Compiler) {
+            SmallVector<GlobalValue *, 16> Here;
+            for (const UsedEntry &Entry : Names) {
+              auto *G = Part->getNamedValue(Entry.Name);
+              if (!G)
+                continue;
+              if (Entry.Declaration ? G->isDeclarationForLinker()
+                                    : !G->isDeclarationForLinker())
+                Here.push_back(G);
+            }
+            if (Compiler)
+              appendToCompilerUsed(*Part, Here);
+            else
+              appendToUsed(*Part, Here);
+          };
+          RebuildUsed(UsedNames, false);
+          RebuildUsed(CompilerUsedNames, true);
 
-        if (!IsELF) {
           for (const LocalEntry &Entry : LocalsToRestore)
             if (auto *G = Part->getNamedValue(Entry.Name))
               if (!G->isDeclaration()) {
@@ -909,111 +821,48 @@ LLVMErrorRef emitPartitions(Module &M, TargetMachine &Machine, unsigned Count,
                 G->setVisibility(Entry.Visibility);
                 G->setDSOLocal(Entry.DSOLocal);
               }
-        }
 
-        auto *Pointer = PointerType::getUnqual(M.getContext());
-        auto *Next = new GlobalVariable(
-            *Part, Pointer, true, GlobalValue::ExternalLinkage, nullptr,
-            Anchor + std::to_string((I + 1) % Count));
-        Next->setVisibility(GlobalValue::HiddenVisibility);
-        Next->setDSOLocal(true);
-        auto *Own = new GlobalVariable(*Part, Pointer, true,
-                                       GlobalValue::ExternalLinkage, Next,
-                                       Anchor + std::to_string(I));
-        Own->setVisibility(GlobalValue::HiddenVisibility);
-        Own->setDSOLocal(true);
-        appendToUsed(*Part, {Own});
+          auto *Pointer = PointerType::getUnqual(M.getContext());
+          auto *Next = new GlobalVariable(
+              *Part, Pointer, true, GlobalValue::ExternalLinkage, nullptr,
+              Anchor + std::to_string((I + 1) % Count));
+          Next->setVisibility(GlobalValue::HiddenVisibility);
+          Next->setDSOLocal(true);
+          auto *Own = new GlobalVariable(*Part, Pointer, true,
+                                         GlobalValue::ExternalLinkage, Next,
+                                         Anchor + std::to_string(I));
+          Own->setVisibility(GlobalValue::HiddenVisibility);
+          Own->setDSOLocal(true);
+          appendToUsed(*Part, {Own});
 
-        if (IsELF)
-          collectPartitionManifest(*Part, Manifests[I]);
-
-        auto IsRetainedName = [&](StringRef Name) {
-          if (Name.starts_with(Anchor))
-            return true;
-          for (const UsedEntry &Entry : UsedNames)
-            if (Entry.Name == Name)
+          auto IsRetainedName = [&](StringRef Name) {
+            if (Name.starts_with(Anchor))
               return true;
-          for (const UsedEntry &Entry : CompilerUsedNames)
-            if (Entry.Name == Name)
-              return true;
-          return false;
-        };
-        auto Prune = [&](GlobalValue &G) {
-          if (G.isDeclaration() && G.use_empty() && !G.isUsedByMetadata() &&
-              !IsRetainedName(G.getName()))
-            G.eraseFromParent();
-        };
-        for (Function &F : make_early_inc_range(*Part))
-          Prune(F);
-        for (GlobalVariable &G : make_early_inc_range(Part->globals()))
-          Prune(G);
+            for (const UsedEntry &Entry : UsedNames)
+              if (Entry.Name == Name)
+                return true;
+            for (const UsedEntry &Entry : CompilerUsedNames)
+              if (Entry.Name == Name)
+                return true;
+            return false;
+          };
+          auto Prune = [&](GlobalValue &G) {
+            if (G.isDeclaration() && G.use_empty() && !G.isUsedByMetadata() &&
+                !IsRetainedName(G.getName()))
+              G.eraseFromParent();
+          };
+          for (Function &F : make_early_inc_range(*Part))
+            Prune(F);
+          for (GlobalVariable &G : make_early_inc_range(Part->globals()))
+            Prune(G);
 
-        SmallString<0> Buffer;
-        raw_svector_ostream Stream(Buffer);
-        WriteBitcodeToFile(*Part, Stream);
-        Pool.async(
-            [&, I](const SmallString<0> &Bytes) {
-              const auto Started = SteadyClock::now();
-              auto Finish = [&] {
-                const auto Ended = SteadyClock::now();
-                Timings[I].startUs = elapsedUs(Started - Origin);
-                Timings[I].endUs = elapsedUs(Ended - Origin);
-                Timings[I].wallUs = elapsedUs(Ended - Started);
-              };
-              LLVMContext Context;
-              auto Parsed = parseBitcodeFile(
-                  MemoryBufferRef(Bytes, "codegen-part"), Context);
-              if (!Parsed) {
-                Errors[I] = toString(Parsed.takeError());
-                Finish();
-                return;
-              }
-              std::unique_ptr<TargetMachine> TM(
-                  Machine.getTarget().createTargetMachine(
-                      Machine.getTargetTriple(), Machine.getTargetCPU(),
-                      Machine.getTargetFeatureString(), Machine.Options,
-                      Machine.getRelocationModel(), Machine.getCodeModel(),
-                      Machine.getOptLevel()));
-              if (!TM) {
-                Errors[I] = "Failed to create partition target machine";
-                Finish();
-                return;
-              }
-              char *Error = nullptr;
-              if (LLVMTargetMachineEmitToFile(
-                      reinterpret_cast<LLVMTargetMachineRef>(TM.get()),
-                      wrap(Parsed->get()), const_cast<char *>(OutputPaths[I]),
-                      LLVMObjectFile, &Error)) {
-                Errors[I] = Error ? Error : "Failed to emit codegen partition";
-                LLVMDisposeMessage(Error);
-              } else if (const char *KeepDir =
-                             std::getenv("KN_OBJECT_PARTITION_KEEP")) {
-                if (*KeepDir) {
-                  SmallString<256> Dest(KeepDir);
-                  sys::fs::create_directories(Dest);
-                  sys::path::append(Dest,
-                                    "part-" + std::to_string(I) + ".o");
-                  sys::fs::copy_file(OutputPaths[I], Dest);
-                }
-              }
-              Finish();
-            },
-            std::move(Buffer));
-      },
-      /*PreserveLocals=*/false, /*RoundRobin=*/false);
-  const auto SplitUs = elapsedUs(SteadyClock::now() - SplitStart);
-
-  if (IsELF) {
-    if (Error Err = checkElfPartitionManifests(Manifests, ID, UsedNames,
-                                               CompilerUsedNames)) {
-      Pool.wait();
-      for (unsigned I = 0; I < Count; ++I)
-        sys::fs::remove(OutputPaths[I]);
-      std::string Msg = toString(std::move(Err));
-      return LLVMCreateStringError(Msg.c_str());
-    }
+          enqueuePartitionEmit(Pool, Machine, I, std::move(Part),
+                               OutputPaths[I], Errors, Timings, Origin);
+        },
+        /*PreserveLocals=*/false, /*RoundRobin=*/false);
   }
 
+  const auto SplitUs = elapsedUs(SteadyClock::now() - SplitStart);
   Pool.wait();
   writePartitionTimings(Count, SplitUs, elapsedUs(SteadyClock::now() - Origin),
                         Timings);
