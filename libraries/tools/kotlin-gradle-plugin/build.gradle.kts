@@ -127,6 +127,7 @@ dependencies {
     commonCompileOnly(project(":kotlin-compiler-runner-unshaded")) {
         isTransitive = false
     }
+    commonCompileOnly(project(":kotlin-ic-event-report"))
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
     commonCompileOnly(project(":kotlin-gradle-plugin-idea-browser-debug"))
@@ -184,6 +185,7 @@ dependencies {
     }
 
     embedded(project(":kotlin-gradle-build-metrics"))
+    embedded(project(":kotlin-ic-event-report")) { isTransitive = false }
     embedded(project(":kotlin-gradle-statistics"))
     embedded(project(":kotlin-gradle-plugin-idea-browser-debug"))
     embedded(libs.intellij.asm) { isTransitive = false }

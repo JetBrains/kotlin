@@ -415,6 +415,7 @@ include(
     ":libraries:tools:gradle:fus-statistics-gradle-plugin",
     ":kotlin-tooling-metadata",
     ":kotlin-tooling-core",
+    ":kotlin-ic-event-report",
     ":compose-compiler-gradle-plugin",
     ":kotlin-allopen",
     ":kotlin-noarg",
@@ -942,6 +943,7 @@ project(":gradle:gradle-warnings-detector").projectDir = File("$rootDir/librarie
 project(":gradle:kotlin-compiler-args-properties").projectDir = File("$rootDir/libraries/tools/gradle/kotlin-compiler-args-properties")
 project(":kotlin-tooling-metadata").projectDir = File("$rootDir/libraries/tools/kotlin-tooling-metadata")
 project(":kotlin-tooling-core").projectDir = File("$rootDir/libraries/tools/kotlin-tooling-core")
+project(":kotlin-ic-event-report").projectDir = File("$rootDir/libraries/tools/kotlin-ic-event-report")
 project(":compose-compiler-gradle-plugin").projectDir = File("$rootDir/libraries/tools/kotlin-compose-compiler")
 project(":kotlin-allopen").projectDir = File("$rootDir/libraries/tools/kotlin-allopen")
 project(":kotlin-noarg").projectDir = File("$rootDir/libraries/tools/kotlin-noarg")

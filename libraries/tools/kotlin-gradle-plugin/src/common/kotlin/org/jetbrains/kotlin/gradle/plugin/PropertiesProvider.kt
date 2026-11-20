@@ -127,6 +127,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val buildReportJsonDir: String?
         get() = property(PropertyNames.KOTLIN_BUILD_REPORT_JSON_DIR).orNull
 
+    val icEventReport: Boolean
+        get() = booleanProperty("kotlin.build.report.ic_event") ?: false
+
     val buildReportVerbose: Boolean
         get() = booleanProperty("kotlin.build.report.verbose") ?: false
 

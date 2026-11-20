@@ -65,6 +65,7 @@ internal class GradleKotlinCompilerWorkArguments(
     val outputFiles: List<File>,
     val taskPath: String,
     val reportingSettings: ReportingSettings,
+    val icEventReport: Boolean,
     val kotlinScriptExtensions: Array<String>,
     val allWarningsAsErrors: Boolean,
     val compilerExecutionSettings: CompilerExecutionSettings,
