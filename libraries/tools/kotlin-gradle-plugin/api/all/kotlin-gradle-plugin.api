@@ -5828,6 +5828,16 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/npm/KotlinSharedNp
 	public fun apply (Lorg/gradle/api/Project;)V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/targets/web/npm/shared/KotlinInstallSharedNpmProjectTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics, org/jetbrains/kotlin/gradle/tasks/nodejs/UsesNodeJsToolchainService {
+	public abstract fun getArgs ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getIgnoreScripts ()Lorg/gradle/api/provider/Property;
+	public abstract fun getInstallDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getLockFile ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getManifestDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public final fun getNodeModulesDirectory ()Lorg/gradle/api/provider/Provider;
+	protected final fun install ()V
+}
+
 public abstract class org/jetbrains/kotlin/gradle/targets/web/npm/shared/KotlinNpmDependencyReportTask : org/gradle/api/DefaultTask {
 	protected final fun generate ()V
 	public abstract fun getOutputFile ()Lorg/gradle/api/file/RegularFileProperty;

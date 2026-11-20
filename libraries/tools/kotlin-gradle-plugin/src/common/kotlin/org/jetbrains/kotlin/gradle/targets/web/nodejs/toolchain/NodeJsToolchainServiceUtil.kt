@@ -64,7 +64,13 @@ internal fun <P : NodeJsToolchainService.Parameters, T : NodeJsToolchainService<
     }
 }
 
-private fun registerIfAbsent(
+/**
+ * Registers the [NodeJsToolchainService] selected for the build, without binding it to any task.
+ *
+ * Prefer [registerNodeJsToolchainServiceIfAbsent], unless the service must be selected lazily,
+ * for example from a task configuration action.
+ */
+internal fun registerNodeJsToolchainServiceOnlyIfAbsent(
     project: Project,
 ): Provider<out NodeJsToolchainService<out NodeJsToolchainService.Parameters>> {
     project.gradle.sharedServices.registrations.findByName(nodeJsServiceName)?.let {
@@ -88,7 +94,7 @@ private fun registerIfAbsent(
 internal fun registerNodeJsToolchainServiceIfAbsent(
     project: Project,
 ): Provider<out NodeJsToolchainService<out NodeJsToolchainService.Parameters>> {
-    val serviceProvider = registerIfAbsent(project)
+    val serviceProvider = registerNodeJsToolchainServiceOnlyIfAbsent(project)
 
     SingleActionPerProject.run(project, UsesNodeJsToolchainService::class.java.name) {
         project.tasks.withType<UsesNodeJsToolchainService>().configureEach { task ->

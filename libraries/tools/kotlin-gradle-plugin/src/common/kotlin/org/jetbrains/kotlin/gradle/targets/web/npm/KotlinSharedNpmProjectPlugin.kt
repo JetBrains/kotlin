@@ -13,9 +13,15 @@ import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.DelicateKotlinGradlePluginApiKind.REQUIRES_KNOWLEDGE
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollectorProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.targets.web.KotlinWebPlatformType
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceOnlyIfAbsent
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.requestDefaultNodeJs
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KOTLIN_JS_STORE
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinInstallSharedNpmProjectTask
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.PACKAGE_LOCK_JSON
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.KotlinSetupSharedNpmProjectTask
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.createNpmDependenciesReportResolver
 import org.jetbrains.kotlin.gradle.targets.web.npm.shared.npmSharedDependenciesConfigurationName
@@ -48,6 +54,7 @@ internal constructor(
     /**
      * Sets up the consumer side of the shared-npm-project flow on the root project for [platform].
      */
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
     private fun setupSharedNpmProject(
         project: Project,
         platform: KotlinWebPlatformType,
@@ -57,7 +64,7 @@ internal constructor(
         val rootDirectoryName = platform.platformName
         val setupSharedNpmProjectTaskName = lowerCamelCaseName("kotlin", platform.platformName, "setupSharedNpmProject")
 
-        project.registerTask<KotlinSetupSharedNpmProjectTask>(setupSharedNpmProjectTaskName) { task ->
+        val setupSharedNpmProjectTask = project.registerTask<KotlinSetupSharedNpmProjectTask>(setupSharedNpmProjectTaskName) { task ->
             task.description =
                 "Assembles the '$rootDirectoryName' shared npm project from the projects declared on '${platform.npmSharedDependenciesConfigurationName}'"
             task.reportFiles.from(
@@ -66,6 +73,25 @@ internal constructor(
             task.rootPackageName.convention(project.name)
             task.rootPackageVersion.convention(providers.provider { project.version.toString() })
             task.outputDirectory.convention(layout.buildDirectory.dir("$rootDirectoryName/shared-npm-project"))
+            task.usesService(project.kotlinToolingDiagnosticsCollectorProvider)
+            task.setupKotlinToolingDiagnosticsParameters(project)
+        }
+
+        val nodeJsRequest = project.requestDefaultNodeJs()
+        val installSharedNpmProjectTaskName = lowerCamelCaseName("kotlin", platform.platformName, "installSharedNpmProject")
+
+        project.registerTask<KotlinInstallSharedNpmProjectTask>(installSharedNpmProjectTaskName) { task ->
+            // The toolchain service is selected lazily: selecting it may report diagnostics,
+            // which require the Kotlin plugin variant, applied by the subprojects, not by this plugin.
+            val nodeJsToolchainService = registerNodeJsToolchainServiceOnlyIfAbsent(project)
+            task.nodeJsToolchainService.convention(nodeJsToolchainService)
+            task.usesService(nodeJsToolchainService)
+            task.description = "Installs the npm dependencies of the '$rootDirectoryName' shared npm project"
+            task.lockFile.from(layout.projectDirectory.file("$KOTLIN_JS_STORE/$rootDirectoryName/$PACKAGE_LOCK_JSON"))
+            task.args.convention(emptyList())
+            task.ignoreScripts.convention(true)
+            task.nodeJsRequest.convention(nodeJsRequest)
+            task.installDirectory.convention(layout.buildDirectory.dir("$rootDirectoryName/shared-npm-install"))
             task.usesService(project.kotlinToolingDiagnosticsCollectorProvider)
             task.setupKotlinToolingDiagnosticsParameters(project)
         }
