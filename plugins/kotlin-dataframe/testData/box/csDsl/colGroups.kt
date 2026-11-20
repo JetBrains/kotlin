@@ -14,5 +14,23 @@ fun box(): String {
         dfGroup.select { name.firstName },
         dfGroup.select { name.colsNameContains("Name").colGroups() },
     )
+
+    compareSchemas(
+        df.select { name.firstName and name.lastName },
+        df.select { colsInGroups() },
+        df.select { colGroups().colsInGroups() },
+    )
+
+    compareSchemas(
+        dfGroup.select { name.firstName.firstName and name.firstName.secondName and name.firstName.thirdName },
+        dfGroup.select { name.colsInGroups() },
+        dfGroup.select { "name".colsInGroups() },
+        dfGroup.select { pathOf("name").colsInGroups() },
+    )
+
+    compareSchemas(
+        df.select { name },
+        df.select { name() },
+    )
     return "OK"
 }

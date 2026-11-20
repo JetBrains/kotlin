@@ -96,9 +96,12 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.plugin.impl.StringApiOverloadInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroupInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslExpr
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslFromString
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslNamedGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslReferencePlus
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringInvoke
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslStringPlus
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddId
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Aggregate
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AggregateRow
@@ -137,10 +140,42 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Cols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsAtAnyDepth0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsAtAnyDepth1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsAtAnyDepth2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Corr0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.CorrWith
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.CorrWithItself
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCorr
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfFrames
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllAfterColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllAfterString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllBeforeColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllBeforeString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllFromColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllFromDslString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllFromString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpToColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpToString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DslColsInGroups
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnColsInGroups
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColsInGroups
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColsInGroups
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnSetColsInGroups
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DslColsOfKind
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnColsOfKind
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColsOfKind
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColsOfKind
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnSetColsOfKind
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DslColsString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnColsString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColsString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColsString
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DslColsColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SingleColumnColsColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.StringColsColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColsColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnReferenceInvokeGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnOfPairs
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathCol
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnPathColUntyped
@@ -280,6 +315,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeId
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeBy0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeBy1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeInto0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MergeIntoPath
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Min0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Min1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Move0
@@ -325,6 +361,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameFrom
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToTop
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TrimMargin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Update0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateAsFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWith0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCounts
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameToCamelCase
@@ -340,6 +377,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Split0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitAnyFrameIntoColumns
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitAnyFrameRows
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitDataFrameInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitDataFrameInward
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitInplace
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitIntoRows
@@ -372,6 +411,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDslAdd
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDslExpr
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDslIntoPath
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDslIntoString
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificType
@@ -536,6 +576,10 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "Select0" -> Select0()
         "SelectString" -> SelectString()
         "DataFrameGetColumns" -> DataFrameGetColumns()
+        "Corr0" -> Corr0()
+        "CorrWith" -> CorrWith()
+        "CorrWithItself" -> CorrWithItself()
+        "DataFrameCorr" -> DataFrameCorr()
         "Distinct0" -> Select0()
         "NestedSelect" -> NestedSelect()
         "Expr0" -> Expr0()
@@ -567,6 +611,33 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "All1" -> All1()
         "All2" -> All2()
         "Cols0" -> Cols0()
+        "DslColsString" -> DslColsString()
+        "SingleColumnColsString" -> SingleColumnColsString()
+        "StringColsString" -> StringColsString()
+        "ColumnPathColsString" -> ColumnPathColsString()
+        "DslColsColumnPath" -> DslColsColumnPath()
+        "SingleColumnColsColumnPath" -> SingleColumnColsColumnPath()
+        "StringColsColumnPath" -> StringColsColumnPath()
+        "ColumnPathColsColumnPath" -> ColumnPathColsColumnPath()
+        "DslColsOfKind" -> DslColsOfKind()
+        "SingleColumnColsOfKind" -> SingleColumnColsOfKind()
+        "StringColsOfKind" -> StringColsOfKind()
+        "ColumnPathColsOfKind" -> ColumnPathColsOfKind()
+        "ColumnSetColsOfKind" -> ColumnSetColsOfKind()
+        "DslColsInGroups" -> DslColsInGroups()
+        "SingleColumnColsInGroups" -> SingleColumnColsInGroups()
+        "StringColsInGroups" -> StringColsInGroups()
+        "ColumnPathColsInGroups" -> ColumnPathColsInGroups()
+        "ColumnSetColsInGroups" -> ColumnSetColsInGroups()
+        "AllAfterString" -> AllAfterString()
+        "AllBeforeString" -> AllBeforeString()
+        "AllUpToString" -> AllUpToString()
+        "AllFromString" -> AllFromString()
+        "AllAfterColumnPath" -> AllAfterColumnPath()
+        "AllFromColumnPath" -> AllFromColumnPath()
+        "AllFromDslString" -> AllFromDslString()
+        "AllBeforeColumnPath" -> AllBeforeColumnPath()
+        "AllUpToColumnPath" -> AllUpToColumnPath()
         "AllAfter0" -> AllAfter0()
         "AllAfter1" -> AllAfter1()
         "AllAfter2" -> AllAfter2()
@@ -648,6 +719,8 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "SplitAnyFrameIntoColumns" -> SplitAnyFrameIntoColumns()
         "SplitIterableInto" -> SplitIterableInto()
         "SplitIterableInward" -> SplitIterableInward()
+        "SplitDataFrameInto" -> SplitDataFrameInto()
+        "SplitDataFrameInward" -> SplitDataFrameInward()
         "SplitWithTransformDefault" -> SplitWithTransformDefault()
         "SplitWithTransformIntoRows" -> SplitWithTransformIntoRows()
         "Named0" -> Named0()
@@ -658,6 +731,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "ToDataFrameDslIntoString" -> ToDataFrameDslIntoString()
         "ToDataFrameDslIntoPath" -> ToDataFrameDslIntoPath()
         "ToDataFrameDslAdd" -> ToDataFrameDslAdd()
+        "ToDataFrameDslExpr" -> ToDataFrameDslExpr()
         "DataFrameOf0" -> DataFrameOf0()
         "DataFrameOfPairs" -> DataFrameOfPairs()
         "DataFrameGenerator" -> DataFrameGenerator()
@@ -684,10 +758,14 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "UpdateNotNullDefault" -> UpdateNotNull()
         "UpdateWithNull" -> UpdateWithNull()
         "UpdateWithZero" -> UpdateWithZero()
+        "UpdateAsFrame" -> UpdateAsFrame()
         "Flatten0" -> Flatten0()
         "FlattenDefault" -> FlattenDefault()
         "AddId" -> AddId()
         "AddDslStringInvoke" -> AddDslStringInvoke()
+        "AddDslStringPlus" -> AddDslStringPlus()
+        "AddDslExpr" -> AddDslExpr()
+        "AddDslFromString" -> AddDslFromString()
         "AddDslNamedGroup" -> AddDslNamedGroup()
         "AddDslAddGroup" -> AddDslAddGroup()
         "AddDslAddGroupInto" -> AddDslAddGroupInto()
@@ -724,6 +802,8 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "GroupByAdd" -> GroupByAdd()
         "Merge0" -> Merge0()
         "MergeInto0" -> MergeInto0()
+        "MergeIntoPath" -> MergeIntoPath()
+        "MergeWithTransformIntoPath" -> MergeIntoPath()
         "MergeId" -> MergeId()
         "MergeBy0" -> MergeBy0()
         "MergeBy1" -> MergeBy1()
@@ -797,6 +877,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "StringInvokeUntyped" -> StringInvokeUntyped()
         "StringInvokeTyped" -> StringInvokeTyped()
         "ColumnPathInvokeTyped" -> ColumnPathInvokeTyped()
+        "ColumnReferenceInvokeGroup" -> ColumnReferenceInvokeGroup()
         "StringGetColumn" -> StringGetColumn()
         "ColumnPathGetColumn" -> ColumnPathGetColumn()
         "ColByIndex" -> ColByIndex()

@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.fir.plugin.createConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlinx.dataframe.AnyFrame
 import org.jetbrains.kotlinx.dataframe.DataFrame
+import org.jetbrains.kotlinx.dataframe.DataRow
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
@@ -308,6 +310,51 @@ class SplitIterableInto : SplitIterableAbstractOperation() {
 class SplitIterableInward : SplitIterableAbstractOperation() {
     context(arguments: Arguments)
     override fun SplitWithTransform<ConeTypesAdapter, Any, ColumnType>.operation(): DataFrame<ConeTypesAdapter> {
+        return inward(arguments.names)
+    }
+}
+
+abstract class SplitDataFrameAbstractOperation : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: SplitApproximation by arg()
+    val Arguments.names: List<String> by arg()
+    val Arguments.extraNamesGenerator by ignore()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return receiver.df
+            .splitDataFrame(receiver.columns, names)
+            .operation()
+            .toPluginDataFrameSchema()
+    }
+
+    context(arguments: Arguments)
+    abstract fun SplitWithTransform<ConeTypesAdapter, Any, DataRow<*>?>.operation(): DataFrame<ConeTypesAdapter>
+}
+
+internal fun PluginDataFrameSchema.splitDataFrame(
+    columns: ColumnsResolver,
+    names: List<String>,
+): SplitWithTransform<ConeTypesAdapter, Any, DataRow<*>?> {
+    val resolvedColumns = columns.resolve(this)
+    if (resolvedColumns.size != 1) error("Compiler plugin only supports split of 1 column, but was $resolvedColumns")
+
+    // The schema adapter represents each frame value as a frame with a single row,
+    // so that row stands in for every row that goes to a new column.
+    return asDataFrame(impliedColumnsResolver = columns).split { columns }.by { frame ->
+        val row = (frame as? AnyFrame)?.rows()?.firstOrNull()
+        List(names.size) { row }
+    }
+}
+
+class SplitDataFrameInto : SplitDataFrameAbstractOperation() {
+    context(arguments: Arguments)
+    override fun SplitWithTransform<ConeTypesAdapter, Any, DataRow<*>?>.operation(): DataFrame<ConeTypesAdapter> {
+        return into(arguments.names)
+    }
+}
+
+class SplitDataFrameInward : SplitDataFrameAbstractOperation() {
+    context(arguments: Arguments)
+    override fun SplitWithTransform<ConeTypesAdapter, Any, DataRow<*>?>.operation(): DataFrame<ConeTypesAdapter> {
         return inward(arguments.names)
     }
 }

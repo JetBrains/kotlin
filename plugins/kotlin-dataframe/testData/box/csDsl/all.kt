@@ -12,8 +12,20 @@ fun box(): String {
 
     compareSchemas(
         df.select { name and age },
+        df.select { allBefore("city") },
+        df.select { allBefore(pathOf("city")) },
+    )
+
+    compareSchemas(
+        df.select { name and age },
         df.select { allUpTo { age } },
         df.select { allUpTo(age) },
+    )
+
+    compareSchemas(
+        df.select { name and age },
+        df.select { allUpTo("age") },
+        df.select { allUpTo(pathOf("age")) },
     )
 
     compareSchemas(
@@ -24,8 +36,21 @@ fun box(): String {
 
     compareSchemas(
         df.select { weight and isHappy },
+        df.select { allAfter("city") },
+        df.select { allAfter(pathOf("city")) },
+    )
+
+    compareSchemas(
+        df.select { weight and isHappy },
         df.select { allFrom { weight } },
         df.select { allFrom(weight) },
+    )
+
+    compareSchemas(
+        df.select { weight and isHappy },
+        df.select { allFrom("weight") },
+        df.select { allFrom(pathOf("weight")) },
+        df.select { all().allFrom("weight") },
     )
 
     compareSchemas(
