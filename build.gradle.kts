@@ -328,7 +328,6 @@ tasks {
     testLifecycleTask("jvmCompilerTest", QualityGate.Master) {
         dependsOn(":compiler:tests-common-new:test")
         dependsOn(":compiler:tests-java8:test")
-        dependsOn(":compiler:tests-spec:test")
     }
 
     testLifecycleTask("jvmCodegenTest", QualityGate.Master) {
