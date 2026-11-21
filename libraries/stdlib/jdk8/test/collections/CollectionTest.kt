@@ -44,5 +44,121 @@ class CollectionTest {
         assertFalse(coll.removeIf(Predicate { it.length > 4 }))
     }
 
+    private class RemoveIfRecordingCollection(elements: List<String>) : AbstractMutableCollection<String>() {
+        private val backingList = elements.toMutableList()
 
+        val removeIfInvocationCount
+            get() = removeIfPredicates.size
+
+        val removeIfPredicates: List<Predicate<in String>>
+            field = mutableListOf()
+
+        override val size: Int
+            get() = backingList.size
+
+        override fun add(element: String): Boolean = backingList.add(element)
+
+        override fun iterator(): MutableIterator<String> = backingList.iterator()
+
+        override fun removeIf(filter: Predicate<in String>): Boolean {
+            removeIfPredicates.add(filter)
+            return backingList.removeIf(filter)
+        }
+    }
+
+    private class RemoveIfRecordingList(elements: List<String>) : AbstractMutableList<String>() {
+        private val backingList = elements.toMutableList()
+
+        val removeIfInvocationCount
+            get() = removeIfPredicates.size
+
+        val removeIfPredicates: List<Predicate<in String>>
+            field = mutableListOf()
+
+        override val size: Int
+            get() = backingList.size
+
+        override fun get(index: Int): String = backingList[index]
+
+        override fun set(index: Int, element: String): String = backingList.set(index, element)
+
+        override fun add(index: Int, element: String) {
+            backingList.add(index, element)
+        }
+
+        override fun removeAt(index: Int): String = backingList.removeAt(index)
+
+        override fun removeIf(filter: Predicate<in String>): Boolean {
+            removeIfPredicates.add(filter)
+            return backingList.removeIf(filter)
+        }
+    }
+
+    @Test fun removeAllDelegatesToCollectionRemoveIf() {
+        val collection = RemoveIfRecordingCollection(listOf("foo", "bar", "bar"))
+        val iterable: MutableIterable<String> = collection
+
+        assertTrue(iterable.removeAll { it == "bar" })
+        assertEquals(1, collection.removeIfInvocationCount)
+        assertEquals(listOf("foo"), collection.toList())
+
+        assertFalse(iterable.removeAll { it == "bar" })
+        assertEquals(2, collection.removeIfInvocationCount)
+        assertEquals(listOf("foo"), collection.toList())
+    }
+
+    @Test fun retainAllDelegatesToCollectionRemoveIfWithNegatedPredicate() {
+        val collection = RemoveIfRecordingCollection(listOf("foo", "bar", "bar"))
+        val iterable: MutableIterable<String> = collection
+
+        assertTrue(iterable.retainAll { it == "foo" })
+        assertEquals(1, collection.removeIfInvocationCount)
+        assertEquals(listOf("foo"), collection.toList())
+        collection.removeIfPredicates.last().let { predicate ->
+            assertFalse(predicate.test("foo"))
+            assertTrue(predicate.test("whatever"))
+        }
+
+        assertFalse(iterable.retainAll { it == "foo" })
+        assertEquals(2, collection.removeIfInvocationCount)
+        assertEquals(listOf("foo"), collection.toList())
+        collection.removeIfPredicates.last().let { predicate ->
+            assertFalse(predicate.test("foo"))
+            assertTrue(predicate.test("whatever"))
+        }
+    }
+
+    @Test fun removeAllFromMutableListDelegatesToCollectionRemoveIf() {
+        val list = RemoveIfRecordingList(listOf("foo", "bar", "bar"))
+        val mutableList: MutableList<String> = list
+
+        assertTrue(mutableList.removeAll { it == "bar" })
+        assertEquals(1, list.removeIfInvocationCount)
+        assertEquals(listOf("foo"), list)
+
+        assertFalse(mutableList.removeAll { it == "bar" })
+        assertEquals(2, list.removeIfInvocationCount)
+        assertEquals(listOf("foo"), list)
+    }
+
+    @Test fun retainAllFromMutableListDelegatesToCollectionRemoveIfWithNegatedPredicate() {
+        val list = RemoveIfRecordingList(listOf("foo", "bar", "bar"))
+        val mutableList: MutableList<String> = list
+
+        assertTrue(mutableList.retainAll { it == "foo" })
+        assertEquals(1, list.removeIfInvocationCount)
+        assertEquals(listOf("foo"), list)
+        list.removeIfPredicates.last().let { predicate ->
+            assertFalse(predicate.test("foo"))
+            assertTrue(predicate.test("whatever"))
+        }
+
+        assertFalse(mutableList.retainAll { it == "foo" })
+        assertEquals(2, list.removeIfInvocationCount)
+        assertEquals(listOf("foo"), list)
+        list.removeIfPredicates.last().let { predicate ->
+            assertFalse(predicate.test("foo"))
+            assertTrue(predicate.test("whatever"))
+        }
+    }
 }

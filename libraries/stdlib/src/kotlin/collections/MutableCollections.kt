@@ -215,24 +215,7 @@ private fun MutableCollection<*>.retainNothing(): Boolean {
     return result
 }
 
-
-/**
- * Removes all elements from this [MutableIterable] that match the given [predicate].
- *
- * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
- */
-@IgnorableReturnValue
-public fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
-
-/**
- * Retains only elements of this [MutableIterable] that match the given [predicate].
- *
- * @return `true` if any element was removed from this collection, or `false` when all elements were retained and collection was not modified.
- */
-@IgnorableReturnValue
-public fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
-
-private fun <T> MutableIterable<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
+internal fun <T> MutableIterable<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
     var result = false
     with(iterator()) {
         while (hasNext())
@@ -281,23 +264,7 @@ public fun <T> MutableList<T>.removeLast(): T = if (isEmpty()) throw NoSuchEleme
 @IgnorableReturnValue
 public fun <T> MutableList<T>.removeLastOrNull(): T? = if (isEmpty()) null else removeAt(lastIndex)
 
-/**
- * Removes all elements from this [MutableList] that match the given [predicate].
- *
- * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
- */
-@IgnorableReturnValue
-public fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
-
-/**
- * Retains only elements of this [MutableList] that match the given [predicate].
- *
- * @return `true` if any element was removed from this collection, or `false` when all elements were retained and collection was not modified.
- */
-@IgnorableReturnValue
-public fun <T> MutableList<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
-
-private fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
+internal fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
     if (this !is RandomAccess)
         return (this as MutableIterable<T>).filterInPlace(predicate, predicateResultToRemove)
 
