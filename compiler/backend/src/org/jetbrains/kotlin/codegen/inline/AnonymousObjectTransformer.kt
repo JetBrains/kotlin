@@ -156,6 +156,7 @@ class AnonymousObjectTransformer(
             methodsToTransform,
             superClassName
         )
+        val classInitializer = MethodNode(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null)
         var putDebugMetadata = false
         loop@ for (next in methodsToTransform) {
             val deferringVisitor =
@@ -163,6 +164,7 @@ class AnonymousObjectTransformer(
                     isAccessorOfSkippedCapturedParameter(next, capturedParams) -> continue@loop
                     coroutineTransformer.shouldSkip(next) -> continue@loop
                     coroutineTransformer.shouldGenerateStateMachine(next) -> coroutineTransformer.newMethod(next)
+                    next.name == "<clinit>" -> newMethod(classBuilder, next, classInitializer)
                     else -> {
                         // Debug metadata is not put, but we should keep, since we do not generate state-machine,
                         // if the lambda does not capture crossinline lambdas.
@@ -219,9 +221,6 @@ class AnonymousObjectTransformer(
 
         if (header != null) {
             writeTransformedMetadata(header, classBuilder)
-            if (transformationInfo.isLambdaTransformedIntoSingleton) {
-                synthesizeSingletonMembers(classBuilder)
-            }
         }
 
         // debugMetadataAnnotation can be null in LV < 1.3
@@ -234,10 +233,19 @@ class AnonymousObjectTransformer(
         writeOuterInfo(classBuilder)
 
         if (inliningContext.generateAssertField && fieldNames.none { it.key == ASSERTIONS_DISABLED_FIELD_NAME }) {
-            val clInitBuilder = classBuilder.newMethod(null, Opcodes.ACC_STATIC, "<clinit>", "()V", null, null)
-            generateAssertionsDisabledFieldInitialization(classBuilder, clInitBuilder, inliningContext.root.callSiteInfo.ownerClassName)
-            clInitBuilder.visitInsn(Opcodes.RETURN)
-            clInitBuilder.visitEnd()
+            val assertionsInitializer = MethodNode()
+            generateAssertionsDisabledFieldInitialization(classBuilder, assertionsInitializer, inliningContext.root.callSiteInfo.ownerClassName)
+            classInitializer.instructions.insert(assertionsInitializer.instructions)
+        }
+
+        if (transformationInfo.isLambdaTransformedIntoSingleton) {
+            synthesizeSingletonMembers(classBuilder, classInitializer)
+        } else if (classInitializer.instructions.size() > 0 && methodsToTransform.none { it.name == "<clinit>" }) {
+            classInitializer.visitInsn(Opcodes.RETURN)
+        }
+        if (classInitializer.instructions.size() > 0) {
+            classInitializer.visitMaxs(-1, -1)
+            classInitializer.accept(classBuilder.newMethod(null, Opcodes.ACC_STATIC, "<clinit>", "()V", null, null))
         }
 
         if (continuationClassName == transformationInfo.oldClassName) {
@@ -249,7 +257,7 @@ class AnonymousObjectTransformer(
         return transformationResult
     }
 
-    private fun synthesizeSingletonMembers(classBuilder: ClassBuilder) {
+    private fun synthesizeSingletonMembers(classBuilder: ClassBuilder, classInitializer: MethodNode) {
         val internalClassName = transformationInfo.newClassName
         val classType = Type.getObjectType(internalClassName)
         classBuilder.newField(
@@ -260,15 +268,21 @@ class AnonymousObjectTransformer(
             null,
             null
         )
-        val clinit = classBuilder.newMethod(null, Opcodes.ACC_STATIC, "<clinit>", "()V", null, null)
-        val adapter = InstructionAdapter(clinit)
+        // Keep the existing initialization (including assertion status) before INSTANCE initialization,
+        // and direct every normal exit to the common epilogue instead of generating a second <clinit>.
+        val epilogue = LabelNode()
+        for (instruction in classInitializer.instructions.toArray()) {
+            if (instruction.opcode == Opcodes.RETURN) {
+                classInitializer.instructions.set(instruction, JumpInsnNode(Opcodes.GOTO, epilogue))
+            }
+        }
+        classInitializer.instructions.add(epilogue)
+        val adapter = InstructionAdapter(classInitializer)
         adapter.anew(classType)
         adapter.dup()
         adapter.invokespecial(internalClassName, "<init>", "()V", false)
         adapter.putstatic(internalClassName, JvmAbi.INSTANCE_FIELD, classType.descriptor)
         adapter.visitInsn(Opcodes.RETURN)
-        adapter.visitMaxs(-1, -1)
-        adapter.visitEnd()
     }
 
     private fun isAccessorOfSkippedCapturedParameter(
@@ -483,14 +497,14 @@ class AnonymousObjectTransformer(
         return builder.buildParameters()
     }
 
-    private fun newMethod(builder: ClassBuilder, original: MethodNode): DeferredMethodVisitor {
+    private fun newMethod(builder: ClassBuilder, original: MethodNode, target: MethodVisitor? = null): DeferredMethodVisitor {
         return DeferredMethodVisitor(
             MethodNode(
                 original.access, original.name, original.desc, original.signature,
                 ArrayUtil.toStringArray(original.exceptions)
             )
         ) {
-            builder.newMethod(
+            target ?: builder.newMethod(
                 null, original.access, original.name, original.desc, original.signature,
                 ArrayUtil.toStringArray(original.exceptions)
             )
