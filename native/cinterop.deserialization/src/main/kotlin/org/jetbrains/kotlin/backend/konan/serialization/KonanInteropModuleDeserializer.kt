@@ -142,9 +142,9 @@ class KonanInteropModuleDeserializer(
         declarationTracker = declarationTracker,
         getNestedKmClass = { classId -> metadataReader.retrieveDeclarationsById(classId.toDeclarationId(), removeMetadataRepresentation = true)?.first() as KmClass? },
         getOrCreateContainingPackageFragment = ::getOrCreateContainingPackageFragment,
-        getReferencedDeclarationSymbol = { signature, kind ->
+        getReferencedDeclarationSymbol = { signatureAndKind ->
             @OptIn(IrLinkerInternalApi::class)
-            linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(signature, kind, this)
+            linker.findAndEnqueueSymbolOrNull(signatureAndKind) ?: referenceDeserializedSymbol(symbolTable, signatureAndKind)
         },
         irProviderForLazyAnnotations = linker,
     )
@@ -380,10 +380,10 @@ class KonanInteropModuleDeserializer(
             if (kmClass.inheritsFromCStructOrEnum()) {
                 // Ask linker about the class instead of deserializing it directly from metadata.
                 // This ensures that, if two interop Klibs define a class with the same ID, only one of them will be chosen, deterministically.
-                val classSig = ClassId.fromString(kmClass.name).toCInteropSignature(isCInterop = true)
+                val signature = ClassId.fromString(kmClass.name).toCInteropSignature(isCInterop = true)
 
                 @OptIn(IrLinkerInternalApi::class)
-                linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(classSig, BinarySymbolData.SymbolKind.CLASS_SYMBOL, this)
+                linker.findAndEnqueueSymbolOrNull(SignatureAndKind(signature, BinarySymbolData.SymbolKind.CLASS_SYMBOL))
             }
         }
     }
