@@ -516,7 +516,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     }
 
     private fun deserializeAccessorSignature(): IdSignature.AccessorSignature {
-        val propertySignature = deserializeIdSignature()
+        val propertySignature = deserializeCommonSignature()
         val accessorSignature = deserializeCommonSignature()
         return IdSignature.AccessorSignature(propertySignature, accessorSignature)
     }

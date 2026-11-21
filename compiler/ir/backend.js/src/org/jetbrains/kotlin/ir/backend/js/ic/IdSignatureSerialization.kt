@@ -96,7 +96,7 @@ internal class IdSignatureSerialization(private val library: KotlinLibraryHeader
                 IdSignatureProtoType.ACCESSOR_SIGNATURE.id -> {
                     val propertySignature = deserializeIdSignature(input)
                     val accessorSignature = deserializeIdSignature(input)
-                    if (accessorSignature !is IdSignature.CommonSignature) {
+                    if (propertySignature !is IdSignature.CommonSignature || accessorSignature !is IdSignature.CommonSignature) {
                         icError("can not read accessor signature")
                     }
                     return IdSignature.AccessorSignature(propertySignature, accessorSignature)

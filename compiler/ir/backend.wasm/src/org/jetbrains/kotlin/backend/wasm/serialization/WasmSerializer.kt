@@ -478,7 +478,7 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeAccessorSignature(accessor: IdSignature.AccessorSignature) {
         with(accessor) {
-            serializeIdSignature(propertySignature)
+            serializeCommonSignature(propertySignature)
             serializeCommonSignature(accessorSignature)
         }
     }

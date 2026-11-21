@@ -137,7 +137,7 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
                 )
                 propertyAccessorIdHashAndDescription = null
                 classFqnSegments.run { removeAt(lastIndex) }
-                val propertySignature = build()
+                val propertySignature = build() as CommonSignature
                 IdSignature.AccessorSignature(propertySignature, accessorSignature)
             }
             else -> {
