@@ -43,7 +43,6 @@ where advanced options include:
   -Xir-property-lazy-initialization={disable|enable}
                              Initialize top level properties lazily per file.
   -Xkonan-data-dir           Custom path to the location of konan distributions.
-  -Xllvm-lto-passes          Custom set of LLVM passes to run as the LTOOptimizationPipeline.
   -Xllvm-module-passes       Custom set of LLVM passes to run as the ModuleOptimizationPipeline.
   -Xllvm-variant={dev|user|absolute path to llvm}
                              Choose the LLVM distribution that will be used during compilation.
