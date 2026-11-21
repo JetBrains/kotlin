@@ -13,4 +13,5 @@ package kotlin.experimental
     RequiresOptIn.Level.ERROR,
 )
 @MustBeDocumented
+@SinceKotlin("2.5")
 public annotation class ExperimentalRichErrors
