@@ -6,8 +6,10 @@ import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -29,6 +31,7 @@ import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import plugins.publishing.configureMultiModuleMavenPublishing
 import plugins.publishing.copyAttributes
+import java.nio.file.Paths
 import kotlin.io.path.copyTo
 
 plugins {
@@ -79,6 +82,44 @@ val commonTestOptIns = listOf(
     "kotlin.uuid.ExperimentalUuidApi",
     "kotlin.time.ExperimentalTime",
 )
+
+fun NamedDomainObjectContainer<KotlinJvmCompilation>.stdlibJvmMultiReleaseCompilation(
+    sourceSetName: String,
+    mainCompilation: KotlinCompilation<*>,
+    target: JvmTarget,
+    toolchainVersion: JdkMajorVersion,
+    vararg extraCompilerArgs: String?
+): KotlinJvmCompilation = create(sourceSetName) {
+    associateWith(mainCompilation)
+    compileTaskProvider.configure {
+        this as UsesKotlinJavaToolchain
+        kotlinJavaToolchain.toolchain.use(getToolchainLauncherFor(toolchainVersion))
+        compilerOptions {
+            moduleName = "kotlin-stdlib"
+            jvmTarget = target
+            jvmDefault = JvmDefaultMode.DISABLE
+            freeCompilerArgs.set(
+                listOfNotNull(
+                    "-Xjdk-release=${target.target}",
+                    "-Xallow-kotlin-package",
+                    "-Xexpect-actual-classes",
+                    "-Xmultifile-parts-inherit",
+                    "-Xno-new-java-annotation-targets",
+                    "-Xexplicit-api=strict",
+                    *extraCompilerArgs
+                )
+            )
+            mainCompilationOptions()
+        }
+    }
+    compileJavaTaskProvider?.configure {
+        targetCompatibility = target.target
+        sourceCompatibility = target.target
+        javaCompiler.set(getToolchainCompilerFor(toolchainVersion))
+    }
+}
+
+val jvmMultiReleaseTargets = listOf(JvmTarget.JVM_9)
 
 kotlin {
     val renderDiagnosticNames = project.kotlinBuildProperties.renderDiagnosticNames.get()
@@ -220,15 +261,26 @@ kotlin {
                     }
                 }
             }
+            val multiReleaseCompilations = jvmMultiReleaseTargets.map { target ->
+                stdlibJvmMultiReleaseCompilation(
+                    "multiRelease${target.target}",
+                    main,
+                    target,
+                    JdkMajorVersion.JDK_25_0,
+                    diagnosticNamesArg
+                )
+            }
             project.sourceSets.create("java9") {
                 java.srcDir("jvm/java9")
             }
             configureJava9Compilation(
-                "kotlin.stdlib", listOf(
+                "kotlin.stdlib",
+                listOf(
                     main.output.allOutputs,
                     mainJdk7.output.allOutputs,
                     mainJdk8.output.allOutputs,
-                ), main.configurations.compileDependencyConfiguration
+                ) + multiReleaseCompilations.map { it.output.allOutputs },
+                main.configurations.compileDependencyConfiguration
             )
             val test = getByName("test") {
                 associateWith(mainJdk7)
@@ -460,6 +512,11 @@ kotlin {
         }
         named("jvmMainJdk8") {
             kotlin.srcDir("jdk8/src")
+        }
+        jvmMultiReleaseTargets.forEach { target ->
+            named("jvmMultiRelease${target.target}") {
+                kotlin.srcDir("jvm/multiRelease/${target.target}/")
+            }
         }
 
         named("jvmTest") {
@@ -744,6 +801,12 @@ tasks {
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib"))
         from(kotlin.jvm().compilations["mainJdk7"].output.allOutputs)
         from(kotlin.jvm().compilations["mainJdk8"].output.allOutputs)
+        jvmMultiReleaseTargets.forEach { target ->
+            from(kotlin.jvm().compilations["multiRelease${target.target}"].output.allOutputs) {
+                into("META-INF/versions/${target.target}")
+                exclude("META-INF/**")
+            }
+        }
         from(project.sourceSets["java9"].output)
     }
 
@@ -774,6 +837,11 @@ tasks {
             from(kotlin.sourceSets["jvmMainJdk8"].kotlin) {
                 into("jdk8")
             }
+            jvmMultiReleaseTargets.forEach { target ->
+                from(kotlin.sourceSets["jvmMultiRelease${target.target}"].kotlin) {
+                    into("jvm/multiRelease/${target.target}")
+                }
+            }
         }
     }
 
@@ -791,6 +859,22 @@ tasks {
     dexMethodCount {
         from(jvmJar)
         ownPackages.set(listOf("kotlin"))
+    }
+
+    // TODO(fzhinkin): can we do better here?
+    // The task mainly verifies that multi-release part of the Jar does not expose any classes not available for the base target
+    register("validateJvmJar", Exec::class) {
+        executable(Paths.get(getToolchainJdkHomeFor(JdkMajorVersion.JDK_25_0).get()).resolve("bin/jar").toString())
+        args(
+            "--validate",
+            "--file",
+            jvmJar.get().archiveFile.get().toString()
+        )
+    }.also {
+        it.configure {
+            dependsOn(jvmJar)
+        }
+        getByName("check").dependsOn(it)
     }
 
     val jsJar = named("jsJar", Jar::class) {
@@ -893,6 +977,24 @@ tasks {
 
         }
         check.configure { dependsOn(jvmVersionTest) }
+
+        jvmMultiReleaseTargets.forEach { mrjTarget ->
+            val targetMajorVersion = when (mrjTarget) {
+                JvmTarget.JVM_1_8 -> 8
+                else -> mrjTarget.target.toInt()
+            }
+            if (targetMajorVersion <= jvmVersion.majorVersion) {
+                val jvmVersionTest = register("jvm${jvmVersion.majorVersion}Mrj${targetMajorVersion}Test", Test::class) {
+                    group = "verification"
+                    javaLauncher.set(getToolchainLauncherFor(jvmVersion))
+                    // Prepend multi-release class version to the classpath to shadow their versions comming from the main compilation
+                    classpath = kotlin.jvm().compilations["multiRelease${mrjTarget.target}"].output.allOutputs + jvmTest.get().classpath
+                    testClassesDirs = jvmTest.get().testClassesDirs
+
+                }
+                check.configure { dependsOn(jvmVersionTest) }
+            }
+        }
     }
 
     val jvmLongRunningTest = register("jvmLongRunningTest", Test::class) {
