@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.buildtools.forward.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.*
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import java.nio.file.Path
 
-@OptIn(ExperimentalCompilerArgument::class)
 class JsModule(
     private val kotlinToolchain: KotlinToolchains,
     val buildSession: KotlinToolchains.BuildSession,

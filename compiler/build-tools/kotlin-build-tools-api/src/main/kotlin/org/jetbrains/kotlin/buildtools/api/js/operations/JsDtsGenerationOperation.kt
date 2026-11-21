@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalSubclassOptIn::class)
 package org.jetbrains.kotlin.buildtools.api.js.operations
 
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
