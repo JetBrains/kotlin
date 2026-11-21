@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.ModuleVisibilityProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.canBeReferencedFromOtherFiles
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -130,6 +131,10 @@ abstract class KotlinIrLinker(
         symbolKind: BinarySymbolData.SymbolKind,
         moduleDeserializer: IrModuleDeserializer,
     ): IrSymbol {
+        check(idSignature.canBeReferencedFromOtherFiles) {
+            "An attempt to run a lookup in IR linker for a signature that is supposed to be limited to the single file: ${idSignature::class.java.simpleName}, ${idSignature.render()}"
+        }
+
         val topLevelSignature: IdSignature = idSignature.topLevelSignature()
 
         // Note: The top-level symbol might be gone in newer version of dependency KLIB. Then the KLIB that was compiled against
