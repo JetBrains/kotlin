@@ -90,7 +90,6 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
         this.hashId = null
         this.propertyAccessorIdHashAndDescription = null
         this.mask = 0L
-        this.overridden = null
         this.description = null
         this.isTopLevelPrivate = false
 
@@ -108,13 +107,6 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
         val packageFqName = packageFqn.asString()
         val classFqName = classFqnSegments.joinToString(".")
         return when {
-            overridden != null -> {
-                val preserved = overridden!!
-                overridden = null
-                val memberSignature = build()
-                val overriddenSignatures = preserved.map { buildSignature(it) }
-                IdSignature.SpecialFakeOverrideSignature(memberSignature, overriddenSignatures)
-            }
             isTopLevelPrivate -> {
                 val fileSig = currentFileSignature
                     ?: error("File expected to be not null ($packageFqName, $classFqName)")

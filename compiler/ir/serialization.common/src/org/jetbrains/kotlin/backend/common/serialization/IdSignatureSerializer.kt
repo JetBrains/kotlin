@@ -85,7 +85,6 @@ class IdSignatureSerializer(
             is IdSignature.CompositeSignature -> proto.compositeSig = serializeCompositeSignature(idSignature)
             is IdSignature.LocalSignature -> proto.localSig = serializeLocalSignature(idSignature)
             is IdSignature.FileSignature -> proto.fileSig = serializeFileSignature(idSignature)
-            is IdSignature.SpecialFakeOverrideSignature,
             is IdSignature.LoweredDeclarationSignature,
                 -> error("${idSignature::class.java} is not expected here")
         }
