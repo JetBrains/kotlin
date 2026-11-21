@@ -466,66 +466,6 @@ sealed class IdSignature {
     }
 
     /**
-     * [KT-42020](https://youtrack.jetbrains.com/issue/KT-42020)
-     *
-     * This special signature is required to disambiguate fake overrides 'foo(x: T)[T = String]' and 'foo(x: String)' in the code below:
-     *
-     * ```kotlin
-     * open class Base<T> {
-     *     fun foo(x: T) {}
-     *     fun foo(x: String) {}
-     * }
-     *
-     * class Derived : Base<String>()
-     * ```
-     *
-     * NB: A similar clash is possible for generic member extension properties as well
-     *
-     * For each fake override `foo` we collect non-fake overrides overridden by `foo`
-     * such that their value parameter types contain type parameters of 'Base',
-     * sorted by the fully-qualified name of the containing class.
-     *
-     * NB: this special case of [IdSignature] is JVM-specific.
-     */
-    class SpecialFakeOverrideSignature(
-        val memberSignature: IdSignature,
-        val overriddenSignatures: List<IdSignature>
-    ) : IdSignature() {
-        override val isPubliclyVisible: Boolean
-            get() = memberSignature.isPubliclyVisible
-
-        override fun asPublic(): CommonSignature? = memberSignature.asPublic()
-
-        override fun topLevelSignature(): IdSignature =
-            memberSignature.topLevelSignature()
-
-        override fun nearestPublicSig(): IdSignature =
-            if (memberSignature.isPubliclyVisible)
-                this
-            else
-                memberSignature.nearestPublicSig()
-
-        override fun packageFqName(): FqName =
-            memberSignature.packageFqName()
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as SpecialFakeOverrideSignature
-
-            if (memberSignature != other.memberSignature) return false
-            if (overriddenSignatures != other.overriddenSignatures) return false
-
-            return true
-        }
-
-        private val hashCode = 31 * memberSignature.hashCode() + overriddenSignatures.hashCode()
-
-        override fun hashCode(): Int = hashCode
-    }
-
-    /**
      * A signature used for local declarations such as functions, properties, classes with their members, etc.
      *
      * This signature is not navigatable through files.
