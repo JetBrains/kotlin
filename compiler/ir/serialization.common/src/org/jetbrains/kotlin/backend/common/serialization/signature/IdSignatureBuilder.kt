@@ -113,7 +113,7 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
                 overridden = null
                 val memberSignature = build()
                 val overriddenSignatures = preserved.map { buildSignature(it) }
-                return IdSignature.SpecialFakeOverrideSignature(memberSignature, overriddenSignatures)
+                IdSignature.SpecialFakeOverrideSignature(memberSignature, overriddenSignatures)
             }
             isTopLevelPrivate -> {
                 val fileSig = currentFileSignature
@@ -154,14 +154,6 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
 
     protected fun setExpected(f: Boolean) {
         mask = mask or IdSignature.Flags.IS_EXPECT.encode(f)
-    }
-
-    protected fun setSpecialJavaProperty(f: Boolean) {
-        mask = mask or IdSignature.Flags.IS_JAVA_FOR_KOTLIN_OVERRIDE_PROPERTY.encode(f)
-    }
-
-    protected fun setSyntheticJavaProperty(f: Boolean) {
-        mask = mask or IdSignature.Flags.IS_SYNTHETIC_JAVA_PROPERTY.encode(f)
     }
 
     protected open fun platformSpecificModule(descriptor: ModuleDescriptor) {

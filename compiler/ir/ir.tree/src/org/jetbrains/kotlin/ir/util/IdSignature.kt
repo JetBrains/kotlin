@@ -226,8 +226,13 @@ sealed class IdSignature {
      */
     enum class Flags(val recursive: Boolean) {
         IS_EXPECT(true),
+
+        @Deprecated("KLIBs are not supported for Kotlin/JVM", level = DeprecationLevel.ERROR)
         IS_JAVA_FOR_KOTLIN_OVERRIDE_PROPERTY(false),
+
         IS_NATIVE_INTEROP_LIBRARY(true),
+
+        @Deprecated("KLIBs are not supported for Kotlin/JVM", level = DeprecationLevel.ERROR)
         IS_SYNTHETIC_JAVA_PROPERTY(false);
 
         fun encode(isSet: Boolean): Long = if (isSet) 1L shl ordinal else 0L
