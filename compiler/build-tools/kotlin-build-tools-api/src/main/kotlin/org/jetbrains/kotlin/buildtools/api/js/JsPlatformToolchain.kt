@@ -46,7 +46,7 @@ public interface JsPlatformToolchain : KotlinToolchains.Toolchain {
 
     /**
      * Creates a builder for an operation that generates TypeScript
-     * declarations (`.d.ts`) from compiled KLIBs.
+     * declarations (`.d.ts`) from compiled klibs.
      *
      * @param klibs the main klib and all of its dependencies
      * @param outputDirectory the directory to write the generated `.d.ts` files into; it is created if it does not exist

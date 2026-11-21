@@ -174,7 +174,7 @@ class WasmModule(
     override fun prepareExecutionProcessBuilder(
         mainClassFqn: String,
     ): ProcessBuilder {
-        // Wasm modules produce KLib files and cannot be executed directly like JVM classes.
+        // Wasm modules produce .klib files and cannot be executed directly like JVM classes.
         throw UnsupportedOperationException("Execution of compiled Wasm modules is not supported directly")
     }
 }
