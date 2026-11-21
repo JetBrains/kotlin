@@ -262,6 +262,21 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     }
 
     @Test
+    @TestMetadata("collectionLiteralVarargs")
+    fun testObjCCollectionLiteralVarargs() {
+        testDylibCinteropExe(
+            testName = "collectionLiteralVarargs",
+            hFile = "../tests/varargs.h",
+            mFile = "../tests/varargs.m",
+            defFile = "collectionLiteralVarargs.def",
+            ktFile = "collectionLiteralVarargs.kt",
+            // KT-81722: Exercise the Array.of lowering while collection literals are experimental.
+            // Remove these flags once that lowering is available with the default language settings.
+            extraCompilerOpts = listOf("-XXLanguage:+CollectionLiterals", "-XXLanguage:+CompanionBlocks"),
+        )
+    }
+
+    @Test
     @TestMetadata("with_initializer")
     fun testObjCWithGlobalInitializer() {
         val execResult = testDylibCinteropExe("with_initializer")

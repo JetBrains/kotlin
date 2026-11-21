@@ -7,25 +7,20 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ir.isArrayOfOrArrayDotOf
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.IrArrayBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
-import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 /**
  * Replaces varargs with array arguments, and lowers [arrayOf] and [emptyArray] calls.
@@ -88,40 +83,5 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
         context.createJvmIrBuilder(currentScope!!, startOffset, endOffset)
 
 }
-
-private val PRIMITIVE_NAMES: List<String> =
-    PrimitiveType.entries.map { it.typeName.asString() } + UnsignedType.entries.map { it.typeName.asString() }
-
-private val PRIMITIVE_ARRAY_NAMES: Set<String> =
-    PRIMITIVE_NAMES.map { it + "Array" }.toSet()
-
-private val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =
-    PRIMITIVE_NAMES.map { name -> name.toLowerCaseAsciiOnly() + "ArrayOf" }.toSet()
-
-private const val ARRAY_NAME = "Array"
-private const val ARRAY_OF_NAME = "arrayOf"
-
-private fun IrFunction.isArrayOf(): Boolean {
-    val parent = when (val directParent = parent) {
-        is IrClass -> directParent.getPackageFragment()
-        is IrPackageFragment -> directParent
-        else -> return false
-    }
-    return parent.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
-            name.asString().let { it in PRIMITIVE_ARRAY_OF_NAMES || it == ARRAY_OF_NAME } &&
-            hasShape(regularParameters = 1) &&
-            parameters[0].isVararg
-}
-
-private fun IrFunction.isArrayDotOf(): Boolean {
-    val klass = parent as? IrClass ?: return false
-    return name == OperatorNameConventions.OF &&
-            klass.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
-            klass.name.asString().let { it in PRIMITIVE_ARRAY_NAMES || it == ARRAY_NAME } &&
-            hasShape(regularParameters = 1) &&
-            parameters[0].isVararg
-}
-
-internal fun IrFunction.isArrayOfOrArrayDotOf(): Boolean = isArrayOf() || isArrayDotOf()
 
 internal fun IrFunction.isEmptyArray(): Boolean = isTopLevelInPackage("emptyArray", StandardNames.BUILT_INS_PACKAGE_FQ_NAME)

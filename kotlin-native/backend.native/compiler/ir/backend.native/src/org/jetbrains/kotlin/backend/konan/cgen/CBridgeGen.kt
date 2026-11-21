@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.cgen
 
+import org.jetbrains.kotlin.backend.common.ir.isArrayOfOrArrayDotOf
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
@@ -430,7 +431,9 @@ private fun KotlinToCCallBuilder.unwrapVariadicArguments(
         is IrExpression -> listOf(it)
         is IrSpreadElement -> {
             val expression = it.expression
-            require(expression is IrCall && expression.symbol == irBuiltIns.arrayOf) { stubs.renderCompilerError(it) }
+            // The isArrayOfOrArrayDotOf() predicate also accepts primitive array factories.
+            // But FIR rejects primitive arrays as spreads for interop varargs, so we are good to use this predicate.
+            require(expression is IrCall && expression.symbol.owner.isArrayOfOrArrayDotOf()) { stubs.renderCompilerError(it) }
             handleArgumentForVarargParameter(expression.arguments[0]) { _, elements ->
                 unwrapVariadicArguments(elements)
             }
