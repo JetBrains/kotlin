@@ -72,7 +72,7 @@ class JsModule(
     override fun prepareExecutionProcessBuilder(
         mainClassFqn: String,
     ): ProcessBuilder {
-        // JS modules produce KLib files and cannot be executed directly like JVM classes.
+        // JS modules produce .klib files and cannot be executed directly like JVM classes.
         throw UnsupportedOperationException("Execution of compiled JS modules is not supported directly")
     }
 }

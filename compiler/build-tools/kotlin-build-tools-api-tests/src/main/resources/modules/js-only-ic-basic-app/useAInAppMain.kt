@@ -4,6 +4,6 @@ fun useAInAppMain(a: A) {
 
 typealias ExportedAlias = String
 
-/** A declaration generated from KLIB metadata. */
+/** A declaration generated from klib metadata. */
 @JsExport
 fun richDts(value: ExportedAlias): ExportedAlias = value
