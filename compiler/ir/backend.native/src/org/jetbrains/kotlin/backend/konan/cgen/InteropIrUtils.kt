@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.backend.konan.cgen
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
-import org.jetbrains.kotlin.backend.common.ir.isArrayDotOf
 import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -128,6 +126,3 @@ fun cBoolType(target: KonanTarget): CType? = when (target.family) {
 
 fun IrFunction.isCGlobalAccess(): Boolean =
     this.hasAnnotation(RuntimeNames.cGlobalAccess)
-
-fun IrCall.isVariadicSpreadArrayFactory(irBuiltIns: IrBuiltIns): Boolean =
-        symbol == irBuiltIns.arrayOf || symbol.owner.isArrayDotOf(irBuiltIns.arrayClass)

@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.hasShape
-import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -33,9 +31,6 @@ private const val ARRAY_NAME = "Array"
 private const val ARRAY_OF_NAME = "arrayOf"
 
 fun IrFunction.isArrayOfOrArrayDotOf(): Boolean = isArrayOf() || isArrayDotOf()
-
-fun IrFunction.isArrayDotOf(arrayClass: IrClassSymbol): Boolean =
-    name == OperatorNameConventions.OF && parent == arrayClass.owner && isStatic && hasSingleVarargParameter()
 
 private fun IrFunction.isArrayOf(): Boolean {
     val parent = when (val directParent = parent) {
