@@ -39,6 +39,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.putToMultiMap
 
+@RequiresOptIn("Internal API of the IR linker. Not supposed to be used outside the linker.")
+annotation class IrLinkerInternalApi
+
 abstract class KotlinIrLinker(
     val symbolTable: SymbolTable,
     private val friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
