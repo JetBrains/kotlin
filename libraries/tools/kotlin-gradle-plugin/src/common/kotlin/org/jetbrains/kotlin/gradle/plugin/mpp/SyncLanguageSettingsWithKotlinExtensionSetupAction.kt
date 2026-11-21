@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.dsl.explicitApiModeAsCompilerArg
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.returnValueCheckerModeAsCompilerArg
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -30,6 +31,10 @@ internal val SyncLanguageSettingsWithKotlinExtensionSetupAction = KotlinProjectS
             languageSettings.explicitApi = project.providers.provider {
                 project.kotlinExtension.explicitApiModeAsCompilerArg()
             }
+        }
+
+        languageSettings.returnValueCheckerMode = project.providers.provider {
+            project.kotlinExtension.returnValueCheckerModeAsCompilerArg(isMainSourceSet)
         }
 
         languageSettings.freeCompilerArgsProvider = project.provider {

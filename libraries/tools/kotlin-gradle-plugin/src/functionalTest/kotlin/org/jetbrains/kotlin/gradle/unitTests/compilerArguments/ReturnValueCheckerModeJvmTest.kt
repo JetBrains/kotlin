@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.gradle.unitTests.compilerArguments
 
 import org.jetbrains.kotlin.gradle.dsl.ReturnValueCheckerMode
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.utils.named
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ReturnValueCheckerModeJvmTest : ReturnValueCheckerTestBase() {
 
@@ -66,5 +68,31 @@ class ReturnValueCheckerModeJvmTest : ReturnValueCheckerTestBase() {
         project.evaluate()
 
         project.assertMode("compileKotlin", ReturnValueCheckerMode.Full)
+    }
+
+    @Test // KT-90458
+    fun `kapt stubs generation receives mode of main compilation`() {
+        val project = buildProjectWithJvm {
+            plugins.apply(Kapt3GradleSubplugin::class.java)
+        }
+        project.kotlinJvmExtension.returnValueCheckerMode.set(ReturnValueCheckerMode.Full)
+        project.evaluate()
+
+        project.assertMode("kaptGenerateStubsKotlin", ReturnValueCheckerMode.Full)
+    }
+
+    @Test // KT-90962
+    fun `override cli arg`() {
+        val project = buildProjectWithJvm()
+        project.kotlinJvmExtension.apply {
+            returnValueCheckerMode.set(ReturnValueCheckerMode.Full)
+            compilerOptions {
+                freeCompilerArgs.add("-Xreturn-value-checker=disable")
+            }
+        }
+        project.evaluate()
+
+        val lastArg = project.compileArguments("compileKotlin").last { it.contains("-Xreturn-value-checker=") }
+        assertEquals("-Xreturn-value-checker=full", lastArg)
     }
 }
