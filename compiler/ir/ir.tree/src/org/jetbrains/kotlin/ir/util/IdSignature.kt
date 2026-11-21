@@ -551,3 +551,28 @@ interface IdSignatureComposer {
 
     val mangler: KotlinMangler.DescriptorMangler
 }
+
+/**
+ * Whether the declaration denoted by this signature can be referenced from an IR file other than the file
+ * it is declared in. That other file may belong to the same module or to a different one.
+ *
+ * If `false`, every reference to the declaration is located in the same IR file as the declaration itself.
+ * So, when a symbol with such a signature is met while deserializing an IR file, its owner can only be found
+ * in that very file. If `true`, the owner may be located in any file of any module.
+ *
+ * - [IdSignature.CommonSignature] and [IdSignature.AccessorSignature] denote publicly accessible declarations
+ *   (see [IdSignature]), which can be referenced from any file.
+ * - [IdSignature.CompositeSignature] follows its [container][IdSignature.CompositeSignature.container]:
+ *     - A top-level private declaration has [IdSignature.FileSignature] as the container. Neither the declaration
+ *       itself nor anything declared inside it can be referenced from other files.
+ *     - A type parameter of a declaration that can be referenced from other files can be referenced from other files
+ *       as well. For example, a non-reified type parameter of an inline function stays in the type argument of a `typeOf`
+ *       call after inlining, and the call site may be in another file.
+ * - All other signatures can't be referenced from other files.
+ */
+val IdSignature.canBeReferencedFromOtherFiles: Boolean
+    get() = when (this) {
+        is IdSignature.CommonSignature, is IdSignature.AccessorSignature -> true
+        is IdSignature.CompositeSignature -> container.canBeReferencedFromOtherFiles
+        else -> false
+    }
