@@ -1,3 +1,4 @@
+import gradle.addKgpGradleApiDependency
 import kotlinx.validation.KotlinApiBuildTask
 
 plugins {
@@ -5,6 +6,8 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     id("gradle-plugin-common-configuration")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    id("test-inputs-check")
+    `java-test-fixtures`
 }
 
 gradlePlugin {
@@ -21,6 +24,28 @@ gradlePlugin {
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin"))
+
+    testImplementation(kotlinTest("junit5"))
+
+    addKgpGradleApiDependency("testFixturesCompileOnly")
+}
+
+projectTests {
+    testTask()
+}
+
+components.named<AdhocComponentWithVariants>("java").configure {
+    // disable publication of test fixtures
+    java.sourceSets.testFixtures.configure {
+        setOf(
+            apiElementsConfigurationName,
+            runtimeElementsConfigurationName,
+        ).forEach { testFixtureConfigurationName ->
+            withVariantsFromConfiguration(configurations[testFixtureConfigurationName]) {
+                skip()
+            }
+        }
+    }
 }
 
 tasks.named<KotlinApiBuildTask>("apiBuild") {

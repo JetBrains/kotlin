@@ -20,6 +20,9 @@ public abstract interface annotation class org/jetbrains/kotlin/gradle/Experimen
 public abstract interface annotation class org/jetbrains/kotlin/gradle/ExperimentalNodeJsToolchainDsl : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/gradle/ExperimentalNpmDependencyManagementDsl : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/gradle/ExperimentalWasmDsl : java/lang/annotation/Annotation {
 }
 

@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeSettingsDsl
 import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
 import org.jetbrains.kotlin.gradle.ecosystem.KotlinToolchainManagementDsl
+import org.jetbrains.kotlin.gradle.ecosystem.targets.KotlinJsSettingsDsl
+import org.jetbrains.kotlin.gradle.ecosystem.targets.KotlinWasmJsSettingsDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainManagementDslImpl
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.WasmToolsToolchainManagementDslImpl
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainManagementDslImpl
@@ -44,5 +46,17 @@ internal open class KotlinEcosystemExtensionImpl @Inject constructor(
 
     override fun toolchainManagement(configure: KotlinToolchainManagementDsl.() -> Unit) {
         toolchainManagementDsl.configure()
+    }
+
+    override val js: KotlinJsSettingsDsl = objects.newInstance(KotlinJsSettingsDsl::class.java)
+
+    override fun js(configure: KotlinJsSettingsDsl.() -> Unit) {
+        js.configure()
+    }
+
+    override val wasmJs: KotlinWasmJsSettingsDsl = objects.newInstance(KotlinWasmJsSettingsDsl::class.java)
+
+    override fun wasmJs(configure: KotlinWasmJsSettingsDsl.() -> Unit) {
+        wasmJs.configure()
     }
 }
