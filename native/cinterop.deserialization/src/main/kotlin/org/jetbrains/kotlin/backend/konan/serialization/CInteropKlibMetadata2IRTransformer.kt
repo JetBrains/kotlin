@@ -53,7 +53,7 @@ class CInteropKlibMetadata2IRTransformer(
     internal val declarationTracker: DeclarationTracker,
     private val getNestedKmClass: (ClassId) -> KmClass?,
     private val getOrCreateContainingPackageFragment: (kmDeclaration: Any) -> IrPackageFragment,
-    private val getReferencedDeclarationSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol,
+    private val getReferencedDeclarationSymbol: (SignatureAndKind) -> IrSymbol,
     private val irProviderForLazyAnnotations: IrProvider,
 ) {
     private val signatureComputer = PublicIdSignatureComputer(KonanManglerIr, markAllAsCInterop = true)
@@ -552,7 +552,7 @@ class CInteropKlibMetadata2IRTransformer(
         // or otherwise, from C-interop Klib. This information is necessary to construct a proper IdSignature.
         val classSignature = classId.toCInteropSignature(isCInterop = !classId.definitelyNotFromCInterop())
 
-        getReferencedDeclarationSymbol(classSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL) as IrClassSymbol
+        getReferencedDeclarationSymbol(SignatureAndKind(classSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL)) as IrClassSymbol
     }
 
     private fun deserializeAnnotationArgument(kmArgument: KmAnnotationArgument): IrExpression {
@@ -580,7 +580,7 @@ class CInteropKlibMetadata2IRTransformer(
                 val enumClassId = ClassId.fromString(kmArgument.enumClassName)
                 val enumEntryId = enumClassId.createNestedClassId(Name.identifier(kmArgument.enumEntryName))
                 val enumEntrySig = enumEntryId.toIdSignature()
-                val enumEntrySymbol = getReferencedDeclarationSymbol(enumEntrySig, BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL) as IrEnumEntrySymbol
+                val enumEntrySymbol = getReferencedDeclarationSymbol(SignatureAndKind(enumEntrySig, BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL)) as IrEnumEntrySymbol
                 val enumClassSymbol = findReferencedClass(kmArgument.enumClassName)
                 val irType = enumClassSymbol.defaultTypeWithoutArguments
                 IrGetEnumValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irType, enumEntrySymbol)
