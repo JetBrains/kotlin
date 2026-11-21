@@ -838,13 +838,19 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         JpsModuleRootModificationUtil.addDependency(b2, a, JpsJavaDependencyScope.COMPILE, /*exported =*/ false)
         JpsModuleRootModificationUtil.addDependency(c2, b2, JpsJavaDependencyScope.COMPILE, /*exported =*/ false)
 
+        val expectedFile = File(getCurrentTestDataRoot(), "expected.txt")
+
+        TestDataAssertions.assertEqualsToFile(expectedFile, buildAndReportDependentTargets())
+    }
+
+    protected fun buildAndReportDependentTargets(): String {
         val actual = StringBuilder()
         buildCustom(CanceledStatus.NULL, TestProjectBuilderLogger(), BuildResult()) {
             project.setTestingContext(TestingContext(LookupTracker.DO_NOTHING, object : TestingBuildLogger {
                 override fun chunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
                     actual.append("Targets dependent on ${chunk.targets.joinToString()}:\n")
                     val dependentRecursively = mutableSetOf<KotlinChunk>()
-                    context.kotlin.getChunk(chunk)!!.collectDependentChunksRecursivelyExportedOnly(dependentRecursively)
+                    context.kotlin.getChunk(chunk)!!.collectDependentChunksRecursively(dependentRecursively)
                     dependentRecursively.asSequence().map { it.targets.joinToString() }.sorted().joinTo(actual, "\n")
                     actual.append("\n---------\n")
                 }
@@ -862,23 +868,24 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
                 override fun markedAsDirtyAfterRound(files: Iterable<File>) {}
             }))
         }
-
-        val expectedFile = File(getCurrentTestDataRoot(), "expected.txt")
-
-        TestDataAssertions.assertEqualsToFile(expectedFile, actual.toString())
+        return actual.toString()
     }
 
     @Test
     fun testJre11() {
-        val jdk11Path = KtTestUtil.getJdk11Home().absolutePath
-
-        val jdk = myModel.global.addSdk(JDK_NAME, jdk11Path, "11", JpsJavaSdkType.INSTANCE)
-        jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + jdk11Path + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
+        addJdk11()
 
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
         addKotlinStdlibDependency()
 
         buildAllModules().assertSuccessful()
+    }
+
+    protected fun addJdk11() {
+        val jdk11Path = KtTestUtil.getJdk11Home().absolutePath
+
+        val jdk = myModel.global.addSdk(JDK_NAME, jdk11Path, "11", JpsJavaSdkType.INSTANCE)
+        jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + jdk11Path + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
     }
 
     @Test
