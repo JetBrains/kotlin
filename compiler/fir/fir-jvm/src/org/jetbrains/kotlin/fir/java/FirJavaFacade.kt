@@ -186,6 +186,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             ).apply {
                 this.isInner = classId.isNestedClass && !isStatic
                 isFun = classKind == ClassKind.INTERFACE && !javaClass.isSealed
+                isValue = javaClass.isValue
             }
 
             declarationList = FirLazyJavaDeclarationList(javaClass, classSymbol)
@@ -207,10 +208,6 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
 
             if (javaClass.isRecord) {
                 this.isJavaRecord = true
-            }
-
-            if (javaClass.isValue) {
-                this.isJavaValueClass = true
             }
 
             if (javaClass is VirtualFileBoundJavaClass) {

@@ -181,7 +181,7 @@ fun Fir2IrConversionScope.createTemporaryVariableForSafeCallConstruction(
 fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<IrSimpleType>? {
     val valueClassRepresentation = klass.valueClassRepresentation
     if (valueClassRepresentation == null) {
-        require(!klass.isValue || klass.isExpect) {
+        require(!klass.isValue || klass.isJavaOrEnhancement || klass.isExpect) {
             "Value class has no representation: ${klass.render()}"
         }
         return null
