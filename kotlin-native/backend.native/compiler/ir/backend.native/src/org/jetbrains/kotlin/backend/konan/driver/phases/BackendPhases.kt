@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.makeEntryPoint
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -70,12 +69,12 @@ internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationSt
     file.addChild(makeEntryPoint(context))
 }
 
-internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, ModuleDescriptor>(
+internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, K1FrontendPhaseOutput>(
         "CreateTestBundlePhase",
-) { context, moduleDescriptor ->
+) { context, input ->
     val config = context.config
     val output = OutputFiles(config.outputPath, config.target, config.produce).mainFile
-    createTestBundle(config, moduleDescriptor, output)
+    createTestBundle(config, input.moduleDescriptor, input.klibModuleDescriptors, output)
 }
 
 private fun IrModuleFragment.addFile(fileEntry: IrFileEntry, packageFqName: FqName): IrFile {

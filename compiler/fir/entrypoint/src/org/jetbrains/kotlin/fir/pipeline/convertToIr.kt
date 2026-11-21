@@ -104,7 +104,6 @@ fun AllModulesFrontendOutput.convertToIrAndActualize(
     createSpecialAnnotationsProvider: ((IrModuleFragment) -> IrSpecialAnnotationsProvider)?,
     extraActualDeclarationExtractorsInitializer: (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>,
     commonMemberStorage: Fir2IrCommonMemberStorage = Fir2IrCommonMemberStorage(),
-    irModuleFragmentPostCompute: (IrModuleFragment) -> Unit = { _ -> },
 ): Fir2IrActualizedResult {
     val pipeline = Fir2IrPipeline(
         outputs,
@@ -118,7 +117,6 @@ fun AllModulesFrontendOutput.convertToIrAndActualize(
         createSpecialAnnotationsProvider,
         extraActualDeclarationExtractorsInitializer,
         commonMemberStorage,
-        irModuleFragmentPostCompute,
     )
     return pipeline.convertToIrAndActualize()
 }
@@ -135,7 +133,6 @@ private class Fir2IrPipeline(
     val createSpecialAnnotationsProvider: ((IrModuleFragment) -> IrSpecialAnnotationsProvider)?,
     val extraActualDeclarationExtractorsInitializer: (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>,
     val commonMemberStorage: Fir2IrCommonMemberStorage,
-    val irModuleFragmentPostCompute: (IrModuleFragment) -> Unit,
 ) {
     private class Fir2IrConversionResult(
         val mainIrFragment: IrModuleFragment,
@@ -197,9 +194,7 @@ private class Fir2IrPipeline(
                 componentsStorages[output.session] = it
             }
 
-            Fir2IrConverter.generateIrModuleFragment(componentsStorage, output.fir).also { moduleFragment ->
-                irModuleFragmentPostCompute(moduleFragment)
-            }
+            Fir2IrConverter.generateIrModuleFragment(componentsStorage, output.fir)
         }
 
         val dependentIrFragments = fragments.dropLast(1)

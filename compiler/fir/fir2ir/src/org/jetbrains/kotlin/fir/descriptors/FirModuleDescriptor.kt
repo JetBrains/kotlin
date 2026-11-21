@@ -62,7 +62,8 @@ class FirModuleDescriptor private constructor(
         shouldNotBeCalled()
     }
 
-    override var allDependencyModules: List<ModuleDescriptor> = emptyList()
+    override val allDependencyModules: List<ModuleDescriptor>
+        get() = shouldNotBeCalled()
 
     override val expectedByModules: List<ModuleDescriptor>
         get() = shouldNotBeCalled()

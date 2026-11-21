@@ -35,9 +35,12 @@ import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.konan.config.emitLazyObjcHeaderFile
 import org.jetbrains.kotlin.konan.config.objcGenerics
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
+import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -45,7 +48,11 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import kotlin.io.path.Path
 import kotlin.io.path.writeLines
 
-data class K1FrontendPhaseOutput(val moduleDescriptor: ModuleDescriptor)
+data class K1FrontendPhaseOutput(
+        val moduleDescriptor: ModuleDescriptor,
+        val klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor>,
+        val forwardDeclarationsModule: ModuleDescriptor,
+)
 
 internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, Nothing?, K1FrontendPhaseOutput?> = createSimpleNamedCompilerPhase(
         "Frontend",
@@ -63,15 +70,16 @@ internal val K1FrontendPhase: NamedCompilerPhase<NativeBackendPhaseContext, Noth
                 "KonanDriver.kt::splitOntoTwoStages() must transform such compilation into two-stage compilation. Please report this here: https://kotl.in/issue"
     }
 
-    val moduleDescriptor = setupModuleDescriptor(context)
+    val output = createFrontendOutput(context)
+    val moduleDescriptor = output.moduleDescriptor
     dumpObjcHeader(context, moduleDescriptor)
-    context.config.configuration.sourcesModules = moduleDescriptor.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
+    context.config.configuration.sourcesModules = output.klibModuleDescriptors.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
 
-    K1FrontendPhaseOutput(moduleDescriptor)
+    output
 }
 
 @OptIn(K1Deprecation::class)
-private fun setupModuleDescriptor(context: NativeBackendPhaseContext): ModuleDescriptor {
+private fun createFrontendOutput(context: NativeBackendPhaseContext): K1FrontendPhaseOutput {
     val config = context.config
     val moduleName = Name.special("<${config.moduleId}>")
 
@@ -106,6 +114,9 @@ private fun setupModuleDescriptor(context: NativeBackendPhaseContext): ModuleDes
             isForMetadataCompilation = config.metadataKlib
     )
 
+    val klibModuleDescriptors: Map<KotlinLibrary, ModuleDescriptor> = resolvedModuleDescriptors.resolvedDescriptors
+            .associateBy { (it.klibModuleOrigin as DeserializedKlibModuleOrigin).library }
+
     val additionalPackages = mutableListOf<PackageFragmentProvider>()
     if (!module.isNativeStdlib()) {
         module.setDependencies(ModuleDependenciesImpl(
@@ -127,7 +138,11 @@ private fun setupModuleDescriptor(context: NativeBackendPhaseContext): ModuleDes
             )
     )
 
-    return module
+    return K1FrontendPhaseOutput(
+            moduleDescriptor = module,
+            klibModuleDescriptors = klibModuleDescriptors,
+            forwardDeclarationsModule = resolvedModuleDescriptors.forwardDeclarationsModule,
+    )
 }
 
 private fun dumpObjcHeader(context: NativeBackendPhaseContext, moduleDescriptor: ModuleDescriptor) {

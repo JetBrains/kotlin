@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
-import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
@@ -93,7 +91,7 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : Frontend2BackendCo
         val fir2IrExtensions = JvmFir2IrExtensions()
 
         val libraries: List<KotlinLibrary> = resolveLibraries(module)
-        val [dependencies: List<ModuleDescriptor>, builtIns: KotlinBuiltIns?] = loadModuleDescriptors(
+        val builtIns: KotlinBuiltIns? = loadModuleDescriptors(
             libraries,
             testServices.targetPlatformProvider.getTargetPlatform(module),
         )
@@ -116,9 +114,7 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : Frontend2BackendCo
             extraActualDeclarationExtractorsInitializer = { it: Fir2IrComponents ->
                 listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it))
             },
-        ).also {
-            (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
-        }
+        )
 
         return createBackendInput(
             module,
@@ -182,7 +178,7 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : Frontend2BackendCo
     private fun loadModuleDescriptors(
         libraries: List<KotlinLibrary>,
         targetPlatform: TargetPlatform,
-    ): Pair<List<ModuleDescriptor>, KotlinBuiltIns?> {
+    ): KotlinBuiltIns? {
         val stdlib: KotlinLibrary? = libraries.firstOrNull { it.isAnyPlatformStdlib }
 
         var builtIns: KotlinBuiltIns? = null
@@ -210,18 +206,15 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : Frontend2BackendCo
             return moduleDescriptor
         }
 
-        val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
         if (stdlib != null) {
-            val stdlibModuleDescriptor = loadDescriptor(stdlib)
-            moduleDescriptors += stdlibModuleDescriptor
-            builtIns = stdlibModuleDescriptor.builtIns
+            builtIns = loadDescriptor(stdlib).builtIns
         }
 
         libraries.forEach { library ->
             if (library == stdlib) return@forEach
-            moduleDescriptors += loadDescriptor(library)
+            loadDescriptor(library)
         }
 
-        return moduleDescriptors to builtIns
+        return builtIns
     }
 }
