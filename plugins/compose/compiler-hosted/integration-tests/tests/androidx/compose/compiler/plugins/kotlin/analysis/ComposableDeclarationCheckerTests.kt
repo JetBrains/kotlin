@@ -164,7 +164,7 @@ class ComposableDeclarationCheckerTests(
                 acceptSuspend @Composable <!ARGUMENT_TYPE_MISMATCH!>{}<!>
                 acceptComposableSuspend @Composable {}
                 acceptComposableSuspend(composableLambda)
-                acceptSuspend(<!COMPOSABLE_SUSPEND_FUN!><!ARGUMENT_TYPE_MISMATCH!>@Composable <!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun()<!> { }<!>)
+                acceptSuspend(<!ARGUMENT_TYPE_MISMATCH!><!COMPOSABLE_SUSPEND_FUN!>@Composable <!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun()<!> { }<!>)
             }
     """
         )
@@ -353,8 +353,8 @@ class ComposableDeclarationCheckerTests(
                     fun compose(content: () -> Unit)
                 }
 
-                class Impl : Base {
-                    override fun compose(content: @Composable () -> Unit) {}
+                <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Impl<!> : Base {
+                    <!NOTHING_TO_OVERRIDE!>override<!> fun compose(content: @Composable () -> Unit) {}
                 }
         """
         )
@@ -422,7 +422,7 @@ class ComposableDeclarationCheckerTests(
             """
                 import androidx.compose.runtime.Composable
 
-                class Impl : () -> Unit, @Composable (Int) -> Unit {
+                class Impl : <!MIXING_FUNCTIONAL_KINDS_IN_SUPERTYPES!>() -> Unit, @Composable (Int) -> Unit<!> {
                     ${"@Composable override <!CONFLICTING_OVERLOADS!>fun invoke()<!> {}"}
                     @Composable override fun invoke(p0: Int) {}
                 }

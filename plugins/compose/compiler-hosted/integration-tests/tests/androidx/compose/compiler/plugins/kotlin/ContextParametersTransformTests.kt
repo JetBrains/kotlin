@@ -190,7 +190,7 @@ class ContextParametersTransformTests : AbstractIrTransformTest() {
     @Test
     fun testContextReceiversWithAndDefaultParam(): Unit = contextReceivers(
         """
-            context(Foo)
+            context(_: Foo)
             @Composable
             fun String.A(param1: Int, param2: String = "") { }
 
