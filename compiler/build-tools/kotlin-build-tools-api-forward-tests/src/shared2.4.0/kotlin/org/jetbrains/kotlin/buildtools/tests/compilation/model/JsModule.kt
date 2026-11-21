@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.buildtools.forward.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.*
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import java.nio.file.Path
 
-@OptIn(ExperimentalCompilerArgument::class)
 class JsModule(
     private val kotlinToolchain: KotlinToolchains,
     val buildSession: KotlinToolchains.BuildSession,
@@ -72,7 +70,7 @@ class JsModule(
     override fun prepareExecutionProcessBuilder(
         mainClassFqn: String,
     ): ProcessBuilder {
-        // JS modules produce KLib files and cannot be executed directly like JVM classes.
+        // JS modules produce .klib files and cannot be executed directly like JVM classes.
         throw UnsupportedOperationException("Execution of compiled JS modules is not supported directly")
     }
 }

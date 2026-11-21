@@ -168,7 +168,7 @@ class JsDtsGenerationTest : BaseCompilationTest() {
         jsProject(strategyConfig) {
             val module = module("js-ts-generation")
 
-            // TODO (KT-90579): the empty KLIB list behavior is not documented; update the expected result and check the warning once it is decided
+            // TODO (KT-90579): the empty klib list behavior is not documented; update the expected result and check the warning once it is decided
             module.generateDts(outputDirectory = module.buildDirectory.resolve("dts-empty"), klibs = emptyList()) {
                 assertOutputs()
             }

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.buildtools.internal.KotlinLoggerMessageCollectorAdap
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentValueAdapter
-import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
@@ -73,7 +72,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
         executionContext: ExecutionContext
     ): CompilationResult {
         val inputModules = transformKlibsIntoKlibInputModule(klibs)
-        // The main KLIB is the last one in the list; its manifest drives the merged artifact naming.
+        // The main klib is the last one in the list; its manifest drives the merged artifact naming.
         // If there is no klib provided, there is nothing to generate
         val mainModule = inputModules.lastOrNull() ?: return CompilationResult.COMPILATION_SUCCESS
         val diagnosticsCollector = DiagnosticsCollectorImpl()
@@ -81,7 +80,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
             KotlinLoggerMessageCollectorAdapter(logger ?: DefaultKotlinLogger, DefaultCompilerMessageRenderer, warningsAsErrors = false)
 
         // Resolve the names the same way the compiler does during linking:
-        // the output name comes from `-ir-output-name` (falling back to the main KLIB manifest),
+        // the output name comes from `-ir-output-name` (falling back to the main klib manifest),
         // and the module name comes from `-Xir-module-name` (falling back to `-ir-output-name`)
         val outputName = this[OUTPUT_NAME] ?: mainModule.config.outputName ?: mainModule.name
         val moduleName = this[MAIN_MODULE_NAME] ?: this[OUTPUT_NAME] ?: mainModule.name

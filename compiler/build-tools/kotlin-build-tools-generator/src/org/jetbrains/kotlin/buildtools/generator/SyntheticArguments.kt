@@ -32,7 +32,7 @@ val DummyLevel = KotlinCompilerArgumentsLevel("", emptySet(), emptySet(), emptyS
 /**
  * Looks up the merged argument level (actual + removed arguments) by name from [kotlinCompilerArguments].
  *
- * The synthetic KLIB-based interfaces must use the merged level rather than the raw `actual*Arguments`
+ * The synthetic klib-based interfaces must use the merged level rather than the raw `actual*Arguments`
  * objects, otherwise removed arguments (declared in the separate `removed*Arguments` levels and combined
  * only via `mergeWith` in `compilerArguments.kt`) would never reach the API generator.
  */

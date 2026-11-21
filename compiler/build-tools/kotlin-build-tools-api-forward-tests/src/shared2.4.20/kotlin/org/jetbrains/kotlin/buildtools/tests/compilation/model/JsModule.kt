@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.IR_OUTPUT_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.LIBRARIES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.NOPACK
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
@@ -28,7 +27,6 @@ import java.nio.file.Path
 import kotlin.io.path.pathString
 import kotlin.io.path.walk
 
-@OptIn(ExperimentalCompilerArgument::class)
 class JsModule(
     private val kotlinToolchain: KotlinToolchains,
     val buildSession: KotlinToolchains.BuildSession,
@@ -175,7 +173,7 @@ class JsModule(
     override fun prepareExecutionProcessBuilder(
         mainClassFqn: String,
     ): ProcessBuilder {
-        // JS modules produce KLib files and cannot be executed directly like JVM classes.
+        // JS modules produce .klib files and cannot be executed directly like JVM classes.
         throw UnsupportedOperationException("Execution of compiled JS modules is not supported directly")
     }
 }

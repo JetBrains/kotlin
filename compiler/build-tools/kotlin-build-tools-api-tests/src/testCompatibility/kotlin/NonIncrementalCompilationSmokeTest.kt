@@ -179,7 +179,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
 
             val dts = appModule.outputDirectory.resolve("out/js-only-ic-basic-app.d.ts").readText()
             assertTrue("function richDts(value: string): string" in dts)
-            assertTrue("* A declaration generated from KLIB metadata." in dts)
+            assertTrue("* A declaration generated from klib metadata." in dts)
         }
     }
 }

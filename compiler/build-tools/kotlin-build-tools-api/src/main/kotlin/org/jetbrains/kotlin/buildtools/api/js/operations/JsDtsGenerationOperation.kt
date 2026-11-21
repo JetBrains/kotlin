@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalSubclassOptIn::class)
 package org.jetbrains.kotlin.buildtools.api.js.operations
 
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import java.nio.file.Path
 
 /**
- * Generates TypeScript declarations (`.d.ts`) from a set of compiled KLIBs into [outputDirectory],
+ * Generates TypeScript declarations (`.d.ts`) from a set of compiled klibs into [outputDirectory],
  * independently of (and potentially in parallel with) JS linking. All export settings are supplied
  * explicitly via the typed [Option]s below; it is the caller's responsibility to keep them consistent
  * with the JS linking configuration (see [JsDtsGenerationOperation.Builder.configureFrom] to inherit configuration from [JsLinkingOperation]).
@@ -33,7 +32,7 @@ import java.nio.file.Path
 public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
 
     /**
-     * The KLIBs to generate declarations from: the main KLIB and all of its dependencies. Per-module output names are derived from the KLIB manifests.
+     * The klibs to generate declarations from: the main klib and all of its dependencies. Per-module output names are derived from the klib manifests.
      */
     public val klibs: List<Path>
 
@@ -55,7 +54,7 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
      */
     public interface Builder : BuildOperation.Builder {
         /**
-         * The KLIBs to generate declarations from.
+         * The klibs to generate declarations from.
          */
         public val klibs: List<Path>
 
@@ -168,9 +167,9 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
          * Must match the JS linking `-ir-output-name`.
          * The name is resolved in the following order; the first value that is not `null` is used:
          * 1. The value of this option.
-         * 2. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerKlibArguments.X_IR_PER_MODULE_OUTPUT_NAME] the main KLIB was compiled with.
-         * 3. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.X_IR_MODULE_NAME] the main KLIB was compiled with.
-         * 4. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.IR_OUTPUT_NAME] the main KLIB was compiled with.
+         * 2. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerKlibArguments.X_IR_PER_MODULE_OUTPUT_NAME] the main klib was compiled with.
+         * 3. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.X_IR_MODULE_NAME] the main klib was compiled with.
+         * 4. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.IR_OUTPUT_NAME] the main klib was compiled with.
          */
         @JvmField
         public val OUTPUT_NAME: Option<String?> =
@@ -183,8 +182,8 @@ public interface JsDtsGenerationOperation : BuildOperation<CompilationResult> {
          * The name is resolved in the following order; the first value that is not `null` is used:
          * 1. The value of this option.
          * 2. The value of [OUTPUT_NAME].
-         * 3. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.X_IR_MODULE_NAME] the main KLIB was compiled with.
-         * 4. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.IR_OUTPUT_NAME] the main KLIB was compiled with.
+         * 3. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.X_IR_MODULE_NAME] the main klib was compiled with.
+         * 4. [org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.IR_OUTPUT_NAME] the main klib was compiled with.
          */
         @JvmField
         public val MAIN_MODULE_NAME: Option<String?> =
