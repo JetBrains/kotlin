@@ -13,6 +13,9 @@ import kotlin.reflect.KClass
 /**
  * This annotation indicates what exceptions should be declared by a function when compiled to a platform method.
  *
+ * This annotation is supported only on functions and constructors.
+ * It cannot be applied to property getters or setters.
+ *
  * When compiling to Objective-C/Swift framework,  non-`suspend`  functions having or inheriting
  * this annotation are represented as `NSError*`-producing methods in Objective-C
  * and as `throws` methods in Swift. Representations for `suspend` functions always have
