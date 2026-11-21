@@ -7,6 +7,7 @@ package kotlin.metadata.internal
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import kotlin.contracts.ExperimentalContracts
+import kotlin.experimental.ExperimentalRichErrors
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.extensions.MetadataExtensions
@@ -314,6 +315,7 @@ private fun ProtoBuf.TypeParameter.toKmTypeParameter(
     return ktp
 }
 
+@OptIn(ExperimentalRichErrors::class)
 private fun ProtoBuf.Type.toKmType(c: ReadContext): KmType {
     val v = KmType(typeFlags)
     v.classifier = when {
@@ -353,6 +355,8 @@ private fun ProtoBuf.Type.toKmType(c: ReadContext): KmType {
     }
 
     c.extensions.forEach { it.readTypeExtensions(v, this, c) }
+    v.richErrors = richErrors(c.types).map { it.toKmType(c) }
+    v.unionTypeAnnotations = unionTypeAnnotationList.map { it.readAnnotation(c.strings) }
 
     return v
 }

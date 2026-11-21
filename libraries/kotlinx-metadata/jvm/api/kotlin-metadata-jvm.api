@@ -54,6 +54,7 @@ public final class kotlin/metadata/Attributes {
 	public static final fun isNullable (Lkotlin/metadata/KmType;)Z
 	public static final fun isOperator (Lkotlin/metadata/KmFunction;)Z
 	public static final fun isReified (Lkotlin/metadata/KmTypeParameter;)Z
+	public static final fun isRichError (Lkotlin/metadata/KmClass;)Z
 	public static final fun isSecondary (Lkotlin/metadata/KmConstructor;)Z
 	public static final fun isStatic (Lkotlin/metadata/KmFunction;)Z
 	public static final fun isStatic (Lkotlin/metadata/KmProperty;)Z
@@ -111,6 +112,7 @@ public final class kotlin/metadata/Attributes {
 	public static final fun setReturnValueStatus (Lkotlin/metadata/KmConstructor;Lkotlin/metadata/ReturnValueStatus;)V
 	public static final fun setReturnValueStatus (Lkotlin/metadata/KmFunction;Lkotlin/metadata/ReturnValueStatus;)V
 	public static final fun setReturnValueStatus (Lkotlin/metadata/KmProperty;Lkotlin/metadata/ReturnValueStatus;)V
+	public static final fun setRichError (Lkotlin/metadata/KmClass;Z)V
 	public static final fun setSecondary (Lkotlin/metadata/KmConstructor;Z)V
 	public static final fun setStatic (Lkotlin/metadata/KmFunction;Z)V
 	public static final fun setStatic (Lkotlin/metadata/KmProperty;Z)V
@@ -623,11 +625,15 @@ public final class kotlin/metadata/KmType {
 	public final fun getClassifier ()Lkotlin/metadata/KmClassifier;
 	public final fun getFlexibleTypeUpperBound ()Lkotlin/metadata/KmFlexibleTypeUpperBound;
 	public final fun getOuterType ()Lkotlin/metadata/KmType;
+	public final fun getRichErrors ()Ljava/util/List;
+	public final fun getUnionTypeAnnotations ()Ljava/util/List;
 	public fun hashCode ()I
 	public final fun setAbbreviatedType (Lkotlin/metadata/KmType;)V
 	public final fun setClassifier (Lkotlin/metadata/KmClassifier;)V
 	public final fun setFlexibleTypeUpperBound (Lkotlin/metadata/KmFlexibleTypeUpperBound;)V
 	public final fun setOuterType (Lkotlin/metadata/KmType;)V
+	public final fun setRichErrors (Ljava/util/List;)V
+	public final fun setUnionTypeAnnotations (Ljava/util/List;)V
 }
 
 public final class kotlin/metadata/KmTypeAlias {
