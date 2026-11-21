@@ -30,8 +30,8 @@ object CliDiagnostics : KtDiagnosticsContainer() {
     val CLI_STRING_LANGUAGE_FEATURE_ARGUMENT_WITH_INCORRECT_VALUE: KtSourcelessDiagnosticFactory by errorWithoutSource()
     val CLI_INVALID_ARGUMENT: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
-    // Use info severity to make sure the unknown arguments can't break the build if `-Werror` is set.
-    val CLI_UNKNOWN_EXTRA_ARGUMENT: KtSourcelessDiagnosticFactory by infoWithoutSource()
+    // Use fixed warning severity to make sure the unknown arguments can't break the build if `-Werror` is set.
+    val CLI_UNKNOWN_EXTRA_ARGUMENT: KtSourcelessDiagnosticFactory by fixedWarningWithoutSource()
 
     // Names of extra (-X...) arguments which have been passed in an obsolete form ("-Xaaa bbb", instead of "-Xaaa=bbb")
     val CLI_EXTRA_ARGUMENT_IN_OBSOLETE_FORM: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()

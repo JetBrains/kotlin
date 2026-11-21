@@ -1,2 +1,2 @@
-info: flag is not supported by this version of the compiler: '-Xcoroutines=warn'.
+warning: flag is not supported by this version of the compiler: '-Xcoroutines=warn'.
 OK
