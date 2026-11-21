@@ -30,10 +30,12 @@ fun CompilationOutcome.expectFailWithError(expectedErrorLines: Set<Regex>) {
 context(module: ModuleContext)
 fun assertClassDeclarationsContain(classFqn: String, expectedDeclarations: Set<String>) {
     val javaHome = System.getProperty("java.home")
-    val javapPath = File(javaHome, "bin/javap").let {
-        // in case we got java.home pointing to the JRE part, javap is located in the outer JDK part
-        if (it.exists()) it else File(javaHome, "../bin/javap")
-    }.absolutePath
+    // in case we got java.home pointing to the JRE part, javap is located in the outer JDK part
+    val javapPath = sequenceOf("bin/javap.exe", "bin/javap", "../bin/javap.exe", "../bin/javap")
+        .map { File(javaHome, it) }
+        .firstOrNull { it.exists() }
+        ?.absolutePath
+        ?: error("Can't find 'javap' executable in $javaHome")
     val result = runProcess(listOf(javapPath, classFqn), module.outputDirectory)
     assert(result.isSuccessful) {
         "Failed to run javap on $classFqn.\n\n${result.output}"
