@@ -79,7 +79,7 @@ fun box() {
 // test.kt:18 callSite: a:int=2:int, b:int=2:int
 // test.kt:29 box:
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:27 $box: (13, 16, 4)
 // test.kt:17 $callSite: $a:i32=1:i32, $b:i32=2:i32 (4)
 // test.kt:9 $callSite: $a:i32=1:i32, $b:i32=2:i32 (15)

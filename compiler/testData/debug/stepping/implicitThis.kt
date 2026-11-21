@@ -84,11 +84,13 @@ class A {
 // test.kt:14 test
 // test.kt:6 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:5 box
 // test.kt:21 <init>
+// EXPECTATIONS JS_IR
 // test.kt:16 <init>
 // test.kt:8 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:5 box
 // test.kt:11 test
 // test.kt:11 test
@@ -101,26 +103,20 @@ class A {
 // test.kt:14 test
 // test.kt:6 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:5 $box (4)
 // test.kt:29 $A.<init> (1)
-// test.kt:21 $A$static_init (32)
 // test.kt:21 $A$Companion.<init> (32)
 // test.kt:28 $A$Companion.<init> (5)
-// test.kt:21 $A$static_init (32)
 // test.kt:29 $A.<init> (1)
 // test.kt:5 $box (8)
-// test.kt:11 $A.test (8)
-// test.kt:21 $A$static_init (32)
 // test.kt:11 $A.test (8)
 // test.kt:18 $A$Companion.foo (20)
 // test.kt:19 $A$Companion.foo (9)
 // test.kt:11 $A.test (8)
-// test.kt:21 $A$static_init (32)
 // test.kt:12 $A.test (8)
 // test.kt:23 $A$Companion.<get-prop> (23, 16)
 // test.kt:12 $A.test (8)
-// test.kt:21 $A$static_init (32)
 // test.kt:13 $A.test (15, 8)
 // test.kt:26 $A$Companion.<set-prop> (16, 24, 16)
 // test.kt:27 $A$Companion.<set-prop> (13)

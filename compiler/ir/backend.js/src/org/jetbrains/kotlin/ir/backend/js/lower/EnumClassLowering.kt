@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -112,14 +112,12 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
             enumConstructor.newEnumConstructor = this
 
             enumConstructor.body?.let { oldBody ->
-                body = context.irFactory.createBlockBody(oldBody.startOffset, oldBody.endOffset) {
+                body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                     statements += (oldBody as IrBlockBody).statements
 
                     context.fixReferencesToConstructorParameters(enumClass, this)
 
                     patchDeclarationParents(enumClass)
-
-                    body = this
                 }
             }
 
@@ -255,8 +253,8 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
             if (isInsideConstructor)
                 JsIrBuilder.buildDelegatingConstructorCall(
                     constructor.symbol,
-                    startOffset = constructorCall.startOffset,
-                    endOffset = constructorCall.endOffset,
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
                 )
             else
                 JsIrBuilder.buildConstructorCall(
@@ -339,6 +337,10 @@ class EnumEntryInstancesBodyLowering(val context: JsCommonBackendContext) : Body
             val enum = entryClass.parentAsClass
             if (enum.isInstantiableEnum) {
                 val entry = enum.declarations.findIsInstanceAnd<IrEnumEntry> { it.correspondingClass === entryClass }!!
+
+                // There's no point in emitting debug info for enum entry constructors — this will result in an extra useless step.
+                irBody.startOffset = UNDEFINED_OFFSET
+                irBody.endOffset = UNDEFINED_OFFSET
 
                 // In ES6 using `this` before superCall is unavailable, so
                 // need to find superCall and put `instance = this` after it

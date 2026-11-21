@@ -47,7 +47,7 @@ fun box() {
 // library.kt:15 box: m:int=1:int, xBar$iv:int=2:int, $i$f$bar:int=0:int, yBar$iv:int=2:int, dangerous$iv:int=3:int
 // test.kt:24 box: m:int=1:int
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:21 $box: $m:i32=0:i32, $yBar:i32=0:i32, $dangerous:i32=0:i32, $yFoo:i32=0:i32 (12, 12)
 // test.kt:22 $box: $m:i32=1:i32, $yBar:i32=0:i32, $dangerous:i32=0:i32, $yFoo:i32=0:i32 (8, 8, 4, 4, 4)
 // library.kt:11 $box: $m:i32=1:i32, $yBar:i32=0:i32, $dangerous:i32=0:i32, $yFoo:i32=0:i32 (15, 15)

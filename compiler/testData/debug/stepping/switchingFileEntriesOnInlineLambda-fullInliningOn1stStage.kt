@@ -83,9 +83,11 @@ fun box(): String {
 // test.kt:51 box
 // test.kt:52 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:51 box
+// EXPECTATIONS JS_IR
 // InlineFunCallSite.kt:18 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:51 box
 // InlineFunDeclaration.kt:30 render
 // bar.kt:43 render
@@ -94,7 +96,7 @@ fun box(): String {
 // InlineFunDeclaration.kt:35 render
 // InlineFunCallSite.kt:20 render
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:51 $box (11)
 // InlineFunCallSite.kt:25 $InlineFunCallSite.<init> (1)
 // test.kt:51 $box (31)

@@ -36,26 +36,24 @@ fun box() {
 // test.kt:7 <get-a>
 // test.kt:14 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:12 box
 // test.kt:4 Foo$static_init
-// test.kt:3 <init>
 // test.kt:7 <init>
+// EXPECTATIONS JS_IR
 // test.kt:6 <init>
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:13 box
 // test.kt:14 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:12 $box (8)
-// test.kt:4 $Foo$static_init (4)
-// test.kt:9 $Foo.<init> (1)
 // test.kt:4 $Foo$static_init (4)
 // test.kt:7 $Foo$Companion.<init> (16)
 // test.kt:4 $Foo$static_init (4)
 // test.kt:7 $Foo$Companion.<init> (16)
 // test.kt:8 $Foo$Companion.<init> (5)
 // test.kt:4 $Foo$static_init (4)
-// test.kt:7 $Foo$static_init (16)
 // test.kt:12 $box (8)
 // test.kt:4 $Foo$static_init (4)
 // test.kt:13 $box (8)

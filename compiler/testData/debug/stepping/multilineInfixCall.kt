@@ -22,12 +22,12 @@ infix fun Int.foo(i: Int) {
 // test.kt:10 foo
 // test.kt:7 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:5 box
 // test.kt:10 foo
 // test.kt:7 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:5 $box (4)
 // test.kt:6 $box (9)
 // test.kt:5 $box (4)

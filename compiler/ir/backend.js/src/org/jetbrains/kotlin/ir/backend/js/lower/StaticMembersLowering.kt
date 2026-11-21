@@ -61,7 +61,7 @@ class StaticMembersLowering(val context: JsCommonBackendContext) : DeclarationTr
                     irClass.file.declarations += declaration
                 }
 
-                if (declaration is IrDeclarationWithName) {
+                if (declaration is IrDeclarationWithName && declaration.originalFqName == null) {
                     // Rename the declaration so it includes its container's name after lifting, so the generated code is more readable.
                     declaration.originalFqName = declaration.fqNameWhenAvailable
                     val prefix = irClass.originalClassId?.relativeClassName?.pathSegments()?.joinToString("$") ?: irClass.name.asString()

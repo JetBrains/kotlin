@@ -59,30 +59,22 @@ fun box(): String {
 // test.kt:20 box
 // test.kt:21 box
 
-// EXPECTATIONS JS_IR
+// EXPECTATIONS JS_IR JS_IR_ES6
 // test.kt:13 box
 // test.kt:10 Enum$static_init
-// test.kt:8 <init>
 // test.kt:10 Enum$static_init
-// test.kt:8 <init>
 // test.kt:14 box
 // test.kt:15 box
 // test.kt:17 box
 // test.kt:5 Anno$Type$static_init
-// test.kt:5 <init>
 // test.kt:5 Anno$Type$static_init
-// test.kt:5 <init>
 // test.kt:18 box
 // test.kt:19 box
 // test.kt:20 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:13 $box (9)
-// test.kt:10 $Enum$static_init (18)
-// test.kt:10 $Enum.<init> (34)
 // test.kt:10 $Enum$static_init (18, 26)
-// test.kt:10 $Enum.<init> (34)
-// test.kt:10 $Enum$static_init (26)
 // test.kt:13 $box (9)
 // test.kt:14 $box (17, 9)
 // test.kt:10 $Enum$static_init (18)
@@ -91,11 +83,7 @@ fun box(): String {
 // test.kt:10 $Enum$static_init (18)
 // test.kt:15 $box (9)
 // test.kt:17 $box (14)
-// test.kt:5 $Type$static_init (22)
-// test.kt:5 $Anno$Type.<init> (36)
 // test.kt:5 $Type$static_init (22, 29)
-// test.kt:5 $Anno$Type.<init> (36)
-// test.kt:5 $Type$static_init (29)
 // test.kt:17 $box (14)
 // test.kt:18 $box (22, 14)
 // test.kt:5 $Type$static_init (22)

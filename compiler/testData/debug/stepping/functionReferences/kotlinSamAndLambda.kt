@@ -134,7 +134,7 @@ fun box(): String {
 
 // test.kt:69 box
 
-// EXPECTATIONS WASM
+// EXPECTATIONS WASM_JS
 // test.kt:9 $box (17, 48, 52, 48)
 // test.kt:9 $box$lambda.invoke (17, 31, 38, 42, 38)
 // test.kt:9 $box$lambda$lambda.invoke (31, 33, 35)
@@ -223,7 +223,6 @@ fun box(): String {
 // test.kt:13 box
 // test.kt:13 box
 // test.kt:11 box$lambda
-
 // test.kt:12 box$lambda
 // test.kt:12 box$lambda
 // test.kt:11 box$lambda$lambda
@@ -236,7 +235,6 @@ fun box(): String {
 // test.kt:17 box$lambda$lambda
 // test.kt:21 box
 // test.kt:27 box
-
 // test.kt:27 box
 // test.kt:22 box$lambda
 // test.kt:25 box$lambda
@@ -248,7 +246,6 @@ fun box(): String {
 // test.kt:31 box$lambda
 // test.kt:34 box$lambda
 // test.kt:34 box$lambda
-
 // test.kt:33 box$lambda$lambda
 // test.kt:37 box
 // test.kt:45 box
@@ -260,7 +257,6 @@ fun box(): String {
 // test.kt:48 box
 // test.kt:55 box
 // test.kt:55 box
-
 // test.kt:51 box$lambda
 // test.kt:54 box$lambda
 // test.kt:54 box$lambda
@@ -272,10 +268,82 @@ fun box(): String {
 // test.kt:65 box$lambda
 // test.kt:65 box$lambda
 // test.kt:63 box$lambda$lambda
-
 // test.kt:69 box
 
-
+// EXPECTATIONS JS_IR_ES6
+// test.kt:9 box
+// test.kt:9 box
+// test.kt:9 <init>
+// test.kt:9 box
+// test.kt:9 box$lambda
+// test.kt:9 box$lambda
+// test.kt:9 <init>
+// test.kt:9 box$lambda
+// test.kt:9 box$lambda$lambda
+// test.kt:11 box
+// test.kt:11 box
+// test.kt:9 <init>
+// test.kt:13 box
+// test.kt:11 box$lambda
+// test.kt:12 box$lambda
+// test.kt:9 <init>
+// test.kt:12 box$lambda
+// test.kt:11 box$lambda$lambda
+// test.kt:15 box
+// test.kt:15 box
+// test.kt:9 <init>
+// test.kt:19 box
+// test.kt:16 box$lambda
+// test.kt:18 box$lambda
+// test.kt:9 <init>
+// test.kt:18 box$lambda
+// test.kt:17 box$lambda$lambda
+// test.kt:21 box
+// test.kt:21 box
+// test.kt:9 <init>
+// test.kt:27 box
+// test.kt:22 box$lambda
+// test.kt:25 box$lambda
+// test.kt:9 <init>
+// test.kt:25 box$lambda
+// test.kt:23 box$lambda$lambda
+// test.kt:29 box
+// test.kt:29 box
+// test.kt:9 <init>
+// test.kt:35 box
+// test.kt:31 box$lambda
+// test.kt:34 box$lambda
+// test.kt:9 <init>
+// test.kt:34 box$lambda
+// test.kt:33 box$lambda$lambda
+// test.kt:37 box
+// test.kt:37 box
+// test.kt:9 <init>
+// test.kt:45 box
+// test.kt:39 box$lambda
+// test.kt:43 box$lambda
+// test.kt:9 <init>
+// test.kt:43 box$lambda
+// test.kt:41 box$lambda$lambda
+// test.kt:48 box
+// test.kt:48 box
+// test.kt:9 <init>
+// test.kt:55 box
+// test.kt:51 box$lambda
+// test.kt:54 box$lambda
+// test.kt:9 <init>
+// test.kt:54 box$lambda
+// test.kt:53 box$lambda$lambda
+// test.kt:58 box
+// test.kt:58 box
+// test.kt:9 <init>
+// test.kt:67 box
+// test.kt:61 box$lambda
+// test.kt:65 box$lambda
+// test.kt:9 <init>
+// test.kt:65 box$lambda
+// test.kt:63 box$lambda$lambda
+// test.kt:69 box
 
 
 // EXPECTATIONS NATIVE
