@@ -16,30 +16,32 @@
 
 package org.jetbrains.kotlin.cli.jvm.modules
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCliJavaFileManagerImpl
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo.FileReadingException
 import java.io.File
 
+/**
+ * @param javaFileManager Resolves the annotation classes of a `module-info` anywhere on the classpath, lazily: the
+ *  classpath index is built after the modules are, so the lookup must not run while a module is being read. `null` leaves
+ *  the annotation classes unresolved.
+ */
 class CliJavaModuleFinder(
     private val jdkHome: File?,
     private val configuration: CompilerConfiguration,
-    private val javaFileManager: KotlinCliJavaFileManager,
-    project: Project,
+    private val javaFileManager: KotlinCliJavaFileManagerImpl?,
     private val jdkRelease: Int?
 ) : JavaModuleFinder {
 
@@ -50,8 +52,6 @@ class CliJavaModuleFinder(
     private val modulesRoot = jrtFileSystemRoot?.findChild("modules")
 
     private val userModules = linkedMapOf<String, JavaModule>()
-
-    private val allScope = GlobalSearchScope.allScope(project)
 
     private val ctSymFile: VirtualFile? by lazy {
         if (jdkHome == null) return@lazy reportError("JDK_HOME path is not specified in compiler configuration")
@@ -123,7 +123,7 @@ class CliJavaModuleFinder(
         val file = moduleRoot.findChild(if (useSig) PsiJavaModule.MODULE_INFO_CLASS + ".sig" else PsiJavaModule.MODULE_INFO_CLS_FILE)
             ?: return null
         val moduleInfo = try {
-            readJavaModuleInfo(file) { javaFileManager.findClass(JavaClassFinder.Request(it), allScope) } ?: return null
+            readJavaModuleInfo(file) { javaFileManager?.findClassOnClasspath(it) } ?: return null
         } catch (e: FileReadingException) {
             reportError(e.message + "\nCaused by: ${e.cause::class.java.name}: ${e.cause.message}")
             throw CompilationErrorException()
@@ -144,14 +144,16 @@ class CliJavaModuleFinder(
     }
 
     private fun createModuleFromSignature(moduleInfo: JavaModuleInfo): List<JavaModule.Root> {
-        return listOf(createModuleFromSignature(!isCompilationJDK12OrLater, isCompilationJDK12OrLater, moduleInfo))
+        return listOfNotNull(createModuleFromSignature(!isCompilationJDK12OrLater, isCompilationJDK12OrLater, moduleInfo))
     }
 
     private fun createModuleFromSignature(
         filterPackages: Boolean,
         filterModules: Boolean,
         moduleInfo: JavaModuleInfo
-    ): JavaModule.Root {
+    ): JavaModule.Root? {
+        // The missing `ct.sym` has been reported already.
+        val ctSymFile = ctSymFile ?: return null
         val packageParts =
             if (!filterPackages) emptyMap()
             else hashMapOf<String, Boolean>().also { parts ->
@@ -172,6 +174,9 @@ class CliJavaModuleFinder(
             else
                 listFoldersForRelease
 
+        // Every ct.sym module root reports the same path (`.../ct.sym!//`), so their identity cannot come from the path.
+        val rootId = JvmClasspathRootId("${ctSymFile.path}${URLUtil.JAR_SEPARATOR}$jdkRelease/${moduleInfo.moduleName}")
+
         return JavaModule.Root(
             CtSymDirectoryContainer(
                 ctSymRootFolder ?: ctSymFile,
@@ -182,7 +187,8 @@ class CliJavaModuleFinder(
                 skipPackageCheck = !filterPackages
             ),
             isBinary = true,
-            isBinarySignature = true
+            isBinarySignature = true,
+            id = rootId,
         )
     }
 
@@ -192,7 +198,8 @@ class CliJavaModuleFinder(
         !fileName.contains("-") && fileName.contains(codeFor(release)) // skip `*-modules`
 
 
-    val nonModuleRoot: JavaModule.Root by lazy {
+    /** The root of the JDK classes for `-Xjdk-release` below 9, or `null` if `ct.sym` is missing. */
+    val nonModuleRoot: JavaModule.Root? by lazy {
         createModuleFromSignature(
             filterPackages = false,
             filterModules = false,

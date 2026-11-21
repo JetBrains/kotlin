@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
 import org.jetbrains.kotlin.test.JavaCompilationError
+import org.jetbrains.kotlin.test.JavaCompilationResult
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -41,6 +42,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         additionalKotlinArguments: List<String> = emptyList(),
         manifest: Manifest? = null,
         destination: File? = null,
+        compileJava: Boolean = true,
         checkKotlinOutput: (String) -> Unit = this.checkKotlinOutput(name),
     ): File {
         @Suppress("DEPRECATION")
@@ -62,7 +64,8 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             name,
             destination ?: File(tmpdir, "$name.jar"),
             kotlinOptions,
-            compileJava = { _, javaFiles, outputDir ->
+            compileJava = compileJava@{ _, javaFiles, outputDir ->
+                if (!compileJava) return@compileJava JavaCompilationResult.Success
                 val javaOptions = mutableListOf(
                     "-d", outputDir.path,
                     "--module-path", paths
@@ -349,6 +352,52 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         // In this test we're checking the diagnostic about using symbols from unnamed modules, so we need to compile 'lib' to a directory.
         val lib = module("lib", destination = File(tmpdir, testInfo.testMethod.get().name))
         module("main", additionalKotlinArguments = listOf("-classpath", lib.path))
+    }
+
+    @Test
+    fun testJarOnClasspathAndModulePath() {
+        // The same jar is both a classpath root and a module path root: its classes still belong to 'lib', so a package which 'lib'
+        // does not export stays inaccessible.
+        val lib = module("lib")
+        module("main", listOf(lib), additionalKotlinArguments = listOf("-classpath", lib.path))
+    }
+
+    @Test
+    fun testSourceModuleInfoClauses() {
+        // `requires static`, `requires transitive` and a qualified `exports` in the `module-info.java` of the compiled module.
+        val lib = module("lib")
+        val lib2 = module("lib2")
+        module("main", listOf(lib, lib2))
+    }
+
+    @Test
+    fun testNullMarkedSourceModule() {
+        // The module annotation of the compiled module is resolved on the module path: `J.foo` is not-null in a `@NullMarked` module.
+        val jspecify = module("jspecify")
+        module("main", listOf(jspecify))
+    }
+
+    @Test
+    fun testNullMarkedSourceModuleWithAnnotationInSameModule() {
+        // As in testNullMarkedSourceModule, with the annotation class declared in a Java source of the compiled module itself.
+        module("main")
+    }
+
+    @Test
+    fun testOutputDirectoryOfSourceModule() {
+        // As in an incremental build: the output directory is also on the classpath, and the class files the previous build left there
+        // belong to the compiled module 'main', not to the unnamed module.
+        val outputDir = File(tmpdir, "out")
+        compileJavaFiles(
+            FileUtil.findFilesByMask(JAVA_FILES, File(testDataDirectory, "previous")), listOf("-d", outputDir.path), jdkHome
+        ).assertSuccessful()
+        module("main", destination = outputDir, additionalKotlinArguments = listOf("-classpath", outputDir.path))
+    }
+
+    @Test
+    fun testUnresolvedSourceModuleAnnotation() {
+        // An unresolved module annotation is ignored by the Kotlin compiler; javac would reject it, so Java is not compiled.
+        module("main", compileJava = false)
     }
 
     @Test

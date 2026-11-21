@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmClasspathRootFilter
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
+import org.jetbrains.kotlin.cli.jvm.index.asBinaryClassFileHandle
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileIndex
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.asBinaryClassFileHandle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import java.util.concurrent.ConcurrentHashMap
@@ -34,11 +34,11 @@ class CliBinaryClassFileIndex(
         get() = index.version
 
     override fun findTopLevelClassFiles(topLevelClassId: ClassId): Collection<BinaryClassFileHandle> =
-        index.findClassVirtualFiles(topLevelClassId, extensions).map { it.asBinaryClassFileHandle() }
+        index.findClassFiles(topLevelClassId, extensions).map { it.asBinaryClassFileHandle() }
 
     override fun findTopLevelClassFiles(topLevelClassId: ClassId, classpath: JvmClasspath): Collection<BinaryClassFileHandle> {
         val rootFilter = rootFilters.computeIfAbsent(classpath, ::JvmClasspathRootFilter)
-        return index.findClassVirtualFiles(topLevelClassId, extensions, rootFilter).map { it.asBinaryClassFileHandle() }
+        return index.findClassFiles(topLevelClassId, extensions, rootFilter).map { it.asBinaryClassFileHandle() }
     }
 
     override fun classFileNamesInPackage(packageFqName: FqName): Set<String> {

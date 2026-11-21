@@ -24,17 +24,18 @@ import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.search.GlobalSearchScope
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
+import org.jetbrains.kotlin.cli.jvm.index.IndexedClassFile
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
+import org.jetbrains.kotlin.cli.jvm.index.asBinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClasses
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.asBinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.readBinaryJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.java.structure.impl.source.SingleFileRootPsiPackage
@@ -64,16 +65,16 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         private set
 
     /**
-     * Caches the [VirtualFile]s found in [index] for the key [FqName].
+     * Caches the files found in [index] for the key [FqName].
      *
      * The value is a [SmartList] because we might need to cache multiple virtual files for multiple classes of the same [FqName]. See
-     * [JvmDependenciesIndex.findClassVirtualFiles] for further details about why multiple classes may be found.
+     * [JvmDependenciesIndex.findClassFiles] for further details about why multiple classes may be found.
      *
      * [KotlinCliJavaFileManagerImpl] takes the classes from the index and filters them by a provided scope. The scope is how each module is
      * able to find its own correct version of the globally ambiguous class. But since [topLevelClassesCache] is global as well and not tied
      * to a specific module or scope, we need to cache that global view.
      */
-    private val topLevelClassesCache: MutableMap<FqName, SmartList<VirtualFile>?> = Object2ObjectOpenHashMap()
+    private val topLevelClassesCache: MutableMap<FqName, SmartList<IndexedClassFile>?> = Object2ObjectOpenHashMap()
 
     private val allScope = GlobalSearchScope.allScope(myPsiManager.project)
     private var usePsiClassFilesReading = false
@@ -96,11 +97,11 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     private fun findPsiClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? {
         return perfManager.tryMeasureSideTime(PhaseSideType.FindJavaClass) {
-            findVirtualFileForTopLevelClass(classId, searchScope)?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
+            findFileForTopLevelClass(classId, searchScope)?.file?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
         }
     }
 
-    private fun findVirtualFileForTopLevelClass(classId: ClassId, searchScope: GlobalSearchScope): VirtualFile? {
+    private fun findFileForTopLevelClass(classId: ClassId, searchScope: GlobalSearchScope): IndexedClassFile? {
         val outerMostClassFqName = classId.packageFqName.child(classId.relativeClassName.pathSegments().first())
         return topLevelClassesCache.getOrPut(outerMostClassFqName) {
             // Search java sources first. For build tools, it makes sense to build new files passing all the
@@ -117,11 +118,11 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             //
             // Otherwise B.kt will not see the newly added field in A.
             val outerMostClassId = ClassId.topLevel(outerMostClassFqName)
-            singleJavaFileRootsIndex.findJavaSourceClass(outerMostClassId)?.let { SmartList(it) }
+            singleJavaFileRootsIndex.findJavaSourceClassFile(outerMostClassId)?.let { SmartList(it) }
                 ?: SmartList(
-                    index.findClassVirtualFiles(outerMostClassId, RELEVANT_JAVA_FILE_EXTENSIONS)
+                    index.findClassFiles(outerMostClassId, RELEVANT_JAVA_FILE_EXTENSIONS)
                 ).takeIf { it.isNotEmpty() }
-        }?.firstOrNull { it in searchScope }
+        }?.firstOrNull { it.file in searchScope }
     }
 
     private val binaryCache = BinaryJavaClasses()
@@ -129,9 +130,13 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     fun findClass(classId: ClassId, searchScope: GlobalSearchScope) = findClass(JavaClassFinder.Request(classId), searchScope)
 
+    /** [findClass] over the whole classpath, for classpath setup, which selects nothing by scope. */
+    fun findClassOnClasspath(classId: ClassId): JavaClass? = findClass(JavaClassFinder.Request(classId), allScope)
+
     override fun findClass(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): JavaClass? {
         (val classId, val classFileContentFromRequest = previouslyFoundClassFileContent, val outerClassFromRequest = outerClass) = request
-        val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
+        val classFile = findFileForTopLevelClass(classId, searchScope) ?: return null
+        val virtualFile = classFile.file
 
         if (!usePsiClassFilesReading && (virtualFile.extension == "class" || virtualFile.extension == "sig")) {
             // We return all class files' names in the directory in knownClassNamesInPackage method, so one may request an inner class
@@ -143,7 +148,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             // Cross-references from bytecode signatures resolve against `allScope`.
             return readBinaryJavaClass(
                 classId = classId,
-                topLevelClassFile = virtualFile.asBinaryClassFileHandle(),
+                topLevelClassFile = classFile.asBinaryClassFileHandle(),
                 classFileContent = classFileContentFromRequest,
                 outerClassFromRequest = outerClassFromRequest,
                 binaryCache = binaryCache,

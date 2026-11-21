@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.plugin.sandbox.ir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.fir.java.BinaryClassSourceElement
 import org.jetbrains.kotlin.fir.java.VirtualFileBasedSourceElement
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.ir.IrElement
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.load.kotlin.ClassFileHandleKotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -49,12 +51,19 @@ class SourceElementChecker(val context: IrPluginContext) : IrVisitorVoid() {
         when (val sourceElement = klass.source) {
             is KotlinJvmBinarySourceElement -> {
                 val binaryClass = sourceElement.binaryClass
-                if (binaryClass !is VirtualFileKotlinClass) {
-                    throw AssertionError("No virtual file found: ${binaryClass.classId}")
+                if (binaryClass !is VirtualFileKotlinClass && binaryClass !is ClassFileHandleKotlinClass) {
+                    throw AssertionError("No class file found: ${binaryClass.classId}")
                 }
             }
             is VirtualFileBasedSourceElement -> {
-                sourceElement.virtualFile
+                if (!sourceElement.virtualFile.exists()) {
+                    throw AssertionError("Source file does not exist: ${sourceElement.virtualFile}")
+                }
+            }
+            is BinaryClassSourceElement -> {
+                if (sourceElement.classFile.extension != "class" && sourceElement.classFile.extension != "sig") {
+                    throw AssertionError("Not a class file: ${sourceElement.classFile.pathForDiagnostics}")
+                }
             }
             is DeserializedContainerSource -> {
                 // Klib element is possible here in JS test

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import com.intellij.testFramework.BinaryLightVirtualFile
+import org.jetbrains.kotlin.cli.jvm.index.InMemoryClassFileHandleForTests
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
@@ -51,7 +51,7 @@ class CustomGeneratedClassesTest {
 
         // This is the actual test. Without the relevant fix, this call throws "No parameter with index 0-0" error
         BinaryJavaClass(
-            BinaryLightVirtualFile("$classFqn.class", classWriter.toByteArray()),
+            InMemoryClassFileHandleForTests(classFqn.substringAfterLast('/'), classWriter.toByteArray()),
             FqName(classFqn.replace('/', '.')),
             ClassifierResolutionContext { null },
             BinaryClassSignatureParser(),
