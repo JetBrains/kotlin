@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import java.io.File
 import javax.inject.Inject
 
 @CacheableTask
@@ -94,6 +95,17 @@ abstract class KotlinCompile @Inject constructor(
 
     @get:Input
     internal val enableJvmClasspathMetadata: Property<Boolean> = objectFactory.propertyWithConvention(false)
+
+    /** Mirrors `modularity.inferModulePath` of the associated `JavaCompile` task. */
+    @get:Input
+    internal val inferModulePath: Property<Boolean> = objectFactory.propertyWithConvention(false)
+
+    /**
+     * Whether `module-info.java` is in a source directory of the associated Java source set, whatever the source filters.
+     * Unless `setSource` is called on the `JavaCompile` task, those are the source roots where Gradle looks for it.
+     */
+    @get:Input
+    internal val hasJavaModuleSource: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
     @get:Nested
     abstract val classpathSnapshotProperties: ClasspathSnapshotProperties
@@ -254,6 +266,7 @@ abstract class KotlinCompile @Inject constructor(
             args.classpathAsList = runSafe {
                 libraries.toList().filter { it.exists() }
             }.orEmpty()
+            args.javaModulePath = inferredJavaModulePath(args.classpathAsList, args.freeArgs)
         }
 
         sources { args ->
@@ -509,6 +522,20 @@ abstract class KotlinCompile @Inject constructor(
         super.setSource(*sources)
     }
 
+    /**
+     * Returns the `-Xmodule-path` value when the associated `JavaCompile` task and kotlinc both compile a module, or `null`.
+     * The modules stay on [classpath] too, so that class lookup order and the classpath snapshot are unchanged.
+     * [freeArgs] are the free arguments passed to kotlinc, which come after the inferred ones.
+     */
+    internal fun inferredJavaModulePath(classpath: List<File>, freeArgs: List<String>): String? {
+        if (!inferModulePath.get() || !hasJavaModuleSource.get()) return null
+        // kotlinc compiles a named module only for a module-info.java among its Java sources, and applies a module path to an
+        // unnamed module too
+        if (javaSources.files.none { it.name == MODULE_INFO_SOURCE_FILE }) return null
+        if (setsJavaPaths(freeArgs)) return null
+        return inferJavaModulePath(classpath).takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator)
+    }
+
     // jvm-specific incremental compilation features
     override fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return super.makeIncrementalCompilationFeatures().copy(
@@ -541,3 +568,5 @@ abstract class KotlinCompile @Inject constructor(
         }
     }
 }
+
+private const val MODULE_INFO_SOURCE_FILE = "module-info.java"
