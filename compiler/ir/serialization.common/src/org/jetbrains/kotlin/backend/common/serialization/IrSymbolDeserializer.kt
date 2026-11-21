@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.ir.util.canBeReferencedFromOtherFiles
 
 class IrSymbolDeserializer(
     private val symbolTable: ReferenceSymbolTable,
@@ -66,13 +67,13 @@ class IrSymbolDeserializer(
     }
 
     private fun deserializeSymbolWithOwnerMaybeInOtherFile(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        if (!signature.isPubliclyVisible) {
-            return deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
+        return if (signature.canBeReferencedFromOtherFiles) {
+            deserializePublicSymbolWithOwnerInUnknownFile(signature, symbolKind)
+        } else {
+            deserializedSymbolsWithOwnersInCurrentFile.getOrPut(signature) {
                 referenceDeserializedSymbol(symbolKind, signature)
             }
         }
-
-        return deserializePublicSymbolWithOwnerInUnknownFile(signature, symbolKind)
     }
 
     private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, signature: IdSignature): IrSymbol {
