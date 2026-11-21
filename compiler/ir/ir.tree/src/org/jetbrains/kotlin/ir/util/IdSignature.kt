@@ -364,7 +364,7 @@ sealed class IdSignature {
      * @property propertySignature A signature of the property that this accessor corresponds to.
      * @property accessorSignature A signature of the accessor function for the property.
      */
-    class AccessorSignature(val propertySignature: IdSignature, val accessorSignature: CommonSignature) : IdSignature() {
+    class AccessorSignature(val propertySignature: CommonSignature, val accessorSignature: CommonSignature) : IdSignature() {
         override val isPubliclyVisible: Boolean get() = true
 
         override fun topLevelSignature(): IdSignature = propertySignature.topLevelSignature()

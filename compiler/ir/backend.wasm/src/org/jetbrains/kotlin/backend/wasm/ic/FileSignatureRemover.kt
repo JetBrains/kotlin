@@ -25,7 +25,7 @@ private fun IdSignature.containsFileSignature(moduleName: String): Boolean = whe
 }
 
 private fun IdSignature.rebuildSignature(moduleName: String) = when (this) {
-    is IdSignature.AccessorSignature -> rebuildSignature(moduleName)
+    is IdSignature.AccessorSignature -> this
     is IdSignature.CommonSignature -> this
     is IdSignature.CompositeSignature -> rebuildSignature(moduleName)
     is IdSignature.FileLocalSignature -> rebuildSignature(moduleName)
@@ -35,9 +35,6 @@ private fun IdSignature.rebuildSignature(moduleName: String) = when (this) {
     is IdSignature.SpecialFakeOverrideSignature -> rebuildSignature(moduleName)
     is IdSignature.FileSignature -> rebuildSignature(moduleName)
 }
-
-private fun IdSignature.AccessorSignature.rebuildSignature(moduleName: String): IdSignature =
-    IdSignature.AccessorSignature(propertySignature.rebuildSignature(moduleName), accessorSignature)
 
 private fun IdSignature.CompositeSignature.rebuildSignature(moduleName: String): IdSignature =
     IdSignature.CompositeSignature(container.rebuildSignature(moduleName), inner.rebuildSignature(moduleName))
