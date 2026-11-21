@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.model
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.FORCE_RECOMPILATION
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.MODULE_BUILD_DIR
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
@@ -31,7 +30,7 @@ import java.nio.file.Path
 import kotlin.io.path.pathString
 import kotlin.io.path.walk
 
-@OptIn(ExperimentalBuildToolsApi::class, ExperimentalCompilerArgument::class)
+@OptIn(ExperimentalCompilerArgument::class)
 class JsModule(
     private val kotlinToolchain: KotlinToolchains,
     val buildSession: KotlinToolchains.BuildSession,
