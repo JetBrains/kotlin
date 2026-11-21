@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
@@ -79,6 +80,15 @@ class MoveCallableFactoriesToDeclarationsLowering(@Suppress("unused") context: J
 
         val targetRichReference = callableReferenceFactory.richFunctionReference ?: return null
         val targetFunction = targetRichReference.reflectionTargetSymbol?.owner as? IrSimpleFunction ?: return null
+
+        // A static member extracted to the top level by StaticMembersLowering has the file as its parent,
+        // so its owning class is only reachable via extractedFromContainer. This lowering runs in the
+        // optimization phase, after StaticMembersLowering, so the attribute is already set.
+        val targetClass = (targetFunction.parent as? IrClass) ?: (targetFunction.extractedFromContainer as? IrClass)
+        if (targetClass != null) {
+            // Emit the factory into the class's artifact (see `findOwningSliceClass`).
+            callableReferenceFactory.extractedFromContainer = targetClass
+        }
 
         val sourceFile = callableReferenceFactory.fileOrNull ?: return null
         val destinationFile = targetFunction.originalFileForExternalDeclaration ?: targetFunction.fileOrNull ?: return null
