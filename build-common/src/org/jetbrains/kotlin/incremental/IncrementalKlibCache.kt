@@ -20,16 +20,15 @@ import com.intellij.util.io.DataExternalizer
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.storage.*
+import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
 
-open class IncrementalJsCache(
+class IncrementalKlibCache(
     cachesDir: File,
     icContext: IncrementalCompilationContext,
-    serializerProtocol: SerializerExtensionProtocol,
 ) : AbstractIncrementalCache<FqName>(cachesDir, icContext) {
     companion object {
         private const val TRANSLATION_RESULT_MAP = "translation-result"
@@ -42,7 +41,7 @@ open class IncrementalJsCache(
         private const val DIRTY_COMMON_METADATA_MAP = "dirty-metadata"
     }
 
-    private val protoData = ProtoDataProvider(serializerProtocol)
+    private val protoData = ProtoDataProvider(KlibMetadataSerializerProtocol)
 
     override val sourceToClassesMap = registerMap(SourceToFqNameMap(SOURCE_TO_CLASSES.storageFile, icContext))
     override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile, icContext))

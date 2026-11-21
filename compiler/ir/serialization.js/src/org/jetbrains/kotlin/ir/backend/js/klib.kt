@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.incrementalResultsConsumer
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.metadataVersion
@@ -235,19 +233,6 @@ private fun String.parseSerializedIrFileFingerprints(): List<SerializedIrFileFin
     return split(FILE_FINGERPRINTS_SEPARATOR).mapNotNull(SerializedIrFileFingerprint::fromString)
 }
 
-private typealias ProcessFun = (
-    sourceFile: File,
-    fileData: ByteArray,
-    types: ByteArray,
-    signatures: ByteArray,
-    strings: ByteArray,
-    declarations: ByteArray,
-    bodies: ByteArray,
-    fqn: ByteArray,
-    debugInfo: ByteArray?,
-    fileEntries: ByteArray?
-) -> Unit
-
 fun serializeModuleIntoKlib(
     moduleName: String,
     configuration: CompilerConfiguration,
@@ -263,7 +248,7 @@ fun serializeModuleIntoKlib(
     wasmTarget: WasmTarget? = null,
     performanceManager: PerformanceManager? = null
 ) {
-    val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
+    val incrementalResultsConsumer = configuration.incrementalResultsConsumer
     val serializerOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
         serializeModuleIntoKlib(
             moduleName = moduleFragment.name.asString(),
@@ -350,76 +335,8 @@ fun serializeModuleIntoKlib(
 const val KLIB_PROPERTY_SERIALIZED_IR_FILE_FINGERPRINTS = "serializedIrFileFingerprints"
 const val KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT = "serializedKlibFingerprint"
 
-fun <SourceFile> shouldGoToNextIcRound(
-    compilerConfiguration: CompilerConfiguration,
-    createMetadataSerializer: () -> KlibSingleFileMetadataSerializer<SourceFile>,
-): Boolean {
-    val nextRoundChecker = compilerConfiguration.get(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER) ?: return false
-    createMetadataSerializer().run {
-        forEachFile { _, ioFile, sourceFile, _, _ ->
-            val protoBuf = serializeSingleFileMetadata(sourceFile)
-            // to minimize the number of IC rounds, we should inspect all proto for changes first,
-            // then go to the next round if needed, with all new dirty files
-            nextRoundChecker.checkProtoChanges(ioFile, protoBuf.toByteArray())
-        }
-    }
-    return nextRoundChecker.shouldGoToNextRound()
-}
-
 private fun List<IrModuleFragment>.getUniqueNameForEachFragment(): Map<IrModuleFragment, String> {
     return this.mapNotNull { moduleFragment ->
         moduleFragment.kotlinLibrary?.jsOutputName?.let { moduleFragment to it }
     }.toMap()
 }
-
-fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): List<KotlinFileSerializedData> {
-    val compiledIrFiles = serializedIrFiles
-    val compiledIrInlineFiles = serializedIrInlineFiles
-    val compiledMetaFiles = compiledPackageParts
-
-    assert(compiledIrFiles.size == compiledMetaFiles.size)
-
-    val storage = mutableListOf<KotlinFileSerializedData>()
-
-    for (f in compiledIrFiles.keys) {
-        if (f in nonCompiledSources) continue
-
-        val irData = compiledIrFiles[f] ?: error("No Ir Data found for file $f")
-        val metaFile = compiledMetaFiles[f] ?: error("No Meta Data found for file $f")
-        val irFile = with(irData) {
-            SerializedIrFile(
-                fileData,
-                String(fqn),
-                f.path.replace('\\', '/'),
-                types,
-                signatures,
-                strings,
-                bodies,
-                declarations,
-                debugInfo,
-                fileEntries,
-            )
-        }
-        val irInlineFile = compiledIrInlineFiles[f]?.run {
-            SerializedIrFile(
-                fileData,
-                String(fqn),
-                f.path.replace('\\', '/'),
-                types,
-                signatures,
-                strings,
-                bodies,
-                declarations,
-                debugInfo,
-                fileEntries,
-            )
-        }
-        storage.add(KotlinFileSerializedData(metaFile.metadata, irFile, irInlineFile))
-    }
-    return storage
-}
-
-
-@JvmName("getSerializedDataByPsiFiles")
-fun IncrementalDataProvider.getSerializedData(newSources: List<KtFile>): List<KotlinFileSerializedData> =
-    getSerializedData(newSources.mapNotNullTo(mutableSetOf()) { KtPsiSourceFile(it).toIoFileOrNull() })

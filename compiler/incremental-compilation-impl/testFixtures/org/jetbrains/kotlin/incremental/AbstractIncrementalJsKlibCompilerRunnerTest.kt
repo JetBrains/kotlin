@@ -24,21 +24,14 @@ abstract class AbstractIncrementalJsKlibCompilerRunnerTest : AbstractIncremental
             isFirEnabled = true,
             isKlibEnabled = true,
             isJsEnabled = true,
-            isScopeExpansionEnabled = scopeExpansionMode != CompileScopeExpansionMode.NEVER,
         )
 
     override fun make(cacheDir: File, outDir: File, sourceRoots: Iterable<File>, args: K2JSCompilerArguments): TestCompilationResult {
         val reporter = TestICReporter()
         val messageCollector = MessageCollectorImpl()
-        makeJsIncrementally(cacheDir, sourceRoots, args, buildHistoryFile(cacheDir), messageCollector, reporter, scopeExpansionMode)
+        makeJsIncrementally(cacheDir, sourceRoots, args, buildHistoryFile(cacheDir), messageCollector, reporter)
         return TestCompilationResult(reporter, messageCollector)
     }
 
-    protected open val scopeExpansionMode = CompileScopeExpansionMode.NEVER
-
     override fun failFile(testDir: File): File = testDir.resolve("fail_js_k2.txt")
-}
-
-abstract class AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest : AbstractIncrementalJsKlibCompilerRunnerTest() {
-    override val scopeExpansionMode = CompileScopeExpansionMode.ALWAYS
 }

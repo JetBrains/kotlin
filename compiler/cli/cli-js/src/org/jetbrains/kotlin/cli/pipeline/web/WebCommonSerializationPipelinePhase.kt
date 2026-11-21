@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.pipeline.web
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.incrementalResultsConsumer
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.incremental.js.KmpIncrementalResultsConsumer
-import org.jetbrains.kotlin.js.config.incrementalResultsConsumer
 import org.jetbrains.kotlin.js.config.jsIncrementalCompilationEnabled
 import org.jetbrains.kotlin.util.metadataVersion
 import java.io.File

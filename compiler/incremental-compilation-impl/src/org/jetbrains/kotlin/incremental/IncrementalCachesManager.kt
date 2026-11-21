@@ -20,7 +20,6 @@ import com.google.common.io.Closer
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import java.io.Closeable
 import java.io.File
 
@@ -90,11 +89,15 @@ open class IncrementalJvmCachesManager(
     ).apply { registerCache() }
 }
 
-class IncrementalJsCachesManager(
+enum class KlibCachePlatform {
+    JS, Wasm, Native
+}
+
+class IncrementalKlibCachesManager(
     icContext: IncrementalCompilationContext,
-    serializerProtocol: SerializerExtensionProtocol,
     cachesRootDir: File,
-) : IncrementalCachesManager<IncrementalJsCache>(icContext, cachesRootDir) {
-    private val jsCacheFile = File(cachesRootDir, "js").apply { mkdirs() }
-    override val platformCache = IncrementalJsCache(jsCacheFile, icContext, serializerProtocol).apply { registerCache() }
+    targetPlatform: KlibCachePlatform,
+) : IncrementalCachesManager<IncrementalKlibCache>(icContext, cachesRootDir) {
+    private val klibCacheFile = File(cachesRootDir, targetPlatform.name.lowercase()).apply { mkdirs() }
+    override val platformCache = IncrementalKlibCache(klibCacheFile, icContext).apply { registerCache() }
 }

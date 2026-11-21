@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web
 
+import org.jetbrains.kotlin.backend.common.serialization.getSerializedData
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.incrementalDataProvider
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform

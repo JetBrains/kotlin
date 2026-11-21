@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.config.keys.generator
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.io.ZipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 
@@ -26,4 +29,20 @@ object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.conf
     val ZIP_FILE_SYSTEM_ACCESSOR by key<ZipFileSystemAccessor>("Zip file system accessor, used for klib reading.")
 
     val SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS by key<Boolean>("Skip library compatibility checks for stdlib and kotlin.test library.")
+
+    val INCREMENTAL_DATA_PROVIDER by key<IncrementalDataProvider>(
+        comment = "Provides the compilation results from previous iteration of IC",
+        throwOnNull = false
+    )
+
+    val INCREMENTAL_RESULTS_CONSUMER by key<IncrementalResultsConsumer>(
+        comment = "Consumes the compilation results from current iteration of IC",
+        throwOnNull = false
+    )
+
+    val INCREMENTAL_NEXT_ROUND_CHECKER by key<IncrementalNextRoundChecker>(
+        comment = "Responsible for checking if next round of IC is needed",
+        throwOnNull = false
+    )
+
 }

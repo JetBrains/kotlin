@@ -29,6 +29,7 @@ dependencies {
     api(project(":compiler:build-tools:kotlin-build-statistics"))
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
     implementation(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
+    api(project(":compiler:incremental-compilation-klib:api"))
     compileOnly(intellijCore())
 
     testFixturesApi(platform(libs.junit.bom))

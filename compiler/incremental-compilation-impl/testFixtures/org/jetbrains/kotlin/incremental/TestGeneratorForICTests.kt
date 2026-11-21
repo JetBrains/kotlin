@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
             }
 
             // TODO: https://youtrack.jetbrains.com/issue/KT-61602/JS-K2-ICL-Fix-muted-tests
-            testClass<AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest> {
+            testClass<AbstractIncrementalJsKlibCompilerRunnerTest> {
                 // IC of sealed interfaces are not supported in JS
                 modelForDirectoryBasedTest(
                     "incremental", "pureKotlin", extension = null, recursive = false,

@@ -37,7 +37,6 @@ abstract class AbstractIncrementalJsKlibMultiModuleCompilerRunnerTest :
         moduleBuildHistoryFile: File,
         messageCollector: MessageCollector,
         reporter: ICReporter,
-        scopeExpansion: CompileScopeExpansionMode,
         modulesApiHistory: ModulesApiHistoryJs,
         providedChangedFiles: ChangedFiles?
     ) {
@@ -48,7 +47,6 @@ abstract class AbstractIncrementalJsKlibMultiModuleCompilerRunnerTest :
             moduleBuildHistoryFile,
             messageCollector,
             reporter,
-            scopeExpansionMode,
             modulesApiHistory,
             providedChangedFiles
         )
@@ -57,8 +55,6 @@ abstract class AbstractIncrementalJsKlibMultiModuleCompilerRunnerTest :
     override val modulesApiHistory: ModulesApiHistoryJs by lazy {
         ModulesApiHistoryJs(workingDir, incrementalModuleInfo)
     }
-
-    override val scopeExpansionMode: CompileScopeExpansionMode get() = CompileScopeExpansionMode.NEVER
 
     override fun String.asOutputFileName(): String = klib
     override fun String.asArtifactFileName(): String = klib
