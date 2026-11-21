@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import kotlinx.metadata.klib.annotations
 import kotlinx.metadata.klib.compileTimeValue
 import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
-import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.and
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.backend.common.serialization.signatureAndKind
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -54,7 +54,7 @@ class CInteropKlibMetadata2IRTransformer(
     internal val declarationTracker: DeclarationTracker,
     private val getNestedKmClass: (ClassId) -> KmClass?,
     private val getOrCreateContainingPackageFragment: (kmDeclaration: Any) -> IrPackageFragment,
-    private val getReferencedDeclarationSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol,
+    private val getReferencedDeclarationSymbol: (SignatureAndKind) -> IrSymbol,
     private val irProviderForLazyAnnotations: IrProvider,
 ) {
     private val signatureComputer = PublicIdSignatureComputer(KonanManglerIr, markAllAsCInterop = true)
@@ -553,7 +553,7 @@ class CInteropKlibMetadata2IRTransformer(
         // or otherwise, from C-interop Klib. This information is necessary to construct a proper IdSignature.
         val classSignature = classId.toCInteropSignature(isCInterop = !classId.definitelyNotFromCInterop())
 
-        getReferencedDeclarationSymbol(classSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL) as IrClassSymbol
+        getReferencedDeclarationSymbol(classSignature and CLASS_SYMBOL) as IrClassSymbol
     }
 
     private fun deserializeAnnotationArgument(kmArgument: KmAnnotationArgument): IrExpression {
@@ -581,7 +581,7 @@ class CInteropKlibMetadata2IRTransformer(
                 val enumClassId = ClassId.fromString(kmArgument.enumClassName)
                 val enumEntryId = enumClassId.createNestedClassId(Name.identifier(kmArgument.enumEntryName))
                 val enumEntrySig = enumEntryId.toIdSignature()
-                val enumEntrySymbol = getReferencedDeclarationSymbol(enumEntrySig, BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL) as IrEnumEntrySymbol
+                val enumEntrySymbol = getReferencedDeclarationSymbol(enumEntrySig and ENUM_ENTRY_SYMBOL) as IrEnumEntrySymbol
                 val enumClassSymbol = findReferencedClass(kmArgument.enumClassName)
                 val irType = enumClassSymbol.defaultTypeWithoutArguments
                 IrGetEnumValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irType, enumEntrySymbol)

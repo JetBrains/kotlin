@@ -187,9 +187,7 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
                 declarationTracker = CInteropKlibMetadata2IRTransformer.DeclarationTracker(),
                 getNestedKmClass = getNestedKmClass,
                 getOrCreateContainingPackageFragment = { packageFragment },
-                getReferencedDeclarationSymbol = { signature, kind ->
-                    referenceDeserializedSymbol(symbolTable, fileSymbol = null, kind, signature)
-                },
+                getReferencedDeclarationSymbol = { signatureAndKind -> referenceDeserializedSymbol(symbolTable, signatureAndKind) },
                 irProviderForLazyAnnotations = StubAnnotationGenerator,
             )
         }
