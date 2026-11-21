@@ -50,6 +50,16 @@ external internal fun areEqualByValue(first: Float, second: Float): Boolean
 @UsedFromCompilerGeneratedCode
 external internal fun areEqualByValue(first: Double, second: Double): Boolean
 
+@PublishedApi
+@UsedFromCompilerGeneratedCode
+internal fun areEqualByValueWithNaNs(first: Float, second: Float): Boolean =
+    first.toBits() == second.toBits()
+
+@PublishedApi
+@UsedFromCompilerGeneratedCode
+internal fun areEqualByValueWithNaNs(first: Double, second: Double): Boolean =
+    first.toBits() == second.toBits()
+
 @TypedIntrinsic(IntrinsicType.ARE_EQUAL_BY_VALUE)
 @PublishedApi
 @UsedFromCompilerGeneratedCode
