@@ -532,7 +532,7 @@ object Mapping : TemplateGroupBase() {
         }
         sample("samples.collections.Collections.Transformations.groupBy")
         specialFor(CharSequences) {
-            sample("samples.text.Strings.groupBy")
+            sample("samples.text.Strings.groupByTo")
         }
         annotation("@IgnorableReturnValue")
         sequenceClassification(terminal)
@@ -599,7 +599,7 @@ object Mapping : TemplateGroupBase() {
         }
         sample("samples.collections.Collections.Transformations.groupByKeysAndValues")
         specialFor(CharSequences) {
-            sample("samples.text.Strings.groupByKeysAndValues")
+            sample("samples.text.Strings.groupByToKeysAndValues")
         }
         annotation("@IgnorableReturnValue")
         sequenceClassification(terminal)

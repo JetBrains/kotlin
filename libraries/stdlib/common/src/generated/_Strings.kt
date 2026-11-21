@@ -939,7 +939,7 @@ public inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTra
  * 
  * @return The [destination] map.
  * 
- * @sample samples.text.Strings.groupBy
+ * @sample samples.text.Strings.groupByTo
  */
 @IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K): M {
@@ -958,7 +958,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequence.grou
  * 
  * @return The [destination] map.
  * 
- * @sample samples.text.Strings.groupByKeysAndValues
+ * @sample samples.text.Strings.groupByToKeysAndValues
  */
 @IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {

@@ -106,13 +106,17 @@ class Strings {
         val byCategory = text.groupBy { if (it.isDigit()) "digits" else "letters" }
 
         assertPrints(byCategory, "{letters=[a, B, c], digits=[1, 2, 3]}")
+    }
 
+    @Sample
+    fun groupByTo() {
+        val text = "a1B2c3"
         val destination = mutableMapOf("letters" to mutableListOf('x'))
         val result = text.groupByTo(destination) { if (it.isDigit()) "digits" else "letters" }
 
         // Characters are appended to existing groups, and new groups are added as needed.
         assertPrints(destination, "{letters=[x, a, B, c], digits=[1, 2, 3]}")
-        assertTrue(result === destination)
+        assertSame(destination, result)
     }
 
     @Sample
@@ -124,7 +128,11 @@ class Strings {
         )
 
         assertPrints(uppercaseByCategory, "{letters=[A, B, C], digits=[1, 2, 3]}")
+    }
 
+    @Sample
+    fun groupByToKeysAndValues() {
+        val text = "a1B2c3"
         val destination = mutableMapOf("letters" to mutableListOf("X"))
         val result = text.groupByTo(
             destination,
@@ -134,7 +142,7 @@ class Strings {
 
         // The destination contains the transformed strings rather than the original characters.
         assertPrints(destination, "{letters=[X, A, B, C], digits=[1, 2, 3]}")
-        assertTrue(result === destination)
+        assertSame(destination, result)
     }
 
     @Sample
