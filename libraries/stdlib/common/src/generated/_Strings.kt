@@ -918,7 +918,7 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destin
  * 
  * The returned map preserves the entry iteration order of the keys produced from the original char sequence.
  * 
- * @sample samples.collections.Collections.Transformations.groupBy
+ * @sample samples.text.Strings.groupBy
  */
 public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> {
     return groupByTo(LinkedHashMap<K, MutableList<Char>>(), keySelector)
@@ -931,7 +931,7 @@ public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, Lis
  * 
  * The returned map preserves the entry iteration order of the keys produced from the original char sequence.
  * 
- * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
+ * @sample samples.text.Strings.groupByKeysAndValues
  */
 public inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTransform: (Char) -> V): Map<K, List<V>> {
     return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
@@ -943,7 +943,7 @@ public inline fun <K, V> CharSequence.groupBy(keySelector: (Char) -> K, valueTra
  * 
  * @return The [destination] map.
  * 
- * @sample samples.collections.Collections.Transformations.groupBy
+ * @sample samples.text.Strings.groupBy
  */
 @IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K): M {
@@ -962,7 +962,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharSequence.grou
  * 
  * @return The [destination] map.
  * 
- * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
+ * @sample samples.text.Strings.groupByKeysAndValues
  */
 @IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharSequence.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
