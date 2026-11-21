@@ -9,11 +9,15 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.computeKtSources
+import org.jetbrains.kotlin.cli.jvm.compiler.countLinesOfCode
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
@@ -155,7 +159,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         environment: VfsBasedProjectEnvironment,
         configuration: CompilerConfiguration
     ): AllModulesFrontendOutput {
-        var output = if (configuration.parserMode.treeBased) {
+        var output = if (!configuration.parseTreeKind.isPsi) {
             firFrontendWithLightTree(environment, configuration)
         } else {
             firFrontendWithPsi(environment, configuration)

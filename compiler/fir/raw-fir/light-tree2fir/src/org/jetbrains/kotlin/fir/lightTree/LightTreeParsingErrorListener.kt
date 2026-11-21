@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.LightTreeParseTreeKind
+import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.parsing.KotlinLightParser
@@ -23,6 +25,7 @@ fun DiagnosticReporter.toKotlinParsingErrorListener(
     val diagnosticContext = object : DiagnosticContext {
         override val containingFile: KtSourceFile = sourceFile
         override val languageVersionSettings: LanguageVersionSettings get() = languageVersionSettings
+        override val parseTreeKind: ParseTreeKind get() = LightTreeParseTreeKind
         override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
     }
     return KotlinLightParser.LightTreeParsingErrorListener { node, syntaxErrorType ->

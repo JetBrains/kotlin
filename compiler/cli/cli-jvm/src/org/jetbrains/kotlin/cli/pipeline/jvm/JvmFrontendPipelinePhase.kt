@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createEnvironmentAndSources
@@ -168,9 +169,9 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val countFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
         val diagnosticsCollector = configuration.diagnosticsCollector
         val outputs = sessionsWithSources.map { (val session, val sources = files) ->
-            val rawFirFiles = when (configuration.parserMode.treeBased) {
-                true -> session.buildFirViaLightTree(sources, diagnosticsCollector, useMultiplatformParsing = false, countFilesAndLines)
-                false -> session.buildFirFromKtFiles(sources.asKtFilesList())
+            val rawFirFiles = when (configuration.parseTreeKind.isPsi) {
+                false -> session.buildFirViaLightTree(sources, diagnosticsCollector, useMultiplatformParsing = false, countFilesAndLines)
+                true -> session.buildFirFromKtFiles(sources.asKtFilesList())
             }
             resolveAndCheckFir(session, rawFirFiles, diagnosticsCollector)
         }
@@ -197,8 +198,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         targetDescription: String,
     ): EnvironmentAndSources? {
         val diagnosticReporter = configuration.diagnosticsCollector
-        return when (configuration.parserMode.treeBased) {
-            true -> {
+        return when (configuration.parseTreeKind.isPsi) {
+            false -> {
                 val environment = createProjectEnvironment(
                     configuration,
                     rootDisposable
@@ -206,7 +207,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 val sources = { collectSources(configuration, environment) }
                 EnvironmentAndSources(environment, sources)
             }
-            false -> {
+            true -> {
                 val kotlinCoreEnvironment = createCoreEnvironment(
                     rootDisposable, configuration, targetDescription
                 ) ?: return null

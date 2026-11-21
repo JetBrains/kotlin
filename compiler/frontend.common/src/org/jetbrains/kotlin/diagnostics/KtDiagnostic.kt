@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 
 // ------------------------------ diagnostics ------------------------------
@@ -43,13 +40,13 @@ class KtDiagnosticWithoutSource(
         get() = TextRange.EMPTY_RANGE
 }
 
-sealed class KtDiagnosticWithSource : KtDiagnostic(), DiagnosticMarker {
+sealed class KtDiagnosticWithSource : KtDiagnostic() {
     abstract val element: AbstractKtSourceElement
     abstract override val factory: KtDiagnosticFactoryN
-    abstract val positioningStrategy: AbstractSourceElementPositioningStrategy
+    abstract val positioningStrategy: SourceElementPositioningStrategy
     abstract override val severity: Severity
 
-    final override val textRanges: List<TextRange>
+    val textRanges: List<TextRange>
         get() = positioningStrategy.markDiagnostic(this)
 
     final override val isValid: Boolean
@@ -57,17 +54,13 @@ sealed class KtDiagnosticWithSource : KtDiagnostic(), DiagnosticMarker {
 
     final override val firstRange: TextRange
         get() = DiagnosticRangeUtils.firstRange(textRanges)
-
-    @K1Deprecation
-    final override val psiElement: PsiElement
-        get() = (element as KtPsiSourceElement).psi
 }
 
 data class KtSimpleDiagnostic(
     override val element: AbstractKtSourceElement,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory0,
-    override val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    override val positioningStrategy: SourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
 ) : KtDiagnosticWithSource()
 
@@ -76,7 +69,7 @@ data class KtDiagnosticWithParameters1<A>(
     val a: A,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory1<A>,
-    override val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    override val positioningStrategy: SourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
 ) : KtDiagnosticWithSource()
 
@@ -86,7 +79,7 @@ data class KtDiagnosticWithParameters2<A, B>(
     val b: B,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory2<A, B>,
-    override val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    override val positioningStrategy: SourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
 ) : KtDiagnosticWithSource()
 
@@ -97,7 +90,7 @@ data class KtDiagnosticWithParameters3<A, B, C>(
     val c: C,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory3<A, B, C>,
-    override val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    override val positioningStrategy: SourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
 ) : KtDiagnosticWithSource()
 
@@ -109,6 +102,6 @@ data class KtDiagnosticWithParameters4<A, B, C, D>(
     val d: D,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory4<A, B, C, D>,
-    override val positioningStrategy: AbstractSourceElementPositioningStrategy,
+    override val positioningStrategy: SourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
 ) : KtDiagnosticWithSource()

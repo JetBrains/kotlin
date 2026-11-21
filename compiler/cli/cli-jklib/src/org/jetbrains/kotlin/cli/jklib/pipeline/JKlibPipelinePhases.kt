@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.jklib.config.klibPaths
 import org.jetbrains.kotlin.cli.jklib.prepareJKlibSessions
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.configureJdkHomeFromSystemProperty
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.report
@@ -361,7 +362,8 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
             configuration = configuration,
             diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
                 diagnosticsReporter.deduplicating(),
-                configuration.languageVersionSettings
+                configuration.languageVersionSettings,
+                configuration.parseTreeKind,
             ),
             cleanFiles = emptyList(),
             dependencies = emptyList(),
@@ -432,7 +434,8 @@ object JKlibMetadataSerializationPhase : PipelinePhase<JKlibFrontendPipelineArti
             configuration = configuration,
             diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
                 diagnosticsReporter.deduplicating(),
-                configuration.languageVersionSettings
+                configuration.languageVersionSettings,
+                configuration.parseTreeKind,
             ),
             cleanFiles = emptyList(),
             dependencies = emptyList(),

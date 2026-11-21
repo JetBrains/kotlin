@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.caches.BridgeLoweringCache
 import org.jetbrains.kotlin.backend.jvm.caches.CollectionStubComputer
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.codegen.state.AllowedOnlyInTestsAPI
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
@@ -67,7 +68,11 @@ class JvmBackendContext(
         this, CachedFieldsForObjectInstances(IrFactoryImpl)
     )
 
-    override var diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
+    override var diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+        state.diagnosticReporter,
+        config.languageVersionSettings,
+        state.configuration.parseTreeKind,
+    )
         private set
 
     override val symbols = JvmSymbols(this, irModule)
@@ -136,6 +141,10 @@ class JvmBackendContext(
 
     @AllowedOnlyInTestsAPI
     fun replaceDiagnosticReporter(newDiagnosticReporter: DiagnosticReporter) {
-        diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(newDiagnosticReporter, config.languageVersionSettings)
+        diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            newDiagnosticReporter,
+            config.languageVersionSettings,
+            state.configuration.parseTreeKind,
+        )
     }
 }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterfac
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.perfManager
@@ -128,6 +129,7 @@ internal class JsIrLinkerLoader(
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             compilerConfiguration.diagnosticsCollector,
             compilerConfiguration.languageVersionSettings,
+            compilerConfiguration.parseTreeKind,
         )
         return JsIrLinker(
             configuration = compilerConfiguration,

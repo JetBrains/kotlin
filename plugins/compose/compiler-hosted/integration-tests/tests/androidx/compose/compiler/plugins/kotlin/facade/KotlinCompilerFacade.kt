@@ -32,9 +32,11 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -124,7 +126,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 updateConfiguration()
                 put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
                 // `K2CompilerFacade` currently builds FIR from Kt PSI files (`buildResolveAndCheckFirFromKtFiles`), KT-91411
-                parserMode = ParserMode.Psi
+                parseTreeKind = PsiParseTreeKind
             }
 
             @OptIn(CoreEnvironmentDeprecation::class)

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.buildFile
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.moduleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.createConfigurationForModule
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -72,7 +73,7 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
             val backendInput = when {
                 chunk.size == 1 -> baseBackendInput
 
-                configurationForModule.parserMode.treeBased -> {
+                !configurationForModule.parseTreeKind.isPsi -> {
                     val wholeModule = baseBackendInput.irModuleFragment
                     val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor)
                     moduleCopy.copyAttributes(wholeModule)

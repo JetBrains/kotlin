@@ -13,10 +13,13 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.computeKtSources
-import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.parseTreeKind
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.diagnostics.LightTreeParseTreeKind
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsReporterImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -31,8 +34,10 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.syntax.KmpParseTreeKind
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
@@ -66,14 +71,15 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
 
         val projectEnvironment = environment.toVfsBasedProjectEnvironment()
 
-        val sourceFiles: Collection<KtSourceFile> = when (configuration.parserMode) {
-            Psi -> {
+        val sourceFiles: Collection<KtSourceFile> = when (configuration.parseTreeKind) {
+            PsiParseTreeKind -> {
                 projectEnvironment.computeKtSources(configuration).map { KtPsiSourceFile(it) }
             }
-            LightTree -> {
+            LightTreeParseTreeKind -> {
                 collectSources(configuration, projectEnvironment).platformSources
             }
-            KmpTree -> TODO("KT-91322")
+            KmpParseTreeKind -> TODO("KT-91322")
+            else -> shouldNotBeCalled("Unsupported parse tree kind")
         }
 
         val session =
@@ -118,7 +124,7 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
 
         val configuration = createDefaultConfiguration(moduleData)
         configureLanguageVersionSettings(configuration, moduleData, LanguageVersion.fromVersionString(LANGUAGE_VERSION_K2)!!)
-        configuration.parserMode = if (USE_LIGHT_TREE) ParserMode.LightTree else ParserMode.Psi
+        configuration.parseTreeKind = if (USE_LIGHT_TREE) LightTreeParseTreeKind else PsiParseTreeKind
 
         @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.create(disposable, configuration)

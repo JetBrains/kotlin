@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.computeKtSources
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
@@ -69,7 +69,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         val extensionStorage = configuration.extensionsStorage ?: error("Extensions storage is not registered")
         val vfsBasedProjectEnvironment = environmentForJS.toVfsBasedProjectEnvironment()
 
-        val analyzedOutput = if (configuration.parserMode.treeBased) {
+        val analyzedOutput = if (!configuration.parseTreeKind.isPsi) {
             val groupedSources = collectSources(configuration, vfsBasedProjectEnvironment)
 
             if (

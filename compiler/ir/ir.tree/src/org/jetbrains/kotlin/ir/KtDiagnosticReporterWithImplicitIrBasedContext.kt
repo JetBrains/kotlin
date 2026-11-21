@@ -24,7 +24,8 @@ import java.util.*
 
 class KtDiagnosticReporterWithImplicitIrBasedContext(
     diagnosticReporter: DiagnosticReporter,
-    val languageVersionSettings: LanguageVersionSettings
+    val languageVersionSettings: LanguageVersionSettings,
+    val parseTreeKind: ParseTreeKind,
 ) : DiagnosticReporter(), IrDiagnosticReporter {
     val diagnosticReporter: DiagnosticReporter = diagnosticReporter.deduplicating()
 
@@ -71,6 +72,8 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
             override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
             override val languageVersionSettings: LanguageVersionSettings
                 get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
+            override val parseTreeKind: ParseTreeKind
+                get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.parseTreeKind
         }
         val diagnostic = factory.create(message, location, context) ?: return
         report(diagnostic, context)
@@ -88,6 +91,8 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
         override val languageVersionSettings: LanguageVersionSettings
             get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
 
+        override val parseTreeKind: ParseTreeKind
+            get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.parseTreeKind
 
         override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
             if (containingIrFile == null) return false

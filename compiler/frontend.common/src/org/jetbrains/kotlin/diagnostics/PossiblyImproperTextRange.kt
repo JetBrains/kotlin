@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.AbstractKtSourceElement
 
-abstract class AbstractSourceElementPositioningStrategy {
-    abstract fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange>
+class PossiblyImproperTextRange(startOffset: Int, endOffset: Int) : TextRange(startOffset, endOffset, /* checkForProperTextRange = */ false)
 
-    abstract fun isValid(element: AbstractKtSourceElement): Boolean
-}

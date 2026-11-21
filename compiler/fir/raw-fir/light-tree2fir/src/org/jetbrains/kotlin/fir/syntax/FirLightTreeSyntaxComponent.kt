@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.DOT_QUALIFIED_EXPRESSION
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.ParserMode
+import org.jetbrains.kotlin.diagnostics.LightTreeParseTreeKind
+import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.diagnostics.findChildrenByType
 import org.jetbrains.kotlin.diagnostics.getAssignmentLhsIfUnwrappable
@@ -34,8 +35,8 @@ import org.jetbrains.kotlin.util.getPreviousSibling
 
 @NoMutableState
 object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() {
-    override val parserMode: ParserMode
-        get() = LightTree
+    override val parseTreeKind: ParseTreeKind
+        get() = LightTreeParseTreeKind
 
     override fun KtSourceElement.unwrap(): KtLightSourceElement {
         return this as? KtLightSourceElement ?: unwrapError(this@unwrap)

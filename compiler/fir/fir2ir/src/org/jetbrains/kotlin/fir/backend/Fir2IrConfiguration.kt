@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 class Fir2IrConfiguration private constructor(
     val languageVersionSettings: LanguageVersionSettings,
     diagnosticReporter: BaseDiagnosticsCollector,
+    parseTreeKind: ParseTreeKind,
     val inlineConstTracker: InlineConstTracker?,
     val expectActualTracker: ExpectActualTracker?,
     val allowNonCachedDeclarations: Boolean,
@@ -42,7 +45,7 @@ class Fir2IrConfiguration private constructor(
     val propagateLazyIrPrivateMembers: Boolean,
 ) {
     val diagnosticReporter: IrDiagnosticReporter =
-        KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
+        KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings, parseTreeKind)
 
     class IrVerificationSettings(
         val mode: IrVerificationMode,
@@ -59,6 +62,7 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
+                parseTreeKind = compilerConfiguration.parseTreeKind,
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
@@ -80,6 +84,7 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
+                parseTreeKind = compilerConfiguration.parseTreeKind,
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
@@ -101,6 +106,7 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
+                parseTreeKind = compilerConfiguration.parseTreeKind,
                 inlineConstTracker = null,
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
@@ -123,6 +129,7 @@ class Fir2IrConfiguration private constructor(
             Fir2IrConfiguration(
                 languageVersionSettings = languageVersionSettings,
                 diagnosticReporter = diagnosticReporter,
+                parseTreeKind = compilerConfiguration.parseTreeKind,
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = true,

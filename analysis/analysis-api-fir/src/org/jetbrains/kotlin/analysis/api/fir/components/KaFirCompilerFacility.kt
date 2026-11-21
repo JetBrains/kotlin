@@ -77,7 +77,8 @@ internal class KaFirCompilerFacility(
     }
 
     override fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
-        return KaFirCompilationOptionsBuilder(token, CompilerConfiguration.create()).apply(init).build()
+        // The Analysis API always works with PSI
+        return KaFirCompilationOptionsBuilder(token, CompilerConfiguration.create(parseTreeKind = PsiParseTreeKind)).apply(init).build()
     }
 
     override fun modify(options: KaCompilationOptions, init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
@@ -267,6 +268,9 @@ internal class KaFirCompilerFacility(
 
                 override val languageVersionSettings: LanguageVersionSettings
                     get() = analysisSession.firSession.languageVersionSettings
+
+                override val parseTreeKind: ParseTreeKind
+                    get() = PsiParseTreeKind
             }
 
             lambda.accept(object : FirDefaultVisitorVoid() {
