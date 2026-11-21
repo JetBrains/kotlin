@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.CODE_ANALYSIS
 import org.jetbrains.kotlin.build.report.metrics.COMPILER_INITIALIZATION
+import org.jetbrains.kotlin.build.report.metrics.GcMetric
 import org.jetbrains.kotlin.build.report.metrics.IR_LOWERING
 import org.jetbrains.kotlin.build.report.metrics.KlibSizeMetric
 import org.jetbrains.kotlin.util.CompilerType
 import org.jetbrains.kotlin.util.DynamicStats
+import org.jetbrains.kotlin.util.GarbageCollectionStats
 import org.jetbrains.kotlin.util.KlibElementStats
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PlatformType
@@ -51,6 +53,7 @@ class KotlinNativeCompilerMetricsTest {
             backendStats = null,
             dynamicStats = listOf(DynamicStats(PhaseType.IrLowering, "Inline", Time(500_000, 500_001, 500_002))),
             klibElementStats = listOf(KlibElementStats("KLIB directory cumulative size", 4_096)),
+            gcStats = listOf(GarbageCollectionStats("G1 Old Generation", millis = 7, count = 2)),
         )
     )
 
@@ -84,6 +87,15 @@ class KotlinNativeCompilerMetricsTest {
 
         val sizes = reporter.getMetrics().buildPerformanceMetrics.asMap()
         assertEquals(4_096, sizes[KlibSizeMetric.createIfDoesNotExistAndReturn("KLIB directory cumulative size")])
+    }
+
+    @Test
+    fun `gc counters from the compiler are reported as gc metrics`() {
+        val reporter = BuildMetricsReporterImpl<BuildTimeMetric, BuildPerformanceMetric>()
+
+        reporter.addCompilerMetrics(CompilerMetricsJson.parse(compilerReport))
+
+        assertEquals(GcMetric(7, 2), reporter.getMetrics().gcMetrics.asMap()["G1 Old Generation"])
     }
 
     @Test
