@@ -95,7 +95,7 @@ class DependencyDownloader(
                         progress.update(read)
                         read = from.read(buffer)
                     }
-                    if (progress.currentBytes != totalBytes) {
+                    if (totalBytes != -1L && progress.currentBytes != totalBytes) {
                         throw EOFException("The stream closed before end of downloading.")
                     }
                 }
@@ -204,6 +204,9 @@ class DependencyDownloader(
                     throw e
                 }
             } catch (e: IOException) {
+                if (source.protocol == "file" && (e is FileNotFoundException || e.cause is FileNotFoundException)) {
+                    throw e
+                }
                 handleException(e)
             }
         }
