@@ -258,9 +258,6 @@ sealed class IdSignature {
 
     open val isLocal: Boolean get() = !isPubliclyVisible
 
-    // TODO: this API is a bit hacky, consider to act somehow else
-    open val visibleCrossFile: Boolean get() = true
-
     /**
      * This signature corresponds to a publicly accessible Kotlin declaration.
      *
@@ -338,9 +335,6 @@ sealed class IdSignature {
         override val isLocal: Boolean
             get() = inner.isLocal
 
-        override val visibleCrossFile: Boolean
-            get() = container.visibleCrossFile
-
         override fun topLevelSignature(): IdSignature {
             return if (container is FileSignature)
                 CompositeSignature(container, inner.topLevelSignature())
@@ -406,7 +400,6 @@ sealed class IdSignature {
         private val fqName: FqName,
         val fileName: String
     ) : IdSignature() {
-
         constructor(fileSymbol: IrFileSymbol) : this(
             fileSymbol, fileSymbol.owner.packageFqName, fileSymbol.owner.fileEntry.name
         )
@@ -417,9 +410,6 @@ sealed class IdSignature {
 
         override val isPubliclyVisible: Boolean
             get() = true
-
-        override val visibleCrossFile: Boolean
-            get() = false
 
         override fun isPackageSignature(): Boolean = true
 
@@ -543,9 +533,6 @@ sealed class IdSignature {
 
         override fun packageFqName(): FqName = container.packageFqName()
 
-        override val visibleCrossFile: Boolean
-            get() = false
-
         override fun topLevelSignature(): IdSignature {
             val topLevelContainer = container.topLevelSignature()
             if (topLevelContainer === container) {
@@ -574,11 +561,7 @@ sealed class IdSignature {
      * This signature is not navigatable through files.
      */
     data class ScopeLocalDeclaration(val id: Int) : IdSignature() {
-
         override val isPubliclyVisible: Boolean get() = false
-
-        override val visibleCrossFile: Boolean
-            get() = false
 
         override val hasTopLevel: Boolean get() = false
 
@@ -596,9 +579,6 @@ sealed class IdSignature {
         override val isPubliclyVisible: Boolean get() = original.isPubliclyVisible
 
         override val hasTopLevel: Boolean get() = true
-
-        override val visibleCrossFile: Boolean
-            get() = original.visibleCrossFile
 
         override fun topLevelSignature(): IdSignature = this
 
