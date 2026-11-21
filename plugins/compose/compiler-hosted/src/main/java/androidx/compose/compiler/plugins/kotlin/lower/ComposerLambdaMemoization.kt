@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -39,6 +40,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
@@ -190,7 +193,10 @@ private class FunctionContext(
     }
 }
 
-private class AnonymousInitializerContext(override val declaration: IrAnonymousInitializer) : DeclarationContext() {
+/**
+ * An `init` block or a field initializer: not a function, but may declare locals.
+ */
+private class InitializerContext(override val declaration: IrSymbolOwner) : DeclarationContext() {
     override val composable: Boolean = false
     override val captures: MutableSet<IrValueDeclaration> = mutableSetOf()
 
@@ -395,7 +401,9 @@ class ComposerLambdaMemoization(
             return super.visitDeclaration(declaration)
         }
 
-        declarationContextStack.push(SymbolOwnerContext(declaration))
+        declarationContextStack.push(
+            if (declaration is IrField) InitializerContext(declaration) else SymbolOwnerContext(declaration)
+        )
         val result = super.visitDeclaration(declaration)
         declarationContextStack.pop()
         return result
@@ -460,7 +468,7 @@ class ComposerLambdaMemoization(
     }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement {
-        val context = AnonymousInitializerContext(declaration)
+        val context = InitializerContext(declaration)
         declarationContextStack.recordLocalDeclaration(context)
         declarationContextStack.push(context)
         val result = super.visitAnonymousInitializer(declaration)
@@ -477,7 +485,9 @@ class ComposerLambdaMemoization(
     }
 
     override fun visitVariable(declaration: IrVariable): IrStatement {
-        currentFunctionContext?.declareLocal(declaration)
+        // Innermost function or initializer, not currentFunctionContext: a class resets it, but `init`
+        // blocks and field initializers have locals too
+        declarationContextStack.lastOrNull { it is FunctionContext || it is InitializerContext }?.declareLocal(declaration)
         return super.visitVariable(declaration)
     }
 
@@ -632,64 +642,53 @@ class ComposerLambdaMemoization(
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
         // SAM conversions are handled by Kotlin compiler
         // We only need to make sure that remember is handled correctly around type operator
-        if (
-            expression.operator != IrTypeOperator.SAM_CONVERSION ||
-            currentFunctionContext?.canRemember != true
-        ) {
+        if (expression.operator != IrTypeOperator.SAM_CONVERSION) {
             return super.visitTypeOperator(expression)
         }
 
         // Unwrap function from type operator
-        val originalFunctionExpression =
+        val functionExpression =
             expression.findSamFunctionExpr() ?: return super.visitTypeOperator(expression)
+
+        val isComposableFunInterface = expression.typeOperand.isComposableFunInterface()
+        val functionContext = currentFunctionContext?.takeIf { it.canRemember }
+        if (functionContext == null && !isComposableFunInterface) {
+            return super.visitTypeOperator(expression)
+        }
 
         // Record capture variables for this scope
         val collector = CaptureCollector()
         startCollector(collector)
-        // Handle inside of the function expression
-        val result = super.visitFunctionExpression(originalFunctionExpression)
+        // The super call transforms the lambda in place, so the conversion stays as is. findSamFunctionExpr already allows only two forms
+        super.visitFunctionExpression(functionExpression)
         stopCollector(collector)
+        val captures = collector.captures.toList()
+        val dontMemoize = functionExpression.function.hasAnnotation(ComposeFqNames.DontMemoize)
 
-        // If the ancestor converted this then return
-        val newFunctionExpression = result as? IrFunctionExpression ?: return result
-
-        // Construct new type operator call to wrap remember around.
-        val newArgument = when (val argument = expression.argument) {
-            is IrFunctionExpression -> newFunctionExpression
-            is IrTypeOperatorCall -> {
-                require(
-                    argument.operator == IrTypeOperator.IMPLICIT_CAST &&
-                            argument.argument == originalFunctionExpression
-                ) {
-                    "Only implicit cast is supported inside SAM conversion"
-                }
-                IrTypeOperatorCallImpl(
-                    argument.startOffset,
-                    argument.endOffset,
-                    argument.type,
-                    argument.operator,
-                    argument.typeOperand,
-                    newFunctionExpression
-                )
-            }
-
-            else -> error("Unknown ")
+        if (!isComposableFunInterface) {
+            return rememberExpression(functionContext!!, expression, captures, dontMemoize = dontMemoize)
         }
 
-        val expressionToRemember =
-            IrTypeOperatorCallImpl(
-                expression.startOffset,
-                expression.endOffset,
-                expression.type,
-                IrTypeOperator.SAM_CONVERSION,
-                expression.typeOperand,
-                newArgument
-            )
-        return rememberExpression(
-            currentFunctionContext!!,
-            expressionToRemember,
-            collector.captures.toList()
-        )
+        // Singleton if nothing is captured: JVM makes it one itself, elsewhere it's an object, which can't
+        // reference outer type parameters, incl. those of the fun interface type
+        val isSingleton = captures.isEmpty() && (context.platform.isJvm() ||
+                functionExpression.function.collectReferencedOuterTypeParameters(expression.typeOperand).isEmpty())
+        val superType = expression.typeOperand
+        val implementation = FunctionReferenceBuilder(
+            functionExpression,
+            superType.classOrFail,
+            superType,
+            functionExpression.function.parent,
+            context,
+            declarationContextStack.last().declaration.symbol,
+            IrTypeSystemContextImpl(context.irBuiltIns),
+            isSingleton,
+        ).build()
+        return if (functionContext == null) {
+            implementation
+        } else {
+            rememberExpression(functionContext, implementation, captures, isSingleton = isSingleton, dontMemoize = dontMemoize)
+        }
     }
 
     private fun visitNonComposableFunctionExpression(
@@ -1021,16 +1020,16 @@ class ComposerLambdaMemoization(
     }
 
     /**
-     * Type parameters declared outside this function and referenced in it, directly or through bounds of other such type parameters,
-     * in the order of declaration: from the outermost container, by index within a container.
+     * Type parameters declared outside this function and referenced in it or in [funInterfaceType], directly or through bounds of other
+     * such type parameters, in the order of declaration: from the outermost container, by index within a container.
      */
-    private fun IrFunction.collectReferencedOuterTypeParameters(): List<IrTypeParameter> {
+    private fun IrFunction.collectReferencedOuterTypeParameters(funInterfaceType: IrType? = null): List<IrTypeParameter> {
         val outerContainers = parents.filter { it is IrTypeParametersContainer && it.typeParameters.isNotEmpty() }.toList()
         // The common case: nothing to reference, don't walk the body.
         if (outerContainers.isEmpty()) return emptyList()
         val function = this
         val referenced = mutableSetOf<IrTypeParameter>()
-        acceptVoid(object : IrTypeVisitorVoid() {
+        val visitor = object : IrTypeVisitorVoid() {
             override fun visitType(container: IrElement, type: IrType) {
                 val typeParameter = type.classifierOrNull?.owner as? IrTypeParameter ?: return
                 if (function in typeParameter.parents) return
@@ -1038,27 +1037,30 @@ class ComposerLambdaMemoization(
                     typeParameter.superTypes.forEach { visitTypeRecursively(typeParameter, it) }
                 }
             }
-        })
+        }
+        acceptVoid(visitor)
+        funInterfaceType?.let { visitor.visitTypeRecursively(this, it) }
         return referenced.sortedWith(compareBy({ -outerContainers.indexOf(it.parent) }, { it.index }))
     }
 
+    // Kotlin/JS doesn't have an optimization for non-capturing lambdas
+    // https://youtrack.jetbrains.com/issue/KT-49923
+    // K2 uses invokedynamic for lambdas, which doesn't perform lambda optimization on Android.
+    private val memoizeLambdasWithoutCaptures = context.platform.isJs() || context.platform.isJvm()
+
+    /**
+     * @param isSingleton [expression] is the same instance every time, no need to remember it
+     * @param dontMemoize the lambda of [expression] is `@DontMemoize`
+     */
     private fun rememberExpression(
         functionContext: FunctionContext,
         expression: IrExpression,
         captures: List<IrValueDeclaration>,
-    ): IrExpression {
-        val memoizeLambdasWithoutCaptures =
-        // Kotlin/JS doesn't have an optimization for non-capturing lambdas
-            // https://youtrack.jetbrains.com/issue/KT-49923
-            context.platform.isJs() ||
-                    (
-                            // K2 uses invokedynamic for lambdas, which doesn't perform lambda optimization
-                            // on Android.
-                            context.platform.isJvm()
-                            )
-
         // If the function doesn't capture, Kotlin's default optimization is sufficient
-        if (!memoizeLambdasWithoutCaptures && captures.isEmpty()) {
+        isSingleton: Boolean = !memoizeLambdasWithoutCaptures && captures.isEmpty(),
+        dontMemoize: Boolean = expression.hasDontMemoizeAnnotation,
+    ): IrExpression {
+        if (isSingleton) {
             metrics.recordLambda(
                 composable = false,
                 memoized = true,
@@ -1074,7 +1076,7 @@ class ComposerLambdaMemoization(
         // - inlined lambdas.
         if (
             functionContext.declaration.hasAnnotation(ComposeFqNames.DontMemoize) ||
-            expression.hasDontMemoizeAnnotation ||
+            dontMemoize ||
             captures.any {
                 it.isVar() ||
                         it.isPropertyReferenceDelegate() ||
@@ -1221,4 +1223,38 @@ private const val MAX_RESTART_ARGUMENT_COUNT = 22
 internal object ComposeMemoizedLambdaOrigin : IrStatementOrigin {
     override val debugName: String
         get() = "ComposeMemoizedLambdaOrigin"
+}
+
+private fun IrType.isComposableFunInterface(): Boolean =
+    classOrNull
+        ?.functions
+        ?.single { it.owner.modality == Modality.ABSTRACT }
+        ?.owner
+        ?.hasComposableAnnotation() == true
+
+internal fun IrTypeOperatorCall.findSamFunctionExpr(): IrFunctionExpression? {
+    val argument = argument
+    val operator = operator
+    val type = typeOperand
+    val functionClass = type.classOrNull
+
+    val isFunInterfaceConversion = operator == IrTypeOperator.SAM_CONVERSION &&
+            functionClass != null &&
+            functionClass.owner.isFun
+
+    return if (isFunInterfaceConversion) {
+        // if you modify this logic, make sure to update visitTypeOperator
+        when {
+            argument is IrFunctionExpression && argument.origin.isLambda -> argument
+            // some expressions are wrapped with additional implicit cast operator
+            // unwrapping that allows to avoid SAM conversion that capture FunctionN and box params.
+            argument is IrTypeOperatorCall && argument.operator == IrTypeOperator.IMPLICIT_CAST -> {
+                val functionExpr = argument.argument
+                functionExpr as? IrFunctionExpression
+            }
+            else -> null
+        }
+    } else {
+        null
+    }
 }

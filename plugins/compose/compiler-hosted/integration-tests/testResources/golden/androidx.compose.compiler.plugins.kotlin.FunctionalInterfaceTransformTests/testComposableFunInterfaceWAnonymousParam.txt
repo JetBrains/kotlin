@@ -37,7 +37,7 @@ fun Test(int: Int, %composer: Composer?, %changed: Int) {
     Example(<block>{
       class <no name provided> : Consumer {
         @Composable
-        @FunctionKeyMeta(key = -1259324577, startOffset = 225, endOffset = 249)
+        @FunctionKeyMeta(key = -352593455, startOffset = 225, endOffset = 249)
         override fun invoke(<unused var>: Int, %composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(invoke):Test.kt")
@@ -63,7 +63,7 @@ fun Test(int: Int, %composer: Composer?, %changed: Int) {
         }
       }
       <no name provided>()
-    }, %composer, 0)
+    }, %composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
