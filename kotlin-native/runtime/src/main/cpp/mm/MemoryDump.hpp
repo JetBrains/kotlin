@@ -22,4 +22,10 @@ namespace kotlin::mm {
  */
 bool DumpMemory(int fd, bool omitPrimitiveArrayPayloads) noexcept;
 
+/** Publishes thread state so a dump can walk the heap. Must run during STW, before fork. */
+void PrepareForMemoryDump() noexcept;
+
+/** Writes a dump assuming [PrepareForMemoryDump] already ran. Safe to call in a fork child. */
+bool WriteMemoryDump(int fd, bool omitPrimitiveArrayPayloads) noexcept;
+
 } // namespace kotlin::mm

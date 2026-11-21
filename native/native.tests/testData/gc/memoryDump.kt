@@ -102,3 +102,28 @@ fun dumpOmitPrimitiveArrayPayloadsIsSmaller() {
     assertTrue(omitted < full, "omitted dump ($omitted) should be smaller than full dump ($full)")
 }
 
+@Test
+@OptIn(ExperimentalNativeApi::class, NativeRuntimeApi::class, ExperimentalForeignApi::class)
+fun dumpMemoryAsyncWritesHeader() {
+    val file = requireNotNull(tmpfile()) { "Could not open temporary file" }
+    val fd = fileno(file)
+    assertTrue(fd > -1, "Failed to obtain a temporary file descriptor")
+    val local = Data()
+    val dump = assertNotNull(Debugging.dumpMemoryAsync(fd.toLong()))
+    assertTrue(dump.waitForCompletion())
+    assertTrue(dump.isCompleted)
+    assertTrue(dump.waitForCompletion())
+    val size = lseek(fd, 0, SEEK_END)
+    assertTrue(size > 0L, "async dump produced empty file")
+    assertEquals(0, fseek(file, 0, SEEK_SET))
+    val header = "Kotlin/Native dump 1.0.8"
+    memScoped {
+        val buf = allocArray<ByteVar>(header.length + 1)
+        val n = fread(buf, 1u, header.length.toULong(), file)
+        assertEquals(header.length.toULong(), n)
+        buf[header.length] = 0
+        assertEquals(header, buf.toKString())
+    }
+    fclose(file)
+}
+
