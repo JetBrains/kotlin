@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.backend.utils.irOrigin
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.isJavaValueClass
@@ -168,7 +169,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
 
         // NB: this is needed to prevent recursions in case of self bounds
         irClass.prepareTypeParameters()
-        irClass.isJavaValueClass = firClass.isJavaValueClass == true
+        irClass.isJavaValueClass = firClass.isJavaOrEnhancement && firClass.isValue
 
         return irClass
     }

@@ -47,9 +47,9 @@ fun identitySensitiveOperations(v: JavaVal, abstract: JavaAbstractVal) {
 }
 
 fun <T : JavaAbstractVal> identitySensitiveOperationsThroughBounds(bounded: T, values: MutableList<out JavaAbstractVal>) {
-    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>bounded<!>)
-    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>bounded<!>)
-    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>values[0]<!>)
+    System.identityHashCode(bounded)
+    WeakReference(bounded)
+    WeakReference(values[0])
 }
 
 fun atomicReference(ref: AtomicReference<JavaVal>, v: JavaVal, abstractRef: AtomicReference<JavaAbstractVal>, abstract: JavaAbstractVal) {
@@ -58,7 +58,7 @@ fun atomicReference(ref: AtomicReference<JavaVal>, v: JavaVal, abstractRef: Atom
 }
 
 fun <T : JavaAbstractVal> atomicReferenceThroughBounds(ref: AtomicReference<T>, bounded: T) {
-    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>ref.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>bounded<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>bounded<!>)<!>
+    ref.compareAndSet(bounded, bounded)
 }
 
 @JvmInline

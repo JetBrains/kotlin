@@ -69,12 +69,6 @@ import kotlin.contracts.contract
 
 private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
-/**
- * JEP 390 marks JDK classes whose identity must not be relied upon, and JEP 401 migrates all of them to value classes.
- * It is the JVM counterpart of [StandardClassIds.Annotations.WillBecomeValue].
- */
-val JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID: ClassId = ClassId.fromString("jdk/internal/ValueBased")
-
 context(context: CheckerContext)
 fun FirClass.unsubstitutedScope(): FirTypeScope =
     this.unsubstitutedScope(
@@ -186,21 +180,23 @@ fun FirRegularClassSymbol.isMappedToPlatformValueClass(session: FirSession): Boo
 fun ConeKotlinType.isInlineClass(session: FirSession): Boolean =
     with(session.typeContext) { typeConstructor().isInlineClass() }
 
-fun ConeKotlinType.getValueClassTypeRecursionType(session: FirSession): RecursionType? =
-    getValueClassTypeRecursionType(hashSetOf(), session)
+context(_: CheckerContext)
+fun ConeKotlinType.getValueClassTypeRecursionType(): RecursionType? =
+    getValueClassTypeRecursionType(hashSetOf())
 
 enum class RecursionType { Plain, ViaTypeParameters }
 
+context(c: CheckerContext)
 private fun ConeKotlinType.getValueClassTypeRecursionType(
-    visited: HashSet<ConeKotlinType>, session: FirSession
-): RecursionType? = context(session.typeContext) {
-    val plainRegularClass = toRegularClassSymbol(session)
+    visited: HashSet<ConeKotlinType>,
+): RecursionType? = context(c.session.typeContext) {
+    val plainRegularClass = toRegularClassSymbol()
     val expectedRecursionType = if (plainRegularClass != null) Plain else ViaTypeParameters
 
-    val asRegularClass = plainRegularClass ?: leastUpperBound(session).toRegularClassSymbol(session) ?: return null
-    val primaryConstructor = asRegularClass.primaryConstructorIfAny(session) ?: return null
+    val asRegularClass = plainRegularClass ?: leastUpperBound(c.session).toRegularClassSymbol(c.session) ?: return null
+    val primaryConstructor = asRegularClass.primaryConstructorIfAny(c.session) ?: return null
     val isOrWillBeFullValueClass = asRegularClass.isFullValueClass ||
-            !asRegularClass.isValue && asRegularClass.willBecomeKotlinValueClass(session)
+            !asRegularClass.isValue && asRegularClass.hasWillBecomeValueAnnotation()
     // A nullable full value class is a reference, so recursion through it is allowed (e.g. `value class Nat(val previous: Nat?)`).
     // An inline class is represented by its underlying type, so recursion through it is forbidden even if it is nullable,
     // though there is no need to forbid it for a nullable one either (e.g. `inline value class Nat(val previous: Nat?)`), see KT-86498.
@@ -217,8 +213,8 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     val isNullableInlineClass = asRegularClass.isInlineClass && isNullableType()
     val hasRecursionInParameters = primaryConstructor.valueParameterSymbols.any {
         val type = it.resolvedReturnType
-        val representedType = if (isNullableInlineClass) type.withNullability(nullable = true, session.typeContext) else type
-        representedType.getValueClassTypeRecursionType(visited, session) != null
+        val representedType = if (isNullableInlineClass) type.withNullability(nullable = true, c.session.typeContext) else type
+        representedType.getValueClassTypeRecursionType(visited) != null
     }
     return (if (hasRecursionInParameters) expectedRecursionType else null).also { visited.remove(this) }
 }

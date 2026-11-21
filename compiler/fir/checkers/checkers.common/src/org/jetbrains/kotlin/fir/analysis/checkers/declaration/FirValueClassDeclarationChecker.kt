@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.RecursionType.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
@@ -74,35 +74,31 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        val isWillBecomeValueClass = !declaration.symbol.isValue && declaration.symbol.willBecomeKotlinValueClass(context.session)
+        val isWillBecomeValueClass = !declaration.symbol.isValue && declaration.symbol.hasWillBecomeValueAnnotation()
         if (!declaration.symbol.isValue && !isWillBecomeValueClass) {
             return
         }
-        val supportsFullValueClasses = LanguageFeature.FullValueClasses.isEnabled()
-        val valueObjectsAllowed = supportsFullValueClasses || isWillBecomeValueClass
+        val valueObjectsAllowed = LanguageFeature.FullValueClasses.isEnabled() || isWillBecomeValueClass
         if (declaration.classKind != ClassKind.CLASS && !(declaration.classKind == ClassKind.OBJECT && valueObjectsAllowed)) {
             return
         }
         val kind = ValueClassKind(
             isWillBecomeValueClass = isWillBecomeValueClass,
             isFullValueClass = declaration.symbol.isFullValueClass || isWillBecomeValueClass,
-            supportsFullValueClasses = supportsFullValueClasses,
         )
 
         checkPlacement(declaration, kind)
         checkModality(declaration, kind)
         checkSupertypes(declaration, kind)
 
-        val primaryConstructor = declaration.constructors(context.session).firstOrNull { it.isPrimary }
-        val primaryConstructorParametersByName = primaryConstructor?.valueParameterSymbols.orEmpty().associateBy { it.name }
-        val primaryConstructorPropertiesByName = checkMembers(declaration, kind, primaryConstructorParametersByName)
-        checkInterfaceDelegation(declaration, kind, primaryConstructorParametersByName.values.toSet())
+        val primaryConstructor = declaration.primaryConstructorIfAny(context.session)
+        val primaryConstructorParameters: Set<FirValueParameterSymbol> = primaryConstructor?.valueParameterSymbols?.toSet().orEmpty()
+        checkMembers(declaration, kind)
+        checkInterfaceDelegation(declaration, kind, primaryConstructorParameters)
         checkReservedMembers(declaration, kind)
 
-        if (!checkPrimaryConstructor(declaration, kind, primaryConstructor, primaryConstructorParametersByName)) return
-        checkPrimaryConstructorParameters(
-            declaration, kind, primaryConstructorParametersByName, primaryConstructorPropertiesByName,
-        )
+        if (!checkPrimaryConstructor(declaration, kind, primaryConstructor, primaryConstructorParameters)) return
+        checkPrimaryConstructorParameters(declaration, kind, primaryConstructorParameters)
 
         if (!kind.isFullValueClass && LanguageFeature.CustomEqualsInValueClasses.isEnabled()) {
             checkCustomEquals(declaration)
@@ -115,18 +111,19 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
     private class ValueClassKind(
         val isWillBecomeValueClass: Boolean,
         val isFullValueClass: Boolean,
-        val supportsFullValueClasses: Boolean,
     ) {
+        context(_: CheckerContext)
         val valueModifierPrefix: String
             get() = when {
-                !supportsFullValueClasses -> "Value"
+                LanguageFeature.FullValueClasses.isDisabled() -> "Value"
                 isFullValueClass -> "Final value"
                 else -> "Inline value"
             }
 
+        context(_: CheckerContext)
         val finalOrInlineClassPrefix: String
             get() = when {
-                !supportsFullValueClasses -> "value"
+                LanguageFeature.FullValueClasses.isDisabled() -> "value"
                 isFullValueClass -> "final value"
                 else -> "inline value"
             }
@@ -144,15 +141,20 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkModality(declaration: FirRegularClass, kind: ValueClassKind) {
-        if (kind.isFullValueClass) {
-            if (declaration.modality == Modality.OPEN) {
-                reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_OPEN)
-            }
-        } else if (declaration.modality != Modality.FINAL) {
+        if (!kind.isFullValueClass && declaration.modality != FINAL) {
             reporter.reportOn(
                 declaration.source,
                 FirErrors.VALUE_CLASS_NOT_FINAL,
                 kind.valueModifierPrefix,
+            )
+        }
+
+        if (kind.isFullValueClass && declaration.modality == OPEN) {
+            reportOn(
+                declaration.source,
+                kind.isWillBecomeValueClass,
+                FirErrors.VALUE_CLASS_OPEN,
+                FirErrors.WILL_BECOME_VALUE_CLASS_OPEN,
             )
         }
     }
@@ -170,7 +172,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     kind.valueModifierPrefix,
                 )
             } else if (!supertypeSymbol.isValueClassSupertype() &&
-                !(kind.isWillBecomeValueClass && supertypeSymbol.willBecomeKotlinOrJdkValueClass(context.session))
+                !(kind.isWillBecomeValueClass && supertypeSymbol.findWillBecomeValueLikeAnnotation() != null)
             ) {
                 reportOn(
                     supertypeEntry.source, kind.isWillBecomeValueClass,
@@ -188,16 +190,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
     }
 
-    /**
-     * Checks the nested classes and properties, and returns the properties declared by the primary constructor parameters.
-     */
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkMembers(
         declaration: FirRegularClass,
         kind: ValueClassKind,
-        primaryConstructorParametersByName: Map<Name, FirValueParameterSymbol>,
-    ): Map<Name, FirPropertySymbol> {
-        val primaryConstructorPropertiesByName = hashMapOf<Name, FirPropertySymbol>()
+    ) {
         declaration.processAllDeclarations(context.session) { innerDeclaration ->
             when (innerDeclaration) {
                 is FirRegularClassSymbol -> {
@@ -214,9 +211,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     // Companion block members and constants are static, so they aren't a part of the value class representation.
                     innerDeclaration.isCompanionBlockMember || innerDeclaration.isConst -> return@processAllDeclarations
 
-                    innerDeclaration.isRelatedToParameter(primaryConstructorParametersByName[innerDeclaration.name]) -> {
-                        primaryConstructorPropertiesByName[innerDeclaration.name] = innerDeclaration
-                    }
+                    innerDeclaration.correspondingValueParameterFromPrimaryConstructor != null -> { }
 
                     innerDeclaration.delegate != null ->
                         reportOn(
@@ -238,7 +233,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 else -> {}
             }
         }
-        return primaryConstructorPropertiesByName
     }
 
     /**
@@ -310,7 +304,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         declaration: FirRegularClass,
         kind: ValueClassKind,
         primaryConstructor: FirConstructorSymbol?,
-        primaryConstructorParametersByName: Map<Name, FirValueParameterSymbol>,
+        primaryConstructorParametersByName: Set<FirValueParameterSymbol>,
     ): Boolean {
         if (declaration.classKind == ClassKind.OBJECT) {
             // A value object has no primary constructor, and nothing is required from it.
@@ -373,27 +367,28 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
     private fun checkPrimaryConstructorParameters(
         declaration: FirRegularClass,
         kind: ValueClassKind,
-        primaryConstructorParametersByName: Map<Name, FirValueParameterSymbol>,
-        primaryConstructorPropertiesByName: Map<Name, FirPropertySymbol>,
+        primaryConstructorParameters: Set<FirValueParameterSymbol>,
     ) {
-        for ([name, primaryConstructorParameter] in primaryConstructorParametersByName) {
+        for (primaryConstructorParameter in primaryConstructorParameters) {
             val parameterTypeRef = primaryConstructorParameter.resolvedReturnTypeRef
-            val recursionType = parameterTypeRef.coneType.getValueClassTypeRecursionType(context.session)
+            val recursionType = parameterTypeRef.coneType.getValueClassTypeRecursionType()
+
+            val correspondingProperty = primaryConstructorParameter.correspondingProperty
             when {
-                declaration.isFinal && primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
+                declaration.isFinal && primaryConstructorParameter.isNotFinalReadOnly(correspondingProperty) ->
                     reportOn(
                         primaryConstructorParameter.source, kind.isWillBecomeValueClass,
                         FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-                        if (kind.supportsFullValueClasses) "Final value" else "Value",
+                        if (LanguageFeature.FullValueClasses.isEnabled()) "Final value" else "Value",
                         FirErrors.WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
                     )
-                kind.isFullValueClass && declaration.isAbstract && primaryConstructorPropertiesByName[name] != null -> reportOn(
+                kind.isFullValueClass && declaration.isAbstract && correspondingProperty != null -> reportOn(
                     primaryConstructorParameter.source, kind.isWillBecomeValueClass,
                     FirErrors.ABSTRACT_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
                     FirErrors.ABSTRACT_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
                 )
 
-                kind.isFullValueClass && declaration.isSealed && primaryConstructorPropertiesByName[name] != null -> reportOn(
+                kind.isFullValueClass && declaration.isSealed && correspondingProperty != null -> reportOn(
                     primaryConstructorParameter.source, kind.isWillBecomeValueClass,
                     FirErrors.SEALED_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
                     FirErrors.SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
@@ -505,9 +500,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             reporter.reportOn(source, valueClassFactory)
         }
     }
-
-    private fun FirPropertySymbol.isRelatedToParameter(parameter: FirValueParameterSymbol?): Boolean =
-        name == parameter?.name && source?.kind is KtFakeSourceElementKind
 
     private fun FirValueParameterSymbol.isNotFinalReadOnly(primaryConstructorProperty: FirPropertySymbol?): Boolean {
         if (primaryConstructorProperty == null) return true

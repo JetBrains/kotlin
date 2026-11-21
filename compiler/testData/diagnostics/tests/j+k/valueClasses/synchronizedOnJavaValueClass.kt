@@ -28,15 +28,15 @@ public final value class JavaSealedValImpl extends JavaSealedVal {}
 
 // FILE: test.kt
 fun <T : <!FINAL_UPPER_BOUND!>JavaVal<!>> bounded(t: T) {
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>t<!>) {}
+    synchronized(t) {}
 }
 
 fun <T : JavaAbstractVal> boundedByAbstract(t: T) {
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>t<!>) {}
+    synchronized(t) {}
 }
 
 fun captured(values: MutableList<out JavaVal>) {
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>values[0]<!>) {}
+    synchronized(values[0]) {}
 }
 
 fun test(v: JavaVal, r: JavaValRecord, a: JavaAbstractVal, s: JavaSealedVal) {

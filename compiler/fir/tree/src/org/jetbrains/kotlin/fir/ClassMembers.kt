@@ -232,6 +232,9 @@ private object CorrespondingProperty : FirDeclarationDataKey()
  */
 var FirValueParameter.correspondingProperty: FirProperty? by FirDeclarationDataRegistry.data(CorrespondingProperty)
 
+val FirValueParameterSymbol.correspondingProperty: FirPropertySymbol?
+    get() = fir.correspondingProperty?.symbol
+
 val FirCallableDeclaration.propertyIfAccessor: FirCallableDeclaration
     get() = (this as? FirPropertyAccessor)?.propertySymbol?.fir ?: this
 
@@ -240,10 +243,6 @@ val FirCallableDeclaration.propertyIfBackingField: FirCallableDeclaration
 
 private object IsJavaRecordKey : FirDeclarationDataKey()
 var FirRegularClass.isJavaRecord: Boolean? by FirDeclarationDataRegistry.data(IsJavaRecordKey)
-
-private object IsJavaValueClassKey : FirDeclarationDataKey()
-// A Java class declared with the `value` modifier (JEP 401 value class), loaded from source or a binary dependency.
-var FirRegularClass.isJavaValueClass: Boolean? by FirDeclarationDataRegistry.data(IsJavaValueClassKey)
 
 private object IsJavaRecordComponentKey : FirDeclarationDataKey()
 var FirFunction.isJavaRecordComponent: Boolean? by FirDeclarationDataRegistry.data(IsJavaRecordComponentKey)

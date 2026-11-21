@@ -2205,6 +2205,7 @@ internal class IdentitySensitiveOperationsWithValueTypeImpl(
 
 internal class IdentitySensitiveOperationOnWillBecomeValueClassImpl(
     override val type: KaType,
+    override val willBecomeValueLikeAnnotation: ClassId,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationOnWillBecomeValueClass
@@ -2213,6 +2214,11 @@ internal class WillBecomeValueClassNotTopLevelImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassNotTopLevel
+
+internal class WillBecomeValueClassOpenImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassOpen
 
 internal class AbsenceOfPrimaryConstructorForWillBecomeValueClassImpl(
     firDiagnostic: KtDiagnosticWithSource,
@@ -6809,12 +6815,6 @@ internal class InapplicableJvmFieldWarningImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.InapplicableJvmFieldWarning
-
-internal class SynchronizedBlockOnJavaValueBasedClassImpl(
-    override val type: KaType,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.SynchronizedBlockOnJavaValueBasedClass
 
 internal class SynchronizedBlockOnValueClassOrPrimitiveErrorImpl(
     override val valueClassOrPrimitive: KaType,

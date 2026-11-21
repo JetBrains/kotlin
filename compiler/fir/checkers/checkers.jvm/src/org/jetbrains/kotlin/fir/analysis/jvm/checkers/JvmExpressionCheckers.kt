@@ -93,10 +93,6 @@ object JvmExpressionCheckers : ExpressionCheckers() {
         FirReturnJavaNullabilityWarningChecker,
     )
 
-    override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker> = setOf(
-        FirJvmIdentityEqualsOnJavaValueBasedClass,
-    )
-
     override val getClassCallCheckers: Set<FirGetClassCallChecker> = setOf(
         FirArrayOfNullableNothingClassLiteralChecker,
     )
