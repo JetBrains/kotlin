@@ -17,88 +17,46 @@
 package androidx.compose.compiler.plugins.kotlin.facade
 
 import androidx.compose.compiler.plugins.kotlin.ComposePluginRegistrar
-import androidx.compose.compiler.plugins.kotlin.TestsCompilerError
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtilRt
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.impl.PsiFileFactoryImpl
-import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
+import org.jetbrains.kotlin.KtInMemoryTextSourceFile
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.psi.KtFile
-import java.nio.charset.StandardCharsets
 
 class SourceFile(
     val name: String,
     val source: String,
-    private val ignoreParseErrors: Boolean = false,
     val path: String = "",
 ) {
-    fun toKtFile(project: Project): KtFile {
+    fun toKtSourceFile(): KtSourceFile {
         val shortName = name.substring(name.lastIndexOf('/') + 1).let {
             it.substring(it.lastIndexOf('\\') + 1)
         }
-
-        val virtualFile = object : LightVirtualFile(
+        // LightTree parses a file as a script unless its name has the `.kt` extension
+        require(shortName.endsWith(".kt")) { "Expected a .kt source file name, got '$name'" }
+        return KtInMemoryTextSourceFile(
             shortName,
-            KotlinLanguage.INSTANCE,
+            "${path}/$name",
             StringUtilRt.convertLineSeparators(source)
-        ) {
-            override fun getPath(): String = "${this@SourceFile.path}/$name"
-        }
-
-        virtualFile.charset = StandardCharsets.UTF_8
-        val factory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
-        val ktFile = factory.trySetupPsiForFile(
-            virtualFile, KotlinLanguage.INSTANCE, true, false
-        ) as KtFile
-
-        if (!ignoreParseErrors) {
-            try {
-                SyntaxErrorReporter.reportSyntaxErrors(ktFile) { element, _ ->
-                    throw IllegalArgumentException(
-                        element.errorDescription + "; looking at " +
-                                element.node.elementType + " '" +
-                                element.text + PsiDiagnosticUtils.atLocation(element)
-                    )
-
-                }
-            } catch (e: Exception) {
-                throw TestsCompilerError(e)
-            }
-        }
-        return ktFile
+        )
     }
-}
-
-interface AnalysisResult {
-    data class Diagnostic(
-        val factoryName: String,
-        val textRanges: List<TextRange>,
-    )
-
-    val files: List<KtFile>
-    val diagnostics: Map<String, List<Diagnostic>>
 }
 
 abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
     abstract fun analyze(
         platformFiles: List<SourceFile>,
         commonFiles: List<SourceFile>,
-    ): AnalysisResult
+    ): FirAnalysisResult
 
     abstract fun compileToIr(files: List<SourceFile>): IrModuleFragment
     abstract fun compile(
@@ -123,8 +81,6 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 messageCollector = TestMessageCollector
                 updateConfiguration()
                 put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
-                // `K2CompilerFacade` currently builds FIR from Kt PSI files (`buildResolveAndCheckFirFromKtFiles`), KT-91411
-                parserMode = ParserMode.Psi
             }
 
             @OptIn(CoreEnvironmentDeprecation::class)

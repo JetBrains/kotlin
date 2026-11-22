@@ -19,7 +19,6 @@ package androidx.compose.compiler.plugins.kotlin.facade
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
@@ -27,50 +26,30 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.convertToIrAndActualizeForJvm
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
-import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
-import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
-import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
-import org.jetbrains.kotlin.fir.session.KmpModuleKind
+import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirViaLightTree
+import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.psi.KtFile
 
 class FirAnalysisResult(
     val frontendOutput: AllModulesFrontendOutput,
-    override val files: List<KtFile>,
     val reporter: BaseDiagnosticsCollector,
-) : AnalysisResult {
-    override val diagnostics: Map<String, List<AnalysisResult.Diagnostic>>
-        get() = reporter.diagnostics.filterIsInstance<KtDiagnosticWithSource>().filter { it.element is KtPsiSourceElement }.groupBy(
-            keySelector = { (it.element as KtPsiSourceElement).psi.containingFile.name },
-            valueTransform = { AnalysisResult.Diagnostic(it.factoryName, it.textRanges) }
-        )
-}
+)
 
 class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacade(environment) {
     private val project: Project
@@ -79,94 +58,39 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     private val configuration: CompilerConfiguration
         get() = environment.configuration
 
-    private fun createSourceSession(
-        moduleData: FirModuleData,
-        context: FirJvmSessionFactory.Context,
-        librarySession: FirSession,
-    ): FirSession {
-        return FirJvmSessionFactory.createSourceSession(
-            moduleData,
-            createIncrementalCompilationSymbolProviders = { null },
-            configuration.getCompilerExtensions(FirExtensionRegistrar),
-            configuration,
-            context,
-            kmpModuleKind = KmpModuleKind.SingleModule,
-            init = {
-                registerComponent(
-                    FirBuiltinSyntheticFunctionInterfaceProvider::class,
-                    librarySession.syntheticFunctionInterfacesSymbolProvider
-                )
-            }
-        )
-    }
-
     override fun analyze(
         platformFiles: List<SourceFile>,
         commonFiles: List<SourceFile>,
     ): FirAnalysisResult {
-        val rootModuleName = configuration.get(CommonConfigurationKeys.MODULE_NAME, "main")
-
-        val dependencyList = DependencyListForCliModule.build(Name.identifier(rootModuleName))
+        val moduleName = configuration.get(CommonConfigurationKeys.MODULE_NAME, "main")
         val projectEnvironment = VfsBasedProjectEnvironment(
             project,
             VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
             environment::createPackagePartProvider
         )
-        val context = FirJvmSessionFactory.Context(
-            configuration,
-            projectEnvironment,
-            JvmClasspath.ProjectLibraries(),
-            projectEnvironment.javaInterop(configuration),
+
+        val commonKtFiles = commonFiles.map { it.toKtSourceFile() }
+        val commonKtFileSet = commonKtFiles.toSet()
+        val sessionsWithSources = JvmFrontendPipelinePhase.prepareJvmSessions(
+            files = commonKtFiles + platformFiles.map { it.toKtSourceFile() },
+            rootModuleName = Name.special("<$moduleName>"),
+            configuration = configuration,
+            projectEnvironment = projectEnvironment,
+            librariesClasspath = JvmClasspath.ProjectLibraries(),
+            libraryList = JvmFrontendPipelinePhase.createLibraryListForJvm(moduleName, configuration, friendPaths = emptyList()),
+            isCommonSource = { it in commonKtFileSet },
+            isScript = { false },
+            fileBelongsToModule = { _, _ -> false },
+            incrementalCompilationContext = null,
         )
-
-        val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
-            Name.identifier(rootModuleName),
-            configuration.getCompilerExtensions(FirExtensionRegistrar),
-            configuration.languageVersionSettings,
-            context,
-        )
-
-        val librarySession = FirJvmSessionFactory.createLibrarySession(
-            sharedLibrarySession,
-            dependencyList.moduleDataProvider,
-            configuration.getCompilerExtensions(FirExtensionRegistrar),
-            configuration.languageVersionSettings,
-            context,
-        )
-
-        val commonModuleData = FirSourceModuleData(
-            Name.identifier("$rootModuleName-common"),
-            dependencyList.regularDependencies,
-            dependencyList.dependsOnDependencies,
-            dependencyList.friendDependencies,
-            CommonPlatforms.defaultCommonPlatform,
-        )
-
-        val platformModuleData = FirSourceModuleData(
-            Name.identifier(rootModuleName),
-            dependencyList.regularDependencies,
-            dependencyList.dependsOnDependencies + commonModuleData,
-            dependencyList.friendDependencies,
-            JvmPlatforms.jvm8,
-        )
-
-        val commonSession = createSourceSession(commonModuleData, context, librarySession)
-        val platformSession = createSourceSession(platformModuleData, context, librarySession)
-
-        val commonKtFiles = commonFiles.map { it.toKtFile(project) }
-        val platformKtFiles = platformFiles.map { it.toKtFile(project) }
 
         val reporter = DiagnosticsCollectorImpl()
-        val commonAnalysis =
-            buildResolveAndCheckFirFromKtFiles(commonSession, commonKtFiles, reporter)
-        val platformAnalysis =
-            buildResolveAndCheckFirFromKtFiles(platformSession, platformKtFiles, reporter)
+        val outputs = sessionsWithSources.map { (val session, val files) ->
+            buildResolveAndCheckFirViaLightTree(session, files, reporter, countFilesAndLines = null)
+        }
+        outputs.runPlatformCheckers(reporter)
 
-        return FirAnalysisResult(
-            AllModulesFrontendOutput(listOf(commonAnalysis, platformAnalysis)),
-            commonKtFiles + platformKtFiles,
-            reporter
-        )
+        return FirAnalysisResult(AllModulesFrontendOutput(outputs), reporter)
     }
 
     private fun frontend(

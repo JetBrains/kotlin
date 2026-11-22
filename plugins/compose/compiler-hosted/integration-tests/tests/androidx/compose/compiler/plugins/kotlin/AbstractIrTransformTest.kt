@@ -55,7 +55,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         dumpClasses: Boolean = false,
         validator: (element: IrElement) -> Unit = {},
     ) {
-        val dependencyFileName = "Test_REPLACEME_${uniqueNumber++}"
+        val dependencyFileName = "Test_REPLACEME_${uniqueNumber++}.kt"
 
         classLoader(dependencySource, dependencyFileName, dumpClasses)
             .allGeneratedFiles
@@ -84,7 +84,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         dumpClasses: Boolean = false,
         validator: (element: IrElement) -> Unit = {},
     ) {
-        val dependencyFileName = "Test_REPLACEME_${uniqueNumber++}"
+        val dependencyFileName = "Test_REPLACEME_${uniqueNumber++}.kt"
 
         classLoader(dependencySource, dependencyFileName, dumpClasses)
             .allGeneratedFiles

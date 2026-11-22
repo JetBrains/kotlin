@@ -2067,7 +2067,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
         packageName: String = "dependency",
         externalTypes: Set<String>,
     ): IrModuleFragment {
-        val dependencyFileName = "Test_REPLACEME_${uniqueNumber++}"
+        val dependencyFileName = "Test_REPLACEME_${uniqueNumber++}.kt"
         val dependencySrc = """
             package $packageName
             import androidx.compose.runtime.mutableStateOf

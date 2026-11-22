@@ -1288,7 +1288,7 @@ class ComposeCrossModuleTests : AbstractCodegenTest() {
                         @Composable fun Content(modifier: Modifier = Modifier)
                     }
 
-                    class C1() : I {
+                    open class C1() : I {
                         @Composable
                         override fun Content(modifier: Modifier) {}
                     }
