@@ -337,6 +337,8 @@ public inline fun <T> Sequence<T>.lastOrNull(predicate: (T) -> Boolean): T? {
  * Returns the single element, or throws an exception if the sequence is empty or has more than one element.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 public fun <T> Sequence<T>.single(): T {
     val iterator = iterator()
@@ -352,6 +354,8 @@ public fun <T> Sequence<T>.single(): T {
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 public inline fun <T> Sequence<T>.single(predicate: (T) -> Boolean): T {
     var single: T? = null
@@ -372,6 +376,8 @@ public inline fun <T> Sequence<T>.single(predicate: (T) -> Boolean): T {
  * Returns single element, or `null` if the sequence is empty or has more than one element.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 public fun <T> Sequence<T>.singleOrNull(): T? {
     val iterator = iterator()
@@ -387,6 +393,8 @@ public fun <T> Sequence<T>.singleOrNull(): T? {
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 public inline fun <T> Sequence<T>.singleOrNull(predicate: (T) -> Boolean): T? {
     var single: T? = null

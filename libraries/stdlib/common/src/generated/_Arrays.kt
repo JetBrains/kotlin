@@ -3004,6 +3004,8 @@ public fun CharArray.randomOrNull(random: Random): Char? {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 public fun <T> Array<out T>.single(): T {
     return when (size) {
@@ -3015,6 +3017,8 @@ public fun <T> Array<out T>.single(): T {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 public fun ByteArray.single(): Byte {
     return when (size) {
@@ -3026,6 +3030,8 @@ public fun ByteArray.single(): Byte {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 public fun ShortArray.single(): Short {
     return when (size) {
@@ -3037,6 +3043,8 @@ public fun ShortArray.single(): Short {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 public fun IntArray.single(): Int {
     return when (size) {
@@ -3048,6 +3056,8 @@ public fun IntArray.single(): Int {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 public fun LongArray.single(): Long {
     return when (size) {
@@ -3059,6 +3069,8 @@ public fun LongArray.single(): Long {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 public fun FloatArray.single(): Float {
     return when (size) {
@@ -3070,6 +3082,8 @@ public fun FloatArray.single(): Float {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 public fun DoubleArray.single(): Double {
     return when (size) {
@@ -3081,6 +3095,8 @@ public fun DoubleArray.single(): Double {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 public fun BooleanArray.single(): Boolean {
     return when (size) {
@@ -3092,6 +3108,8 @@ public fun BooleanArray.single(): Boolean {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 public fun CharArray.single(): Char {
     return when (size) {
@@ -3103,6 +3121,8 @@ public fun CharArray.single(): Char {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 public inline fun <T> Array<out T>.single(predicate: (T) -> Boolean): T {
     var single: T? = null
@@ -3121,6 +3141,8 @@ public inline fun <T> Array<out T>.single(predicate: (T) -> Boolean): T {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 public inline fun ByteArray.single(predicate: (Byte) -> Boolean): Byte {
     var single: Byte? = null
@@ -3139,6 +3161,8 @@ public inline fun ByteArray.single(predicate: (Byte) -> Boolean): Byte {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 public inline fun ShortArray.single(predicate: (Short) -> Boolean): Short {
     var single: Short? = null
@@ -3157,6 +3181,8 @@ public inline fun ShortArray.single(predicate: (Short) -> Boolean): Short {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 public inline fun IntArray.single(predicate: (Int) -> Boolean): Int {
     var single: Int? = null
@@ -3175,6 +3201,8 @@ public inline fun IntArray.single(predicate: (Int) -> Boolean): Int {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 public inline fun LongArray.single(predicate: (Long) -> Boolean): Long {
     var single: Long? = null
@@ -3193,6 +3221,8 @@ public inline fun LongArray.single(predicate: (Long) -> Boolean): Long {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 public inline fun FloatArray.single(predicate: (Float) -> Boolean): Float {
     var single: Float? = null
@@ -3211,6 +3241,8 @@ public inline fun FloatArray.single(predicate: (Float) -> Boolean): Float {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 public inline fun DoubleArray.single(predicate: (Double) -> Boolean): Double {
     var single: Double? = null
@@ -3229,6 +3261,8 @@ public inline fun DoubleArray.single(predicate: (Double) -> Boolean): Double {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 public inline fun BooleanArray.single(predicate: (Boolean) -> Boolean): Boolean {
     var single: Boolean? = null
@@ -3247,6 +3281,8 @@ public inline fun BooleanArray.single(predicate: (Boolean) -> Boolean): Boolean 
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 public inline fun CharArray.single(predicate: (Char) -> Boolean): Char {
     var single: Char? = null
@@ -3265,6 +3301,8 @@ public inline fun CharArray.single(predicate: (Char) -> Boolean): Char {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 public fun <T> Array<out T>.singleOrNull(): T? {
     return if (size == 1) this[0] else null
@@ -3272,6 +3310,8 @@ public fun <T> Array<out T>.singleOrNull(): T? {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 public fun ByteArray.singleOrNull(): Byte? {
     return if (size == 1) this[0] else null
@@ -3279,6 +3319,8 @@ public fun ByteArray.singleOrNull(): Byte? {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 public fun ShortArray.singleOrNull(): Short? {
     return if (size == 1) this[0] else null
@@ -3286,6 +3328,8 @@ public fun ShortArray.singleOrNull(): Short? {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 public fun IntArray.singleOrNull(): Int? {
     return if (size == 1) this[0] else null
@@ -3293,6 +3337,8 @@ public fun IntArray.singleOrNull(): Int? {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 public fun LongArray.singleOrNull(): Long? {
     return if (size == 1) this[0] else null
@@ -3300,6 +3346,8 @@ public fun LongArray.singleOrNull(): Long? {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 public fun FloatArray.singleOrNull(): Float? {
     return if (size == 1) this[0] else null
@@ -3307,6 +3355,8 @@ public fun FloatArray.singleOrNull(): Float? {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 public fun DoubleArray.singleOrNull(): Double? {
     return if (size == 1) this[0] else null
@@ -3314,6 +3364,8 @@ public fun DoubleArray.singleOrNull(): Double? {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 public fun BooleanArray.singleOrNull(): Boolean? {
     return if (size == 1) this[0] else null
@@ -3321,6 +3373,8 @@ public fun BooleanArray.singleOrNull(): Boolean? {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 public fun CharArray.singleOrNull(): Char? {
     return if (size == 1) this[0] else null
@@ -3328,6 +3382,8 @@ public fun CharArray.singleOrNull(): Char? {
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 public inline fun <T> Array<out T>.singleOrNull(predicate: (T) -> Boolean): T? {
     var single: T? = null
@@ -3345,6 +3401,8 @@ public inline fun <T> Array<out T>.singleOrNull(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 public inline fun ByteArray.singleOrNull(predicate: (Byte) -> Boolean): Byte? {
     var single: Byte? = null
@@ -3362,6 +3420,8 @@ public inline fun ByteArray.singleOrNull(predicate: (Byte) -> Boolean): Byte? {
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 public inline fun ShortArray.singleOrNull(predicate: (Short) -> Boolean): Short? {
     var single: Short? = null
@@ -3379,6 +3439,8 @@ public inline fun ShortArray.singleOrNull(predicate: (Short) -> Boolean): Short?
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 public inline fun IntArray.singleOrNull(predicate: (Int) -> Boolean): Int? {
     var single: Int? = null
@@ -3396,6 +3458,8 @@ public inline fun IntArray.singleOrNull(predicate: (Int) -> Boolean): Int? {
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 public inline fun LongArray.singleOrNull(predicate: (Long) -> Boolean): Long? {
     var single: Long? = null
@@ -3413,6 +3477,8 @@ public inline fun LongArray.singleOrNull(predicate: (Long) -> Boolean): Long? {
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 public inline fun FloatArray.singleOrNull(predicate: (Float) -> Boolean): Float? {
     var single: Float? = null
@@ -3430,6 +3496,8 @@ public inline fun FloatArray.singleOrNull(predicate: (Float) -> Boolean): Float?
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 public inline fun DoubleArray.singleOrNull(predicate: (Double) -> Boolean): Double? {
     var single: Double? = null
@@ -3447,6 +3515,8 @@ public inline fun DoubleArray.singleOrNull(predicate: (Double) -> Boolean): Doub
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 public inline fun BooleanArray.singleOrNull(predicate: (Boolean) -> Boolean): Boolean? {
     var single: Boolean? = null
@@ -3464,6 +3534,8 @@ public inline fun BooleanArray.singleOrNull(predicate: (Boolean) -> Boolean): Bo
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 public inline fun CharArray.singleOrNull(predicate: (Char) -> Boolean): Char? {
     var single: Char? = null

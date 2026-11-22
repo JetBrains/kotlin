@@ -1438,6 +1438,8 @@ public fun UShortArray.randomOrNull(random: Random): UShort? {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1448,6 +1450,8 @@ public inline fun UIntArray.single(): UInt {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1458,6 +1462,8 @@ public inline fun ULongArray.single(): ULong {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1468,6 +1474,8 @@ public inline fun UByteArray.single(): UByte {
 
 /**
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1478,6 +1486,8 @@ public inline fun UShortArray.single(): UShort {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1499,6 +1509,8 @@ public inline fun UIntArray.single(predicate: (UInt) -> Boolean): UInt {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1520,6 +1532,8 @@ public inline fun ULongArray.single(predicate: (ULong) -> Boolean): ULong {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1541,6 +1555,8 @@ public inline fun UByteArray.single(predicate: (UByte) -> Boolean): UByte {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1562,6 +1578,8 @@ public inline fun UShortArray.single(predicate: (UShort) -> Boolean): UShort {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1571,6 +1589,8 @@ public fun UIntArray.singleOrNull(): UInt? {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1580,6 +1600,8 @@ public fun ULongArray.singleOrNull(): ULong? {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1589,6 +1611,8 @@ public fun UByteArray.singleOrNull(): UByte? {
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1598,6 +1622,8 @@ public fun UShortArray.singleOrNull(): UShort? {
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1618,6 +1644,8 @@ public inline fun UIntArray.singleOrNull(predicate: (UInt) -> Boolean): UInt? {
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1638,6 +1666,8 @@ public inline fun ULongArray.singleOrNull(predicate: (ULong) -> Boolean): ULong?
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1658,6 +1688,8 @@ public inline fun UByteArray.singleOrNull(predicate: (UByte) -> Boolean): UByte?
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

@@ -1482,6 +1482,47 @@ class Collections {
             assertPrints(emptyList.lastOrNull(), "null")
             assertFails { emptyList.last() }
         }
+
+        @Sample
+        fun single() {
+            val list = listOf(42)
+            assertPrints(list.single(), "42")
+
+            val singletonSet = setOf("only value")
+            assertPrints(singletonSet.single(), "only value")
+
+            // single() throws if the collection is empty or has more than one element
+            assertFailsWith<NoSuchElementException> { emptyList<Int>().single() }
+            assertFailsWith<IllegalArgumentException> { listOf(1, 2).single() }
+        }
+
+        @Sample
+        fun singleOrNull() {
+            val list = listOf(42)
+            assertPrints(list.singleOrNull(), "42")
+
+            assertPrints(emptyList<Int>().singleOrNull(), "null")
+            assertPrints(listOf(1, 2).singleOrNull(), "null")
+        }
+
+        @Sample
+        fun singleWithPredicate() {
+            val numbers = listOf(1, 2, 3, 4)
+            assertPrints(numbers.single { it % 3 == 0 }, "3")
+
+            // single(predicate) throws if no element or more than one element matches
+            assertFailsWith<NoSuchElementException> { numbers.single { it % 5 == 0 } }
+            assertFailsWith<IllegalArgumentException> { numbers.single { it % 2 == 0 } }
+        }
+
+        @Sample
+        fun singleOrNullWithPredicate() {
+            val numbers = listOf(1, 2, 3, 4)
+            assertPrints(numbers.singleOrNull { it % 3 == 0 }, "3")
+
+            assertPrints(numbers.singleOrNull { it % 5 == 0 }, "null")
+            assertPrints(numbers.singleOrNull { it % 2 == 0 }, "null")
+        }
     }
 
     @Nested

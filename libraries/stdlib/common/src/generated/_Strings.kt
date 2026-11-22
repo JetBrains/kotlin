@@ -280,6 +280,8 @@ public fun CharSequence.randomOrNull(random: Random): Char? {
 
 /**
  * Returns the single character, or throws an exception if the char sequence is empty or has more than one character.
+ * 
+ * @sample samples.text.Strings.single
  */
 public fun CharSequence.single(): Char {
     return when (length) {
@@ -291,6 +293,8 @@ public fun CharSequence.single(): Char {
 
 /**
  * Returns the single character matching the given [predicate], or throws exception if there is no or more than one matching character.
+ * 
+ * @sample samples.text.Strings.singleWithPredicate
  */
 public inline fun CharSequence.single(predicate: (Char) -> Boolean): Char {
     var single: Char? = null
@@ -309,6 +313,8 @@ public inline fun CharSequence.single(predicate: (Char) -> Boolean): Char {
 
 /**
  * Returns single character, or `null` if the char sequence is empty or has more than one character.
+ * 
+ * @sample samples.text.Strings.singleOrNull
  */
 public fun CharSequence.singleOrNull(): Char? {
     return if (length == 1) this[0] else null
@@ -316,6 +322,8 @@ public fun CharSequence.singleOrNull(): Char? {
 
 /**
  * Returns the single character matching the given [predicate], or `null` if character was not found or more than one character was found.
+ * 
+ * @sample samples.text.Strings.singleOrNullWithPredicate
  */
 public inline fun CharSequence.singleOrNull(predicate: (Char) -> Boolean): Char? {
     var single: Char? = null

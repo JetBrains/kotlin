@@ -1193,4 +1193,45 @@ class Strings {
         assertPrints(emptyString.indexOfLast { it == 'z' }, "-1")
     }
 
+    @Sample
+    fun single() {
+        val singleCharString = "K"
+        assertPrints(singleCharString.single(), "K")
+
+        // single() throws if the char sequence is empty or has more than one char
+        assertFailsWith<NoSuchElementException> { "".single() }
+        assertFailsWith<IllegalArgumentException> { "ab".single() }
+    }
+
+    @Sample
+    fun singleOrNull() {
+        val singleCharString = "K"
+        assertPrints(singleCharString.singleOrNull(), "K")
+
+        assertPrints("".singleOrNull(), "null")
+        assertPrints("ab".singleOrNull(), "null")
+    }
+
+    @Sample
+    fun singleWithPredicate() {
+        val string = "Kotlin"
+
+        // The only uppercase letter
+        assertPrints(string.single { it.isUpperCase() }, "K")
+
+        // single(predicate) throws if no char or more than one char matches
+        assertFailsWith<NoSuchElementException> { string.single { it.isDigit() } }
+        assertFailsWith<IllegalArgumentException> { string.single { it in "tl" } }
+    }
+
+    @Sample
+    fun singleOrNullWithPredicate() {
+        val string = "Kotlin"
+
+        assertPrints(string.singleOrNull { it.isUpperCase() }, "K")
+
+        assertPrints(string.singleOrNull { it.isDigit() }, "null")
+        assertPrints(string.singleOrNull { it in "tl" }, "null")
+    }
+
 }

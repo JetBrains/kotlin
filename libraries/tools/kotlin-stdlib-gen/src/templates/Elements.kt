@@ -884,6 +884,7 @@ object Elements : TemplateGroupBase() {
     } builder {
         doc { "Returns the single ${f.element}, or throws an exception if the ${f.collection} is empty or has more than one ${f.element}." }
         returns("T")
+        sample("${f.sampleClass}.single")
         body {
             """
             when (this) {
@@ -933,6 +934,7 @@ object Elements : TemplateGroupBase() {
     } builder {
         doc { "Returns single ${f.element}, or `null` if the ${f.collection} is empty or has more than one ${f.element}." }
         returns("T?")
+        sample("${f.sampleClass}.singleOrNull")
         body {
             """
             when (this) {
@@ -981,6 +983,7 @@ object Elements : TemplateGroupBase() {
 
         doc { "Returns the single ${f.element} matching the given [predicate], or throws exception if there is no or more than one matching ${f.element}." }
         returns("T")
+        sample("${f.sampleClass}.singleWithPredicate")
 
         body {
             """
@@ -1009,6 +1012,7 @@ object Elements : TemplateGroupBase() {
 
         doc { "Returns the single ${f.element} matching the given [predicate], or `null` if ${f.element} was not found or more than one ${f.element} was found." }
         returns("T?")
+        sample("${f.sampleClass}.singleOrNullWithPredicate")
 
         body {
             """

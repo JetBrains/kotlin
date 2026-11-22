@@ -603,6 +603,8 @@ public fun <T> Collection<T>.randomOrNull(random: Random): T? {
 
 /**
  * Returns the single element, or throws an exception if the collection is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 public fun <T> Iterable<T>.single(): T {
     when (this) {
@@ -621,6 +623,8 @@ public fun <T> Iterable<T>.single(): T {
 
 /**
  * Returns the single element, or throws an exception if the list is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.single
  */
 public fun <T> List<T>.single(): T {
     return when (size) {
@@ -632,6 +636,8 @@ public fun <T> List<T>.single(): T {
 
 /**
  * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleWithPredicate
  */
 public inline fun <T> Iterable<T>.single(predicate: (T) -> Boolean): T {
     var single: T? = null
@@ -650,6 +656,8 @@ public inline fun <T> Iterable<T>.single(predicate: (T) -> Boolean): T {
 
 /**
  * Returns single element, or `null` if the collection is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 public fun <T> Iterable<T>.singleOrNull(): T? {
     when (this) {
@@ -668,6 +676,8 @@ public fun <T> Iterable<T>.singleOrNull(): T? {
 
 /**
  * Returns single element, or `null` if the list is empty or has more than one element.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNull
  */
 public fun <T> List<T>.singleOrNull(): T? {
     return if (size == 1) this[0] else null
@@ -675,6 +685,8 @@ public fun <T> List<T>.singleOrNull(): T? {
 
 /**
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.singleOrNullWithPredicate
  */
 public inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean): T? {
     var single: T? = null
