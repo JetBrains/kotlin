@@ -1,0 +1,1034 @@
+private val tick: MutableState<Int>
+  field = mutableStateOf<Int>(value = 0)
+  private get
+
+private val suffix: MutableState<String>
+  field = mutableStateOf<String>(value = "")
+  private get
+
+private var renders: Int
+  field = 0
+  private get
+  private set
+
+private var appShows: Int
+  field = 0
+  private get
+  private set
+
+private class InitHolder {
+  val renderer: Renderer
+    get
+
+  init {
+    val local: String = label
+    <this>.#renderer = { // BLOCK
+      local class <no name provided> : Renderer {
+        constructor() /* primary */ {
+          super/*Any*/()
+          /* <init>() */
+
+        }
+
+        @Composable
+        @FunctionKeyMeta(key = 721057758, startOffset = 3018, endOffset = 3052)
+        override fun Render(text: String, /* var */ $composer: Composer?, $changed: Int) {
+          var $composer: Composer? = $composer
+          { // BLOCK
+            $composer = $composer.startRestartGroup(key = 721057758)
+            sourceInformation(composer = $composer, sourceInformation = "C(Render)100@3028L22:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+          }
+          val $dirty: Int = $changed
+          when {
+            EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+              $composer.changed(value = text) -> 4
+              else -> 2
+            })
+          }
+          when {
+            EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = when {
+              $composer.changed(value = <this>) -> 32
+              else -> 16
+            })
+          }
+          when {
+            $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+              when {
+                isTraceInProgress() -> traceEventStart(key = 721057758, dirty1 = $dirty, dirty2 = -1, info = "InitHolder.<no name provided>.Render (composableFunInterfaceOutsideCompositionIsSingleton.kt:100)")
+              }
+              TextNode(text = local.plus(other = text), $composer = $composer, $changed = 0)
+              when {
+                isTraceInProgress() -> traceEventEnd()
+              }
+            }
+            else -> $composer.skipToGroupEnd()
+          }
+          { // BLOCK
+            val tmp_0: <no name provided> = <this>
+            { // BLOCK
+              val tmp_1: ScopeUpdateScope? = $composer.endRestartGroup()
+              when {
+                EQEQ(arg0 = tmp_1, arg1 = null) -> null
+                else -> tmp_1.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+                  return tmp_0.Render(text = text, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+                }
+)
+              }
+            }
+          }
+        }
+
+      }
+
+      <no name provided>()
+    }
+  }
+
+  constructor(label: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+private class Named {
+  val name: String
+    field = name
+    get
+
+  constructor(name: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun renderer(): Renderer {
+    return { // BLOCK
+      local class <no name provided> : Renderer {
+        constructor() /* primary */ {
+          super/*Any*/()
+          /* <init>() */
+
+        }
+
+        @Composable
+        @FunctionKeyMeta(key = 986667406, startOffset = 2846, endOffset = 2879)
+        override fun Render(text: String, /* var */ $composer: Composer?, $changed: Int) {
+          var $composer: Composer? = $composer
+          { // BLOCK
+            $composer = $composer.startRestartGroup(key = 986667406)
+            sourceInformation(composer = $composer, sourceInformation = "C(Render)92@2856L21:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+          }
+          val $dirty: Int = $changed
+          when {
+            EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+              $composer.changed(value = text) -> 4
+              else -> 2
+            })
+          }
+          when {
+            EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = when {
+              $composer.changed(value = <this>) -> 32
+              else -> 16
+            })
+          }
+          when {
+            $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+              when {
+                isTraceInProgress() -> traceEventStart(key = 986667406, dirty1 = $dirty, dirty2 = -1, info = "Named.renderer.<no name provided>.Render (composableFunInterfaceOutsideCompositionIsSingleton.kt:92)")
+              }
+              TextNode(text = <this>.<get-name>().plus(other = text), $composer = $composer, $changed = 0)
+              when {
+                isTraceInProgress() -> traceEventEnd()
+              }
+            }
+            else -> $composer.skipToGroupEnd()
+          }
+          { // BLOCK
+            val tmp_2: <no name provided> = <this>
+            { // BLOCK
+              val tmp_3: ScopeUpdateScope? = $composer.endRestartGroup()
+              when {
+                EQEQ(arg0 = tmp_3, arg1 = null) -> null
+                else -> tmp_3.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+                  return tmp_2.Render(text = text, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+                }
+)
+              }
+            }
+          }
+        }
+
+      }
+
+      <no name provided>()
+    }
+  }
+
+}
+
+private class Node {
+  var text: String
+    field = text
+    get
+    set
+
+  val children: MutableList<Node>
+    field = mutableListOf<Node>()
+    get
+
+  constructor(text: String = "") /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+private class NodeApplier : AbstractApplier<Node> {
+  constructor(root: Node) /* primary */ {
+    super/*AbstractApplier*/<Node>(root = root)
+    /* <init>() */
+
+  }
+
+  override fun insertBottomUp(index: Int, instance: Node) {
+    <this>.<get-current>().<get-children>().add(index = index, element = instance)
+  }
+
+  override fun insertTopDown(index: Int, instance: Node) {
+  }
+
+  override fun move(from: Int, to: Int, count: Int) {
+    val nodes: List<Node> = toList<Node>(/* <this> = <this>.<get-current>().<get-children>().subList(fromIndex = from, toIndex = from.plus(other = count)) */)
+    <this>.<get-current>().<get-children>().subList(fromIndex = from, toIndex = from.plus(other = count)).clear()
+    <this>.<get-current>().<get-children>().addAll(index = when {
+      greater(arg0 = to, arg1 = from) -> to.minus(other = count)
+      else -> to
+    }, elements = nodes) /*~> Unit */
+  }
+
+  protected override fun onClear() {
+    <this>.<get-root>().<get-children>().clear()
+  }
+
+  override fun remove(index: Int, count: Int) {
+    repeat(times = count, action = local fun <anonymous>(it: Int) {
+      <this>.<get-current>().<get-children>().removeAt(index = index) /*~> Unit */
+    }
+)
+  }
+
+}
+
+private fun interface Renderer {
+  @Composable
+  @FunctionKeyMeta(key = 2064279845, startOffset = 1939, endOffset = 1963)
+  abstract fun Render(text: String, /* var */ $composer: Composer?, $changed: Int)
+
+}
+
+private fun interface ValueRenderer<T : Any?> {
+  @Composable
+  @FunctionKeyMeta(key = -952390745, startOffset = 2028, endOffset = 2048)
+  abstract fun Render(value: T, /* var */ $composer: Composer?, $changed: Int)
+
+}
+
+internal object ComposableSingletons$ComposableFunInterfaceOutsideCompositionIsSingletonKt {
+  internal val lambda$669634698: Function2<Composer, Int, Unit>?
+    internal get(): Function2<Composer, Int, Unit> {
+      when {
+        EQEQ(arg0 = <this>.#lambda$669634698, arg1 = null) -> <this>.#lambda$669634698 = Function2<Composer, Int, Unit>(
+          /* bound = */ [composableLambdaInstance(key = 669634698, tracked = false, block =           @Composable
+          @FunctionKeyMeta(key = 669634698, startOffset = 2458, endOffset = 2475)
+local fun <anonymous>(/* var */ $composer: Composer?, $changed: Int) {
+            var $composer: Composer? = $composer
+            sourceInformation(composer = $composer, sourceInformation = "C82@2460L13:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+            when {
+              $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 3), arg1 = 2).not(), flags = $changed.and(other = 1)) -> { // BLOCK
+                when {
+                  isTraceInProgress() -> traceEventStart(key = 669634698, dirty1 = $changed, dirty2 = -1, info = "ComposableSingletons$ComposableFunInterfaceOutsideCompositionIsSingletonKt.<get-lambda$669634698>.<anonymous> (composableFunInterfaceOutsideCompositionIsSingleton.kt:82)")
+                }
+                TextNode(text = "d", $composer = $composer, $changed = 6)
+                when {
+                  isTraceInProgress() -> traceEventEnd()
+                }
+              }
+              else -> $composer.skipToGroupEnd()
+            }
+          }
+)],
+          /* invoke = */          local fun(<this>: ComposableLambda, p0: Composer, p1: Int) {
+            return <this>.invoke(p1 = p0, p2 = p1) /*~> Unit */
+          }
+        )
+
+      }
+      return <this>.#lambda$669634698
+    }
+
+  internal val lambda$1482619011: Function2<Composer, Int, Unit>?
+    internal get(): Function2<Composer, Int, Unit> {
+      when {
+        EQEQ(arg0 = <this>.#lambda$1482619011, arg1 = null) -> <this>.#lambda$1482619011 = Function2<Composer, Int, Unit>(
+          /* bound = */ [composableLambdaInstance(key = 1482619011, tracked = false, block =           @Composable
+          @FunctionKeyMeta(key = 1482619011, startOffset = 4636, endOffset = 4688)
+local fun <anonymous>(/* var */ $composer: Composer?, $changed: Int) {
+            var $composer: Composer? = $composer
+            sourceInformation(composer = $composer, sourceInformation = "C150@4650L5,151@4668L10:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+            when {
+              $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 3), arg1 = 2).not(), flags = $changed.and(other = 1)) -> { // BLOCK
+                when {
+                  isTraceInProgress() -> traceEventStart(key = 1482619011, dirty1 = $changed, dirty2 = -1, info = "ComposableSingletons$ComposableFunInterfaceOutsideCompositionIsSingletonKt.<get-lambda$1482619011>.<anonymous> (composableFunInterfaceOutsideCompositionIsSingleton.kt:150)")
+                }
+                App($composer = $composer, $changed = 0)
+                Distinct($composer = $composer, $changed = 0)
+                when {
+                  isTraceInProgress() -> traceEventEnd()
+                }
+              }
+              else -> $composer.skipToGroupEnd()
+            }
+          }
+)],
+          /* invoke = */          local fun(<this>: ComposableLambda, p0: Composer, p1: Int) {
+            return <this>.invoke(p1 = p0, p2 = p1) /*~> Unit */
+          }
+        )
+
+      }
+      return <this>.#lambda$1482619011
+    }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+private object TestFrameClock : MonotonicFrameClock {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override suspend fun <R : Any?> withFrameNanos(onFrame: Function1<Long, R>): R {
+    return onFrame.invoke(p1 = 0L)
+  }
+
+}
+
+@Composable
+@FunctionKeyMeta(key = -2051258724, startOffset = 3258, endOffset = 3314)
+private fun App(/* var */ $composer: Composer?, $changed: Int) {
+  var $composer: Composer? = $composer
+  { // BLOCK
+    $composer = $composer.startRestartGroup(key = -2051258724)
+    sourceInformation(composer = $composer, sourceInformation = "C(App)118@3289L23:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+  }
+  when {
+    $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed, arg1 = 0).not(), flags = $changed.and(other = 1)) -> { // BLOCK
+      when {
+        isTraceInProgress() -> traceEventStart(key = -2051258724, dirty1 = $changed, dirty2 = -1, info = "App (composableFunInterfaceOutsideCompositionIsSingleton.kt:116)")
+      }
+      <get-tick>().<get-value>() /*~> Unit */
+      AppShow(renderer = makeRenderer(), $composer = $composer, $changed = 0)
+      when {
+        isTraceInProgress() -> traceEventEnd()
+      }
+    }
+    else -> $composer.skipToGroupEnd()
+  }
+  { // BLOCK
+    { // BLOCK
+      val tmp_4: ScopeUpdateScope? = $composer.endRestartGroup()
+      when {
+        EQEQ(arg0 = tmp_4, arg1 = null) -> null
+        else -> tmp_4.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+          return App($composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+        }
+)
+      }
+    }
+  }
+}
+
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+@FunctionKeyMeta(key = 328544386, startOffset = 3161, endOffset = 3236)
+private fun AppShow(renderer: Renderer, /* var */ $composer: Composer?, $changed: Int) {
+  var $composer: Composer? = $composer
+  { // BLOCK
+    $composer = $composer.startRestartGroup(key = 328544386)
+    sourceInformation(composer = $composer, sourceInformation = "C(AppShow)112@3223L11:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+  }
+  val $dirty: Int = $changed
+  when {
+    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+      when {
+        EQEQ(arg0 = $changed.and(other = 8), arg1 = 0) -> $composer.changed(value = renderer)
+        else -> $composer.changedInstance(value = renderer)
+      } -> 4
+      else -> 2
+    })
+  }
+  when {
+    $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 3), arg1 = 2).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+      when {
+        isTraceInProgress() -> traceEventStart(key = 328544386, dirty1 = $dirty, dirty2 = -1, info = "AppShow (composableFunInterfaceOutsideCompositionIsSingleton.kt:110)")
+      }
+      { // BLOCK
+        val tmp_5: Int = <get-appShows>()
+        <set-appShows>(<set-?> = tmp_5.inc())
+        tmp_5
+      } /*~> Unit */
+      renderer.Render(text = "a", $composer = $composer, $changed = 6.or(other = 112.and(other = $dirty.shl(bitCount = 3))))
+      when {
+        isTraceInProgress() -> traceEventEnd()
+      }
+    }
+    else -> $composer.skipToGroupEnd()
+  }
+  { // BLOCK
+    { // BLOCK
+      val tmp_6: ScopeUpdateScope? = $composer.endRestartGroup()
+      when {
+        EQEQ(arg0 = tmp_6, arg1 = null) -> null
+        else -> tmp_6.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+          return AppShow(renderer = renderer, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+        }
+)
+      }
+    }
+  }
+}
+
+@Composable
+@FunctionKeyMeta(key = 822029573, startOffset = 3336, endOffset = 3631)
+private fun Distinct(/* var */ $composer: Composer?, $changed: Int) {
+  var $composer: Composer? = $composer
+  { // BLOCK
+    $composer = $composer.startRestartGroup(key = 822029573)
+    sourceInformation(composer = $composer, sourceInformation = "C(Distinct)123@3357L23,124@3385L23,125@3413L27,126@3445L27,127@3477L30,128@3512L30,129@3572L9,130@3586L20,131@3611L18:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+  }
+  when {
+    $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed, arg1 = 0).not(), flags = $changed.and(other = 1)) -> { // BLOCK
+      when {
+        isTraceInProgress() -> traceEventStart(key = 822029573, dirty1 = $changed, dirty2 = -1, info = "Distinct (composableFunInterfaceOutsideCompositionIsSingleton.kt:122)")
+      }
+      Show(renderer = makeLabelled(label = "x"), $composer = $composer, $changed = 0)
+      Show(renderer = makeLabelled(label = "y"), $composer = $composer, $changed = 0)
+      Show(renderer = Named(name = "n").renderer(), $composer = $composer, $changed = 0)
+      Show(renderer = Named(name = "m").renderer(), $composer = $composer, $changed = 0)
+      Show(renderer = InitHolder(label = "i").<get-renderer>(), $composer = $composer, $changed = 0)
+      Show(renderer = InitHolder(label = "j").<get-renderer>(), $composer = $composer, $changed = 0)
+      makeValueRenderer<Int>().Render(value = 1, $composer = $composer, $changed = 6)
+      Show(renderer = makeWrapping(), $composer = $composer, $changed = 0)
+      Show(renderer = makeInline(), $composer = $composer, $changed = 0)
+      when {
+        isTraceInProgress() -> traceEventEnd()
+      }
+    }
+    else -> $composer.skipToGroupEnd()
+  }
+  { // BLOCK
+    { // BLOCK
+      val tmp_7: ScopeUpdateScope? = $composer.endRestartGroup()
+      when {
+        EQEQ(arg0 = tmp_7, arg1 = null) -> null
+        else -> tmp_7.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+          return Distinct($composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+        }
+)
+      }
+    }
+  }
+}
+
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+@FunctionKeyMeta(key = -1177792761, startOffset = 3082, endOffset = 3139)
+private fun Show(renderer: Renderer, /* var */ $composer: Composer?, $changed: Int) {
+  var $composer: Composer? = $composer
+  { // BLOCK
+    $composer = $composer.startRestartGroup(key = -1177792761)
+    sourceInformation(composer = $composer, sourceInformation = "C(Show)106@3126L11:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+  }
+  val $dirty: Int = $changed
+  when {
+    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+      when {
+        EQEQ(arg0 = $changed.and(other = 8), arg1 = 0) -> $composer.changed(value = renderer)
+        else -> $composer.changedInstance(value = renderer)
+      } -> 4
+      else -> 2
+    })
+  }
+  when {
+    $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 3), arg1 = 2).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+      when {
+        isTraceInProgress() -> traceEventStart(key = -1177792761, dirty1 = $dirty, dirty2 = -1, info = "Show (composableFunInterfaceOutsideCompositionIsSingleton.kt:105)")
+      }
+      renderer.Render(text = "a", $composer = $composer, $changed = 6.or(other = 112.and(other = $dirty.shl(bitCount = 3))))
+      when {
+        isTraceInProgress() -> traceEventEnd()
+      }
+    }
+    else -> $composer.skipToGroupEnd()
+  }
+  { // BLOCK
+    { // BLOCK
+      val tmp_8: ScopeUpdateScope? = $composer.endRestartGroup()
+      when {
+        EQEQ(arg0 = tmp_8, arg1 = null) -> null
+        else -> tmp_8.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+          return Show(renderer = renderer, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+        }
+)
+      }
+    }
+  }
+}
+
+@Composable
+@FunctionKeyMeta(key = -1606027133, startOffset = 1735, endOffset = 1884)
+private fun TextNode(text: String, /* var */ $composer: Composer?, $changed: Int) {
+  var $composer: Composer? = $composer
+  { // BLOCK
+    $composer = $composer.startRestartGroup(key = -1606027133)
+    sourceInformation(composer = $composer, sourceInformation = "C(TextNode)52@1818L6,51@1768L114:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+  }
+  val $dirty: Int = $changed
+  when {
+    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+      $composer.changed(value = text) -> 4
+      else -> 2
+    })
+  }
+  when {
+    $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 3), arg1 = 2).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+      when {
+        isTraceInProgress() -> traceEventStart(key = -1606027133, dirty1 = $dirty, dirty2 = -1, info = "TextNode (composableFunInterfaceOutsideCompositionIsSingleton.kt:50)")
+      }
+      ComposeNode<Node, NodeApplier>(factory = { // BLOCK
+        sourceInformationMarkerStart(composer = $composer, key = -1498812887, sourceInformation = "CC(remember):composableFunInterfaceOutsideCompositionIsSingleton.kt#9igjgp")
+        val tmp_9: Function0<Node> = cache<Function0<Node>>(/* <this> = $composer, */ invalid = false, block = local fun <anonymous>(): Function0<Node> {
+          return Function0<Node>(
+            /* bound = */ [],
+            /* invoke = */            local fun(): Node {
+              return Node()
+            }
+          )
+
+        }
+)
+        sourceInformationMarkerEnd(composer = $composer)
+        tmp_9
+      }, update = local fun Updater<Node>.<anonymous>() {
+        $this$ComposeNode.set<String>(value = text, block = local fun Node.<anonymous>(it: String) {
+          $this$set.<set-text>(<set-?> = it)
+        }
+)
+      }
+, $composer = $composer, $changed = 6)
+      when {
+        isTraceInProgress() -> traceEventEnd()
+      }
+    }
+    else -> $composer.skipToGroupEnd()
+  }
+  { // BLOCK
+    { // BLOCK
+      val tmp_10: ScopeUpdateScope? = $composer.endRestartGroup()
+      when {
+        EQEQ(arg0 = tmp_10, arg1 = null) -> null
+        else -> tmp_10.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+          return TextNode(text = text, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+        }
+)
+      }
+    }
+  }
+}
+
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+@FunctionKeyMeta(key = 864123714, startOffset = 2308, endOffset = 2361)
+private fun Wrap(content: Function2<Composer, Int, Unit>, /* var */ $composer: Composer?, $changed: Int) {
+  var $composer: Composer? = $composer
+  { // BLOCK
+    $composer = $composer.startRestartGroup(key = 864123714)
+    sourceInformation(composer = $composer, sourceInformation = "C(Wrap)78@2352L9:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+  }
+  val $dirty: Int = $changed
+  when {
+    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+      $composer.changedInstance(value = content) -> 4
+      else -> 2
+    })
+  }
+  when {
+    $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 3), arg1 = 2).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+      when {
+        isTraceInProgress() -> traceEventStart(key = 864123714, dirty1 = $dirty, dirty2 = -1, info = "Wrap (composableFunInterfaceOutsideCompositionIsSingleton.kt:78)")
+      }
+      content.invoke(p1 = $composer, p2 = 14.and(other = $dirty))
+      when {
+        isTraceInProgress() -> traceEventEnd()
+      }
+    }
+    else -> $composer.skipToGroupEnd()
+  }
+  { // BLOCK
+    { // BLOCK
+      val tmp_11: ScopeUpdateScope? = $composer.endRestartGroup()
+      when {
+        EQEQ(arg0 = tmp_11, arg1 = null) -> null
+        else -> tmp_11.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+          return Wrap(content = content, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+        }
+)
+      }
+    }
+  }
+}
+
+suspend fun box(): String {
+  return withContext<String>(context = TestFrameClock, block = local suspend fun CoroutineScope.<anonymous>(): String {
+    when {
+      EQEQEQ(arg0 = makeRenderer(), arg1 = makeRenderer()).not() -> return "capture-free conversion is not one instance"
+    }
+    when {
+      EQEQEQ(arg0 = makeWrapping(), arg1 = makeWrapping()).not() -> return "capture-free conversion with lambdas is not one instance"
+    }
+    when {
+      EQEQEQ(arg0 = makeLabelled(label = "x"), arg1 = makeLabelled(label = "y")) -> return "conversion capturing a parameter is one instance"
+    }
+    when {
+      EQEQEQ(arg0 = Named(name = "n").renderer(), arg1 = Named(name = "m").renderer()) -> return "conversion capturing this is one instance"
+    }
+    when {
+      EQEQEQ(arg0 = InitHolder(label = "i").<get-renderer>(), arg1 = InitHolder(label = "j").<get-renderer>()) -> return "conversion capturing a local of init is one instance"
+    }
+    return coroutineScope<String>(block = local suspend fun CoroutineScope.<anonymous>(): String {
+      val root: Node = Node()
+      val recomposer: Recomposer = Recomposer(effectCoroutineContext = $this$coroutineScope.<get-coroutineContext>())
+      val recomposerJob: Job = launch(/* <this> = $this$coroutineScope, */ start = CoroutineStart.UNDISPATCHED, block = local suspend fun CoroutineScope.<anonymous>() {
+        recomposer.runRecomposeAndApplyChanges()
+      }
+)
+      val composition: Composition = Composition(applier = NodeApplier(root = root), parent = recomposer)
+      composition.setContent(content = ComposableSingletons$ComposableFunInterfaceOutsideCompositionIsSingletonKt.<get-lambda$1482619011>())
+      recomposer.awaitIdle()
+      local suspend fun update(change: Function0<Unit>) {
+        change.invoke()
+        Companion.sendApplyNotifications()
+        yield()
+        recomposer.awaitIdle()
+      }
+
+      update(change = local fun <anonymous>() {
+        { // BLOCK
+          val tmp_12: MutableState<Int> = <get-tick>()
+          val tmp_13: Int = tmp_12.<get-value>()
+          tmp_12.<set-value>(<set-?> = tmp_13.inc())
+          tmp_13
+        } /*~> Unit */
+      }
+)
+      update(change = local fun <anonymous>() {
+        { // BLOCK
+          val tmp_14: MutableState<Int> = <get-tick>()
+          val tmp_15: Int = tmp_14.<get-value>()
+          tmp_14.<set-value>(<set-?> = tmp_15.inc())
+          tmp_15
+        } /*~> Unit */
+      }
+)
+      val afterTicks: String = "renders=" + <get-renders>() + ", appShows=" + <get-appShows>()
+      update(change = local fun <anonymous>() {
+        <get-suffix>().<set-value>(<set-?> = "!")
+      }
+)
+      val result: List<String> = map<Node, String>(/* <this> = root.<get-children>(), */ transform = local fun <anonymous>(it: Node): String {
+        return it.<get-text>()
+      }
+)
+      composition.dispose()
+      recomposer.cancel()
+      recomposerJob.join()
+      return when {
+        EQEQ(arg0 = afterTicks, arg1 = "renders=1, appShows=1").not() -> "after ticks: " + afterTicks
+        EQEQ(arg0 = result, arg1 = listOf<String>(elements = ["a!", "xa", "ya", "na", "ma", "ia", "ja", "1", "a", "d", "ai"])).not() -> "result=" + result
+        when {
+          EQEQ(arg0 = <get-renders>(), arg1 = 2).not() -> true
+          else -> EQEQ(arg0 = <get-appShows>(), arg1 = 1).not()
+        } -> "renders=" + <get-renders>() + ", appShows=" + <get-appShows>()
+        else -> "OK"
+      }
+    }
+)
+  }
+)
+}
+
+private inline fun makeInline(): Renderer {
+  return { // BLOCK
+    local object <no name provided> : Renderer {
+      constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+      @Composable
+      @FunctionKeyMeta(key = -1154061761, startOffset = 2532, endOffset = 2564)
+      override fun Render(text: String, /* var */ $composer: Composer?, $changed: Int) {
+        var $composer: Composer? = $composer
+        { // BLOCK
+          $composer = $composer.startRestartGroup(key = -1154061761)
+          sourceInformation(composer = $composer, sourceInformation = "C(Render)85@2542L20:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+        }
+        val $dirty: Int = $changed
+        when {
+          EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+            $composer.changed(value = text) -> 4
+            else -> 2
+          })
+        }
+        when {
+          EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = when {
+            $composer.changed(value = <this>) -> 32
+            else -> 16
+          })
+        }
+        when {
+          $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+            when {
+              isTraceInProgress() -> traceEventStart(key = -1154061761, dirty1 = $dirty, dirty2 = -1, info = "makeInline.<no name provided>.Render (composableFunInterfaceOutsideCompositionIsSingleton.kt:85)")
+            }
+            TextNode(text = text.plus(other = "i"), $composer = $composer, $changed = 0)
+            when {
+              isTraceInProgress() -> traceEventEnd()
+            }
+          }
+          else -> $composer.skipToGroupEnd()
+        }
+        { // BLOCK
+          val tmp_16: <no name provided> = <this>
+          { // BLOCK
+            val tmp_17: ScopeUpdateScope? = $composer.endRestartGroup()
+            when {
+              EQEQ(arg0 = tmp_17, arg1 = null) -> null
+              else -> tmp_17.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+                return tmp_16.Render(text = text, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+              }
+)
+            }
+          }
+        }
+      }
+
+    }
+
+    <no name provided>
+  }
+}
+
+private fun makeLabelled(label: String): Renderer {
+  return { // BLOCK
+    local class <no name provided> : Renderer {
+      constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+      @Composable
+      @FunctionKeyMeta(key = -1504089230, startOffset = 2627, endOffset = 2661)
+      override fun Render(text: String, /* var */ $composer: Composer?, $changed: Int) {
+        var $composer: Composer? = $composer
+        { // BLOCK
+          $composer = $composer.startRestartGroup(key = -1504089230)
+          sourceInformation(composer = $composer, sourceInformation = "C(Render)87@2637L22:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+        }
+        val $dirty: Int = $changed
+        when {
+          EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+            $composer.changed(value = text) -> 4
+            else -> 2
+          })
+        }
+        when {
+          EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = when {
+            $composer.changed(value = <this>) -> 32
+            else -> 16
+          })
+        }
+        when {
+          $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+            when {
+              isTraceInProgress() -> traceEventStart(key = -1504089230, dirty1 = $dirty, dirty2 = -1, info = "makeLabelled.<no name provided>.Render (composableFunInterfaceOutsideCompositionIsSingleton.kt:87)")
+            }
+            TextNode(text = label.plus(other = text), $composer = $composer, $changed = 0)
+            when {
+              isTraceInProgress() -> traceEventEnd()
+            }
+          }
+          else -> $composer.skipToGroupEnd()
+        }
+        { // BLOCK
+          val tmp_18: <no name provided> = <this>
+          { // BLOCK
+            val tmp_19: ScopeUpdateScope? = $composer.endRestartGroup()
+            when {
+              EQEQ(arg0 = tmp_19, arg1 = null) -> null
+              else -> tmp_19.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+                return tmp_18.Render(text = text, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+              }
+)
+            }
+          }
+        }
+      }
+
+    }
+
+    <no name provided>()
+  }
+}
+
+private fun makeRenderer(): Renderer {
+  return { // BLOCK
+    local object <no name provided> : Renderer {
+      constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+      @Composable
+      @FunctionKeyMeta(key = -1821713579, startOffset = 2227, endOffset = 2286)
+      override fun Render(text: String, /* var */ $composer: Composer?, $changed: Int) {
+        var $composer: Composer? = $composer
+        { // BLOCK
+          $composer = $composer.startRestartGroup(key = -1821713579)
+          sourceInformation(composer = $composer, sourceInformation = "C(Render)74@2255L29:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+        }
+        val $dirty: Int = $changed
+        when {
+          EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+            $composer.changed(value = text) -> 4
+            else -> 2
+          })
+        }
+        when {
+          EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = when {
+            $composer.changed(value = <this>) -> 32
+            else -> 16
+          })
+        }
+        when {
+          $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+            when {
+              isTraceInProgress() -> traceEventStart(key = -1821713579, dirty1 = $dirty, dirty2 = -1, info = "makeRenderer.<no name provided>.Render (composableFunInterfaceOutsideCompositionIsSingleton.kt:73)")
+            }
+            { // BLOCK
+              val tmp_20: Int = <get-renders>()
+              <set-renders>(<set-?> = tmp_20.inc())
+              tmp_20
+            } /*~> Unit */
+            TextNode(text = text.plus(other = <get-suffix>().<get-value>()), $composer = $composer, $changed = 0)
+            when {
+              isTraceInProgress() -> traceEventEnd()
+            }
+          }
+          else -> $composer.skipToGroupEnd()
+        }
+        { // BLOCK
+          val tmp_21: <no name provided> = <this>
+          { // BLOCK
+            val tmp_22: ScopeUpdateScope? = $composer.endRestartGroup()
+            when {
+              EQEQ(arg0 = tmp_22, arg1 = null) -> null
+              else -> tmp_22.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+                return tmp_21.Render(text = text, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+              }
+)
+            }
+          }
+        }
+      }
+
+    }
+
+    <no name provided>
+  }
+}
+
+private fun <T : Any?> makeValueRenderer(): ValueRenderer<T> {
+  return { // BLOCK
+    local class <no name provided> : ValueRenderer<T> {
+      constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+      @Composable
+      @FunctionKeyMeta(key = -1713062312, startOffset = 2733, endOffset = 2764)
+      override fun Render(value: T, /* var */ $composer: Composer?, $changed: Int) {
+        var $composer: Composer? = $composer
+        { // BLOCK
+          $composer = $composer.startRestartGroup(key = -1713062312)
+          sourceInformation(composer = $composer, sourceInformation = "C(Render)89@2744L18:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+        }
+        val $dirty: Int = $changed
+        when {
+          EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+            when {
+              EQEQ(arg0 = $changed.and(other = 8), arg1 = 0) -> $composer.changed(value = value)
+              else -> $composer.changedInstance(value = value)
+            } -> 4
+            else -> 2
+          })
+        }
+        when {
+          EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = when {
+            $composer.changed(value = <this>) -> 32
+            else -> 16
+          })
+        }
+        when {
+          $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+            when {
+              isTraceInProgress() -> traceEventStart(key = -1713062312, dirty1 = $dirty, dirty2 = -1, info = "makeValueRenderer.<no name provided>.Render (composableFunInterfaceOutsideCompositionIsSingleton.kt:89)")
+            }
+            TextNode(text = value, $composer = $composer, $changed = 0)
+            when {
+              isTraceInProgress() -> traceEventEnd()
+            }
+          }
+          else -> $composer.skipToGroupEnd()
+        }
+        { // BLOCK
+          val tmp_23: <no name provided> = <this>
+          { // BLOCK
+            val tmp_24: ScopeUpdateScope? = $composer.endRestartGroup()
+            when {
+              EQEQ(arg0 = tmp_24, arg1 = null) -> null
+              else -> tmp_24.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+                return tmp_23.Render(value = value, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+              }
+)
+            }
+          }
+        }
+      }
+
+    }
+
+    <no name provided>()
+  }
+}
+
+private fun makeWrapping(): Renderer {
+  return { // BLOCK
+    local object <no name provided> : Renderer {
+      constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+      @Composable
+      @FunctionKeyMeta(key = 114202748, startOffset = 2411, endOffset = 2477)
+      override fun Render(text: String, /* var */ $composer: Composer?, $changed: Int) {
+        var $composer: Composer? = $composer
+        { // BLOCK
+          $composer = $composer.startRestartGroup(key = 114202748)
+          sourceInformation(composer = $composer, sourceInformation = "C(Render)81@2430L18,81@2425L23,82@2453L22:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+        }
+        val $dirty: Int = $changed
+        when {
+          EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
+            $composer.changed(value = text) -> 4
+            else -> 2
+          })
+        }
+        when {
+          EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = when {
+            $composer.changed(value = <this>) -> 32
+            else -> 16
+          })
+        }
+        when {
+          $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+            when {
+              isTraceInProgress() -> traceEventStart(key = 114202748, dirty1 = $dirty, dirty2 = -1, info = "makeWrapping.<no name provided>.Render (composableFunInterfaceOutsideCompositionIsSingleton.kt:81)")
+            }
+            Wrap(content = run<Function2<Composer, Int, Unit>>(block = local inline fun <anonymous>(): Function2<Composer, Int, Unit> {
+              val tmp_25: ComposableLambda = rememberComposableLambda(key = -678233453, tracked = true, block =               @Composable
+              @FunctionKeyMeta(key = -678233453, startOffset = 2430, endOffset = 2448)
+local fun <anonymous>(/* var */ $composer: Composer?, $changed: Int) {
+                var $composer: Composer? = $composer
+                sourceInformation(composer = $composer, sourceInformation = "C81@2432L14:composableFunInterfaceOutsideCompositionIsSingleton.kt")
+                when {
+                  $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 3), arg1 = 2).not(), flags = $changed.and(other = 1)) -> { // BLOCK
+                    when {
+                      isTraceInProgress() -> traceEventStart(key = -678233453, dirty1 = $changed, dirty2 = -1, info = "makeWrapping.<no name provided>.Render.<anonymous> (composableFunInterfaceOutsideCompositionIsSingleton.kt:81)")
+                    }
+                    TextNode(text = text, $composer = $composer, $changed = 0)
+                    when {
+                      isTraceInProgress() -> traceEventEnd()
+                    }
+                  }
+                  else -> $composer.skipToGroupEnd()
+                }
+              }
+, $composer = $composer, $changed = 54)
+              return remember<Function2<Composer, Int, Unit>>(key1 = tmp_25, calculation = local inline fun <anonymous>(): Function2<Composer, Int, Unit> {
+                return Function2<Composer, Int, Unit>(
+                  /* bound = */ [tmp_25],
+                  /* invoke = */                  local fun(<this>: ComposableLambda, p0: Composer, p1: Int) {
+                    return <this>.invoke(p1 = p0, p2 = p1) /*~> Unit */
+                  }
+                )
+
+              }
+, $composer = $composer, $changed = 0)
+            }
+) /*as Function2<Composer, Int, Unit> */, $composer = $composer, $changed = 6)
+            Wrap(content = ComposableSingletons$ComposableFunInterfaceOutsideCompositionIsSingletonKt.<get-lambda$669634698>(), $composer = $composer, $changed = 6)
+            when {
+              isTraceInProgress() -> traceEventEnd()
+            }
+          }
+          else -> $composer.skipToGroupEnd()
+        }
+        { // BLOCK
+          val tmp_26: <no name provided> = <this>
+          { // BLOCK
+            val tmp_27: ScopeUpdateScope? = $composer.endRestartGroup()
+            when {
+              EQEQ(arg0 = tmp_27, arg1 = null) -> null
+              else -> tmp_27.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+                return tmp_26.Render(text = text, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+              }
+)
+            }
+          }
+        }
+      }
+
+    }
+
+    <no name provided>
+  }
+}
+

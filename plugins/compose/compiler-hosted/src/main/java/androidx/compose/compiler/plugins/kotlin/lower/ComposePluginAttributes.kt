@@ -26,6 +26,8 @@ internal var IrFunction.isComposableReferenceAdapter: Boolean by irFlag(copyByDe
 
 internal var IrFunction.isComposableReferenceInvoke: Boolean by irFlag(copyByDefault = true)
 
+internal var IrFunction.isComposableFunInterfaceImplementation: Boolean by irFlag(copyByDefault = true)
+
 internal var IrExpression.isStaticFunctionExpression: Boolean by irFlag(copyByDefault = true)
 
 internal var IrExpression.isStaticExpression: Boolean by irFlag(copyByDefault = true)
