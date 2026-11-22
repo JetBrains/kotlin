@@ -101,6 +101,7 @@ val jsShellVersion = libs.versions.jsShell
 val jsShellSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
+    OsType(OsName.LINUX, OsArch.ARM64) -> "linux-aarch64"
     OsType(OsName.MAC, OsArch.X86_64),
     OsType(OsName.MAC, OsArch.ARM64) -> "mac"
     OsType(OsName.WINDOWS, OsArch.X86_32) -> "win32"
@@ -168,6 +169,7 @@ dependencies {
 
     implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:win64@zip")
     implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:linux-x86_64@zip")
+    implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:linux-aarch64@zip")
     implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:mac@zip")
 
     jsc("org.jsc:jsc:$jscOsDependentRevision:$jscOsDependentClassifier")
