@@ -13,13 +13,13 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("all")
 public class IncrementalJvmCompilerRunnerTestCustom extends AbstractIncrementalJvmCompilerRunnerTest {
     @Nested
-    @TestMetadata("jps/jps-plugin/testData/incremental/custom")
+    @TestMetadata("compiler/incremental-compilation-impl/testData/incremental/custom")
     @TestDataPath("$PROJECT_ROOT")
     public class Custom extends AbstractIncrementalJvmCompilerRunnerTest {
         @Test
         @TestMetadata("companionWithSyntaxError")
         public void testCompanionWithSyntaxError() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/custom/companionWithSyntaxError/");
+            runTest("compiler/incremental-compilation-impl/testData/incremental/custom/companionWithSyntaxError/");
         }
     }
 }

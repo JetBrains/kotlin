@@ -37,6 +37,7 @@ ignored:
  - compiler/cli/cli-native-klib/README.md
  - compiler/fir/ReadMe.md
  - compiler/fir/analysis-tests/ReadMe.md
+ - compiler/incremental-compilation-impl/testData/incremental/multiModule/common/README.md
  - compiler/ir/ReadMe.md
  - compiler/ir/backend.common/ReadMe.md
  - compiler/ir/backend.js/ReadMe.md

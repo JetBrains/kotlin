@@ -1,0 +1,3 @@
+fun willBeUnresolved() {
+    JavaClass().f(":(")
+}

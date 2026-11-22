@@ -1,0 +1,21 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/root/Root.class
+End of files
+Compiling files:
+  src/Root.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/Usage.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/Usage.java
+End of files
+COMPILATION FAILED
+package root does not exist

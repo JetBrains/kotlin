@@ -1,0 +1,22 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/MyBean.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  src/MyBean.java
+End of files
+Cleaning output files:
+  out/production/module/AppKt.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/app.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+'val' cannot be reassigned.
+

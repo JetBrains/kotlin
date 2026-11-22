@@ -1,0 +1,4 @@
+@file: JvmName("Foo")
+
+@JvmField
+val bar = Any()

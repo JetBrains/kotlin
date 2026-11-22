@@ -1,0 +1,3 @@
+package inline
+
+class Inline

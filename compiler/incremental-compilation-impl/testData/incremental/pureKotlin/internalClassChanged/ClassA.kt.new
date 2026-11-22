@@ -1,0 +1,6 @@
+package test
+
+internal class ClassA() {
+    public fun meth1() {}
+    public val x = 100
+}

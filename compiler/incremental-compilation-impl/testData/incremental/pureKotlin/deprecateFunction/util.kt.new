@@ -1,0 +1,6 @@
+package test
+
+class Util {
+  @Deprecated("message", level = DeprecationLevel.ERROR)
+  fun foo(param : String)  = 10
+}

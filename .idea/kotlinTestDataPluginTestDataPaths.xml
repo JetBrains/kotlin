@@ -101,6 +101,7 @@
     <option name="testDataDirectories">
       <array>
         <option value="$PROJECT_DIR$/compiler/testData/klib/partial-linkage" />
+        <option value="$PROJECT_DIR$/compiler/incremental-compilation-impl/testData/incremental" />
         <option value="$PROJECT_DIR$/jps/jps-plugin/testData" />
         <option value="$PROJECT_DIR$/js/js.translator/testData/incremental" />
         <option value="$PROJECT_DIR$/native/native.tests/testData/klib/header-klibs" />
