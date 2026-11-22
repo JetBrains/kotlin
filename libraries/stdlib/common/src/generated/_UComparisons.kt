@@ -19,6 +19,8 @@ import kotlin.random.*
 
 /**
  * Returns the greater of two values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 public fun maxOf(a: UInt, b: UInt): UInt {
@@ -27,6 +29,8 @@ public fun maxOf(a: UInt, b: UInt): UInt {
 
 /**
  * Returns the greater of two values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 public fun maxOf(a: ULong, b: ULong): ULong {
@@ -35,6 +39,8 @@ public fun maxOf(a: ULong, b: ULong): ULong {
 
 /**
  * Returns the greater of two values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 public fun maxOf(a: UByte, b: UByte): UByte {
@@ -43,6 +49,8 @@ public fun maxOf(a: UByte, b: UByte): UByte {
 
 /**
  * Returns the greater of two values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 public fun maxOf(a: UShort, b: UShort): UShort {
@@ -51,6 +59,8 @@ public fun maxOf(a: UShort, b: UShort): UShort {
 
 /**
  * Returns the greater of three values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -60,6 +70,8 @@ public inline fun maxOf(a: UInt, b: UInt, c: UInt): UInt {
 
 /**
  * Returns the greater of three values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -69,6 +81,8 @@ public inline fun maxOf(a: ULong, b: ULong, c: ULong): ULong {
 
 /**
  * Returns the greater of three values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -78,6 +92,8 @@ public inline fun maxOf(a: UByte, b: UByte, c: UByte): UByte {
 
 /**
  * Returns the greater of three values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -87,6 +103,8 @@ public inline fun maxOf(a: UShort, b: UShort, c: UShort): UShort {
 
 /**
  * Returns the greater of the given values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -98,6 +116,8 @@ public fun maxOf(a: UInt, vararg other: UInt): UInt {
 
 /**
  * Returns the greater of the given values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -109,6 +129,8 @@ public fun maxOf(a: ULong, vararg other: ULong): ULong {
 
 /**
  * Returns the greater of the given values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -120,6 +142,8 @@ public fun maxOf(a: UByte, vararg other: UByte): UByte {
 
 /**
  * Returns the greater of the given values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -131,6 +155,8 @@ public fun maxOf(a: UShort, vararg other: UShort): UShort {
 
 /**
  * Returns the smaller of two values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 public fun minOf(a: UInt, b: UInt): UInt {
@@ -139,6 +165,8 @@ public fun minOf(a: UInt, b: UInt): UInt {
 
 /**
  * Returns the smaller of two values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 public fun minOf(a: ULong, b: ULong): ULong {
@@ -147,6 +175,8 @@ public fun minOf(a: ULong, b: ULong): ULong {
 
 /**
  * Returns the smaller of two values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 public fun minOf(a: UByte, b: UByte): UByte {
@@ -155,6 +185,8 @@ public fun minOf(a: UByte, b: UByte): UByte {
 
 /**
  * Returns the smaller of two values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 public fun minOf(a: UShort, b: UShort): UShort {
@@ -163,6 +195,8 @@ public fun minOf(a: UShort, b: UShort): UShort {
 
 /**
  * Returns the smaller of three values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -172,6 +206,8 @@ public inline fun minOf(a: UInt, b: UInt, c: UInt): UInt {
 
 /**
  * Returns the smaller of three values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -181,6 +217,8 @@ public inline fun minOf(a: ULong, b: ULong, c: ULong): ULong {
 
 /**
  * Returns the smaller of three values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -190,6 +228,8 @@ public inline fun minOf(a: UByte, b: UByte, c: UByte): UByte {
 
 /**
  * Returns the smaller of three values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
@@ -199,6 +239,8 @@ public inline fun minOf(a: UShort, b: UShort, c: UShort): UShort {
 
 /**
  * Returns the smaller of the given values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -210,6 +252,8 @@ public fun minOf(a: UInt, vararg other: UInt): UInt {
 
 /**
  * Returns the smaller of the given values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -221,6 +265,8 @@ public fun minOf(a: ULong, vararg other: ULong): ULong {
 
 /**
  * Returns the smaller of the given values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -232,6 +278,8 @@ public fun minOf(a: UByte, vararg other: UByte): UByte {
 
 /**
  * Returns the smaller of the given values.
+ * 
+ * @sample samples.comparisons.ComparableOps.minOfMaxOfUnsigned
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes

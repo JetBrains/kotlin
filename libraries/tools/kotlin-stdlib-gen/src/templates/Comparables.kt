@@ -161,6 +161,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Unsigned)
     } builder {
         sourceFile(f.sourceFileComparisons)
+        sample("samples.comparisons.ComparableOps.minOfMaxOf${f.sampleSuffix}")
         since("1.1")
         typeParam("T : Comparable<T>")
         returns("T")
@@ -227,6 +228,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Unsigned)
     } builder {
         sourceFile(f.sourceFileComparisons)
+        sample("samples.comparisons.ComparableOps.minOfMaxOf${f.sampleSuffix}")
         since("1.1")
         typeParam("T : Comparable<T>")
         returns("T")
@@ -272,6 +274,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Unsigned)
     } builder {
         sourceFile(f.sourceFileComparisons)
+        sample("samples.comparisons.ComparableOps.minOfMaxOf${f.sampleSuffix}")
         since("1.4")
         typeParam("T : Comparable<T>")
         returns("T")
@@ -302,6 +305,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Generic)
     } builder {
         sourceFile(f.sourceFileComparisons)
+        sample("samples.comparisons.ComparableOps.minOfMaxOfWithComparator")
         since("1.1")
         returns("T")
         receiver("")
@@ -321,6 +325,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Generic)
     } builder {
         sourceFile(f.sourceFileComparisons)
+        sample("samples.comparisons.ComparableOps.minOfMaxOfWithComparator")
         since("1.1")
         returns("T")
         receiver("")
@@ -340,6 +345,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Generic)
     } builder {
         sourceFile(f.sourceFileComparisons)
+        sample("samples.comparisons.ComparableOps.minOfMaxOfWithComparator")
         since("1.4")
         returns("T")
         receiver("")
@@ -365,6 +371,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Unsigned)
     } builder {
         sourceFile(f.sourceFileComparisons)
+        sample("samples.comparisons.ComparableOps.minOfMaxOf${f.sampleSuffix}")
         since("1.1")
         typeParam("T : Comparable<T>")
         returns("T")
@@ -427,6 +434,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Unsigned)
     } builder {
         sourceFile(f.sourceFileComparisons)
+        sample("samples.comparisons.ComparableOps.minOfMaxOf${f.sampleSuffix}")
         since("1.1")
         typeParam("T : Comparable<T>")
         returns("T")
@@ -472,6 +480,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Unsigned)
     } builder {
         sourceFile(f.sourceFileComparisons)
+        sample("samples.comparisons.ComparableOps.minOfMaxOf${f.sampleSuffix}")
         since("1.4")
         typeParam("T : Comparable<T>")
         returns("T")
@@ -502,6 +511,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Generic)
     } builder {
         sourceFile(f.sourceFileComparisons)
+        sample("samples.comparisons.ComparableOps.minOfMaxOfWithComparator")
         since("1.1")
         returns("T")
         receiver("")
@@ -521,6 +531,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Generic)
     } builder {
         sourceFile(f.sourceFileComparisons)
+        sample("samples.comparisons.ComparableOps.minOfMaxOfWithComparator")
         since("1.1")
         returns("T")
         receiver("")
@@ -540,6 +551,7 @@ object ComparableOps : TemplateGroupBase() {
         include(Generic)
     } builder {
         sourceFile(f.sourceFileComparisons)
+        sample("samples.comparisons.ComparableOps.minOfMaxOfWithComparator")
         since("1.4")
         returns("T")
         receiver("")

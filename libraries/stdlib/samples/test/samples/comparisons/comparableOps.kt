@@ -96,4 +96,49 @@ class ComparableOps {
 
         assertFailsWith<IllegalArgumentException> { 9.9.coerceIn(1.0..Double.NaN) }
     }
+
+    @Sample
+    fun minOfMaxOf() {
+        assertPrints(minOf(12, 7), "7")
+        assertPrints(maxOf(12, 7), "12")
+
+        // If values are equal, the first one is returned
+        assertPrints(minOf(7, 7), "7")
+
+        assertPrints(minOf(12, 7, 9), "7")
+        assertPrints(maxOf(12, 7, 9), "12")
+
+        assertPrints(minOf(12, 7, 9, 4), "4")
+        assertPrints(maxOf(12, 7, 9, 4), "12")
+    }
+
+    @Sample
+    fun minOfMaxOfUnsigned() {
+        assertPrints(minOf(12u, 7u), "7")
+        assertPrints(maxOf(12u, 7u), "12")
+
+        assertPrints(minOf(12u, 7u, 9u), "7")
+        assertPrints(maxOf(12u, 7u, 9u), "12")
+    }
+
+    @Sample
+    fun minOfMaxOfComparable() {
+        assertPrints(minOf("orange", "apple"), "apple")
+        assertPrints(maxOf("orange", "apple"), "orange")
+
+        assertPrints(minOf("orange", "apple", "pear"), "apple")
+        assertPrints(maxOf("orange", "apple", "pear"), "pear")
+    }
+
+    @Sample
+    fun minOfMaxOfWithComparator() {
+        // A custom Comparator that orders strings by their length
+        val lengthComparator = compareBy<String> { it.length }
+
+        assertPrints(minOf("orange", "fig", lengthComparator), "fig")
+        assertPrints(maxOf("orange", "fig", lengthComparator), "orange")
+
+        assertPrints(minOf("orange", "fig", "plum", lengthComparator), "fig")
+        assertPrints(maxOf("orange", "fig", "plum", lengthComparator), "orange")
+    }
 }
