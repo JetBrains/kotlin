@@ -24,6 +24,7 @@ node {
 dependencies {
     implicitDependencies("org.nodejs:node:$nodejsVersion:win-x64@zip")
     implicitDependencies("org.nodejs:node:$nodejsVersion:linux-x64@tar.gz")
+    implicitDependencies("org.nodejs:node:$nodejsVersion:linux-arm64@tar.gz")
     implicitDependencies("org.nodejs:node:$nodejsVersion:darwin-x64@tar.gz")
     implicitDependencies("org.nodejs:node:$nodejsVersion:darwin-arm64@tar.gz")
 }
