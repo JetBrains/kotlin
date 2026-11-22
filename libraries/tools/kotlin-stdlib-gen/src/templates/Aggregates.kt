@@ -1237,6 +1237,9 @@ object Aggregates : TemplateGroupBase() {
 
         doc { reduceDoc("reduceIndexed") }
         sample("samples.collections.Collections.Aggregates.reduce")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.reduce")
+        }
         returns("T")
         body {
             """
@@ -1299,6 +1302,9 @@ object Aggregates : TemplateGroupBase() {
 
         doc { reduceDoc("reduceIndexedOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceOrNull")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.reduceOrNull")
+        }
         returns("T?")
         body {
             """
@@ -1361,6 +1367,9 @@ object Aggregates : TemplateGroupBase() {
 
         doc { reduceDoc("reduceRightIndexed") }
         sample("samples.collections.Collections.Aggregates.reduceRight")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.reduceRight")
+        }
         returns("T")
         body {
             """
@@ -1428,6 +1437,9 @@ object Aggregates : TemplateGroupBase() {
 
         doc { reduceDoc("reduceRightIndexedOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.reduceRightOrNull")
+        }
         returns("T?")
         body {
             """
@@ -1495,6 +1507,9 @@ object Aggregates : TemplateGroupBase() {
 
         doc { reduceDoc("reduce") }
         sample("samples.collections.Collections.Aggregates.reduce")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.reduce")
+        }
         returns("T")
         body {
             """
@@ -1555,6 +1570,9 @@ object Aggregates : TemplateGroupBase() {
 
         doc { reduceDoc("reduceOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceOrNull")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.reduceOrNull")
+        }
         returns("T?")
         body {
             """
@@ -1615,6 +1633,9 @@ object Aggregates : TemplateGroupBase() {
 
         doc { reduceDoc("reduceRight") }
         sample("samples.collections.Collections.Aggregates.reduceRight")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.reduceRight")
+        }
         returns("T")
         body {
             """
@@ -1678,6 +1699,9 @@ object Aggregates : TemplateGroupBase() {
 
         doc { reduceDoc("reduceRightOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.reduceRightOrNull")
+        }
         returns("T?")
         body {
             """
@@ -1770,6 +1794,9 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Aggregates.runningFold")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.runningFold")
+        }
         sequenceClassification(intermediate, stateless)
 
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences) {
@@ -1836,6 +1863,9 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Aggregates.scan")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.scan")
+        }
         sequenceClassification(intermediate, stateless)
 
         body { "return runningFold(initial, operation)" }
@@ -1865,6 +1895,9 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Aggregates.runningFold")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.runningFold")
+        }
         sequenceClassification(intermediate, stateless)
 
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences) {
@@ -1934,6 +1967,9 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Aggregates.scan")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.scan")
+        }
         sequenceClassification(intermediate, stateless)
 
         body { "return runningFoldIndexed(initial, operation)" }
@@ -1958,6 +1994,9 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Aggregates.runningReduce")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.runningReduce")
+        }
 
         body {
             """
@@ -1994,6 +2033,9 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Aggregates.runningReduce")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.runningReduce")
+        }
 
         body {
             """

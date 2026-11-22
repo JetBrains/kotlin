@@ -1912,7 +1912,7 @@ public inline fun <S : CharSequence> S.onEachIndexed(action: (index: Int, Char) 
  * @param [operation] function that takes current accumulator value and a character,
  * and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.reduce
+ * @sample samples.text.Strings.reduce
  */
 public inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Char): Char {
     if (isEmpty())
@@ -1934,7 +1934,7 @@ public inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Char): Cha
  * @param [operation] function that takes the index of a character, current accumulator value and the character itself,
  * and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.reduce
+ * @sample samples.text.Strings.reduce
  */
 public inline fun CharSequence.reduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): Char {
     if (isEmpty())
@@ -1955,7 +1955,7 @@ public inline fun CharSequence.reduceIndexed(operation: (index: Int, acc: Char, 
  * @param [operation] function that takes the index of a character, current accumulator value and the character itself,
  * and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ * @sample samples.text.Strings.reduceOrNull
  */
 @SinceKotlin("1.4")
 public inline fun CharSequence.reduceIndexedOrNull(operation: (index: Int, acc: Char, Char) -> Char): Char? {
@@ -1977,7 +1977,7 @@ public inline fun CharSequence.reduceIndexedOrNull(operation: (index: Int, acc: 
  * @param [operation] function that takes current accumulator value and a character,
  * and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.reduceOrNull
+ * @sample samples.text.Strings.reduceOrNull
  */
 @SinceKotlin("1.4")
 public inline fun CharSequence.reduceOrNull(operation: (acc: Char, Char) -> Char): Char? {
@@ -2000,7 +2000,7 @@ public inline fun CharSequence.reduceOrNull(operation: (acc: Char, Char) -> Char
  * @param [operation] function that takes a character and current accumulator value,
  * and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.reduceRight
+ * @sample samples.text.Strings.reduceRight
  */
 public inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -> Char): Char {
     var index = lastIndex
@@ -2022,7 +2022,7 @@ public inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -> Char)
  * @param [operation] function that takes the index of a character, the character itself and current accumulator value,
  * and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.reduceRight
+ * @sample samples.text.Strings.reduceRight
  */
 public inline fun CharSequence.reduceRightIndexed(operation: (index: Int, Char, acc: Char) -> Char): Char {
     var index = lastIndex
@@ -2044,7 +2044,7 @@ public inline fun CharSequence.reduceRightIndexed(operation: (index: Int, Char, 
  * @param [operation] function that takes the index of a character, the character itself and current accumulator value,
  * and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ * @sample samples.text.Strings.reduceRightOrNull
  */
 @SinceKotlin("1.4")
 public inline fun CharSequence.reduceRightIndexedOrNull(operation: (index: Int, Char, acc: Char) -> Char): Char? {
@@ -2067,7 +2067,7 @@ public inline fun CharSequence.reduceRightIndexedOrNull(operation: (index: Int, 
  * @param [operation] function that takes a character and current accumulator value,
  * and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
+ * @sample samples.text.Strings.reduceRightOrNull
  */
 @SinceKotlin("1.4")
 public inline fun CharSequence.reduceRightOrNull(operation: (Char, acc: Char) -> Char): Char? {
@@ -2089,7 +2089,7 @@ public inline fun CharSequence.reduceRightOrNull(operation: (Char, acc: Char) ->
  * 
  * @param [operation] function that takes current accumulator value and a character, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.runningFold
+ * @sample samples.text.Strings.runningFold
  */
 @SinceKotlin("1.4")
 public inline fun <R> CharSequence.runningFold(initial: R, operation: (acc: R, Char) -> R): List<R> {
@@ -2113,7 +2113,7 @@ public inline fun <R> CharSequence.runningFold(initial: R, operation: (acc: R, C
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.runningFold
+ * @sample samples.text.Strings.runningFold
  */
 @SinceKotlin("1.4")
 public inline fun <R> CharSequence.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): List<R> {
@@ -2136,7 +2136,7 @@ public inline fun <R> CharSequence.runningFoldIndexed(initial: R, operation: (in
  * 
  * @param [operation] function that takes current accumulator value and a character, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.runningReduce
+ * @sample samples.text.Strings.runningReduce
  */
 @SinceKotlin("1.4")
 public inline fun CharSequence.runningReduce(operation: (acc: Char, Char) -> Char): List<Char> {
@@ -2160,7 +2160,7 @@ public inline fun CharSequence.runningReduce(operation: (acc: Char, Char) -> Cha
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.runningReduce
+ * @sample samples.text.Strings.runningReduce
  */
 @SinceKotlin("1.4")
 public inline fun CharSequence.runningReduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): List<Char> {
@@ -2183,7 +2183,7 @@ public inline fun CharSequence.runningReduceIndexed(operation: (index: Int, acc:
  * 
  * @param [operation] function that takes current accumulator value and a character, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.text.Strings.scan
  */
 @SinceKotlin("1.4")
 public inline fun <R> CharSequence.scan(initial: R, operation: (acc: R, Char) -> R): List<R> {
@@ -2200,7 +2200,7 @@ public inline fun <R> CharSequence.scan(initial: R, operation: (acc: R, Char) ->
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself, and calculates the next accumulator value.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.text.Strings.scan
  */
 @SinceKotlin("1.4")
 public inline fun <R> CharSequence.scanIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): List<R> {

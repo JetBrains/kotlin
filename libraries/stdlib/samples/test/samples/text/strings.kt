@@ -1193,4 +1193,83 @@ class Strings {
         assertPrints(emptyString.indexOfLast { it == 'z' }, "-1")
     }
 
+    @Sample
+    fun reduce() {
+        val letters = "kotlin"
+        // the greatest letter
+        assertPrints(letters.reduce { maxLetter, letter -> maxOf(maxLetter, letter) }, "t")
+        // the greatest letter among those at odd indices
+        assertPrints(letters.reduceIndexed { index, maxLetter, letter ->
+            if (index % 2 == 1) maxOf(maxLetter, letter) else maxLetter
+        }, "o")
+
+        assertFails { "".reduce { _, _ -> ' ' } }
+    }
+
+    @Sample
+    fun reduceRight() {
+        val letters = "kotlin"
+        // the least letter
+        assertPrints(letters.reduceRight { letter, minLetter -> minOf(letter, minLetter) }, "i")
+        // the least letter among those at odd indices
+        assertPrints(letters.reduceRightIndexed { index, letter, minLetter ->
+            if (index % 2 == 1) minOf(letter, minLetter) else minLetter
+        }, "l")
+
+        assertFails { "".reduceRight { _, _ -> ' ' } }
+    }
+
+    @Sample
+    fun reduceOrNull() {
+        val letters = "kotlin"
+        assertPrints(letters.reduceOrNull { maxLetter, letter -> maxOf(maxLetter, letter) }, "t")
+        assertPrints(letters.reduceIndexedOrNull { index, maxLetter, letter ->
+            if (index % 2 == 1) maxOf(maxLetter, letter) else maxLetter
+        }, "o")
+
+        assertPrints("".reduceOrNull { _, _ -> ' ' }, "null")
+    }
+
+    @Sample
+    fun reduceRightOrNull() {
+        val letters = "kotlin"
+        assertPrints(letters.reduceRightOrNull { letter, minLetter -> minOf(letter, minLetter) }, "i")
+        assertPrints(letters.reduceRightIndexedOrNull { index, letter, minLetter ->
+            if (index % 2 == 1) minOf(letter, minLetter) else minLetter
+        }, "l")
+
+        assertPrints("".reduceRightOrNull { _, _ -> ' ' }, "null")
+    }
+
+    @Sample
+    fun scan() {
+        val letters = "abcd"
+        assertPrints(letters.scan("s") { acc, letter -> acc + letter }, "[s, sa, sab, sabc, sabcd]")
+        assertPrints(letters.scanIndexed("s") { index, acc, letter -> acc + letter + index }, "[s, sa0, sa0b1, sa0b1c2, sa0b1c2d3]")
+
+        assertPrints("".scan("s") { _, _ -> "X" }, "[s]")
+    }
+
+    @Sample
+    fun runningFold() {
+        val letters = "abcd"
+        assertPrints(letters.runningFold("s") { acc, letter -> acc + letter }, "[s, sa, sab, sabc, sabcd]")
+        assertPrints(letters.runningFoldIndexed("s") { index, acc, letter -> acc + letter + index }, "[s, sa0, sa0b1, sa0b1c2, sa0b1c2d3]")
+
+        assertPrints("".runningFold("s") { _, _ -> "X" }, "[s]")
+    }
+
+    @Sample
+    fun runningReduce() {
+        val letters = "kotl"
+        // successive greatest letters seen so far
+        assertPrints(letters.runningReduce { maxLetter, letter -> maxOf(maxLetter, letter) }, "[k, o, t, t]")
+        // only the letters at even indices participate in the reduction
+        assertPrints(letters.runningReduceIndexed { index, maxLetter, letter ->
+            if (index % 2 == 0) maxOf(maxLetter, letter) else maxLetter
+        }, "[k, k, t, t]")
+
+        assertPrints("".runningReduce { _, _ -> ' ' }, "[]")
+    }
+
 }
