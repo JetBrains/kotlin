@@ -136,6 +136,13 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         return destination
     }
 
+    private fun createJar(destination: File, root: File): File {
+        val command = listOf(File(jdkHome, "bin/jar").path, "--create", "--file=$destination", "-C", root.path, ".")
+        val process = ProcessBuilder().command(command).inheritIO().start()
+        assertEquals(0, process.waitFor(), "'jar' did not finish successfully")
+        return destination
+    }
+
     // -------------------------------------------------------
 
     @Test
@@ -750,11 +757,21 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     @Test
     fun testPatchModuleJdkBinary() {
         // Like javac, a class added to a JDK module by a binary patch is a member of that module, with and without -Xjdk-release.
-        val patch = "-Xpatch-module=java.base=${compileJdkPatch().path}"
+        val patchDirectory = compileJdkPatch()
+        val patch = "-Xpatch-module=java.base=${patchDirectory.path}"
         val doesNotExport = assertCompilationError("does not export package 'java.lang.extra'")
         module("main", additionalKotlinArguments = listOf(patch), checkKotlinOutput = doesNotExport)
         module("main", additionalKotlinArguments = listOf(patch, "-Xadd-exports=java.base/java.lang.extra=ALL-UNNAMED"))
         module("main", additionalKotlinArguments = listOf(patch, "-Xjdk-release=10"), checkKotlinOutput = doesNotExport)
+
+        // Like javac, the same holds for a patch path that is also given with the module path or the classpath, where a jar is a module
+        // of its own.
+        val jar = createJar(File(tmpdir, "extra.jar"), patchDirectory)
+        val jarPatch = "-Xpatch-module=java.base=${jar.path}"
+        module("main", listOf(jar), additionalKotlinArguments = listOf(jarPatch), checkKotlinOutput = doesNotExport)
+        val onClasspath = listOf(jarPatch, "-classpath", jar.path)
+        module("named", additionalKotlinArguments = onClasspath, checkKotlinOutput = doesNotExport)
+        module("named", additionalKotlinArguments = onClasspath + "-Xadd-exports=java.base/java.lang.extra=named")
     }
 
     @Test

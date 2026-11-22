@@ -42,13 +42,27 @@ class CliJavaModuleResolver(
     private val access: JavaModuleAccess = JavaModuleAccess.EMPTY,
 ) : JavaModuleResolver {
 
+    // JDK modules by their roots given with -Xpatch-module, which are the roots outside the runtime image and ct.sym. Like javac, the
+    // classes in such a root are members of the JDK module, even when the root is also a user module.
+    private val systemModulesByPatchRoot: Map<JvmClasspathRootId, JavaModule.Explicit> = buildMap {
+        for (module in systemModules) {
+            for (root in module.moduleRoots) {
+                if (!root.isBinarySignature && root.file.fileSystem.protocol != StandardFileSystems.JRT_PROTOCOL) {
+                    putIfAbsent(root.id, module)
+                }
+            }
+        }
+    }
+
     init {
         assert(userModules.count(JavaModule::isSourceModule) <= 1) {
             "Modules computed by ClasspathRootsResolver cannot have more than one source module: $userModules"
         }
         // `findJavaModule(rootId)` takes the first module owning a root, which is only correct if the modules sharing a root have
-        // the same name: one module which is both a system and a user module.
-        val systemModuleNames = systemModules.flatMap { module -> module.moduleRoots.map { root -> root.id to module.name } }.toMap()
+        // the same name: one module which is both a system and a user module. The patch roots of a system module are left out, since they
+        // are looked up in that module first.
+        val systemModuleNames = systemModules.flatMap { module -> module.moduleRoots.map { root -> root.id to module.name } }.toMap() -
+                systemModulesByPatchRoot.keys
         for (module in userModules) {
             for (root in module.moduleRoots) {
                 val systemModuleName = systemModuleNames[root.id] ?: continue
@@ -69,11 +83,6 @@ class CliJavaModuleResolver(
 
     private val sourceModule: JavaModule? = userModules.firstOrNull(JavaModule::isSourceModule)
 
-    // JDK modules with roots given with -Xpatch-module, which are the roots outside the runtime image and ct.sym.
-    private val patchedSystemModules: List<JavaModule> = systemModules.filter { module ->
-        module.moduleRoots.any { root -> !root.isBinarySignature && root.file.fileSystem.protocol != StandardFileSystems.JRT_PROTOCOL }
-    }
-
     private fun findJavaModule(file: VirtualFile): JavaModule? {
         if (file.fileSystem.protocol == StandardFileSystems.JRT_PROTOCOL || file.extension == "sig") {
             return systemModules.firstOrNull { module -> file in module }
@@ -82,7 +91,8 @@ class CliJavaModuleResolver(
         return when (file.fileType) {
             KotlinFileType.INSTANCE, JavaFileType.INSTANCE -> sourceModule
             JavaClassFileType.INSTANCE ->
-                userModules.firstOrNull { module -> file in module } ?: patchedSystemModules.firstOrNull { module -> file in module }
+                systemModulesByPatchRoot.values.firstOrNull { module -> file in module }
+                    ?: userModules.firstOrNull { module -> file in module }
             else -> null
         }
     }
@@ -90,9 +100,11 @@ class CliJavaModuleResolver(
     private operator fun JavaModule.contains(file: VirtualFile): Boolean =
         moduleRoots.any { (val root = file, val isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
 
-    /** The module owning the binary classpath root [rootId], looked up in the user modules first. */
+    /** The module that the binary classpath root [rootId] belongs to, looked up in the patched system modules first. */
     private fun findJavaModule(rootId: JvmClasspathRootId): JavaModule? =
-        userModules.firstOrNull { module -> rootId in module } ?: systemModules.firstOrNull { module -> rootId in module }
+        systemModulesByPatchRoot[rootId]
+            ?: userModules.firstOrNull { module -> rootId in module }
+            ?: systemModules.firstOrNull { module -> rootId in module }
 
     private operator fun JavaModule.contains(rootId: JvmClasspathRootId): Boolean =
         moduleRoots.any { root -> root.isBinary && root.id == rootId }
