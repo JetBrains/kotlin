@@ -1512,6 +1512,8 @@ public fun CharSequence.maxOrNull(): Char? {
  * Returns the first character having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.text.Strings.minMaxWith
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -1528,6 +1530,8 @@ public fun CharSequence.maxWith(comparator: Comparator<in Char>): Char {
 
 /**
  * Returns the first character having the largest value according to the provided [comparator] or `null` if there are no characters.
+ * 
+ * @sample samples.text.Strings.minMaxWith
  */
 @SinceKotlin("1.4")
 public fun CharSequence.maxWithOrNull(comparator: Comparator<in Char>): Char? {
@@ -1836,6 +1840,8 @@ public fun CharSequence.minOrNull(): Char? {
  * Returns the first character having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.text.Strings.minMaxWith
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -1852,6 +1858,8 @@ public fun CharSequence.minWith(comparator: Comparator<in Char>): Char {
 
 /**
  * Returns the first character having the smallest value according to the provided [comparator] or `null` if there are no characters.
+ * 
+ * @sample samples.text.Strings.minMaxWith
  */
 @SinceKotlin("1.4")
 public fun CharSequence.minWithOrNull(comparator: Comparator<in Char>): Char? {

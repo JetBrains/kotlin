@@ -1193,4 +1193,22 @@ class Strings {
         assertPrints(emptyString.indexOfLast { it == 'z' }, "-1")
     }
 
+    @Sample
+    fun minMaxWith() {
+        // A custom Comparator that orders letters case-insensitively
+        val caseInsensitiveComparator = compareBy<Char> { it.lowercaseChar() }
+
+        val word = "HighAndLow"
+
+        // The last letter alphabetically, ignoring case
+        assertPrints(word.maxWith(caseInsensitiveComparator), "w")
+        // The first letter alphabetically, ignoring case
+        assertPrints(word.minWith(caseInsensitiveComparator), "A")
+
+        val emptyString = "";
+        // maxWithOrNull() and minWithOrNull() return null if the char sequence is empty
+        assertPrints(emptyString.maxWithOrNull(caseInsensitiveComparator), "null")
+        assertPrints(emptyString.minWithOrNull(caseInsensitiveComparator), "null")
+    }
+
 }

@@ -401,6 +401,8 @@ public inline fun <K, V, R> Map<out K, V>.maxOfWithOrNull(comparator: Comparator
  * Returns the first entry having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the map is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -412,6 +414,8 @@ public inline fun <K, V> Map<out K, V>.maxWith(comparator: Comparator<in Map.Ent
 
 /**
  * Returns the first entry having the largest value according to the provided [comparator] or `null` if there are no entries.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
@@ -599,6 +603,8 @@ public inline fun <K, V, R> Map<out K, V>.minOfWithOrNull(comparator: Comparator
  * Returns the first entry having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the map is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -610,6 +616,8 @@ public inline fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Ent
 
 /**
  * Returns the first entry having the smallest value according to the provided [comparator] or `null` if there are no entries.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly

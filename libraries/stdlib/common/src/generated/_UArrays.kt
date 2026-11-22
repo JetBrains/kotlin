@@ -8256,6 +8256,8 @@ public fun UShortArray.maxOrNull(): UShort? {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow-U")
@@ -8275,6 +8277,8 @@ public fun UIntArray.maxWith(comparator: Comparator<in UInt>): UInt {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow-U")
@@ -8294,6 +8298,8 @@ public fun ULongArray.maxWith(comparator: Comparator<in ULong>): ULong {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow-U")
@@ -8313,6 +8319,8 @@ public fun UByteArray.maxWith(comparator: Comparator<in UByte>): UByte {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow-U")
@@ -8330,6 +8338,8 @@ public fun UShortArray.maxWith(comparator: Comparator<in UShort>): UShort {
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -8345,6 +8355,8 @@ public fun UIntArray.maxWithOrNull(comparator: Comparator<in UInt>): UInt? {
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -8360,6 +8372,8 @@ public fun ULongArray.maxWithOrNull(comparator: Comparator<in ULong>): ULong? {
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -8375,6 +8389,8 @@ public fun UByteArray.maxWithOrNull(comparator: Comparator<in UByte>): UByte? {
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -9616,6 +9632,8 @@ public fun UShortArray.minOrNull(): UShort? {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow-U")
@@ -9635,6 +9653,8 @@ public fun UIntArray.minWith(comparator: Comparator<in UInt>): UInt {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow-U")
@@ -9654,6 +9674,8 @@ public fun ULongArray.minWith(comparator: Comparator<in ULong>): ULong {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow-U")
@@ -9673,6 +9695,8 @@ public fun UByteArray.minWith(comparator: Comparator<in UByte>): UByte {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow-U")
@@ -9690,6 +9714,8 @@ public fun UShortArray.minWith(comparator: Comparator<in UShort>): UShort {
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -9705,6 +9731,8 @@ public fun UIntArray.minWithOrNull(comparator: Comparator<in UInt>): UInt? {
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -9720,6 +9748,8 @@ public fun ULongArray.minWithOrNull(comparator: Comparator<in ULong>): ULong? {
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -9735,6 +9765,8 @@ public fun UByteArray.minWithOrNull(comparator: Comparator<in UByte>): UByte? {
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes

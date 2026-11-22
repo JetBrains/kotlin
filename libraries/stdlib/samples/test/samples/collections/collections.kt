@@ -1297,6 +1297,32 @@ class Collections {
         }
 
         @Sample
+        fun minMaxWithOrNull() {
+            // A custom Comparator that orders strings by their length
+            val lengthComparator = compareBy<String> { it.length }
+
+            val strings = listOf("abcd", "abc", "ab", "de", "abcde")
+
+            // The first element having the greatest length
+            val longestString = strings.maxWith(lengthComparator)
+            assertPrints(longestString, "abcde")
+
+            // The first element having the smallest length
+            val shortestString = strings.minWith(lengthComparator)
+            assertPrints(shortestString, "ab")
+
+            val emptyList = emptyList<String>()
+
+            // maxWith() and minWith() throw if the collection is empty
+            assertFailsWith<NoSuchElementException> { emptyList.maxWith(lengthComparator) }
+            assertFailsWith<NoSuchElementException> { emptyList.minWith(lengthComparator) }
+
+            // maxWithOrNull() and minWithOrNull() return null if the collection is empty
+            assertPrints(emptyList.maxWithOrNull(lengthComparator), "null")
+            assertPrints(emptyList.minWithOrNull(lengthComparator), "null")
+        }
+
+        @Sample
         fun minMaxByOrNull() {
             val strings = listOf("abcd", "abc", "ab", "de", "abcde")
 

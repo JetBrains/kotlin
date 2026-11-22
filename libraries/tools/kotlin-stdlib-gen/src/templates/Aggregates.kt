@@ -856,12 +856,14 @@ object Aggregates : TemplateGroupBase() {
                     annotation("@kotlin.jvm.JvmName(\"${op}OrThrow${"-U".ifOrEmpty(isUnsigned)}\")")
                 }
 
+                sample("samples.collections.Collections.Aggregates.minMaxWithOrNull")
+
                 val [acc, cmp] = if (op == "minWith") Pair("min", ">") else Pair("max", "<")
                 body {
                     """
                     val iterator = iterator()
                     if (!iterator.hasNext()) $doOnEmpty
-        
+
                     var $acc = iterator.next()
                     while (iterator.hasNext()) {
                         val e = iterator.next()
@@ -882,6 +884,10 @@ object Aggregates : TemplateGroupBase() {
                     """
                 }
                 body(Maps) { "return entries.$op$orNull(comparator)" }
+
+                specialFor(CharSequences) {
+                    sample("samples.text.Strings.minMaxWith")
+                }
             }
 
         for (op in listOf("minWith", "maxWith")) {

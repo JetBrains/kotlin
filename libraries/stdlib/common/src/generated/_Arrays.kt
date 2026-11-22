@@ -19014,6 +19014,8 @@ public fun CharArray.maxOrNull(): Char? {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -19032,6 +19034,8 @@ public fun <T> Array<out T>.maxWith(comparator: Comparator<in T>): T {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -19050,6 +19054,8 @@ public fun ByteArray.maxWith(comparator: Comparator<in Byte>): Byte {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -19068,6 +19074,8 @@ public fun ShortArray.maxWith(comparator: Comparator<in Short>): Short {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -19086,6 +19094,8 @@ public fun IntArray.maxWith(comparator: Comparator<in Int>): Int {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -19104,6 +19114,8 @@ public fun LongArray.maxWith(comparator: Comparator<in Long>): Long {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -19122,6 +19134,8 @@ public fun FloatArray.maxWith(comparator: Comparator<in Float>): Float {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -19140,6 +19154,8 @@ public fun DoubleArray.maxWith(comparator: Comparator<in Double>): Double {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -19158,6 +19174,8 @@ public fun BooleanArray.maxWith(comparator: Comparator<in Boolean>): Boolean {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -19174,6 +19192,8 @@ public fun CharArray.maxWith(comparator: Comparator<in Char>): Char {
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun <T> Array<out T>.maxWithOrNull(comparator: Comparator<in T>): T? {
@@ -19188,6 +19208,8 @@ public fun <T> Array<out T>.maxWithOrNull(comparator: Comparator<in T>): T? {
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun ByteArray.maxWithOrNull(comparator: Comparator<in Byte>): Byte? {
@@ -19202,6 +19224,8 @@ public fun ByteArray.maxWithOrNull(comparator: Comparator<in Byte>): Byte? {
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun ShortArray.maxWithOrNull(comparator: Comparator<in Short>): Short? {
@@ -19216,6 +19240,8 @@ public fun ShortArray.maxWithOrNull(comparator: Comparator<in Short>): Short? {
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun IntArray.maxWithOrNull(comparator: Comparator<in Int>): Int? {
@@ -19230,6 +19256,8 @@ public fun IntArray.maxWithOrNull(comparator: Comparator<in Int>): Int? {
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun LongArray.maxWithOrNull(comparator: Comparator<in Long>): Long? {
@@ -19244,6 +19272,8 @@ public fun LongArray.maxWithOrNull(comparator: Comparator<in Long>): Long? {
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun FloatArray.maxWithOrNull(comparator: Comparator<in Float>): Float? {
@@ -19258,6 +19288,8 @@ public fun FloatArray.maxWithOrNull(comparator: Comparator<in Float>): Float? {
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun DoubleArray.maxWithOrNull(comparator: Comparator<in Double>): Double? {
@@ -19272,6 +19304,8 @@ public fun DoubleArray.maxWithOrNull(comparator: Comparator<in Double>): Double?
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun BooleanArray.maxWithOrNull(comparator: Comparator<in Boolean>): Boolean? {
@@ -19286,6 +19320,8 @@ public fun BooleanArray.maxWithOrNull(comparator: Comparator<in Boolean>): Boole
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun CharArray.maxWithOrNull(comparator: Comparator<in Char>): Char? {
@@ -21986,6 +22022,8 @@ public fun CharArray.minOrNull(): Char? {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -22004,6 +22042,8 @@ public fun <T> Array<out T>.minWith(comparator: Comparator<in T>): T {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -22022,6 +22062,8 @@ public fun ByteArray.minWith(comparator: Comparator<in Byte>): Byte {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -22040,6 +22082,8 @@ public fun ShortArray.minWith(comparator: Comparator<in Short>): Short {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -22058,6 +22102,8 @@ public fun IntArray.minWith(comparator: Comparator<in Int>): Int {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -22076,6 +22122,8 @@ public fun LongArray.minWith(comparator: Comparator<in Long>): Long {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -22094,6 +22142,8 @@ public fun FloatArray.minWith(comparator: Comparator<in Float>): Float {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -22112,6 +22162,8 @@ public fun DoubleArray.minWith(comparator: Comparator<in Double>): Double {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -22130,6 +22182,8 @@ public fun BooleanArray.minWith(comparator: Comparator<in Boolean>): Boolean {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -22146,6 +22200,8 @@ public fun CharArray.minWith(comparator: Comparator<in Char>): Char {
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun <T> Array<out T>.minWithOrNull(comparator: Comparator<in T>): T? {
@@ -22160,6 +22216,8 @@ public fun <T> Array<out T>.minWithOrNull(comparator: Comparator<in T>): T? {
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun ByteArray.minWithOrNull(comparator: Comparator<in Byte>): Byte? {
@@ -22174,6 +22232,8 @@ public fun ByteArray.minWithOrNull(comparator: Comparator<in Byte>): Byte? {
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun ShortArray.minWithOrNull(comparator: Comparator<in Short>): Short? {
@@ -22188,6 +22248,8 @@ public fun ShortArray.minWithOrNull(comparator: Comparator<in Short>): Short? {
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun IntArray.minWithOrNull(comparator: Comparator<in Int>): Int? {
@@ -22202,6 +22264,8 @@ public fun IntArray.minWithOrNull(comparator: Comparator<in Int>): Int? {
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun LongArray.minWithOrNull(comparator: Comparator<in Long>): Long? {
@@ -22216,6 +22280,8 @@ public fun LongArray.minWithOrNull(comparator: Comparator<in Long>): Long? {
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun FloatArray.minWithOrNull(comparator: Comparator<in Float>): Float? {
@@ -22230,6 +22296,8 @@ public fun FloatArray.minWithOrNull(comparator: Comparator<in Float>): Float? {
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun DoubleArray.minWithOrNull(comparator: Comparator<in Double>): Double? {
@@ -22244,6 +22312,8 @@ public fun DoubleArray.minWithOrNull(comparator: Comparator<in Double>): Double?
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun BooleanArray.minWithOrNull(comparator: Comparator<in Boolean>): Boolean? {
@@ -22258,6 +22328,8 @@ public fun BooleanArray.minWithOrNull(comparator: Comparator<in Boolean>): Boole
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun CharArray.minWithOrNull(comparator: Comparator<in Char>): Char? {

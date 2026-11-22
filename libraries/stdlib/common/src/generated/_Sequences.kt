@@ -2087,6 +2087,8 @@ public fun <T : Comparable<T>> Sequence<T>.maxOrNull(): T? {
  * The operation is _terminal_.
  * 
  * @throws NoSuchElementException if the sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -2106,6 +2108,8 @@ public fun <T> Sequence<T>.maxWith(comparator: Comparator<in T>): T {
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun <T> Sequence<T>.maxWithOrNull(comparator: Comparator<in T>): T? {
@@ -2547,6 +2551,8 @@ public fun <T : Comparable<T>> Sequence<T>.minOrNull(): T? {
  * The operation is _terminal_.
  * 
  * @throws NoSuchElementException if the sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -2566,6 +2572,8 @@ public fun <T> Sequence<T>.minWith(comparator: Comparator<in T>): T {
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun <T> Sequence<T>.minWithOrNull(comparator: Comparator<in T>): T? {

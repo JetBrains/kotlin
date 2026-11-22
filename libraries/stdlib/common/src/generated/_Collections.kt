@@ -2609,6 +2609,8 @@ public fun <T : Comparable<T>> Iterable<T>.maxOrNull(): T? {
  * Returns the first element having the largest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxWithOrThrow")
@@ -2626,6 +2628,8 @@ public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T {
 
 /**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun <T> Iterable<T>.maxWithOrNull(comparator: Comparator<in T>): T? {
@@ -3033,6 +3037,8 @@ public fun <T : Comparable<T>> Iterable<T>.minOrNull(): T? {
  * Returns the first element having the smallest value according to the provided [comparator].
  * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minWithOrThrow")
@@ -3050,6 +3056,8 @@ public fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T {
 
 /**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxWithOrNull
  */
 @SinceKotlin("1.4")
 public fun <T> Iterable<T>.minWithOrNull(comparator: Comparator<in T>): T? {
