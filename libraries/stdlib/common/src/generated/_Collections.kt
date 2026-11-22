@@ -1150,11 +1150,15 @@ public fun <T> Iterable<T>.isSortedWith(comparator: Comparator<in T>): Boolean {
 
 /**
  * Reverses elements in the list in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 public expect fun <T> MutableList<T>.reverse(): Unit
 
 /**
  * Returns a list with elements in reversed order.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversed
  */
 public fun <T> Iterable<T>.reversed(): List<T> {
     if (this is Collection && size <= 1) return toList()
@@ -1167,6 +1171,8 @@ public fun <T> Iterable<T>.reversed(): List<T> {
  * Randomly shuffles elements in this list in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.3")
 public fun <T> MutableList<T>.shuffle(random: Random): Unit {
@@ -1213,6 +1219,8 @@ public fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit {
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sorted
  */
 public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
     if (this is Collection) {
@@ -1251,6 +1259,8 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.sortedByDescending(crossinl
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sorted
  */
 public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
     return sortedWith(reverseOrder())
@@ -1260,6 +1270,8 @@ public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
  * Returns a list of all elements sorted according to the specified [comparator].
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedWith
  */
 public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
     if (this is Collection) {

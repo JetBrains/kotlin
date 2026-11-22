@@ -7,6 +7,7 @@ package samples.collections
 
 import samples.*
 import kotlin.math.*
+import kotlin.random.Random
 import kotlin.test.*
 
 
@@ -1663,6 +1664,117 @@ class Collections {
 
             // the original array remains unchanged
             assertPrints(unsorted.toList(), "[3, 1, 2, 4]")
+        }
+
+        @Sample
+        fun sorted() {
+            val fruits = listOf("cherry", "apple", "banana")
+
+            assertPrints(fruits.sorted(), "[apple, banana, cherry]")
+            assertPrints(fruits.sortedDescending(), "[cherry, banana, apple]")
+
+            val numberArray = arrayOf(3, 1, 2)
+            assertPrints(numberArray.sorted(), "[1, 2, 3]")
+
+            // the original collection remains unchanged
+            assertPrints(fruits, "[cherry, apple, banana]")
+        }
+
+        @Sample
+        fun sortedPrimitiveArray() {
+            val unsorted = intArrayOf(3, 1, 2, 4)
+
+            assertPrints(unsorted.sorted(), "[1, 2, 3, 4]")
+            assertPrints(unsorted.sortedDescending(), "[4, 3, 2, 1]")
+            assertPrints(unsorted.sortedWith(reverseOrder()), "[4, 3, 2, 1]")
+
+            // the original array remains unchanged
+            assertPrints(unsorted.toList(), "[3, 1, 2, 4]")
+        }
+
+        @Sample
+        fun sortedWith() {
+            class Dish(val name: String, val calories: Int, val tasteRate: Float) {
+                override fun toString(): String = "Dish($name: $calories cal, taste $tasteRate/5)"
+            }
+
+            val fridgeContent = listOf(Dish("🍨", 207, 4.7f), Dish("🥦", 34, 2.3f), Dish("🧃", 34, 4.9f))
+
+            val byTasteRate = fridgeContent.sortedWith(compareByDescending<Dish> { it.tasteRate })
+            assertPrints(byTasteRate, "[Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5)]")
+
+            val lengthComparator = compareBy<String> { it.length }
+            assertPrints(listOf("aaa", "b", "cc").sortedWith(lengthComparator), "[b, cc, aaa]")
+        }
+
+        @Sample
+        fun reverse() {
+            val mutableNumbers = mutableListOf(1, 2, 3)
+            mutableNumbers.reverse()
+            assertPrints(mutableNumbers, "[3, 2, 1]")
+
+            val letters = arrayOf("a", "b", "c")
+            letters.reverse()
+            assertPrints(letters.toList(), "[c, b, a]")
+
+            val digits = intArrayOf(1, 2, 3)
+            digits.reverse()
+            assertPrints(digits.toList(), "[3, 2, 1]")
+        }
+
+        @Sample
+        fun reverseRange() {
+            val digits = intArrayOf(1, 2, 3, 4, 5)
+            digits.reverse(1, 4)
+            assertPrints(digits.toList(), "[1, 4, 3, 2, 5]")
+
+            val letters = arrayOf("a", "b", "c", "d")
+            letters.reverse(0, 2)
+            assertPrints(letters.toList(), "[b, a, c, d]")
+        }
+
+        @Sample
+        fun reversed() {
+            val fruits = listOf("cherry", "apple", "banana")
+            assertPrints(fruits.reversed(), "[banana, apple, cherry]")
+
+            val numberArray = arrayOf(1, 2, 3)
+            assertPrints(numberArray.reversed().toList(), "[3, 2, 1]")
+
+            // the original collection remains unchanged
+            assertPrints(fruits, "[cherry, apple, banana]")
+        }
+
+        @Sample
+        fun reversedPrimitiveArray() {
+            val digits = intArrayOf(1, 2, 3)
+
+            assertPrints(digits.reversed(), "[3, 2, 1]")
+
+            // the original array remains unchanged
+            assertPrints(digits.toList(), "[1, 2, 3]")
+        }
+
+        @Sample
+        fun shuffle() {
+            val numbers = arrayOf(1, 2, 3, 4, 5)
+            numbers.shuffle()
+            // the elements are the same, but in a random order
+            assertPrints(numbers.sorted(), "[1, 2, 3, 4, 5]")
+        }
+
+        @Sample
+        fun shuffleRandom() {
+            val first = mutableListOf(1, 2, 3, 4, 5)
+            val second = mutableListOf(1, 2, 3, 4, 5)
+
+            first.shuffle(Random(42))
+            second.shuffle(Random(42))
+
+            // the same seed produces the same permutation
+            assertPrints(first == second, "true")
+            // the elements are preserved
+            assertPrints(first.sorted(), "[1, 2, 3, 4, 5]")
         }
     }
 

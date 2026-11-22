@@ -15,6 +15,8 @@ import kotlin.ranges.reversed
 
 /**
  * Reverses elements in the list in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 public actual fun <T> MutableList<T>.reverse(): Unit {
     val midPoint = (size / 2) - 1

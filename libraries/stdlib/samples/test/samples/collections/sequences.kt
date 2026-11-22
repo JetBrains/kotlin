@@ -350,5 +350,17 @@ class Sequences {
             assertPrints(fridgeContent.toList(), "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5)]")
         }
 
+        @Sample
+        fun sorted() {
+            val fruits = sequenceOf("cherry", "apple", "banana")
+
+            assertPrints(fruits.sorted().toList(), "[apple, banana, cherry]")
+            assertPrints(fruits.sortedDescending().toList(), "[cherry, banana, apple]")
+            assertPrints(fruits.sortedWith(compareByDescending { it.length }).toList(), "[cherry, banana, apple]")
+
+            // the original sequence's state remains unchanged
+            assertPrints(fruits.toList(), "[cherry, apple, banana]")
+        }
+
     }
 }

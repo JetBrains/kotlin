@@ -6659,6 +6659,8 @@ public fun CharArray.isSortedWith(comparator: Comparator<in Char>): Boolean {
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 public fun <T> Array<T>.reverse(): Unit {
     val midPoint = (size / 2) - 1
@@ -6674,6 +6676,8 @@ public fun <T> Array<T>.reverse(): Unit {
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 public fun ByteArray.reverse(): Unit {
     val midPoint = (size / 2) - 1
@@ -6689,6 +6693,8 @@ public fun ByteArray.reverse(): Unit {
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 public fun ShortArray.reverse(): Unit {
     val midPoint = (size / 2) - 1
@@ -6704,6 +6710,8 @@ public fun ShortArray.reverse(): Unit {
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 public fun IntArray.reverse(): Unit {
     val midPoint = (size / 2) - 1
@@ -6719,6 +6727,8 @@ public fun IntArray.reverse(): Unit {
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 public fun LongArray.reverse(): Unit {
     val midPoint = (size / 2) - 1
@@ -6734,6 +6744,8 @@ public fun LongArray.reverse(): Unit {
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 public fun FloatArray.reverse(): Unit {
     val midPoint = (size / 2) - 1
@@ -6749,6 +6761,8 @@ public fun FloatArray.reverse(): Unit {
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 public fun DoubleArray.reverse(): Unit {
     val midPoint = (size / 2) - 1
@@ -6764,6 +6778,8 @@ public fun DoubleArray.reverse(): Unit {
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 public fun BooleanArray.reverse(): Unit {
     val midPoint = (size / 2) - 1
@@ -6779,6 +6795,8 @@ public fun BooleanArray.reverse(): Unit {
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 public fun CharArray.reverse(): Unit {
     val midPoint = (size / 2) - 1
@@ -6800,6 +6818,8 @@ public fun CharArray.reverse(): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 public fun <T> Array<T>.reverse(fromIndex: Int, toIndex: Int): Unit {
@@ -6823,6 +6843,8 @@ public fun <T> Array<T>.reverse(fromIndex: Int, toIndex: Int): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 public fun ByteArray.reverse(fromIndex: Int, toIndex: Int): Unit {
@@ -6846,6 +6868,8 @@ public fun ByteArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 public fun ShortArray.reverse(fromIndex: Int, toIndex: Int): Unit {
@@ -6869,6 +6893,8 @@ public fun ShortArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 public fun IntArray.reverse(fromIndex: Int, toIndex: Int): Unit {
@@ -6892,6 +6918,8 @@ public fun IntArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 public fun LongArray.reverse(fromIndex: Int, toIndex: Int): Unit {
@@ -6915,6 +6943,8 @@ public fun LongArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 public fun FloatArray.reverse(fromIndex: Int, toIndex: Int): Unit {
@@ -6938,6 +6968,8 @@ public fun FloatArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 public fun DoubleArray.reverse(fromIndex: Int, toIndex: Int): Unit {
@@ -6961,6 +6993,8 @@ public fun DoubleArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 public fun BooleanArray.reverse(fromIndex: Int, toIndex: Int): Unit {
@@ -6984,6 +7018,8 @@ public fun BooleanArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 public fun CharArray.reverse(fromIndex: Int, toIndex: Int): Unit {
@@ -7003,6 +7039,8 @@ public fun CharArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversed
  */
 public fun <T> Array<out T>.reversed(): List<T> {
     if (isEmpty()) return emptyList()
@@ -7015,6 +7053,8 @@ public fun <T> Array<out T>.reversed(): List<T> {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversedPrimitiveArray
  */
 public fun ByteArray.reversed(): List<Byte> {
     if (isEmpty()) return emptyList()
@@ -7027,6 +7067,8 @@ public fun ByteArray.reversed(): List<Byte> {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversedPrimitiveArray
  */
 public fun ShortArray.reversed(): List<Short> {
     if (isEmpty()) return emptyList()
@@ -7039,6 +7081,8 @@ public fun ShortArray.reversed(): List<Short> {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversedPrimitiveArray
  */
 public fun IntArray.reversed(): List<Int> {
     if (isEmpty()) return emptyList()
@@ -7051,6 +7095,8 @@ public fun IntArray.reversed(): List<Int> {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversedPrimitiveArray
  */
 public fun LongArray.reversed(): List<Long> {
     if (isEmpty()) return emptyList()
@@ -7063,6 +7109,8 @@ public fun LongArray.reversed(): List<Long> {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversedPrimitiveArray
  */
 public fun FloatArray.reversed(): List<Float> {
     if (isEmpty()) return emptyList()
@@ -7075,6 +7123,8 @@ public fun FloatArray.reversed(): List<Float> {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversedPrimitiveArray
  */
 public fun DoubleArray.reversed(): List<Double> {
     if (isEmpty()) return emptyList()
@@ -7087,6 +7137,8 @@ public fun DoubleArray.reversed(): List<Double> {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversedPrimitiveArray
  */
 public fun BooleanArray.reversed(): List<Boolean> {
     if (isEmpty()) return emptyList()
@@ -7099,6 +7151,8 @@ public fun BooleanArray.reversed(): List<Boolean> {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversedPrimitiveArray
  */
 public fun CharArray.reversed(): List<Char> {
     if (isEmpty()) return emptyList()
@@ -7235,6 +7289,8 @@ public fun CharArray.reversedArray(): CharArray {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 public fun <T> Array<T>.shuffle(): Unit {
@@ -7243,6 +7299,8 @@ public fun <T> Array<T>.shuffle(): Unit {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 public fun ByteArray.shuffle(): Unit {
@@ -7251,6 +7309,8 @@ public fun ByteArray.shuffle(): Unit {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 public fun ShortArray.shuffle(): Unit {
@@ -7259,6 +7319,8 @@ public fun ShortArray.shuffle(): Unit {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 public fun IntArray.shuffle(): Unit {
@@ -7267,6 +7329,8 @@ public fun IntArray.shuffle(): Unit {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 public fun LongArray.shuffle(): Unit {
@@ -7275,6 +7339,8 @@ public fun LongArray.shuffle(): Unit {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 public fun FloatArray.shuffle(): Unit {
@@ -7283,6 +7349,8 @@ public fun FloatArray.shuffle(): Unit {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 public fun DoubleArray.shuffle(): Unit {
@@ -7291,6 +7359,8 @@ public fun DoubleArray.shuffle(): Unit {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 public fun BooleanArray.shuffle(): Unit {
@@ -7299,6 +7369,8 @@ public fun BooleanArray.shuffle(): Unit {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 public fun CharArray.shuffle(): Unit {
@@ -7309,6 +7381,8 @@ public fun CharArray.shuffle(): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 public fun <T> Array<T>.shuffle(random: Random): Unit {
@@ -7324,6 +7398,8 @@ public fun <T> Array<T>.shuffle(random: Random): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 public fun ByteArray.shuffle(random: Random): Unit {
@@ -7339,6 +7415,8 @@ public fun ByteArray.shuffle(random: Random): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 public fun ShortArray.shuffle(random: Random): Unit {
@@ -7354,6 +7432,8 @@ public fun ShortArray.shuffle(random: Random): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 public fun IntArray.shuffle(random: Random): Unit {
@@ -7369,6 +7449,8 @@ public fun IntArray.shuffle(random: Random): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 public fun LongArray.shuffle(random: Random): Unit {
@@ -7384,6 +7466,8 @@ public fun LongArray.shuffle(random: Random): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 public fun FloatArray.shuffle(random: Random): Unit {
@@ -7399,6 +7483,8 @@ public fun FloatArray.shuffle(random: Random): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 public fun DoubleArray.shuffle(random: Random): Unit {
@@ -7414,6 +7500,8 @@ public fun DoubleArray.shuffle(random: Random): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 public fun BooleanArray.shuffle(random: Random): Unit {
@@ -7429,6 +7517,8 @@ public fun BooleanArray.shuffle(random: Random): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 public fun CharArray.shuffle(random: Random): Unit {
@@ -7549,6 +7639,8 @@ public fun CharArray.sortDescending(): Unit {
  * Use [sortedArray] if you need to get the result in an array.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sorted
  */
 public fun <T : Comparable<T>> Array<out T>.sorted(): List<T> {
     return sortedArray().asList()
@@ -7558,6 +7650,8 @@ public fun <T : Comparable<T>> Array<out T>.sorted(): List<T> {
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * Use [sortedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun ByteArray.sorted(): List<Byte> {
     return toTypedArray().apply { sort() }.asList()
@@ -7567,6 +7661,8 @@ public fun ByteArray.sorted(): List<Byte> {
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * Use [sortedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun ShortArray.sorted(): List<Short> {
     return toTypedArray().apply { sort() }.asList()
@@ -7576,6 +7672,8 @@ public fun ShortArray.sorted(): List<Short> {
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * Use [sortedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun IntArray.sorted(): List<Int> {
     return toTypedArray().apply { sort() }.asList()
@@ -7585,6 +7683,8 @@ public fun IntArray.sorted(): List<Int> {
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * Use [sortedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun LongArray.sorted(): List<Long> {
     return toTypedArray().apply { sort() }.asList()
@@ -7594,6 +7694,8 @@ public fun LongArray.sorted(): List<Long> {
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * Use [sortedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun FloatArray.sorted(): List<Float> {
     return toTypedArray().apply { sort() }.asList()
@@ -7603,6 +7705,8 @@ public fun FloatArray.sorted(): List<Float> {
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * Use [sortedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun DoubleArray.sorted(): List<Double> {
     return toTypedArray().apply { sort() }.asList()
@@ -7612,6 +7716,8 @@ public fun DoubleArray.sorted(): List<Double> {
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * Use [sortedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun CharArray.sorted(): List<Char> {
     return toTypedArray().apply { sort() }.asList()
@@ -8015,6 +8121,8 @@ public inline fun <R : Comparable<R>> CharArray.sortedByDescending(crossinline s
  * Use [sortedArrayDescending] if you need to get the result in an array.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sorted
  */
 public fun <T : Comparable<T>> Array<out T>.sortedDescending(): List<T> {
     return sortedWith(reverseOrder())
@@ -8024,6 +8132,8 @@ public fun <T : Comparable<T>> Array<out T>.sortedDescending(): List<T> {
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * Use [sortedArrayDescending] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun ByteArray.sortedDescending(): List<Byte> {
     return copyOf().apply { sort() }.reversed()
@@ -8033,6 +8143,8 @@ public fun ByteArray.sortedDescending(): List<Byte> {
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * Use [sortedArrayDescending] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun ShortArray.sortedDescending(): List<Short> {
     return copyOf().apply { sort() }.reversed()
@@ -8042,6 +8154,8 @@ public fun ShortArray.sortedDescending(): List<Short> {
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * Use [sortedArrayDescending] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun IntArray.sortedDescending(): List<Int> {
     return copyOf().apply { sort() }.reversed()
@@ -8051,6 +8165,8 @@ public fun IntArray.sortedDescending(): List<Int> {
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * Use [sortedArrayDescending] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun LongArray.sortedDescending(): List<Long> {
     return copyOf().apply { sort() }.reversed()
@@ -8060,6 +8176,8 @@ public fun LongArray.sortedDescending(): List<Long> {
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * Use [sortedArrayDescending] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun FloatArray.sortedDescending(): List<Float> {
     return copyOf().apply { sort() }.reversed()
@@ -8069,6 +8187,8 @@ public fun FloatArray.sortedDescending(): List<Float> {
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * Use [sortedArrayDescending] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun DoubleArray.sortedDescending(): List<Double> {
     return copyOf().apply { sort() }.reversed()
@@ -8078,6 +8198,8 @@ public fun DoubleArray.sortedDescending(): List<Double> {
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * Use [sortedArrayDescending] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun CharArray.sortedDescending(): List<Char> {
     return copyOf().apply { sort() }.reversed()
@@ -8089,6 +8211,8 @@ public fun CharArray.sortedDescending(): List<Char> {
  * Use [sortedArrayWith] if you need to get the result in an array.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedWith
  */
 public fun <T> Array<out T>.sortedWith(comparator: Comparator<in T>): List<T> {
     return sortedArrayWith(comparator).asList()
@@ -8096,6 +8220,8 @@ public fun <T> Array<out T>.sortedWith(comparator: Comparator<in T>): List<T> {
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun ByteArray.sortedWith(comparator: Comparator<in Byte>): List<Byte> {
     return toTypedArray().apply { sortWith(comparator) }.asList()
@@ -8103,6 +8229,8 @@ public fun ByteArray.sortedWith(comparator: Comparator<in Byte>): List<Byte> {
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun ShortArray.sortedWith(comparator: Comparator<in Short>): List<Short> {
     return toTypedArray().apply { sortWith(comparator) }.asList()
@@ -8110,6 +8238,8 @@ public fun ShortArray.sortedWith(comparator: Comparator<in Short>): List<Short> 
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun IntArray.sortedWith(comparator: Comparator<in Int>): List<Int> {
     return toTypedArray().apply { sortWith(comparator) }.asList()
@@ -8117,6 +8247,8 @@ public fun IntArray.sortedWith(comparator: Comparator<in Int>): List<Int> {
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun LongArray.sortedWith(comparator: Comparator<in Long>): List<Long> {
     return toTypedArray().apply { sortWith(comparator) }.asList()
@@ -8124,6 +8256,8 @@ public fun LongArray.sortedWith(comparator: Comparator<in Long>): List<Long> {
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun FloatArray.sortedWith(comparator: Comparator<in Float>): List<Float> {
     return toTypedArray().apply { sortWith(comparator) }.asList()
@@ -8131,6 +8265,8 @@ public fun FloatArray.sortedWith(comparator: Comparator<in Float>): List<Float> 
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun DoubleArray.sortedWith(comparator: Comparator<in Double>): List<Double> {
     return toTypedArray().apply { sortWith(comparator) }.asList()
@@ -8138,6 +8274,8 @@ public fun DoubleArray.sortedWith(comparator: Comparator<in Double>): List<Doubl
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun BooleanArray.sortedWith(comparator: Comparator<in Boolean>): List<Boolean> {
     return toTypedArray().apply { sortWith(comparator) }.asList()
@@ -8145,6 +8283,8 @@ public fun BooleanArray.sortedWith(comparator: Comparator<in Boolean>): List<Boo
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedPrimitiveArray
  */
 public fun CharArray.sortedWith(comparator: Comparator<in Char>): List<Char> {
     return toTypedArray().apply { sortWith(comparator) }.asList()

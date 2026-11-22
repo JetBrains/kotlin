@@ -39,6 +39,8 @@ public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(desti
 
 /**
  * Reverses elements in the list in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 public actual fun <T> MutableList<T>.reverse(): Unit {
     java.util.Collections.reverse(this)

@@ -668,6 +668,8 @@ public inline fun String.takeWhile(predicate: (Char) -> Boolean): String {
 
 /**
  * Returns a char sequence with characters in reversed order.
+ * 
+ * @sample samples.text.Strings.reversed
  */
 public fun CharSequence.reversed(): CharSequence {
     return StringBuilder(this).reverse()
@@ -675,6 +677,8 @@ public fun CharSequence.reversed(): CharSequence {
 
 /**
  * Returns a string with characters in reversed order.
+ * 
+ * @sample samples.text.Strings.reversed
  */
 @kotlin.internal.InlineOnly
 public inline fun String.reversed(): String {

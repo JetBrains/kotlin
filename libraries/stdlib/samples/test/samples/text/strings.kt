@@ -1193,4 +1193,13 @@ class Strings {
         assertPrints(emptyString.indexOfLast { it == 'z' }, "-1")
     }
 
+    @Sample
+    fun reversed() {
+        val word = "kotlin"
+
+        assertPrints(word.reversed(), "niltok")
+
+        assertPrints("".reversed(), "")
+    }
+
 }

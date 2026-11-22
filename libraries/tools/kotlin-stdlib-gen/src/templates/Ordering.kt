@@ -24,6 +24,7 @@ object Ordering : TemplateGroupBase() {
         include(Lists, InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Reverses ${f.element.pluralize()} in the ${f.collection} in-place." }
+        sample("samples.collections.Collections.Sorting.reverse")
         returns("Unit")
         body {
             """
@@ -65,6 +66,7 @@ object Ordering : TemplateGroupBase() {
             ${rangeDoc(hasDefault = false, action = "reverse")}
             """
         }
+        sample("samples.collections.Collections.Sorting.reverseRange")
         returns("Unit")
         body {
             """
@@ -98,6 +100,10 @@ object Ordering : TemplateGroupBase() {
                 Use [reversedArray] if you need to get the result in an array.
                 """.trimIndent()
             }
+        }
+        sample("samples.collections.Collections.Sorting.reversed${f.sampleSuffixReversed}")
+        specialFor(CharSequences, Strings) {
+            sample("samples.text.Strings.reversed")
         }
         returns("List<T>")
         body {
@@ -169,6 +175,18 @@ object Ordering : TemplateGroupBase() {
         }
     }
 
+    private val Family.sampleSuffixReversed: String
+        get() = when (this) {
+            ArraysOfPrimitives -> "PrimitiveArray"
+            else -> ""
+        }
+
+    private val Family.sampleSuffixSorted: String
+        get() = when (this) {
+            ArraysOfPrimitives -> "PrimitiveArray"
+            else -> ""
+        }
+
     val stableSortNote =
         "The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting."
 
@@ -211,6 +229,10 @@ object Ordering : TemplateGroupBase() {
         }
         if (f != ArraysOfPrimitives && f != ArraysOfUnsigned) {
             appendStableSortNote()
+        }
+        sample("samples.collections.Collections.Sorting.sorted${f.sampleSuffixSorted}")
+        specialFor(Sequences) {
+            sample("samples.collections.Sequences.Sorting.sorted")
         }
         returns("List<T>")
         typeParam("T : Comparable<T>")
@@ -333,6 +355,10 @@ object Ordering : TemplateGroupBase() {
         if (f != ArraysOfPrimitives && f != ArraysOfUnsigned) {
             appendStableSortNote()
         }
+        sample("samples.collections.Collections.Sorting.sorted${f.sampleSuffixSorted}")
+        specialFor(Sequences) {
+            sample("samples.collections.Sequences.Sorting.sorted")
+        }
         returns("List<T>")
         typeParam("T : Comparable<T>")
         body {
@@ -406,6 +432,17 @@ object Ordering : TemplateGroupBase() {
         }
         if (f != ArraysOfPrimitives) {
             appendStableSortNote()
+        }
+        when (f) {
+            ArraysOfPrimitives -> {
+                sample("samples.collections.Collections.Sorting.sortedPrimitiveArray")
+            }
+            Sequences -> {
+                sample("samples.collections.Sequences.Sorting.sorted")
+            }
+            else -> {
+                sample("samples.collections.Collections.Sorting.sortedWith")
+            }
         }
         body {
             """
@@ -591,6 +628,7 @@ object Ordering : TemplateGroupBase() {
             Randomly shuffles elements in this ${f.collection} in-place.
             """
         }
+        sample("samples.collections.Collections.Sorting.shuffle")
         body {
             "shuffle(Random)"
         }
@@ -608,6 +646,7 @@ object Ordering : TemplateGroupBase() {
             See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
             """
         }
+        sample("samples.collections.Collections.Sorting.shuffleRandom")
         specialFor(Lists) {
             since("1.3")
             receiver("MutableList<T>")

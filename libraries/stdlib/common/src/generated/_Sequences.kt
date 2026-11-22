@@ -763,6 +763,8 @@ public fun <T> Sequence<T>.isSortedWith(comparator: Comparator<in T>): Boolean {
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  *
  * The operation is _intermediate_ and _stateful_.
+ * 
+ * @sample samples.collections.Sequences.Sorting.sorted
  */
 public fun <T : Comparable<T>> Sequence<T>.sorted(): Sequence<T> {
     return object : Sequence<T> {
@@ -808,6 +810,8 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.sortedByDescending(crossinl
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  *
  * The operation is _intermediate_ and _stateful_.
+ * 
+ * @sample samples.collections.Sequences.Sorting.sorted
  */
 public fun <T : Comparable<T>> Sequence<T>.sortedDescending(): Sequence<T> {
     return sortedWith(reverseOrder())
@@ -819,6 +823,8 @@ public fun <T : Comparable<T>> Sequence<T>.sortedDescending(): Sequence<T> {
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  *
  * The operation is _intermediate_ and _stateful_.
+ * 
+ * @sample samples.collections.Sequences.Sorting.sorted
  */
 public fun <T> Sequence<T>.sortedWith(comparator: Comparator<in T>): Sequence<T> {
     return object : Sequence<T> {

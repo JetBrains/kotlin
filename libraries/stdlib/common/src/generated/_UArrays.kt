@@ -3250,6 +3250,8 @@ public fun UShortArray.isSortedWith(comparator: Comparator<in UShort>): Boolean 
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3260,6 +3262,8 @@ public inline fun UIntArray.reverse(): Unit {
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3270,6 +3274,8 @@ public inline fun ULongArray.reverse(): Unit {
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3280,6 +3286,8 @@ public inline fun UByteArray.reverse(): Unit {
 
 /**
  * Reverses elements in the array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.reverse
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3296,6 +3304,8 @@ public inline fun UShortArray.reverse(): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3312,6 +3322,8 @@ public inline fun UIntArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3328,6 +3340,8 @@ public inline fun ULongArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3344,6 +3358,8 @@ public inline fun UByteArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
+ * 
+ * @sample samples.collections.Collections.Sorting.reverseRange
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3356,6 +3372,8 @@ public inline fun UShortArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversed
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3370,6 +3388,8 @@ public fun UIntArray.reversed(): List<UInt> {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversed
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3384,6 +3404,8 @@ public fun ULongArray.reversed(): List<ULong> {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversed
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3398,6 +3420,8 @@ public fun UByteArray.reversed(): List<UByte> {
  * Returns a list with elements in reversed order.
  * 
  * Use [reversedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.reversed
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3458,6 +3482,8 @@ public inline fun UShortArray.reversedArray(): UShortArray {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3467,6 +3493,8 @@ public fun UIntArray.shuffle(): Unit {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3476,6 +3504,8 @@ public fun ULongArray.shuffle(): Unit {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3485,6 +3515,8 @@ public fun UByteArray.shuffle(): Unit {
 
 /**
  * Randomly shuffles elements in this array in-place.
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffle
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3496,6 +3528,8 @@ public fun UShortArray.shuffle(): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3512,6 +3546,8 @@ public fun UIntArray.shuffle(random: Random): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3528,6 +3564,8 @@ public fun ULongArray.shuffle(random: Random): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3544,6 +3582,8 @@ public fun UByteArray.shuffle(random: Random): Unit {
  * Randomly shuffles elements in this array in-place using the specified [random] instance as the source of randomness.
  * 
  * See: [A modern version of Fisher-Yates shuffle algorithm](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm).
+ * 
+ * @sample samples.collections.Collections.Sorting.shuffleRandom
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3608,6 +3648,8 @@ public fun UShortArray.sortDescending(): Unit {
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * Use [sortedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sorted
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3619,6 +3661,8 @@ public fun UIntArray.sorted(): List<UInt> {
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * Use [sortedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sorted
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3630,6 +3674,8 @@ public fun ULongArray.sorted(): List<ULong> {
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * Use [sortedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sorted
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3641,6 +3687,8 @@ public fun UByteArray.sorted(): List<UByte> {
  * Returns a list of all elements sorted according to their natural sort order.
  * 
  * Use [sortedArray] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sorted
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3748,6 +3796,8 @@ public fun UShortArray.sortedArrayDescending(): UShortArray {
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * Use [sortedArrayDescending] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sorted
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3759,6 +3809,8 @@ public fun UIntArray.sortedDescending(): List<UInt> {
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * Use [sortedArrayDescending] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sorted
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3770,6 +3822,8 @@ public fun ULongArray.sortedDescending(): List<ULong> {
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * Use [sortedArrayDescending] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sorted
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3781,6 +3835,8 @@ public fun UByteArray.sortedDescending(): List<UByte> {
  * Returns a list of all elements sorted descending according to their natural sort order.
  * 
  * Use [sortedArrayDescending] if you need to get the result in an array.
+ * 
+ * @sample samples.collections.Collections.Sorting.sorted
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
