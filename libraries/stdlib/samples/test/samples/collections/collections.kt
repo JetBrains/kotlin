@@ -1806,6 +1806,48 @@ class Collections {
             assertPrints(cats, "[Scratchy]")
         }
 
+        @Sample
+        fun slice() {
+            val words = listOf("cherry", "apple", "banana", "kiwi", "lime")
+
+            assertPrints(words.slice(listOf(1, 3, 4)), "[apple, kiwi, lime]")
+            // indices may be given in any order and may repeat
+            assertPrints(words.slice(listOf(4, 0)), "[lime, cherry]")
+
+            val digits = intArrayOf(0, 1, 2, 3, 4)
+            assertPrints(digits.slice(listOf(2, 4)).toList(), "[2, 4]")
+        }
+
+        @Sample
+        fun sliceRange() {
+            val words = listOf("cherry", "apple", "banana", "kiwi", "lime")
+
+            assertPrints(words.slice(1..3), "[apple, banana, kiwi]")
+
+            val digits = intArrayOf(0, 1, 2, 3, 4)
+            assertPrints(digits.slice(3..4).toList(), "[3, 4]")
+        }
+
+        @Sample
+        fun sliceArray() {
+            val words = arrayOf("cherry", "apple", "banana", "kiwi")
+
+            assertPrints(words.sliceArray(listOf(1, 3)).toList(), "[apple, kiwi]")
+
+            val digits = intArrayOf(0, 1, 2, 3, 4)
+            assertPrints(digits.sliceArray(setOf(2, 4)).toList(), "[2, 4]")
+        }
+
+        @Sample
+        fun sliceArrayRange() {
+            val words = arrayOf("cherry", "apple", "banana", "kiwi")
+
+            assertPrints(words.sliceArray(1..2).toList(), "[apple, banana]")
+
+            val digits = intArrayOf(0, 1, 2, 3, 4)
+            assertPrints(digits.sliceArray(0..0).toList(), "[0]")
+        }
+
     }
 
     @Nested

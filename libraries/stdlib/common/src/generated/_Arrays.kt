@@ -4619,6 +4619,8 @@ public inline fun <C : MutableCollection<in Char>> CharArray.filterTo(destinatio
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 public fun <T> Array<out T>.slice(indices: IntRange): List<T> {
     if (indices.isEmpty()) return listOf()
@@ -4627,6 +4629,8 @@ public fun <T> Array<out T>.slice(indices: IntRange): List<T> {
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 public fun ByteArray.slice(indices: IntRange): List<Byte> {
     if (indices.isEmpty()) return listOf()
@@ -4635,6 +4639,8 @@ public fun ByteArray.slice(indices: IntRange): List<Byte> {
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 public fun ShortArray.slice(indices: IntRange): List<Short> {
     if (indices.isEmpty()) return listOf()
@@ -4643,6 +4649,8 @@ public fun ShortArray.slice(indices: IntRange): List<Short> {
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 public fun IntArray.slice(indices: IntRange): List<Int> {
     if (indices.isEmpty()) return listOf()
@@ -4651,6 +4659,8 @@ public fun IntArray.slice(indices: IntRange): List<Int> {
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 public fun LongArray.slice(indices: IntRange): List<Long> {
     if (indices.isEmpty()) return listOf()
@@ -4659,6 +4669,8 @@ public fun LongArray.slice(indices: IntRange): List<Long> {
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 public fun FloatArray.slice(indices: IntRange): List<Float> {
     if (indices.isEmpty()) return listOf()
@@ -4667,6 +4679,8 @@ public fun FloatArray.slice(indices: IntRange): List<Float> {
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 public fun DoubleArray.slice(indices: IntRange): List<Double> {
     if (indices.isEmpty()) return listOf()
@@ -4675,6 +4689,8 @@ public fun DoubleArray.slice(indices: IntRange): List<Double> {
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 public fun BooleanArray.slice(indices: IntRange): List<Boolean> {
     if (indices.isEmpty()) return listOf()
@@ -4683,6 +4699,8 @@ public fun BooleanArray.slice(indices: IntRange): List<Boolean> {
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 public fun CharArray.slice(indices: IntRange): List<Char> {
     if (indices.isEmpty()) return listOf()
@@ -4691,6 +4709,8 @@ public fun CharArray.slice(indices: IntRange): List<Char> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
     val size = indices.collectionSizeOrDefault(10)
@@ -4704,6 +4724,8 @@ public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
     val size = indices.collectionSizeOrDefault(10)
@@ -4717,6 +4739,8 @@ public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
     val size = indices.collectionSizeOrDefault(10)
@@ -4730,6 +4754,8 @@ public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
     val size = indices.collectionSizeOrDefault(10)
@@ -4743,6 +4769,8 @@ public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
     val size = indices.collectionSizeOrDefault(10)
@@ -4756,6 +4784,8 @@ public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
     val size = indices.collectionSizeOrDefault(10)
@@ -4769,6 +4799,8 @@ public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
     val size = indices.collectionSizeOrDefault(10)
@@ -4782,6 +4814,8 @@ public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
     val size = indices.collectionSizeOrDefault(10)
@@ -4795,6 +4829,8 @@ public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 public fun CharArray.slice(indices: Iterable<Int>): List<Char> {
     val size = indices.collectionSizeOrDefault(10)
@@ -4808,6 +4844,8 @@ public fun CharArray.slice(indices: Iterable<Int>): List<Char> {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 public fun <T> Array<T>.sliceArray(indices: Collection<Int>): Array<T> {
     val result = arrayOfNulls(this, indices.size)
@@ -4820,6 +4858,8 @@ public fun <T> Array<T>.sliceArray(indices: Collection<Int>): Array<T> {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 public fun ByteArray.sliceArray(indices: Collection<Int>): ByteArray {
     val result = ByteArray(indices.size)
@@ -4832,6 +4872,8 @@ public fun ByteArray.sliceArray(indices: Collection<Int>): ByteArray {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 public fun ShortArray.sliceArray(indices: Collection<Int>): ShortArray {
     val result = ShortArray(indices.size)
@@ -4844,6 +4886,8 @@ public fun ShortArray.sliceArray(indices: Collection<Int>): ShortArray {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 public fun IntArray.sliceArray(indices: Collection<Int>): IntArray {
     val result = IntArray(indices.size)
@@ -4856,6 +4900,8 @@ public fun IntArray.sliceArray(indices: Collection<Int>): IntArray {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 public fun LongArray.sliceArray(indices: Collection<Int>): LongArray {
     val result = LongArray(indices.size)
@@ -4868,6 +4914,8 @@ public fun LongArray.sliceArray(indices: Collection<Int>): LongArray {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 public fun FloatArray.sliceArray(indices: Collection<Int>): FloatArray {
     val result = FloatArray(indices.size)
@@ -4880,6 +4928,8 @@ public fun FloatArray.sliceArray(indices: Collection<Int>): FloatArray {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 public fun DoubleArray.sliceArray(indices: Collection<Int>): DoubleArray {
     val result = DoubleArray(indices.size)
@@ -4892,6 +4942,8 @@ public fun DoubleArray.sliceArray(indices: Collection<Int>): DoubleArray {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 public fun BooleanArray.sliceArray(indices: Collection<Int>): BooleanArray {
     val result = BooleanArray(indices.size)
@@ -4904,6 +4956,8 @@ public fun BooleanArray.sliceArray(indices: Collection<Int>): BooleanArray {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 public fun CharArray.sliceArray(indices: Collection<Int>): CharArray {
     val result = CharArray(indices.size)
@@ -4916,6 +4970,8 @@ public fun CharArray.sliceArray(indices: Collection<Int>): CharArray {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 public fun <T> Array<T>.sliceArray(indices: IntRange): Array<T> {
     if (indices.isEmpty()) return copyOfRange(0, 0)
@@ -4924,6 +4980,8 @@ public fun <T> Array<T>.sliceArray(indices: IntRange): Array<T> {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 public fun ByteArray.sliceArray(indices: IntRange): ByteArray {
     if (indices.isEmpty()) return ByteArray(0)
@@ -4932,6 +4990,8 @@ public fun ByteArray.sliceArray(indices: IntRange): ByteArray {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
     if (indices.isEmpty()) return ShortArray(0)
@@ -4940,6 +5000,8 @@ public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 public fun IntArray.sliceArray(indices: IntRange): IntArray {
     if (indices.isEmpty()) return IntArray(0)
@@ -4948,6 +5010,8 @@ public fun IntArray.sliceArray(indices: IntRange): IntArray {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 public fun LongArray.sliceArray(indices: IntRange): LongArray {
     if (indices.isEmpty()) return LongArray(0)
@@ -4956,6 +5020,8 @@ public fun LongArray.sliceArray(indices: IntRange): LongArray {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 public fun FloatArray.sliceArray(indices: IntRange): FloatArray {
     if (indices.isEmpty()) return FloatArray(0)
@@ -4964,6 +5030,8 @@ public fun FloatArray.sliceArray(indices: IntRange): FloatArray {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 public fun DoubleArray.sliceArray(indices: IntRange): DoubleArray {
     if (indices.isEmpty()) return DoubleArray(0)
@@ -4972,6 +5040,8 @@ public fun DoubleArray.sliceArray(indices: IntRange): DoubleArray {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 public fun BooleanArray.sliceArray(indices: IntRange): BooleanArray {
     if (indices.isEmpty()) return BooleanArray(0)
@@ -4980,6 +5050,8 @@ public fun BooleanArray.sliceArray(indices: IntRange): BooleanArray {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 public fun CharArray.sliceArray(indices: IntRange): CharArray {
     if (indices.isEmpty()) return CharArray(0)

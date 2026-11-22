@@ -1193,4 +1193,22 @@ class Strings {
         assertPrints(emptyString.indexOfLast { it == 'z' }, "-1")
     }
 
+    @Sample
+    fun slice() {
+        val word = "kotlin"
+
+        // the characters at the given indices in the given order
+        assertPrints(word.slice(listOf(0, 2, 4)), "kti")
+        assertPrints(word.slice(listOf(4, 1)), "io")
+    }
+
+    @Sample
+    fun sliceRange() {
+        val word = "kotlin"
+
+        assertPrints(word.slice(1..3), "otl")
+
+        assertPrints(word.slice(5..5), "n")
+    }
+
 }

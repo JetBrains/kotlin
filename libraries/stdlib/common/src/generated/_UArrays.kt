@@ -2278,6 +2278,8 @@ public inline fun <C : MutableCollection<in UShort>> UShortArray.filterTo(destin
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2288,6 +2290,8 @@ public fun UIntArray.slice(indices: IntRange): List<UInt> {
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2298,6 +2302,8 @@ public fun ULongArray.slice(indices: IntRange): List<ULong> {
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2308,6 +2314,8 @@ public fun UByteArray.slice(indices: IntRange): List<UByte> {
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2318,6 +2326,8 @@ public fun UShortArray.slice(indices: IntRange): List<UShort> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2333,6 +2343,8 @@ public fun UIntArray.slice(indices: Iterable<Int>): List<UInt> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2348,6 +2360,8 @@ public fun ULongArray.slice(indices: Iterable<Int>): List<ULong> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2363,6 +2377,8 @@ public fun UByteArray.slice(indices: Iterable<Int>): List<UByte> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2378,6 +2394,8 @@ public fun UShortArray.slice(indices: Iterable<Int>): List<UShort> {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2387,6 +2405,8 @@ public fun UIntArray.sliceArray(indices: Collection<Int>): UIntArray {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2396,6 +2416,8 @@ public fun ULongArray.sliceArray(indices: Collection<Int>): ULongArray {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2405,6 +2427,8 @@ public fun UByteArray.sliceArray(indices: Collection<Int>): UByteArray {
 
 /**
  * Returns an array containing elements of this array at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2414,6 +2438,8 @@ public fun UShortArray.sliceArray(indices: Collection<Int>): UShortArray {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2423,6 +2449,8 @@ public fun UIntArray.sliceArray(indices: IntRange): UIntArray {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2432,6 +2460,8 @@ public fun ULongArray.sliceArray(indices: IntRange): ULongArray {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -2441,6 +2471,8 @@ public fun UByteArray.sliceArray(indices: IntRange): UByteArray {
 
 /**
  * Returns an array containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceArrayRange
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

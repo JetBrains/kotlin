@@ -884,6 +884,8 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destinat
 
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
+ * 
+ * @sample samples.collections.Collections.Filtering.sliceRange
  */
 public fun <T> List<T>.slice(indices: IntRange): List<T> {
     if (indices.isEmpty()) return listOf()
@@ -892,6 +894,8 @@ public fun <T> List<T>.slice(indices: IntRange): List<T> {
 
 /**
  * Returns a list containing elements at specified [indices].
+ * 
+ * @sample samples.collections.Collections.Filtering.slice
  */
 public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
     val size = indices.collectionSizeOrDefault(10)

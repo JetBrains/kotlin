@@ -527,6 +527,8 @@ public inline fun <C : Appendable> CharSequence.filterTo(destination: C, predica
 
 /**
  * Returns a char sequence containing characters of the original char sequence at the specified range of [indices].
+ * 
+ * @sample samples.text.Strings.sliceRange
  */
 public fun CharSequence.slice(indices: IntRange): CharSequence {
     if (indices.isEmpty()) return ""
@@ -535,6 +537,8 @@ public fun CharSequence.slice(indices: IntRange): CharSequence {
 
 /**
  * Returns a string containing characters of the original string at the specified range of [indices].
+ * 
+ * @sample samples.text.Strings.sliceRange
  */
 public fun String.slice(indices: IntRange): String {
     if (indices.isEmpty()) return ""
@@ -543,6 +547,8 @@ public fun String.slice(indices: IntRange): String {
 
 /**
  * Returns a char sequence containing characters of the original char sequence at specified [indices].
+ * 
+ * @sample samples.text.Strings.slice
  */
 public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {
     val size = indices.collectionSizeOrDefault(10)
@@ -556,6 +562,8 @@ public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {
 
 /**
  * Returns a string containing characters of the original string at specified [indices].
+ * 
+ * @sample samples.text.Strings.slice
  */
 @kotlin.internal.InlineOnly
 public inline fun String.slice(indices: Iterable<Int>): String {

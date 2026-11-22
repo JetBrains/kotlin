@@ -918,6 +918,10 @@ object Filtering : TemplateGroupBase() {
         include(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns a list containing elements at specified [indices]." }
+        sample("samples.collections.Collections.Filtering.slice")
+        specialFor(CharSequences, Strings) {
+            sample("samples.text.Strings.slice")
+        }
         returns("List<T>")
         body {
             """
@@ -956,6 +960,10 @@ object Filtering : TemplateGroupBase() {
         include(CharSequences, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns a list containing elements at indices in the specified [indices] range." }
+        sample("samples.collections.Collections.Filtering.sliceRange")
+        specialFor(CharSequences, Strings) {
+            sample("samples.text.Strings.sliceRange")
+        }
         returns("List<T>")
         body(Lists) {
             """
@@ -986,6 +994,7 @@ object Filtering : TemplateGroupBase() {
         include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns an array containing elements of this array at specified [indices]." }
+        sample("samples.collections.Collections.Filtering.sliceArray")
         returns("SELF")
         body(InvariantArraysOfObjects) {
             """
@@ -1018,6 +1027,7 @@ object Filtering : TemplateGroupBase() {
         include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns an array containing elements at indices in the specified [indices] range." }
+        sample("samples.collections.Collections.Filtering.sliceArrayRange")
         returns("SELF")
         body(InvariantArraysOfObjects) {
             """
