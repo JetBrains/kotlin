@@ -1066,6 +1066,10 @@ object Aggregates : TemplateGroupBase() {
             and the ${f.element} itself, and calculates the next accumulator value.
             """
         }
+        sample("samples.collections.Collections.Aggregates.fold")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.fold")
+        }
         typeParam("R")
         returns("R")
         body {
@@ -1095,6 +1099,10 @@ object Aggregates : TemplateGroupBase() {
             @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
             and current accumulator value, and calculates the next accumulator value.
             """
+        }
+        sample("samples.collections.Collections.Aggregates.foldRight")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.foldRight")
         }
         typeParam("R")
         returns("R")
@@ -1142,6 +1150,10 @@ object Aggregates : TemplateGroupBase() {
             @param [operation] function that takes current accumulator value and ${f.element.prefixWithArticle()}, and calculates the next accumulator value.
             """
         }
+        sample("samples.collections.Collections.Aggregates.fold")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.fold")
+        }
         typeParam("R")
         returns("R")
         body {
@@ -1168,6 +1180,10 @@ object Aggregates : TemplateGroupBase() {
 
             @param [operation] function that takes ${f.element.prefixWithArticle()} and current accumulator value, and calculates the next accumulator value.
             """
+        }
+        sample("samples.collections.Collections.Aggregates.foldRight")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.foldRight")
         }
         typeParam("R")
         returns("R")

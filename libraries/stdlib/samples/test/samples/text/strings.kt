@@ -1193,4 +1193,22 @@ class Strings {
         assertPrints(emptyString.indexOfLast { it == 'z' }, "-1")
     }
 
+    @Sample
+    fun fold() {
+        val letters = "abcd"
+        assertPrints(letters.fold("s") { acc, letter -> acc + letter }, "sabcd")
+        assertPrints(letters.foldIndexed("s") { index, acc, letter -> acc + letter + index }, "sa0b1c2d3")
+
+        assertPrints("".fold("s") { _, _ -> "X" }, "s")
+    }
+
+    @Sample
+    fun foldRight() {
+        val letters = "abcd"
+        assertPrints(letters.foldRight("s") { letter, acc -> "$letter$acc" }, "abcds")
+        assertPrints(letters.foldRightIndexed("s") { index, letter, acc -> "$letter$index$acc" }, "a0b1c2d3s")
+
+        assertPrints("".foldRight("s") { _, _ -> "X" }, "s")
+    }
+
 }

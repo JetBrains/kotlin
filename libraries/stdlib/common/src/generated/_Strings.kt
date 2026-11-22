@@ -1140,6 +1140,8 @@ public inline fun CharSequence.count(predicate: (Char) -> Boolean): Int {
  * Returns the specified [initial] value if the char sequence is empty.
  * 
  * @param [operation] function that takes current accumulator value and a character, and calculates the next accumulator value.
+ * 
+ * @sample samples.text.Strings.fold
  */
 public inline fun <R> CharSequence.fold(initial: R, operation: (acc: R, Char) -> R): R {
     var accumulator = initial
@@ -1155,6 +1157,8 @@ public inline fun <R> CharSequence.fold(initial: R, operation: (acc: R, Char) ->
  * 
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.text.Strings.fold
  */
 public inline fun <R> CharSequence.foldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): R {
     var index = 0
@@ -1170,6 +1174,8 @@ public inline fun <R> CharSequence.foldIndexed(initial: R, operation: (index: In
  * Returns the specified [initial] value if the char sequence is empty.
  * 
  * @param [operation] function that takes a character and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.text.Strings.foldRight
  */
 public inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, acc: R) -> R): R {
     var index = lastIndex
@@ -1188,6 +1194,8 @@ public inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, acc: 
  * 
  * @param [operation] function that takes the index of a character, the character itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.text.Strings.foldRight
  */
 public inline fun <R> CharSequence.foldRightIndexed(initial: R, operation: (index: Int, Char, acc: R) -> R): R {
     var index = lastIndex

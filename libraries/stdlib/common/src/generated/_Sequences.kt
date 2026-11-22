@@ -1613,6 +1613,8 @@ public inline fun <T> Sequence<T>.count(predicate: (T) -> Boolean): Int {
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <T, R> Sequence<T>.fold(initial: R, operation: (acc: R, T) -> R): R {
     var accumulator = initial
@@ -1630,6 +1632,8 @@ public inline fun <T, R> Sequence<T>.fold(initial: R, operation: (acc: R, T) -> 
  * and the element itself, and calculates the next accumulator value.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <T, R> Sequence<T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R {
     var index = 0

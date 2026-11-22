@@ -6631,6 +6631,8 @@ public inline fun UShortArray.count(predicate: (UShort) -> Boolean): Int {
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6648,6 +6650,8 @@ public inline fun <R> UIntArray.fold(initial: R, operation: (acc: R, UInt) -> R)
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6665,6 +6669,8 @@ public inline fun <R> ULongArray.fold(initial: R, operation: (acc: R, ULong) -> 
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6682,6 +6688,8 @@ public inline fun <R> UByteArray.fold(initial: R, operation: (acc: R, UByte) -> 
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6700,6 +6708,8 @@ public inline fun <R> UShortArray.fold(initial: R, operation: (acc: R, UShort) -
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6719,6 +6729,8 @@ public inline fun <R> UIntArray.foldIndexed(initial: R, operation: (index: Int, 
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6738,6 +6750,8 @@ public inline fun <R> ULongArray.foldIndexed(initial: R, operation: (index: Int,
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6757,6 +6771,8 @@ public inline fun <R> UByteArray.foldIndexed(initial: R, operation: (index: Int,
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6775,6 +6791,8 @@ public inline fun <R> UShortArray.foldIndexed(initial: R, operation: (index: Int
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6795,6 +6813,8 @@ public inline fun <R> UIntArray.foldRight(initial: R, operation: (UInt, acc: R) 
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6815,6 +6835,8 @@ public inline fun <R> ULongArray.foldRight(initial: R, operation: (ULong, acc: R
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6835,6 +6857,8 @@ public inline fun <R> UByteArray.foldRight(initial: R, operation: (UByte, acc: R
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6856,6 +6880,8 @@ public inline fun <R> UShortArray.foldRight(initial: R, operation: (UShort, acc:
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6878,6 +6904,8 @@ public inline fun <R> UIntArray.foldRightIndexed(initial: R, operation: (index: 
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6900,6 +6928,8 @@ public inline fun <R> ULongArray.foldRightIndexed(initial: R, operation: (index:
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6922,6 +6952,8 @@ public inline fun <R> UByteArray.foldRightIndexed(initial: R, operation: (index:
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

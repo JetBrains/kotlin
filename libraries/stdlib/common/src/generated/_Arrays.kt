@@ -15586,6 +15586,8 @@ public inline fun CharArray.count(predicate: (Char) -> Boolean): Int {
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <T, R> Array<out T>.fold(initial: R, operation: (acc: R, T) -> R): R {
     var accumulator = initial
@@ -15600,6 +15602,8 @@ public inline fun <T, R> Array<out T>.fold(initial: R, operation: (acc: R, T) ->
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> ByteArray.fold(initial: R, operation: (acc: R, Byte) -> R): R {
     var accumulator = initial
@@ -15614,6 +15618,8 @@ public inline fun <R> ByteArray.fold(initial: R, operation: (acc: R, Byte) -> R)
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> ShortArray.fold(initial: R, operation: (acc: R, Short) -> R): R {
     var accumulator = initial
@@ -15628,6 +15634,8 @@ public inline fun <R> ShortArray.fold(initial: R, operation: (acc: R, Short) -> 
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> IntArray.fold(initial: R, operation: (acc: R, Int) -> R): R {
     var accumulator = initial
@@ -15642,6 +15650,8 @@ public inline fun <R> IntArray.fold(initial: R, operation: (acc: R, Int) -> R): 
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> LongArray.fold(initial: R, operation: (acc: R, Long) -> R): R {
     var accumulator = initial
@@ -15656,6 +15666,8 @@ public inline fun <R> LongArray.fold(initial: R, operation: (acc: R, Long) -> R)
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> FloatArray.fold(initial: R, operation: (acc: R, Float) -> R): R {
     var accumulator = initial
@@ -15670,6 +15682,8 @@ public inline fun <R> FloatArray.fold(initial: R, operation: (acc: R, Float) -> 
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> DoubleArray.fold(initial: R, operation: (acc: R, Double) -> R): R {
     var accumulator = initial
@@ -15684,6 +15698,8 @@ public inline fun <R> DoubleArray.fold(initial: R, operation: (acc: R, Double) -
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> BooleanArray.fold(initial: R, operation: (acc: R, Boolean) -> R): R {
     var accumulator = initial
@@ -15698,6 +15714,8 @@ public inline fun <R> BooleanArray.fold(initial: R, operation: (acc: R, Boolean)
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> CharArray.fold(initial: R, operation: (acc: R, Char) -> R): R {
     var accumulator = initial
@@ -15713,6 +15731,8 @@ public inline fun <R> CharArray.fold(initial: R, operation: (acc: R, Char) -> R)
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <T, R> Array<out T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R {
     var index = 0
@@ -15729,6 +15749,8 @@ public inline fun <T, R> Array<out T>.foldIndexed(initial: R, operation: (index:
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> ByteArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Byte) -> R): R {
     var index = 0
@@ -15745,6 +15767,8 @@ public inline fun <R> ByteArray.foldIndexed(initial: R, operation: (index: Int, 
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> ShortArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Short) -> R): R {
     var index = 0
@@ -15761,6 +15785,8 @@ public inline fun <R> ShortArray.foldIndexed(initial: R, operation: (index: Int,
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> IntArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Int) -> R): R {
     var index = 0
@@ -15777,6 +15803,8 @@ public inline fun <R> IntArray.foldIndexed(initial: R, operation: (index: Int, a
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> LongArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Long) -> R): R {
     var index = 0
@@ -15793,6 +15821,8 @@ public inline fun <R> LongArray.foldIndexed(initial: R, operation: (index: Int, 
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> FloatArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Float) -> R): R {
     var index = 0
@@ -15809,6 +15839,8 @@ public inline fun <R> FloatArray.foldIndexed(initial: R, operation: (index: Int,
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> DoubleArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Double) -> R): R {
     var index = 0
@@ -15825,6 +15857,8 @@ public inline fun <R> DoubleArray.foldIndexed(initial: R, operation: (index: Int
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> BooleanArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Boolean) -> R): R {
     var index = 0
@@ -15841,6 +15875,8 @@ public inline fun <R> BooleanArray.foldIndexed(initial: R, operation: (index: In
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <R> CharArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): R {
     var index = 0
@@ -15856,6 +15892,8 @@ public inline fun <R> CharArray.foldIndexed(initial: R, operation: (index: Int, 
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, acc: R) -> R): R {
     var index = lastIndex
@@ -15873,6 +15911,8 @@ public inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, acc: 
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, acc: R) -> R): R {
     var index = lastIndex
@@ -15890,6 +15930,8 @@ public inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, acc: R) 
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, acc: R) -> R): R {
     var index = lastIndex
@@ -15907,6 +15949,8 @@ public inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, acc: R
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> IntArray.foldRight(initial: R, operation: (Int, acc: R) -> R): R {
     var index = lastIndex
@@ -15924,6 +15968,8 @@ public inline fun <R> IntArray.foldRight(initial: R, operation: (Int, acc: R) ->
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> LongArray.foldRight(initial: R, operation: (Long, acc: R) -> R): R {
     var index = lastIndex
@@ -15941,6 +15987,8 @@ public inline fun <R> LongArray.foldRight(initial: R, operation: (Long, acc: R) 
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, acc: R) -> R): R {
     var index = lastIndex
@@ -15958,6 +16006,8 @@ public inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, acc: R
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, acc: R) -> R): R {
     var index = lastIndex
@@ -15975,6 +16025,8 @@ public inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, acc:
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, acc: R) -> R): R {
     var index = lastIndex
@@ -15992,6 +16044,8 @@ public inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, ac
  * Returns the specified [initial] value if the array is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> CharArray.foldRight(initial: R, operation: (Char, acc: R) -> R): R {
     var index = lastIndex
@@ -16010,6 +16064,8 @@ public inline fun <R> CharArray.foldRight(initial: R, operation: (Char, acc: R) 
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <T, R> Array<out T>.foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R): R {
     var index = lastIndex
@@ -16029,6 +16085,8 @@ public inline fun <T, R> Array<out T>.foldRightIndexed(initial: R, operation: (i
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> ByteArray.foldRightIndexed(initial: R, operation: (index: Int, Byte, acc: R) -> R): R {
     var index = lastIndex
@@ -16048,6 +16106,8 @@ public inline fun <R> ByteArray.foldRightIndexed(initial: R, operation: (index: 
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> ShortArray.foldRightIndexed(initial: R, operation: (index: Int, Short, acc: R) -> R): R {
     var index = lastIndex
@@ -16067,6 +16127,8 @@ public inline fun <R> ShortArray.foldRightIndexed(initial: R, operation: (index:
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> IntArray.foldRightIndexed(initial: R, operation: (index: Int, Int, acc: R) -> R): R {
     var index = lastIndex
@@ -16086,6 +16148,8 @@ public inline fun <R> IntArray.foldRightIndexed(initial: R, operation: (index: I
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> LongArray.foldRightIndexed(initial: R, operation: (index: Int, Long, acc: R) -> R): R {
     var index = lastIndex
@@ -16105,6 +16169,8 @@ public inline fun <R> LongArray.foldRightIndexed(initial: R, operation: (index: 
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> FloatArray.foldRightIndexed(initial: R, operation: (index: Int, Float, acc: R) -> R): R {
     var index = lastIndex
@@ -16124,6 +16190,8 @@ public inline fun <R> FloatArray.foldRightIndexed(initial: R, operation: (index:
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> DoubleArray.foldRightIndexed(initial: R, operation: (index: Int, Double, acc: R) -> R): R {
     var index = lastIndex
@@ -16143,6 +16211,8 @@ public inline fun <R> DoubleArray.foldRightIndexed(initial: R, operation: (index
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> BooleanArray.foldRightIndexed(initial: R, operation: (index: Int, Boolean, acc: R) -> R): R {
     var index = lastIndex
@@ -16162,6 +16232,8 @@ public inline fun <R> BooleanArray.foldRightIndexed(initial: R, operation: (inde
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <R> CharArray.foldRightIndexed(initial: R, operation: (index: Int, Char, acc: R) -> R): R {
     var index = lastIndex

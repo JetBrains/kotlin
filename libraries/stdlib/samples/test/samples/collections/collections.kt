@@ -1377,6 +1377,24 @@ class Collections {
 
             assertPrints(emptyList<String>().runningReduce { _, _ -> "X" }, "[]")
         }
+
+        @Sample
+        fun fold() {
+            val strings = listOf("a", "b", "c", "d")
+            assertPrints(strings.fold("s") { acc, string -> acc + string }, "sabcd")
+            assertPrints(strings.foldIndexed("s") { index, acc, string -> acc + string + index }, "sa0b1c2d3")
+
+            assertPrints(emptyList<String>().fold("s") { _, _ -> "X" }, "s")
+        }
+
+        @Sample
+        fun foldRight() {
+            val strings = listOf("a", "b", "c", "d")
+            assertPrints(strings.foldRight("s") { string, acc -> string + acc }, "abcds")
+            assertPrints(strings.foldRightIndexed("s") { index, string, acc -> string + index + acc }, "a0b1c2d3s")
+
+            assertPrints(emptyList<String>().foldRight("s") { _, _ -> "X" }, "s")
+        }
     }
 
     @Nested

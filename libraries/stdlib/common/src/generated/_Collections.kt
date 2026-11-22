@@ -2134,6 +2134,8 @@ public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int {
  * Returns the specified [initial] value if the collection is empty.
  * 
  * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> R): R {
     var accumulator = initial
@@ -2149,6 +2151,8 @@ public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> 
  * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.fold
  */
 public inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R {
     var index = 0
@@ -2164,6 +2168,8 @@ public inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (index: 
  * Returns the specified [initial] value if the list is empty.
  * 
  * @param [operation] function that takes an element and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, acc: R) -> R): R {
     var accumulator = initial
@@ -2184,6 +2190,8 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, acc: R) ->
  * 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.foldRight
  */
 public inline fun <T, R> List<T>.foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R): R {
     var accumulator = initial
