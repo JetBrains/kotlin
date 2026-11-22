@@ -545,6 +545,10 @@ object Aggregates : TemplateGroupBase() {
 
         inline()
         doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
+        sample("samples.collections.Collections.Aggregates.sumBy")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.sumBy")
+        }
         returns("Int")
         body {
             """
@@ -597,6 +601,10 @@ object Aggregates : TemplateGroupBase() {
             }
 
             doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
+            sample("samples.collections.Collections.Aggregates.sumOf")
+            specialFor(CharSequences) {
+                sample("samples.text.Strings.sumOf")
+            }
             returns(selectorType)
             body {
                 """
@@ -620,6 +628,10 @@ object Aggregates : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
+        sample("samples.collections.Collections.Aggregates.sumByDouble")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.sumByDouble")
+        }
         returns("Double")
         body {
             """

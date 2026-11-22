@@ -1377,6 +1377,35 @@ class Collections {
 
             assertPrints(emptyList<String>().runningReduce { _, _ -> "X" }, "[]")
         }
+
+        @Suppress("DEPRECATION")
+        @Sample
+        fun sumBy() {
+            val strings = listOf("a", "ab", "abc")
+
+            assertPrints(strings.sumBy { it.length }, "6")
+        }
+
+        @Suppress("DEPRECATION")
+        @Sample
+        fun sumByDouble() {
+            val measurements = listOf(0.5, 1.5, 2.5)
+
+            assertPrints(measurements.sumByDouble { it * 2 }, "9.0")
+        }
+
+        @Sample
+        fun sumOf() {
+            val numbers = listOf(1, 2, 3, 4)
+
+            assertPrints(numbers.sumOf { it * 2 }, "20")
+            assertPrints(numbers.sumOf { it.toLong() * 1_000_000_000 }, "10000000000")
+            assertPrints(numbers.sumOf { it.toUInt() * 2u }, "20")
+            assertPrints(numbers.sumOf { it.toULong() * 2uL }, "20")
+            assertPrints(numbers.sumOf { it * 1.5 }, "15.0")
+            assertPrints(numbers.sumOf { it.toBigDecimal() }, "10")
+            assertPrints(numbers.sumOf { it.toBigInteger() }, "10")
+        }
     }
 
     @Nested

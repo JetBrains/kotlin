@@ -3422,6 +3422,8 @@ public inline fun <T, R> Iterable<T>.scanIndexed(initial: R, operation: (index: 
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumBy
  */
 @Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -3435,6 +3437,8 @@ public inline fun <T> Iterable<T>.sumBy(selector: (T) -> Int): Int {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumByDouble
  */
 @Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -3448,6 +3452,8 @@ public inline fun <T> Iterable<T>.sumByDouble(selector: (T) -> Double): Double {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -3464,6 +3470,8 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Double): Double {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @kotlin.jvm.JvmName("sumOfInt")
@@ -3478,6 +3486,8 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Int): Int {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -3494,6 +3504,8 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Long): Long {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.5")
 @kotlin.jvm.JvmName("sumOfUInt")
@@ -3508,6 +3520,8 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> UInt): UInt {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)

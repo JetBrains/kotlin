@@ -75,6 +75,8 @@ public fun CharSequence.minWith(comparator: Comparator<in Char>): Char? {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
+ * 
+ * @sample samples.text.Strings.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -91,6 +93,8 @@ public inline fun CharSequence.sumOf(selector: (Char) -> java.math.BigDecimal): 
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
+ * 
+ * @sample samples.text.Strings.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)

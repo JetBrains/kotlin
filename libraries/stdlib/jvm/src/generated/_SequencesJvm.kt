@@ -138,6 +138,8 @@ public fun <T> Sequence<T>.minWith(comparator: Comparator<in T>): T? {
  * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -156,6 +158,8 @@ public inline fun <T> Sequence<T>.sumOf(selector: (T) -> java.math.BigDecimal): 
  * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)

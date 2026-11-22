@@ -1193,4 +1193,28 @@ class Strings {
         assertPrints(emptyString.indexOfLast { it == 'z' }, "-1")
     }
 
+    @Suppress("DEPRECATION")
+    @Sample
+    fun sumBy() {
+        val chars = "kotlin"
+
+        assertPrints(chars.sumBy { it.code }, "657")
+    }
+
+    @Suppress("DEPRECATION")
+    @Sample
+    fun sumByDouble() {
+        val chars = "kotlin"
+
+        assertPrints(chars.sumByDouble { if (it == 'i') 0.5 else 1.0 }, "5.5")
+    }
+
+    @Sample
+    fun sumOf() {
+        val chars = "kotlin"
+
+        assertPrints(chars.sumOf { it.code }, "657")
+        assertPrints(chars.sumOf { if (it == 'n') 0.5 else 1.0 }, "5.5")
+    }
+
 }

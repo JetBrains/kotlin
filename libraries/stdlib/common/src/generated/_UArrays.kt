@@ -11290,6 +11290,8 @@ public inline fun <R> UShortArray.scanIndexed(initial: R, operation: (index: Int
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumBy
  */
 @Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -11306,6 +11308,8 @@ public inline fun UIntArray.sumBy(selector: (UInt) -> UInt): UInt {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumBy
  */
 @Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -11322,6 +11326,8 @@ public inline fun ULongArray.sumBy(selector: (ULong) -> UInt): UInt {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumBy
  */
 @Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -11338,6 +11344,8 @@ public inline fun UByteArray.sumBy(selector: (UByte) -> UInt): UInt {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumBy
  */
 @Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -11354,6 +11362,8 @@ public inline fun UShortArray.sumBy(selector: (UShort) -> UInt): UInt {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumByDouble
  */
 @Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -11370,6 +11380,8 @@ public inline fun UIntArray.sumByDouble(selector: (UInt) -> Double): Double {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumByDouble
  */
 @Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -11386,6 +11398,8 @@ public inline fun ULongArray.sumByDouble(selector: (ULong) -> Double): Double {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumByDouble
  */
 @Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -11402,6 +11416,8 @@ public inline fun UByteArray.sumByDouble(selector: (UByte) -> Double): Double {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumByDouble
  */
 @Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -11418,6 +11434,8 @@ public inline fun UShortArray.sumByDouble(selector: (UShort) -> Double): Double 
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -11436,6 +11454,8 @@ public inline fun UIntArray.sumOf(selector: (UInt) -> Double): Double {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -11454,6 +11474,8 @@ public inline fun ULongArray.sumOf(selector: (ULong) -> Double): Double {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -11472,6 +11494,8 @@ public inline fun UByteArray.sumOf(selector: (UByte) -> Double): Double {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -11490,6 +11514,8 @@ public inline fun UShortArray.sumOf(selector: (UShort) -> Double): Double {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @Suppress("INAPPLICABLE_JVM_NAME")
@@ -11506,6 +11532,8 @@ public inline fun UIntArray.sumOf(selector: (UInt) -> Int): Int {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @Suppress("INAPPLICABLE_JVM_NAME")
@@ -11522,6 +11550,8 @@ public inline fun ULongArray.sumOf(selector: (ULong) -> Int): Int {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @Suppress("INAPPLICABLE_JVM_NAME")
@@ -11538,6 +11568,8 @@ public inline fun UByteArray.sumOf(selector: (UByte) -> Int): Int {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @Suppress("INAPPLICABLE_JVM_NAME")
@@ -11554,6 +11586,8 @@ public inline fun UShortArray.sumOf(selector: (UShort) -> Int): Int {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -11572,6 +11606,8 @@ public inline fun UIntArray.sumOf(selector: (UInt) -> Long): Long {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -11590,6 +11626,8 @@ public inline fun ULongArray.sumOf(selector: (ULong) -> Long): Long {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -11608,6 +11646,8 @@ public inline fun UByteArray.sumOf(selector: (UByte) -> Long): Long {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -11626,6 +11666,8 @@ public inline fun UShortArray.sumOf(selector: (UShort) -> Long): Long {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.5")
 @Suppress("INAPPLICABLE_JVM_NAME")
@@ -11642,6 +11684,8 @@ public inline fun UIntArray.sumOf(selector: (UInt) -> UInt): UInt {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.5")
 @Suppress("INAPPLICABLE_JVM_NAME")
@@ -11658,6 +11702,8 @@ public inline fun ULongArray.sumOf(selector: (ULong) -> UInt): UInt {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.5")
 @Suppress("INAPPLICABLE_JVM_NAME")
@@ -11674,6 +11720,8 @@ public inline fun UByteArray.sumOf(selector: (UByte) -> UInt): UInt {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.5")
 @Suppress("INAPPLICABLE_JVM_NAME")
@@ -11690,6 +11738,8 @@ public inline fun UShortArray.sumOf(selector: (UShort) -> UInt): UInt {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -11708,6 +11758,8 @@ public inline fun UIntArray.sumOf(selector: (UInt) -> ULong): ULong {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -11726,6 +11778,8 @@ public inline fun ULongArray.sumOf(selector: (ULong) -> ULong): ULong {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -11744,6 +11798,8 @@ public inline fun UByteArray.sumOf(selector: (UByte) -> ULong): ULong {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)

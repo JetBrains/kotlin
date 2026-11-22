@@ -2209,6 +2209,8 @@ public inline fun <R> CharSequence.scanIndexed(initial: R, operation: (index: In
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
+ * 
+ * @sample samples.text.Strings.sumBy
  */
 @Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -2222,6 +2224,8 @@ public inline fun CharSequence.sumBy(selector: (Char) -> Int): Int {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
+ * 
+ * @sample samples.text.Strings.sumByDouble
  */
 @Deprecated("Use sumOf instead.", ReplaceWith("this.sumOf(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
@@ -2235,6 +2239,8 @@ public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
+ * 
+ * @sample samples.text.Strings.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2251,6 +2257,8 @@ public inline fun CharSequence.sumOf(selector: (Char) -> Double): Double {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
+ * 
+ * @sample samples.text.Strings.sumOf
  */
 @SinceKotlin("1.4")
 @kotlin.jvm.JvmName("sumOfInt")
@@ -2265,6 +2273,8 @@ public inline fun CharSequence.sumOf(selector: (Char) -> Int): Int {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
+ * 
+ * @sample samples.text.Strings.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -2281,6 +2291,8 @@ public inline fun CharSequence.sumOf(selector: (Char) -> Long): Long {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
+ * 
+ * @sample samples.text.Strings.sumOf
  */
 @SinceKotlin("1.5")
 @kotlin.jvm.JvmName("sumOfUInt")
@@ -2295,6 +2307,8 @@ public inline fun CharSequence.sumOf(selector: (Char) -> UInt): UInt {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
+ * 
+ * @sample samples.text.Strings.sumOf
  */
 @SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)

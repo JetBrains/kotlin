@@ -515,6 +515,8 @@ public fun UShortArray.minWith(comparator: Comparator<in UShort>): UShort? {
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -533,6 +535,8 @@ public inline fun UIntArray.sumOf(selector: (UInt) -> java.math.BigDecimal): jav
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -551,6 +555,8 @@ public inline fun ULongArray.sumOf(selector: (ULong) -> java.math.BigDecimal): j
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -569,6 +575,8 @@ public inline fun UByteArray.sumOf(selector: (UByte) -> java.math.BigDecimal): j
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -587,6 +595,8 @@ public inline fun UShortArray.sumOf(selector: (UShort) -> java.math.BigDecimal):
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -605,6 +615,8 @@ public inline fun UIntArray.sumOf(selector: (UInt) -> java.math.BigInteger): jav
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -623,6 +635,8 @@ public inline fun ULongArray.sumOf(selector: (ULong) -> java.math.BigInteger): j
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
@@ -641,6 +655,8 @@ public inline fun UByteArray.sumOf(selector: (UByte) -> java.math.BigInteger): j
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ * 
+ * @sample samples.collections.Collections.Aggregates.sumOf
  */
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
