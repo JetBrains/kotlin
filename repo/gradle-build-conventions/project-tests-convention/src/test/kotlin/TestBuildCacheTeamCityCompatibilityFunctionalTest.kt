@@ -54,6 +54,9 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
         assertEquals(TaskOutcome.SUCCESS, result.fixtureTaskOutcome)
         assertEquals(expectedRecording, recordedExecutions().withoutVolatileParts())
         assertEquals(emptyList(), result.replayedTestMessages)
+        // Nothing was replayed, so there was nothing to settle for: a build that only runs its
+        // tests exits without the delay.
+        assertFalse("TestReplay: settled " in result.quotableOutput)
     }
 
     /**
@@ -74,6 +77,8 @@ class TestBuildCacheTeamCityCompatibilityFunctionalTest {
         assertEquals(TaskOutcome.FROM_CACHE, result.fixtureTaskOutcome)
         assertEquals(recorded, recordedExecutions(), "The build cache should restore the recording unchanged")
         assertContains(result.quotableOutput, CONFIGURATION_CACHE_REUSED)
+        // What the replay wrote is what the settle waits out, in proportion to it.
+        assertContains(result.quotableOutput, "TestReplay: settled ")
         assertEquals(1, result.replayedTestMessages.flows.size)
         assertEquals(expectedReplay, result.replayedTestMessages.withoutFlowIds())
     }

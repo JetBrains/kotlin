@@ -13,6 +13,7 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSuccessResult
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Reports the tests of the test tasks served from the Gradle Build Cache to TeamCity.
@@ -20,6 +21,13 @@ import java.util.concurrent.atomic.AtomicInteger
  * One service for the whole build, holding the `test-executions.jsonl` of every test task in the
  * graph; when it is subscribed to task completions is load bearing, see [configureTestInventory].
  * What is reported about a recording is [TestExecutionsReplay]'s; this is when, and where to.
+ *
+ * After a task's messages comes a settle: the build, and so the process its step runs, is kept
+ * alive a little longer so that the reader behind the step's output can drain what the replay
+ * left in the buffers between the processes - which the TeamCity Docker wrapper otherwise
+ * discards when the process exits. The settle is in proportion to what was written and bounded
+ * per build, so that the thread it blocks still drains well inside the time the build gives it,
+ * see [settleMillisFor].
  */
 abstract class TestBuildCacheTeamCityCompatibilityService :
     BuildService<TestBuildCacheTeamCityCompatibilityService.Parameters>,
@@ -42,6 +50,9 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
      */
     private val flowNumbers = AtomicInteger()
 
+    /** What this build's settles have taken between them, against the budget in [settleMillisFor]. */
+    private val settleSpent = AtomicLong()
+
     override fun onFinish(event: FinishEvent) {
         if (event !is TaskFinishEvent) return
         val taskPath = event.descriptor.taskPath
@@ -52,16 +63,58 @@ abstract class TestBuildCacheTeamCityCompatibilityService :
         val flowId = "R${flowNumbers.incrementAndGet()}"
         val replay = TestExecutionsReplay(taskPath, flowId) { message, failure -> log.warn(message, failure) }
         var count = 0
+        var emitted = 0L
         for (message in replay.messagesFor(executionsFile)) {
             println("##teamcity[$message]")
+            emitted += message.length + 13 // the '##teamcity[' and ']' wrapper and the newline
             count++
         }
 
         // Through the same 'println' the messages go through, and last, so that a log missing it is
         // a log whose replay was cut short - which TeamCity does to the tail of a large one.
-        // Never block this thread to wait for TeamCity: Gradle stops the listener executor when the
-        // build finishes and fails the build if it cannot, see the 5 s sleep tried on 2026-10-03.
         // The flow is named so a short id stays traceable to its task from the log alone.
         println("TestReplay: $count messages of $taskPath emitted in flow $flowId")
+
+        // Sleeping here was tried on 2026-10-03 and failed builds: a flat 5 s per task outlasted
+        // the sixty seconds the build gives this thread to drain, and the builds that failed
+        // replayed the most tasks. That is what the budget in settleMillisFor is for - what
+        // sleeps is what was written, capped per task and per build - and what sleeps for
+        // nothing, a replay that reported nothing, is nothing.
+        val settleMillis = settleMillisFor(emitted, settleSpent.get())
+        if (settleMillis > 0) {
+            println("TestReplay: settled $settleMillis ms after $taskPath")
+            Thread.sleep(settleMillis)
+            settleSpent.addAndGet(settleMillis)
+        }
     }
 }
+
+/** The rate the TeamCity agent ingests a step's output, characters per millisecond (~382 KiB/s, measured on CI). */
+private const val INGESTION_CHARS_PER_MS = 391L
+
+/** The longest settle that can deliver anything: the buffers between the processes hold about a megabyte. */
+private const val MAX_SETTLE_MILLIS = 3_000L
+
+/** What the settles of one build may take between them: half of the drain time the build gives its event thread. */
+private const val SETTLE_BUDGET_MILLIS = 30_000L
+
+/**
+ * How long to keep the build alive after a replay that wrote [emittedChars] characters.
+ *
+ * TeamCity's Docker wrapper discards whatever still sits in the buffers between the build's
+ * process and the agent when the process exits - moby closes an exec's streams two seconds
+ * after the exec'd process exits - and a replay can leave about a megabyte in them. The agent
+ * ingests a step's output at ~382 KiB/s, so the sleep is the time that output needs to drain:
+ * proportional to what there is of it, and a replay that wrote nothing sleeps nothing.
+ *
+ * No single settle runs longer than the buffers can hold, about three seconds' worth at that
+ * rate - a bigger one cannot deliver more than they contain. And no build settles for more
+ * than half of the sixty seconds it gives the one thread its events run on, the rest being
+ * the printing itself, which happens on the same thread: [alreadySpentMillis] is what this
+ * build's earlier settles took, so the budget is shared over the tasks that need it.
+ */
+internal fun settleMillisFor(emittedChars: Long, alreadySpentMillis: Long): Long =
+    (emittedChars / INGESTION_CHARS_PER_MS)
+        .coerceAtMost(MAX_SETTLE_MILLIS)
+        .coerceAtMost(SETTLE_BUDGET_MILLIS - alreadySpentMillis)
+        .coerceAtLeast(0)
