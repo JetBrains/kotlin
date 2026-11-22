@@ -447,8 +447,11 @@ internal object KotlinToolingDiagnostics {
                     "The Kotlin/Native distribution used in this build does not provide the standard library."
                 }
                 .solution {
-                    "Make sure that the '$changedKotlinNativeHomeProperty' property points to a valid Kotlin/Native distribution."
-                        .takeIf { changedKotlinNativeHomeProperty != null }.orEmpty()
+                    if (changedKotlinNativeHomeProperty != null) {
+                        "Make sure that the '$changedKotlinNativeHomeProperty' property points to a valid Kotlin/Native distribution."
+                    } else {
+                        "Make sure the Kotlin/Native distribution is installed and provides the standard library."
+                    }
                 }
         }
     }
