@@ -1193,4 +1193,41 @@ class Strings {
         assertPrints(emptyString.indexOfLast { it == 'z' }, "-1")
     }
 
+    @Sample
+    fun getOrElse() {
+        val string = "abc"
+        assertPrints(string.getOrElse(0) { '?' }, "a")
+        assertPrints(string.getOrElse(2) { '?' }, "c")
+        assertPrints(string.getOrElse(3) { '?' }, "?")
+        assertPrints(string.getOrElse(-1) { '?' }, "?")
+
+        // the default value is invoked with the out-of-bounds index
+        assertPrints(string.getOrElse(5) { index -> 'a' + index }, "f")
+    }
+
+    @Sample
+    fun getOrNull() {
+        val string = "abc"
+        assertPrints(string.getOrNull(0), "a")
+        assertPrints(string.getOrNull(2), "c")
+        assertPrints(string.getOrNull(3), "null")
+
+        val emptyString = ""
+        assertPrints(emptyString.getOrNull(0), "null")
+    }
+
+    @Sample
+    fun firstNotNullOf() {
+        val string = "ab7c42"
+
+        // the first digit in the string, as an Int
+        assertPrints(string.firstNotNullOf { it.digitToIntOrNull() }, "7")
+        assertPrints(string.firstNotNullOfOrNull { it.digitToIntOrNull() }, "7")
+
+        assertFailsWith<NoSuchElementException> {
+            val noDigit: Int = "abc".firstNotNullOf { it.digitToIntOrNull() }
+        }
+        assertPrints("abc".firstNotNullOfOrNull { it.digitToIntOrNull() }, "null")
+    }
+
 }
