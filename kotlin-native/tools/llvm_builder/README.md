@@ -78,21 +78,15 @@ docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --instal-path /ou
 ### IR PGO for the host LLVM toolchain
 
 `package.py --pgo-instrument` builds an IR-instrumented final stage for training.
-`--pgo-profile PATH` optimizes the final stage with an indexed profile. These
-options are mutually exclusive; earlier stages keep their original configuration.
+`--pgo-profile PATH` optimizes the final stage with an indexed profile.
 
-[package-pgo.py](package-pgo.py) runs the complete workflow on macOS arm64:
+[package-pgo.py](package-pgo.py) runs the workflow on macOS arm64:
 
 1. Build PGO instrumented LLVM with ThinLTO.
-2. Build Kotlin/Native against it, including the LLVM code linked into both JNI libraries.
+2. Build Kotlin/Native against it.
 3. Compile a training project with that compiler.
 4. Merge the training profiles into one shared IR profile.
-5. Build optimized LLVM with ThinLTO and that profile, then package both dev and essentials distributions.
-
-Configure the Kotlin/Native build prerequisites first (see
-[BUILDING_LLVM.md](../../BUILDING_LLVM.md)). The script locates the Kotlin checkout
-from its own path. Supply the training project Git remote, branch or tag, and a shell
-command that prepares and compiles the project in a fresh clone:
+5. Build optimized LLVM and package dev and essentials distributions.
 
 ```shell
 python3 kotlin-native/tools/llvm_builder/package-pgo.py \
@@ -101,50 +95,35 @@ python3 kotlin-native/tools/llvm_builder/package-pgo.py \
     --training-command './gradlew <native-link-task>' \
     --stage0 /absolute/path/to/bootstrap-llvm \
     --llvm-sources /absolute/path/to/llvm-project \
-    --xcode-llvm-version 26.4 \
-    --install-path /absolute/path/to/llvm-pgo-distribution
+    --llvm-xcode-version 26.4 \
+    --version-number <artifact-revision> \
+    --output-dir /absolute/path/to/llvm-pgo-distribution
 ```
 
-The workflow switches Xcode between stages: the LLVM builds use `--xcode-llvm-version`
-(defaults to 26.4, compatible with LLVM 21), while Xcode with build matching `xcodeBuild`
-from `kotlin-native/konan/konan.properties` is used to build Kotlin. Both Xcodes are 
-located in `/Applications` by `Contents/version.plist`, and the script
-fails before creating the output directory if either is missing. If Kotlin's Xcode is 
-configured to be auto provisioned, e.g. via `KONAN_USE_INTERNAL_SERVER`, the latter check 
-would be skipped. If the training build project requires yet another Xcode version, set
-that via DEVELOPER_DIR env var in `--training-command`. Kotlin and the training project
-share one isolated Gradle user home. Before building, the script seeds `caches/modules-2`
-and `wrapper/dists` from `GRADLE_USER_HOME` (or `~/.gradle`).
+`--output-dir` is the container for the generated distributions and
+`common.profdata`. `--version-number` is the positive Kotlin/Native artifact
+revision used in both package names. The LLVM build uses
+`--llvm-xcode-version` (26.4 by default); the Kotlin/Native Xcode is selected
+from `xcodeBuild` in `kotlin-native/konan/konan.properties`.
 
-`--target` restricts the build to a single Kotlin/Native target's platform libraries; 
-by default platform libraries for all targets are built. `--save-temporary-files` keeps 
-the intermediate work directory after a successful run; failed runs always retain it
-for diagnostics.
+```text
+llvm-21-aarch64-macos-dev-<artifact-revision>/
+llvm-21-aarch64-macos-dev-<artifact-revision>.tar.gz
+llvm-21-aarch64-macos-essentials-<artifact-revision>/
+llvm-21-aarch64-macos-essentials-<artifact-revision>.tar.gz
+common.profdata
+```
 
-The training compiler build sets `kotlin.internal.native.llvm.pgoInstrument=true`
-to link the profile runtime into both JNI libraries. Raw profiles use `%m-%p` to 
-separate binaries and processes. Only profiles from the training command are merged, 
-using the bootstrap's `llvm-profdata` without `--sparse`.
-
-`--llvm-sources` and `--stage0` are optional. Without them, `package.py` downloads
-its default LLVM source and builds the bootstrap. Use matching, fixed LLVM sources
-and bootstrap for reproducible builds.
-
-One final LLVM build produces both `llvm-dev/` (full development distribution)
-and `llvm/` (essentials), each with a `.tar.gz` archive and `.sha256` checksum,
-alongside `common.profdata`. `--distribution-components` controls only essentials
-and defaults to:
+The archive's top-level directory has the same name as its archive stem.
+`--distribution-components` controls only essentials; dev is always a full install.
+`--kotlin-native-target` restricts Kotlin/Native platform libraries; for example,
+use `ios_arm64` for a physical iOS device or `ios_simulator_arm64` for an arm64
+simulator. By default all targets are built.
+`--save-temporary-files` keeps intermediate files after a successful run, and failed
+runs retain their work directory for diagnostics. Kotlin and the training project
+share one isolated Gradle home seeded from the global Gradle dependency and wrapper
+caches using macOS copy-on-write.
 
 ```shell
 --distribution-components clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers
 ```
-
-Kotlin/Native is built only for training. Build the final Kotlin/Native
-distribution against the optimized LLVM separately.
-
-Following Kotlin Compiler Plugins in Kotlin repo are packaged and used while building
-the training project via init script.
-
-- `:plugins:compose-compiler-plugin:compiler:runtimeJar`
-- `:kotlinx-serialization-compiler-plugin.embeddable:embeddable`
-- `:kotlin-atomicfu-compiler-plugin-embeddable:embeddable`

@@ -20,6 +20,8 @@ import package as llvm_package
 
 # newer xcode's libc++ versions reject parts of LLVM 21.1.6's sources.
 DEFAULT_LLVM_XCODE_VERSION = "26.4"
+# This workflow builds Kotlin's LLVM 21 macOS arm64 distribution.
+LLVM_ARTIFACT_PREFIX = "llvm-21-aarch64-macos"
 KOTLIN_REPO = Path(__file__).resolve().parents[3]
 
 
@@ -78,12 +80,16 @@ def build_parser():
     parser.add_argument("--training-repo", required=True, help="Git remote of the training project")
     parser.add_argument("--training-branch", required=True, help="Branch or tag to clone")
     parser.add_argument("--training-command", required=True, help="Shell command to prepare and compile the training project")
-    parser.add_argument("--install-path", type=Path, default=Path("llvm-pgo-distribution"), help="Output directory")
-    parser.add_argument("--target", help="Kotlin/Native target to build platform libraries for; by default all targets are built")
+    parser.add_argument("--output-dir", type=Path, default=Path("llvm-pgo-distribution"), help="Directory containing the generated distributions and profile")
+    parser.add_argument("--version-number", type=int, required=True, help="Kotlin/Native LLVM artifact revision number")
+    parser.add_argument(
+        "--kotlin-native-target",
+        help="Kotlin/Native target for platform libraries, e.g. ios_arm64 for a physical iOS device or ios_simulator_arm64 for an arm64 simulator; by default all targets are built",
+    )
     parser.add_argument("--stage0", type=Path, help="Existing LLVM bootstrap; otherwise build one")
     parser.add_argument("--llvm-sources", type=Path, help="Existing LLVM checkout; otherwise use package.py's default")
     parser.add_argument(
-        "--xcode-llvm-version", default=DEFAULT_LLVM_XCODE_VERSION,
+        "--llvm-xcode-version", default=DEFAULT_LLVM_XCODE_VERSION,
         help="Xcode version used for the LLVM builds; its macOS SDK must be compatible with the LLVM sources",
     )
     parser.add_argument(
@@ -98,6 +104,13 @@ def build_parser():
 def run(command, cwd=None, env=None):
     print("Running:", command, flush=True)
     subprocess.run(command, cwd=cwd, env={**os.environ, **(env or {})}, check=True)
+
+
+def artifact_names(version_number):
+    return (
+        f"{LLVM_ARTIFACT_PREFIX}-dev-{version_number}",
+        f"{LLVM_ARTIFACT_PREFIX}-essentials-{version_number}",
+    )
 
 
 def wait_for_gradle_daemons(gradle_home, timeout=120):
@@ -204,13 +217,15 @@ def prepare_local_plugins(kotlin_repo, gradle_home):
 def main():
     parser = build_parser()
     args = parser.parse_args()
+    if args.version_number <= 0:
+        parser.error("--version-number must be positive")
     if platform.system() != "Darwin" or platform.machine() != "arm64":
         parser.error("This workflow requires macOS arm64.")
 
     script_dir = Path(__file__).resolve().parent
     kotlin_repo = KOTLIN_REPO
     try:
-        llvm_xcode, llvm_version, llvm_build = find_xcode(version=args.xcode_llvm_version)
+        llvm_xcode, llvm_version, llvm_build = find_xcode(version=args.llvm_xcode_version)
     except RuntimeError as error:
         parser.error(str(error))
     print(f"LLVM Xcode: {llvm_version} ({llvm_build}) at {llvm_xcode}", flush=True)
@@ -230,7 +245,7 @@ def main():
     package_script = script_dir / "package.py"
     stage0 = args.stage0.resolve(strict=True) if args.stage0 else None
     llvm_sources = args.llvm_sources.resolve(strict=True) if args.llvm_sources else None
-    output = args.install_path.resolve()
+    output = args.output_dir.resolve()
     # Refuse an existing output directory rather than mixing training profiles.
     output.mkdir()
     work_dir = Path(tempfile.mkdtemp(prefix=".work_dir.", dir=output))
@@ -273,10 +288,10 @@ def main():
 
         print("2/5: Build instrumented Kotlin/Native for training", flush=True)
         native_tasks = [":kotlin-native:dist"]
-        if args.target:
+        if args.kotlin_native_target:
             native_tasks += [
-                f":kotlin-native:{args.target}CrossDist",
-                f":kotlin-native:{args.target}PlatformLibs",
+                f":kotlin-native:{args.kotlin_native_target}CrossDist",
+                f":kotlin-native:{args.kotlin_native_target}PlatformLibs",
             ]
         else:
             native_tasks += [":kotlin-native:crossDist", ":kotlin-native:crossDistPlatformLibs"]
@@ -326,7 +341,8 @@ def main():
                     shutil.rmtree(path)
 
         print("5/5: Build optimized LLVM and package dev and essentials distributions", flush=True)
-        dev_llvm = output / "llvm-dev"
+        dev_name, essentials_name = artifact_names(args.version_number)
+        dev_llvm = output / dev_name
         package_args = [
             "--llvm-sources", llvm_sources,
             "--stage0", stage0,
@@ -340,7 +356,7 @@ def main():
         ]
         run([sys.executable, package_script, *package_args], cwd=work_dir / "optimized", env={"DEVELOPER_DIR": str(llvm_xcode)})
         package_essentials(
-            work_dir / "optimized/llvm-stage-1-build", dev_llvm, output / "llvm", args.distribution_components,
+            work_dir / "optimized/llvm-stage-1-build", dev_llvm, output / essentials_name, args.distribution_components,
             {"DEVELOPER_DIR": str(llvm_xcode)},
         )
     # Failed runs retain unfinished intermediates for diagnostics. Cleanup below runs only on success.
