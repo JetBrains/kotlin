@@ -84,7 +84,7 @@ def build_parser():
     parser.add_argument("--version-number", type=int, required=True, help="Kotlin/Native LLVM artifact revision number")
     parser.add_argument(
         "--kotlin-native-target",
-        help="Kotlin/Native target for platform libraries, e.g. ios_arm64 for a physical iOS device or ios_simulator_arm64 for an arm64 simulator; by default all targets are built",
+        help="Kotlin/Native target for platform libraries, e.g. ios_arm64; by default all targets are built",
     )
     parser.add_argument("--stage0", type=Path, help="Existing LLVM bootstrap; otherwise build one")
     parser.add_argument("--llvm-sources", type=Path, help="Existing LLVM checkout; otherwise use package.py's default")

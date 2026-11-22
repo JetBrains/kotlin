@@ -83,7 +83,7 @@ docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --instal-path /ou
 [package-pgo.py](package-pgo.py) runs the workflow on macOS arm64:
 
 1. Build PGO instrumented LLVM with ThinLTO.
-2. Build Kotlin/Native against it.
+2. Build Kotlin/Native compiler against it.
 3. Compile a training project with that compiler.
 4. Merge the training profiles into one shared IR profile.
 5. Build optimized LLVM and package dev and essentials distributions.
@@ -106,6 +106,7 @@ revision used in both package names. The LLVM build uses
 `--llvm-xcode-version` (26.4 by default); the Kotlin/Native Xcode is selected
 from `xcodeBuild` in `kotlin-native/konan/konan.properties`.
 
+Key artifacts:
 ```text
 llvm-21-aarch64-macos-dev-<artifact-revision>/
 llvm-21-aarch64-macos-dev-<artifact-revision>.tar.gz
@@ -115,15 +116,10 @@ common.profdata
 ```
 
 The archive's top-level directory has the same name as its archive stem.
-`--distribution-components` controls only essentials; dev is always a full install.
+`--distribution-components` controls only the essentials build; dev is always a full install.
 `--kotlin-native-target` restricts Kotlin/Native platform libraries; for example,
-use `ios_arm64` for a physical iOS device or `ios_simulator_arm64` for an arm64
-simulator. By default all targets are built.
+use `ios_arm64` iOS device. By default all targets are built.
 `--save-temporary-files` keeps intermediate files after a successful run, and failed
-runs retain their work directory for diagnostics. Kotlin and the training project
+runs always retain the work directory for diagnostics. Kotlin and the training project
 share one isolated Gradle home seeded from the global Gradle dependency and wrapper
 caches using macOS copy-on-write.
-
-```shell
---distribution-components clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers
-```
