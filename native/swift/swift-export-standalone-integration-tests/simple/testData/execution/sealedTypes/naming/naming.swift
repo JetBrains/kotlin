@@ -16,3 +16,12 @@ func testInheritorsWithTheSameSimpleNameGetDistinctCases() throws {
     try #require(describe(ExportedKotlinPackages.org.kotlin.foo.createMyClassALeaf()) == "a: MyClassA.Inner.Leaf")
     try #require(describe(ExportedKotlinPackages.org.kotlin.foo.createMyClassBLeaf()) == "b: MyClassB.Inner.Leaf")
 }
+
+@Test
+func testInheritorsThatDifferOnlyInSeparatorsGetDistinctCases() throws {
+    let underscored = ExportedKotlinPackages.org.kotlin.foo.createFooUnderscoreBar().sealedType()
+    let plain = ExportedKotlinPackages.org.kotlin.foo.createFooBar().sealedType()
+    try #require("\(underscored.value)" == "Foo_Bar")
+    try #require("\(plain.value)" == "FooBar")
+    try #require("\(underscored)" != "\(plain)")
+}
