@@ -31,7 +31,7 @@ KtFile: labelInFunctionTypeContext.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('String')
-          PsiErrorElement:Function type expected expected
+          PsiErrorElement:Function type expected
             <empty list>
       PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
