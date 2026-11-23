@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 // Contains common configuration that should be applied to all projects
 plugins {
     id("implicit-dependencies")
-    id("java-instrumentation")
     id("jvm-toolchains-convention")
 }
 
