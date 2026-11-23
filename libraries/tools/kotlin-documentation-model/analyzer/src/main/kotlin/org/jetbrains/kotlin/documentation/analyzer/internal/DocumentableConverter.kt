@@ -72,7 +72,7 @@ internal class DocumentableConverter(
         }
 
     fun convert(): KdBundle = KdBundle(
-        schemaVersion = KotlinVersion.CURRENT.toString(),
+        schemaVersion = KDM_SCHEMA_VERSION,
         fragments = fragmentNames.map(::buildFragment),
         expectActualMappings = collectExpectActualMappings(),
     )
