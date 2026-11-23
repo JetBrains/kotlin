@@ -22,7 +22,9 @@ public actual constructor(public actual open val message: String?, public actual
     public actual constructor() : this(null, null)
 
     //TODO: Investigate possibility to make WASI stack discoverable (KT-60965)
-    internal val stack: String = wasmConstructTraceFromShadowStack()
+    // TODO disabled only to make sure kotlin-test builds. For this measurement, we mostly care about the overhead of the instrumentation anyway
+//    internal val stack: String = wasmConstructTraceFromShadowStack()
+    internal val stack: String = ""
 
     internal var suppressedExceptionsList: MutableList<Throwable>? = null
 
