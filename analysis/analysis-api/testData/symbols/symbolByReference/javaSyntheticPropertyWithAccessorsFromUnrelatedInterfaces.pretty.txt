@@ -1,0 +1,3 @@
+var foo: kotlin.String!
+  get()
+  set(value: kotlin.String!)

@@ -1,0 +1,35 @@
+KaJavaFieldSymbol:
+  anchorPsi: PsiFieldImpl
+  annotations: []
+  callableId: /Derived.value
+  contextParameters: []
+  contextReceivers: []
+  isActual: false
+  isCompanion: false
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isStatic: false
+  isVal: false
+  location: CLASS
+  modality: FINAL
+  name: value
+  origin: SUBSTITUTION_OVERRIDE
+  psi: PsiFieldImpl
+  realPsi: null
+  receiverParameter: null
+  returnType: KaFlexibleType:
+    annotations: []
+    type: kotlin/String!
+  typeParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: Derived
+  getContainingFileSymbol: null
+  getContainingJvmClassName: Derived
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null

@@ -1,0 +1,57 @@
+Inital from Sources of main:
+KaJavaFieldSymbol:
+  anchorPsi: PsiFieldImpl
+  annotations: []
+  callableId: /Derived.COUNT
+  contextParameters: []
+  contextReceivers: []
+  isActual: false
+  isCompanion: true
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isStatic: true
+  isVal: false
+  location: CLASS
+  modality: FINAL
+  name: COUNT
+  origin: JAVA_SOURCE
+  psi: PsiFieldImpl
+  realPsi: PsiFieldImpl
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  typeParameters: []
+  visibility: PUBLIC
+
+Restored in Sources of restoreInContextOf:
+KaJavaFieldSymbol:
+  anchorPsi: PsiFieldImpl
+  annotations: []
+  callableId: /Base.COUNT
+  contextParameters: []
+  contextReceivers: []
+  isActual: false
+  isCompanion: true
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isStatic: true
+  isVal: false
+  location: CLASS
+  modality: FINAL
+  name: COUNT
+  origin: JAVA_SOURCE
+  psi: PsiFieldImpl
+  realPsi: PsiFieldImpl
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  typeParameters: []
+  visibility: PUBLIC

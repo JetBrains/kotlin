@@ -1,0 +1,6 @@
+Inital from Sources of main:
+@java.lang.Override
+open fun getFoo(): kotlin.Int
+
+Restored in Sources of restoreInContextOf:
+open fun getFoo(): kotlin.Int

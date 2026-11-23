@@ -1,0 +1,10 @@
+Inital from Sources of main:
+open var foo: kotlin.String!
+  @java.lang.Override
+  get()
+  set(value: kotlin.String!)
+
+Restored in Sources of restoreInContextOf:
+open var foo: kotlin.String!
+  get()
+  set(value: kotlin.String!)
