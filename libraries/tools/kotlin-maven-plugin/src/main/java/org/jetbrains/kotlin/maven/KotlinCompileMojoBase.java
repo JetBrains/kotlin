@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.kotlin.com.intellij.util.ArrayUtil;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.config.Services;
+import org.jetbrains.kotlin.maven.bundled.BundledCompilerPlugins;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -257,32 +258,16 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     protected abstract void configureSpecificCompilerArguments(@NotNull A arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException;
 
     @NotNull
-    private List<String> getCompilerPluginClassPaths() {
+    private List<String> getCompilerPluginClassPaths() throws MojoExecutionException {
         ArrayList<String> result = new ArrayList<>();
 
-        List<File> files = new ArrayList<>();
-
-        ArtifactRepository localRepo = session == null ? null : session.getLocalRepository();
-        List<ArtifactRepository> remoteRepos = session == null ? null : session.getCurrentProject().getPluginArtifactRepositories();
+        LinkedHashSet<File> files = new LinkedHashSet<>();
 
         for (Dependency dependency : mojoExecution.getPlugin().getDependencies()) {
-            Artifact artifact = system.createDependencyArtifact(dependency);
-
-            ArtifactResolutionRequest request = new ArtifactResolutionRequest().setArtifact(artifact);
-            if (localRepo != null) request.setLocalRepository(localRepo);
-            if (remoteRepos != null) request.setRemoteRepositories(remoteRepos);
-            if (localRepo != null || remoteRepos != null) request.setResolveTransitively(true);
-
-            ArtifactResolutionResult resolved = system.resolve(request);
-
-            for (Artifact resolvedArtifact : resolved.getArtifacts()) {
-                File file = resolvedArtifact.getFile();
-
-                if (file != null && file.exists()) {
-                    files.add(file);
-                }
-            }
+            files.addAll(resolvePluginDependency(dependency, null));
         }
+
+        files.addAll(getBundledCompilerPluginJars());
 
         for (File file : files) {
             result.add(file.getAbsolutePath());
@@ -292,19 +277,88 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     }
 
     @NotNull
+    private List<File> resolvePluginDependency(@NotNull Dependency dependency, @Nullable String pluginName) throws MojoExecutionException {
+        ArtifactRepository localRepo = session == null ? null : session.getLocalRepository();
+        List<ArtifactRepository> remoteRepos = session == null ? null : session.getCurrentProject().getPluginArtifactRepositories();
+
+        Artifact artifact = system.createDependencyArtifact(dependency);
+
+        ArtifactResolutionRequest request = new ArtifactResolutionRequest().setArtifact(artifact);
+        if (localRepo != null) request.setLocalRepository(localRepo);
+        if (remoteRepos != null) request.setRemoteRepositories(remoteRepos);
+        if (localRepo != null || remoteRepos != null) request.setResolveTransitively(true);
+
+        ArtifactResolutionResult resolved = system.resolve(request);
+
+        if (pluginName != null && !resolved.isSuccess()) {
+            String coordinates = dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion();
+            Exception cause = resolved.getExceptions().isEmpty() ? null : resolved.getExceptions().iterator().next();
+            throw new MojoExecutionException("Failed to resolve the compiler plugin '" + pluginName + "' from " + coordinates, cause);
+        }
+
+        List<File> files = new ArrayList<>();
+        for (Artifact resolvedArtifact : resolved.getArtifacts()) {
+            File file = resolvedArtifact.getFile();
+
+            if (file != null && file.exists()) {
+                files.add(file);
+            }
+        }
+        return files;
+    }
+
+    /**
+     * Resolves the compiler plugin jars of the extensions bundled into kotlin-maven-plugin (KT-91851),
+     * so that the {@code kotlin-maven-*} wrappers do not have to be declared as plugin dependencies.
+     * A plugin still declared the old way keeps coming from the plugin's dependencies.
+     */
+    @NotNull
+    private List<File> getBundledCompilerPluginJars() throws MojoExecutionException {
+        if (compilerPlugins == null || compilerPlugins.isEmpty()) return Collections.emptyList();
+
+        Set<String> declaredArtifactIds = new HashSet<>();
+        for (Dependency dependency : mojoExecution.getPlugin().getDependencies()) {
+            declaredArtifactIds.add(dependency.getArtifactId());
+        }
+
+        String pluginVersion = Util.getMavenPluginVersion();
+
+        List<File> files = new ArrayList<>();
+        for (String pluginName : BundledCompilerPlugins.expandPluginNames(compilerPlugins)) {
+            String wrapperArtifactId = BundledCompilerPlugins.getWrapperArtifactId(pluginName);
+            String compilerPluginArtifactId = BundledCompilerPlugins.getCompilerPluginArtifactId(pluginName);
+            if (compilerPluginArtifactId == null) {
+                // not a bundled compiler plugin: it is provided by the plugin's dependencies
+                continue;
+            }
+
+            if ((wrapperArtifactId != null && declaredArtifactIds.contains(wrapperArtifactId))
+                    || declaredArtifactIds.contains(compilerPluginArtifactId)) {
+                getLog().debug("Compiler plugin '" + pluginName + "' is provided by the plugin's dependencies");
+                continue;
+            }
+
+            Dependency dependency = new Dependency();
+            dependency.setGroupId(BundledCompilerPlugins.KOTLIN_GROUP_ID);
+            dependency.setArtifactId(compilerPluginArtifactId);
+            dependency.setVersion(pluginVersion);
+
+            files.addAll(resolvePluginDependency(dependency, pluginName));
+            getLog().info("Resolved compiler plugin '" + pluginName + "' from " + dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + pluginVersion);
+        }
+        return files;
+    }
+
+    @NotNull
     private Map<String, KotlinMavenPluginExtension> loadCompilerPlugins() throws PluginNotFoundException {
         if (compilerPlugins == null) return Collections.emptyMap();
 
         Map<String, KotlinMavenPluginExtension> loadedPlugins = new HashMap<>();
-        for (String pluginName : compilerPlugins) {
+        for (String pluginName : BundledCompilerPlugins.expandPluginNames(compilerPlugins)) {
             getLog().debug("Looking for plugin " + pluginName);
             try {
                 KotlinMavenPluginExtension extension = container.lookup(KotlinMavenPluginExtension.class, pluginName);
                 loadedPlugins.put(pluginName, extension);
-                if ("jpa".equals(pluginName)) {
-                    // "jpa" compiler plugin should also apply 'all-open' plugin
-                    loadedPlugins.put("all-open", container.lookup(KotlinMavenPluginExtension.class, "all-open"));
-                }
                 getLog().debug("Got plugin instance " + pluginName + " of type " + extension.getClass().getName());
             } catch (ComponentLookupException e) {
                 getLog().debug("Unable to get plugin instance " + pluginName);

@@ -21,7 +21,8 @@ class CompilerPluginsIT : KotlinMavenTestBase() {
                     "target/classes/org/jetbrains/example/SomeClass.class"
                 )
                 assertBuildLogContains(
-                    "Loaded Maven plugin org.jetbrains.kotlin.test.KotlinNoArgMavenPluginExtension",
+                    "Got plugin instance no-arg of type org.jetbrains.kotlin.maven.bundled.NoArgMavenPluginExtension",
+                    "Resolved compiler plugin 'no-arg' from org.jetbrains.kotlin:kotlin-noarg-compiler-plugin-embeddable",
                     "Plugin options are: plugin:org.jetbrains.kotlin.noarg:annotation=com.my.Annotation"
                 )
             }

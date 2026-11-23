@@ -30,20 +30,14 @@
                     </execution>
                 </executions>
 
-                <!-- Apply a compiler plugin. It should currently lead to the creation of another classloader -->
+                <!-- Apply a compiler plugin. It is resolved at runtime (KT-91851), so no extra plugin
+                     dependency is needed and all modules share the same plugin classrealm -->
                 <configuration>
                     <compilerPlugins>
                        <plugin>all-open</plugin>
                     </compilerPlugins>
                 </configuration>
 
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-maven-allopen</artifactId>
-                        <version>${kotlin.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
