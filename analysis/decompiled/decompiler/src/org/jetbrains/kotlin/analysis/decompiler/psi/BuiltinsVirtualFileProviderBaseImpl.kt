@@ -78,4 +78,6 @@ abstract class BuiltinsVirtualFileProviderBaseImpl : BuiltinsVirtualFileProvider
         }
         file
     }
+
+    override fun isBuiltinVirtualFile(file: VirtualFile): Boolean = file in getBuiltinVirtualFiles()
 }
