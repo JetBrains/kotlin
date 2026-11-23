@@ -546,6 +546,7 @@ internal class ObjCExportCodeGenerator(
     private val objCClassForAny = ObjCClassForKotlinClass(
             namer.kotlinAnyName.binaryName,
             irBuiltIns.anyClass,
+            context.builtIns.any,
             methods = listOf("equals", "hashCode", "toString").map { nameString ->
                 val name = Name.identifier(nameString)
 
