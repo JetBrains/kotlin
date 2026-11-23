@@ -2590,3 +2590,4 @@ public fun CharSequence.asSequence(): Sequence<Char> {
     if (this is String && isEmpty()) return emptySequence()
     return Sequence { this.iterator() }
 }
+
