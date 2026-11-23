@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.utils.pollFirst
 import org.jetbrains.kotlin.utils.putToMultiMap
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
@@ -230,8 +231,8 @@ class FileDeserializationState(
      * Deserialize all top-level declarations previously scheduled for deserialization in the current file.
      */
     internal fun deserializeAllFileReachableTopLevel() {
-        while (reachableTopLevels.isNotEmpty()) {
-            val topLevelDeclarationSignature = reachableTopLevels.first()
+        while (true) {
+            val topLevelDeclarationSignature = reachableTopLevels.pollFirst() ?: break
 
             val topLevelDeclarationSymbol = symbolDeserializer.deserializedSymbolsWithOwnersInCurrentFile[topLevelDeclarationSignature]
             if (topLevelDeclarationSymbol == null || !topLevelDeclarationSymbol.isBound) {
@@ -241,9 +242,6 @@ class FileDeserializationState(
                     linker.partialLinkageSupport.enqueueDeclaration(it)
                 }
             }
-
-            // Remove it from the queue:
-            reachableTopLevels.remove(topLevelDeclarationSignature)
         }
     }
 }

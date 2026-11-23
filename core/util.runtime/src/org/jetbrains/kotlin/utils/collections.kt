@@ -128,3 +128,16 @@ fun <E : Any> MutableList<E?>.setSize(newSize: Int) {
 }
 
 inline fun <E> buildSmartList(build: MutableList<E>.() -> Unit): List<E> = SmartList<E>().apply(build)
+
+/**
+ * Removes the first element of this set and returns it, or returns `null` if the set is empty.
+ *
+ * "First" means the first in the iteration order. So, for a set that preserves the insertion order
+ * (e.g. [LinkedHashSet]) this is the element that was added the earliest. This allows using such a set
+ * as a queue without duplicates.
+ */
+fun <T : Any> MutableSet<T>.pollFirst(): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    return iterator.next().also { iterator.remove() }
+}
