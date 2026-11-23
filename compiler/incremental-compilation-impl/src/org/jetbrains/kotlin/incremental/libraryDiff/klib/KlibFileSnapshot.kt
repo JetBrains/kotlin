@@ -63,3 +63,9 @@ class KlibClassInfo(
     val classId: ClassId,
     val supertypes: List<ClassId>,
 )
+
+/** Classes declared in this file; empty for snapshot types without classes. */
+internal fun KlibFileSnapshot.classInfos(): List<KlibClassInfo> = when (this) {
+    is PackageFragmentSnapshot -> classInfos
+}
+

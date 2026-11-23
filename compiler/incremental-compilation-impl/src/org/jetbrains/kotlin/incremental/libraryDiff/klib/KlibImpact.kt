@@ -54,7 +54,7 @@ private object KlibSupertypesInheritorsImpact : KlibImpact {
 
     override fun getResolver(allSnapshots: Iterable<KlibFileSnapshot>): ImpactedSymbolsResolver {
         val classIdToSubclasses =
-            getClassIdToSubclassesMap(allSnapshots.flatMap { it.getKlibClassInfos() })
+            getClassIdToSubclassesMap(allSnapshots.flatMap { it.classInfos() })
 
         return object : ImpactedSymbolsResolver {
             override fun getImpactedClasses(classId: ClassId): Set<ClassId> =
@@ -70,18 +70,13 @@ private object KlibSupertypesInheritorsImpact : KlibImpact {
 
     override fun getReverseResolver(allSnapshots: Iterable<KlibFileSnapshot>): ImpactingClassesResolver {
         val classIdToSupertypes =
-            getClassIdToSupertypesMap(allSnapshots.flatMap { it.getKlibClassInfos() })
+            getClassIdToSupertypesMap(allSnapshots.flatMap { it.classInfos() })
 
         return object : ImpactingClassesResolver {
             override fun getImpactingClasses(classId: ClassId): Set<ClassId> =
                 classIdToSupertypes[classId].orEmpty()
         }
     }
-
-    private fun KlibFileSnapshot.getKlibClassInfos(): Iterable<KlibClassInfo> =
-        when (this) {
-            is PackageFragmentSnapshot -> classInfos
-        }
 
     private fun getClassIdToSubclassesMap(allClassInfos: Iterable<KlibClassInfo>): Map<ClassId, Set<ClassId>> {
         val classIdToSubclasses = mutableMapOf<ClassId, MutableSet<ClassId>>()

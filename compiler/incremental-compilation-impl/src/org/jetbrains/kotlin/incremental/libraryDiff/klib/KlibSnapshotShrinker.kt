@@ -47,7 +47,7 @@ internal object KlibSnapshotShrinker {
         )
 
         return allSnapshots.filter { snapshot ->
-            val hasReferencedClass = snapshot.classIds().any { it in transitivelyReferencedClassIds }
+            val hasReferencedClass = snapshot.classInfos().any { it.classId in transitivelyReferencedClassIds }
             if (hasReferencedClass) return@filter true
 
             when (snapshot) {
@@ -61,7 +61,8 @@ internal object KlibSnapshotShrinker {
 
     private fun findReferencedClassIds(allSnapshots: List<KlibFileSnapshot>, lookupSymbols: LookupSymbolSet): Set<ClassId> =
         allSnapshots
-            .flatMap { it.classIds() }
+            .flatMap { it.classInfos() }
+            .map { it.classId }
             .filterToSetOrEmpty { classId ->
                 ClassSymbol(classId).toLookupSymbol() in lookupSymbols
                         || lookupSymbols.getLookupNamesInScope(classId.asSingleFqName()).isNotEmpty()
@@ -73,10 +74,6 @@ internal object KlibSnapshotShrinker {
 
         val impactingClassesResolver = KlibAllImpacts.getReverseResolver(allSnapshots)
         return findReachableNodes(referencedClassIds, impactingClassesResolver::getImpactingClasses)
-    }
-
-    private fun KlibFileSnapshot.classIds(): List<ClassId> = when (this) {
-        is PackageFragmentSnapshot -> classInfos.map { it.classId }
     }
 }
 
