@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.platformModule
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -1149,7 +1151,10 @@ private fun getContainingDeclaration(declaration: IrDeclaration): DeclarationDes
     val parentDescriptor = (parent as IrSymbolOwner).let {
         when (it) {
             is IrDeclaration -> it.toIrBasedDescriptor()
-            is IrPackageFragment -> it.symbol.descriptor
+            is IrPackageFragment -> {
+                val module = (it as? IrFile)?.platformModule ?: it.module
+                EmptyPackageFragmentDescriptor(module.descriptor, it.packageFqName)
+            }
             else -> error("Unexpected declaration parent: $it")
         }
     }

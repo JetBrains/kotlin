@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.hmppProvidersEnabled
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.platformModule
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
@@ -153,7 +154,10 @@ class IrActualizer(
         // Reversing `dependentFragments` results in backward top-sorted order
         // It is crucial for aligning files order when serializing to klib
         val newFiles = dependentFragments.reversed().flatMap { it.files }
-        for (file in newFiles) file.module = mainFragment
+        for (file in newFiles) {
+            file.platformModule = file.module
+            file.module = mainFragment
+        }
         mainFragment.files.addAll(newFiles)
     }
 }
