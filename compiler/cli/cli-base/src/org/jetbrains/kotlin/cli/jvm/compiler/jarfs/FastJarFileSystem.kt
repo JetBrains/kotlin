@@ -4,59 +4,25 @@
  */
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Couple
 import com.intellij.openapi.vfs.DeprecatedVirtualFileSystem
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.containers.ConcurrentFactoryMap
-import com.intellij.util.io.FileAccessorCache
-import java.io.File
-import java.io.IOException
-import java.io.RandomAccessFile
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
-import java.nio.channels.FileChannel
 import java.nio.file.Paths
-import kotlin.io.path.absolutePathString
+import java.util.concurrent.ConcurrentHashMap
 
-private typealias RandomAccessFileAndBuffer = Pair<RandomAccessFile, LargeDynamicMappedBuffer>
+class FastJarFileSystem private constructor(unmapBuffer: MappedByteBuffer.() -> Unit) : DeprecatedVirtualFileSystem() {
 
-class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByteBuffer.() -> Unit) : DeprecatedVirtualFileSystem() {
-    private val myHandlers: MutableMap<String, FastJarHandler> =
-        ConcurrentFactoryMap.createMap { key: String -> FastJarHandler(this@FastJarFileSystem, key) }
+    val archives = JarArchiveCache(unmapBuffer) { file, e ->
+        // copying the behavior of ArchiveHandler (and therefore ZipHandler)
+        // TODO: consider propagating to compiler error or warning, but take into account that both javac and K1 simply ignore invalid jars in such cases
+        Logger.getInstance(FastJarHandler::class.java).warn("Error while reading zip file: ${file.path}: $e", e)
+    }
 
-    internal val cachedOpenFileHandles: FileAccessorCache<File, RandomAccessFileAndBuffer> =
-        object : FileAccessorCache<File, RandomAccessFileAndBuffer>(20, 10) {
-            @Throws(IOException::class)
-            override fun createAccessor(file: File): RandomAccessFileAndBuffer {
-                val randomAccessFile = RandomAccessFile(file, "r")
-                val buffer = LargeDynamicMappedBuffer(
-                    randomAccessFile.length(),
-                    { offset, size -> randomAccessFile.channel.map(FileChannel.MapMode.READ_ONLY, offset, size) },
-                    unmapBuffer,
-                    defaultByteOrder = ByteOrder.LITTLE_ENDIAN,
-                )
-                return Pair(randomAccessFile, buffer)
-            }
-
-            @Throws(IOException::class)
-            override fun disposeAccessor(fileAccessor: RandomAccessFileAndBuffer) {
-                fileAccessor.first.close()
-                fileAccessor.second.unmap()
-            }
-
-            override fun isEqual(val1: File, val2: File): Boolean {
-                return val1 == val2 // reference equality to handle different jars for different ZipHandlers on the same path
-            }
-        }
-
-    internal fun readContents(file: File, zipEntryDescription: ZipEntryDescription): ByteArray =
-        cachedOpenFileHandles[file].use {
-            synchronized(it) {
-                it.get().second.contentsToByteArray(zipEntryDescription)
-            }
-        }
+    private val myHandlers = ConcurrentHashMap<String, FastJarHandler>()
 
     override fun getProtocol(): String {
         return StandardFileSystems.JAR_PROTOCOL
@@ -64,7 +30,13 @@ class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByte
 
     override fun findFileByPath(path: String): VirtualFile? {
         val pair = splitPath(path)
-        return myHandlers[pair.first]!!.findFileByPath(pair.second)
+        return handler(pair.first).findFileByPath(pair.second)
+    }
+
+    private fun handler(localPath: String): FastJarHandler {
+        myHandlers[localPath]?.let { return it }
+        val handler = FastJarHandler(this, localPath)
+        return myHandlers.putIfAbsent(localPath, handler) ?: handler
     }
 
     override fun refresh(asynchronous: Boolean) {}
@@ -74,11 +46,11 @@ class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByte
 
     fun clearHandlersCache() {
         myHandlers.clear()
-        cleanOpenFilesCache()
+        archives.clear()
     }
 
     fun cleanOpenFilesCache() {
-        cachedOpenFileHandles.clear()
+        archives.closeOpenArchives()
     }
 
     companion object {
