@@ -376,6 +376,21 @@ abstract class AbstractComposeLowering(
         return binaryOperatorCall(lhs, rhs, OperatorNameConventions.AND)
     }
 
+    protected fun irPlus(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
+        val int = context.irBuiltIns.intType
+        return binaryOperatorCall(lhs, rhs, OperatorNameConventions.PLUS, lhsType = int, rhsType = int)
+    }
+
+    protected fun irReinterpretCast(argument: IrExpression, type: IrType): IrExpression =
+        IrTypeOperatorCallImpl(
+            argument.startOffset,
+            argument.endOffset,
+            type,
+            IrTypeOperator.REINTERPRET_CAST,
+            type,
+            argument
+        )
+
     protected fun irShl(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
         val int = context.irBuiltIns.intType
         return binaryOperatorCall(lhs, rhs, OperatorNameConventions.SHL, lhsType = int, rhsType = int)

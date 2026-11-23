@@ -1,0 +1,101 @@
+// MODULE: lib
+// FILE: lib.kt
+
+@Composable
+@FunctionKeyMeta(key = 240179690, startOffset = 102, endOffset = 174)
+fun Leaf(a: Int, b: String, /* var */ c: Double, /* var */ $composer: Composer?, $changed: Int, $default: Int) {
+  var c: Double = c
+  var $composer: Composer? = $composer
+  { // BLOCK
+    $composer = $composer.startRestartGroup(key = 240179690)
+    sourceInformation(composer = $composer, sourceInformation = "C(Leaf):lib.kt")
+  }
+  val $dirty: Int = $changed
+  when {
+    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = a) /*=> Int */.plus(other = 1).shl(bitCount = 1))
+  }
+  when {
+    EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = b) /*=> Int */.plus(other = 1).shl(bitCount = 4))
+  }
+  when {
+    EQEQ(arg0 = $default.and(other = 4), arg1 = 0).not() -> $dirty = $dirty.or(other = 384)
+    EQEQ(arg0 = $changed.and(other = 384), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = c) /*=> Int */.plus(other = 1).shl(bitCount = 7))
+  }
+  when {
+    $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 147), arg1 = 146).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+      when {
+        EQEQ(arg0 = $default.and(other = 4), arg1 = 0).not() -> c = 0.0
+      }
+      when {
+        isTraceInProgress() -> traceEventStart(key = 240179690, dirty1 = $dirty, dirty2 = -1, info = "Leaf (lib.kt:7)")
+      }
+      println(message = a + " " + b + " " + c)
+      when {
+        isTraceInProgress() -> traceEventEnd()
+      }
+    }
+    else -> $composer.skipToGroupEnd()
+  }
+  { // BLOCK
+    { // BLOCK
+      val tmp_0: ScopeUpdateScope? = $composer.endRestartGroup()
+      when {
+        EQEQ(arg0 = tmp_0, arg1 = null) -> null
+        else -> tmp_0.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+          return Leaf(a = a, b = b, c = c, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)), $default = $default)
+        }
+)
+      }
+    }
+  }
+}
+
+// MODULE: main
+// FILE: main.kt
+
+@Composable
+@FunctionKeyMeta(key = -1964850794, startOffset = 105, endOffset = 150)
+fun App(a: Int, b: String, /* var */ $composer: Composer?, $changed: Int) {
+  var $composer: Composer? = $composer
+  { // BLOCK
+    $composer = $composer.startRestartGroup(key = -1964850794)
+    sourceInformation(composer = $composer, sourceInformation = "C(App)17@138L10:main.kt")
+  }
+  val $dirty: Int = $changed
+  when {
+    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = a) /*=> Int */.plus(other = 1).shl(bitCount = 1))
+  }
+  when {
+    EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = b) /*=> Int */.plus(other = 1).shl(bitCount = 4))
+  }
+  when {
+    $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
+      when {
+        isTraceInProgress() -> traceEventStart(key = -1964850794, dirty1 = $dirty, dirty2 = -1, info = "App (main.kt:16)")
+      }
+      Leaf(a = a, b = b, c = // COMPOSITE {
+      0.0
+      // }, $composer = $composer, $changed = 14.and(other = $dirty).or(other = 112.and(other = $dirty)), $default = 4)
+      when {
+        isTraceInProgress() -> traceEventEnd()
+      }
+    }
+    else -> $composer.skipToGroupEnd()
+  }
+  { // BLOCK
+    { // BLOCK
+      val tmp_0: ScopeUpdateScope? = $composer.endRestartGroup()
+      when {
+        EQEQ(arg0 = tmp_0, arg1 = null) -> null
+        else -> tmp_0.updateScope(block = local fun <anonymous>($composer: Composer?, $force: Int) {
+          return App(a = a, b = b, $composer = $composer, $changed = updateChangedFlags(flags = $changed.or(other = 1)))
+        }
+)
+      }
+    }
+  }
+}
+
+fun box(): String {
+  return "OK"
+}

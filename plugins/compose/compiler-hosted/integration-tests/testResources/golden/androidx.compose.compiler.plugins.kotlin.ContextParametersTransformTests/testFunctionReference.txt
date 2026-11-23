@@ -28,12 +28,12 @@ fun Test(foo: Foo, %composer: Composer?, %changed: Int) {
   sourceInformation(%composer, "C(Test)N(foo)*<::A>,<::A>,<refA(4...>,<Foo::E...>,<Foo::E...>,<Caller...>,<String...>,<String...>,<refB(4...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+    %dirty = %dirty or if (%changed and 0b1000 == 0) {
       %composer.changed(foo)
     } else {
       %composer.changedInstance(foo)
     }
-    ) 0b0100 else 0b0010
+     as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -48,7 +48,7 @@ fun Test(foo: Foo, %composer: Composer?, %changed: Int) {
             @Composable
             @FunctionKeyMeta(key = -951514801, startOffset = 140, endOffset = 143)
             fun A(c0: Foo, p0: @[ParameterName(name = 'a')] Int, %composer: Composer?, %changed: Int) {
-              return A(c0, p0, %composer, Foo.%stable or 0b01110000 and %changed shl 0b0011)
+              return A(c0, p0, %composer, Foo.%stable or 0b01110000 and %changed shl 3)
             }
           }
         }
@@ -78,7 +78,7 @@ fun Test(foo: Foo, %composer: Composer?, %changed: Int) {
             @Composable
             @FunctionKeyMeta(key = -357558262, startOffset = 246, endOffset = 255)
             fun B(c0: Foo, p0: String, p1: @[ParameterName(name = 'a')] Int, %composer: Composer?, %changed: Int) {
-              return p0.B(c0, p1, %composer, Foo.%stable or 0b01110000 and %changed shl 0b0011 or 0b001110000000 and %changed shl 0b0011)
+              return p0.B(c0, p1, %composer, Foo.%stable or 0b01110000 and %changed shl 3 or 0b001110000000 and %changed shl 3)
             }
           }
         }

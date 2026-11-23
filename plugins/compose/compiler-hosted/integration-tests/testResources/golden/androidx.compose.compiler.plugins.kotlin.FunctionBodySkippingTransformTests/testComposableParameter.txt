@@ -27,15 +27,15 @@ fun Example(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %defaul
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
   } else if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(a) as Int + 1 shl 1
   }
   if (%changed and 0b00110000 == 0) {
-    %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(b)) 0b00100000 else 0b00010000
+    %dirty = %dirty or %default and 0b0010 == 0 && %composer.changed(b) as Int + 1 shl 4
   }
   if (%default and 0b0100 != 0) {
     %dirty = %dirty or 0b000110000000
   } else if (%changed and 0b000110000000 == 0) {
-    %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
+    %dirty = %dirty or %composer.changed(c) as Int + 1 shl 7
   }
   if (%composer.shouldExecute(%dirty and 0b10010011 != 0b10010010, %dirty and 0b0001)) {
     %composer.startDefaults()
