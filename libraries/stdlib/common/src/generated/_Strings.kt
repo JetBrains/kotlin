@@ -902,6 +902,8 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapIndexedTo
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each character of original char sequence, to the given [destination].
+ * 
+ * @sample samples.text.Strings.flatMapTo
  */
 @IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
@@ -2588,4 +2590,3 @@ public fun CharSequence.asSequence(): Sequence<Char> {
     if (this is String && isEmpty()) return emptySequence()
     return Sequence { this.iterator() }
 }
-
