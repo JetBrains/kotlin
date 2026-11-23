@@ -80,13 +80,13 @@ abstract class DeprecatingArtifactTransform : TransformAction<DeprecatingArtifac
                     if (name.endsWith(".class") && spec.isSatisfiedBy(this)) {
                         open().use { inputStream ->
                             val classReader = ClassReader(inputStream)
-                            val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES)
+                            val classWriter = ClassWriter(classReader, 0)
                             val classVisitor = DeprecatingClassTransformer(classWriter, deprecationMessage) { className ->
                                 require(className.contains('.')) {
                                     "Deprecating classes in the default (unnamed) package is not supported. Tried to deprecate $className"
                                 }
                             }
-                            classReader.accept(classVisitor, ClassReader.EXPAND_FRAMES)
+                            classReader.accept(classVisitor, 0)
                             outputStream.write(classWriter.toByteArray())
                         }
                     } else {
