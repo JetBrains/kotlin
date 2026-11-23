@@ -103,6 +103,10 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         }
     }
 
+    private fun assertCompilationError(vararg expected: String): (String) -> Unit = { output ->
+        assertTrue(expected.all(output::contains) && output.trimEnd().endsWith("COMPILATION_ERROR"), output)
+    }
+
     private data class ModuleRunResult(val stdout: String, val stderr: String)
 
     private fun runModule(className: String, modulePath: List<File>): ModuleRunResult {
@@ -625,6 +629,16 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             "main",
             additionalKotlinArguments = listOf(
                 "-Xjdk-release=11", "-Xadd-reads=java.base=ALL-UNNAMED", "-Xadd-exports=java.base/sun.nio.ch=ALL-UNNAMED",
+            ),
+        )
+        // Like javac, the options are rejected with a release below 9.
+        module(
+            "main",
+            additionalKotlinArguments = listOf(
+                "-Xjdk-release=8", "-Xadd-reads=java.base=ALL-UNNAMED", "-Xadd-exports=java.base/sun.nio.ch=ALL-UNNAMED",
+            ),
+            checkKotlinOutput = assertCompilationError(
+                "'-Xadd-reads' is not allowed with '-Xjdk-release=8'", "'-Xadd-exports' is not allowed with '-Xjdk-release=8'",
             ),
         )
     }

@@ -164,6 +164,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 private fun CompilerConfiguration.addJavaModuleAccessOptions(
     key: CompilerConfigurationKey<List<String>>, flag: String, values: Array<String>, isExports: Boolean,
 ) {
+    reportJavaModuleOptionBelowRelease9(flag, values)
     for (value in values) {
         val option = parseJavaModuleAccessOption(value, isExports)
         if (option == null) {
@@ -176,6 +177,14 @@ private fun CompilerConfiguration.addJavaModuleAccessOptions(
             this.report(COMPILER_ARGUMENTS_WARNING, "Bad name in value for '$flag': '$name'.")
         }
         add(key, value)
+    }
+}
+
+// Like javac, which rejects the option with a release below 9. Module handling is skipped there, so the option would have no effect.
+private fun CompilerConfiguration.reportJavaModuleOptionBelowRelease9(flag: String, values: Array<String>) {
+    val jdkRelease = get(JVMConfigurationKeys.JDK_RELEASE) ?: return
+    if (jdkRelease < 9 && values.isNotEmpty()) {
+        this.report(COMPILER_ARGUMENTS_ERROR, "'$flag' is not allowed with '-Xjdk-release=$jdkRelease'.")
     }
 }
 
