@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.NO_PARCE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_ANNOTATION_CLASS
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_ANONYMOUS_OBJECT
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_EXPECT_DECLARATION
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_INNER_CLASS
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_LOCAL_CLASS
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_NON_SEALED_INTERFACE
@@ -90,6 +91,11 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
         map.put(
             PARCELABLE_CANT_BE_LOCAL_CLASS,
             "'Parcelable' cannot be a local class."
+        )
+
+        map.put(
+            PARCELABLE_CANT_BE_EXPECT_DECLARATION,
+            "'Parcelable' cannot be an 'expect' declaration."
         )
 
         map.put(

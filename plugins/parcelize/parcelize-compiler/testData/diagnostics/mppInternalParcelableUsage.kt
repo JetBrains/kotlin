@@ -30,7 +30,7 @@ package test.direct
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.internal.Parcelable
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED, ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class Plain<!> : <!INTERNAL_PARCELABLE_USAGE!>Parcelable<!>
+abstract class Plain : <!INTERNAL_PARCELABLE_USAGE!>Parcelable<!>
 
 @Parcelize
 class Explicit(val id: Int) : <!INTERNAL_PARCELABLE_USAGE!>Parcelable<!>

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
@@ -43,6 +44,7 @@ class FirParcelizeSupertypeGenerator(
 
     override fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean {
         if (declaration !is FirRegularClass) return false
+        if (declaration.isExpect) return false
         if (declaration.isLocal) return false
         if (declaration.classKind == ClassKind.ANNOTATION_CLASS) return false
         if (declaration.isInterface && !declaration.isSealed) return false

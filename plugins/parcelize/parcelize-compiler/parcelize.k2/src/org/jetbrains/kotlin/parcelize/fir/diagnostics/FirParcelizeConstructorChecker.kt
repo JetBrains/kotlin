@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirConstructorChecker
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -40,6 +41,7 @@ object FirParcelizeConstructorChecker : FirConstructorChecker(MppCheckerKind.Pla
         @OptIn(SymbolInternals::class)
         val containingClass = containingClassSymbol.fir
         if (!containingClassSymbol.isParcelize(context.session)
+            || containingClassSymbol.isExpect
             || containingClassSymbol.hasCustomParceler(context.session)) {
             return
         }

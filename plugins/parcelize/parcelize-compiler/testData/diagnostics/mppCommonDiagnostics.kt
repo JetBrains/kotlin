@@ -2,6 +2,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // IMPLICITLY_ADD_PARCELABLE_SUPERTYPE
 // WITH_STDLIB
+// DIAGNOSTICS: -ANNOTATION_CLASS_MEMBER
 
 // MODULE: m1-common
 // FILE: common.kt
@@ -59,7 +60,7 @@ enum class ImplicitEnum { A, B }
 object ImplicitObject
 
 @Parcelize
-annotation class <!ANNOTATION_CLASS_MEMBER, ANNOTATION_CLASS_MEMBER, PARCELABLE_CANT_BE_ANNOTATION_CLASS, PARCELABLE_CANT_BE_ANNOTATION_CLASS{METADATA}!>BadAnnotation<!>
+annotation class <!PARCELABLE_CANT_BE_ANNOTATION_CLASS, PARCELABLE_CANT_BE_ANNOTATION_CLASS{METADATA}!>BadAnnotation<!>
 
 val badAnonymous = @Parcelize <!PARCELABLE_CANT_BE_ANONYMOUS_OBJECT, PARCELABLE_CANT_BE_ANONYMOUS_OBJECT{METADATA}!>object<!> {}
 
@@ -88,8 +89,25 @@ class BadBodyProp(val id: Int) {
 @Parcelize
 class Delegated(val shape: Shape) : Shape <!PARCELABLE_DELEGATE_IS_NOT_ALLOWED, PARCELABLE_DELEGATE_IS_NOT_ALLOWED{METADATA}!>by<!> shape
 
+@Parcelize
+expect class <!PARCELABLE_CANT_BE_EXPECT_DECLARATION, PARCELABLE_CANT_BE_EXPECT_DECLARATION{METADATA}!>ExpectParcelable<!>(id: Int) {
+    val id: Int
+}
+
+@Parcelize
+expect object <!PARCELABLE_CANT_BE_EXPECT_DECLARATION, PARCELABLE_CANT_BE_EXPECT_DECLARATION{METADATA}!>ExpectSingleton<!>
+
 // MODULE: m2-jvm()()(m1-common)
 // FILE: android.kt
 package test
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 actual typealias PlatformValue = String
+
+@Parcelize
+actual class ExpectParcelable actual constructor(actual val id: Int) : Parcelable
+
+@Parcelize
+actual object ExpectSingleton : Parcelable

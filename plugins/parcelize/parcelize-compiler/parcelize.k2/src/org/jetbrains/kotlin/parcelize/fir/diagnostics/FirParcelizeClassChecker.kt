@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.isMetadataCompilation
@@ -43,6 +44,11 @@ object FirParcelizeClassChecker : FirClassChecker(MppCheckerKind.Platform) {
 
         when (klass) {
             is FirRegularClass -> {
+                if (klass.isExpect) {
+                    reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_EXPECT_DECLARATION, context)
+                    return
+                }
+
                 if (classKind == ClassKind.ANNOTATION_CLASS) {
                     reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_ANNOTATION_CLASS, context)
                     return
