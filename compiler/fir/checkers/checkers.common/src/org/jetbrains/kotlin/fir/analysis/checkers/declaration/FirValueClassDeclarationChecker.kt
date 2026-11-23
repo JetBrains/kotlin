@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -392,11 +393,13 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 )
 
                 parameterTypeRef.isInapplicableParameterType(context.session, kind.isFullValueClass, declaration.isFinal) -> {
-                    reporter.reportOn(
+                    reportOn(
                         parameterTypeRef.source,
+                        kind.isWillBecomeValueClass,
                         FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
-                        parameterTypeRef.coneType,
                         kind.valueModifierPrefix,
+                        FirErrors.WILL_BECOME_VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
+                        parameterTypeRef.coneType,
                     )
                 }
 
@@ -495,6 +498,22 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             reporter.reportOn(source, willBecomeValueClassFactory)
         } else {
             reporter.reportOn(source, valueClassFactory)
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun <A, B> reportOn(
+        source: KtSourceElement?,
+        isWillBecomeValueClass: Boolean,
+        valueClassFactory: KtDiagnosticFactory2<A, B>,
+        valueClassArgument: A,
+        willBecomeValueClassFactory: KtDiagnosticFactory1<B>,
+        commonArgument: B
+    ) {
+        if (isWillBecomeValueClass) {
+            reporter.reportOn(source, willBecomeValueClassFactory, commonArgument)
+        } else {
+            reporter.reportOn(source, valueClassFactory, valueClassArgument, commonArgument)
         }
     }
 
