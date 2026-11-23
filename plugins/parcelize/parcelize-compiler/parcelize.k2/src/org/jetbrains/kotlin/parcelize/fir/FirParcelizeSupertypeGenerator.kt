@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.PluginTypeResolver
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
+import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -69,6 +71,11 @@ class FirParcelizeSupertypeGenerator(
         val id = classId ?: return false
         if (id in PARCELABLE_CLASS_IDS) return true
         val fir = toClassLikeSymbol(session)?.fir as? FirClass ?: return false
-        return fir.moduleData.session.kind == FirSession.Kind.Source && needTransformSupertypes(fir)
+        val supertypeSession = fir.moduleData.session
+        // Ask the module of the supertype, because in the IDE its plugin options can differ from this module.
+        return supertypeSession.kind == FirSession.Kind.Source &&
+                supertypeSession.extensionService.supertypeGenerators.any {
+                    it is FirParcelizeSupertypeGenerator && it.needTransformSupertypes(fir)
+                }
     }
 }
