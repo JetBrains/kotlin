@@ -532,7 +532,7 @@ KtFile: danglingContextInFunctionTypeAnnotated.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('String')
-          PsiErrorElement:Function type expected expected
+          PsiErrorElement:Function type expected
             <empty list>
       PsiWhiteSpace('\n    ')
       PROPERTY
@@ -564,7 +564,7 @@ KtFile: danglingContextInFunctionTypeAnnotated.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unresolved')
-          PsiErrorElement:Function type expected expected
+          PsiErrorElement:Function type expected
             <empty list>
       PsiWhiteSpace('\n    ')
       PROPERTY
@@ -598,7 +598,7 @@ KtFile: danglingContextInFunctionTypeAnnotated.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('String')
             PsiElement(QUEST)('?')
-          PsiErrorElement:Function type expected expected
+          PsiErrorElement:Function type expected
             <empty list>
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
@@ -697,7 +697,7 @@ KtFile: danglingContextInFunctionTypeAnnotated.kt
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('String')
-            PsiErrorElement:Function type expected expected
+            PsiErrorElement:Function type expected
               <empty list>
             PsiElement(RPAR)(')')
             PsiElement(QUEST)('?')
@@ -829,7 +829,7 @@ KtFile: danglingContextInFunctionTypeAnnotated.kt
               <empty list>
             PsiElement(RPAR)(')')
             PsiElement(QUEST)('?')
-          PsiErrorElement:Function type expected expected
+          PsiErrorElement:Function type expected
             <empty list>
       PsiWhiteSpace('\n    ')
       PROPERTY
