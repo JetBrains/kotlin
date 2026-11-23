@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // LANGUAGE: +MultiPlatformProjects
 data class X(val a: Int, val b: Int)
 

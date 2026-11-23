@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.isFakeDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkExpectForActualIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalForLazyResolutionPurposes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
@@ -72,11 +73,15 @@ private class LLFirExpectActualMatchingTargetResolver(target: LLFirResolveTarget
     }
 }
 
+/**
+ * Local properties can't be `actual`, and they have no callable id to match by. Some of them are still resolved
+ * as declarations of their own, see [isLocalForLazyResolutionPurposes].
+ */
 private fun FirMemberDeclaration.canHaveExpectCounterPart(): Boolean = when (this) {
     // We shouldn't try to calculate expect/actual mapping for fake declarations
     is FirCallableDeclaration if isFakeDeclaration -> false
     is FirEnumEntry -> true
-    is FirProperty -> true
+    is FirProperty -> !isLocal
     is FirConstructor -> true
     is FirNamedFunction -> true
     is FirRegularClass -> true
