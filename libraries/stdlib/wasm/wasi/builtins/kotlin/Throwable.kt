@@ -22,7 +22,7 @@ public actual constructor(public actual open val message: String?, public actual
     public actual constructor() : this(null, null)
 
     //TODO: Investigate possibility to make WASI stack discoverable (KT-60965)
-    internal val stack: String get() = ""
+    internal val stack: String = wasmConstructTraceFromShadowStack()
 
     internal var suppressedExceptionsList: MutableList<Throwable>? = null
 

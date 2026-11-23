@@ -213,6 +213,16 @@ class BackendWasmSymbols(
 
     val wasmIsInterface by CallableIds.wasmIsInterface.functionSymbol()
 
+    val wasmGetStringLiteralForStringLiteralId by CallableIds.wasmGetStringLiteralForStringLiteralId.functionSymbol()
+    val wasmGetCurrentFunctionFqNameStringLiteralId by CallableIds.wasmGetCurrentFunctionFqNameStringLiteralId.functionSymbol()
+    val wasmShadowStackGetLocal by CallableIds.wasmShadowStackGetLocal.functionSymbol()
+    // only referenced here to preserve it for codegen
+    @Suppress("unused")
+    val wasmShadowStackGetLocalTyped by CallableIds.wasmShadowStackGetLocalTyped.functionSymbol()
+    val wasmShadowStackSaveGlobalToLocal by CallableIds.wasmShadowStackSaveGlobalToLocal.functionSymbol()
+    val wasmShadowStackPush by CallableIds.wasmShadowStackPush.functionSymbol()
+    val wasmShadowStackPop by CallableIds.wasmShadowStackPop.functionSymbol()
+
     val nullableEquals by CallableIds.nullableEquals.functionSymbol()
     val anyNtoString by CallableIds.anyNtoString.functionSymbol()
 
@@ -570,6 +580,14 @@ private object CallableIds {
     val wasmGetSimpleNameImpl = "wasmGetSimpleNameImpl".wasmCallableId
     val wasmArrayAnyIndexOfValue = "wasmArrayAnyIndexOfValue".wasmCallableId
     val wasmIsInterface = "wasmIsInterface".wasmCallableId
+    val wasmGetStringLiteralForStringLiteralId = "wasmGetStringLiteralForStringLiteralId".wasmCallableId
+    val wasmGetCurrentFunctionFqNameStringLiteralId = "wasmGetCurrentFunctionFqNameStringLiteralId".wasmCallableId
+    val wasmShadowStackPush = "wasmShadowStackPush".wasmCallableId
+    val wasmShadowStackPop = "wasmShadowStackPop".wasmCallableId
+    val wasmShadowStackGetLocal = "wasmShadowStackGetLocal".wasmCallableId
+    val wasmShadowStackGetLocalTyped = "wasmShadowStackGetLocalTyped".wasmCallableId
+    val wasmShadowStackSaveGlobalToLocal = "wasmShadowStackSaveGlobalToLocal".wasmCallableId
+
     val nullableEquals = "nullableEquals".wasmCallableId
     val anyNtoString = "anyNtoString".wasmCallableId
     val nullableFloatIeee754Equals = "nullableFloatIeee754Equals".wasmCallableId

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.wasm.ir.*
 import java.util.LinkedList
 
 enum class LoopLabelType { BREAK, CONTINUE }
-enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, IS_INTERFACE_ANY_ARRAY, TABLE_SWITCH_SELECTOR }
+enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, IS_INTERFACE_ANY_ARRAY, TABLE_SWITCH_SELECTOR, SHADOW_STACK }
 
 class WasmFunctionCodegenContext(
     val irFunction: IrFunction?,
@@ -35,7 +35,7 @@ class WasmFunctionCodegenContext(
     private val functionFileEntry: IrFileEntry,
 ) {
 
-    private val wasmLocals = LinkedHashMap<IrValueSymbol, WasmLocal>()
+    private val wasmIrLocals = LinkedHashMap<IrValueSymbol, WasmLocal>()
     private val wasmSyntheticLocals = LinkedHashMap<SyntheticLocalType, WasmLocal>()
     private val loopLevels = LinkedHashMap<Pair<IrLoop, LoopLabelType>, Int>()
     private val nonLocalReturnLevels = LinkedHashMap<IrReturnableBlockSymbol, Int>()
@@ -44,8 +44,8 @@ class WasmFunctionCodegenContext(
 
     private val inlineContextStack = LinkedList<InlineContext>()
 
-    fun defineLocal(irValueDeclaration: IrValueSymbol) {
-        assert(irValueDeclaration !in wasmLocals) { "Redefinition of local" }
+    fun defineIrLocal(irValueDeclaration: IrValueSymbol) {
+        assert(irValueDeclaration !in wasmIrLocals) { "Redefinition of local" }
 
         val owner = irValueDeclaration.owner
         val originalName = owner.name.asString()
@@ -72,12 +72,12 @@ class WasmFunctionCodegenContext(
             isParameter = irValueDeclaration is IrValueParameterSymbol
         )
 
-        wasmLocals[irValueDeclaration] = wasmLocal
+        wasmIrLocals[irValueDeclaration] = wasmLocal
         wasmFunction.locals += wasmLocal
     }
 
     fun referenceLocal(irValueDeclaration: IrValueSymbol): WasmLocal {
-        return wasmLocals.getValue(irValueDeclaration)
+        return wasmIrLocals.getValue(irValueDeclaration)
     }
 
     fun referenceLocal(index: Int): WasmLocal {
@@ -86,11 +86,12 @@ class WasmFunctionCodegenContext(
 
     private val SyntheticLocalType.wasmType
         get() = when (this) {
-            SyntheticLocalType.IS_INTERFACE_PARAMETER ->
+            IS_INTERFACE_PARAMETER ->
                 WasmRefNullType(typeContext.referenceHeapType(backendContext.irBuiltIns.anyClass))
-            SyntheticLocalType.IS_INTERFACE_ANY_ARRAY ->
+            IS_INTERFACE_ANY_ARRAY ->
                 WasmRefNullType(Synthetics.HeapTypes.wasmAnyArrayType)
-            SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
+            TABLE_SWITCH_SELECTOR -> WasmI32
+            SHADOW_STACK -> WasmRefNullType(typeContext.referenceHeapType(backendContext.irBuiltIns.anyClass))
         }
 
     fun referenceLocal(type: SyntheticLocalType): WasmLocal = wasmSyntheticLocals.getOrPut(type) {

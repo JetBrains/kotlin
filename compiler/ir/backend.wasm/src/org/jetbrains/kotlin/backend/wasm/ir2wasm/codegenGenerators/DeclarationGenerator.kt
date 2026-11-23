@@ -195,7 +195,7 @@ class DeclarationGenerator(
         )
 
         declaration.forEachEffectiveValueParameters {
-            functionCodegenContext.defineLocal(it.symbol)
+            functionCodegenContext.defineIrLocal(it.symbol)
         }
 
         val bodyBuilder = BodyGenerator(
@@ -667,11 +667,11 @@ fun generateConstExpression(
                 val literalId = linkerDataContext.referenceStringLiteralId(stringValue)
                 body.buildConstI32Symbol(literalId, location)
 
-                if (stringValue.fitsLatin1) {
-                    body.buildCall(Synthetics.Functions.createStringLiteralLatin1, location)
-                } else {
-                    body.buildCall(Synthetics.Functions.createStringLiteralUtf16, location)
-                }
+                body.buildCall(
+                    if (stringValue.fitsLatin1)
+                        Synthetics.Functions.createStringLiteralLatin1
+                    else
+                        Synthetics.Functions.createStringLiteralUtf16, location)
             }
             body.commentGroupEnd()
         }

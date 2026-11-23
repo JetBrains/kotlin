@@ -189,6 +189,9 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::InvokeOnExportedFunctionExitLowering,
 
+    // TODO need to make sure there is nothing that can insert logic beyond the try{}finally{} in the lowerings after this
+    ::WasmWasiOptionalShadowStackLowering,
+
     ::TryCatchCanonicalization,
 
     ::WasmForLoopsLowering,

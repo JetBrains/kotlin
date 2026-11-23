@@ -429,7 +429,7 @@ class BodyGenerator(
 
     private fun IrCatch.initializeCatchParameter() {
         with(catchParameter.symbol) {
-            functionContext.defineLocal(this)
+            functionContext.defineIrLocal(this)
             body.buildSetLocal(functionContext.referenceLocal(this), owner.getSourceLocation())
         }
     }
@@ -890,7 +890,7 @@ class BodyGenerator(
 
         val callFunction = call.symbol.owner
 
-        if (tryToGenerateIntrinsicCall(call, callFunction)) {
+        if (tryToGenerateIntrinsicCall(call)) {
             if (callFunction.returnType.isUnit())
                 body.buildGetUnit()
             return
@@ -1112,8 +1112,9 @@ class BodyGenerator(
     // Assumes call arguments are already on the stack
     private fun tryToGenerateIntrinsicCall(
         call: IrFunctionAccessExpression,
-        function: IrFunction,
     ): Boolean {
+        val function = call.symbol.owner
+
         if (tryToGenerateWasmOpIntrinsicCall(call, function)) {
             return true
         }
@@ -1460,6 +1461,33 @@ class BodyGenerator(
                 return true
             }
 
+            // for the following 2 intrinsics, they are basically dividing the 2 parts of the WASI version of generateConstExpression for a string: we only save the literal id, and we only rebuild it once its needed
+            wasmSymbols.wasmGetCurrentFunctionFqNameStringLiteralId -> {
+                val caller = functionContext.irFunction ?: error("wasmGetCurrentFunctionFqNameStringLiteralId only intrinsic allowed inside functions")
+                val fqnString = caller.kotlinFqName.asString()
+                assert(fqnString.fitsLatin1) { "FQNs are ASCII only, the decoding logic only handles latin1 strings" }
+
+                val literalId = linkerDataContext.referenceStringLiteralId(fqnString)
+                body.buildConstI32Symbol(literalId, location)
+            }
+
+            wasmSymbols.wasmGetStringLiteralForStringLiteralId -> {
+                // NOTE: because we know that FQNs are ASCII only, we can just use the latin1 string literal function
+                // TODO but make this more clear either in the type system, or the names/comments
+                body.buildCall(Synthetics.Functions.createStringLiteralLatin1, location)
+            }
+
+            wasmSymbols.wasmShadowStackSaveGlobalToLocal -> {
+                val shadowStackLocal = functionContext.referenceLocal(SyntheticLocalType.SHADOW_STACK)
+                // the global is already on the stack as an argument
+                body.buildSetLocal(shadowStackLocal, location)
+            }
+
+            wasmSymbols.wasmShadowStackGetLocal -> {
+                val shadowStackLocal = functionContext.referenceLocal(SyntheticLocalType.SHADOW_STACK)
+                body.buildGetLocal(shadowStackLocal, location)
+            }
+
             else -> {
                 return false
             }
@@ -1793,7 +1821,7 @@ class BodyGenerator(
     }
 
     override fun visitVariable(declaration: IrVariable) {
-        functionContext.defineLocal(declaration.symbol)
+        functionContext.defineIrLocal(declaration.symbol)
         if (declaration.initializer == null) {
             return
         }
