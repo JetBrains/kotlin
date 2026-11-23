@@ -1181,9 +1181,9 @@ private fun makeKotlinType(
 ): SimpleType =
     when (classifier) {
         is IrTypeParameterSymbol ->
-            classifier.toIrBasedDescriptorIfPossible().defaultType.makeNullableAsSpecified(hasQuestionMark)
+            classifier.owner.toIrBasedDescriptor().defaultType.makeNullableAsSpecified(hasQuestionMark)
         is IrClassSymbol -> {
-            val classDescriptor = classifier.toIrBasedDescriptorIfPossible()
+            val classDescriptor = classifier.owner.toIrBasedDescriptor()
             val kotlinTypeArguments = arguments.memoryOptimizedMapIndexed { index, it ->
                 when (it) {
                     is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toIrBasedKotlinType(builtins))
@@ -1220,15 +1220,6 @@ private fun makeKotlinType(
             ).makeNullableAsSpecified(hasQuestionMark)
         }
     }
-
-/* When IR-based descriptors are used from Psi2Ir, symbols may be unbound, thus we may need to resort to real descriptors. */
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-private fun IrClassSymbol.toIrBasedDescriptorIfPossible(): ClassDescriptor =
-    if (isBound) owner.toIrBasedDescriptor() else descriptor
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-private fun IrTypeParameterSymbol.toIrBasedDescriptorIfPossible(): TypeParameterDescriptor =
-    if (isBound) owner.toIrBasedDescriptor() else descriptor
 
 private fun IrElement.toConstantValue(): ConstantValue<*> {
     return when (this) {
