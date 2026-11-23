@@ -34,39 +34,41 @@ import java.io.Reader
 import java.io.Writer
 import java.util.Properties
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as ProtoFunction
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
 
 private const val INVALID_INDEX = -1
 
 internal class InlineFunctionSerializer(private val deserializer: KonanPartialModuleDeserializer) {
     fun buildInlineFunctionReference(irFunction: IrFunction): SerializedInlineFunctionReference {
-        val signature = irFunction.symbol.signature
-                ?: error("No signature for ${irFunction.render()}")
-        val topLevelSignature = signature.topLevelSignature()
-        val fileDeserializationState: FileDeserializationState = deserializer.getFileDeserializationState(topLevelSignature)
-        val declarationIndex = fileDeserializationState.fileDeserializer.reversedSignatureIndex[topLevelSignature]
-                ?: error("No declaration for ${topLevelSignature.render()}")
-        val fileReader = fileDeserializationState.fileReader
-        val symbolDeserializer = fileDeserializationState.fileDeserializer.symbolDeserializer
-        val protoDeclaration = fileReader.declaration(declarationIndex)
+        val inlineFunctionSignature = irFunction.symbol.signature ?: error("No signature for ${irFunction.render()}")
 
         val outerClasses: List<IrClass> = (irFunction.parent as? IrClass)?.getOuterClasses(takeOnlyInner = false) ?: emptyList()
         require((outerClasses.getOrNull(0)?.parent ?: irFunction.parent) is IrFile) {
             "Local inline functions are not supported: ${irFunction.render()}"
         }
 
-        val protoFunction = if (outerClasses.isEmpty()) {
+        val [protoFunction: ProtoFunction, declaringFile: IrFile] = if (outerClasses.isEmpty()) {
             val irProperty = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
-            if (irProperty == null)
-                protoDeclaration.irFunction
-            else protoDeclaration.irProperty.findAccessor(irProperty, irFunction)
+            if (irProperty == null) {
+                loadFunction(inlineFunctionSignature.topLevelSignature())
+            } else {
+                val [protoProperty, file] = loadProperty(inlineFunctionSignature.topLevelSignature())
+                protoProperty.findAccessor(irProperty, irFunction) to file
+            }
         } else {
-            var protoClass = protoDeclaration.irClass
+            var [protoClass, fileDeserializationState] = loadClass(inlineFunctionSignature.topLevelSignature())
+
+            val fileReader = fileDeserializationState.fileReader
+            val symbolDeserializer = fileDeserializationState.declarationDeserializer.symbolDeserializer
+
             outerClasses.indices.forEach { classIndex ->
                 if (classIndex < outerClasses.size - 1) {
                     protoClass = protoClass.findClass(outerClasses[classIndex + 1], fileReader, symbolDeserializer)
                 }
             }
-            protoClass.findInlineFunction(irFunction, fileReader, symbolDeserializer)
+            protoClass.findInlineFunction(irFunction, fileReader, symbolDeserializer) to fileDeserializationState.file
         }
 
         val functionSignature = BinarySymbolData.decode(protoFunction.base.base.symbol).signatureId
@@ -76,11 +78,36 @@ internal class InlineFunctionSerializer(private val deserializer: KonanPartialMo
         }
 
         return SerializedInlineFunctionReference(
-                SerializedFileReference(fileDeserializationState.file),
+                SerializedFileReference(declaringFile),
                 functionSignature, protoFunction.base.body,
                 irFunction.startOffset, irFunction.endOffset,
                 defaultValues.toIntArray()
         )
+    }
+
+    private fun loadFunction(topLevelSignature: IdSignature): Pair<ProtoFunction, IrFile> {
+        val [protoDeclaration, fileDeserializationState] = loadDeclaration(topLevelSignature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL)
+        return protoDeclaration.irFunction to fileDeserializationState.file
+    }
+
+    private fun loadProperty(topLevelSignature: IdSignature): Pair<ProtoProperty, IrFile> {
+        val [protoDeclaration, fileDeserializationState] = loadDeclaration(topLevelSignature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL)
+        return protoDeclaration.irProperty to fileDeserializationState.file
+    }
+
+    private fun loadClass(topLevelSignature: IdSignature): Pair<ProtoClass, FileDeserializationState> {
+        val [protoDeclaration, fileDeserializationState] = loadDeclaration(topLevelSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL)
+        return protoDeclaration.irClass to fileDeserializationState
+    }
+
+    private fun loadDeclaration(topLevelSignature: IdSignature, kind: BinarySymbolData.SymbolKind): Pair<ProtoDeclaration, FileDeserializationState> {
+        val signatureAndKind = SignatureAndKind(topLevelSignature, kind)
+
+        val fileDeserializationState: FileDeserializationState = deserializer.getFileDeserializationState(topLevelSignature)
+        val declarationIndex = fileDeserializationState.fileDeserializer.topLevelDeclarationIndex[signatureAndKind]
+                ?: error("No declaration for $signatureAndKind")
+
+        return fileDeserializationState.fileReader.declaration(declarationIndex) to fileDeserializationState
     }
 }
 

@@ -15,13 +15,14 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultTypeWithoutArguments
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.isClassSignature
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.utils.putToMultiMap
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation as ProtoAnnotation
@@ -38,18 +39,47 @@ class IrFileDeserializer(
     val symbolDeserializer: IrSymbolDeserializer,
     private val declarationDeserializer: IrDeclarationDeserializer,
 ) {
-    val reversedSignatureIndex: Map<IdSignature, Int> = fileProto.declarationIdList.associateBy { topLevelDeclarationIndex ->
-        symbolDeserializer.deserializeIdSignature(topLevelDeclarationIndex)
-    }
+    /**
+     * All top-level declarations in this file that are available for deserialization:
+     * the signature and the kind of the declaration mapped to its ID in the KLIB (see [IrLibraryFile.declaration]).
+     */
+    val topLevelDeclarationIndex: Map<SignatureAndKind, Int> = buildMap {
+        for (declarationIndex in fileProto.declarationIdList) {
+            val signature: IdSignature = symbolDeserializer.deserializeIdSignature(declarationIndex)
 
-    private val callableIdToSignature: Map<CallableId, List<IdSignature>> = buildMap<CallableId, MutableList<IdSignature>> {
-        reversedSignatureIndex.keys.forEach { idSig ->
-            if (idSig !is IdSignature.CommonSignature) return@forEach
-            if (idSig.isClassSignature()) return@forEach
-            val callableId = CallableId(idSig.packageFqName(), Name.identifier(idSig.declarationFqName))
-            getOrPut(callableId) { mutableListOf() } += idSig
+            val kind: BinarySymbolData.SymbolKind = when (val declarationKind = libraryFile.declarationKind(declarationIndex)) {
+                ProtoDeclaration.DeclaratorCase.IR_CLASS -> BinarySymbolData.SymbolKind.CLASS_SYMBOL
+                ProtoDeclaration.DeclaratorCase.IR_FUNCTION -> BinarySymbolData.SymbolKind.FUNCTION_SYMBOL
+                ProtoDeclaration.DeclaratorCase.IR_PROPERTY -> BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
+                ProtoDeclaration.DeclaratorCase.IR_TYPE_ALIAS -> BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL
+                else -> error(
+                    "Unexpected top-level declaration kind $declarationKind" +
+                            " for signature ${signature::class.java.simpleName} ${signature.render()}" +
+                            " in file ${file.fileEntry.name} of module ${file.module.name}"
+                )
+            }
+
+            this[SignatureAndKind(signature, kind)] = declarationIndex
         }
     }
+
+    /** The cache of [TopLevelCallableIdAndKind] representing a top-level callable and the corresponding signatures */
+    private val topLevelCallables: Map<TopLevelCallableIdAndKind, List<IdSignature>> by lazy {
+        buildMap<TopLevelCallableIdAndKind, MutableList<IdSignature>> {
+            for ([signature, kind] in topLevelDeclarationIndex.keys) {
+                // Only `IdSignature.CommonSignature` can denote a top-level declaration visible to other files/modules.
+                if (signature !is IdSignature.CommonSignature) continue
+
+                if (kind == BinarySymbolData.SymbolKind.FUNCTION_SYMBOL || kind == BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) {
+                    val callableId = CallableId(signature.packageFqName(), Name.identifier(signature.declarationFqName))
+                    putToMultiMap(TopLevelCallableIdAndKind(callableId, kind), signature)
+                }
+            }
+        }
+    }
+
+    // TODO(KT-91417): Drop this legacy index after completely migrating to signature+symbolKind addressing scheme.
+    private val reversedSignatureIndex: Map<IdSignature, Int> = topLevelDeclarationIndex.mapKeys { it.key.signature }
 
     /** Once deserialized this property is set to `null`. */
     private var protoAnnotationsPendingDeserialization: List<ProtoAnnotation>? = fileProto.annotationList
@@ -91,18 +121,7 @@ class IrFileDeserializer(
         topLevelCallableId: TopLevelCallableIdAndKind,
         output: MutableCollection<IdSignature>,
     ) {
-        val topLevelCallableSignature = callableIdToSignature[topLevelCallableId.callableId] ?: return
-        for (topLevelSignature in topLevelCallableSignature) {
-            val index = reversedSignatureIndex[topLevelSignature] ?: continue
-            val protoKind = libraryFile.declarationKind(index)
-            when (topLevelCallableId.kind) {
-                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL ->
-                    if (protoKind == ProtoDeclaration.DeclaratorCase.IR_FUNCTION) output += topLevelSignature
-                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL ->
-                    if (protoKind == ProtoDeclaration.DeclaratorCase.IR_PROPERTY) output += topLevelSignature
-                else -> error("Unexpected callable: $topLevelCallableId")
-            }
-        }
+        topLevelCallables[topLevelCallableId]?.let { output += it }
     }
 }
 
@@ -195,7 +214,7 @@ class FileDeserializationState(
      * Schedule deserialization of all top-level declarations in this file.
      */
     internal fun enqueueAllDeclarations() {
-        reachableTopLevels.addAll(fileDeserializer.reversedSignatureIndex.keys)
+        fileDeserializer.topLevelDeclarationIndex.keys.mapTo(reachableTopLevels) { it.signature }
     }
 
     /**
