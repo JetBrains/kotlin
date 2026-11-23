@@ -23,18 +23,7 @@ FILE: dataStaticConstructorOnEnumClass.kt
         public final static val entries: R|kotlin/enums/EnumEntries<A>|
             public static get(): R|kotlin/enums/EnumEntries<A>|
 
-        public open override fun toString(): R|kotlin/String|
-
-        public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() public final fun of(x: R|kotlin/Int|): R|A|
-
-            private constructor(): R|A.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
     }
     public final fun test(): R|kotlin/Unit| {
-        Q|A(.<companion>)|.R|/A.Companion.of|(Int(1))
+        Q|A|.<Unresolved name: of>#(Int(1))
     }

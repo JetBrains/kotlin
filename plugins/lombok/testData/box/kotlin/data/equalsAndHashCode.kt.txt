@@ -1410,10 +1410,6 @@ enum class Color : Enum<Color> {
 
   companion fun values(): Array<Color> /* Synthetic body for ENUM_VALUES */
 
-  override fun toString(): String {
-    return "Color(" + "hex=" + <this>.<get-hex>() + ')'
-  }
-
   companion val entries: EnumEntries<Color>
     companion get(): EnumEntries<Color> /* Synthetic body for ENUM_ENTRIES */
 

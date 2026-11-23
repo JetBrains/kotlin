@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
@@ -67,6 +68,8 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         val constructorInfo = getConstructorInfo(classSymbol) ?: return false
         if (constructorInfo.accessLevel.toVisibility(classSymbol) == null) return false
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) } ?: return false
+        // Only regular classes may have static factory constructors (no objects/interfaces/enums/annotations)
+        if (classSymbol.classKind != ClassKind.CLASS) return false
 
         return classSymbol.supportsGeneratedConstructor && !classSymbol.isInner &&
                 !staticFactoryNameIsTaken(classSymbol, staticName, getVariablesForParameters(classSymbol).size)

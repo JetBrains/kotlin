@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
@@ -97,17 +98,17 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
 
     /**
      * The `@ToString` (or `@Data`) configuration of [classSymbol] if it is a class `toString` may be
-     * generated for. Only a non-interface & non-annotation class gets them.
+     * generated for. Only classes and objects get them. Note: enum entry is a wrong annotation target.
      */
     private fun getApplicableAnnotation(classSymbol: FirClassSymbol<*>): ConeLombokAnnotations.ToString? {
-        if (classSymbol !is FirRegularClassSymbol || !classSymbol.isSupportedLombokTarget) return null
+        if (classSymbol !is FirRegularClassSymbol || !classSymbol.isSupportedLombokTarget || classSymbol.isEnumClass) return null
         return session.lombokService.getToString(classSymbol)
     }
 
     private fun initializeToStringIfNeeded(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): FirNamedFunctionSymbol? {
-        // An annotation class can hold no member at all, generating one makes the platform report
-        // `ANNOTATION_CLASS_MEMBER` on it. Both kinds are already reported as `ANNOTATION_HAS_NO_EFFECT`.
-        if (classSymbol !is FirRegularClassSymbol || !classSymbol.isSupportedLombokTarget) return null
+        // Again, only regular classes and objects are possible here.
+        // All other kinds are already reported as `ANNOTATION_HAS_NO_EFFECT`.
+        if (classSymbol !is FirRegularClassSymbol || !classSymbol.isSupportedLombokTarget || classSymbol.isEnumClass) return null
 
         val toStringConfig = session.lombokService.getToString(classSymbol) ?: return null
         val declaredScope = context.declaredScope
