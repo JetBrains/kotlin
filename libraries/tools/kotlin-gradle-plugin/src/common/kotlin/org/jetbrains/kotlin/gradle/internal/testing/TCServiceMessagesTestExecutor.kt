@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.internal.testing
 import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
+import org.gradle.internal.nativeintegration.services.NativeServices
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle.Companion.execAsync
@@ -18,6 +19,7 @@ import java.io.IOException
 import java.io.OutputStream
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
+import java.lang.reflect.InvocationTargetException
 import kotlin.concurrent.thread
 
 open class TCServiceMessagesTestExecutionSpec(
@@ -114,7 +116,7 @@ class TCServiceMessagesTestExecutor(
                 )
 
                 val exitValue = client.root {
-                    val proc = processBuilder.start()
+                    val proc = processBuilder.startWithGradleLauncher()
                     process = proc
 
                     // Test processes don't read from stdin.
@@ -227,6 +229,40 @@ class TCServiceMessagesTestExecutor(
  * and prevents backpressure from reaching the child process. See KT-86107.
  */
 private val PIPE_BUFFER_SIZE = TCServiceMessageOutputStreamHandler.MESSAGE_LIMIT_BYTES
+
+/**
+ * Starts the process through the launcher Gradle uses for its own processes.
+ *
+ * On Linux, a forked process keeps copies of the daemon's open file descriptors until it calls `exec`.
+ * If the daemon is writing the test executable at that moment (restoring it from the build cache, for example),
+ * the copy keeps the file open for writing, and starting the executable fails with "Text file busy" (JDK-8068370).
+ * Gradle's launcher starts one process at a time, so a test started through it can't overlap with another start
+ * made through the same launcher. A process started with a plain [ProcessBuilder.start] can still get in the way.
+ * See KT-91929.
+ *
+ * The launcher is an internal Gradle service, and KGP doesn't compile against the library that declares its type,
+ * hence the reflection. If the lookup fails, the process is started directly. With native integration disabled
+ * (`org.gradle.native=false`) Gradle's launcher has no lock, so this is the same as a direct start.
+ */
+private fun ProcessBuilder.startWithGradleLauncher(): Process {
+    val (launcher, startMethod) = try {
+        val launcherClass = Class.forName(GRADLE_PROCESS_LAUNCHER_CLASS, false, NativeServices::class.java.classLoader)
+        NativeServices.getInstance().get(launcherClass) to launcherClass.getMethod("start", ProcessBuilder::class.java)
+    } catch (e: Exception) {
+        log.debug("Gradle process launcher is not available, starting the process directly", e)
+        return start()
+    } catch (e: LinkageError) {
+        log.debug("Gradle process launcher is not available, starting the process directly", e)
+        return start()
+    }
+    return try {
+        startMethod.invoke(launcher, this) as Process
+    } catch (e: InvocationTargetException) {
+        throw e.cause ?: e
+    }
+}
+
+private const val GRADLE_PROCESS_LAUNCHER_CLASS = "net.rubygrapefruit.platform.ProcessLauncher"
 
 /**
  * Returns a new [OutputStream] which discards all bytes.
