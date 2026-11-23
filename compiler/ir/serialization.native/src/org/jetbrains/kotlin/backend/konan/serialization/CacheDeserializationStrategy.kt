@@ -27,11 +27,11 @@ sealed class CacheDeserializationStrategy {
         override fun contains(filePath: String) = filePath == this.filePath
 
         override fun contains(fqName: FqName, fileName: String) =
-                fqName.asString() == this.fqName && Path(filePath).name == fileName
+            fqName.asString() == this.fqName && Path(filePath).name == fileName
     }
 
     class MultipleFiles(filePaths: List<String>, fqNames: List<String>) : CacheDeserializationStrategy() {
-        private val filePaths = filePaths.toSet()
+        val filePaths: Set<String> = filePaths.toSet()
 
         private val fqNamesWithNames = fqNames.mapIndexed { i: Int, fqName: String -> Pair(fqName, Path(filePaths[i]).name) }.toSet()
 

@@ -114,6 +114,17 @@ class CacheSupport(
         return fileCacheDirectory.absolutePathString()
     }
 
+    // Libraries requested to be cached mapped to the source file paths to rebuild (empty means whole library).
+    private val requestedFilesToCache: Map<KotlinLibrary, List<String>> = configuration[CACHE_BATCH]?.let { batch ->
+        require(configuration.konanLibraryToAddToCache == null) { "Batched build cannot be mixed with single cache build" }
+        require(configuration.makePerFileCache) {
+            "Batched build is only supported for per-file caches as a part of incremental build"
+        }
+        batch.entries.associate { [path, member] -> getLibrary(Path(path)) to member.filesToCache }
+    } ?: configuration.konanLibraryToAddToCache?.let { path ->
+        mapOf(getLibrary(Path(path)) to configuration.filesToCache)
+    } ?: emptyMap()
+
     internal val cachedLibraries: CachedLibraries = run {
         val explicitCacheFiles = configuration[NativeConfigurationKeys.CACHED_LIBRARIES]!!
 
@@ -139,7 +150,7 @@ class CacheSupport(
                 implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
                 autoCacheDirectory = autoCacheDirectory,
                 autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom,
-                libraryToCache = configuration.konanLibraryToAddToCache?.let { getLibrary(Path(it)) },
+                filesBeingCached = requestedFilesToCache,
         )
     }
 
@@ -149,34 +160,26 @@ class CacheSupport(
                     "not found among resolved libraries:\n  " +
                     klibDag.librariesReverseTopoSorted.joinToString("\n  ") { it.path.pathString })
 
-    internal val librariesToCache: Map<KotlinLibrary, PartialCacheInfo> = configuration[CACHE_BATCH]?.let { batch ->
-        require(configuration.konanLibraryToAddToCache == null) { "Batched build cannot be mixed with single cache build" }
-        require(configuration.makePerFileCache) {
-            "Batched build is only supported for per-file caches as a part of incremental build"
-        }
-        batch.keys.associate { path ->
-            val library = getLibrary(Path(path))
-            require(cachedLibraries.getLibraryCache(library, allowIncomplete = true) == null) {
-                "Cache batch contains an already cached library: ${library.path}"
+    internal val librariesToCache: Map<KotlinLibrary, PartialCacheInfo> = buildMap {
+        val isBatch = configuration[CACHE_BATCH] != null
+        for ([kotlinLibrary, filesToCache] in requestedFilesToCache) {
+            val libraryCache = cachedLibraries.getLibraryCache(kotlinLibrary, allowIncomplete = true)
+            if (isBatch) {
+                if (filesToCache.isEmpty()) {
+                    require(libraryCache == null) {
+                        "Cache batch contains an already cached library: ${kotlinLibrary.path}"
+                    }
+                }
+            } else if (libraryCache is CachedLibraries.Cache.Monolithic) {
+                continue
             }
-            library to PartialCacheInfo(library, CacheDeserializationStrategy.WholeModule)
+            val strategy = when {
+                filesToCache.isEmpty() -> CacheDeserializationStrategy.WholeModule
+                else -> CacheDeserializationStrategy.MultipleFiles(filesToCache, kotlinLibrary.getFileFqNames(filesToCache))
+            }
+            put(kotlinLibrary, PartialCacheInfo(kotlinLibrary, strategy))
         }
-    } ?: configuration.konanLibraryToAddToCache?.let {
-        val libraryToAddToCacheFile = Path(it)
-        val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
-        val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache, allowIncomplete = true)
-        if (libraryCache is CachedLibraries.Cache.Monolithic)
-            null
-        else {
-            val filesToCache = configuration.filesToCache
-
-            val strategy = if (filesToCache.isEmpty())
-                CacheDeserializationStrategy.WholeModule
-            else
-                CacheDeserializationStrategy.MultipleFiles(filesToCache, libraryToAddToCache.getFileFqNames(filesToCache))
-            mapOf(libraryToAddToCache to PartialCacheInfo(libraryToAddToCache, strategy))
-        }
-    } ?: emptyMap()
+    }
 
     internal val preLinkCaches: Boolean =
             configuration.preLinkCaches
