@@ -339,7 +339,12 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         shortName = "p"
         description = "Specify the output file kind.".asReleaseDependent()
         valueType = StringType.defaultNull
-        valueDescription = "{program|static|dynamic|framework|library|bitcode}".asReleaseDependent()
+        valueDescription = ReleaseDependent(
+            current = "{program|static|dynamic|framework|library}",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v1_5_20..KotlinReleaseVersion.v2_5_0 to "{program|static|dynamic|framework|library|bitcode}"
+            )
+        )
         argumentType = CompilerOutputKindType()
 
         lifecycle(

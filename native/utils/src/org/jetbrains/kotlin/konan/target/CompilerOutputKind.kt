@@ -23,6 +23,7 @@ enum class CompilerOutputKind {
     LIBRARY {
         override fun suffix(target: KonanTarget?) = ".klib"
     },
+    @Deprecated("Bitcode output kind is obsolete.")
     BITCODE {
         override fun suffix(target: KonanTarget?) = ".bc"
     },

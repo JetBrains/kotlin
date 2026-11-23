@@ -42,6 +42,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                         CompilerOutputKind.STATIC -> produceCLibrary(engine, config, environment)
                         CompilerOutputKind.FRAMEWORK -> produceObjCFramework(engine, config, environment)
                         CompilerOutputKind.LIBRARY -> error("klib is supported only in NativeKlibCliPipeline")
+                        @Suppress("DEPRECATION")
                         CompilerOutputKind.BITCODE -> error("Bitcode output kind is obsolete.")
                         CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)

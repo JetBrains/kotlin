@@ -879,7 +879,7 @@ This library must be one of the ones passed with '-library'.""",
     @Argument(
         value = "-produce",
         shortName = "-p",
-        valueDescription = "{program|static|dynamic|framework|library|bitcode}",
+        valueDescription = "{program|static|dynamic|framework|library}",
         description = "Specify the output file kind.",
     )
     var produce: String? = null
