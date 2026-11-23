@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 @OptIn(DiagnosticLossRisk::class)
 class SourceElementPositioningStrategy(
     private val lightTreeStrategy: LightTreePositioningStrategy,
-    psiStrategy: PositioningStrategy<*>,
+    psiStrategy: PsiPositioningStrategy<*>,
 ) : AbstractSourceElementPositioningStrategy() {
     // The strategy is only applied to the elements it's registered for, so the erased element type is safe
     @Suppress("UNCHECKED_CAST")
-    private val psiStrategy = psiStrategy as PositioningStrategy<PsiElement>
+    private val psiStrategy = psiStrategy as PsiPositioningStrategy<PsiElement>
 
     companion object {
         private val improperTextRanges = listOf(PossiblyImproperTextRange(-1, -1))
