@@ -16,8 +16,25 @@ import kotlin.test.assertTrue
 internal class JvmClasspathMetadataTest {
 
     @Test
-    fun byDefaultJvmClasspathMetadataShouldBeDisabled() {
+    fun byDefaultJvmClasspathMetadataShouldBeEnabled() {
         val project = buildProjectWithJvm()
+
+        project.evaluate()
+
+        val kotlinJvmCompileTasks = project.tasks.withType<KotlinCompile>()
+        kotlinJvmCompileTasks.all { task ->
+            assertTrue(
+                actual = task.enableJvmClasspathMetadata.get(),
+                message = "Task ${task.path} has configured 'false' for 'enableKmpJvmClasspathMetadata'"
+            )
+        }
+    }
+
+    @Test
+    fun disabledJvmClasspathMetadataShouldBeConfiguredCorrectly() {
+        val project = buildProjectWithJvm(preApplyCode = {
+            extraProperties.set("kotlin.internal.jvm.enableKmpClasspathMetadataForIncrementalCompilation", "false")
+        })
 
         project.evaluate()
 
@@ -31,18 +48,18 @@ internal class JvmClasspathMetadataTest {
     }
 
     @Test
-    fun enabledJvmClasspathMetadataShouldBeConfiguredCorrectly() {
+    fun disablingIncrementalCompilationOfCommonSourcesDisablesJvmClasspathMetadata() {
         val project = buildProjectWithJvm(preApplyCode = {
-            extraProperties.set("kotlin.internal.jvm.enableKmpClasspathMetadataForIncrementalCompilation", "true")
+            extraProperties.set("kotlin.jvm.enableIncrementalCompilationOfCommonSources", "false")
         })
 
         project.evaluate()
 
         val kotlinJvmCompileTasks = project.tasks.withType<KotlinCompile>()
         kotlinJvmCompileTasks.all { task ->
-            assertTrue(
+            assertFalse(
                 actual = task.enableJvmClasspathMetadata.get(),
-                message = "Task ${task.path} has configured 'false' for 'enableKmpJvmClasspathMetadata'"
+                message = "Task ${task.path} has configured 'true' for 'enableKmpJvmClasspathMetadata'"
             )
         }
     }

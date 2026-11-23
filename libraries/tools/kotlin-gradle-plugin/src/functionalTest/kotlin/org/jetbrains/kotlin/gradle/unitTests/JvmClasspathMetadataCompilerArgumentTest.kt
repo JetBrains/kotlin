@@ -24,25 +24,22 @@ import kotlin.test.assertEquals
 class JvmClasspathMetadataCompilerArgumentTest {
 
     @Test
-    fun disabledByDefault() {
-        assertUseMetadataOnIncrementalClasspath(properties = emptyMap(), expected = false)
+    fun enabledByDefault() {
+        assertUseMetadataOnIncrementalClasspath(properties = emptyMap(), expected = true)
     }
 
     @Test
-    fun enabledByIncrementalCompilationOfCommonSources() {
+    fun disabledWhenIncrementalCompilationOfCommonSourcesIsTurnedOff() {
         assertUseMetadataOnIncrementalClasspath(
-            properties = mapOf(KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to "true"),
-            expected = true,
+            properties = mapOf(KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to "false"),
+            expected = false,
         )
     }
 
     @Test
     fun disabledWhenClasspathMetadataIsTurnedOff() {
         assertUseMetadataOnIncrementalClasspath(
-            properties = mapOf(
-                KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to "true",
-                KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA to "false",
-            ),
+            properties = mapOf(KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA to "false"),
             expected = false,
         )
     }
@@ -50,7 +47,10 @@ class JvmClasspathMetadataCompilerArgumentTest {
     @Test
     fun classpathMetadataAloneDoesNotEnableTheFlag() {
         assertUseMetadataOnIncrementalClasspath(
-            properties = mapOf(KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA to "true"),
+            properties = mapOf(
+                KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to "false",
+                KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA to "true",
+            ),
             expected = false,
         )
     }
@@ -58,11 +58,7 @@ class JvmClasspathMetadataCompilerArgumentTest {
     @Test
     fun disabledWithoutIncrementalCompilation() {
         assertUseMetadataOnIncrementalClasspath(
-            properties = mapOf(
-                KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to "true",
-                KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA to "true",
-                "kotlin.incremental" to "false",
-            ),
+            properties = mapOf("kotlin.incremental" to "false"),
             expected = false,
         )
     }

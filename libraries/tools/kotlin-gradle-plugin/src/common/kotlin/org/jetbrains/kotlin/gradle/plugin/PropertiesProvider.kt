@@ -654,12 +654,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
             .orElse(KotlinCompilerArgumentsLogLevel.DEFAULT)
 
     /**
+     * When enabled (default): common sources are compiled incrementally, and [enableJvmClasspathMetadata] keeps them
+     * from seeing platform declarations. See KT-86703.
      * When disabled: in k2, if a common source is dirty, the whole module is rebuilt.
-     * When enabled: common sources are compiled incrementally, and [enableJvmClasspathMetadata] keeps them from seeing
-     * platform declarations. See KT-86703.
      */
     val enableJvmIncrementalCompilationOfCommonSources: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(false)
+        get() = booleanProvider(PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(true)
 
     /**
      * When disabled: in k2, if a common source is dirty, the whole module is rebuilt.

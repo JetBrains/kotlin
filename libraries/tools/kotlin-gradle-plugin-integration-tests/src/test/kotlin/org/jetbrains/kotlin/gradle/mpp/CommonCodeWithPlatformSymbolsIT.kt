@@ -34,6 +34,8 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             buildReport = listOf(BuildReportType.FILE),
+            // These tests cover the opt-out path for JVM
+            enableJvmIncrementalCompilationOfCommonSources = false,
             isolatedProjects = when (platformType) {
                 KotlinPlatformType.js -> BuildOptions.IsolatedProjectsMode.DISABLED
                 else -> super.defaultBuildOptions.isolatedProjects
