@@ -451,6 +451,13 @@ private fun KaDiagnosticConverterBuilder.addConversions3() {
             token,
         )
     }
+    add(FirErrors.WILL_BECOME_VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE) { firDiagnostic ->
+        WillBecomeValueClassHasInapplicableParameterTypeImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH) { firDiagnostic ->
         ComponentFunctionReturnTypeMismatchImpl(
             firDiagnostic.a,
@@ -9236,8 +9243,8 @@ private fun KaDiagnosticConverterBuilder.addConversions188() {
     }
     add(FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE) { firDiagnostic ->
         ValueClassHasInapplicableParameterTypeImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firDiagnostic.b,
+            firDiagnostic.a,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

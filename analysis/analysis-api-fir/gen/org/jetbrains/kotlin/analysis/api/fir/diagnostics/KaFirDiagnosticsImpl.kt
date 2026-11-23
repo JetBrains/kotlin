@@ -2111,8 +2111,8 @@ internal class DelegatedPropertyInsideValueClassImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DelegatedPropertyInsideValueClass
 
 internal class ValueClassHasInapplicableParameterTypeImpl(
-    override val type: KaType,
     override val prefix: String,
+    override val type: KaType,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ValueClassHasInapplicableParameterType
@@ -2245,6 +2245,12 @@ internal class SealedWillBecomeValueClassConstructorPropertyParameterImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.SealedWillBecomeValueClassConstructorPropertyParameter
+
+internal class WillBecomeValueClassHasInapplicableParameterTypeImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WillBecomeValueClassHasInapplicableParameterType
 
 internal class PropertyWithBackingFieldInsideWillBecomeValueClassImpl(
     firDiagnostic: KtDiagnosticWithSource,

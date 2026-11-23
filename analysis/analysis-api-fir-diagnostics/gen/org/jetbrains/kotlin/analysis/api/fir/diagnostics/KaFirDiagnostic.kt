@@ -2972,8 +2972,8 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<ValueClassHasInapplicableParameterType>
             get() = ValueClassHasInapplicableParameterType::class
 
-        public val type: KaType
         public val prefix: String
+        public val type: KaType
     }
 
     @KaUnstableDiagnosticApi
@@ -3159,6 +3159,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface SealedWillBecomeValueClassConstructorPropertyParameter : KaFirDiagnostic<KtParameter> {
         override val diagnosticClass: KClass<SealedWillBecomeValueClassConstructorPropertyParameter>
             get() = SealedWillBecomeValueClassConstructorPropertyParameter::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WillBecomeValueClassHasInapplicableParameterType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WillBecomeValueClassHasInapplicableParameterType>
+            get() = WillBecomeValueClassHasInapplicableParameterType::class
+
+        public val type: KaType
     }
 
     @KaUnstableDiagnosticApi

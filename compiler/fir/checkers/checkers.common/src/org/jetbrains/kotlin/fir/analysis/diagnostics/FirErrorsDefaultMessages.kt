@@ -1006,6 +1006,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_CLASS_OPEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WILL_BECOME_VALUE_NOT_APPLICABLE
@@ -2595,7 +2596,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS, "Value class cannot have properties with backing fields outside the primary constructor.")
         map.put(DELEGATED_PROPERTY_INSIDE_VALUE_CLASS, "Value class cannot have delegated properties.")
-        map.put(VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "{1} class cannot have value parameter of type ''{0}''.", RENDER_TYPE, STRING)
+        map.put(VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "{0} class cannot have value parameter of type ''{1}''.", STRING, RENDER_TYPE)
         map.put(VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Value class cannot implement an interface by delegation.")
         map.put(VALUE_CLASS_CANNOT_EXTEND_CLASSES, "{0} class cannot extend classes.", STRING)
         map.put(VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES, "Value class cannot extend identity classes.")
@@ -2642,6 +2643,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
             "Primary constructor of a sealed class annotated with '@WillBecomeValue' cannot have property parameters."
+        )
+        map.put(
+            WILL_BECOME_VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
+            "Class annotated with ''@WillBecomeValue'' cannot have property parameter of type ''{0}''.", RENDER_TYPE
         )
         map.put(
             PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS,
