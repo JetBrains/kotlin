@@ -21,6 +21,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
@@ -51,6 +52,9 @@ class FunctionReferenceBuilder(
     private val generatorContext: IrGeneratorContext,
     private val currentScopeOwnerSymbol: IrSymbol,
     private val irTypeSystemContext: IrTypeSystemContext,
+    // The JS and Wasm backends treat a class of the JVM origins, matched by name, as their own lambda class
+    private val isJvm: Boolean,
+    private val singleton: Boolean,
 ) {
     private val callee = irFunctionExpression.function
     private val superMethod =
@@ -59,7 +63,11 @@ class FunctionReferenceBuilder(
     private val functionReferenceClass = generatorContext.irFactory.buildClass {
         setSourceRange(irFunctionExpression)
         visibility = DescriptorVisibilities.LOCAL
-        origin = JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+        when {
+            isJvm -> origin = JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+            // A local object: not expressible in Kotlin, but it references nothing outside
+            singleton -> kind = ClassKind.OBJECT
+        }
         name = SpecialNames.NO_NAME_PROVIDED
     }.apply {
         parent = currentDeclarationParent
@@ -78,13 +86,13 @@ class FunctionReferenceBuilder(
             createInvokeMethod()
             functionReferenceClass.addFakeOverrides(irTypeSystemContext)
             +functionReferenceClass
-            +irCall(constructor.symbol)
+            +if (functionReferenceClass.isObject) irGetObject(functionReferenceClass.symbol) else irCall(constructor.symbol)
         }
     }
 
     private fun createConstructor(): IrConstructor =
         functionReferenceClass.addConstructor {
-            origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
+            if (isJvm) origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
             returnType = functionReferenceClass.defaultType
             isPrimary = true
         }.apply {
@@ -109,6 +117,7 @@ class FunctionReferenceBuilder(
             returnType = callee.returnType
             isSuspend = callee.isSuspend
         }.apply {
+            isComposableFunInterfaceImplementation = true
             overriddenSymbols += superMethod
             parameters += parentAsClass.thisReceiver!!.copyTo(this)
             createLambdaInvokeMethod()
