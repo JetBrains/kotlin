@@ -11,6 +11,7 @@ import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategyResolver
+import org.jetbrains.kotlin.backend.common.serialization.IrLinkerInternalApi
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
@@ -57,6 +58,7 @@ import kotlin.metadata.*
  * It returns regular (non-lazy), body-less IR, with a top-level-class grauallity (i.e. even if one class member is referenced, it
  * deserializes the entire top-level class along with its nested classes).
  */
+@OptIn(IrLinkerInternalApi::class)
 class KonanInteropModuleDeserializer(
     private val deserializationConfiguration: DeserializationConfiguration,
     moduleFragment: IrModuleFragment,

@@ -106,6 +106,7 @@ class IrFileDeserializer(
     }
 }
 
+@OptIn(IrLinkerInternalApi::class)
 class FileDeserializationState(
     private val linker: KotlinIrLinker,
     val fileIndex: Int,

@@ -130,6 +130,7 @@ abstract class IrModuleDeserializer(
      *
      * If there are no matching callables in this module, [output] is left unchanged.
      */
+    @IrLinkerInternalApi
     abstract fun collectAllMatchingSignatures(
         topLevelCallableId: TopLevelCallableIdAndKind,
         output: MutableCollection<IdSignature>,
@@ -140,7 +141,7 @@ fun IrModuleDeserializer.deserializeIrSymbolOrFail(idSig: IdSignature, symbolKin
     tryDeserializeIrSymbol(idSig, symbolKind) ?: deserializedSymbolNotFound(idSig)
 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
-@OptIn(InternalSymbolFinderAPI::class)
+@OptIn(IrLinkerInternalApi::class)
 class IrModuleDeserializerWithBuiltIns(
     moduleFragment: IrModuleFragment,
     private val symbolTable: SymbolTable,

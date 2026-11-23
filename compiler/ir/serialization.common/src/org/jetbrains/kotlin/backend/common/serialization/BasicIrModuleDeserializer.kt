@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFi
  *   Type aliases don't need to be (de)serialized anymore. See KT-86632.
  *   The only case for enabling it is the klib tool and its ability to dump (even older) KLIBs.
  */
+@OptIn(IrLinkerInternalApi::class)
 abstract class BasicIrModuleDeserializer(
     val linker: KotlinIrLinker,
     moduleFragment: IrModuleFragment,
