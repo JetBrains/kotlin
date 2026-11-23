@@ -68,7 +68,7 @@ class IrDeclarationDeserializer(
     val irFactory: IrFactory,
     private val libraryFile: IrLibraryFile,
     parent: IrDeclarationParent,
-    private val settings: IrDeserializationSettings,
+    internal val settings: IrDeserializationSettings,
     val symbolDeserializer: IrSymbolDeserializer,
     private val onDeserializedClass: (IrClass, IdSignature) -> Unit,
     private val needToDeserializeFakeOverrides: (IrClass) -> Boolean,
