@@ -16,6 +16,7 @@ class InstrumentJava(@Transient val javaInstrumentator: Configuration) : Action<
         javaInstrumentator.asPath
     }
 
+    @Suppress("DEPRECATION") // Task.ant is deprecated in Gradle 9.9, removed in Gradle 10: https://docs.gradle.org/9.9.2/userguide/upgrading_version_9.html
     override fun execute(task: Task) {
         require(task is JavaCompile) { "$task is not of type JavaCompile!" }
 

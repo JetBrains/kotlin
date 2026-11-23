@@ -24,12 +24,15 @@ sourceSets {
     "test" {}
 }
 
+@Suppress("DEPRECATION") // Project.ant is deprecated in Gradle 9.9, removed in Gradle 10: https://docs.gradle.org/9.9.2/userguide/upgrading_version_9.html
 ant.importBuild("buildLexer.xml")
 
+@Suppress("DEPRECATION")
 ant.properties["builddir"] = layout.buildDirectory.get().asFile.absolutePath
 
 tasks.findByName("lexer")!!.apply {
     doFirst {
+        @Suppress("DEPRECATION")
         ant.properties["flex.classpath"] = jflexPath.asPath
     }
 }

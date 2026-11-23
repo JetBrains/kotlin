@@ -1122,24 +1122,16 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
         val rvcMode = rvcModes.singleOrNull()
 
         if (rvcMode == null) {
-            reporter.report(
-                ProblemId.create(
-                    "missing-rvc-mode",
-                    "return-value-checker not set",
-                    ProblemGroup.create("return-value-checker", "return-value-checker")
-                )
+            problems.reporter.report(
+                problems.groups.gradle.buildDefinition.problemId("kotlin-missing-rvc-mode")
             ) {
                 details("$path has invalid return-value-checker mode. All values: $rvcModes")
                 solution("""Enable return-value-checker""")
             }
         } else if (!rvcMode.endsWith("=$expectedRvcMode", ignoreCase = true)) {
             logger.warn("$path has incorrect return-value-checker mode. Expected: $expectedRvcMode, but actual arg is: $rvcMode")
-            reporter.report(
-                ProblemId.create(
-                    "incorrect-rvc-mode",
-                    "incorrect return-value-checker mode",
-                    ProblemGroup.create("return-value-checker", "return-value-checker")
-                )
+            problems.reporter.report(
+                problems.groups.gradle.buildDefinition.problemId("kotlin-incorrect-rvc-mode")
             ) {
                 details("$path has incorrect return-value-checker mode. Expected: $expectedRvcMode, but actual arg is: $rvcMode")
                 solution("""Enable return-value-checker=$expectedRvcMode""")
