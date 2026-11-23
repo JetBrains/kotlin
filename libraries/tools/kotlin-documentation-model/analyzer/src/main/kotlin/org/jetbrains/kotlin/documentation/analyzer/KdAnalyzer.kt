@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.documentation.analyzer
 
 import org.jetbrains.kotlin.documentation.KdBundle
+import org.jetbrains.kotlin.documentation.KDM_SCHEMA_VERSION
 import org.jetbrains.kotlin.documentation.analyzer.internal.DocumentableConverter
 import org.jetbrains.kotlin.documentation.analyzer.internal.buildDokkaConfiguration
 import org.jetbrains.kotlin.documentation.analyzer.internal.runDokkaAnalysis
@@ -32,5 +33,5 @@ public fun generateDocumentationBundle(moduleName: String, sourceSets: List<KdAn
     return runDokkaAnalysis(configuration) { module, context ->
         DocumentableConverter(sourceSets, module, context).convert().also { it.checkElementIds() }
     }
-        ?: KdBundle(schemaVersion = KotlinVersion.CURRENT.toString(), fragments = emptyList(), expectActualMappings = emptyList())
+        ?: KdBundle(schemaVersion = KDM_SCHEMA_VERSION, fragments = emptyList(), expectActualMappings = emptyList())
 }
