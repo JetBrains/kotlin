@@ -287,7 +287,7 @@ def main():
                 shutil.rmtree(build)
 
         print("2/5: Build instrumented Kotlin/Native for training", flush=True)
-        native_tasks = [":kotlin-native:dist"]
+        native_tasks = [":kotlin-native:dependencies:update", ":kotlin-native:dist"]
         if args.kotlin_native_target:
             native_tasks += [
                 f":kotlin-native:{args.kotlin_native_target}CrossDist",
