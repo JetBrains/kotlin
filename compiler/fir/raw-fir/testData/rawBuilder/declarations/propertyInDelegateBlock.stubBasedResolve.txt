@@ -1,0 +1,14 @@
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] propertyInDelegateBlock.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class C : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor([ResolvedTo(BODY_RESOLVE)] flag: R|kotlin/Boolean|): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(CONTRACTS)] val member: <implicit> by LAZY_EXPRESSION
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val flag: R|kotlin/Boolean| = Boolean(true)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean|
+    public final [ResolvedTo(CONTRACTS)] val topLevel: <implicit> by LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }

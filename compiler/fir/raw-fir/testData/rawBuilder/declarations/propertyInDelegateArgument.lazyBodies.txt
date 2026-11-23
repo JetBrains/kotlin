@@ -1,0 +1,16 @@
+FILE: propertyInDelegateArgument.kt
+    public? final? fun foo(a: Any): Lazy<Int> { LAZY_BLOCK }
+    public final? class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? val annotated: <implicit> by LAZY_EXPRESSION
+            public? [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? val binary: <implicit> by LAZY_EXPRESSION
+            public? [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? val topLevel: <implicit> by LAZY_EXPRESSION
+        public? get(): <implicit> { LAZY_BLOCK }

@@ -1,0 +1,14 @@
+FILE: propertyInDelegateBlock.kt
+    public final? class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(flag: Boolean): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? val member: <implicit> by LAZY_EXPRESSION
+            public? [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? val flag: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? val topLevel: <implicit> by LAZY_EXPRESSION
+        public? get(): <implicit> { LAZY_BLOCK }

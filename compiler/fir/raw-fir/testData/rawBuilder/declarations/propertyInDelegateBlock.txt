@@ -1,0 +1,48 @@
+FILE: propertyInDelegateBlock.kt
+    public final? class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(flag: Boolean): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val member: <implicit> by when () {
+            flag# ->  {
+                @Suppress(String()) lval n: <implicit> = IntegerLiteral(1)
+                lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    n#
+                }
+                )
+            }
+            else ->  {
+                lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    IntegerLiteral(0)
+                }
+                )
+            }
+        }
+
+            public? [ContainingClassKey=C] get(): <implicit> {
+                ^ this@R|/C|.D|/C.member|.getValue#(this@R|/C|, ::R|/C.member|)
+            }
+
+    }
+    public? final? val flag: <implicit> = Boolean(true)
+        public? get(): <implicit>
+    public? final? val topLevel: <implicit> by when () {
+        flag# ->  {
+            @Suppress(String()) lval m: <implicit> = IntegerLiteral(2)
+            lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                m#
+            }
+            )
+        }
+        else ->  {
+            lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                IntegerLiteral(0)
+            }
+            )
+        }
+    }
+
+        public? get(): <implicit> {
+            ^ D|/topLevel|.getValue#(Null(null), ::R|/topLevel|)
+        }
