@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.library.components.inlinableFunctionsIr
 import org.jetbrains.kotlin.library.metadata.KlibContainerSourceComponentsProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
@@ -247,7 +246,7 @@ class NonLinkingIrInlineFunctionDeserializer(
             val fileEntry = fileEntryDeserializer.fileEntry(fileReader, functionProto.irFunction.preparedInlineFunctionFileEntryId)
 
             val file = IrFileImpl(
-                symbol = IrFileSymbolImpl(with(originalFunctionPackage.symbol) { runIf(hasDescriptor) { descriptor } }),
+                symbol = IrFileSymbolImpl(),
                 packageFqName = originalFunctionPackage.packageFqName,
                 fileEntry = fileEntry,
                 module = originalFunctionModule

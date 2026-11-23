@@ -17,13 +17,9 @@ import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 
-class IrFileSymbolImpl(
-    descriptor: PackageFragmentDescriptor? = null,
-) : IrSymbolBase<PackageFragmentDescriptor, IrFile>(descriptor), IrFileSymbol
+class IrFileSymbolImpl : IrSymbolBase<PackageFragmentDescriptor, IrFile>(null), IrFileSymbol
 
-class IrExternalPackageFragmentSymbolImpl(
-    descriptor: PackageFragmentDescriptor? = null,
-) : IrSymbolBase<PackageFragmentDescriptor, IrExternalPackageFragment>(descriptor), IrExternalPackageFragmentSymbol
+class IrExternalPackageFragmentSymbolImpl : IrSymbolBase<PackageFragmentDescriptor, IrExternalPackageFragment>(null), IrExternalPackageFragmentSymbol
 
 class IrAnonymousInitializerSymbolImpl(
     descriptor: ClassDescriptor? = null,

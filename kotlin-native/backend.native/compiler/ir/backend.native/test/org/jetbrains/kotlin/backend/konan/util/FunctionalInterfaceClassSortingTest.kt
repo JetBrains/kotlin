@@ -78,10 +78,10 @@ class FunctionalInterfaceClassSortingTest {
 
     private companion object {
         fun newFile(): IrFile = IrFileImpl(
-                fileEntry = NaiveSourceBasedFileEntryImpl(name = "test.kt"),
-                symbol = IrFileSymbolImpl(null),
-                packageFqName = FqName.ROOT,
-                module = IrErrorModuleFragment, // we don't care here, let it be just an error fragment
+            fileEntry = NaiveSourceBasedFileEntryImpl(name = "test.kt"),
+            symbol = IrFileSymbolImpl(),
+            packageFqName = FqName.ROOT,
+            module = IrErrorModuleFragment, // we don't care here, let it be just an error fragment
         )
 
         fun IrFile.newClass(name: String): IrClass = with(IrFactoryImpl) {

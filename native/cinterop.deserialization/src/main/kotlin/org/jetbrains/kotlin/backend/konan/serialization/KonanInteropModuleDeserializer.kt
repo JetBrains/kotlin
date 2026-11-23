@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
@@ -37,7 +34,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.name.isOneSegmentFQN
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.kotlin.utils.putToMultiMap
@@ -331,7 +327,6 @@ class KonanInteropModuleDeserializer(
 
     private fun getOrCreateContainingPackageFragment(forKmDeclaration: Any): IrPackageFragment {
         val containerSource = KlibDeserializedContainerSource(klib, moduleHeaderProto, deserializationConfiguration, definedPackageFqName, null)
-        val descriptor = DeserializedSecondStageInteropPackageDescriptor(moduleFragment.descriptor, definedPackageFqName, containerSource)
         if (forKmDeclaration is KmClass && forKmDeclaration.inheritsFromCStructOrEnum() && !isLibraryCached) {
             // Most declarations from C-interop Klib are just stubs which shouldn't be lowered, so they are
             // put inside IrExternalPackageFragment, the same way as on the first stage of compilation.
@@ -341,13 +336,13 @@ class KonanInteropModuleDeserializer(
             // binary code, so those classes may be treated as regular dependencies.
             return ::typeDefinitionsIrFile.getOrSetIfNull {
                 val fileEntry = NaiveSourceBasedFileEntryImpl(NativeStandardInteropNames.cTypeDefinitionsFileName)
-                val irFile = IrFileImpl(fileEntry, IrFileSymbolImpl(descriptor), definedPackageFqName, moduleFragment)
+                val irFile = IrFileImpl(fileEntry, IrFileSymbolImpl(), definedPackageFqName, moduleFragment)
                 moduleFragment.files += irFile
                 irFile
             }
         } else {
             return ::externalIrPackageFragment.getOrSetIfNull {
-                IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(descriptor), definedPackageFqName, moduleFragment)
+                IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), definedPackageFqName, moduleFragment)
             }
         }
     }
@@ -480,12 +475,3 @@ class KonanInteropModuleDeserializer(
 }
 
 private val ClassName.declarationFqName get() = FqName(substringAfterLast('/'))
-
-class DeserializedSecondStageInteropPackageDescriptor(
-    module: ModuleDescriptor,
-    fqName: FqName,
-    private val containerSource: KlibDeserializedContainerSource,
-) : PackageFragmentDescriptorImpl(module, fqName) {
-    override fun getMemberScope(): MemberScope = error("K1-specific functionality is not supported.")
-    override fun getSource(): SourceElement = containerSource
-}

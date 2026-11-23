@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.name.FqName
@@ -17,5 +16,5 @@ val IrPackageFragment.moduleDescriptor: ModuleDescriptor
 
 fun createEmptyExternalPackageFragment(module: IrModuleFragment, fqName: FqName): IrExternalPackageFragment =
     IrExternalPackageFragmentImpl(
-        IrExternalPackageFragmentSymbolImpl(EmptyPackageFragmentDescriptor(module.descriptor, fqName)), fqName, module
+        IrExternalPackageFragmentSymbolImpl(), fqName, module
     )

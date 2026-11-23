@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -304,8 +303,7 @@ fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
 fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile, fileEntryDeserializer: FileEntryDeserializer): IrFile {
     val fileEntry = fileEntryDeserializer.fileEntry(this, fileProto)
     val fqName = FqName(deserializeFqName(fileProto.fqNameList))
-    val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(module.descriptor, fqName)
-    val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
+    val symbol = IrFileSymbolImpl()
     return IrFileImpl(fileEntry, symbol, fqName, module)
 }
 

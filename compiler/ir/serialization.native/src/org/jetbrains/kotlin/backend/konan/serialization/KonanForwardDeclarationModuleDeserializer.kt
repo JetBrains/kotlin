@@ -105,8 +105,7 @@ internal class KonanForwardDeclarationModuleDeserializer(
 
     private fun getOrCreateContainingPackage(packageFqName: FqName): IrExternalPackageFragment {
         return declaredPackageFragments.computeIfAbsent(packageFqName) {
-            val descriptor = EmptyPackageFragmentDescriptor(moduleFragment.descriptor, packageFqName)
-            IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(descriptor), packageFqName, moduleFragment)
+            IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), packageFqName, moduleFragment)
         }
     }
 
