@@ -60,14 +60,13 @@ internal inline fun <reified D : FirCallableDeclaration> FirScope.findMemberWith
     signature: FirCallableSignature,
     processor: FirScope.((FirBasedSymbol<*>) -> Unit) -> Unit,
 ): KaCallableSymbol? {
-    val ownerLookupTag = owner.toLookupTag()
     var foundSymbol: KaCallableSymbol? = null
     processor { candidate ->
         val declaration = candidate.fir
         if (declaration is D && signature.hasTheSameSignature(declaration)) {
             // The builder unwraps substitution overrides with unchanged signatures, so the containing class is checked on its result
             val symbol = analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(declaration.symbol)
-            if (symbol.firSymbol.containingClassLookupTag() == ownerLookupTag) {
+            if (symbol.isMemberOf(owner)) {
                 foundSymbol = symbol
             }
         }
@@ -75,6 +74,12 @@ internal inline fun <reified D : FirCallableDeclaration> FirScope.findMemberWith
 
     return foundSymbol
 }
+
+/**
+ * Returns whether [owner] is the containing class of this symbol.
+ */
+internal fun KaCallableSymbol.isMemberOf(owner: FirClassSymbol<*>): Boolean =
+    firSymbol.containingClassLookupTag() == owner.toLookupTag()
 
 internal inline fun <reified D : FirCallableDeclaration> Collection<FirCallableSymbol<*>>.findDeclarationWithSignatureBySymbols(
     signature: FirCallableSignature,
