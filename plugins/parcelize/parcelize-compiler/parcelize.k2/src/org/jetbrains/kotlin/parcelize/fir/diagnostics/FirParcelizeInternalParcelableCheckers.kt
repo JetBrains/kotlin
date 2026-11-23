@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirResolvedQualifierChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.name.ClassId
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.INTERNAL_PARCELABLE_ID
 object FirParcelizeInternalParcelableTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirResolvedTypeRef) {
-        val classId = typeRef.coneType.lowerBoundIfFlexible().abbreviatedTypeOrSelf.classId
+        val classId = typeRef.coneType.fullyExpandedType().lowerBoundIfFlexible().classId
         reportIfInternalParcelable(typeRef.source, classId)
     }
 }

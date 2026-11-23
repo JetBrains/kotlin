@@ -33,6 +33,8 @@ class Explicit(val id: Int) : <!INTERNAL_PARCELABLE_USAGE!>Parcelable<!>
 
 fun parameter(p: <!INTERNAL_PARCELABLE_USAGE!>Parcelable<!>) {}
 
+fun viaAlias(p: <!INTERNAL_PARCELABLE_USAGE!>test.suppressed.Alias<!>) {}
+
 val classLiteral = <!INTERNAL_PARCELABLE_USAGE!>Parcelable<!>::class
 
 // FILE: suppressed.kt
@@ -41,5 +43,7 @@ val classLiteral = <!INTERNAL_PARCELABLE_USAGE!>Parcelable<!>::class
 package test.suppressed
 
 import kotlinx.parcelize.internal.Parcelable
+
+typealias Alias = Parcelable
 
 fun parameter(p: Parcelable) {}
