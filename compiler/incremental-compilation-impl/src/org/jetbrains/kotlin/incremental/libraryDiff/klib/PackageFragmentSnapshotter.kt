@@ -83,21 +83,21 @@ internal object PackageFragmentSnapshotter {
 
         return fileName ?: "<package>"
     }
+}
 
-    /**
-     * A class is accessible if it is not private and its outer class, if any, is accessible (like [InaccessibleClassSnapshot] on the JVM).
-     * Inaccessible classes can't be referenced from other modules. Nested classes are always in the same fragment as their outer class,
-     * so [classes] holds all classes of the fragment.
-     */
-    private fun ClassId.isAccessibleIn(classes: Map<ClassId, ProtoBuf.Class>): Boolean {
-        val visibility = Flags.VISIBILITY.get(classes.getValue(this).flags)
-        if (visibility == ProtoBuf.Visibility.PRIVATE || visibility == ProtoBuf.Visibility.PRIVATE_TO_THIS) {
-            return false
-        }
-
-        val outerClassId = outerClassId ?: return true
-        return outerClassId !in classes || outerClassId.isAccessibleIn(classes)
+/**
+ * A class is accessible if it is not private and its outer class, if any, is accessible (like [InaccessibleClassSnapshot] on the JVM).
+ * Inaccessible classes can't be referenced from other modules. Nested classes are always in the same fragment as their outer class,
+ * so [classes] holds all classes of the fragment.
+ */
+internal fun ClassId.isAccessibleIn(classes: Map<ClassId, ProtoBuf.Class>): Boolean {
+    val visibility = Flags.VISIBILITY.get(classes.getValue(this).flags)
+    if (visibility == ProtoBuf.Visibility.PRIVATE || visibility == ProtoBuf.Visibility.PRIVATE_TO_THIS) {
+        return false
     }
+
+    val outerClassId = outerClassId ?: return true
+    return outerClassId !in classes || outerClassId.isAccessibleIn(classes)
 }
 
 private class PackageFragmentSnapshotBuilder(private val packageName: FqName, private val sourceFile: String) {

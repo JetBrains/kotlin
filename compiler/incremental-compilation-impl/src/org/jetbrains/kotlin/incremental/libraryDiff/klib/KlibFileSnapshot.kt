@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 class KlibEntrySnapshot(
     val klibFileSnapshots: Set<KlibFileSnapshot>,
@@ -38,14 +39,18 @@ class PackageFragmentInfo(
     val packageName: FqName,
     val packageFragmentProto: List<ByteArray>,
 ) {
+    /** Like [PackageFragmentSnapshot.classInfos], includes only accessible classes. */
     val proto: List<ProtoData> by lazy {
         buildList {
-            for (proto in packageFragmentProto) {
-                val fragment = parsePackageFragment(proto)
+            for (fragmentBytes in packageFragmentProto) {
+                val fragment = parsePackageFragment(fragmentBytes)
                 val nameResolver = NameResolverImpl(fragment.strings, fragment.qualifiedNames)
 
-                for (classProto in fragment.class_List) {
-                    add(ClassProtoData(classProto, nameResolver))
+                val classes = fragment.class_List.associateBy { nameResolver.getClassId(it.fqName) }
+                for ([classId, classProto] in classes) {
+                    if (classId.isAccessibleIn(classes)) {
+                        add(ClassProtoData(classProto, nameResolver))
+                    }
                 }
 
                 add(PackagePartProtoData(fragment.`package`, nameResolver, packageName))
