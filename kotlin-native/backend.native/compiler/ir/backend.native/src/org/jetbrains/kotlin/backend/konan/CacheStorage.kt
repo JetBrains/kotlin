@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.TrivialGettersSerializer
 import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.runtimeFingerprint
 import org.jetbrains.kotlin.konan.config.cachedLibraryDependenciesFingerprint
-import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.isHeaderCache
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -50,7 +49,7 @@ private fun NativeGenerationState.generateCacheMetadata(): CacheMetadata {
             dependenciesFingerprint = config.configuration[CACHE_BATCH]?.let { batch ->
                 // The batch is keyed by Klib.canonicalPath and must contain every library compiled here.
                 // A silent miss would store a null fingerprint, making the cache forever stale (see [CacheBuilder.staleCacheReason]).
-                batch[cacheInfo.klib.canonicalPath.pathString]
+                batch[cacheInfo.klib.canonicalPath.pathString]?.dependenciesFingerprint
                         ?: error("Library ${cacheInfo.klib.path} is not found in the cache batch")
             } ?: config.configuration.cachedLibraryDependenciesFingerprint?.let { FingerprintHash.fromString(it) },
             newCompanionInitialization = library.newCompanionInitializationEnabled,
@@ -142,17 +141,18 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
      *   which is then the only code that could have triggered the issue. When several files are cached at once,
      *   there is no way to tell which of them is responsible: keeping the issue in the caches of all of them would
      *   make the issue survive in the caches of the innocent files, so it is not stored at all.
-     * - The same goes for a batch caching several whole libraries at once: an issue reported for one of them is
-     *   stored in the cache of that very library, and an issue reported for anything else is not stored at all.
+     * - The same applies to a batched compilation caching multiple libraries (whether rebuilt whole or partially):
+     *   an issue reported for one of the files being cached is stored only in the cache of that file and library,
+     *   and an issue reported for anything else is stored only if the entire compilation caches a single file.
      */
     private fun savePartialLinkageIssues() {
         val config = generationState.config
-        // Note: Empty for a whole-library cache build, in which case the deserialization strategy covers every file.
-        val filePathsBeingCached = config.configuration.filesToCache
-        val deserializationStrategy = generationState.cacheDeserializationStrategy
         val libraryBeingCached = generationState.cacheInfo!!.klib
-        fun KotlinLibrary.moduleName() =
-                generationState.context.irLinker.findKonanModuleDeserializer(this)?.moduleFragment?.name?.asString()
+        val deserializationStrategy = generationState.cacheDeserializationStrategy
+        val memberStrategy = config.librariesToCache[libraryBeingCached]?.strategy
+
+        fun KotlinLibrary.moduleName() = generationState.context.irLinker
+                .findKonanModuleDeserializer(this)?.moduleFragment?.name?.asString()
 
         val moduleName = libraryBeingCached.moduleName()
         val otherModuleNamesBeingCached = config.librariesToCache.keys
@@ -165,15 +165,11 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
             when {
                 // The issue is reported for the code that is being cached here.
                 isFromCachedModule && deserializationStrategy?.contains(issue.filePath) == true -> true
-                // The issue belongs to the cache of another file compiled in this very compilation.
-                isFromCachedModule && issue.filePath in filePathsBeingCached -> false
-                // The issue belongs to the cache of another library compiled in this very compilation.
+                // The issue belongs to the cache of another file of the same library compiled in this compilation.
+                isFromCachedModule && memberStrategy?.contains(issue.filePath) == true -> false
+                // The issue belongs to another library compiled in this very compilation.
                 issue.moduleName in otherModuleNamesBeingCached -> false
-                // A whole-library cache also owns issues triggered by lazily deserialized dependency code,
-                // unless the library is cached as a part of a batch.
-                deserializationStrategy == CacheDeserializationStrategy.WholeModule -> config.librariesToCache.size == 1
-                // The issue is attributed to none of the files being cached.
-                else -> filePathsBeingCached.size == 1
+                else -> config.isCompilingSingleFile
             }
         }
 
@@ -182,4 +178,16 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
 
         outputFiles.partialLinkageIssuesFile!!.writeBytes(PartialLinkageIssuesSerializer.serialize(issues))
     }
+
+    private val NativeSecondStageCompilationConfig.isCompilingSingleFile: Boolean
+        get() = librariesToCache.values.singleOrNull()?.let { partialCacheInfo ->
+            when (val strategy = partialCacheInfo.strategy) {
+                is CacheDeserializationStrategy.SingleFile -> true
+                is CacheDeserializationStrategy.MultipleFiles -> strategy.filePaths.size == 1
+                CacheDeserializationStrategy.WholeModule ->
+                    producePerFileCache && generationState.context.irLinker
+                            .findKonanModuleDeserializer(partialCacheInfo.klib)?.files?.size == 1
+                else -> false
+            }
+        } == true
 }

@@ -104,7 +104,10 @@ class CacheBatchTest : AbstractNativeSimpleTest() {
         verifyOutput(executable, "3")
 
         compileLibrary(2)
-        assertFalse(link().contains("CACHING BATCH:"))
+        // The changed library, its dependent that used the changed inline function and the main library calling
+        // into the dependent are all rebuilt in a single batched compilation, each one rebuilding only its dirty files.
+        val incremental = link()
+        assertEquals(setOf("library", "consumer", "main"), incremental.batchLibraries()) { incremental }
         val changedArchives = rebuiltCaches.readLines().filter { it.isNotBlank() }
         assertTrue(changedArchives.any { "consumer-per-file-cache" in it })
         verifyOutput(executable, "6")
@@ -134,12 +137,14 @@ class CacheBatchTest : AbstractNativeSimpleTest() {
         assertTrue(partialBatchArchives.none { "library-per-file-cache" in it })
         verifyOutput(executable, "6")
 
-        // A dependency with pending per-file rebuilds must be rebuilt before its dependents,
-        // so the dependents cannot be batched and fall back to the per-library builds.
+        // The changed library is rebuilt in the very same batched compilation as its dependents needing a full
+        // rebuild: the dependents are compiled there against the dependency's fresh IR, while the dependency
+        // itself rebuilds only its dirty files.
         compileLibrary(3, includeUnused = false)
         deletePerFileCache("consumer")
         deletePerFileCache("main")
-        assertFalse(link().contains("CACHING BATCH:"))
+        val mixedBatch = link()
+        assertEquals(setOf("library", "consumer", "main"), mixedBatch.batchLibraries()) { mixedBatch }
         verifyOutput(executable, "9")
     }
 
@@ -458,6 +463,244 @@ class CacheBatchTest : AbstractNativeSimpleTest() {
             !it.value.readBytes().contentEquals(separateFiles.getValue(it.key).readBytes())
         }
         assertTrue(differentFiles.isEmpty()) { "Batched caches differ from separately built ones: ${differentFiles.keys.sorted()}" }
+    }
+
+    @Test
+    fun batchedPartialRebuildMatchesUnbatched() {
+        assumeTrue(HostManager.host.family == Family.OSX || HostManager.host.family == Family.LINUX)
+        assumeFalse(testRunSettings.get<ForcedNoopTestRunner>().value)
+
+        val batchedCacheDir = buildDir.resolve("batched-cache").apply { mkdirs() }
+        val unbatchedCacheDir = buildDir.resolve("unbatched-cache").apply { mkdirs() }
+        val rebuiltCaches = buildDir.resolve("rebuilt.txt")
+        val coreSource = buildDir.resolve("core.kt")
+        val untouchedSource = buildDir.resolve("untouched.kt").apply { writeText("fun untouched(): Int = 100") }
+        val midSource = buildDir.resolve("mid.kt").apply { writeText("fun mid(x: Int): Int = core(x) * 2") }
+        val topSource = buildDir.resolve("top.kt").apply { writeText("fun top(x: Int): Int = mid(x) + core(x)") }
+        val mainSource = buildDir.resolve("main.kt").apply { writeText("fun main() { println(top(20)) }") }
+        val core = buildDir.resolve("core.klib")
+        val mid = buildDir.resolve("mid.klib")
+        val top = buildDir.resolve("top.klib")
+        val main = buildDir.resolve("main.klib")
+        val executable = buildDir.resolve("main.kexe")
+
+        fun compileCore(delta: Int) {
+            coreSource.writeText("inline fun core(x: Int): Int = x + $delta")
+            compileKlib(coreSource.path, untouchedSource.path, "-o", core.path)
+        }
+
+        compileCore(1)
+        compileKlib(midSource.path, "-l", core.path, "-o", mid.path)
+        compileKlib(topSource.path, "-l", core.path, "-l", mid.path, "-o", top.path)
+        compileKlib(mainSource.path, "-l", core.path, "-l", mid.path, "-l", top.path, "-o", main.path)
+
+        fun link(cacheDir: File, vararg extraArgs: String): String = compile(
+            "-g", "-verbose", "-Xenable-incremental-compilation", "-Xic-cache-dir=${cacheDir.path}",
+            "-Xdump-built-caches-to=${rebuiltCaches.path}",
+            "-Xinclude=${main.path}", "-l", core.path, "-l", mid.path, "-l", top.path,
+            "-o", executable.path, *extraArgs,
+        )
+
+        val batchedClean = link(batchedCacheDir)
+        assertEquals(setOf("core", "mid", "top", "main"), batchedClean.batchLibraries()) { batchedClean }
+        verifyOutput(executable, "63")
+
+        val unbatchedClean = link(unbatchedCacheDir, "-Xbinary=batchedCacheBuild=false")
+        assertFalse("CACHING BATCH:" in unbatchedClean) { unbatchedClean }
+        verifyOutput(executable, "63")
+
+        // The inline function body changes: core.kt, mid.kt, top.kt and main.kt are dirty, untouched.kt is not.
+        compileCore(2)
+
+        // All dirty libraries are rebuilt in one batch, each rebuilding only its dirty file and reusing untouched caches.
+        val batched = link(batchedCacheDir)
+        assertEquals(setOf("core", "mid", "top", "main"), batched.batchLibraries()) { batched }
+        verifyOutput(executable, "66")
+        val batchedRebuiltCaches = rebuiltCaches.readRebuiltCaches(batchedCacheDir)
+
+        val unbatched = link(unbatchedCacheDir, "-Xbinary=batchedCacheBuild=false")
+        assertFalse("CACHING BATCH:" in unbatched) { unbatched }
+        verifyOutput(executable, "66")
+        assertEquals(rebuiltCaches.readRebuiltCaches(unbatchedCacheDir), batchedRebuiltCaches) {
+            "The rebuilt caches of the batched run differ from the ones of the unbatched run"
+        }
+        // Only the dirty files are rebuilt: one per library, leaving core's untouched.kt untouched.
+        assertRebuiltCaches(batchedRebuiltCaches, "core" to 1, "mid" to 1, "top" to 1, "main" to 1)
+
+        // Nothing has changed since the batched rebuild: every library is up to date.
+        val noop = link(batchedCacheDir)
+        assertFalse("CACHING" in noop) { noop }
+        assertTrue(rebuiltCaches.readText().isBlank())
+        verifyOutput(executable, "66")
+    }
+
+    @Test
+    fun batchedPartialRebuildWithSameRelativePathInTwoLibraries() {
+        assumeTrue(HostManager.host.family == Family.OSX || HostManager.host.family == Family.LINUX)
+        assumeFalse(testRunSettings.get<ForcedNoopTestRunner>().value)
+
+        val cacheDir = buildDir.resolve("cache").apply { mkdirs() }
+        val rebuiltCaches = buildDir.resolve("rebuilt.txt")
+        // Both libraries contain a file with the same path, but with different declarations.
+        val sharedSource = buildDir.resolve("shared.kt")
+        val extraSource1 = buildDir.resolve("extra1.kt")
+        val extraSource2 = buildDir.resolve("extra2.kt")
+        val lib1 = buildDir.resolve("lib1.klib")
+        val lib2 = buildDir.resolve("lib2.klib")
+        val main = buildDir.resolve("main.klib")
+        val executable = buildDir.resolve("main.kexe")
+
+        fun compileKlibs(shared1: Int, extra1: Int, shared2: Int) {
+            sharedSource.writeText("fun shared1(): Int = $shared1")
+            extraSource1.writeText("fun extra1(): Int = $extra1")
+            compileKlib(sharedSource.path, extraSource1.path, "-o", lib1.path)
+            sharedSource.writeText("fun shared2(): Int = $shared2")
+            extraSource2.writeText("fun extra2(): Int = 0")
+            compileKlib(sharedSource.path, extraSource2.path, "-o", lib2.path)
+        }
+
+        fun link(): String = compile(
+            "-g", "-verbose", "-Xenable-incremental-compilation", "-Xic-cache-dir=${cacheDir.path}",
+            "-Xdump-built-caches-to=${rebuiltCaches.path}",
+            "-Xinclude=${main.path}", "-l", lib1.path, "-l", lib2.path, "-o", executable.path,
+        )
+
+        compileKlibs(shared1 = 1, extra1 = 10, shared2 = 2)
+        val mainSource = buildDir.resolve("main.kt").apply { writeText("fun main() { println(shared1() + extra1() + shared2()) }") }
+        compileKlib(mainSource.path, "-l", lib1.path, "-l", lib2.path, "-o", main.path)
+        val clean = link()
+        assertEquals(setOf("lib1", "lib2", "main"), clean.batchLibraries()) { clean }
+        verifyOutput(executable, "13")
+
+        // Both libraries change in different files while sharing the shared.kt path: lib1's shared.kt stays cached
+        // and lib1 rebuilds extra1.kt, while lib2 rebuilds shared.kt, all in one batch together with main.
+        compileKlibs(shared1 = 1, extra1 = 100, shared2 = 200)
+        val partial = link()
+        assertEquals(setOf("lib1", "lib2", "main"), partial.batchLibraries()) { partial }
+        assertRebuiltCaches(rebuiltCaches.readRebuiltCaches(), "lib1" to 1, "lib2" to 1, "main" to 1)
+        verifyOutput(executable, "301")
+    }
+
+    @Test
+    fun parallelBatchedPartialRebuildReusesCleanSiblingCache() {
+        assumeTrue(HostManager.host.family == Family.OSX || HostManager.host.family == Family.LINUX)
+        assumeFalse(testRunSettings.get<ForcedNoopTestRunner>().value)
+
+        val cacheDir = buildDir.resolve("cache").apply { mkdirs() }
+        val rebuiltCaches = buildDir.resolve("rebuilt.txt")
+        val coreSource = buildDir.resolve("core.kt")
+        val cleanSource = buildDir.resolve("clean.kt").apply {
+            writeText("""
+                class Multiplier(val factor: Int) {
+                    fun apply(x: Int): Int = x * factor
+                }
+                inline fun cleanBonus(): Int = 100
+            """.trimIndent())
+        }
+        val core = buildDir.resolve("core.klib")
+        val consumer = buildDir.resolve("consumer.klib")
+        val main = buildDir.resolve("main.klib")
+        val executable = buildDir.resolve("main.kexe")
+
+        fun compileCore(delta: Int) {
+            coreSource.writeText("inline fun core(x: Int): Int = Multiplier(2).apply(x + $delta)")
+            compileKlib(coreSource.path, cleanSource.path, "-o", core.path)
+        }
+
+        compileCore(1)
+        val consumerSource = buildDir.resolve("consumer.kt").apply {
+            writeText("fun consume(x: Int): Int = core(x) + Multiplier(3).apply(1) + cleanBonus()")
+        }
+        compileKlib(consumerSource.path, "-l", core.path, "-o", consumer.path)
+        val mainSource = buildDir.resolve("main.kt").apply { writeText("fun main() { println(consume(10)) }") }
+        compileKlib(mainSource.path, "-l", core.path, "-l", consumer.path, "-o", main.path)
+
+        fun link(): String = compile(
+            "-g", "-verbose", "-Xenable-incremental-compilation", "-Xic-cache-dir=${cacheDir.path}",
+            "-Xdump-built-caches-to=${rebuiltCaches.path}", "-Xbackend-threads=4",
+            "-Xinclude=${main.path}", "-l", core.path, "-l", consumer.path, "-o", executable.path,
+        )
+
+        val clean = link()
+        assertEquals(setOf("core", "consumer", "main"), clean.batchLibraries()) { clean }
+        verifyOutput(executable, "125")
+
+        // Only core.kt changes; consumer.kt (dirty in the same batch) still references Multiplier and cleanBonus()
+        // from core's untouched clean.kt, whose existing per-file cache must be reused across backend threads.
+        compileCore(2)
+        val partial = link()
+        assertEquals(setOf("core", "consumer", "main"), partial.batchLibraries()) { partial }
+        assertRebuiltCaches(rebuiltCaches.readRebuiltCaches(), "core" to 1, "consumer" to 1, "main" to 1)
+        verifyOutput(executable, "127")
+
+        val noop = link()
+        assertFalse("CACHING" in noop) { noop }
+        assertTrue(rebuiltCaches.readText().isBlank())
+    }
+
+    @Test
+    fun batchedPartialRebuildWithAddedFileInCachedLibrary() {
+        assumeTrue(HostManager.host.family == Family.OSX || HostManager.host.family == Family.LINUX)
+        assumeFalse(testRunSettings.get<ForcedNoopTestRunner>().value)
+
+        val cacheDir = buildDir.resolve("cache").apply { mkdirs() }
+        val rebuiltCaches = buildDir.resolve("rebuilt.txt")
+        val coreSource = buildDir.resolve("core.kt").apply { writeText("fun core(): Int = 10") }
+        val addedSource = buildDir.resolve("added.kt").apply { writeText("inline fun added(): Int = 20") }
+        val consumerSource = buildDir.resolve("consumer.kt")
+        val core = buildDir.resolve("core.klib")
+        val consumer = buildDir.resolve("consumer.klib")
+        val main = buildDir.resolve("main.klib")
+        val executable = buildDir.resolve("main.kexe")
+
+        fun compileKlibs(includeAdded: Boolean) {
+            compileKlib(coreSource.path, addedSource.path.takeIf { includeAdded }, "-o", core.path)
+            consumerSource.writeText(
+                if (includeAdded) "fun consume(): Int = core() + added()" else "fun consume(): Int = core()"
+            )
+            compileKlib(consumerSource.path, "-l", core.path, "-o", consumer.path)
+        }
+
+        compileKlibs(includeAdded = false)
+        val mainSource = buildDir.resolve("main.kt").apply { writeText("fun main() { println(consume()) }") }
+        compileKlib(mainSource.path, "-l", core.path, "-l", consumer.path, "-o", main.path)
+
+        fun link(): String = compile(
+            "-g", "-verbose", "-Xenable-incremental-compilation", "-Xic-cache-dir=${cacheDir.path}",
+            "-Xdump-built-caches-to=${rebuiltCaches.path}",
+            "-Xinclude=${main.path}", "-l", core.path, "-l", consumer.path, "-o", executable.path,
+        )
+
+        val clean = link()
+        assertEquals(setOf("core", "consumer", "main"), clean.batchLibraries()) { clean }
+        verifyOutput(executable, "10")
+
+        // Adding a new file makes core's existing per-file cache incomplete (core.kt is still cached, added.kt is not).
+        // Both core's new file and consumer's updated file are rebuilt in one batch while reusing core.kt's cache.
+        compileKlibs(includeAdded = true)
+        val partial = link()
+        assertEquals(setOf("core", "consumer", "main"), partial.batchLibraries()) { partial }
+        assertRebuiltCaches(rebuiltCaches.readRebuiltCaches(), "core" to 1, "consumer" to 1, "main" to 1)
+        verifyOutput(executable, "30")
+
+        val noop = link()
+        assertFalse("CACHING" in noop) { noop }
+        assertTrue(rebuiltCaches.readText().isBlank())
+    }
+
+    private fun String.batchLibraries(): Set<String>? =
+        lines().singleOrNull { "CACHING BATCH:" in it }?.substringAfter("CACHING BATCH:")?.split(",")?.map { it.trim() }?.toSet()
+
+    private fun File.readRebuiltCaches(cacheDir: File? = null): List<String> =
+        readLines().filter { it.isNotBlank() }.map { if (cacheDir != null) it.removePrefix(cacheDir.path) else it }.sorted()
+
+    private fun assertRebuiltCaches(rebuiltCaches: List<String>, vararg expected: Pair<String, Int>) {
+        assertEquals(expected.sumOf { it.second }, rebuiltCaches.size) { rebuiltCaches.joinToString("\n") }
+        for ([libraryName, count] in expected) {
+            assertEquals(count, rebuiltCaches.count { "$libraryName-per-file-cache" in it }) {
+                "Unexpected rebuilt cache count for $libraryName:\n${rebuiltCaches.joinToString("\n")}"
+            }
+        }
     }
 
     private fun compileKlib(vararg args: String?) = compile(
