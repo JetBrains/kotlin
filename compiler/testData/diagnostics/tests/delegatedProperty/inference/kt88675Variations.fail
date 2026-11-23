@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: Currently, we see no cases when contradiction might happen after adding equality constraint like that.But if you see the message, please report your case to https://youtrack.jetbrains.com/newIssue?project=KT
