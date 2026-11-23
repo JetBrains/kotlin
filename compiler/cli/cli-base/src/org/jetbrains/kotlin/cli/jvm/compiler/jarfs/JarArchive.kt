@@ -38,8 +38,6 @@ class JarArchive(
                 entries = try {
                     largeBuffer.parseCentralDirectory()
                 } catch (e: Exception) {
-                    // copying the behavior of ArchiveHandler (and therefore ZipHandler)
-                    // TODO: consider propagating to compiler error or warning, but take into account that both javac and K1 simply ignore invalid jars in such cases
                     onInvalidArchive(file, e)
                     emptyList()
                 }
