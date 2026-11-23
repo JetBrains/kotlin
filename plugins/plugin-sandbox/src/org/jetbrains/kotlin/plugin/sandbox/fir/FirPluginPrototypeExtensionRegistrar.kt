@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.plugin.sandbox.fir.types.FirNumberSignAttributeExten
 import org.jetbrains.kotlin.plugin.sandbox.fir.types.SandboxFunctionTypeKindExtension
 import org.jetbrains.kotlin.plugin.sandbox.ir.GeneratedDeclarationsIrBodyFiller
 
-class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
+class FirPluginPrototypeExtensionRegistrar(val shouldAddCompanionSupertypeExtension: Boolean = true) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::AllOpenStatusTransformer
         +::AllOpenMatcherBasedStatusTransformer
@@ -27,6 +27,10 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::SomeAdditionalSupertypeGenerator
         +::AdditionalSuperclassGenerator
         +::SupertypeWithArgumentGenerator
+        if (shouldAddCompanionSupertypeExtension) {
+            +::AddToCompanionSupertypeGenerator
+            +::AlsoAddToCompanionSupertypeGenerator
+        }
         +::PluginAdditionalCheckers
         +::FirNumberSignAttributeExtension
         +::AlgebraReceiverInjector
@@ -44,6 +48,8 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::MemberFunctionWithAnnotatedParametersGenerator
         +::SamInterfaceFunctionGenerator
         +::CompanionGenerator
+        +::AddToCompanionGenerator
+        +::AlsoAddToCompanionGenerator
         +::MembersOfSerializerGenerator
         +::DataFrameLikeTypeMembersGenerator
 

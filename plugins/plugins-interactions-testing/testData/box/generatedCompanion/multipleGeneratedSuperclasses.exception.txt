@@ -1,0 +1,3 @@
+java.lang.IllegalStateException: Multiple superclasses generated for companion object for class generatedCompanion/Owner:
+generatedCompanion/BaseA
+generatedCompanion/BaseB

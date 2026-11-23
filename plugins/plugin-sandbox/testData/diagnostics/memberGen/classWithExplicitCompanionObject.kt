@@ -2,9 +2,7 @@
 import org.jetbrains.kotlin.plugin.sandbox.CompanionWithFoo
 
 @CompanionWithFoo
-class SomeClass {
-    companion object
-}
+class SomeClass { companion object }
 
 fun takeInt(x: Int) {}
 

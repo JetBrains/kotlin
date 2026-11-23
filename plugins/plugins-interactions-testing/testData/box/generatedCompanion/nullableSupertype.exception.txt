@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: Invalid supertype generatedCompanion/Base? generated for companion object of generatedCompanion/Owner: a supertype cannot be nullable

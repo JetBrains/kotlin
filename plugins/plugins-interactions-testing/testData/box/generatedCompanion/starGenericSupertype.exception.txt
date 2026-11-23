@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: Invalid supertype generatedCompanion/Provider<*> generated for companion object of generatedCompanion/Owner: type argument #0 is a projection, which is not allowed in a supertype

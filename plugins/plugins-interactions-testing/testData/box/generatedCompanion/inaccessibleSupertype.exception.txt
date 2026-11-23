@@ -1,0 +1,4 @@
+java.lang.IllegalStateException: /null:[IR_VALIDATION_ERROR] (0,0): error: The frontend generated invalid IR. This is a compiler bug, please report it to https://kotl.in/issue. The following element references 'private' declaration that is invisible in the current scope:
+CLASS GENERATED[org.jetbrains.kotlin.fir.extensions.GeneratedCompanionKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any; other.Hidden]
+  inside CLASS CLASS name:Owner modality:FINAL visibility:public superTypes:[kotlin.Any]
+    inside FILE fqName:generatedCompanion fileName:main.kt
