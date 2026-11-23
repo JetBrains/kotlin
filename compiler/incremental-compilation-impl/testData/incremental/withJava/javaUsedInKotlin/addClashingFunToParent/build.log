@@ -1,0 +1,23 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/Base1.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/Base1.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/Derived.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/Derived.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Cannot infer visibility for 'foo'. Please specify it explicitly.
+Class 'Derived' must override 'foo' because it inherits multiple implementations for it.

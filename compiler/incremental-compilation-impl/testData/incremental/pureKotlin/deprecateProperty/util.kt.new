@@ -1,0 +1,8 @@
+package test
+
+class Util {
+    @Deprecated("message", level = DeprecationLevel.ERROR)
+    var foo = 10
+        get
+        set
+}

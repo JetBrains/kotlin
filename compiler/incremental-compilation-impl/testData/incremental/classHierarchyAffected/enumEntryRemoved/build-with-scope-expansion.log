@@ -1,0 +1,22 @@
+================ Step #1 =================
+
+Compiling files:
+  src/Enum.kt
+  src/getRandomEnumEntry.kt
+  src/use.kt
+  src/useEnumImplicitly.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Unresolved reference: C
+
+================ Step #2 =================
+
+Compiling files:
+  src/Enum.kt
+  src/getRandomEnumEntry.kt
+  src/use.kt
+  src/useEnumImplicitly.kt
+End of files
+Exit code: OK

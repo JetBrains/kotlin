@@ -1,0 +1,6 @@
+class Usage {
+    void usage() {
+        test.AKt.a();
+        test.BKt.b();
+    }
+}

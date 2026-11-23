@@ -1,0 +1,5 @@
+package test
+
+fun foo() = 1
+
+fun baz() = bar()

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.incremental.IncrementalTestsGeneratorUtil.incrementa
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("compiler/incremental-compilation-impl/tests-gen", "jps/jps-plugin/testData") {
+        testGroup("compiler/incremental-compilation-impl/tests-gen", "compiler/incremental-compilation-impl/testData") {
             // K2
             testClass<AbstractIncrementalJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
