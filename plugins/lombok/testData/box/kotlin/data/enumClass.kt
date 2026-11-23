@@ -1,5 +1,4 @@
 // ISSUE: KT-91394
-// IGNORE_BACKEND: JVM
 
 import lombok.Data
 import kotlin.test.assertEquals

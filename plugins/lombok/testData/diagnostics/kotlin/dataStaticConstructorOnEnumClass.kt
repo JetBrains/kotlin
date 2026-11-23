@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-91394
 // FIR_DUMP
 
@@ -10,7 +10,7 @@ enum class A(val x: Int) {
 }
 
 fun test() {
-    A.of(1)
+    A.<!UNRESOLVED_REFERENCE!>of<!>(1)
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, integerLiteral, primaryConstructor,
