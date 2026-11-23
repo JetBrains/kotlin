@@ -32,7 +32,7 @@ object KotlinBuiltInMetadataStubBuilder : KotlinMetadataStubBuilder() {
         // their classes back the built-ins symbol provider in all modules, including non-JVM ones. For common modules in particular,
         // filtering them out leads to unresolved code, as the declarations are not published in .kotlin_metadata files
         // of kotlin-stdlib-common.
-        val isBuiltInFromClasspath = virtualFile in BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles()
+        val isBuiltInFromClasspath = BuiltinsVirtualFileProvider.getInstance().isBuiltinVirtualFile(virtualFile)
 
         return BuiltInDefinitionFile.read(
             content,

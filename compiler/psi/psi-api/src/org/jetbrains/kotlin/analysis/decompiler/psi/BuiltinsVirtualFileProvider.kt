@@ -35,6 +35,14 @@ abstract class BuiltinsVirtualFileProvider {
     abstract fun getBuiltinVirtualFiles(): Set<VirtualFile>
 
     /**
+     * Returns whether [file] is one of the built-in declaration files of [getBuiltinVirtualFiles].
+     *
+     * A platform that represents the same file by several [VirtualFile] instances, which are not equal to each other, can override this
+     * check to identify the file by other means, such as its URL.
+     */
+    abstract fun isBuiltinVirtualFile(file: VirtualFile): Boolean
+
+    /**
      * Creates a search scope covering exactly the files of [getBuiltinVirtualFiles].
      *
      * The scope is not a part of any module content, as built-ins do not belong to the analyzed project.
