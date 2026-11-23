@@ -65,8 +65,8 @@ enum class SourcesChangesMode {
  * `kotlin.ic.fuzz.sourcesChanges` system property: `known`, `calculated` or `calculatedAfterRebuild`.
  * As with the scenario DSL, the changes are accumulated until an incremental build succeeds.
  *
- * Both builds run in process or, with `kotlin.ic.fuzz.strategy=daemon`, in the Kotlin daemon,
- * with the compiler arguments of the space-separated `kotlin.ic.fuzz.compilerArgs` system property.
+ * Both builds run in process or, with `kotlin.ic.fuzz.strategy=daemon`, in the Kotlin daemon, with `-jvm-target 17`
+ * and the compiler arguments of the space-separated `kotlin.ic.fuzz.compilerArgs` system property.
  */
 class IcFuzzHarness(
     workingDirectory: Path,
@@ -147,7 +147,7 @@ class IcFuzzHarness(
         val result = try {
             module.compileIncrementally(
                 sourcesChanges,
-                compilationConfigAction = { if (compilerArgs.isNotEmpty()) it.compilerArguments.applyCommandLineArguments(compilerArgs) },
+                compilationConfigAction = { it.compilerArguments.applyCommandLineArguments(compilerArgs) },
             ) {
                 expectCompilationResult(actualResult)
                 outcome = this
@@ -199,7 +199,9 @@ class IcFuzzHarness(
             "calculatedAfterRebuild" -> SourcesChangesMode.CALCULATED_AFTER_REBUILD
             else -> SourcesChangesMode.KNOWN
         }
-        private val compilerArgs = System.getProperty("kotlin.ic.fuzz.compilerArgs").orEmpty().split(' ').filter(String::isNotBlank)
+        /** The programs may use `@JvmRecord`, which needs the JVM target 16 at least. */
+        private val compilerArgs = listOf("-jvm-target", "17") +
+                System.getProperty("kotlin.ic.fuzz.compilerArgs").orEmpty().split(' ').filter(String::isNotBlank)
 
         val toolchains: KotlinToolchains by lazy { KotlinToolchains.loadImplementation(btaClassloader) }
         private val executionPolicy: ExecutionPolicy by lazy {

@@ -363,6 +363,8 @@ testing {
                 val focus = providers.gradleProperty("kotlin.ic.fuzz.focus").orElse("")
                 val jqwikDatabase = layout.buildDirectory.file("${testTask.name}.jqwik-database").map { it.asFile.absolutePath }
                 testTask.configure {
+                    // the programs are compiled with -jvm-target 17 for @JvmRecord, which needs java.lang.Record in the JDK of the compiler
+                    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
                     // jqwik reads its configuration parameters from the system properties
                     systemProperty("jqwik.tries.default", fuzzingTries.get())
                     systemProperty("jqwik.shrinking.bounded.seconds", shrinkingSeconds.get())
@@ -385,6 +387,8 @@ testing {
             }
             targets.all {
                 testTask.configure {
+                    // the same JDK as the fuzzing, see the testIcFuzzing suite
+                    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
                     // the oracle tolerates no known issue in a reproducer
                     systemProperty("kotlin.ic.fuzz.includeKnownIssues", "true")
                 }

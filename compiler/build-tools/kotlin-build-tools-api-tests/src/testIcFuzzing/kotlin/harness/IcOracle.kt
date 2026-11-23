@@ -14,10 +14,12 @@ import java.nio.file.Path
  * Checks that an incremental build is indistinguishable from a clean rebuild of the same sources:
  * - both builds have the same result;
  * - the incremental build reports no errors the clean rebuild does not report
- *   (it may report fewer, as it stops at the first failed iteration);
+ *   (it may report fewer, as it stops at the first failed iteration),
+ *   errors differing only in the order of their lines are equal unless [KnownIssues.classFileOrder] is included;
  * - the incremental build does not fall back to a non-incremental one because of an internal failure;
  * - when the builds succeed, their outputs are byte-identical.
- *   Class files differing only in the order of their constant pools or members are equal unless [KnownIssues.classFileOrder] is included.
+ *   Class files differing only in the order of their constant pools, members or attributes are equal unless [KnownIssues.classFileOrder]
+ *   is included.
  */
 object IcOracle {
     /** Returns the description of every violated property, empty if the builds are equivalent. */
@@ -35,7 +37,8 @@ object IcOracle {
                 )
                 return@buildList
             }
-            val unexpectedErrors = incremental.errors - rebuild.errors
+            val rebuildErrors = rebuild.errors.mapTo(mutableSetOf(), ::comparable)
+            val unexpectedErrors = incremental.errors.filterTo(mutableSetOf()) { comparable(it) !in rebuildErrors }
             if (unexpectedErrors.isNotEmpty()) {
                 add("The incremental build reported errors the rebuild did not:\n${unexpectedErrors.render()}\nRebuild errors:\n${rebuild.errors.render()}")
             }
@@ -66,11 +69,15 @@ object IcOracle {
 
     private fun Set<String>.render(): String = if (isEmpty()) "  <none>" else joinToString("\n") { "  $it" }
 
+    /** A diagnostic listing declarations lists them in another order when they are read from a class file. */
+    private fun comparable(error: String): String = if (KnownIssues.classFileOrder) error else error.lines().sorted().joinToString("\n")
+
     /**
      * A line diff of the `javap` dumps of two class files: for each differing class member, its lines in [expected] marked with `-`
      * and its lines in [actual] marked with `+`, and the entries of the constant pool which only one of them has.
-     * The lines of a member are compared in order and with their repetitions, while the members and the constant pool entries
-     * may be in any order: an empty diff means that the class files differ only in these orders. Returns `null` for the other files.
+     * The lines of a member are compared in order and with their repetitions, while the members, the attributes of the class
+     * and the constant pool entries may be in any order: an empty diff means that the class files differ only in these orders.
+     * Returns `null` for the other files.
      */
     private fun classDiff(expected: Path, actual: Path): Map<String, List<String>>? {
         if (!expected.toString().endsWith(".class")) return null
@@ -85,6 +92,8 @@ object IcOracle {
                 expectedLines == null -> listOf("+ (only in the incremental build)")
                 actualLines == null -> listOf("- (only in the rebuild)")
                 expectedLines == actualLines -> emptyList()
+                // e.g. the inner classes of a file with inline functions are listed in another order when it is compiled with their call sites
+                member == CLASS_ATTRIBUTES && expectedLines.sorted() == actualLines.sorted() -> emptyList()
                 else -> ((expectedLines - actualLines.toSet()).map { "- $it" } + (actualLines - expectedLines.toSet()).map { "+ $it" })
                     .ifEmpty { listOf("  (the same lines in a different order or number)") }
             }
@@ -121,7 +130,7 @@ object IcOracle {
             when {
                 MEMBER_DECLARATION.matches(line) -> current = members.getOrPut(line.trim()) { mutableListOf() }
                 // the end of the class body, followed by the attributes of the class
-                line == "}" -> current = members.getOrPut("<class attributes>") { mutableListOf() }
+                line == "}" -> current = members.getOrPut(CLASS_ATTRIBUTES) { mutableListOf() }
                 // the members are separated by blank lines, which belong to no member
                 line.isNotBlank() -> current += line
             }
@@ -149,6 +158,8 @@ object IcOracle {
     }
 
     private const val MAX_MEMBER_DIFF_LINES = 30
+
+    private const val CLASS_ATTRIBUTES = "<class attributes>"
 
     /** A constant pool index with the padding that aligns the following comment, the padding depends on the width of the index. */
     private val CONSTANT_POOL_INDEX = Regex("#\\d+\\s*")

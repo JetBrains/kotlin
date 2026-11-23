@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.fuzzing
 
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -16,14 +17,149 @@ import org.junit.jupiter.api.Test
  * Each test builds `a.kt` with the inline functions and `b.kt` with their call sites, then touches `b.kt`,
  * so that the incremental build recompiles only `b.kt` and reads the inline functions from the class files.
  */
-@DisplayName("The bytecode of an inline call does not depend on whether the inline function is compiled together with it")
+@DisplayName("The bytecode does not depend on whether the declarations it uses are compiled together with it")
 class SeparateCompilationReproducibilityTest {
-    private fun touchingCallSites(inlineFunctions: String, callSites: String) = icFuzzingReproducer {
+    private fun touchingCallSites(@Language("kotlin") inlineFunctions: String, @Language("kotlin") callSites: String) = icFuzzingReproducer {
         step("build", changed = mapOf("a.kt" to "package p0\n\n$inlineFunctions\n", "b.kt" to "package p0\n\n$callSites\n"))
         step("touch b.kt", touched = setOf("b.kt"))
     }
 
     // the $$forInline template of a suspend inline function keeps the unoptimized code of the inlined functions
+
+    @Test
+    @DisplayName("an inline function with an elvis operator calling the inline TODO")
+    fun testInlineFunctionWithElvisCallingTodo() = touchingCallSites(
+        """
+            |fun v(): Long? = 18L
+            |
+            |inline fun f() {
+            |    println(v() ?: TODO())
+            |}
+        """.trimMargin(),
+        """
+            |fun g() = f()
+        """.trimMargin(),
+    )
+
+    @Test
+    @DisplayName("an inline function with a redundant safe cast")
+    fun testInlineFunctionWithRedundantSafeCast() = touchingCallSites(
+        """
+            |class C
+            |
+            |inline fun f() {
+            |    println(C() as? C)
+            |}
+        """.trimMargin(),
+        """
+            |fun g() = f()
+        """.trimMargin(),
+    )
+
+    @Test
+    @DisplayName("an elvis operator calling the inline TODO on the result of an inline function with a when expression")
+    fun testElvisCallingTodoOnResultOfInlineFunctionWithWhen() = touchingCallSites(
+        """
+            |inline fun f(): Array<Boolean>? {
+            |    println(when (0) { 73 -> "c"; else -> "n" })
+            |    return arrayOf(true)
+            |}
+        """.trimMargin(),
+        """
+            |fun g() = println(f() ?: TODO())
+        """.trimMargin(),
+    )
+
+    @Test
+    @DisplayName("a write to a @JvmField property of an object reads the object only when it is compiled together with it")
+    fun testWriteToJvmFieldPropertyOfObject() = touchingCallSites(
+        """
+            |object O {
+            |    @JvmField var p = 0
+            |}
+        """.trimMargin(),
+        """
+            |fun g() {
+            |    O.p = 1
+            |}
+        """.trimMargin(),
+    )
+
+    @Test
+    @DisplayName("a reference to a @JvmField property of an object reads the object only when it is compiled together with it")
+    fun testReferenceToJvmFieldPropertyOfObject() = touchingCallSites(
+        """
+            |object O {
+            |    @JvmField var p = 0
+            |}
+        """.trimMargin(),
+        """
+            |fun g() = O::p
+        """.trimMargin(),
+    )
+
+    @Test
+    @DisplayName("a reference to a const property of an object has a line number only when the property is compiled together with it")
+    fun testReferenceToConstPropertyOfObject() = touchingCallSites(
+        """
+            |object O {
+            |    const val p = "s"
+            |}
+        """.trimMargin(),
+        """
+            |fun g() = O::p
+        """.trimMargin(),
+    )
+
+    @Test
+    @DisplayName("a reference to an inline function of a multifile class is owned by the part only when it is compiled together with it")
+    fun testReferenceToInlineFunctionOfMultifileClass() = icFuzzingReproducer {
+        step(
+            "build",
+            changed = mapOf(
+                "a.kt" to "@file:JvmName(\"F\")\n@file:JvmMultifileClass\npackage p0\n\ninline fun f() = 0\n",
+                "b.kt" to "package p0\n\nfun g() = run { val r: () -> Int = ::f; r }\n",
+            ),
+        )
+        step("touch b.kt", touched = setOf("b.kt"))
+    }
+
+    @Test
+    @DisplayName("a reference to a property of a multifile class is owned by the part only when it is compiled together with it")
+    fun testReferenceToPropertyOfMultifileClass() = icFuzzingReproducer {
+        step(
+            "build",
+            changed = mapOf(
+                "a.kt" to "@file:JvmName(\"F\")\n@file:JvmMultifileClass\npackage p0\n\nval p: Any = 0\n",
+                "b.kt" to "package p0\n\nfun g() = run { val r: kotlin.reflect.KProperty0<Any> = ::p; r }\n",
+            ),
+        )
+        step("touch b.kt", touched = setOf("b.kt"))
+    }
+
+    @Test
+    @DisplayName("a reference to a function of a multifile class is owned by the part only when it is compiled together with it")
+    fun testReferenceToFunctionOfMultifileClass() = icFuzzingReproducer {
+        step(
+            "build",
+            changed = mapOf(
+                "a.kt" to "@file:JvmName(\"F\")\n@file:JvmMultifileClass\npackage p0\n\nfun f() = 0\n",
+                "b.kt" to "package p0\n\nfun g() = run { val r: () -> Int = ::f; r }\n",
+            ),
+        )
+        step("touch b.kt", touched = setOf("b.kt"))
+    }
+
+    @Test
+    @DisplayName("a reference to a const property has a line number only when the property is compiled together with it")
+    fun testReferenceToConstProperty() = touchingCallSites(
+        """
+            |const val p = "s"
+        """.trimMargin(),
+        """
+            |fun f() = ::p
+        """.trimMargin(),
+    )
 
     @Test
     @DisplayName("an object implementing an interface with default members has a different constant pool order")
@@ -67,6 +203,33 @@ class SeparateCompilationReproducibilityTest {
             |}
         """.trimMargin(),
     )
+
+    @Test
+    @DisplayName("a file with inline functions compiled together with their call sites has a different order of its inner classes")
+    fun testInlineFunctionsCompiledTogetherWithCallSites() = icFuzzingReproducer {
+        step(
+            "build",
+            changed = mapOf(
+                "a.kt" to "package p0\n",
+                "b.kt" to """
+                    |package p0
+                    |
+                    |inline fun f(): Any {
+                    |    println(object {})
+                    |    return 5
+                    |}
+                    |
+                    |@JvmName("g")
+                    |inline fun f(a: Array<Long>, block: () -> Int): suspend (Long) -> Boolean {
+                    |    println(block())
+                    |    println(object {})
+                    |    return { _: Long -> false }
+                    |}
+                """.trimMargin(),
+            ),
+        )
+        step("call f in a.kt", changed = mapOf("a.kt" to "package p0\n\nfun h() = f(arrayOf(0L)) { 0 }\n"))
+    }
 
     @Test
     @DisplayName("an inline function called from a suspend inline function")
