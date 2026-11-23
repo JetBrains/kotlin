@@ -222,14 +222,9 @@ fun deserializeClassToSymbol(
         )
 
         if (classKind == ClassKind.ENUM_CLASS) {
-            generateValuesFunction(
-                moduleData,
-                classId.packageFqName,
-                classId.relativeClassName,
-                origin = origin,
-            )
-            generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName, origin = origin)
-            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName, origin = origin)
+            generateValuesFunction(moduleData, origin = origin)
+            generateValueOfFunction(moduleData, origin = origin)
+            generateEntriesGetter(moduleData, origin = origin)
         }
 
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver, session)

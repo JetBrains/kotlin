@@ -259,12 +259,10 @@ internal fun deserializeClassToSymbol(
         if (classKind == ClassKind.ENUM_CLASS) {
             generateValuesFunction(
                 moduleData,
-                classId.packageFqName,
-                classId.relativeClassName,
                 origin = initialOrigin
             )
-            generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName, origin = initialOrigin)
-            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName, origin = initialOrigin)
+            generateValueOfFunction(moduleData, origin = initialOrigin)
+            generateEntriesGetter(moduleData, origin = initialOrigin)
         }
 
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver, session)
