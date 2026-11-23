@@ -2809,6 +2809,11 @@ internal class CodeGeneratorVisitor(
                 val cache = context.config.cachedLibraries.getLibraryCache(library)
                         ?: error("Library ${library.path} is expected to be cached")
 
+                // Only a final binary calls the constructors of its cached dependencies (see [appendGlobalCtors]).
+                // Elsewhere, e.g. in a per-file cache, they would be declared for nothing, one per file of each per-file cached
+                // library the current file depends on as a whole: as many as the compiled files times the files of these libraries.
+                if (!context.config.isFinalBinary) return@flatMap emptyList()
+
                 when (cache) {
                     is CachedLibraries.Cache.Monolithic -> listOf(ctorProto(ctorName))
                     is CachedLibraries.Cache.PerFile -> {
