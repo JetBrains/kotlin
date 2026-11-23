@@ -7,6 +7,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import java.lang.reflect.Constructor
+import java.lang.reflect.Field
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import kotlin.LazyThreadSafetyMode.PUBLICATION
@@ -25,6 +26,9 @@ internal abstract class ReflectKParameter : KParameter {
 
         // Workaround for KT-13077: members of built-in classes don't have caller, so we load parameter annotations from metadata.
         if (callable.isMappedBuiltinMember) return@lazy loadAnnotationsFromMetadata()
+
+        // Private property with default accessors has no setter method in the bytecode.
+        if (callable.caller.member is Field) return@lazy emptyList()
 
         val java = javaParameter
         when (val callable = java.callable) {
