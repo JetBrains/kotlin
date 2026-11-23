@@ -69,7 +69,7 @@ internal fun KtExpression.inferExpressionTypeByPsi(mayHaveExpectedType: Boolean)
             is KtStringTemplateExpression -> string
 
             // A loop statement has the Unit type, but a declaration with a loop body is left to FIR
-            is KtConstructorDelegationReferenceExpression, is KtLoopExpression -> unit
+            is KtLoopExpression -> unit
 
             is KtBinaryExpression -> {
                 when (unwrappedExpression.operationToken) {
@@ -85,8 +85,7 @@ internal fun KtExpression.inferExpressionTypeByPsi(mayHaveExpectedType: Boolean)
 
             is KtIsExpression -> boolean
 
-            is KtContinueExpression, is KtBreakExpression, is KtThrowExpression, is KtReturnExpression, is KtLabelReferenceExpression,
-                -> nothing
+            is KtContinueExpression, is KtBreakExpression, is KtThrowExpression, is KtReturnExpression -> nothing
 
             is KtConstantExpression -> {
                 val classId = unwrappedExpression.inferClassIdByPsi()
