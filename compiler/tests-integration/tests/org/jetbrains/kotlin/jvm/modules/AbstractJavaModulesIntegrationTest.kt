@@ -67,7 +67,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             K2JVMCompilerArguments::suppressVersionWarnings.cliArgument,
         )
         if (addModules.isNotEmpty()) {
-            kotlinOptions += "-Xadd-modules=${addModules.joinToString()}"
+            kotlinOptions += "-Xadd-modules=${addModules.joinToString(separator = ",")}"
         }
         kotlinOptions += additionalKotlinArguments
 
@@ -83,7 +83,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
                 )
                 if (addModules.isNotEmpty()) {
                     javaOptions += "--add-modules"
-                    javaOptions += addModules.joinToString()
+                    javaOptions += addModules.joinToString(separator = ",")
                 }
                 javaOptions += additionalJavaArguments
                 compileJavaFiles(javaFiles, javaOptions, KtTestUtil.getJdk11Home())
@@ -589,6 +589,37 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     }
 
     @Test
+    fun testAddReadsRepeated() {
+        // Like javac, the reads given with several values of -Xadd-reads for the same module are all applied.
+        val a = module("a")
+        val b = module("b")
+        module("main", listOf(a, b), listOf("a", "b"), listOf("-Xadd-reads=main=a", "-Xadd-reads=main=b"))
+        module(
+            "main", listOf(a, b), listOf("a", "b"), listOf("-Xadd-reads=main=a"),
+            checkKotlinOutput = assertCompilationError("module 'b', which the current module does not depend on"),
+        )
+    }
+
+    @Test
+    fun testAddExportsRepeated() {
+        // Like javac, the exports given with several values of -Xadd-exports are all applied, and the targets of the same package are
+        // merged.
+        val lib = module("lib")
+        val exportsP2 = "-Xadd-exports=lib/lib.p2=main"
+        module("main", listOf(lib), additionalKotlinArguments = listOf("-Xadd-exports=lib/lib.p1=main", exportsP2))
+        for (exportsP1 in listOf(listOf("ALL-UNNAMED", "main"), listOf("main", "ALL-UNNAMED"))) {
+            module("main", listOf(lib), additionalKotlinArguments = exportsP1.map { "-Xadd-exports=lib/lib.p1=$it" } + exportsP2)
+        }
+        module(
+            "main", listOf(lib), additionalKotlinArguments = listOf("-Xadd-exports=lib/lib.p1=ALL-UNNAMED", exportsP2),
+            checkKotlinOutput = {
+                assertCompilationError("does not export package 'lib.p1'")(it)
+                assertTrue("does not export package 'lib.p2'" !in it, it)
+            },
+        )
+    }
+
+    @Test
     fun testAddReadsAndExportsWithJdkRelease() {
         module(
             "main",
@@ -662,6 +693,26 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             checkKotlinOutput = assertCompilationError("does not export package 'lib.extra'"),
         )
         module("main", listOf(lib), listOf("lib"), listOf(patch, "-Xadd-exports=lib/lib.extra=ALL-UNNAMED"))
+    }
+
+    @Test
+    fun testPatchModuleRepeated() {
+        // Like javac, -Xpatch-module can be given once for each of several modules, and all of them are patched.
+        val lib = module("lib")
+        val other = module("other")
+        val libExtra = module("libExtra", destination = File(tmpdir, "libExtra"))
+        val otherExtra = module("otherExtra", destination = File(tmpdir, "otherExtra"))
+        val patches = listOf("-Xpatch-module=lib=${libExtra.path}", "-Xpatch-module=other=${otherExtra.path}")
+        module(
+            "main", listOf(lib, other), listOf("lib", "other"), patches,
+            checkKotlinOutput = assertCompilationError(
+                "does not export package 'lib.extra'", "does not export package 'other.extra'",
+            ),
+        )
+        module(
+            "main", listOf(lib, other), listOf("lib", "other"),
+            patches + listOf("-Xadd-exports=lib/lib.extra=ALL-UNNAMED", "-Xadd-exports=other/other.extra=ALL-UNNAMED"),
+        )
     }
 
     @Test
