@@ -145,9 +145,9 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
 
     /** Returns the type references of the context receivers declared for this function type, or an empty list if there are none. */
     public List<KtTypeReference> getContextReceiversTypeReferences() {
-        KtContextParameterList contextReceiverList = getContextParameterList();
-        if (contextReceiverList != null) {
-            return contextReceiverList.typeReferences();
+        KtContextParameterList contextParameterList = getContextParameterList();
+        if (contextParameterList != null) {
+            return contextParameterList.typeReferences();
         } else {
             return Collections.emptyList();
         }
@@ -165,9 +165,9 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
      */
     public int getTotalParameterCount() {
         int count = 0;
-        KtContextParameterList contextReceiverList = getContextParameterList();
-        if (contextReceiverList != null) {
-            count += contextReceiverList.getContextParameters().size();
+        KtContextParameterList contextParameterList = getContextParameterList();
+        if (contextParameterList != null) {
+            count += contextParameterList.getContextParameters().size();
         }
 
         KtFunctionTypeReceiver receiverDeclaration = getReceiver();

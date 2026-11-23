@@ -126,7 +126,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 it.annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.extensionFunctionType
             }
 
-            val [contextReceiverAnnotations, otherAnnotations] = notExtensionAnnotations.partition {
+            val [contextAnnotations, otherAnnotations] = notExtensionAnnotations.partition {
                 it.annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams
             }
 
@@ -142,13 +142,13 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 nullableTypeParent(parent, type)
             }
 
-            val numContextReceivers = if (contextReceiverAnnotations.isEmpty()) {
+            val numContextParameters = if (contextAnnotations.isEmpty()) {
                 0
             } else {
-                contextReceiverAnnotations.first().annotationWithArgs.args[CONTEXT_FUNCTION_TYPE_PARAMS_ARGUMENT_NAME]?.value as? Int
+                contextAnnotations.first().annotationWithArgs.args[CONTEXT_FUNCTION_TYPE_PARAMS_ARGUMENT_NAME]?.value as? Int
                     ?: error("Error: can't get type parameter count from ${StandardNames.FqNames.contextFunctionTypeParams}")
             }
-            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers, abbreviatedType)
+            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextParameters, abbreviatedType)
 
             return
         }
@@ -270,7 +270,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         type: Type,
         isExtensionFunctionType: Boolean,
         isSuspend: Boolean,
-        numContextReceivers: Int,
+        numContextParameters: Int,
         abbreviatedType: KotlinClassTypeBean?,
     ) {
         val typeArgumentList = type.argumentList
@@ -281,14 +281,14 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         var processedTypes = 0
 
-        if (numContextReceivers != 0) {
+        if (numContextParameters != 0) {
             createContextParameterStubsWithoutNames(
-                functionType,
-                typeArgumentList.subList(
-                    processedTypes,
-                    processedTypes + numContextReceivers
-                ).map { it.type(c.typeTable)!! })
-            processedTypes += numContextReceivers
+                parent = functionType,
+                contextParameterTypes = typeArgumentList
+                    .subList(fromIndex = 0, toIndex = numContextParameters)
+                    .map { it.type(c.typeTable)!! },
+            )
+            processedTypes += numContextParameters
         }
 
         if (isExtensionFunctionType) {

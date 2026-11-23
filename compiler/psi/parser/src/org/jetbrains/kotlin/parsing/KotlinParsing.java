@@ -2259,12 +2259,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         IElementType lookahead = lookahead(1);
         IElementType lookahead2 = lookahead(2);
         boolean typeBeforeDot = true;
-        boolean withContextReceiver = at(CONTEXT_KEYWORD) && lookahead == LPAR;
+        boolean withContextParameterList = at(CONTEXT_KEYWORD) && lookahead == LPAR;
         boolean wasFunctionTypeParsed = false;
 
-        PsiBuilder.Marker contextReceiversStart = mark();
+        PsiBuilder.Marker contextParameterListStart = mark();
 
-        if (withContextReceiver) {
+        if (withContextParameterList) {
             parseContextParameterList(true);
         }
 
@@ -2297,7 +2297,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 // or
                 //   (a : A) -> C
                 functionOrParenthesizedType.rollbackTo();
-                parseFunctionType(contextReceiversStart.precede());
+                parseFunctionType(contextParameterListStart.precede());
                 wasFunctionTypeParsed = true;
             }
         }
@@ -2354,7 +2354,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             //  A.(B) -> C
             //   ^
 
-            PsiBuilder.Marker functionType = contextReceiversStart.precede();
+            PsiBuilder.Marker functionType = contextParameterListStart.precede();
 
             PsiBuilder.Marker receiverTypeRef = typeElementMarker.precede();
             PsiBuilder.Marker receiverType = receiverTypeRef.precede();
@@ -2374,7 +2374,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             wasFunctionTypeParsed = true;
         }
 
-        if (withContextReceiver && !wasFunctionTypeParsed) {
+        if (withContextParameterList && !wasFunctionTypeParsed) {
             errorWithRecovery("Function type expected",
                               TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
                                              TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON),
@@ -2382,7 +2382,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         typeElementMarker.drop();
-        contextReceiversStart.drop();
+        contextParameterListStart.drop();
         return typeRefMarker;
     }
 
