@@ -73,7 +73,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createScriptSymbol(declaration: ScriptDescriptor, signature: IdSignature?): IrScriptSymbol {
-        return IrScriptSymbolImpl(declaration)
+        return IrScriptSymbolImpl()
     }
 
     // ------------------------------------ class ------------------------------------
@@ -87,81 +87,81 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createPublicClassSymbol(declaration: ClassDescriptor, signature: IdSignature): IrClassSymbol {
-        return IrClassSymbolImpl(declaration, signature)
+        return IrClassSymbolImpl(signature)
     }
 
     override fun createPrivateClassSymbol(descriptor: ClassDescriptor): IrClassSymbol {
-        return IrClassSymbolImpl(descriptor)
+        return IrClassSymbolImpl()
     }
 
     // ------------------------------------ constructor ------------------------------------
 
     override fun createPublicConstructorSymbol(declaration: ClassConstructorDescriptor, signature: IdSignature): IrConstructorSymbol {
-        return IrConstructorSymbolImpl(declaration, signature)
+        return IrConstructorSymbolImpl(signature)
     }
 
     override fun createPrivateConstructorSymbol(declaration: ClassConstructorDescriptor): IrConstructorSymbol {
-        return IrConstructorSymbolImpl(declaration)
+        return IrConstructorSymbolImpl()
     }
 
     // ------------------------------------ enum entry ------------------------------------
 
     override fun createPublicEnumEntrySymbol(declaration: ClassDescriptor, signature: IdSignature): IrEnumEntrySymbol {
-        return IrEnumEntrySymbolImpl(declaration, signature)
+        return IrEnumEntrySymbolImpl(signature)
     }
 
     override fun createPrivateEnumEntrySymbol(declaration: ClassDescriptor): IrEnumEntrySymbol {
-        return IrEnumEntrySymbolImpl(declaration)
+        return IrEnumEntrySymbolImpl()
     }
 
     // ------------------------------------ field ------------------------------------
 
     override fun createPublicFieldSymbol(declaration: PropertyDescriptor, signature: IdSignature): IrFieldSymbol {
-        return IrFieldSymbolImpl(declaration, signature)
+        return IrFieldSymbolImpl(signature)
     }
 
     override fun createPrivateFieldSymbol(declaration: PropertyDescriptor): IrFieldSymbol {
-        return IrFieldSymbolImpl(declaration)
+        return IrFieldSymbolImpl()
     }
 
     // ------------------------------------ property ------------------------------------
 
     override fun createPublicPropertySymbol(declaration: PropertyDescriptor, signature: IdSignature): IrPropertySymbol {
-        return IrPropertySymbolImpl(declaration, signature)
+        return IrPropertySymbolImpl(signature)
     }
 
     override fun createPrivatePropertySymbol(declaration: PropertyDescriptor): IrPropertySymbol {
-        return IrPropertySymbolImpl(declaration)
+        return IrPropertySymbolImpl()
     }
 
     // ------------------------------------ typealias ------------------------------------
 
     override fun createPublicTypeAliasSymbol(declaration: TypeAliasDescriptor, signature: IdSignature): IrTypeAliasSymbol {
-        return IrTypeAliasSymbolImpl(declaration, signature)
+        return IrTypeAliasSymbolImpl(signature)
     }
 
     override fun createPrivateTypeAliasSymbol(declaration: TypeAliasDescriptor): IrTypeAliasSymbol {
-        return IrTypeAliasSymbolImpl(declaration)
+        return IrTypeAliasSymbolImpl()
     }
 
     // ------------------------------------ function ------------------------------------
 
     override fun createPublicFunctionSymbol(declaration: FunctionDescriptor, signature: IdSignature): IrSimpleFunctionSymbol {
-        return IrSimpleFunctionSymbolImpl(declaration, signature)
+        return IrSimpleFunctionSymbolImpl(signature)
     }
 
     override fun createPrivateFunctionSymbol(declaration: FunctionDescriptor): IrSimpleFunctionSymbol {
-        return IrSimpleFunctionSymbolImpl(declaration)
+        return IrSimpleFunctionSymbolImpl()
     }
 
     // ------------------------------------ type parameter ------------------------------------
 
     override fun createPublicTypeParameterSymbol(declaration: TypeParameterDescriptor, signature: IdSignature): IrTypeParameterSymbol {
-        return IrTypeParameterSymbolImpl(declaration, signature)
+        return IrTypeParameterSymbolImpl(signature)
     }
 
     override fun createPrivateTypeParameterSymbol(declaration: TypeParameterDescriptor): IrTypeParameterSymbol {
-        return IrTypeParameterSymbolImpl(declaration)
+        return IrTypeParameterSymbolImpl()
     }
 
     // ------------------------------------ value parameter ------------------------------------

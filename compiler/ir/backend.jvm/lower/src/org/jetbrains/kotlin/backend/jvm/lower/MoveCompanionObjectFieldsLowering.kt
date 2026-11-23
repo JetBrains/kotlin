@@ -90,7 +90,7 @@ internal class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCo
     private fun makeAnonymousInitializerStatic(oldInitializer: IrAnonymousInitializer, newParent: IrClass): IrAnonymousInitializer =
         with(oldInitializer) {
             val oldParent = parentAsClass
-            val newSymbol = IrAnonymousInitializerSymbolImpl(newParent.symbol)
+            val newSymbol = IrAnonymousInitializerSymbolImpl()
             factory.createAnonymousInitializer(startOffset, endOffset, origin, newSymbol, isStatic = true).apply {
                 parent = newParent
                 body = this@with.body.patchDeclarationParents(newParent)

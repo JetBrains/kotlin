@@ -181,7 +181,7 @@ class IrBasedFunctionFactory(
             val signature = signatureComputer(declarationWithoutSignature)
             val declarationWithSignature = symbolTable.declareGlobalTypeParameter(
                 signature,
-                { IrTypeParameterSymbolImpl(descriptor = null, signature) }
+                { IrTypeParameterSymbolImpl(signature) }
             ) { parameter(it) }
             declarationWithSignature.superTypes += anyNType
             declarationWithSignature.parent = this

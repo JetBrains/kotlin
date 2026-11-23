@@ -60,7 +60,7 @@ private class SingletonOrConstantDelegationTransformer(val context: JvmBackendCo
                 delegate.startOffset,
                 delegate.endOffset,
                 IrDeclarationOrigin.DEFINED,
-                IrAnonymousInitializerSymbolImpl(parentAsClass.symbol),
+                IrAnonymousInitializerSymbolImpl(),
                 parentAsClass.isFileClass
             ).apply {
                 body = context.irFactory.createBlockBody(delegate.startOffset, delegate.endOffset, listOf(delegate.remapReceiver(null, null)))

@@ -28,14 +28,13 @@ class SymbolImplementationPrinter(
     override fun makeFieldPrinter(printer: ImportCollectingPrinter) = object : AbstractFieldPrinter<SymbolField>(printer) {}
 
     override fun ImportCollecting.parentConstructorArguments(implementation: SymbolImplementation): List<String> = buildList {
-        add("descriptor")
+        add("null")
         if (implementation.hasSignature) {
             add("signature")
         }
     }
 
     override fun additionalConstructorParameters(implementation: SymbolImplementation): List<FunctionParameter> = buildList {
-        add(FunctionParameter("descriptor", implementation.element.descriptor!!.copy(nullable = true), "null"))
         if (implementation.hasSignature) {
             add(FunctionParameter("signature", idSignatureType.copy(nullable = true), "null"))
         }

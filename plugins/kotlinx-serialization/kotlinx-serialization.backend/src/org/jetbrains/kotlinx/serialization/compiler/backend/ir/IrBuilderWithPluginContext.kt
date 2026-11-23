@@ -241,7 +241,7 @@ interface IrBuilderWithPluginContext {
 
     fun IrClass.addAnonymousInit(body: IrBlockBodyBuilder.() -> Unit) {
         val anonymousInit = this.run {
-            val symbol = IrAnonymousInitializerSymbolImpl(symbol)
+            val symbol = IrAnonymousInitializerSymbolImpl()
             this.factory.createAnonymousInitializer(startOffset, endOffset, SERIALIZATION_PLUGIN_ORIGIN, symbol).also {
                 it.parent = this
                 declarations.add(it)

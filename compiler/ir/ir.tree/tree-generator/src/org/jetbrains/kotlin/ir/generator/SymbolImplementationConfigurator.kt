@@ -14,11 +14,6 @@ object SymbolImplementationConfigurator : AbstractIrSymbolTreeImplementationConf
     override fun configure(model: Model<Symbol>): Unit = with(IrSymbolTree) {
         impl(anonymousInitializerSymbol) {
             noSignature()
-            implementation.generationCallback = {
-                println()
-                println("@OptIn(", obsoleteDescriptorBasedApiAnnotation.asClassRefString, ")")
-                println("constructor(irClassSymbol: ${classSymbol.render()}) : this(irClassSymbol.descriptor)")
-            }
         }
 
         impl(externalPackageFragmentSymbol) {

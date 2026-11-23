@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.ir.symbols.impl
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.*
@@ -21,77 +20,54 @@ class IrFileSymbolImpl : IrSymbolBase<PackageFragmentDescriptor, IrFile>(null), 
 
 class IrExternalPackageFragmentSymbolImpl : IrSymbolBase<PackageFragmentDescriptor, IrExternalPackageFragment>(null), IrExternalPackageFragmentSymbol
 
-class IrAnonymousInitializerSymbolImpl(
-    descriptor: ClassDescriptor? = null,
-) : IrSymbolBase<ClassDescriptor, IrAnonymousInitializer>(descriptor), IrAnonymousInitializerSymbol {
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    constructor(irClassSymbol: IrClassSymbol) : this(irClassSymbol.descriptor)
-}
+class IrAnonymousInitializerSymbolImpl : IrSymbolBase<ClassDescriptor, IrAnonymousInitializer>(null), IrAnonymousInitializerSymbol
 
 class IrEnumEntrySymbolImpl(
-    descriptor: ClassDescriptor? = null,
     signature: IdSignature? = null,
-) : IrSymbolWithSignature<ClassDescriptor, IrEnumEntry>(descriptor, signature), IrEnumEntrySymbol
+) : IrSymbolWithSignature<ClassDescriptor, IrEnumEntry>(null, signature), IrEnumEntrySymbol
 
 class IrFieldSymbolImpl(
-    descriptor: PropertyDescriptor? = null,
     signature: IdSignature? = null,
-) : IrSymbolWithSignature<PropertyDescriptor, IrField>(descriptor, signature), IrFieldSymbol
+) : IrSymbolWithSignature<PropertyDescriptor, IrField>(null, signature), IrFieldSymbol
 
 class IrClassSymbolImpl(
-    descriptor: ClassDescriptor? = null,
     signature: IdSignature? = null,
-) : IrSymbolWithSignature<ClassDescriptor, IrClass>(descriptor, signature), IrClassSymbol
+) : IrSymbolWithSignature<ClassDescriptor, IrClass>(null, signature), IrClassSymbol
 
 class IrScriptSymbolImpl(
-    descriptor: ScriptDescriptor? = null,
     signature: IdSignature? = null,
-) : IrSymbolWithSignature<ScriptDescriptor, IrScript>(descriptor, signature), IrScriptSymbol
+) : IrSymbolWithSignature<ScriptDescriptor, IrScript>(null, signature), IrScriptSymbol
 
 class IrReplSnippetSymbolImpl(
-    descriptor: Nothing? = null,
     signature: IdSignature? = null,
-) : IrSymbolWithSignature<Nothing, IrReplSnippet>(descriptor, signature), IrReplSnippetSymbol
+) : IrSymbolWithSignature<Nothing, IrReplSnippet>(null, signature), IrReplSnippetSymbol
 
 class IrTypeParameterSymbolImpl(
-    descriptor: TypeParameterDescriptor? = null,
     signature: IdSignature? = null,
-) : IrSymbolWithSignature<TypeParameterDescriptor, IrTypeParameter>(descriptor, signature), IrTypeParameterSymbol
+) : IrSymbolWithSignature<TypeParameterDescriptor, IrTypeParameter>(null, signature), IrTypeParameterSymbol
 
 class IrValueParameterSymbolImpl(
-    descriptor: ParameterDescriptor? = null,
     signature: IdSignature? = null,
-) : IrSymbolWithSignature<ParameterDescriptor, IrValueParameter>(descriptor, signature), IrValueParameterSymbol
+) : IrSymbolWithSignature<ParameterDescriptor, IrValueParameter>(null, signature), IrValueParameterSymbol
 
-class IrVariableSymbolImpl(
-    descriptor: VariableDescriptor? = null,
-) : IrSymbolBase<VariableDescriptor, IrVariable>(descriptor), IrVariableSymbol
+class IrVariableSymbolImpl : IrSymbolBase<VariableDescriptor, IrVariable>(null), IrVariableSymbol
 
 class IrConstructorSymbolImpl(
-    descriptor: ClassConstructorDescriptor? = null,
     signature: IdSignature? = null,
-) : IrSymbolWithSignature<ClassConstructorDescriptor, IrConstructor>(descriptor, signature), IrConstructorSymbol
+) : IrSymbolWithSignature<ClassConstructorDescriptor, IrConstructor>(null, signature), IrConstructorSymbol
 
 class IrSimpleFunctionSymbolImpl(
-    descriptor: FunctionDescriptor? = null,
     signature: IdSignature? = null,
-) : IrSymbolWithSignature<FunctionDescriptor, IrSimpleFunction>(descriptor, signature), IrSimpleFunctionSymbol
+) : IrSymbolWithSignature<FunctionDescriptor, IrSimpleFunction>(null, signature), IrSimpleFunctionSymbol
 
-class IrReturnableBlockSymbolImpl(
-    descriptor: FunctionDescriptor? = null,
-) : IrSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor), IrReturnableBlockSymbol
+class IrReturnableBlockSymbolImpl : IrSymbolBase<FunctionDescriptor, IrReturnableBlock>(null), IrReturnableBlockSymbol
 
 class IrPropertySymbolImpl(
-    descriptor: PropertyDescriptor? = null,
     signature: IdSignature? = null,
-) : IrSymbolWithSignature<PropertyDescriptor, IrProperty>(descriptor, signature), IrPropertySymbol
+) : IrSymbolWithSignature<PropertyDescriptor, IrProperty>(null, signature), IrPropertySymbol
 
-class IrLocalDelegatedPropertySymbolImpl(
-    descriptor: VariableDescriptorWithAccessors? = null,
-) : IrSymbolBase<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>(descriptor), IrLocalDelegatedPropertySymbol
+class IrLocalDelegatedPropertySymbolImpl : IrSymbolBase<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>(null), IrLocalDelegatedPropertySymbol
 
 class IrTypeAliasSymbolImpl(
-    descriptor: TypeAliasDescriptor? = null,
     signature: IdSignature? = null,
-) : IrSymbolWithSignature<TypeAliasDescriptor, IrTypeAlias>(descriptor, signature), IrTypeAliasSymbol
+) : IrSymbolWithSignature<TypeAliasDescriptor, IrTypeAlias>(null, signature), IrTypeAliasSymbol
