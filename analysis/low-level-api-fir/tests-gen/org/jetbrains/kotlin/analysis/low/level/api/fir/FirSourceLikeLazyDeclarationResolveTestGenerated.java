@@ -581,6 +581,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("entryInScriptDestructuringDeclarationMultiplatform.kts")
+  public void testEntryInScriptDestructuringDeclarationMultiplatform() {
+    run("entryInScriptDestructuringDeclarationMultiplatform.kts");
+  }
+
+  @Test
   @TestMetadata("entryInScriptDestructuringDeclarationMutable.kts")
   public void testEntryInScriptDestructuringDeclarationMutable() {
     run("entryInScriptDestructuringDeclarationMutable.kts");
@@ -1139,6 +1145,18 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("propertyInMemberDelegateAnnotatedArgumentMultiplatform.kt")
+  public void testPropertyInMemberDelegateAnnotatedArgumentMultiplatform() {
+    run("propertyInMemberDelegateAnnotatedArgumentMultiplatform.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInMemberDelegateBinaryArgumentMultiplatform.kt")
+  public void testPropertyInMemberDelegateBinaryArgumentMultiplatform() {
+    run("propertyInMemberDelegateBinaryArgumentMultiplatform.kt");
+  }
+
+  @Test
   @TestMetadata("propertyWithGetter.kt")
   public void testPropertyWithGetter() {
     run("propertyWithGetter.kt");
@@ -1280,6 +1298,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
   @TestMetadata("scriptArgument.kts")
   public void testScriptArgument() {
     run("scriptArgument.kts");
+  }
+
+  @Test
+  @TestMetadata("scriptDestructuringDeclarationMultiplatform.kts")
+  public void testScriptDestructuringDeclarationMultiplatform() {
+    run("scriptDestructuringDeclarationMultiplatform.kts");
   }
 
   @Test

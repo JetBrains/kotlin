@@ -34,6 +34,12 @@ public class FirCustomScriptDefinitionLazyDeclarationResolveTestGenerated extend
   }
 
   @Test
+  @TestMetadata("providedPropertyMultiplatform.test.kts")
+  public void testProvidedPropertyMultiplatform_test() {
+    run("providedPropertyMultiplatform.test.kts");
+  }
+
+  @Test
   @TestMetadata("providedPropertyWithDefaultImport.test.kts")
   public void testProvidedPropertyWithDefaultImport_test() {
     run("providedPropertyWithDefaultImport.test.kts");
