@@ -119,8 +119,8 @@ object ComposeErrors : KtDiagnosticsContainer() {
 }
 
 object ComposeSourceElementPositioningStrategies {
-    private val PSI_TRY_KEYWORD: PositioningStrategy<KtTryExpression> =
-        object : PositioningStrategy<KtTryExpression>() {
+    private val PSI_TRY_KEYWORD: PsiPositioningStrategy<KtTryExpression> =
+        object : PsiPositioningStrategy<KtTryExpression>() {
             override fun mark(element: KtTryExpression): List<TextRange> {
                 element.tryKeyword?.let {
                     return markElement(it)
@@ -142,8 +142,8 @@ object ComposeSourceElementPositioningStrategies {
             }
         }
 
-    private val PSI_DECLARATION_NAME_OR_DEFAULT: PositioningStrategy<PsiElement> =
-        object : PositioningStrategy<PsiElement>() {
+    private val PSI_DECLARATION_NAME_OR_DEFAULT: PsiPositioningStrategy<PsiElement> =
+        object : PsiPositioningStrategy<PsiElement>() {
             override fun mark(element: PsiElement): List<TextRange> {
                 if (element is KtNamedDeclaration) {
                     return PsiPositioningStrategies.DECLARATION_NAME.mark(element)

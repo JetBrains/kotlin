@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 @RequiresOptIn
 annotation class DiagnosticLossRisk
 
-open class PositioningStrategy<in E : PsiElement> {
+open class PsiPositioningStrategy<in E : PsiElement> {
     open fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
         @Suppress("UNCHECKED_CAST")
         return mark((diagnostic.element as KtPsiSourceElement).psi as E)
