@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.gradle.util.computeTransformedLibraryVersionChecksum
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
 @DisplayName("Test the GMT runtime behavior")
 @MustRunOnChangesInGradle
+@Disabled("KT-91874: The Uklib prototype is going to be removed")
 class KmpResolutionIT : KGPBaseTest() {
 
     /**
