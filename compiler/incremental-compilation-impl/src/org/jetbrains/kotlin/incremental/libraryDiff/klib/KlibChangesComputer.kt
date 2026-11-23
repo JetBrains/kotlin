@@ -10,13 +10,8 @@ import org.jetbrains.kotlin.build.report.metrics.COMPUTE_CHANGED_AND_IMPACTED_SE
 import org.jetbrains.kotlin.build.report.metrics.COMPUTE_CLASS_CHANGES
 import org.jetbrains.kotlin.build.report.metrics.COMPUTE_IMPACTED_SET
 import org.jetbrains.kotlin.build.report.metrics.measure
-import org.jetbrains.kotlin.incremental.ClassProtoData
-import org.jetbrains.kotlin.incremental.DifferenceCalculatorForClass
-import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade
+import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getNonPrivateMembers
-import org.jetbrains.kotlin.incremental.LookupStorage
-import org.jetbrains.kotlin.incremental.PackagePartProtoData
-import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findReachableNodes
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassMembers
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
@@ -72,7 +67,7 @@ internal object KlibChangesComputer {
         val changedPreviousSnapshots = previous.values.filter { it.contentHash != current[it.id]?.contentHash }
 
         val changedSet = reporter.measure(COMPUTE_CLASS_CHANGES) {
-            computePackageChanges(changedCurrentSnapshots, changedPreviousSnapshots)
+            computeKlibFileChanges(changedCurrentSnapshots, changedPreviousSnapshots)
         }
         reporter.reportVerboseWithLimit { "Changed set = ${changedSet.toDebugString()}" }
 
@@ -99,66 +94,76 @@ internal object KlibChangesComputer {
     /**
      * Computes changes between the current and previous lists of changed snapshots. The result does not need to include elements that
      * are impacted by the changes.
-     *
-     * Snapshots without member-level data, or whose granularity changed between builds, are compared at the coarse level.
      */
-    private fun computePackageChanges(
+    private fun computeKlibFileChanges(
         currentSnapshots: List<KlibFileSnapshot>,
         previousSnapshots: List<KlibFileSnapshot>,
     ): ProgramSymbolSet {
-        val granularityChangedIds = findSnapshotsWithGranularityChange(currentSnapshots, previousSnapshots)
+        val [currentPackageFragmentSnapshots, currentUnsupportedSnapshots] = currentSnapshots.partition { it is PackageFragmentSnapshot }
+        val [previousPackageFragmentSnapshots, previousUnsupportedSnapshots] = previousSnapshots.partition { it is PackageFragmentSnapshot }
 
-        val [coarseGrainedCurrent, fineGrainedCurrent] = currentSnapshots.partition {
-            !it.hasMemberLevelData() || it.id in granularityChangedIds
-        }
-        val [coarseGrainedPrevious, fineGrainedPrevious] = previousSnapshots.partition {
-            !it.hasMemberLevelData() || it.id in granularityChangedIds
+        val unsupportedSnapshots = currentUnsupportedSnapshots + previousUnsupportedSnapshots
+        if (unsupportedSnapshots.isNotEmpty()) {
+            error("Unexpected snapshot types: ${unsupportedSnapshots.map { it.javaClass.simpleName }.distinct()}")
         }
 
-        return computeCoarseGrainedChanges(coarseGrainedCurrent, coarseGrainedPrevious) +
-                computeFineGrainedChanges(fineGrainedCurrent, fineGrainedPrevious)
+        @Suppress("UNCHECKED_CAST")
+        return computePackageFragmentChanges(
+            currentPackageFragmentSnapshots as List<PackageFragmentSnapshot>,
+            previousPackageFragmentSnapshots as List<PackageFragmentSnapshot>
+        )
     }
 
-    private fun findSnapshotsWithGranularityChange(
-        currentSnapshots: List<KlibFileSnapshot>,
-        previousSnapshots: List<KlibFileSnapshot>,
+    /** Package fragments without member-level data, or whose granularity changed between builds, are compared at the coarse level. */
+    private fun computePackageFragmentChanges(
+        currentSnapshots: List<PackageFragmentSnapshot>,
+        previousSnapshots: List<PackageFragmentSnapshot>,
+    ): ProgramSymbolSet {
+        val granularityChangedIds = findPackageFragmentWithGranularityChanges(currentSnapshots, previousSnapshots)
+
+        val [coarseGrainedCurrent, fineGrainedCurrent] = currentSnapshots.partition {
+            it.classMemberLevelSnapshot == null || it.id in granularityChangedIds
+        }
+        val [coarseGrainedPrevious, fineGrainedPrevious] = previousSnapshots.partition {
+            it.classMemberLevelSnapshot == null || it.id in granularityChangedIds
+        }
+
+        return computeCoarseGrainedPackageFragmentChanges(coarseGrainedCurrent, coarseGrainedPrevious) +
+                computeFineGrainedPackageFragmentChanges(fineGrainedCurrent, fineGrainedPrevious)
+    }
+
+    private fun findPackageFragmentWithGranularityChanges(
+        currentSnapshots: List<PackageFragmentSnapshot>,
+        previousSnapshots: List<PackageFragmentSnapshot>,
     ): Set<String> {
         val current = currentSnapshots.associateBy { it.id }
         val previous = previousSnapshots.associateBy { it.id }
 
         return (current.keys intersect previous.keys).filterTo(mutableSetOf()) { id ->
-            current.getValue(id).hasMemberLevelData() != previous.getValue(id).hasMemberLevelData()
+            (current.getValue(id).classMemberLevelSnapshot == null) != (previous.getValue(id).classMemberLevelSnapshot == null)
         }
     }
 
-    private fun KlibFileSnapshot.hasMemberLevelData(): Boolean = when (this) {
-        is PackageFragmentSnapshot -> classMemberLevelSnapshot != null
-    }
-
-    private fun computeCoarseGrainedChanges(
-        currentSnapshots: List<KlibFileSnapshot>,
-        previousSnapshots: List<KlibFileSnapshot>,
+    private fun computeCoarseGrainedPackageFragmentChanges(
+        currentSnapshots: List<PackageFragmentSnapshot>,
+        previousSnapshots: List<PackageFragmentSnapshot>,
     ): ProgramSymbolSet {
         // Note: We have removed unchanged snapshots earlier in computeChangedAndImpactedSet method, so here we only have changed ones.
         return ProgramSymbolSet.Collector().run {
             (currentSnapshots + previousSnapshots).forEach {
-                when (it) {
-                    is PackageFragmentSnapshot -> {
-                        addClasses(it.classInfos.map { classInfo -> classInfo.classId })
-                        addPackageMembers(it.packageName, it.packageMemberNames)
-                    }
-                }
+                addClasses(it.classInfos.map { classInfo -> classInfo.classId })
+                addPackageMembers(it.packageName, it.packageMemberNames)
             }
             getResult()
         }
     }
 
-    private fun computeFineGrainedChanges(
-        currentSnapshots: List<KlibFileSnapshot>,
-        previousSnapshots: List<KlibFileSnapshot>,
+    private fun computeFineGrainedPackageFragmentChanges(
+        currentSnapshots: List<PackageFragmentSnapshot>,
+        previousSnapshots: List<PackageFragmentSnapshot>,
     ): ProgramSymbolSet {
-        val previousProtoDataMap = previousSnapshots.associate { it.id to createProtoData(it) }
-        val currentProtoDataMap = currentSnapshots.associate { it.id to createProtoData(it) }
+        val previousProtoDataMap = previousSnapshots.associate { it.id to requireNotNull(it.classMemberLevelSnapshot?.proto) }
+        val currentProtoDataMap = currentSnapshots.associate { it.id to requireNotNull(it.classMemberLevelSnapshot?.proto) }
 
         return ProgramSymbolSet.Collector().run {
             for (id in previousProtoDataMap.keys + currentProtoDataMap.keys) {
@@ -176,15 +181,6 @@ internal object KlibChangesComputer {
             }
 
             getResult()
-        }
-    }
-
-    private fun createProtoData(snapshot: KlibFileSnapshot): List<ProtoData> = when (snapshot) {
-        is PackageFragmentSnapshot -> {
-            val accessibleClassIds = snapshot.classInfos.mapTo(HashSet(), KlibClassInfo::classId)
-            requireNotNull(snapshot.classMemberLevelSnapshot).proto.filter { protoData ->
-                protoData !is ClassProtoData || protoData.nameResolver.getClassId(protoData.proto.fqName) in accessibleClassIds
-            }
         }
     }
 
