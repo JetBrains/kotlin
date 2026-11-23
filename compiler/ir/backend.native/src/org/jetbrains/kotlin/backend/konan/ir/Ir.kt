@@ -115,6 +115,7 @@ private object ClassIds {
     val continuation = ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("Continuation"))
     val cancellationException = ClassId.topLevel(KonanFqNames.cancellationException)
     val kotlinResult = ClassId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("Result"))
+    val kotlinResultFailure = kotlinResult.createNestedClassId(Name.identifier("Failure"))
 
     // Internal coroutines classes
     private val String.internalCoroutinesClassId
@@ -217,7 +218,6 @@ private object CallableIds {
     // Built-ins functions
     private val String.builtInsCallableId get() = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(this))
     val isAssertionThrowingErrorEnabled = "isAssertionThrowingErrorEnabled".builtInsCallableId
-    val getOrThrow = "getOrThrow".builtInsCallableId
 
     // Special stdlib public functions
     val enumEntries = CallableId(FqName("kotlin.enums"), Name.identifier("enumEntries"))
@@ -225,6 +225,7 @@ private object CallableIds {
     val executeImpl = CallableId(KonanFqNames.packageName.child(Name.identifier("concurrent")), Name.identifier("executeImpl"))
     val coroutineSuspended = CallableId(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME, StandardNames.COROUTINE_SUSPENDED_NAME)
     val invokeSuspend = CallableId(ClassIds.baseContinuationImpl, Name.identifier("invokeSuspend"))
+    val kotlinResultFailureException = CallableId(ClassIds.kotlinResultFailure, Name.identifier("exception"))
     val anyEquals = CallableId(StandardClassIds.Any, StandardNames.EQUALS_NAME)
 
     // collections functions
@@ -590,9 +591,8 @@ class BackendNativeSymbols(
 
     val kotlinResult = ClassIds.kotlinResult.classSymbol()
 
-    val kotlinResultGetOrThrow by CallableIds.getOrThrow.functionSymbol {
-        it.extensionReceiverClass == kotlinResult
-    }
+    val kotlinResultFailure = ClassIds.kotlinResultFailure.classSymbol()
+    val kotlinResultFailureExceptionGetter by CallableIds.kotlinResultFailureException.getterSymbol()
 
     override val functionAdapter = ClassIds.functionAdapter.classSymbol()
 

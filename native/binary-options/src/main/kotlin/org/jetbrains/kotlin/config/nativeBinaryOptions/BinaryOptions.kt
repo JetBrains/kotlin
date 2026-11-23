@@ -90,6 +90,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val packFields by booleanOption()
 
+    val coroutinesExceptionFastPath by booleanOption()
+
     val cInterfaceMode by option<CInterfaceGenerationMode>()
 
     /**

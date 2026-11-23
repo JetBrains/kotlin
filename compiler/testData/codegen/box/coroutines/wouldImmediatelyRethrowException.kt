@@ -1,7 +1,8 @@
-// TARGET_BACKEND: JVM
+// TARGET_BACKEND: JVM, NATIVE
 // LANGUAGE: +JvmOptimizeImmediateRethrowForSuspend
 // WITH_STDLIB
 // WITH_COROUTINES
+// WORKS_WHEN_VALUE_CLASS
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -12,7 +13,7 @@ var cont: Continuation<String>? = null
 
 suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { cont = it; COROUTINE_SUSPENDED }
 
-@JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC(val s: String)
 
 suspend fun level3(): String = suspendHere() + "3"
@@ -26,6 +27,26 @@ suspend fun withFinally(): String {
         return icLevel().s
     } finally {
         log.append("F")
+    }
+}
+
+// The suspension point is in the catch block, so the try block does not protect it.
+suspend fun suspendInCatch(): String =
+    try {
+        throw IllegalStateException()
+    } catch (e: IllegalStateException) {
+        level2()
+    }
+
+suspend fun suspendInCatchWithFinally(): String {
+    try {
+        try {
+            throw IllegalStateException()
+        } catch (e: IllegalStateException) {
+            return level2()
+        }
+    } finally {
+        log.append("G")
     }
 }
 
@@ -122,6 +143,9 @@ fun box(): String {
     check("open") { A().f() }?.let { return it }
     check("finally") { withFinally() }?.let { return it }
     if (log.toString() != "FF") return "FAIL finally: $log"
+    check("catch") { suspendInCatch() }?.let { return it }
+    check("catch with finally") { suspendInCatchWithFinally() }?.let { return it }
+    if (log.toString() != "FFGG") return "FAIL catch with finally: $log"
 
     checkManyStates("named", { manyStates() }, setOf(2, 4, 5, 6))?.let { return it }
     checkManyStates("lambda", {

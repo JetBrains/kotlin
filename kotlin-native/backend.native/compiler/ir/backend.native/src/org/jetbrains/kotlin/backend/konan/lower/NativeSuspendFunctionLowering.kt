@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -35,6 +34,7 @@ internal class NativeSuspendFunctionsLowering(
     private val fileLowerState = generationState.fileLowerState
     private val saveCoroutineState = symbols.saveCoroutineState
     private val restoreCoroutineState = symbols.restoreCoroutineState
+    private val coroutinesExceptionFastPath = generationState.config.coroutinesExceptionFastPath
 
     override val stateMachineMethodName = Name.identifier("invokeSuspend")
 
@@ -169,7 +169,7 @@ internal class NativeSuspendFunctionsLowering(
                     context.irBuiltIns.unitType,
                     suspensionPointId = irGetField(irGet(stateMachineFunction.dispatchReceiverParameter!!), labelField),
                     result = irBlock(startOffset, endOffset) {
-                        +irThrowIfNotNull(irExceptionOrNull(irGet(resultArgument))) // Coroutine might start with an exception.
+                        unwrapResult(irGet(resultArgument), insideTry = false) // Coroutine might start with an exception.
                         (originalBody as IrBlockBody).statements.forEach { +it }
                     })
             if (transformingFunction.returnType.isUnit())
@@ -189,6 +189,18 @@ internal class NativeSuspendFunctionsLowering(
             val labelField: IrField,
     ) : IrElementTransformerVoid() {
         // TODO: optimize - it has square complexity.
+
+        // An exception thrown inside a try block might be caught, so a failure can't be returned there.
+        private var tryDepth = 0
+
+        override fun visitTry(aTry: IrTry): IrExpression {
+            tryDepth++
+            aTry.tryResult = aTry.tryResult.transform(this, null)
+            tryDepth--
+            aTry.catches.forEach { it.transformChildrenVoid(this) }
+            aTry.finallyExpression = aTry.finallyExpression?.transform(this, null)
+            return aTry
+        }
 
         override fun visitSetField(expression: IrSetField): IrExpression {
             expression.transformChildrenVoid(this)
@@ -327,7 +339,7 @@ internal class NativeSuspendFunctionsLowering(
                         },
                         resumeResult               = irBlock(startOffset, endOffset) {
                             +irCall(restoreCoroutineState)
-                            +irGetOrThrow(irGet(resultArgument))
+                            +irGet(unwrapResult(irGet(resultArgument), insideTry = tryDepth > 0))
                         })
                 val expressionResult = when {
                     suspendCall.type.isUnit() -> irImplicitCoercionToUnit(suspensionPoint)
@@ -350,14 +362,34 @@ internal class NativeSuspendFunctionsLowering(
         +expression
     }
 
-
-    private fun IrBuilderWithScope.irThrowIfNotNull(exception: IrExpression) = irLetS(exception) {
-        irThrowIfNotNull(it.owner)
+    /**
+     * Unwraps the [result] argument of `invokeSuspend` without calls to [Result] functions,
+     * and returns the variable with the unwrapped value.
+     *
+     * On failure, the [Result.Failure] instance is returned from `invokeSuspend` instead of throwing its exception.
+     * `BaseContinuationImpl.resumeWith` wraps the returned value with `Result.success`, which gives the same [Result]
+     * as a caught exception, but without the cost to throw and catch it.
+     * Inside a try block, the exception is thrown, so that the handler can catch it.
+     * It is also thrown when the `coroutinesExceptionFastPath` binary option is disabled.
+     */
+    private fun IrBlockBuilder.unwrapResult(result: IrExpression, insideTry: Boolean): IrVariable {
+        val failureType = symbols.kotlinResultFailure.owner.defaultType
+        val value = irTemporary(
+                irCall(symbols.reinterpret, irBuiltIns.anyNType, listOf(result.type, irBuiltIns.anyNType)).apply {
+                    arguments[0] = result
+                },
+                nameHint = "result"
+        )
+        val onFailure = if (insideTry || !coroutinesExceptionFastPath) {
+            irThrow(irCall(symbols.kotlinResultFailureExceptionGetter).apply {
+                arguments[0] = irImplicitCast(irGet(value), failureType)
+            })
+        } else {
+            irReturn(irGet(value))
+        }
+        +irIfThen(irIs(irGet(value), failureType), onFailure)
+        return value
     }
-
-    fun IrBuilderWithScope.irThrowIfNotNull(exception: IrValueDeclaration) =
-            irIfThen(irNot(irEqeqeq(irGet(exception), irNull())),
-                    irThrow(irImplicitCast(irGet(exception), exception.type.makeNotNull())))
 
     private val IrExpression.isSuspendCall: Boolean
         get() = this is IrCall && this.isSuspend
@@ -423,19 +455,6 @@ internal class NativeSuspendFunctionsLowering(
             this.initializer = initializer
             this.parent = this@irVar.parent
         }
-
-    private fun IrBuilderWithScope.irGetOrThrow(result: IrExpression): IrExpression =
-            irCall(symbols.kotlinResultGetOrThrow.owner).apply {
-                arguments[0] = result
-            } // TODO: consider inlining getOrThrow function body here.
-
-    private fun IrBuilderWithScope.irExceptionOrNull(result: IrExpression): IrExpression {
-        val resultClass = symbols.kotlinResult.owner
-        val exceptionOrNull = resultClass.simpleFunctions().single { it.name.asString() == "exceptionOrNull" }
-        return irCall(exceptionOrNull).apply {
-            dispatchReceiver = result
-        }
-    }
 
     fun IrBlockBodyBuilder.irSuccess(value: IrExpression): IrMemberAccessExpression<*> {
         val createResult = symbols.kotlinResult.owner.constructors.single { it.isPrimary }
