@@ -17,7 +17,7 @@ import java.io.File
 import java.util.*
 
 /**
- * The compilation of the C stubs for this library, which also use the declarations of some standard headers.
+ * The compilation of this library's C stubs, which also include some standard headers.
  */
 internal fun Compilation.forCStubs(platform: KotlinPlatform): Compilation = copy(
         includes = mutableListOf<IncludeInfo>().apply {
