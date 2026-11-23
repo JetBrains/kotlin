@@ -24,15 +24,16 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleO
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.diagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.createForAnalysisApi
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmEvaluatorData
-import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.codegen.state.CompiledCodeProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -73,8 +74,9 @@ internal class KaFirCompilerFacility(
         }
     }
 
+    @OptIn(LLFirInternals::class)
     override fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
-        return KaFirCompilationOptionsBuilder(token, CompilerConfiguration.create(parseTreeKind = PsiParseTreeKind)).apply(init).build()
+        return KaFirCompilationOptionsBuilder(token, CompilerConfiguration.createForAnalysisApi()).apply(init).build()
     }
 
     override fun modify(options: KaCompilationOptions, init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
