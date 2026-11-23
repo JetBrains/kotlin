@@ -159,7 +159,7 @@ kotlin {
     }
 }
 
-// Keep the historical local JAR name used by the compiler distribution.
+// Keep the historical local JAR name to preserve the published JVM module metadata.
 tasks.named<Jar>("jvmJar") {
     setupPublicJar("parcelize-runtime")
     archiveAppendix = ""
@@ -231,6 +231,7 @@ private fun KotlinMultiplatformExtension.androidJvm(): KotlinTarget {
     }
     val project = target.project
     val jar = project.tasks.named<Jar>(target.artifactsTaskName) {
+        setupPublicJar("parcelize-runtime")
         from(main.output.allOutputs)
         archiveAppendix = target.targetName
     }
