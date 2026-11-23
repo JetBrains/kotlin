@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
+import org.jetbrains.kotlin.fir.java.enhancement.isInSecondRoundOfTypeParameterBoundsEnhancement
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.toFirJavaTypeRef
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -131,17 +132,17 @@ class FirJavaTypeParameter(
 
     override val bounds: List<FirTypeRef>
         get() {
-            run {
-                val initialState = boundsEnhancementState
-                initialState.enhancedBounds?.let { return it }
+            val initialState = boundsEnhancementState
+            if (initialState is BoundsEnhancementState.Completed) {
+                return initialState.enhancedBounds
+            }
 
-                if (containingDeclarationSymbol !is FirClassSymbol) {
-                    // It's possible to get here for FirJavaMethod via JavaOverrideChecker
-                    // Stack trace: (JavaOverrideChecker).isOverriddenFunction -> hasSameValueParameterTypes ->
-                    // buildTypeParametersSubstitutorIfCompatible -> buildErasure
-                    // For JavaOverrideChecker it's possible to work with not-yet-enhanced bounds
-                    return initialState.bounds
-                }
+            if (containingDeclarationSymbol !is FirClassSymbol) {
+                // It's possible to get here for FirJavaMethod via JavaOverrideChecker
+                // Stack trace: (JavaOverrideChecker).isOverriddenFunction -> hasSameValueParameterTypes ->
+                // buildTypeParametersSubstitutorIfCompatible -> buildErasure
+                // For JavaOverrideChecker it's possible to work with not-yet-enhanced bounds
+                return initialState.enhancedBounds ?: initialState.bounds
             }
 
             val firJavaClass = containingDeclarationSymbol.fir
@@ -152,17 +153,23 @@ class FirJavaTypeParameter(
                 withFirEntry("class", firJavaClass)
             }
 
-            // Explicitly call type parameters which will trigger enhancement
-            firJavaClass.typeParameters
-
-            // Second attempt after enhancement
-            val currentState = boundsEnhancementState
-            currentState.enhancedBounds?.let { return it }
+            if (firJavaClass.isInSecondRoundOfTypeParameterBoundsEnhancement()) {
+                // The second round on this thread reads the first-round bounds
+                initialState.enhancedBounds?.let { return it }
+            } else {
+                // Another thread may be enhancing the bounds as well, so its first-round bounds are not returned
+                firJavaClass.enhanceTypeParameterBounds()
+                val currentState = boundsEnhancementState
+                if (currentState is BoundsEnhancementState.Completed) {
+                    return currentState.enhancedBounds
+                }
+            }
 
             errorWithAttachment(
-                "Attempt to access Java type parameter bounds before their enhancement! (state: ${currentState::class.simpleName})"
+                "Attempt to access Java type parameter bounds before their enhancement! (state: ${boundsEnhancementState::class.simpleName})"
             ) {
-                withFirEntry("class", firJavaClass)
+                // Rendering the class would read these bounds again
+                withEntry("class", firJavaClass.symbol.classId.asString())
                 withEntry("name", name.asString())
             }
         }
