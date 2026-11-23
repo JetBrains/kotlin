@@ -5,6 +5,4 @@ open var foo: kotlin.String!
   set(value: kotlin.String!)
 
 Restored in Sources of restoreInContextOf:
-open var foo: kotlin.String!
-  get()
-  set(value: kotlin.String!)
+<NOT RESTORED>

@@ -206,7 +206,7 @@ KaSyntheticJavaPropertySymbol:
   isStatic: false
   isVal: false
   javaGetterSymbol: KaNamedFunctionSymbol(/Base.getFoo)
-  javaSetterSymbol: KaNamedFunctionSymbol(/Base.setFoo)
+  javaSetterSymbol: KaNamedFunctionSymbol(/Derived.setFoo)
   location: CLASS
   modality: OPEN
   name: foo
@@ -219,8 +219,11 @@ KaSyntheticJavaPropertySymbol:
     type: kotlin/String!
   setter: KaPropertySetterSymbol:
     anchorPsi: PsiMethodImpl
-    annotations: []
-    callableId: /Base.setFoo
+    annotations: [
+      java/lang/Override()
+        psi: null
+    ]
+    callableId: /Derived.setFoo
     contextParameters: []
     contextReceivers: []
     hasStableParameterNames: false

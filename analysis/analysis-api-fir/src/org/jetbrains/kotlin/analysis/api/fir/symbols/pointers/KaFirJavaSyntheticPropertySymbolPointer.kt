@@ -37,8 +37,9 @@ internal class KaFirJavaSyntheticPropertySymbolPointer(
 
         val symbol = analysisSession.firSymbolBuilder.variableBuilder.buildSyntheticJavaPropertySymbol(syntheticProperty.symbol)
 
-        // The scope of the owner also has the properties of its superclasses, which have other owners
-        return symbol.takeIf { it.isMemberOf(owner) }
+        // The scope of the owner also has the properties of its superclasses, which have other owners.
+        // The owner is the class of the property or, if the setter comes from a subclass of it, the class of the setter.
+        return symbol.takeIf { it.isMemberOf(owner) || it.javaSetterSymbol?.isMemberOf(owner) == true }
     }
 
     override fun getSearchScope(analysisSession: KaFirSession, owner: FirClassSymbol<*>): FirScope? {
