@@ -8,15 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 
 class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
-    internal val archive = JarArchive(
-        File(path),
-        fileSystem.unmapBuffer,
-        onInvalidArchive = { file, e ->
-            System.err.println("WARN: Error while reading zip file: ${file.path}: $e")
-            e.printStackTrace(System.err)
-        },
-        readContents = fileSystem::readContents,
-    )
+    internal val archive: JarArchive = fileSystem.archives[path]
 
     internal val file: File
         get() = archive.file
