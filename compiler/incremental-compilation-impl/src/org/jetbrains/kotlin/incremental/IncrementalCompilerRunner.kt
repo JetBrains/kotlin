@@ -576,15 +576,13 @@ abstract class IncrementalCompilerRunner<
     protected open fun performWorkAfterCompilation(compilationMode: CompilationMode, exitCode: ExitCode, caches: CacheManager) {}
 
     private fun collectSizeMetrics() {
-        if (!reporter.isEnabled) return
         reporter.measure(CALCULATE_OUTPUT_SIZE) {
-            reporter.addMetric(
-                SNAPSHOT_SIZE,
+            reporter.addMetric(SNAPSHOT_SIZE) {
                 (buildHistoryFile?.length() ?: 0) + lastBuildInfoFile.length()
-            )
-            reporter.addMetric(
-                CACHE_DIRECTORY_SIZE,
-                cacheDirectory.walk().filter { it.isFile }.sumOf { it.length() })
+            }
+            reporter.addMetric(CACHE_DIRECTORY_SIZE) {
+                cacheDirectory.walk().filter { it.isFile }.sumOf { it.length() }
+            }
         }
     }
 

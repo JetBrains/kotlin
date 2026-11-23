@@ -8,17 +8,34 @@ package org.jetbrains.kotlin.build.report.metrics
 import java.lang.management.ManagementFactory
 
 interface BuildMetricsReporter<in B : BuildTimeMetric, P : BuildPerformanceMetric> {
-    val isEnabled: Boolean
+    private val isEnabled: Boolean
         get() = true
 
     fun startMeasure(time: B)
     fun endMeasure(time: B)
     fun addTimeMetricNs(time: B, durationNs: Long)
 
+    /**
+     * Records [time] metric with a duration in nanoseconds computed by [durationNs].
+     * [durationNs] is invoked only if metrics collection is enabled (see [isEnabled]).
+     */
+    fun addTimeMetricNs(time: B, durationNs: () -> Long) {
+        if (isEnabled) addTimeMetricNs(time, durationNs())
+    }
+
     @Deprecated("Use addTimeMetricNs instead", ReplaceWith("addTimeMetricNs(time, durationNs)"))
     fun addTimeMetricMs(time: B, durationMs: Long) = addTimeMetricNs(time, durationMs * 1_000_000)
 
     fun addMetric(metric: P, value: Long)
+
+    /**
+     * Records [metric] with a value computed by [value].
+     * [value] is invoked only if metrics collection is enabled (see [isEnabled]).
+     */
+    fun addMetric(metric: P, value: BuildMetricsReporter<B, P>.() -> Long) {
+        if (isEnabled) addMetric(metric, value())
+    }
+
     fun addTimeMetric(metric: P)
 
     //Change metric to enum if possible

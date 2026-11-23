@@ -321,19 +321,14 @@ internal fun shrinkAndSaveClasspathSnapshot(
         }
     }
 
-    if (!reporter.isEnabled) return
-
     reporter.addMetric(SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
-    reporter.addMetric(
-        CLASSPATH_ENTRY_COUNT,
+    reporter.addMetric(CLASSPATH_ENTRY_COUNT) {
         classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.size.toLong()
-    )
-    reporter.addMetric(
-        CLASSPATH_SNAPSHOT_SIZE,
+    }
+    reporter.addMetric(CLASSPATH_SNAPSHOT_SIZE) {
         classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.sumOf { it.length() }
-    )
-    reporter.addMetric(
-        SHRUNK_CLASSPATH_SNAPSHOT_SIZE,
+    }
+    reporter.addMetric(SHRUNK_CLASSPATH_SNAPSHOT_SIZE) {
         classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.length()
-    )
+    }
 }

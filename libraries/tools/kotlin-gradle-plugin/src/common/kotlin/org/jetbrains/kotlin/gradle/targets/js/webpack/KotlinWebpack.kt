@@ -330,14 +330,12 @@ internal constructor(
             ).execute()
 
             val buildMetrics = metrics.get()
-            outputDirectory.get().asFile.walkTopDown()
-                .filter { it.isFile }
-                .filter { it.extension == "js" }
-                .map { it.length() }
-                .sum()
-                .let {
-                    buildMetrics.addMetric(BUNDLE_SIZE, it)
-                }
+            buildMetrics.addMetric(BUNDLE_SIZE) {
+                outputDirectory.get().asFile.walkTopDown()
+                    .filter { it.isFile }
+                    .filter { it.extension == "js" }
+                    .sumOf { it.length() }
+            }
 
             buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
         }
