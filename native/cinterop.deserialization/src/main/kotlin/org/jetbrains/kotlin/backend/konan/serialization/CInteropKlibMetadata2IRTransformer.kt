@@ -698,11 +698,11 @@ class CInteropKlibMetadata2IRTransformer(
             deserializedDeclarations[enumEntry.symbol.signature!!] = enumEntry
         }
 
-        fun onNewFunction(function: IrSimpleFunction) {
+        open fun onNewFunction(function: IrSimpleFunction) {
             deserializedDeclarations[function.symbol.signature!!] = function
         }
 
-        fun onNewProperty(property: IrProperty) {
+        open fun onNewProperty(property: IrProperty) {
             deserializedDeclarations[property.symbol.signature!!] = property
         }
 

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.putToMultiMap
 
 fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
     return when (this) {
@@ -119,11 +120,20 @@ abstract class IrModuleDeserializer(
 
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 
-    open fun collectAllMatchingSignatures(
-        callableId: CallableId,
-        signatureKind: BinarySymbolData.SymbolKind,
+    /**
+     * Collects signatures of all top-level callables matching the given [topLevelCallableId]
+     * that are defined in this module, and adds them to [output].
+     *
+     * **This is an internal API of the linker.** It is only supposed to be called by [KotlinIrLinker]
+     * and overridden by implementations of [IrModuleDeserializer]. Everyone else should use
+     * [KotlinIrLinker.getAllMatchingSignatures] instead.
+     *
+     * If there are no matching callables in this module, [output] is left unchanged.
+     */
+    abstract fun collectAllMatchingSignatures(
+        topLevelCallableId: TopLevelCallableIdAndKind,
         output: MutableCollection<IdSignature>,
-    ) = Unit
+    )
 }
 
 fun IrModuleDeserializer.deserializeIrSymbolOrFail(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol =
@@ -167,12 +177,13 @@ class IrModuleDeserializerWithBuiltIns(
         delegate.contributedPackageNames?.let { addAll(it) }
     }
 
-    private val irBuiltInsCallableIdMap: Map<CallableId, MutableList<IdSignature>> by lazy {
-        buildMap {
+    private val irBuiltInsCallableIdMap: Map<TopLevelCallableIdAndKind, List<IdSignature>> by lazy {
+        buildMap<TopLevelCallableIdAndKind, MutableList<IdSignature>> {
             syntheticProvider.operatorsPackageFragment.declarations.forEach {
                 val symbol = (it as IrSymbolOwner).symbol
                 val callableId = CallableId(it.getPackageFragment().packageFqName, (it as IrDeclarationWithName).name)
-                getOrPut(callableId) { mutableListOf() } += symbol.signature!!
+
+                putToMultiMap(TopLevelCallableIdAndKind(callableId, symbol.kind()), symbol.signature!!)
             }
         }
     }
@@ -251,11 +262,10 @@ class IrModuleDeserializerWithBuiltIns(
     }
 
     override fun collectAllMatchingSignatures(
-        callableId: CallableId,
-        signatureKind: BinarySymbolData.SymbolKind,
+        topLevelCallableId: TopLevelCallableIdAndKind,
         output: MutableCollection<IdSignature>,
     ) {
-        irBuiltInsCallableIdMap[callableId]?.let { output += it }
-        delegate.collectAllMatchingSignatures(callableId, signatureKind, output)
+        irBuiltInsCallableIdMap[topLevelCallableId]?.let { output += it }
+        delegate.collectAllMatchingSignatures(topLevelCallableId, output)
     }
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategyResolver
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
+import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
+import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
@@ -106,11 +108,31 @@ class KonanInteropModuleDeserializer(
 
     private var typeDefinitionsIrFile: IrFile? = null
 
+    /** The cache of [TopLevelCallableIdAndKind] representing a top-level callable and the corresponding signatures */
+    private val topLevelCallables: MutableMap<TopLevelCallableIdAndKind, MutableList<IdSignature>> = mutableMapOf()
+
     /** The cache of the declarations deserialized by the current deserializer. */
     private val declarationTracker = object : CInteropKlibMetadata2IRTransformer.DeclarationTracker() {
         override fun onNewClass(clazz: IrClass) {
             super.onNewClass(clazz)
             linker.fakeOverrideBuilder.enqueueClass(clazz, clazz.symbol.signature!!, CompatibilityMode.CURRENT)
+        }
+
+        override fun onNewFunction(function: IrSimpleFunction) {
+            super.onNewFunction(function)
+            onNewCallable(function, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL)
+        }
+
+        override fun onNewProperty(property: IrProperty) {
+            super.onNewProperty(property)
+            onNewCallable(property, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL)
+        }
+
+        private fun onNewCallable(callable: IrOverridableDeclaration<*>, kind: BinarySymbolData.SymbolKind) {
+            if (callable.isTopLevelDeclaration) {
+                val signature = callable.symbol.signature as IdSignature.CommonSignature
+                topLevelCallables.putToMultiMap(TopLevelCallableIdAndKind(signature, kind), signature)
+            }
         }
     }
 
@@ -242,6 +264,32 @@ class KonanInteropModuleDeserializer(
             // are not retrieved again, so nothing is deserialized twice, even if this function is called more than once.
             deserializeTopLevelDeclarations(id)
         }
+    }
+
+    override fun collectAllMatchingSignatures(
+        topLevelCallableId: TopLevelCallableIdAndKind,
+        output: MutableCollection<IdSignature>,
+    ) {
+        topLevelCallables[topLevelCallableId]?.let {
+            // If there is already the deserialized callables in the cache, return them.
+            output += it
+            return
+        }
+
+        val topLevelDeclarationId = MetadataDeclarationId(
+            topLevelCallableId.kind,
+            topLevelCallableId.callableId.packageName,
+            FqName(topLevelCallableId.callableId.callableName.asString())
+        )
+
+        if (topLevelDeclarationId !in metadataReader.getDeclaredDeclarationIds()) {
+            // There is definitely no such a declaration.
+            return
+        }
+
+        // There is such a declaration, but it hasn't been deserialized yet. So, initiate it's deserialization.
+        deserializeTopLevelDeclarations(topLevelDeclarationId)
+        output += topLevelCallables[topLevelCallableId].orEmpty()
     }
 
     private fun deserializeTopLevelDeclarations(id: MetadataDeclarationId) {

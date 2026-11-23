@@ -89,12 +89,11 @@ abstract class BasicIrModuleDeserializer(
     }
 
     override fun collectAllMatchingSignatures(
-        callableId: CallableId,
-        signatureKind: BinarySymbolData.SymbolKind,
+        topLevelCallableId: TopLevelCallableIdAndKind,
         output: MutableCollection<IdSignature>,
     ) {
-        fileDeserializersByPackage[callableId.packageName]?.forEach { fileDeserializer ->
-            fileDeserializer.collectAllMatchingSignatures(callableId, signatureKind, output)
+        fileDeserializersByPackage[topLevelCallableId.packageFqName]?.forEach { fileDeserializer ->
+            fileDeserializer.collectAllMatchingSignatures(topLevelCallableId, output)
         }
     }
 

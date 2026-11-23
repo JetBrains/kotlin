@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.BasicIrModuleDeserializ
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategyResolver
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
+import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
 import org.jetbrains.kotlin.backend.common.serialization.deserializeIrSymbolOrFail
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.konan.serialization.KonanInteropModuleDeserializer
@@ -105,7 +106,9 @@ internal class KlibToolIrLinker(
             libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
             allowErrorNodes = true,
             deserializeTypeAliases = true,
-    )
+    ) {
+        override fun collectAllMatchingSignatures(topLevelCallableId: TopLevelCallableIdAndKind, output: MutableCollection<IdSignature>) = error("Not supported")
+    }
 
     /**
      * An artificial module deserializer that emulates the part of the Kotlin standard library which is referenced
@@ -196,6 +199,8 @@ internal class KlibToolIrLinker(
                 }
             }
         }
+
+        override fun collectAllMatchingSignatures(topLevelCallableId: TopLevelCallableIdAndKind, output: MutableCollection<IdSignature>) = error("Not supported")
     }
 
     companion object {
