@@ -21,7 +21,8 @@ internal fun addDefaultLlvmFunctionAttributes(context: NativeBackendContext, llv
         enforceFramePointer(llvmFunction, context)
     }
     if (context.config.arm64e) {
-        // Matches Clang behaviour for arm64e.
+        // Clang sets these attributes for arm64e. They make functions authenticate indirect calls and gotos, trap when
+        // an authentication fails, and sign the return addresses they save on the stack, which the unwinder authenticates.
         LLVMAddTargetDependentFunctionAttr(llvmFunction, "ptrauth-auth-traps", "")
         LLVMAddTargetDependentFunctionAttr(llvmFunction, "ptrauth-calls", "")
         LLVMAddTargetDependentFunctionAttr(llvmFunction, "ptrauth-indirect-gotos", "")
