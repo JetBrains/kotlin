@@ -655,10 +655,10 @@ open class FirDeclarationsResolveTransformer(
             // We don't actually fix it, but add an equality constraint as approximation
             candidateSystem.addEqualityConstraint(returnTypeBasedOnVariable, resultType, ProvideDelegateFixationPosition)
 
-            check(!candidateStorage.hasContradiction) {
-                "Currently, we see no cases when contradiction might happen after adding equality constraint like that." +
-                        "But if you see the message, please report your case to https://youtrack.jetbrains.com/newIssue?project=KT"
-            }
+            // By design the resulting type shouldn't create new contradictions, but CST computation might lead to overapproximation
+            // which in its turn might run into the failure.
+            // Though, we still use the resulting binding as the new CS errors would be reported anyway.
+            // TODO: Restore check(!candidateStorage.hasContradiction) assertion once KT-88681 and KT-91962 are fixed.
         }
 
         return resultType?.let {

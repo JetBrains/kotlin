@@ -10,5 +10,9 @@ operator fun <T : Artifact, L : Collection<T>> L.getValue(thisRef: Any?, propert
 
 class Foo {
     val strings: List<String> = listOf()
-    val artifacts by if (true) strings.map { MyArtifact(it) } else emptyList()
+    val artifacts <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> <!ARGUMENT_TYPE_MISMATCH!>if (true) strings.map { MyArtifact(it) } else emptyList()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression,
+interfaceDeclaration, lambdaLiteral, nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate,
+starProjection, thisExpression, typeConstraint, typeParameter */
