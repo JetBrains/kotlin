@@ -28,7 +28,10 @@ internal class KaFirJavaFieldSymbolPointer(
         owner: FirClassSymbol<*>,
     ): KaJavaFieldSymbol? {
         val javaField = candidates.getProperties(fieldName).mapNotNull { it.fir as? FirJavaField }.singleOrNull() ?: return null
-        return analysisSession.firSymbolBuilder.variableBuilder.buildFieldSymbol(javaField.symbol)
+        val symbol = analysisSession.firSymbolBuilder.variableBuilder.buildFieldSymbol(javaField.symbol)
+
+        // The scope of the owner also has the fields of its superclasses, which have other owners
+        return symbol.takeIf { it.isMemberOf(owner) }
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

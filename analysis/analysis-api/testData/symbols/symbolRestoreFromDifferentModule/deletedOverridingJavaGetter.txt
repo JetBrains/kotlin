@@ -39,38 +39,4 @@ KaNamedFunctionSymbol:
   visibility: PUBLIC
 
 Restored in Sources of restoreInContextOf:
-KaNamedFunctionSymbol:
-  anchorPsi: PsiMethodImpl
-  annotations: []
-  callableId: /Base.getFoo
-  contextParameters: []
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: false
-  isActual: false
-  isBuiltinFunctionInvoke: false
-  isCompanion: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  isTailRec: false
-  location: CLASS
-  modality: OPEN
-  name: getFoo
-  origin: JAVA_SOURCE
-  psi: PsiMethodImpl
-  realPsi: null
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Int
-  typeParameters: []
-  valueParameters: []
-  visibility: PUBLIC
+<NOT RESTORED>

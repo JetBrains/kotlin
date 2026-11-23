@@ -2,4 +2,4 @@ Inital from Sources of main:
 var count: kotlin.Int
 
 Restored in Sources of restoreInContextOf:
-var count: kotlin.Int
+<NOT RESTORED>

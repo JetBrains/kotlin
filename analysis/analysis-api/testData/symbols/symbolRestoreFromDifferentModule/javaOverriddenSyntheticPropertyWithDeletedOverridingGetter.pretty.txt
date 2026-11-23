@@ -4,5 +4,4 @@ open val foo: kotlin.Int
   get()
 
 Restored in Sources of restoreInContextOf:
-open val foo: kotlin.Int
-  get()
+<NOT RESTORED>

@@ -28,30 +28,4 @@ KaJavaFieldSymbol:
   visibility: PUBLIC
 
 Restored in Sources of restoreInContextOf:
-KaJavaFieldSymbol:
-  anchorPsi: PsiFieldImpl
-  annotations: []
-  callableId: /Base.count
-  contextParameters: []
-  contextReceivers: []
-  isActual: false
-  isCompanion: false
-  isDelegated: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isStatic: false
-  isVal: false
-  location: CLASS
-  modality: FINAL
-  name: count
-  origin: JAVA_SOURCE
-  psi: PsiFieldImpl
-  realPsi: PsiFieldImpl
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Int
-  typeParameters: []
-  visibility: PUBLIC
+<NOT RESTORED>

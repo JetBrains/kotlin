@@ -3,4 +3,4 @@ Inital from Sources of main:
 open fun getFoo(): kotlin.Int
 
 Restored in Sources of restoreInContextOf:
-open fun getFoo(): kotlin.Int
+<NOT RESTORED>
