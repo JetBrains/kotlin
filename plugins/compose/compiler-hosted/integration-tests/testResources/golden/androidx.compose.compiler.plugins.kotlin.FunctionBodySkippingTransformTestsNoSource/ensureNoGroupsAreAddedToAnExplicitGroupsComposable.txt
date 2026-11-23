@@ -27,7 +27,7 @@ inline fun Test(active: Boolean, content: @Composable () -> Unit) {
 fun Test(active: Boolean, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer.startReusableGroup(1, null)
   if (active) {
-    content(%composer, 0b1110 and %changed shr 0b0011)
+    content(%composer, 0b1110 and %changed shr 3)
   } else {
     %composer.deactivateToEndGroup(false)
   }

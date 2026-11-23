@@ -399,10 +399,7 @@ fun <S : Any?> Consume(content: Function3<List<S>, Composer, Int, Unit>, /* var 
   }
   val $dirty: Int = $changed
   when {
-    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
-      $composer.changedInstance(value = content) -> 4
-      else -> 2
-    })
+    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changedInstance(value = content) /*=> Int */.plus(other = 1).shl(bitCount = 1))
   }
   when {
     $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 3), arg1 = 2).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
@@ -558,10 +555,7 @@ fun Wrapper(content: Function2<Composer, Int, Unit>, /* var */ $composer: Compos
   }
   val $dirty: Int = $changed
   when {
-    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
-      $composer.changedInstance(value = content) -> 4
-      else -> 2
-    })
+    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changedInstance(value = content) /*=> Int */.plus(other = 1).shl(bitCount = 1))
   }
   when {
     $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 3), arg1 = 2).not(), flags = $dirty.and(other = 1)) -> { // BLOCK

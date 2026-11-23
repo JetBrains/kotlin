@@ -28,7 +28,7 @@ fun Example(content: Function2<Composer, Int, Unit>?, %composer: Composer?, %cha
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
   } else if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changedInstance(content) as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (%default and 0b0001 != 0) {

@@ -49,7 +49,7 @@ fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {
   sourceInformation(%composer, "C(test1)N(x)<rememb...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changed(x) as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -78,7 +78,7 @@ fun test2(x: KnownUnstable, %composer: Composer?, %changed: Int) {
   sourceInformation(%composer, "C(test2)N(x)<rememb...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (%composer.changedInstance(x)) 0b0100 else 0b0010
+    %dirty = %dirty or %composer.changedInstance(x) as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
@@ -107,12 +107,12 @@ fun test3(x: Uncertain, %composer: Composer?, %changed: Int) {
   sourceInformation(%composer, "C(test3)N(x)<rememb...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
-    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+    %dirty = %dirty or if (%changed and 0b1000 == 0) {
       %composer.changed(x)
     } else {
       %composer.changedInstance(x)
     }
-    ) 0b0100 else 0b0010
+     as Int + 1 shl 1
   }
   if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
