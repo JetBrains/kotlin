@@ -22,7 +22,7 @@ abstract class Abstract {
     inner <!VALUE_CLASS_NOT_TOP_LEVEL!>value<!> class Inner(val x: Int)
 }
 
-<!VALUE_CLASS_CANNOT_BE_CLONEABLE!>value<!> class B<T>(val x: A, val y: Int = 0, val z: T, <!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!>var t: Int<!>, <!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!><!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> val s: Long<!>): <!VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES!>Abstract<!>(), Cloneable {
+<!VALUE_CLASS_CANNOT_BE_CLONEABLE!>value<!> class B<T>(val x: A, val y: Int = 0, val z: T, <!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!>var t: Int<!>, <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> val s: Long): <!VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES!>Abstract<!>(), Cloneable {
     inner <!VALUE_CLASS_NOT_TOP_LEVEL!>value<!> class Inner(val x: Int)
     inner class Inner1(val x: Int)
     init {

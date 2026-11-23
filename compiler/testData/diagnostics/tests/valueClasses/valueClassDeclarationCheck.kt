@@ -25,7 +25,7 @@ value class A6<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(x: Int, val y: 
 @JvmInline
 value class A7(<!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!>vararg val x: Int<!>)
 @JvmInline
-value class A8(<!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!><!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> val x: Int<!>)
+value class A8(<!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> val x: Int)
 @JvmInline
 value class A9(final val x: Int)
 

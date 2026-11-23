@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.INLINE_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.VALUE_KEYWORD
 import org.jetbrains.kotlin.name.ClassId
@@ -372,7 +371,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
             val correspondingProperty = primaryConstructorParameter.correspondingProperty
             when {
-                declaration.isFinal && primaryConstructorParameter.isNotFinalReadOnly(correspondingProperty) ->
+                declaration.isFinal && primaryConstructorParameter.isNotSimpleValProperty(correspondingProperty) ->
                     reportOn(
                         primaryConstructorParameter.source, kind.isWillBecomeValueClass,
                         FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
@@ -498,12 +497,10 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
     }
 
-    private fun FirValueParameterSymbol.isNotFinalReadOnly(primaryConstructorProperty: FirPropertySymbol?): Boolean {
+    private fun FirValueParameterSymbol.isNotSimpleValProperty(primaryConstructorProperty: FirPropertySymbol?): Boolean {
         if (primaryConstructorProperty == null) return true
 
-        val isOpen = hasModifier(KtTokens.OPEN_KEYWORD)
-
-        return isVararg || !primaryConstructorProperty.isVal || isOpen
+        return isVararg || !primaryConstructorProperty.isVal
     }
 
     // Unlike inline value classes, full value classes store their properties as fields, so `Unit` and `Nothing` are fine there.
