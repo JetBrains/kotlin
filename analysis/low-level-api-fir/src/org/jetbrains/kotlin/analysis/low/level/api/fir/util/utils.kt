@@ -6,7 +6,13 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.openapi.progress.ProgressManager
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.create
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -20,6 +26,12 @@ import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Lock
+
+@LLFirInternals
+fun CompilerConfiguration.Companion.createForAnalysisApi(
+    diagnosticsCollector: BaseDiagnosticsCollector? = null,
+    messageCollector: MessageCollector? = null,
+): CompilerConfiguration = create(diagnosticsCollector, messageCollector, parseTreeKind = PsiParseTreeKind)
 
 internal inline fun <T> Lock.lockWithPCECheck(action: () -> T): T {
     while (true) {
