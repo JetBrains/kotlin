@@ -51,6 +51,13 @@ class FastJarFileSystem private constructor(internal val unmapBuffer: MappedByte
             }
         }
 
+    internal fun readContents(file: File, zipEntryDescription: ZipEntryDescription): ByteArray =
+        cachedOpenFileHandles[file].use {
+            synchronized(it) {
+                it.get().second.contentsToByteArray(zipEntryDescription)
+            }
+        }
+
     override fun getProtocol(): String {
         return StandardFileSystems.JAR_PROTOCOL
     }
