@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartiallyLinkedDeclar
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.BasicIrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategyResolver
+import org.jetbrains.kotlin.backend.common.serialization.IrLinkerInternalApi
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.checkIsInstance
 
+@OptIn(IrLinkerInternalApi::class)
 internal class KlibToolIrLinker(
         output: KlibToolOutput,
         symbolTable: SymbolTable,
