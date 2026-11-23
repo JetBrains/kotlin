@@ -2404,12 +2404,12 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         val lookahead = lookahead(1)
         val lookahead2 = lookahead(2)
         var typeBeforeDot = true
-        val withContextReceiver = atWithRemap(KtTokens.CONTEXT_KEYWORD) && lookahead === KtTokens.LPAR
+        val withContextParameterList = atWithRemap(KtTokens.CONTEXT_KEYWORD) && lookahead === KtTokens.LPAR
         var wasFunctionTypeParsed = false
 
-        val contextReceiversStart = mark()
+        val contextParameterListStart = mark()
 
-        if (withContextReceiver) {
+        if (withContextParameterList) {
             parseContextParameterList(true)
         }
 
@@ -2449,7 +2449,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                     // or
                     //   (a : A) -> C
                     functionOrParenthesizedType.rollbackTo()
-                    parseFunctionType(contextReceiversStart.precede())
+                    parseFunctionType(contextParameterListStart.precede())
                     wasFunctionTypeParsed = true
                 }
             }
@@ -2504,7 +2504,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             //  A.(B) -> C
             //   ^
 
-            val functionType = contextReceiversStart.precede()
+            val functionType = contextParameterListStart.precede()
 
             val receiverTypeRef = typeElementMarker.precede()
             val receiverType = receiverTypeRef.precede()
@@ -2523,12 +2523,12 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             wasFunctionTypeParsed = true
         }
 
-        if (withContextReceiver && !wasFunctionTypeParsed) {
+        if (withContextParameterList && !wasFunctionTypeParsed) {
             errorWithRecovery("Function type expected", TYPE_REF_CONTENTS_RECOVERY_SET + extraRecoverySet)
         }
 
         typeElementMarker.drop()
-        contextReceiversStart.drop()
+        contextParameterListStart.drop()
         return typeRefMarker
     }
 

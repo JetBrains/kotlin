@@ -215,14 +215,14 @@ abstract class CallableClsStubBuilder(
             return typeStubBuilder.createContextParameterStubsWithoutNames(modifierListStub, contextReceiverTypes)
         }
 
-        val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
+        val contextParameterListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
             parent = modifierListStub,
             elementType = KtNodeTypes.CONTEXT_PARAMETER_LIST,
         )
 
         typeStubBuilder.createValueParameterStubs(
             contextParameters,
-            contextReceiverListStub,
+            contextParameterListStub,
             protoContainer,
             callableProto,
             when (callableProto) {
