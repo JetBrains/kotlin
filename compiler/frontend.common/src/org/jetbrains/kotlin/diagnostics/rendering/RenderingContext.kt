@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 
-@RequiresOptIn("Legacy API for K1 that doesn't pass a DiagnosticBaseContext. Mustn't be used with K2.")
+@RequiresOptIn("Legacy API for K1 that doesn't pass a DiagnosticContext. Mustn't be used with K2.")
 annotation class LegacyRenderingContextApi
 
 // holds data about the parameters of the diagnostic we're about to render
@@ -16,12 +15,12 @@ sealed class RenderingContext {
     abstract operator fun <T> get(key: Key<T>): T
 
     abstract class Key<out T>(val name: String) {
-        abstract fun compute(objectsToRender: Collection<Any?>, diagnosticContext: DiagnosticBaseContext): T
+        abstract fun compute(objectsToRender: Collection<Any?>, diagnosticContext: DiagnosticContext): T
     }
 
     class Impl(
         private val objectsToRender: Collection<Any?>,
-        private val diagnosticContext: DiagnosticBaseContext,
+        private val diagnosticContext: DiagnosticContext,
     ) : RenderingContext() {
         @LegacyRenderingContextApi
         constructor(objectsToRender: Collection<Any?>) : this(objectsToRender, DiagnosticContext.Default)
@@ -47,7 +46,7 @@ sealed class RenderingContext {
             return Impl(objectsToRender.toList())
         }
 
-        fun of(diagnosticContext: DiagnosticBaseContext, vararg objectsToRender: Any?): RenderingContext {
+        fun of(diagnosticContext: DiagnosticContext, vararg objectsToRender: Any?): RenderingContext {
             return Impl(objectsToRender.toList(), diagnosticContext)
         }
     }

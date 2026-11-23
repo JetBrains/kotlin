@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.diagnostics
 
 /**
  * The kind of parse tree used in the compilation (PSI, LightTree or KMP), with the services specific to it.
- * It's provided by [DiagnosticBaseContext.parseTreeKind] to position diagnostics.
+ * It's provided by [DiagnosticContext.parseTreeKind] to position diagnostics.
  */
 abstract class ParseTreeKind {
     abstract val isPsi: Boolean

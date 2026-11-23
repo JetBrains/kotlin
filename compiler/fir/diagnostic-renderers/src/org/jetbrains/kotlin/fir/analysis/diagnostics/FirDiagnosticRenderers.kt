@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.*
@@ -564,7 +564,7 @@ object FirDiagnosticRenderers {
     private object FirUnsafeKindKey : RenderingContext.Key<Map<ConeKotlinType, UnsafeKind>>("UNSAFE_KIND") {
         override fun compute(
             objectsToRender: Collection<Any?>,
-            diagnosticContext: DiagnosticBaseContext,
+            diagnosticContext: DiagnosticContext,
         ): Map<ConeKotlinType, UnsafeKind> = context(diagnosticContext as SessionHolder) {
             objectsToRender
                 .filterIsInstance<ConeKotlinType>()
