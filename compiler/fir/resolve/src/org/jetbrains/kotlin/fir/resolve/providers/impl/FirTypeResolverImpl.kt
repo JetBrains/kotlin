@@ -404,6 +404,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 FunctionTypeKind.Function
             }
         }
+        val arity = typeRef.parametersCount
+        if (arity > kind.maxArity && diagnostic == null) {
+            diagnostic = ConeFunctionWithTooLargeArity(arity, kind)
+        }
 
         val classId = kind.numberedClassId(typeRef.parametersCount)
 

@@ -92,6 +92,11 @@ class ConeAmbiguousFunctionTypeKinds(val kinds: List<FunctionTypeKind>) : ConeDi
         get() = "There are multiple function kinds for functional type ref"
 }
 
+class ConeFunctionWithTooLargeArity(val arity: Int, val kind: FunctionTypeKind) : ConeDiagnostic {
+    override val reason: String
+        get() = "Functional type ref has too large arity: $arity, max supported arity: ${kind.maxArity}"
+}
+
 object ConeUnsupportedClassLiteralsWithEmptyLhs : ConeDiagnostic {
     override val reason: String get() = "No receiver in class literal"
 }

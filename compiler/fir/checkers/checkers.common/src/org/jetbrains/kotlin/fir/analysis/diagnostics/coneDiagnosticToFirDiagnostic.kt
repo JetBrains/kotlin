@@ -717,6 +717,11 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
             session
         )
     is ConeAmbiguousFunctionTypeKinds -> FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND.createOn(source, kinds, session)
+    is ConeFunctionWithTooLargeArity -> FirErrors.FUNCTION_TYPE_OF_TOO_LARGE_ARITY.createOn(
+        source,
+        kind.numberedClassId(arity), kind.maxArity,
+        session
+    )
     is ConeUnsupportedClassLiteralsWithEmptyLhs -> FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.createOn(source, session)
     is ConeMultipleLabelsAreForbidden -> FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN.createOn(this.source, session)
     is ConeTypeMismatch -> FirErrors.TYPE_MISMATCH.createOn(source, lowerType, upperType, false, session)

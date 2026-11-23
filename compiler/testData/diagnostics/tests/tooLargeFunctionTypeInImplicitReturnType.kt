@@ -1,7 +1,7 @@
-// RUN_PIPELINE_TILL: LOWERINGS
+// RUN_PIPELINE_TILL: FRONTEND
 
 fun foo(
-    f: (
+    f: <!FUNCTION_TYPE_OF_TOO_LARGE_ARITY!>(
         Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
         Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
         Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
@@ -18,7 +18,7 @@ fun foo(
         Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
         Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
         Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
-    ) -> Unit,
+    ) -> Unit<!>,
 ) = f
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType */
