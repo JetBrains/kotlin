@@ -160,16 +160,10 @@ private fun App(/* var */ $composer: Composer?, $changed: Int) {
             }
             val $dirty: Int = $changed
             when {
-              EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
-                $composer.changed(value = text) -> 4
-                else -> 2
-              })
+              EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = text) /*=> Int */.plus(other = 1).shl(bitCount = 1))
             }
             when {
-              EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = when {
-                $composer.changed(value = <this>) -> 32
-                else -> 16
-              })
+              EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = <this>) /*=> Int */.plus(other = 1).shl(bitCount = 4))
             }
             when {
               $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
@@ -224,16 +218,10 @@ private fun App(/* var */ $composer: Composer?, $changed: Int) {
             }
             val $dirty: Int = $changed
             when {
-              EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
-                $composer.changed(value = text) -> 4
-                else -> 2
-              })
+              EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = text) /*=> Int */.plus(other = 1).shl(bitCount = 1))
             }
             when {
-              EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = when {
-                $composer.changed(value = <this>) -> 32
-                else -> 16
-              })
+              EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = <this>) /*=> Int */.plus(other = 1).shl(bitCount = 4))
             }
             when {
               $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
@@ -298,12 +286,9 @@ private fun ItemList(itemRenderer: ItemRenderer, /* var */ $composer: Composer?,
   val $dirty: Int = $changed
   when {
     EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
-      when {
-        EQEQ(arg0 = $changed.and(other = 8), arg1 = 0) -> $composer.changed(value = itemRenderer)
-        else -> $composer.changedInstance(value = itemRenderer)
-      } -> 4
-      else -> 2
-    })
+      EQEQ(arg0 = $changed.and(other = 8), arg1 = 0) -> $composer.changed(value = itemRenderer)
+      else -> $composer.changedInstance(value = itemRenderer)
+    } /*=> Int */.plus(other = 1).shl(bitCount = 1))
   }
   when {
     $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 3), arg1 = 2).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
@@ -357,12 +342,9 @@ private fun Labelled(label: Label, /* var */ $composer: Composer?, $changed: Int
   val $dirty: Int = $changed
   when {
     EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
-      when {
-        EQEQ(arg0 = $changed.and(other = 8), arg1 = 0) -> $composer.changed(value = label)
-        else -> $composer.changedInstance(value = label)
-      } -> 4
-      else -> 2
-    })
+      EQEQ(arg0 = $changed.and(other = 8), arg1 = 0) -> $composer.changed(value = label)
+      else -> $composer.changedInstance(value = label)
+    } /*=> Int */.plus(other = 1).shl(bitCount = 1))
   }
   when {
     $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 3), arg1 = 2).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
@@ -400,10 +382,7 @@ private fun TextNode(text: String, /* var */ $composer: Composer?, $changed: Int
   }
   val $dirty: Int = $changed
   when {
-    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
-      $composer.changed(value = text) -> 4
-      else -> 2
-    })
+    EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = text) /*=> Int */.plus(other = 1).shl(bitCount = 1))
   }
   when {
     $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 3), arg1 = 2).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
@@ -509,16 +488,10 @@ private inline fun inlineRenderer(crossinline transform: Function1<String, Strin
         }
         val $dirty: Int = $changed
         when {
-          EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = when {
-            $composer.changed(value = text) -> 4
-            else -> 2
-          })
+          EQEQ(arg0 = $changed.and(other = 6), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = text) /*=> Int */.plus(other = 1).shl(bitCount = 1))
         }
         when {
-          EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = when {
-            $composer.changed(value = <this>) -> 32
-            else -> 16
-          })
+          EQEQ(arg0 = $changed.and(other = 48), arg1 = 0) -> $dirty = $dirty.or(other = $composer.changed(value = <this>) /*=> Int */.plus(other = 1).shl(bitCount = 4))
         }
         when {
           $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $dirty.and(other = 19), arg1 = 18).not(), flags = $dirty.and(other = 1)) -> { // BLOCK
