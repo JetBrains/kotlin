@@ -13,9 +13,13 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.descendants
 import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.cfg.UnreachableCode
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
@@ -1355,6 +1359,30 @@ object PositioningStrategies {
             if (element is KtConstructorCalleeExpression) element.typeReference?.let { return mark(it) }
             if (element is KtTypeReference) return SELECTOR_BY_QUALIFIED.mark(element)
             return REFERENCED_NAME_BY_QUALIFIED.mark(element)
+        }
+    }
+
+    val UNREACHABLE_CODE = object : PositioningStrategy<PsiElement>() {
+        override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
+            //todo it is better to implement arguments extraction in KtDiagnosticFactory, but kotlin struggle with checking types in it atm
+            @Suppress("UNCHECKED_CAST")
+            val typed = diagnostic as KtDiagnosticWithParameters2<Set<KtSourceElement>, Set<KtSourceElement>>
+            val source = diagnostic.element as KtPsiSourceElement
+            return UnreachableCode.getUnreachableTextRanges(
+                source.psi as KtElement,
+                typed.a.mapNotNull { it.psi as? KtElement }.toSet(),
+                typed.b.mapNotNull { it.psi as? KtElement }.toSet()
+            )
+        }
+    }
+
+    val ACTUAL_DECLARATION_NAME = object : PositioningStrategy<PsiElement>() {
+        override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
+            val element = diagnostic.element.psi ?: return emptyList()
+            (element as? KtNamedDeclaration)?.nameIdentifier?.let { nameIdentifier ->
+                return mark(nameIdentifier)
+            }
+            return mark(element)
         }
     }
 }
