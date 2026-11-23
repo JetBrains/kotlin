@@ -5,7 +5,7 @@ This testsuit can be run:
   `./gradlew :native:native.tests:klib-ir-inliner:withPlatformLibs:test --tests "org.jetbrains.kotlin.konan.test.diagnostics.LightTreeNativeKlibDiagnosticsTestGenerated"`.
   Platform libs for the host are built as a dependency of this task.
 - manually: run `compiler/testData/diagnostics/nativeTests/specialBackendChecks/runtests.sh -Xcompanion-blocks`.
-  The flag enables calls to `Array.of` in `objCInterop/t6.kt` and `objCInterop/t7.kt`.
+  The flag enables calls to `Array.of` in `objCInterop/t5.kt`, `objCInterop/t6.kt`, and `objCInterop/t7.kt`.
   Remove it once companion blocks are enabled by default.
   Make sure platform libs for both targets are installed first:
   - `./gradlew :kotlin-native:platformLibs:macos_arm64Install` and
@@ -237,9 +237,18 @@ compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t4.kt
 fun foo() = println(NSAssertionHandler()::handleFailureInFunction)
                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t5.kt
-/tmp/t5.kt:7:81: error: passing String as variadic Objective-C argument is ambiguous; cast it to NSString or pass with '.cstr' as C string.
-fun foo() = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, "qzz")
-                                                                                ^^^^^
+/tmp/t5.kt:33:60: error: passing 'String' as a variadic Objective-C argument is ambiguous; cast it to 'NSString' or pass with '.cstr' as a C string.
+    handler.handleFailureInFunction("zzz", "zzz", 0, null, "literal")
+                                                           ^^^^^^^^^
+/tmp/t5.kt:34:60: error: passing 'String' as a variadic Objective-C argument is ambiguous; cast it to 'NSString' or pass with '.cstr' as a C string.
+    handler.handleFailureInFunction("zzz", "zzz", 0, null, detail)
+                                                           ^^^^^^
+/tmp/t5.kt:55:60: error: passing 'String' as a variadic Objective-C argument is ambiguous; cast it to 'NSString' or pass with '.cstr' as a C string.
+    handler.handleFailureInFunction("zzz", "zzz", 0, null, detail)
+                                                           ^^^^^^
+/tmp/t5.kt:61:60: error: passing 'String' as a variadic Objective-C argument is ambiguous; cast it to 'NSString' or pass with '.cstr' as a C string.
+    handler.handleFailureInFunction("zzz", "zzz", 0, null, myString)
+                                                           ^^^^^^^^
 compiler/testData/diagnostics/nativeTests/specialBackendChecks/objCInterop/t6.kt
 /tmp/t6.kt:13:95: error: when calling variadic Objective-C methods, the spread operator is only supported for '*[...]', '*arrayOf(...)', or '*Array.of(...)'.
 fun foo(s: Array<Any?>) = NSAssertionHandler().handleFailureInFunction("zzz", "zzz", 0, null, *s)
