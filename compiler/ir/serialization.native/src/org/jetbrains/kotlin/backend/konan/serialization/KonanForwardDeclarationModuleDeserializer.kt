@@ -126,8 +126,6 @@ internal class KonanForwardDeclarationModuleDeserializer(
         }
     }
 
-    override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No forward declaration found for $idSig")
-
     override fun collectAllMatchingSignatures(
         topLevelCallableId: TopLevelCallableIdAndKind,
         output: MutableCollection<IdSignature>,
