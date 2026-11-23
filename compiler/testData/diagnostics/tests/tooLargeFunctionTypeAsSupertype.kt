@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 
-interface I : (
+interface I : <!FUNCTION_TYPE_OF_TOO_LARGE_ARITY!>(
     Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
     Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
     Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
@@ -17,6 +17,6 @@ interface I : (
     Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
     Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
     Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
-) -> Unit
+) -> Unit<!>
 
 /* GENERATED_FIR_TAGS: functionalType, interfaceDeclaration */
