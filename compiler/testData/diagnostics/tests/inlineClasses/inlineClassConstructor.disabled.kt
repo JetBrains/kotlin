@@ -6,7 +6,7 @@
 <!INLINE_CLASS_DEPRECATED!>inline<!> class WithTwoParameters<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: String)<!> {}
 
 <!INLINE_CLASS_DEPRECATED!>inline<!> class Ok(private val x: Int) {}
-<!INLINE_CLASS_DEPRECATED!>inline<!> class OpenParameter(<!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!><!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> val x: Int<!>) {}
+<!INLINE_CLASS_DEPRECATED!>inline<!> class OpenParameter(<!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> val x: Int) {}
 <!INLINE_CLASS_DEPRECATED!>inline<!> class VarargParameter(<!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!>vararg x: Int<!>) {}
 <!INLINE_CLASS_DEPRECATED!>inline<!> class VarParameter(<!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!>var x: Int<!>) {}
 <!INLINE_CLASS_DEPRECATED!>inline<!> class SimpleParameter(<!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!>x: Int<!>) {}
