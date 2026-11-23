@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths
 import org.jetbrains.kotlin.documentation.KdJson
 import java.io.File
 import java.nio.file.Files
+import org.junit.jupiter.api.Assumptions.assumeTrue
 
 internal val json = Json(from = KdJson) {
     prettyPrint = true
@@ -43,15 +44,17 @@ internal fun stdlibFor(platform: KdAnalyzerPlatform): File = when (platform) {
  *
  * The build script passes it via the `kotlin.native.stdlib.klib.path` system property only when
  * `kotlin.native.enabled=true`, since `:kotlin-native:*` projects don't exist otherwise.
- * Without it, tests that need this klib fail.
+ * Without it, tests that need this klib are skipped via JUnit `Assumptions.assumeTrue` rather than failed.
  */
 internal val nativeStdlibKlib: File
-    get() = File(
-        System.getProperty(NATIVE_STDLIB_KLIB_PATH_PROPERTY)
-            ?: error(
-                "Missing system property '$NATIVE_STDLIB_KLIB_PATH_PROPERTY': this test requires the Kotlin/Native stdlib. " +
-                        "Pass `-Pkotlin.native.enabled=true` to Gradle (or set it in local.properties)."
-            )
-    )
+    get() {
+        val path = System.getProperty(NATIVE_STDLIB_KLIB_PATH_PROPERTY)
+        assumeTrue(
+            path != null,
+            "Kotlin/Native is not enabled: pass `-Pkotlin.native.enabled=true` to Gradle " +
+                    "(or set it in local.properties) to run this test",
+        )
+        return File(path)
+    }
 
 private const val NATIVE_STDLIB_KLIB_PATH_PROPERTY = "kotlin.native.stdlib.klib.path"
