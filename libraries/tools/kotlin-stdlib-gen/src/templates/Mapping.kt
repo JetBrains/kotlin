@@ -308,6 +308,9 @@ object Mapping : TemplateGroupBase() {
         }
 
         sample("${sampleClass(f)}.flatMap")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.flatMap")
+        }
         typeParam("R")
         returns("List<R>")
         body {
@@ -362,6 +365,9 @@ object Mapping : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Appends all elements yielded from results of [transform] function being invoked on each ${f.element} of original ${f.collection}, to the given [destination]." }
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.flatMapTo")
+        }
         specialFor(Sequences) {
             since("1.4")
             annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")

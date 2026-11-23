@@ -860,7 +860,7 @@ public fun CharSequence.toSet(): Set<Char> {
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each character of original char sequence.
  * 
- * @sample samples.collections.Collections.Transformations.flatMap
+ * @sample samples.text.Strings.flatMap
  */
 public inline fun <R> CharSequence.flatMap(transform: (Char) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -902,6 +902,8 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapIndexedTo
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each character of original char sequence, to the given [destination].
+ * 
+ * @sample samples.text.Strings.flatMapTo
  */
 @IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
