@@ -1548,6 +1548,50 @@ public class CliTestGenerated extends AbstractCliTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/cli/jvm/XuseNioJvmDependenciesIndex")
+  @TestDataPath("$PROJECT_ROOT")
+  public class XuseNioJvmDependenciesIndex {
+    private void run(String fileName) {
+      doJvmTest("compiler/testData/cli/jvm/XuseNioJvmDependenciesIndex/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInXuseNioJvmDependenciesIndex() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/XuseNioJvmDependenciesIndex"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @Test
+    @TestMetadata("fastJarDisabled.args")
+    public void testFastJarDisabled() {
+      run("fastJarDisabled.args");
+    }
+
+    @Test
+    @TestMetadata("jdkRelease11.args")
+    public void testJdkRelease11() {
+      run("jdkRelease11.args");
+    }
+
+    @Test
+    @TestMetadata("jdkRelease8.args")
+    public void testJdkRelease8() {
+      run("jdkRelease8.args");
+    }
+
+    @Test
+    @TestMetadata("jdkRelease8MissingApi.args")
+    public void testJdkRelease8MissingApi() {
+      run("jdkRelease8MissingApi.args");
+    }
+
+    @Test
+    @TestMetadata("stdlibAndJava.args")
+    public void testStdlibAndJava() {
+      run("stdlibAndJava.args");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/cli/jvm/XXmultiPlatformProject")
   @TestDataPath("$PROJECT_ROOT")
   public class XXmultiPlatformProject {

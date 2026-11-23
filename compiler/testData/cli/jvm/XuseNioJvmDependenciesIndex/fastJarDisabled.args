@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/stdlibAndJava.kt
+$TESTDATA_DIR$/JavaClass.java
+-d
+$TEMP_DIR$
+-Xuse-nio-jvm-dependencies-index
+-Xuse-fast-jar-file-system=false

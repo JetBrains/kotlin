@@ -1,0 +1,5 @@
+-Xjdk-release=8
+$TESTDATA_DIR$/jdkApi.kt
+-d
+$TEMP_DIR$
+-Xuse-nio-jvm-dependencies-index

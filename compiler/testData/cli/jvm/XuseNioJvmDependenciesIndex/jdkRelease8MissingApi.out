@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/XuseNioJvmDependenciesIndex/jdkApi11.kt:1:25: error: unresolved reference 'http'.
+fun client() = java.net.http.HttpClient.newHttpClient()
+                        ^^^^
+COMPILATION_ERROR
