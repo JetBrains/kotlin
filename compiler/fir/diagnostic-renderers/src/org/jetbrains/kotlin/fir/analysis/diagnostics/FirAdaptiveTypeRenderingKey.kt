@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
  * - prints inner classes with generic outer types in the correct way, i.e., with the type arguments on the outer types when necessary
  */
 object FirAdaptiveTypeRenderingKey : RenderingContext.Key<Map<ConeKotlinType, String>>("ADAPTIVE_RENDERED_TYPES") {
-    override fun compute(objectsToRender: Collection<Any?>, diagnosticContext: DiagnosticBaseContext): Map<ConeKotlinType, String> {
+    override fun compute(objectsToRender: Collection<Any?>, diagnosticContext: DiagnosticContext): Map<ConeKotlinType, String> {
         val coneTypes = buildList {
             objectsToRender.filterIsInstanceTo<ConeKotlinType, _>(this)
             objectsToRender.filterIsInstance<Iterable<*>>().flatMapTo(this) { it.filterIsInstance<ConeKotlinType>() }

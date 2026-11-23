@@ -21,7 +21,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -42,7 +42,7 @@ private class AdaptiveClassifierNamePolicy(private val ambiguousNames: List<Name
 }
 
 private val ADAPTIVE_CLASSIFIER_POLICY_KEY = object : RenderingContext.Key<ClassifierNamePolicy>("ADAPTIVE_CLASSIFIER_POLICY") {
-    override fun compute(objectsToRender: Collection<Any?>, diagnosticContext: DiagnosticBaseContext): ClassifierNamePolicy {
+    override fun compute(objectsToRender: Collection<Any?>, diagnosticContext: DiagnosticContext): ClassifierNamePolicy {
         val ambiguousNames =
             collectClassifiersFqNames(objectsToRender).groupBy { it.shortNameOrSpecial() }.filter { it.value.size > 1 }.map { it.key }
         return AdaptiveClassifierNamePolicy(ambiguousNames)

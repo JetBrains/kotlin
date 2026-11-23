@@ -1184,16 +1184,20 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
     }
 }
 
-private fun FirSession.toDiagnosticContext(): DiagnosticBaseContext {
-    // Data class is required to preserve structural equality of KtDiagnostics.
+private fun FirSession.toDiagnosticContext(): DiagnosticContext {
+    // Data class is required to preserve structural equality of KtDiagnostics, TODO: KT-91957
     data class SessionWrapper(
         override val session: FirSession
-    ) : DiagnosticBaseContext, SessionHolder {
+    ) : DiagnosticContext, SessionHolder {
         override val languageVersionSettings: LanguageVersionSettings
             get() = session.languageVersionSettings
 
+        override val containingFile: KtSourceFile? get() = null
+
         override val parseTreeKind: ParseTreeKind
             get() = session.syntaxComponent.parseTreeKind
+
+        override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
     }
 
     return SessionWrapper(this)
