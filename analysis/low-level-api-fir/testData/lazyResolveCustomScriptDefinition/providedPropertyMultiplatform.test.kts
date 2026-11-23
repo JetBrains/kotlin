@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // LANGUAGE: +MultiPlatformProjects
 // RESOLVE_SCRIPT
 // MEMBER_NAME_FILTER: fileParameter
