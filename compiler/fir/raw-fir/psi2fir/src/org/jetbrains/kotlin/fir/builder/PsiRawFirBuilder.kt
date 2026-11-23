@@ -1997,20 +1997,9 @@ open class PsiRawFirBuilder(
                             }
 
                             if (classOrObject.hasModifier(ENUM_KEYWORD)) {
-                                generateValuesFunction(
-                                    baseModuleData,
-                                    context.packageFqName,
-                                    context.className,
-                                    classIsExpect
-                                )
-                                generateValueOfFunction(
-                                    baseModuleData, context.packageFqName, context.className,
-                                    classIsExpect
-                                )
-                                generateEntriesGetter(
-                                    baseModuleData, context.packageFqName, context.className,
-                                    classIsExpect
-                                )
+                                generateValuesFunction(baseModuleData, classIsExpect)
+                                generateValueOfFunction(baseModuleData, classIsExpect)
+                                generateEntriesGetter(baseModuleData, classIsExpect)
                             }
 
                             initCompanionObjectSymbolAttr()

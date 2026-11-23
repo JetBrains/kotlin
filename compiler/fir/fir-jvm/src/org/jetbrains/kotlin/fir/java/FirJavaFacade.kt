@@ -321,8 +321,6 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
                 classStatus,
                 classResolvePhase,
                 moduleData,
-                classId.packageFqName,
-                classId.relativeClassName,
                 origin = firJavaClass.origin,
             )
 
@@ -332,8 +330,6 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
                 classStatus,
                 classResolvePhase,
                 moduleData,
-                classId.packageFqName,
-                classId.relativeClassName,
                 origin = firJavaClass.origin,
             )
 
@@ -348,8 +344,6 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
                 classStatus,
                 classResolvePhase,
                 moduleData,
-                classId.packageFqName,
-                classId.relativeClassName,
                 origin = enumEntriesOrigin,
             )
         }

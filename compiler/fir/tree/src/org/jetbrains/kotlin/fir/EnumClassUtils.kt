@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 
 // Note: The fake source elements of the generated enum members should be distinct per the contract of `KtSourceElement`. Hence, the
@@ -41,8 +40,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 fun FirRegularClassBuilder.generateValuesFunction(
     moduleData: FirModuleData,
-    packageFqName: FqName,
-    classFqName: FqName,
     makeExpect: Boolean = false,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ) {
@@ -52,8 +49,6 @@ fun FirRegularClassBuilder.generateValuesFunction(
         status,
         resolvePhase,
         moduleData,
-        packageFqName,
-        classFqName,
         makeExpect,
         origin,
     )
@@ -65,8 +60,6 @@ fun generateValuesFunction(
     classStatus: FirDeclarationStatus,
     classResolvePhase: FirResolvePhase,
     moduleData: FirModuleData,
-    packageFqName: FqName,
-    classFqName: FqName,
     makeExpect: Boolean = false,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ): FirNamedFunction {
@@ -99,7 +92,7 @@ fun generateValuesFunction(
             isExpect = makeExpect
         }
         isLocal = classStatus.visibility == Visibilities.Local
-        symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
+        symbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, ENUM_VALUES))
         resolvePhase = classResolvePhase
         body = buildEmptyExpressionBlock().also {
             it.replaceConeTypeOrNull(returnTypeRef.coneType)
@@ -111,8 +104,6 @@ fun generateValuesFunction(
 
 fun FirRegularClassBuilder.generateValueOfFunction(
     moduleData: FirModuleData,
-    packageFqName: FqName,
-    classFqName: FqName,
     makeExpect: Boolean = false,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ) {
@@ -122,8 +113,6 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         status,
         resolvePhase,
         moduleData,
-        packageFqName,
-        classFqName,
         makeExpect,
         origin,
     )
@@ -135,8 +124,6 @@ fun generateValueOfFunction(
     classStatus: FirDeclarationStatus,
     classResolvePhase: FirResolvePhase,
     moduleData: FirModuleData,
-    packageFqName: FqName,
-    classFqName: FqName,
     makeExpect: Boolean = false,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ): FirNamedFunction {
@@ -161,7 +148,7 @@ fun generateValueOfFunction(
             isExpect = makeExpect
         }
         isLocal = classStatus.visibility == Visibilities.Local
-        symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUE_OF))
+        symbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, ENUM_VALUE_OF))
         valueParameters += buildValueParameter vp@{
             val valueParameterSource = classSource
                 ?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.ValueOfFunction.Parameter)
@@ -196,8 +183,6 @@ fun generateValueOfFunction(
 
 fun FirRegularClassBuilder.generateEntriesGetter(
     moduleData: FirModuleData,
-    packageFqName: FqName,
-    classFqName: FqName,
     makeExpect: Boolean = false,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ) {
@@ -207,8 +192,6 @@ fun FirRegularClassBuilder.generateEntriesGetter(
         status,
         resolvePhase,
         moduleData,
-        packageFqName,
-        classFqName,
         makeExpect,
         origin,
     )
@@ -220,8 +203,6 @@ fun generateEntriesGetter(
     classStatus: FirDeclarationStatus,
     classResolvePhase: FirResolvePhase,
     moduleData: FirModuleData,
-    packageFqName: FqName,
-    classFqName: FqName,
     makeExpect: Boolean = false,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ): FirProperty {
@@ -253,7 +234,7 @@ fun generateEntriesGetter(
         }
         isLocal = classStatus.visibility == Visibilities.Local
 
-        symbol = FirRegularPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
+        symbol = FirRegularPropertySymbol(CallableId(classSymbol.classId, ENUM_ENTRIES))
         resolvePhase = classResolvePhase
 
         val getterTypeRefSource =
