@@ -1,3 +1,28 @@
+## 2.5.0-RC2
+
+### Backend. Wasm
+
+- [`KT-91749`](https://youtrack.jetbrains.com/issue/KT-91749) Kotlin/Wasm: cos is ~47% slower in 2.5.0-RC than in 2.4.21
+
+### Compiler
+
+- [`KT-91549`](https://youtrack.jetbrains.com/issue/KT-91549) Slowdown in compose benchmarks in Float.fromBits
+
+### Tools. Compiler Plugins
+
+- [`KT-91488`](https://youtrack.jetbrains.com/issue/KT-91488) Lombok: Kotlin use of one sibling `@SuperBuilder` leaf's builder() makes the other leaf's inherited parent-builder setters unresolved
+- [`KT-87563`](https://youtrack.jetbrains.com/issue/KT-87563) Lombok: StackOverflow with `@SuperBuilder` and cyclic inheritance hierarchy
+
+### Tools. Compiler plugins. Compose
+
+- [`KT-91414`](https://youtrack.jetbrains.com/issue/KT-91414) Compose compiler, Kotlin/Native: lambda SAM-converted to `@Composable` fun interface gets no restart group; recomposition fails with "No nodes can be emitted before calling skipAndEndGroup"
+- [`KT-91591`](https://youtrack.jetbrains.com/issue/KT-91591) Compose: NoSuchFieldError when a cross-module `@JvmField` property of `@Composable` lambda type is accessed more than once (field arity grows by 2 per access)
+
+### Tools. Gradle. JS
+
+- [`KT-90626`](https://youtrack.jetbrains.com/issue/KT-90626) Analysis API-based TypeScript declarations ignore the JS file name set on the link task
+- [`KT-90770`](https://youtrack.jetbrains.com/issue/KT-90770) Analysis API-based TypeScript declarations ignore the module name set on the link task for UMD and plain modules
+
 ## 2.5.0-RC
 
 ### Analysis API. Standalone
