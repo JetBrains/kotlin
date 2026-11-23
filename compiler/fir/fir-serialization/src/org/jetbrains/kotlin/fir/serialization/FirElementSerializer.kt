@@ -1158,7 +1158,7 @@ class FirElementSerializer private constructor(
         // - `ConeAttributes.WithExtensionFunctionType` in ConeAttributes.kt and
         // - `ConeAttributes.custom` in CustomAnnotationTypeAttribute.kt
         // To put custom attrs before builtin ones, as K1 does, the following partial sorting is used.
-        val sortedAttributes = attributes.sortedBy { it !is CustomAnnotationTypeAttribute }
+        val sortedAttributes = attributes.sortedWith(typeAttributeSerializationComparator)
         for (attribute in sortedAttributes) {
             when {
                 attribute is CustomAnnotationTypeAttribute -> typeAnnotations.addAll(attribute.annotations.nonSourceAnnotations(session))
@@ -1575,3 +1575,6 @@ class FirElementSerializer private constructor(
 
 internal fun scriptClassId(script: FirScript): ClassId =
     ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, ScriptNames.getScriptTargetClassName(script.name))
+
+private val typeAttributeSerializationComparator: Comparator<ConeAttribute<*>> =
+    compareBy<ConeAttribute<*>> { it !is CustomAnnotationTypeAttribute }.thenBy { it.key.qualifiedName }
