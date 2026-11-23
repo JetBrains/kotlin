@@ -88,7 +88,7 @@ dependencies {
 
 //region Kotlin/Native stdlib klib, needed by tests with `NATIVE`-platform source sets.
 // `:kotlin-native:*` projects only exist with `kotlin.native.enabled=true`; otherwise the property is absent
-// and such tests fail (see `nativeStdlibKlib` in TestSupport.kt).
+// and tests that need it are skipped via `Assume` (see `nativeStdlibKlib` in TestSupport.kt).
 if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
     val nativeStdlibKlib = configurations.dependencyScope("nativeStdlibKlib")
     val nativeStdlibKlibClasspath = configurations.resolvable("nativeStdlibKlibClasspath") {
@@ -105,6 +105,30 @@ if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
             }
         )
     }
+}
+//endregion
+
+// TODO KTI-3693  use withJsRuntime()
+//region Kotlin/JS stdlib klib, needed by tests with `JS`-platform source sets.
+// `withJsRuntime()` is disabled under isolated projects because two of its klibs carry NPM dependencies
+// resolved on the root project (OSIP-739), so CI fails with "Property kotlin.js.stdlib.klib.path is
+// not defined". Wire the property directly instead: `distJsKlib` is a plain klib without NPM and the
+// dependencyScope/resolvable pattern resolves lazily at execution time, so it is safe in both modes
+// (cf. ungated `withWasmRuntime()`, same pattern).
+val stdlibJsKlib = configurations.dependencyScope("kdmStdlibJsKlib")
+val stdlibJsKlibClasspath = configurations.resolvable("kdmStdlibJsKlibClasspath") {
+    extendsFrom(stdlibJsKlib.get())
+}
+dependencies {
+    stdlibJsKlib(project(":kotlin-stdlib", configuration = "distJsKlib"))
+}
+tasks.withType<Test>().configureEach {
+    jvmArgumentProviders.add(
+        objects.newInstance<SystemPropertyClasspathProvider>().apply {
+            property.set("kotlin.js.stdlib.klib.path")
+            classpath.from(stdlibJsKlibClasspath)
+        }
+    )
 }
 //endregion
 
@@ -127,7 +151,6 @@ projectTests {
     // Built stdlib artifacts per platform, exposed as `kotlin.*.stdlib.path` system properties (see `stdlibFor`).
     withJvmStdlibAndReflect()
     withStdlibCommon()
-    withJsRuntime()
     withWasmRuntime()
 
     // Single test task running tests with symbols java analysis (K2).
