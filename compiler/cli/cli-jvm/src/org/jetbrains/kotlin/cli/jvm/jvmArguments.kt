@@ -189,6 +189,7 @@ private fun CompilerConfiguration.reportJavaModuleOptionBelowRelease9(flag: Stri
 }
 
 private fun CompilerConfiguration.addJavaModulePatches(values: Array<String>) {
+    reportJavaModuleOptionBelowRelease9("-Xpatch-module", values)
     val patchedModules = HashSet<String>()
     for (value in values) {
         val moduleName = parseJavaModulePatch(value)?.first

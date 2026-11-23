@@ -665,10 +665,6 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     private fun patchModule(moduleName: String, vararg paths: String): String =
         "-Xpatch-module=$moduleName=" + paths.joinToString(File.pathSeparator) { File(testDataDirectory, it).path }
 
-    private fun assertCompilationError(vararg expected: String): (String) -> Unit = { output ->
-        assertTrue(expected.all(output::contains) && output.trimEnd().endsWith("COMPILATION_ERROR"), output)
-    }
-
     @Test
     fun testPatchModuleSources() {
         // Like javac, sources in a patch path are members of the patched module, which is then the root module.
@@ -773,10 +769,11 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val lib = module("lib")
         module("test", additionalKotlinArguments = listOf(patchModule("nosuch", "test")))
         module("test2", additionalKotlinArguments = listOf("-classpath", lib.path, patchModule("lib", "test2")))
-        // Module handling is skipped with -Xjdk-release below 9, the patches included.
-        module("test", additionalKotlinArguments = listOf("-Xjdk-release=8", patchModule("nosuch", "test"), patchModule("other", "test"))) {
-            assertEquals("OK", it.trim())
-        }
+        // Like javac, the option is rejected with a release below 9, where module handling is skipped.
+        module(
+            "test", additionalKotlinArguments = listOf("-Xjdk-release=8", patchModule("nosuch", "test")),
+            checkKotlinOutput = assertCompilationError("'-Xpatch-module' is not allowed with '-Xjdk-release=8'"),
+        )
     }
 
     @Test
