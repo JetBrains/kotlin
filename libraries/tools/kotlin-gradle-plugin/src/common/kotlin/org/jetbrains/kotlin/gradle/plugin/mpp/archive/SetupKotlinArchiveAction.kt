@@ -114,13 +114,16 @@ private fun Configuration.selectNewKotlinArchiveComponentOnLegacyPublicationCapa
     }
 }
 
+internal fun Configuration.configureKarExtractionToState(state: String) {
+    attributes.attribute(KarLayout.Attributes.state, state)
+    selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict()
+}
 
 internal fun Configuration.usesPlatformKlibsOf(target: KotlinTarget) {
     require(isCanBeResolved) { "This method should only be used on resolvable configurations"}
     usesPlatformOf(target)
     if (target is KotlinTargetWithKotlinArchiveSupport) {
-        attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
-        selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict()
+        configureKarExtractionToState(KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
     }
 }
 

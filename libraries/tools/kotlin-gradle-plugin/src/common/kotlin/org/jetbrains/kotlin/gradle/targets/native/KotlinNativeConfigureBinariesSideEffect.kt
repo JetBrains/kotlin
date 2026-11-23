@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KarLayout
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.configureKarExtractionToState
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinNativeCacheMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeLinkTaskMetrics
@@ -101,7 +102,7 @@ internal fun KotlinNativeCompilation.resolvableApiConfiguration(): Configuration
             compileConfiguration.copyAttributesTo(project.providers, this)
             KlibPackaging.setAttributeTo(project, attributes, false)
             // Added to the classpath after this copy, like the klib packaging above.
-            attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
+            configureKarExtractionToState(KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
         }
 }
 
