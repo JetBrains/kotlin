@@ -354,6 +354,16 @@ class NativeCompilerDownloader(
     level = DeprecationLevel.WARNING
 )
 internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
+    if (!HostManager.hostIsSupported) {
+        // No distribution exists for this host, so neither the download nor the
+        // platform libs generation can succeed. Resolving 'kotlin-native-prebuilt-<host>'
+        // here would fail the whole build at configuration time, even for JVM-only
+        // tasks. Native targets stay disabled by enabledOnCurrentHost, and
+        // SupportedNativeHostChecker reports the unsupported host to the user.
+        logger.info("Kotlin/Native does not support the current host: skipping Kotlin/Native distribution setup")
+        return
+    }
+
     val isKonanHomeOverridden = project.nativeProperties.userProvidedNativeHome.orNull != null
     if (!isKonanHomeOverridden) {
         val downloader = NativeCompilerDownloader(this)
