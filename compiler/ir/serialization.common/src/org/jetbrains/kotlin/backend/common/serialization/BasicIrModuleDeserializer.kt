@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.irOrFail
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -60,7 +59,8 @@ abstract class BasicIrModuleDeserializer(
 
     protected val fileDeserializationStates: List<FileDeserializationState>
 
-    protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
+    protected val moduleReversedFileIndex: Map<IdSignature, FileDeserializationState>
+        field = hashMapOf()
 
     protected val ir: KlibIrComponent get() = klib.irOrFail
 
@@ -143,9 +143,8 @@ abstract class BasicIrModuleDeserializer(
         fileDeserializers[file] = fileDeserializationState.fileDeserializer
         fileDeserializersByPackage.putToMultiMap(file.packageFqName, fileDeserializationState.fileDeserializer)
 
-        val topLevelDeclarations = fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys
-        topLevelDeclarations.forEach {
-            moduleReversedFileIndex[it] = fileDeserializationState
+        for ([signature, _] in fileDeserializationState.fileDeserializer.topLevelDeclarationIndex.keys) {
+            moduleReversedFileIndex[signature] = fileDeserializationState
         }
 
         if (fileStrategy.theWholeWorld) {
