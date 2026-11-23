@@ -1,24 +1,29 @@
-function foo() {
-    throw "foo";
+// TARGET_BACKEND: JS_IR
+// CHECK_OPTIMIZED_JS
+// EXPECT_GENERATED_JS: function=foo;bar;box expect=tryCatch.optimized.js TARGET_BACKENDS=JS_IR_ES6
+
+fun foo(): Int {
+    throw Exception("foo")
+    return -1
 }
 
-function bar() {
-    var $tmp = foo();
+fun bar(): String {
+    val tmp = foo()
     try {
-        return "result: " + $tmp;
-    } catch (e) {
-        return "error";
+        return "result: $tmp"
+    } catch (e: Exception) {
+        return "error"
     }
 }
 
-function box() {
+fun box(): String {
     try {
         bar()
-    } catch (e) {
-        if (e == "foo") {
+    } catch (e: Exception) {
+        if (e.message == "foo") {
             return "OK"
         }
-        return e;
+        return "Exception: ${e.message}"
     }
-    return "Exception expected";
+    return "Exception expected"
 }
