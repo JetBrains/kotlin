@@ -1,5 +1,5 @@
 // ISSUE: KT-91595
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM_JS, WASM_WASI
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // LANGUAGE: +CompanionBlocks
 
 // Test that static method of classes, we generate the ES6 default parameter syntax even in development mode
