@@ -506,15 +506,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
     private fun FirTypeRef.isInapplicableParameterType(session: FirSession, isFullValueClass: Boolean, isFinal: Boolean): Boolean =
         coneType.fullyExpandedType(session).let { !isFullValueClass && (it.isUnit || it.isNothing) || isFinal && it is ConeDynamicType }
 
-    private fun ConeKotlinType.isGenericArrayOfTypeParameter(): Boolean {
-        if (this.typeArguments.firstOrNull() is ConeStarProjection || !isArrayOrPrimitiveArray())
-            return false
-
-        val arrayElementType = arrayElementType() ?: return false
-        return arrayElementType is ConeTypeParameterType ||
-                arrayElementType.isGenericArrayOfTypeParameter()
-    }
-
     private fun FirRegularClass.isSubtypeOfCloneable(session: FirSession): Boolean {
         if (classId.isCloneableId()) return true
 
