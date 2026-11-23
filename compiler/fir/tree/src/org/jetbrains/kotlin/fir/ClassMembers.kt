@@ -232,6 +232,9 @@ private object CorrespondingProperty : FirDeclarationDataKey()
  */
 var FirValueParameter.correspondingProperty: FirProperty? by FirDeclarationDataRegistry.data(CorrespondingProperty)
 
+val FirValueParameterSymbol.correspondingProperty: FirPropertySymbol?
+    get() = fir.correspondingProperty?.symbol
+
 val FirCallableDeclaration.propertyIfAccessor: FirCallableDeclaration
     get() = (this as? FirPropertyAccessor)?.propertySymbol?.fir ?: this
 
