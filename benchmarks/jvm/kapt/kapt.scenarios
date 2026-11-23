@@ -21,6 +21,7 @@ common {
         "-Pkotlin.compiler.execution.strategy=in-process",
         "-Dorg.gradle.parallel=false",
         "--no-build-cache",
+        "-Pkotlin.build.report.output=json",
     ]
     warm-ups = 2
     iterations = 20
