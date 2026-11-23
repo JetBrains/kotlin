@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -110,6 +111,11 @@ internal class KonanForwardDeclarationModuleDeserializer(
     }
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No forward declaration found for $idSig")
+
+    override fun collectAllMatchingSignatures(
+        topLevelCallableId: TopLevelCallableIdAndKind,
+        output: MutableCollection<IdSignature>,
+    ) = Unit
 
     companion object {
         private val FORWARD_DECLARATION_ORIGIN by IrDeclarationOriginImpl.Regular

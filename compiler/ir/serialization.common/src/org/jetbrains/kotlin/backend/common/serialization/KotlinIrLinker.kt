@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.putToMultiMap
 
@@ -410,10 +411,22 @@ abstract class KotlinIrLinker(
             )
         } else moduleDeserializer
 
+    /**
+     * Finds signatures of all top-level callables (functions or properties) with the given [callableId]
+     * across all modules known to the linker.
+     *
+     * The result may have more than one signature: there can be several overloaded functions with the same
+     * [CallableId], and they can even be located in different modules.
+     *
+     * Note: This function does not return symbols and does not schedule deserialization of the found callables.
+     * To get a symbol, pass the signature to the appropriate symbol lookup function of the linker.
+     */
     fun getAllMatchingSignatures(callableId: CallableId, signatureKind: BinarySymbolData.SymbolKind): List<IdSignature> {
+        val topLevelCallableId = TopLevelCallableIdAndKind(callableId, signatureKind)
+
         return buildList {
             fun List<IrModuleDeserializer>.collectMatchingSignatures() {
-                forEach { it.collectAllMatchingSignatures(callableId, signatureKind, output = this@buildList) }
+                forEach { it.collectAllMatchingSignatures(topLevelCallableId, output = this@buildList) }
             }
 
             moduleDeserializersByPackageName[callableId.packageName]?.collectMatchingSignatures()
@@ -421,6 +434,34 @@ abstract class KotlinIrLinker(
         }
     }
 }
+
+/**
+ * A key for looking up top-level callables (functions or properties) in a module by their [CallableId].
+ *
+ * A [CallableId] alone does not identify a single declaration: there can be several overloaded functions
+ * with the same [CallableId], and a function and a property can share the same [CallableId] too.
+ * So [kind] is used to tell functions from properties, and a single [TopLevelCallableIdAndKind]
+ * may still correspond to multiple [IdSignature]s (one per overload).
+ *
+ * @property callableId The package FQ name and the name of the top-level callable.
+ * @property kind The kind of the callable. Only [BinarySymbolData.SymbolKind.FUNCTION_SYMBOL] and
+ *   [BinarySymbolData.SymbolKind.PROPERTY_SYMBOL] are allowed.
+ */
+data class TopLevelCallableIdAndKind(val callableId: CallableId, val kind: BinarySymbolData.SymbolKind) {
+    val packageFqName: FqName get() = callableId.packageName
+
+    constructor(signature: IdSignature.CommonSignature, kind: BinarySymbolData.SymbolKind) : this(
+        callableId = CallableId(signature.packageFqName(), Name.identifier(signature.declarationFqName)),
+        kind = kind,
+    )
+
+    init {
+        require(kind == BinarySymbolData.SymbolKind.FUNCTION_SYMBOL || kind == BinarySymbolData.SymbolKind.PROPERTY_SYMBOL)
+    }
+
+    override fun toString() = "$callableId, kind = $kind"
+}
+
 
 /**
  * Defines which declarations of a deserialized IR file are loaded, and how much of each declaration.
