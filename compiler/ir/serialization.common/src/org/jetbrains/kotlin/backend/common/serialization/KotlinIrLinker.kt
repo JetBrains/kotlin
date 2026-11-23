@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.pollFirst
 import org.jetbrains.kotlin.utils.putToMultiMap
 
 @RequiresOptIn("Internal API of the IR linker. Not supposed to be used outside the linker.")
@@ -252,10 +253,8 @@ abstract class KotlinIrLinker(
      * Run deserialization of top-level declarations previously scheduled for deserialization in the current [KotlinIrLinker].
      */
     fun deserializeAllReachableTopLevels() {
-        while (modulesWithReachableTopLevels.isNotEmpty()) {
-            val moduleDeserializer = modulesWithReachableTopLevels.first()
-            modulesWithReachableTopLevels.remove(moduleDeserializer)
-
+        while (true) {
+            val moduleDeserializer = modulesWithReachableTopLevels.pollFirst() ?: break
             moduleDeserializer.deserializeReachableDeclarations()
         }
     }

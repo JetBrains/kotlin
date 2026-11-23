@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.utils.pollFirst
 import org.jetbrains.kotlin.utils.putToMultiMap
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
@@ -213,8 +214,8 @@ abstract class BasicIrModuleDeserializer(
          * Run deserialization of top-level declarations previously scheduled for deserialization in the current module.
          */
         fun deserializeReachableDeclarations() {
-            while (filesWithPendingTopLevels.isNotEmpty()) {
-                val pendingFileDeserializationState = filesWithPendingTopLevels.first()
+            while (true) {
+                val pendingFileDeserializationState = filesWithPendingTopLevels.pollFirst() ?: break
 
                 if (pendingFileDeserializationState.fileDeserializer.deserializeFileImplicitDataIfFirstUse()) {
                     // Schedule the IR file for processing by the PL engine only when the implicit file data
@@ -225,8 +226,6 @@ abstract class BasicIrModuleDeserializer(
                     linker.partialLinkageSupport.enqueueFile(pendingFileDeserializationState.file)
                 }
                 pendingFileDeserializationState.deserializeAllFileReachableTopLevel()
-
-                filesWithPendingTopLevels.remove(pendingFileDeserializationState)
             }
         }
     }
