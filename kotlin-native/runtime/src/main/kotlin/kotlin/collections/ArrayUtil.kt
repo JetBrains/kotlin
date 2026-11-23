@@ -18,8 +18,8 @@ import kotlin.native.internal.escapeAnalysis.PointsTo
 @PublishedApi
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
-    // TODO: special case for size == 0?
     require(size >= 0) { "capacity must be non-negative." }
+    if (size == 0) return emptyArray()
     @Suppress("TYPE_PARAMETER_AS_REIFIED")
     return Array<E>(size)
 }

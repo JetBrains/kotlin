@@ -841,7 +841,7 @@ class ArraysTest {
         assertArrayNotSameButEquals(arrayOf('E', 'B', 'C'), arrayOf('A', 'B', 'C', 'E').sliceArray(coll))
 
 
-        assertArrayNotSameButEquals(arrayOf<Int>(), arrayOf<Int>().sliceArray(5..4))
+        assertContentEquals(arrayOf<Int>(), arrayOf<Int>().sliceArray(5..4))
         assertArrayNotSameButEquals(intArrayOf(), intArrayOf(1, 2, 3).sliceArray(5..1))
         assertArrayNotSameButEquals(intArrayOf(2, 3, 9), intArrayOf(2, 3, 9, 2, 3, 9).sliceArray(coll))
         assertArrayNotSameButEquals(doubleArrayOf(2.0, 3.0), doubleArrayOf(2.0, 3.0, 9.0).sliceArray(0..1))
@@ -979,7 +979,7 @@ class ArraysTest {
         assertArrayNotSameButEquals(charArrayOf('A', 'B'), charArrayOf('A', 'B', 'C').copyOf(2))
         assertArrayNotSameButEquals(charArrayOf('A', 'B', '\u0000'), charArrayOf('A', 'B').copyOf(3))
 
-        assertArrayNotSameButEquals(emptyArray(), arrayOf("x").copyOf(0))
+        assertContentEquals(emptyArray(), arrayOf("x").copyOf(0))
         assertArrayNotSameButEquals(intArrayOf(), intArrayOf(1).copyOf(0))
         assertArrayNotSameButEquals(longArrayOf(), longArrayOf(1).copyOf(0))
         assertArrayNotSameButEquals(charArrayOf(), charArrayOf('a').copyOf(0))
@@ -1003,7 +1003,7 @@ class ArraysTest {
         assertArrayNotSameButEquals(charArrayOf('0', '1', '2'), charArrayOf('0', '1', '2', '3', '4', '5').copyOfRange(0, 3))
 
         for (pos in 0..3) {
-            assertArrayNotSameButEquals(emptyArray(), arrayOf("a", "b", "c").copyOfRange(pos, pos))
+            assertContentEquals(emptyArray(), arrayOf("a", "b", "c").copyOfRange(pos, pos))
             assertArrayNotSameButEquals(intArrayOf(), intArrayOf(1, 2, 3).copyOfRange(pos, pos))
             assertArrayNotSameButEquals(charArrayOf(), charArrayOf('a', 'b', 'c').copyOfRange(pos, pos))
             assertArrayNotSameButEquals(longArrayOf(), LongArray(3) { it.toLong() }.copyOfRange(pos, pos))
@@ -1162,7 +1162,7 @@ class ArraysTest {
         assertArrayNotSameButEquals(doubleArrayOf(0.0, 1.0, 2.0), doubleArrayOf().copyOf(3) { it.toDouble() })
         assertFailsWith<IllegalArgumentException> { doubleArrayOf(1.0, 2.0, 3.0).copyOf(-1) { 0.0 } }
 
-        assertArrayNotSameButEquals(arrayOf(), arrayOf("a", "b", "c").copyOf(0) { "" })
+        assertContentEquals(arrayOf(), arrayOf("a", "b", "c").copyOf(0) { "" })
         assertArrayNotSameButEquals(arrayOf("a", "b", "c"), arrayOf("a", "b", "c").copyOf(3) { "" })
         assertArrayNotSameButEquals(arrayOf("a", "b", "c", "", ""), arrayOf("a", "b", "c").copyOf(5) { "" })
         assertArrayNotSameButEquals(arrayOf("0", "1", "2"), arrayOf<String>().copyOf(3) { it.toString() })
