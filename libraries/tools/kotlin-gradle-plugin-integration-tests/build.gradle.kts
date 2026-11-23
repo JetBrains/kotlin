@@ -512,13 +512,21 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
         dependsOn(perTagJunitTasks.filterKeys { it.junitTag.parent == null }.values)
     }
 
-    registerTestTask(
-        JunitTag.SwiftPMImportKGP.taskConfiguration(
-            description = "Run SwiftPM import tests with the maximum supported Gradle version",
-            taskName = "kgpSwiftPMImportTestsWithMaxGradleVersion",
-            gradleVersionFilter = TestVersions.Gradle.MAX_SUPPORTED,
-        )
+    // These only run on latest Gradle and are used in the release aggregate
+    val latestGradleOnlyTests = listOf(
+        JunitTag.SwiftPMImportKGP to "kgpSwiftPMImportTestsWithMaxGradleVersion",
+        JunitTag.SwiftExportKGP to "kgpSwiftExportTestsWithMaxGradleVersion",
+        JunitTag.NativeKGP to "kgpNativeTestsWithMaxGradleVersion",
     )
+    latestGradleOnlyTests.forEach { (tag, taskName) ->
+        registerTestTask(
+            tag.taskConfiguration(
+                description = "Run ${tag} tests with the maximum supported Gradle version",
+                taskName = taskName,
+                gradleVersionFilter = TestVersions.Gradle.MAX_SUPPORTED,
+            )
+        )
+    }
 }
 
 excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()
