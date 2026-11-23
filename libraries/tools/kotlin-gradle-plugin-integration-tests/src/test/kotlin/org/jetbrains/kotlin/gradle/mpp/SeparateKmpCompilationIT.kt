@@ -702,7 +702,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     fun jvmIcEnabledWithSeparateCompilation(gradleVersion: GradleVersion) {
         defaultProject(
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(enableJvmIncrementalCompilationOfCommonSources = true),
             targetsToInclude = listOf("jvm", "js"),
         ) {
             kotlinSourcesDir("commonMain").source("common.kt") {

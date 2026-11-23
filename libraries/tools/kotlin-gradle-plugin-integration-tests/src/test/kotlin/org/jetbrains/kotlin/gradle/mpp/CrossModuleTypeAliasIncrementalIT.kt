@@ -65,7 +65,6 @@ class CrossModuleTypeAliasIncrementalIT : KGPBaseTest() {
     ) {
         val buildOptions = defaultBuildOptions
             .copy(
-                enableJvmIncrementalCompilationOfCommonSources = true,
                 separateCompilation = separateCompilation,
                 expandTypeAliasesInClasspathSnapshots = expandTypeAliases,
             )

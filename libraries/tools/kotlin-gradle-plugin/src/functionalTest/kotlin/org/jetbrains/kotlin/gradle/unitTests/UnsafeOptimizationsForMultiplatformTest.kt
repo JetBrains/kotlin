@@ -20,18 +20,22 @@ import kotlin.test.assertTrue
 class UnsafeOptimizationsForMultiplatformTest {
 
     @Test
-    fun disabledByDefaultForEveryTarget() {
+    fun enabledByDefaultOnlyForJvm() {
         assertEnabledTargets(
             properties = emptyMap(),
-            expectedJvm = false, expectedJs = false, expectedWasm = false,
+            expectedJvm = true, expectedJs = false, expectedWasm = false,
         )
     }
 
     @Test
     fun jvmPropertyAffectsOnlyJvmTasks() {
         assertEnabledTargets(
-            properties = mapOf(KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to true),
-            expectedJvm = true, expectedJs = false, expectedWasm = false,
+            properties = mapOf(
+                KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES to false,
+                KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to true,
+                KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to true,
+            ),
+            expectedJvm = false, expectedJs = true, expectedWasm = true,
         )
     }
 
@@ -39,7 +43,7 @@ class UnsafeOptimizationsForMultiplatformTest {
     fun jsPropertyAffectsOnlyJsTasks() {
         assertEnabledTargets(
             properties = mapOf(KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to true),
-            expectedJvm = false, expectedJs = true, expectedWasm = false,
+            expectedJvm = true, expectedJs = true, expectedWasm = false,
         )
     }
 
@@ -47,7 +51,7 @@ class UnsafeOptimizationsForMultiplatformTest {
     fun wasmPropertyAffectsOnlyWasmTasks() {
         assertEnabledTargets(
             properties = mapOf(KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION to true),
-            expectedJvm = false, expectedJs = false, expectedWasm = true,
+            expectedJvm = true, expectedJs = false, expectedWasm = true,
         )
     }
 
