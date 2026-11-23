@@ -1,9 +1,9 @@
 @Suppress(String())
 owner -> FirRegularPropertySymbol /C.member
-context -> FirLocalPropertySymbol <local>/n
-context -> FirLocalPropertySymbol <local>/n
+context -> FirLocalPropertySymbol <local>/n from FirRegularPropertySymbol /C.member
+context -> FirLocalPropertySymbol <local>/n from FirRegularPropertySymbol /C.member
 
 @Suppress(String())
 owner -> FirRegularPropertySymbol /topLevel
-context -> FirLocalPropertySymbol <local>/m
-context -> FirLocalPropertySymbol <local>/m
+context -> FirLocalPropertySymbol <local>/m from FirRegularPropertySymbol /topLevel
+context -> FirLocalPropertySymbol <local>/m from FirRegularPropertySymbol /topLevel
