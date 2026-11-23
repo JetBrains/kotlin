@@ -4,19 +4,11 @@
  */
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 
 class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
-    internal val archive = JarArchive(
-        File(path),
-        fileSystem.unmapBuffer,
-        onInvalidArchive = { file, e ->
-            Logger.getInstance(FastJarHandler::class.java).warn("Error while reading zip file: ${file.path}: $e", e)
-        },
-        readContents = fileSystem::readContents,
-    )
+    internal val archive: JarArchive = fileSystem.archives.archive(path)
 
     internal val file: File
         get() = archive.file
