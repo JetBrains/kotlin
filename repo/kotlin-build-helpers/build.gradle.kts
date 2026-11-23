@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     `kotlin-dsl`
     kotlin("jvm")
@@ -9,7 +12,12 @@ dependencies {
     compileOnly(kotlin("stdlib"))
 }
 
-kotlin.jvmToolchain(17)
+kotlin {
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
+    compilerVersion = embeddedKotlinVersion
+    coreKotlinLibrariesVersion = embeddedKotlinVersion
+    jvmToolchain(17)
+}
 
 sourceSets {
     main {
