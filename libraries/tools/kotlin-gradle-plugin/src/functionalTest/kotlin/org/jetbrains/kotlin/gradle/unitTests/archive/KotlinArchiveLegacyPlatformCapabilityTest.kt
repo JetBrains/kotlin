@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.gradle.unitTests.archive
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.result.UnresolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.targets.native.resolvableApiConfiguration
 import org.jetbrains.kotlin.gradle.testing.compilationConfiguration
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.testing.resolveSelectedVariantNames
@@ -68,6 +70,7 @@ class KotlinArchiveLegacyPlatformCapabilityTest {
             ).prettyPrinted,
             consumer.jsRuntimeResolution().prettyPrinted,
         )
+        assertNoUnresolvedDependencies(consumer)
     }
 
     @Test
@@ -100,6 +103,7 @@ class KotlinArchiveLegacyPlatformCapabilityTest {
             ).prettyPrinted,
             consumer.jsRuntimeResolution().prettyPrinted,
         )
+        assertNoUnresolvedDependencies(consumer)
     }
 
     @Test
@@ -133,6 +137,7 @@ class KotlinArchiveLegacyPlatformCapabilityTest {
             ).prettyPrinted,
             consumer.jsRuntimeResolution(RENAMED_JS_TARGET_NAME).prettyPrinted,
         )
+        assertNoUnresolvedDependencies(consumer)
     }
 
     @Test
@@ -165,6 +170,7 @@ class KotlinArchiveLegacyPlatformCapabilityTest {
             ).prettyPrinted,
             consumer.jsRuntimeResolution().prettyPrinted,
         )
+        assertNoUnresolvedDependencies(consumer)
     }
 
     @Test
@@ -213,10 +219,11 @@ class KotlinArchiveLegacyPlatformCapabilityTest {
             ).prettyPrinted,
             consumer.jsRuntimeResolution().prettyPrinted,
         )
+        assertNoUnresolvedDependencies(consumer)
     }
 
     @Test
-    fun `legacy platform component is replaced by the kotlin archive component in the api configuration of a native framework`() {
+    fun `legacy platform component is replaced by the kotlin archive component in all configurations of a native framework`() {
         val repository = generateMockRepository(
             temporaryDirectory,
             listOf(
@@ -249,19 +256,36 @@ class KotlinArchiveLegacyPlatformCapabilityTest {
             }
         }.evaluate()
 
-        val expectedResolution = mapOf(
-            "$GROUP:intermediateLibrary:1.0" to IOS_ARM64_API_VARIANT,
-            "$GROUP:library:2.0" to IOS_ARM64_API_VARIANT,
-        ).prettyPrinted
         assertEquals(
-            expectedResolution,
+            mapOf(
+                "$GROUP:intermediateLibrary:1.0" to IOS_ARM64_API_VARIANT,
+                "$GROUP:library:2.0" to IOS_ARM64_API_VARIANT,
+            ).prettyPrinted,
             consumer.iosArm64MainCompilation.internal.configurations.compileDependencyConfiguration
                 .resolveSelectedVariantNames().prettyPrinted,
         )
+        assertNoUnresolvedDependencies(consumer)
+    }
+
+    private fun assertNoUnresolvedDependencies(consumer: Project) {
         assertEquals(
-            expectedResolution,
-            consumer.iosArm64MainCompilation.resolvableApiConfiguration().resolveSelectedVariantNames().prettyPrinted,
+            emptyMap<String, List<String>>().prettyPrinted,
+            consumer.configurations
+                .filter { it.isCanBeResolved }
+                .associate { it.name to it.unresolvedDependencies() }
+                .filterValues { it.isNotEmpty() }
+                .prettyPrinted,
         )
+    }
+
+    private fun Configuration.unresolvedDependencies(): List<String> {
+        val resolutionResult = incoming.resolutionResult
+
+        return resolutionResult.allDependencies
+            .filterIsInstance<UnresolvedDependencyResult>()
+            .map { it.requested }
+            .filter { it is ModuleComponentSelector && it.group == GROUP }
+            .map { "unresolved ${it.displayName}" }
     }
 
     private fun jsConsumer(

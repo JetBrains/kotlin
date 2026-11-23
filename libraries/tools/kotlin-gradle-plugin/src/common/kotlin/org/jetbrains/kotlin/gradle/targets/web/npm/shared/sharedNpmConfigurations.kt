@@ -12,6 +12,7 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.usesPlatformKlibsOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -110,7 +111,7 @@ internal fun Project.createNpmRuntimeDependenciesResolver(compilation: KotlinJsI
     configurations.createResolvable(compilation.npmRuntimeDependenciesResolverConfigurationName) {
         setInvisibleIfSupported()
         description = "Resolves the runtime dependencies of $compilation to collect their npm dependencies."
-        usesPlatformOf(compilation.target)
+        usesPlatformKlibsOf(compilation.target)
         attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(KotlinUsages.KOTLIN_NPM_RUNTIME_DEPENDENCIES))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
         listOf(API_SCOPE, IMPLEMENTATION_SCOPE, RUNTIME_ONLY_SCOPE).forEach { scope ->

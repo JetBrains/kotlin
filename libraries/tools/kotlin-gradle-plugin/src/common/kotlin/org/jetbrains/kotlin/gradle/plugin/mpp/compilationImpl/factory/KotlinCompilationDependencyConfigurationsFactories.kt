@@ -10,6 +10,9 @@ import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KarLayout
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.configureKarExtractionToState
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.usesPlatformKlibsOf
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
@@ -200,6 +203,12 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
                 dest = this
             )
             attributes.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            // We need to be compatible with KAR artifacts, and make them able to replace older platform ones.
+            // But on the other side, KAR can't have platform-specific metadata, so no artifacts from it is necessary
+            // So registering request of state which would correctly match, but transform kar artifact to nothing.
+            if (target is KotlinTargetWithKotlinArchiveSupport) {
+                configureKarExtractionToState(KarLayout.Attributes.State.NOTHING_EXTRACTED)
+            }
         } else null
 
     val pluginConfiguration = target.project.configurations.maybeCreateResolvable(pluginConfigurationName).apply {

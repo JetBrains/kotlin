@@ -64,6 +64,7 @@ internal val SetupKotlinArchiveAction = KotlinProjectSetupCoroutine {
     }
 
     configureTransformActionFromKarXzToKar()
+    configureTransformActionFromKarToNothing()
     configureTransformActionFromKarToPsm()
     configureTransformActionFromKarToSwiftExportMetadata()
 }
@@ -81,6 +82,8 @@ internal val SetupKotlinArchiveAction = KotlinProjectSetupCoroutine {
  * We use the following heuristic to check if it's indeed KAR:
  * - Both should have the same group
  * - Both should have the same variant name (e.g. `iosArm64ApiElements-published`)
+ *   - The host-specific metadata variant (e.g. `iosArm64MetadataElements-published`) counts as the platform variant of the same target.
+ *     A Kotlin Archive has no host-specific metadata variant, so a consumer selects its platform variant instead.
  *   - As additional safety measure to not detect something irrelevant this variant name should have `-published` suffix,
  *     as we know that our variants always have it.
  * - Module name of old component is same as capability name
@@ -106,7 +109,7 @@ private fun Configuration.selectNewKotlinArchiveComponentOnLegacyPublicationCapa
             candidateComponent.group == requestedCapability.group && requestedCapability.name.startsWith("${candidateComponent.module}-")
         } ?: return@all
 
-        if (legacyPublicationCandidate.variantName != replacementCandidate.variantName) return@all
+        if (legacyPublicationCandidate.variantName.normalizeVariantNameForCapabilityCheck() != replacementCandidate.variantName.normalizeVariantNameForCapabilityCheck()) return@all
         if (!replacementCandidate.variantName.endsWith("-published")) return@all
 
         details.selectHighestVersion()
@@ -114,6 +117,16 @@ private fun Configuration.selectNewKotlinArchiveComponentOnLegacyPublicationCapa
     }
 }
 
+
+private fun String.normalizeVariantNameForCapabilityCheck(): String {
+    val hostSpecificMetadataSuffix = "MetadataElements-published"
+    val apiElementsSuffix = "ApiElements-published"
+    return if (endsWith(hostSpecificMetadataSuffix)) {
+        removeSuffix(hostSpecificMetadataSuffix) + apiElementsSuffix
+    } else {
+        this
+    }
+}
 internal fun Configuration.configureKarExtractionToState(state: String) {
     attributes.attribute(KarLayout.Attributes.state, state)
     selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict()

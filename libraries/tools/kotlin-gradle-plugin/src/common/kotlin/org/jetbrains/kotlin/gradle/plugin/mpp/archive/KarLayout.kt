@@ -38,6 +38,7 @@ internal object KarLayout {
             const val PSM_EXTRACTED = "psm-extracted"
             const val RESOURCES_EXTRACTED = "resources-extracted"
             const val SWIFT_EXPORT_METADATA_EXTRACTED = "swift-export-metadata-extracted"
+            const val NOTHING_EXTRACTED = "nothing-extracted"
         }
 
         val state: Attribute<String> = Attribute.of("org.jetbrains.kotlin.kar.state", String::class.java)
