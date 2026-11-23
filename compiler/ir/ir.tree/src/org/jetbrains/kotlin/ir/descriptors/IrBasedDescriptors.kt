@@ -1147,7 +1147,11 @@ private fun getContainingDeclaration(declaration: IrDeclaration): DeclarationDes
         parent.correspondingPropertySymbol?.owner?.let { return it.toIrBasedDescriptor() }
     }
     val parentDescriptor = (parent as IrSymbolOwner).let {
-        if (it is IrDeclaration) it.toIrBasedDescriptor() else it.symbol.descriptor
+        when (it) {
+            is IrDeclaration -> it.toIrBasedDescriptor()
+            is IrPackageFragment -> it.symbol.descriptor
+            else -> error("Unexpected declaration parent: $it")
+        }
     }
     return if (parent is IrClass && parent.isFileClass) {
         // JVM IR adds facade classes for IR of functions/properties loaded both from sources and dependencies. However, these shouldn't
