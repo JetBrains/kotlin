@@ -689,6 +689,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("propertyInMemberDelegateAnnotatedArgumentMultiplatform.kt")
+  public void testPropertyInMemberDelegateAnnotatedArgumentMultiplatform() {
+    run("propertyInMemberDelegateAnnotatedArgumentMultiplatform.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInMemberDelegateBinaryArgumentMultiplatform.kt")
+  public void testPropertyInMemberDelegateBinaryArgumentMultiplatform() {
+    run("propertyInMemberDelegateBinaryArgumentMultiplatform.kt");
+  }
+
+  @Test
   @TestMetadata("propertyWithGetter.kt")
   public void testPropertyWithGetter() {
     run("propertyWithGetter.kt");

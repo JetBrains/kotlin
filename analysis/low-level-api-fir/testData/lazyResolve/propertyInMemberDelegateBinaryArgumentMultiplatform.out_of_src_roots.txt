@@ -1,0 +1,231 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Any): Lazy<Int> { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val pp: <implicit> by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Any): Lazy<Int> { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val pp: <implicit> by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Any): Lazy<Int> { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val pp: <implicit> by LAZY_EXPRESSION
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Any): Lazy<Int> { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(COMPANION_GENERATION)] val pp: <implicit> by LAZY_EXPRESSION
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Any): Lazy<Int> { LAZY_BLOCK }
+    public final? [ResolvedTo(SUPER_TYPES)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(SUPER_TYPES)] val pp: <implicit> by LAZY_EXPRESSION
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Any): Lazy<Int> { LAZY_BLOCK }
+    public final? [ResolvedTo(TYPES)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(TYPES)] val pp: <implicit> by LAZY_EXPRESSION
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Any): Lazy<Int> { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val pp: <implicit> by LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Any): Lazy<Int> { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] val pp: <implicit> by LAZY_EXPRESSION
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Any): Lazy<Int> { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONTRACTS)] [ExpectForActualAttributeKey={}] val pp: <implicit> by LAZY_EXPRESSION
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Any|): <ERROR TYPE REF: Symbol not found for Lazy> { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ExpectForActualAttributeKey={}] val pp: <ERROR TYPE REF: Unresolved name: getValue> by R|/foo|(IntegerLiteral(1).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(ERROR_EXPR(No right operand)[ResolvedTo(RAW_FIR)] lval x: <ERROR TYPE REF: Unresolved name: getValue> by <Unresolved name: lazy>#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(1)
+        }
+        )
+            local [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ D|<local>/x|.<Unresolved name: getValue>#(Null(null), ::R|<local>/x|)
+            }
+        ))
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=C] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ this@R|/C|.D|/C.pp|.<Unresolved name: getValue>#(this@R|/C|, ::R|/C.pp|)
+            }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Any|): <ERROR TYPE REF: Symbol not found for Lazy> { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ExpectForActualAttributeKey={}] val pp: <ERROR TYPE REF: Unresolved name: getValue> by R|/foo|(IntegerLiteral(1).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(ERROR_EXPR(No right operand)[ResolvedTo(RAW_FIR)] lval x: <ERROR TYPE REF: Unresolved name: getValue> by <Unresolved name: lazy>#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(1)
+        }
+        )
+            local [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ D|<local>/x|.<Unresolved name: getValue>#(Null(null), ::R|<local>/x|)
+            }
+        ))
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=C] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ this@R|/C|.D|/C.pp|.<Unresolved name: getValue>#(this@R|/C|, ::R|/C.pp|)
+            }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Any|): <ERROR TYPE REF: Symbol not found for Lazy> { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ExpectForActualAttributeKey={}] val pp: <ERROR TYPE REF: Unresolved name: getValue> by R|/foo|(IntegerLiteral(1).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(ERROR_EXPR(No right operand)[ResolvedTo(RAW_FIR)] lval x: <ERROR TYPE REF: Unresolved name: getValue> by <Unresolved name: lazy>#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(1)
+        }
+        )
+            local [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ D|<local>/x|.<Unresolved name: getValue>#(Null(null), ::R|<local>/x|)
+            }
+        ))
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ this@R|/C|.D|/C.pp|.<Unresolved name: getValue>#(this@R|/C|, ::R|/C.pp|)
+            }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Any|): <ERROR TYPE REF: Symbol not found for Lazy> { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] val pp: <ERROR TYPE REF: Unresolved name: getValue> by R|/foo|(IntegerLiteral(1).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(ERROR_EXPR(No right operand)[ResolvedTo(BODY_RESOLVE)] lval x: <ERROR TYPE REF: Unresolved name: getValue> by <Unresolved name: lazy>#(<L> = [ResolvedTo(BODY_RESOLVE)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(1)
+        }
+        )
+            local [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ D|<local>/x|.<Unresolved name: getValue>#(Null(null), ::R|<local>/x|)
+            }
+        ))
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ this@R|/C|.D|/C.pp|.<Unresolved name: getValue>#(this@R|/C|, ::R|/C.pp|)
+            }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyInMemberDelegateBinaryArgumentMultiplatform.kt
+    public final [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] fun foo([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Any|): <ERROR TYPE REF: Symbol not found for Lazy> {
+        ^foo <Unresolved name: lazy>#(<L> = [ResolvedTo(BODY_RESOLVE)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(1)
+        }
+        )
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] class C : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C, ExpectForActualAttributeKey={}] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] val pp: <ERROR TYPE REF: Unresolved name: getValue> by R|/foo|(IntegerLiteral(1).<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(ERROR_EXPR(No right operand)[ResolvedTo(BODY_RESOLVE)] lval x: <ERROR TYPE REF: Unresolved name: getValue> by <Unresolved name: lazy>#(<L> = [ResolvedTo(BODY_RESOLVE)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(1)
+        }
+        )
+            local [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ D|<local>/x|.<Unresolved name: getValue>#(Null(null), ::R|<local>/x|)
+            }
+        ))
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+                ^ this@R|/C|.D|/C.pp|.<Unresolved name: getValue>#(this@R|/C|, ::R|/C.pp|)
+            }
+
+    }
