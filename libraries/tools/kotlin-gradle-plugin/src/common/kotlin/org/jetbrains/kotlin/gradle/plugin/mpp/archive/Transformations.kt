@@ -104,6 +104,25 @@ internal fun Project.configureTransformActionFromKarXzToKar() {
     }
 }
 
+/**
+ * Registers no outputs, so the Kotlin Archive gives no artifacts.
+ */
+@DisableCachingByDefault(because = "Dropping an artifact is not worth caching")
+internal abstract class KarToNothingTransformation : TransformAction<TransformParameters.None> {
+    override fun transform(outputs: TransformOutputs) {}
+}
+
+/**
+ * Starts from the compressed archive, so the archive is not decompressed to be dropped.
+ * The compression method must be [CompressionMethod.XZ] to keep unrelated `.xz` artifacts unchanged.
+ */
+internal fun Project.configureTransformActionFromKarToNothing() {
+    dependencies.registerTransform(KarToNothingTransformation::class.java) { spec ->
+        spec.changesState(KarState.COMPRESSED, KarState.NOTHING_EXTRACTED)
+        spec.changesAttribute(KarAttributes.compressionMethod, CompressionMethod.XZ, CompressionMethod.XZ)
+    }
+}
+
 @DisableCachingByDefault(because = "Extracting resources from a .kar is not worth caching")
 internal abstract class KarToResourcesTransformation : TransformAction<KarToResourcesTransformation.Parameters> {
 
