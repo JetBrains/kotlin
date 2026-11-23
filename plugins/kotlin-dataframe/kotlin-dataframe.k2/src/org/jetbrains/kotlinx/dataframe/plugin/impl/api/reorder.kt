@@ -15,6 +15,17 @@ class ReorderColumnsByName : AbstractSchemaModificationInterpreter() {
     }
 }
 
+class ReorderColumnsByNameIncludingFrames : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver by dataFrame()
+    val Arguments.atAnyDepth: Boolean by arg(defaultValue = Present(true))
+    val Arguments.desc: Boolean by arg(defaultValue = Present(false))
+    val Arguments.inFrameColumns: Boolean by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return receiver.modify { reorderColumnsByName(atAnyDepth, desc, inFrameColumns) }
+    }
+}
+
 class Reorder : AbstractInterpreter<ReorderApproximation>() {
     val Arguments.receiver by dataFrame()
     val Arguments.selector: ColumnsResolver by arg()

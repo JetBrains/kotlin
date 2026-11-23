@@ -368,6 +368,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameToCamelCase
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RenameToCamelCaseClause
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Reorder
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReorderColumnsByName
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ReorderColumnsByNameIncludingFrames
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RightJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RightJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SelectString
@@ -808,6 +809,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "MergeBy0" -> MergeBy0()
         "MergeBy1" -> MergeBy1()
         "ReorderColumnsByName" -> ReorderColumnsByName()
+        "ReorderColumnsByNameIncludingFrames" -> ReorderColumnsByNameIncludingFrames()
         "Reorder" -> Reorder()
         "ByName" -> ByName()
         "Sum0" -> Sum0()
