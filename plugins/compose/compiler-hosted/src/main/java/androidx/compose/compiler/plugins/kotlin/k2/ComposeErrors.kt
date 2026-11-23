@@ -89,7 +89,7 @@ object ComposeErrors : KtDiagnosticsContainer() {
     val COMPOSE_APPLIER_CALL_MISMATCH by warning2<String, String>(
         SourceElementPositioningStrategy(
             LightTreePositioningStrategies.REFERENCED_NAME_BY_QUALIFIED,
-            PositioningStrategies.CALL_EXPRESSION
+            PsiPositioningStrategies.CALL_EXPRESSION
         )
     )
 
@@ -108,7 +108,7 @@ object ComposeErrors : KtDiagnosticsContainer() {
     val KEY_CALL_WITH_NO_ARGUMENTS by error0(
         SourceElementPositioningStrategy(
             LightTreePositioningStrategies.REFERENCED_NAME_BY_QUALIFIED,
-            PositioningStrategies.CALL_EXPRESSION
+            PsiPositioningStrategies.CALL_EXPRESSION
         )
     )
 
@@ -125,7 +125,7 @@ object ComposeSourceElementPositioningStrategies {
                 element.tryKeyword?.let {
                     return markElement(it)
                 }
-                return PositioningStrategies.DEFAULT.mark(element)
+                return PsiPositioningStrategies.DEFAULT.mark(element)
             }
         }
 
@@ -146,9 +146,9 @@ object ComposeSourceElementPositioningStrategies {
         object : PositioningStrategy<PsiElement>() {
             override fun mark(element: PsiElement): List<TextRange> {
                 if (element is KtNamedDeclaration) {
-                    return PositioningStrategies.DECLARATION_NAME.mark(element)
+                    return PsiPositioningStrategies.DECLARATION_NAME.mark(element)
                 }
-                return PositioningStrategies.DEFAULT.mark(element)
+                return PsiPositioningStrategies.DEFAULT.mark(element)
             }
         }
 
