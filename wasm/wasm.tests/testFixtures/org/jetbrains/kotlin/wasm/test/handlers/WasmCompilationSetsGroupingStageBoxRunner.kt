@@ -19,11 +19,12 @@ import org.jetbrains.kotlin.test.isSingleTestBatch
 import org.jetbrains.kotlin.test.services.sourceProviders.hasBoxMethod
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmInProcessSecondStageFacade
+import org.jetbrains.kotlin.wasm.test.converters.WasmInProcessSingleModuleSecondStageFacade
 
 /**
  * A Wasm variant of the grouping stage handler for the IN_PROCESS second-stage mode.
- * Handles [WasmCompilationSetsBinaryArtifact] artifacts produced by [WasmBackendFacade] or [WasmInProcessSecondStageFacade]
- * by delegating to [WasmBoxRunner.runWasmCode] which invokes the relevant VMs.
+ * Handles [WasmCompilationSetsBinaryArtifact] artifacts produced by [WasmBackendFacade], [WasmInProcessSecondStageFacade] or
+ * [WasmInProcessSingleModuleSecondStageFacade] by delegating to [WasmBoxRunner.runWasmCode] which invokes the relevant VMs.
  */
 open class WasmCompilationSetsGroupingStageBoxRunner(
     testServices: TestServices

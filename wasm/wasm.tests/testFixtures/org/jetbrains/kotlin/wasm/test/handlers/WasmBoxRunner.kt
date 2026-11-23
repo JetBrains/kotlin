@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.test.model.WasmCompilationSet
 import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.hasBoxMethod
 import java.io.File
@@ -63,8 +62,8 @@ open class WasmBoxRunner(
             val outputDir = testServices.getWasmTestOutputDirectoryForMode(mode)
             outputDir.mkdirs()
 
-            result.compilerResult.writeTo(outputDir, WASM_BASE_FILE_NAME, debugMode, mode)
-            result.compilationDependencies.forEach {
+            // The JS wrappers import each other by base name, so every module is written under its own.
+            (listOf(result) + result.compilationDependencies).forEach {
                 it.compilerResult.writeTo(outputDir, it.compilerResult.baseFileName, debugMode, mode)
             }
 
@@ -76,6 +75,7 @@ open class WasmBoxRunner(
                 useUnitTestRunnerOnly = useUnitTestRunnerOnly,
                 callGroupedTestsDriver = callGroupedTestsDriver,
                 outputCollector = outputCollector,
+                entryModuleBaseFileName = result.compilerResult.baseFileName,
             )
 
             return exceptions + checkExpectedOutputSize(

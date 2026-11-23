@@ -187,11 +187,7 @@ class CustomWasmSecondStageFacade internal constructor(
             val filteredOutputs = context.filteredOutputs
             val services = filteredOutputs.first().testServices
             val testModules = filteredOutputs.map { it.testModule }
-            // Pick the last non-helpers module as the main module. The helpers module is
-            // synthesized by WasmCoroutineHelpersModuleTransformer and contains only the
-            // synthetic `helpers` package files, never `box()`.
-            val mainModule = testModules.lastOrNull { it.name != WasmCoroutineHelpersModuleTransformer.HELPERS_MODULE_NAME }
-                ?: testModules.last()
+            val mainModule = testModules.mainModuleOfTest()
 
             val [regularDependencies, friendDependencies] = mainModule.collectDependencies(services, CompilationStage.SECOND)
 

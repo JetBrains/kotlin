@@ -10,16 +10,19 @@ import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import java.io.File
 
+/** @param artifactsDir see [WasmLoweringSingleModuleFacade]. */
 class WasmBackendSingleModuleFacade(
     testServices: TestServices,
+    artifactsDir: File? = null,
 ) : AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Wasm>() {
     override val inputKind = ArtifactKinds.KLib
     override val outputKind = ArtifactKinds.Wasm
 
     private val deserializerFacade = WasmDeserializerFacade(testServices)
 
-    private val loweringFacade = WasmLoweringSingleModuleFacade(testServices)
+    private val loweringFacade = WasmLoweringSingleModuleFacade(testServices, artifactsDir)
 
     override fun shouldTransform(module: TestModule): Boolean {
         return deserializerFacade.shouldTransform(module) && loweringFacade.shouldTransform(module)
