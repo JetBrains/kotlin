@@ -50,26 +50,3 @@ class UnexpectedUnboundIrSymbols(unboundSymbols: Set<IrSymbol>, whenDetected: St
         }
     }
 }
-
-class SymbolTypeMismatch(
-    private val cause: IrSymbolTypeMismatchException,
-) : KotlinIrLinkerIssue() {
-    override val errorMessage = try {
-        computeErrorMessage()
-    } catch (e: Throwable) {
-        // Don't suppress the real cause if computation of error message failed.
-        throw if (e === cause) e else e.apply { addSuppressed(cause) }
-    }
-
-    private fun computeErrorMessage() = buildString {
-        // cause:
-        append(cause.message)
-
-        // explanation:
-        append("\n\nThis could happen if there are two libraries, where one library was compiled against the different version")
-        append(" of the other library than the one currently used in the project.")
-
-        // action items:
-        append(" Please check that the project configuration is correct and has consistent versions of dependencies.")
-    }
-}

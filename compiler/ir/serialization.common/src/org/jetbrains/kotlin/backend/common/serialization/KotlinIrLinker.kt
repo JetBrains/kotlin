@@ -167,9 +167,6 @@ abstract class KotlinIrLinker(
         return symbol ?: referenceDeserializedSymbol(symbolTable, signatureAndKind)
     }
 
-    private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? =
-        firstModuleDeserializerOrNull(idSignature.packageFqName()) { idSignature in it }
-
     /**
      * Returns the first module deserializer that may define declarations in the package [packageFqName]
      * and matches the given [filter], or `null` if no such module deserializer is found.
@@ -252,40 +249,16 @@ abstract class KotlinIrLinker(
         } while (unbound != prevUnbound)
     }
 
-    private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): Boolean {
-        if (!triedToDeserializeDeclarationForSymbol.add(symbol)) return false
-
-        val signature = symbol.signature ?: return false
-        val moduleDeserializer = resolveModuleDeserializer(signature)
-            ?: return false
-        moduleDeserializer.declareIrSymbol(symbol)
-
-        deserializeAllReachableTopLevels()
-
-        return symbol.isBound
-    }
-
     protected open fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
 
-    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? =
-        deserializeOrResolveDeclaration(symbol)
-
-    private fun deserializeOrResolveDeclaration(symbol: IrSymbol): IrDeclaration? {
-        if (!symbol.isBound) {
-            try {
-                if (!findDeserializedDeclarationForSymbol(symbol)) return null
-            } catch (e: IrSymbolTypeMismatchException) {
-                SymbolTypeMismatch(e).raiseIssue(errorCallback)
-            }
+    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
+        if (!symbol.isBound && triedToDeserializeDeclarationForSymbol.add(symbol)) {
+            val signature = symbol.signature ?: return null
+            findAndEnqueueSymbolOrNull(SignatureAndKind(signature, symbol.kind()))
+            deserializeAllReachableTopLevels()
         }
 
-        if (!symbol.isBound) return null
-
-        //assert(symbol.isBound) {
-        //    "getDeclaration: symbol $symbol is unbound, descriptor = ${symbol.descriptor}, signature = ${symbol.signature}"
-        //}
-
-        return symbol.owner as IrDeclaration
+        return if (symbol.isBound) symbol.owner as IrDeclaration else null
     }
 
     /**

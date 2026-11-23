@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
-import org.jetbrains.kotlin.backend.common.serialization.deserializeIrSymbolOrFail
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.CLASS_SYMBOL
 import org.jetbrains.kotlin.backend.konan.serialization.KonanInteropModuleDeserializer
@@ -133,7 +132,8 @@ internal class KlibToolIrLinker(
 
         // We cannot load the real nothing class. So let's use an emulated one here.
         private val emulatedNothingClass: IrClassSymbol by lazy {
-            deserializeIrSymbolOrFail(StandardClassIds.Nothing.toIdSignature(), CLASS_SYMBOL) as IrClassSymbol
+            @OptIn(IrLinkerInternalApi::class)
+            findAndEnqueueSymbolOrNull(SignatureAndKind(StandardClassIds.Nothing.toIdSignature(), CLASS_SYMBOL)) as IrClassSymbol
         }
 
         override val klib: KotlinLibrary get() = error("The emulated standard library has no Klib")
@@ -176,7 +176,6 @@ internal class KlibToolIrLinker(
             }.last().symbol
         }
 
-        override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No emulated standard library symbol found for $idSig")
         override fun deserializeReachableDeclarations() = Unit
 
         @OptIn(UnsafeDuringIrConstructionAPI::class)
