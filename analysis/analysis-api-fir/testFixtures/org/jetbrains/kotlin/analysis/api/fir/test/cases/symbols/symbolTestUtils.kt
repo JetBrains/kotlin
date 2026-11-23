@@ -5,17 +5,22 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirBasePropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiSymbol
+import org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol
 import org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName
+import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.utils.exceptions.unexpectedElementError
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubtypeOf
@@ -119,4 +124,23 @@ internal val KaSymbol.hasBuiltFirSymbol: Boolean
         is KaFirBasePropertyAccessorSymbol -> owningKaProperty.hasBuiltFirSymbol
         is KaFirPsiSymbol<*, *> -> lazyFirSymbol.isInitialized()
         else -> true
+    }
+
+/**
+ * The symbol of the Java declaration of this symbol. For a synthetic Java property, it's the setter or, without a setter, the getter.
+ */
+context(_: KaSession)
+internal val KaSymbol.symbolByJavaPsi: KaSymbol?
+    get() {
+        val javaPsi = when (this) {
+            is KaSyntheticJavaPropertySymbol -> setter?.psi ?: getter.psi
+            else -> psi
+        }
+
+        return when (javaPsi) {
+            is PsiClass -> javaPsi.namedClassSymbol
+            is PsiMember -> javaPsi.callableSymbol
+            null -> error("Failed to find psi for symbol")
+            else -> unexpectedElementError<PsiElement>(javaPsi)
+        }
     }

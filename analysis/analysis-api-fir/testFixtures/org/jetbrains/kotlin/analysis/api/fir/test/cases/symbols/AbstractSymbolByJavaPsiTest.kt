@@ -5,38 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol
-import org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.resolveSymbolPreferringCall
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.utils.exceptions.unexpectedElementError
 
 abstract class AbstractSymbolByJavaPsiTest : AbstractSymbolTest() {
     context(_: KaSession)
     override fun collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val referenceExpression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtReferenceExpression>(ktFile)
         val symbolByReference = referenceExpression.resolveSymbolPreferringCall() ?: error("Failed to resolve expression")
-
-        val javaPsi = when (symbolByReference) {
-            is KaSyntheticJavaPropertySymbol -> symbolByReference.setter?.psi ?: symbolByReference.getter.psi
-            else -> symbolByReference.psi
-        }
-
-        val symbolByJavaPsi = when (javaPsi) {
-            is PsiClass -> javaPsi.namedClassSymbol
-            is PsiMember -> javaPsi.callableSymbol
-            null -> error("Failed to find psi for symbol")
-            else -> unexpectedElementError<PsiElement>(javaPsi)
-        }
-
-        return SymbolsData(listOfNotNull(symbolByJavaPsi))
+        return SymbolsData(listOfNotNull(symbolByReference.symbolByJavaPsi))
     }
 }
