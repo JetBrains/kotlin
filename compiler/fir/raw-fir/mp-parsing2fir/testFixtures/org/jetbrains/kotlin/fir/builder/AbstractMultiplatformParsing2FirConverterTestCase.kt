@@ -49,5 +49,6 @@ abstract class AbstractMultiplatformParsing2FirConverterTestCase : AbstractRawFi
         }
 
         checkAnnotationOwners(absolutePath, firFile)
+        checkNonLocalCallablesHaveCallableIds(firFile)
     }
 }

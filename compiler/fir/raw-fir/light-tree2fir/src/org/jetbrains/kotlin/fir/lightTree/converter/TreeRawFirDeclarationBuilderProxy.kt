@@ -1673,7 +1673,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 }
 
                 symbol = propertySymbol
-                this.isLocal = context.inLocalContext
+                this.isLocal = isLocal || context.inLocalContext
 
                 typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, symbol) }
                 if (!isLocal) {

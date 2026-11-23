@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -71,6 +72,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
         val expectedPath = expectedPath(absolutePath, ".txt")
         TestDataAssertions.assertEqualsToFile(File(expectedPath), firFileDump)
         checkAnnotationOwners(absolutePath, firFile)
+        checkNonLocalCallablesHaveCallableIds(firFile)
     }
 
     /**
@@ -134,6 +136,27 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
             }
 
         TestDataAssertions.assertEqualsToFile(expectedFile, actual)
+    }
+
+    /**
+     * Checks that only local callables lack a callable id. The reverse doesn't hold: local functions and members of local classes
+     * have callable ids.
+     */
+    protected fun checkNonLocalCallablesHaveCallableIds(firFile: FirFile) {
+        val callablesWithoutId = mutableListOf<String>()
+        firFile.accept(object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                if (element is FirCallableDeclaration && !element.isLocal && element.symbol.callableId == null) {
+                    callablesWithoutId += element.render().lineSequence().first()
+                }
+
+                element.acceptChildren(this)
+            }
+        })
+
+        JUnit5Assertions.assertTrue(callablesWithoutId.isEmpty()) {
+            "Non-local callables without a callable id:\n" + callablesWithoutId.joinToString("\n")
+        }
     }
 
     protected open fun createKtFile(filePath: String): KtFile {

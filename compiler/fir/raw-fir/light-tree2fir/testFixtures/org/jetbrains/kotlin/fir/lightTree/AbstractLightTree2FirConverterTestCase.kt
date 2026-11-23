@@ -52,5 +52,6 @@ abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTes
         }
 
         checkAnnotationOwners(absolutePath, firFile)
+        checkNonLocalCallablesHaveCallableIds(firFile)
     }
 }

@@ -2566,7 +2566,7 @@ open class PsiRawFirBuilder(
                     }
 
                     initializer = propertyInitializer
-                    this.isLocal = context.inLocalContext
+                    this.isLocal = isLocal || context.inLocalContext
 
                     val propertyAnnotations = mutableListOf<FirAnnotationCall>()
                     for (annotationEntry in annotationEntries) {
