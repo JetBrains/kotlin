@@ -57,16 +57,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
     protected abstract fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable>
 
     /**
-     * Whether the constructor Lombok generates for [classSymbol] by this part is a plain one without parameters, which
-     * stands in for the default constructor `javac` would otherwise create. With a `staticName`, the constructor behind
-     * the factory is private, so it does not count.
-     */
-    fun generatesPlainNoArgsConstructor(classSymbol: FirClassSymbol<*>): Boolean {
-        val constructorInfo = getConstructorInfo(classSymbol) ?: return false
-        return constructorInfo.staticName == null && getVariablesForParameters(classSymbol).isEmpty()
-    }
-
-    /**
      * Whether a static factory would be generated into [classSymbol]'s companion object: the annotation asks for one,
      * and the name it would take is free.
      *
