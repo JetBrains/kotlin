@@ -450,6 +450,17 @@ abstract class KotlinIrLinker(
 }
 
 /**
+ * A key for looking up a declaration (or its symbol) in the linker: the [signature] tells which declaration
+ * it is, and the [kind] tells what kind of declaration (and so what kind of [IrSymbol]) is expected.
+ *
+ * Unlike [TopLevelCallableIdAndKind], which may correspond to several overloaded callables,
+ * a [SignatureAndKind] denotes exactly one declaration.
+ */
+data class SignatureAndKind(val signature: IdSignature, val kind: BinarySymbolData.SymbolKind) {
+    override fun toString() = "${signature.render()}, kind=$kind"
+}
+
+/**
  * A key for looking up top-level callables (functions or properties) in a module by their [CallableId].
  *
  * A [CallableId] alone does not identify a single declaration: there can be several overloaded functions
@@ -473,9 +484,9 @@ data class TopLevelCallableIdAndKind(val callableId: CallableId, val kind: Binar
         require(kind == BinarySymbolData.SymbolKind.FUNCTION_SYMBOL || kind == BinarySymbolData.SymbolKind.PROPERTY_SYMBOL)
     }
 
-    override fun toString() = "$callableId, kind = $kind"
-}
 
+    override fun toString() = "$callableId, kind=$kind"
+}
 
 /**
  * Defines which declarations of a deserialized IR file are loaded, and how much of each declaration.
