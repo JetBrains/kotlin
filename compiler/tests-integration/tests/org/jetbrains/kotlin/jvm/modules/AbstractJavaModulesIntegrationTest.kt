@@ -67,7 +67,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             K2JVMCompilerArguments::suppressVersionWarnings.cliArgument,
         )
         if (addModules.isNotEmpty()) {
-            kotlinOptions += "-Xadd-modules=${addModules.joinToString()}"
+            kotlinOptions += "-Xadd-modules=${addModules.joinToString(separator = ",")}"
         }
         kotlinOptions += additionalKotlinArguments
 
@@ -83,7 +83,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
                 )
                 if (addModules.isNotEmpty()) {
                     javaOptions += "--add-modules"
-                    javaOptions += addModules.joinToString()
+                    javaOptions += addModules.joinToString(separator = ",")
                 }
                 javaOptions += additionalJavaArguments
                 compileJavaFiles(javaFiles, javaOptions, KtTestUtil.getJdk11Home())
@@ -586,6 +586,37 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val autoA = module("autoA")
         val autoB = module("autoB")
         module("main", listOf(autoA, autoB), listOf("autoA"), additionalKotlinArguments = listOf("-Xadd-reads=main=autoA"))
+    }
+
+    @Test
+    fun testAddReadsRepeated() {
+        // Like javac, the reads given with several values of -Xadd-reads for the same module are all applied.
+        val a = module("a")
+        val b = module("b")
+        module("main", listOf(a, b), listOf("a", "b"), listOf("-Xadd-reads=main=a", "-Xadd-reads=main=b"))
+        module(
+            "main", listOf(a, b), listOf("a", "b"), listOf("-Xadd-reads=main=a"),
+            checkKotlinOutput = assertCompilationError("module 'b', which the current module does not depend on"),
+        )
+    }
+
+    @Test
+    fun testAddExportsRepeated() {
+        // Like javac, the exports given with several values of -Xadd-exports are all applied, and the targets of the same package are
+        // merged.
+        val lib = module("lib")
+        val exportsP2 = "-Xadd-exports=lib/lib.p2=main"
+        module("main", listOf(lib), additionalKotlinArguments = listOf("-Xadd-exports=lib/lib.p1=main", exportsP2))
+        for (exportsP1 in listOf(listOf("ALL-UNNAMED", "main"), listOf("main", "ALL-UNNAMED"))) {
+            module("main", listOf(lib), additionalKotlinArguments = exportsP1.map { "-Xadd-exports=lib/lib.p1=$it" } + exportsP2)
+        }
+        module(
+            "main", listOf(lib), additionalKotlinArguments = listOf("-Xadd-exports=lib/lib.p1=ALL-UNNAMED", exportsP2),
+            checkKotlinOutput = {
+                assertCompilationError("does not export package 'lib.p1'")(it)
+                assertTrue("does not export package 'lib.p2'" !in it, it)
+            },
+        )
     }
 
     @Test
