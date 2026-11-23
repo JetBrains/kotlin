@@ -365,9 +365,11 @@ internal object KotlinJsBrowserTestMetrics : FusMetrics {
     internal fun collectMetrics(project: Project, jdBrowserRunner: KotlinBrowserTestRunnerDsl) {
         // KT-90126: runners of unsupported types are reported via a diagnostic, FUS should not fail on them
         val browserKind = jdBrowserRunner.getBrowserKindOrNull() ?: return
+        //KT-91219: for default tests location access `testsLocation` leads to a task creation `KotlinJsIrCompilation.registerTestLocations`
+        val changedOptions = jdBrowserRunner.optionsChangedFromDefaults()
         project.addConfigurationMetrics { metricContainer ->
             metricContainer.put(StringListMetrics.JS_TEST_BROWSER_TYPE, browserKind.browserName)
-            metricContainer.put(StringListMetrics.JS_TEST_BROWSER_CHANGED_OPTION, jdBrowserRunner.optionsChangedFromDefaults())
+            metricContainer.put(StringListMetrics.JS_TEST_BROWSER_CHANGED_OPTION, changedOptions)
         }
     }
 
@@ -513,7 +515,10 @@ internal object KotlinSourceSetMetrics : FusMetrics {
 
 internal object NodeJsToolchainServiceMetrics : FusMetrics {
     @OptIn(ExperimentalNodeJsToolchainDsl::class)
-    internal fun collectServiceCreated(project: Project, serviceProvider: Provider<out NodeJsToolchainService<out NodeJsToolchainService.Parameters>>) {
+    internal fun collectServiceCreated(
+        project: Project,
+        serviceProvider: Provider<out NodeJsToolchainService<out NodeJsToolchainService.Parameters>>,
+    ) {
         project.addConfigurationMetrics {
             val service = serviceProvider.orNull ?: return@addConfigurationMetrics
             val metric = when (service) {
@@ -530,7 +535,10 @@ internal object NodeJsToolchainServiceMetrics : FusMetrics {
 
 internal object WasiAdapterToolchainServiceMetrics : FusMetrics {
     @OptIn(ExperimentalWasmDsl::class)
-    internal fun collectServiceCreated(project: Project, serviceProvider: Provider<out WasiAdapterToolchainService<out WasiAdapterToolchainService.Parameters>>) {
+    internal fun collectServiceCreated(
+        project: Project,
+        serviceProvider: Provider<out WasiAdapterToolchainService<out WasiAdapterToolchainService.Parameters>>,
+    ) {
         project.addConfigurationMetrics {
             val service = serviceProvider.orNull ?: return@addConfigurationMetrics
             val metric = when (service) {
