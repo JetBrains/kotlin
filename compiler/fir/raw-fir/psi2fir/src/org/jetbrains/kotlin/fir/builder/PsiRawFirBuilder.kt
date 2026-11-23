@@ -2531,6 +2531,7 @@ open class PsiRawFirBuilder(
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
             context: Context<T>,
         ): FirProperty {
+            val isLocal = isLocal
             val isInsideScript = context.containingScriptSymbol != null && context.className == FqName.ROOT
             val propertyName = when {
                 (isLocal || isInsideScript) && isSingleUnderscore -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
@@ -2565,13 +2566,13 @@ open class PsiRawFirBuilder(
                     }
 
                     initializer = propertyInitializer
-                    isLocal = context.inLocalContext
+                    this.isLocal = context.inLocalContext
 
                     val propertyAnnotations = mutableListOf<FirAnnotationCall>()
                     for (annotationEntry in annotationEntries) {
                         propertyAnnotations += annotationEntry.convert<FirAnnotationCall>()
                     }
-                    if (this@toFirProperty.isLocal) {
+                    if (isLocal) {
                         symbol = propertySymbol
 
                         extractTypeParametersTo(this, symbol)
@@ -2702,7 +2703,7 @@ open class PsiRawFirBuilder(
                         }
                     }
                     annotations += when {
-                        this@toFirProperty.isLocal -> propertyAnnotations
+                        isLocal -> propertyAnnotations
                         else -> propertyAnnotations.filterStandalonePropertyRelevantAnnotations(isVar)
                     }
 
