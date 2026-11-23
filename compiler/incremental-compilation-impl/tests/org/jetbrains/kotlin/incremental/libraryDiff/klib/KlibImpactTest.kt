@@ -52,13 +52,13 @@ class KlibImpactTest {
         assertEquals(emptySet(), reverseResolver.getImpactingClasses(base))
     }
 
-    private fun snapshot(id: String, vararg classInfos: KlibClassInfo): KlibSnapshot =
+    private fun snapshot(id: String, vararg classInfos: KlibClassInfo): KlibFileSnapshot =
         PackageFragmentSnapshot(
             id = id,
             contentHash = 0,
             packageName = FqName("com.example"),
             classInfos = classInfos.toList(),
             packageMemberNames = emptySet(),
-            packageFragmentProto = null,
+            classMemberLevelSnapshot = null,
         )
 }

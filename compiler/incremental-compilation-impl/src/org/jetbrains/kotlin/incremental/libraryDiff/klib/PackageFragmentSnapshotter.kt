@@ -114,7 +114,9 @@ private class PackageFragmentSnapshotBuilder(private val packageName: FqName, pr
             contentHash = fragmentsBytes.map { it.hashToLong() }.reduce { acc, hash -> acc * 31 + hash },
             classInfos = classInfos.toList(),
             packageMemberNames = packageMemberNames.toSet(),
-            packageFragmentProto = fragmentsBytes.toList().takeIf { settings.granularity == CLASS_MEMBER_LEVEL },
+            classMemberLevelSnapshot = if (settings.granularity == CLASS_MEMBER_LEVEL) {
+                PackageFragmentInfo(packageName, fragmentsBytes.toList())
+            } else null,
         )
     }
 

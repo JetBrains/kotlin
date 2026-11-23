@@ -201,8 +201,8 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
         fqNames = setOf("com.example.Outer", "com.example.Outer.Companion")
     )
 
-    private fun snapshot(testName: String, version: String, granularity: ClassSnapshotGranularity): List<KlibSnapshot> =
-        snapshotKlib(File(testDataDir, "$testName/src/$version"), granularity).klibSnapshots.toList()
+    private fun snapshot(testName: String, version: String, granularity: ClassSnapshotGranularity): List<KlibFileSnapshot> =
+        snapshotKlib(File(testDataDir, "$testName/src/$version"), granularity).klibFileSnapshots.toList()
 
     private fun computeChanges(testName: String, granularity: ClassSnapshotGranularity = CLASS_MEMBER_LEVEL): Changes =
         computeChanges(snapshot(testName, "current", granularity), snapshot(testName, "previous", granularity))
@@ -211,14 +211,14 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
      * Granularity is set per klib, so take each source file's snapshot from the klib snapshotted with the granularity encoded in the
      * file name (`<previous build granularity>FirstBuild_<current build granularity>SecondBuild_Class`).
      */
-    private fun snapshotWithMixedGranularities(version: String): List<KlibSnapshot> {
+    private fun snapshotWithMixedGranularities(version: String): List<KlibFileSnapshot> {
         val coarse = snapshot("testMixedClassSnapshotGranularities", version, CLASS_LEVEL).associateBy { it.id }
         val fineMarker = if (version == "previous") "FineGrainedFirstBuild" else "FineGrainedSecondBuild"
         return snapshot("testMixedClassSnapshotGranularities", version, CLASS_MEMBER_LEVEL)
             .map { if (fineMarker in it.id) it else coarse.getValue(it.id) }
     }
 
-    private fun computeChanges(current: List<KlibSnapshot>, previous: List<KlibSnapshot>): Changes =
+    private fun computeChanges(current: List<KlibFileSnapshot>, previous: List<KlibFileSnapshot>): Changes =
         KlibChangesComputer.computeChangedAndImpactedSet(current, previous, ClasspathSnapshotBuildReporter(DoNothingBuildReporter))
             .toChanges()
 }

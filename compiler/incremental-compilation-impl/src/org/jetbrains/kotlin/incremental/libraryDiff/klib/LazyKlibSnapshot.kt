@@ -25,11 +25,11 @@ internal class LazyKlibSnapshot(
     private val shrunkPreviousSnapshotFile: File,
     private val reporter: ClasspathSnapshotBuildReporter,
 ) {
-    private var currentSnapshot: List<KlibSnapshot>? = null
-    private var computedShrunkSnapshotAgainstPreviousLookups: List<KlibSnapshot>? = null
-    private var savedShrunkSnapshot: List<KlibSnapshot>? = null
+    private var currentSnapshot: List<KlibFileSnapshot>? = null
+    private var computedShrunkSnapshotAgainstPreviousLookups: List<KlibFileSnapshot>? = null
+    private var savedShrunkSnapshot: List<KlibFileSnapshot>? = null
 
-    fun getCurrentKlibSnapshot(metricToReportIfComputing: LazySnapshotLoadingMetrics): List<KlibSnapshot> {
+    fun getCurrentKlibSnapshot(metricToReportIfComputing: LazySnapshotLoadingMetrics): List<KlibFileSnapshot> {
         currentSnapshot?.let { return it }
 
         return reporter.measure(metricToReportIfComputing.loadClasspathSnapshotTag) {
@@ -43,7 +43,7 @@ internal class LazyKlibSnapshot(
     fun getComputedShrunkKlibSnapshotAgainstPreviousLookups(
         lookupStorage: LookupStorage,
         metricToReportIfComputing: LazySnapshotLoadingMetrics,
-    ): List<KlibSnapshot> {
+    ): List<KlibFileSnapshot> {
         computedShrunkSnapshotAgainstPreviousLookups?.let { return it }
 
         val currentSnapshot = getCurrentKlibSnapshot(metricToReportIfComputing)
@@ -52,7 +52,7 @@ internal class LazyKlibSnapshot(
         }.also { computedShrunkSnapshotAgainstPreviousLookups = it }
     }
 
-    fun getSavedShrunkKlibSnapshotAgainstPreviousLookups(metricToReportIfComputing: LazySnapshotLoadingMetrics): List<KlibSnapshot> {
+    fun getSavedShrunkKlibSnapshotAgainstPreviousLookups(metricToReportIfComputing: LazySnapshotLoadingMetrics): List<KlibFileSnapshot> {
         savedShrunkSnapshot?.let { return it }
 
         return reporter.measure(metricToReportIfComputing.loadShrunkClasspathTag) {
@@ -63,8 +63,8 @@ internal class LazyKlibSnapshot(
 
 // TODO(KT-90559): handle duplicate ids across klibs. Until then, fail instead of silently missing changes.
 /** Flattens the snapshots of all klibs. */
-internal fun List<KlibEntrySnapshot>.toKlibSnapshots(): List<KlibSnapshot> {
-    val snapshots = flatMap { it.klibSnapshots }
+internal fun List<KlibEntrySnapshot>.toKlibSnapshots(): List<KlibFileSnapshot> {
+    val snapshots = flatMap { it.klibFileSnapshots }
 
     val duplicateIds = snapshots.groupingBy { it.id }.eachCount().filterValues { it > 1 }.keys
     check(duplicateIds.isEmpty()) { "Klib snapshots with duplicate ids are not supported yet: ${duplicateIds.sorted()}" }

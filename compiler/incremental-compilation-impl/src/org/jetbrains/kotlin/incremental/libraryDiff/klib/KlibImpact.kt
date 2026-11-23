@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.name.ClassId
 
 /** Describes how a change of one symbol impacts other symbols. */
 internal sealed interface KlibImpact {
-    fun getResolver(allSnapshots: Iterable<KlibSnapshot>): ImpactedSymbolsResolver
-    fun getReverseResolver(allSnapshots: Iterable<KlibSnapshot>): ImpactingClassesResolver
+    fun getResolver(allSnapshots: Iterable<KlibFileSnapshot>): ImpactedSymbolsResolver
+    fun getReverseResolver(allSnapshots: Iterable<KlibFileSnapshot>): ImpactingClassesResolver
 }
 
 /**
@@ -24,7 +24,7 @@ internal object KlibAllImpacts : KlibImpact {
 
     private val allImpacts: List<KlibImpact> = listOf(KlibSupertypesInheritorsImpact)
 
-    override fun getResolver(allSnapshots: Iterable<KlibSnapshot>): ImpactedSymbolsResolver {
+    override fun getResolver(allSnapshots: Iterable<KlibFileSnapshot>): ImpactedSymbolsResolver {
         val resolvers = allImpacts.map { it.getResolver(allSnapshots) }
 
         return object : ImpactedSymbolsResolver {
@@ -36,7 +36,7 @@ internal object KlibAllImpacts : KlibImpact {
         }
     }
 
-    override fun getReverseResolver(allSnapshots: Iterable<KlibSnapshot>): ImpactingClassesResolver {
+    override fun getReverseResolver(allSnapshots: Iterable<KlibFileSnapshot>): ImpactingClassesResolver {
         val reverseResolvers = allImpacts.map { it.getReverseResolver(allSnapshots) }
 
         return object : ImpactingClassesResolver {
@@ -52,7 +52,7 @@ internal object KlibAllImpacts : KlibImpact {
  */
 private object KlibSupertypesInheritorsImpact : KlibImpact {
 
-    override fun getResolver(allSnapshots: Iterable<KlibSnapshot>): ImpactedSymbolsResolver {
+    override fun getResolver(allSnapshots: Iterable<KlibFileSnapshot>): ImpactedSymbolsResolver {
         val classIdToSubclasses =
             getClassIdToSubclassesMap(allSnapshots.flatMap { it.getKlibClassInfos() })
 
@@ -68,7 +68,7 @@ private object KlibSupertypesInheritorsImpact : KlibImpact {
         }
     }
 
-    override fun getReverseResolver(allSnapshots: Iterable<KlibSnapshot>): ImpactingClassesResolver {
+    override fun getReverseResolver(allSnapshots: Iterable<KlibFileSnapshot>): ImpactingClassesResolver {
         val classIdToSupertypes =
             getClassIdToSupertypesMap(allSnapshots.flatMap { it.getKlibClassInfos() })
 
@@ -78,7 +78,7 @@ private object KlibSupertypesInheritorsImpact : KlibImpact {
         }
     }
 
-    private fun KlibSnapshot.getKlibClassInfos(): Iterable<KlibClassInfo> =
+    private fun KlibFileSnapshot.getKlibClassInfos(): Iterable<KlibClassInfo> =
         when (this) {
             is PackageFragmentSnapshot -> classInfos
         }

@@ -30,14 +30,14 @@ import org.jetbrains.kotlin.utils.filterToSetOrEmpty
 internal object KlibSnapshotShrinker {
 
     /** Retains only the snapshots referenced, directly or transitively, by the lookup symbols stored in [lookupStorage]. */
-    fun shrink(allSnapshots: List<KlibSnapshot>, lookupStorage: LookupStorage): List<KlibSnapshot> =
+    fun shrink(allSnapshots: List<KlibFileSnapshot>, lookupStorage: LookupStorage): List<KlibFileSnapshot> =
         shrink(allSnapshots, lookupStorage.lookupSymbols)
 
     /**
      * Retains only the snapshots referenced by [lookupSymbols], directly or transitively (e.g. via supertypes), so that the impact
      * of changes can still be computed (see [KlibChangesComputer.computeChangedAndImpactedSet]).
      */
-    fun shrink(allSnapshots: List<KlibSnapshot>, lookupSymbols: Collection<LookupSymbolKey>): List<KlibSnapshot> {
+    fun shrink(allSnapshots: List<KlibFileSnapshot>, lookupSymbols: Collection<LookupSymbolKey>): List<KlibFileSnapshot> {
         val lookupSymbolSet =
             LookupSymbolSet(lookupSymbols.asSequence().map { LookupSymbol(name = it.name, scope = it.scope) }.asIterable())
 
@@ -59,7 +59,7 @@ internal object KlibSnapshotShrinker {
         }
     }
 
-    private fun findReferencedClassIds(allSnapshots: List<KlibSnapshot>, lookupSymbols: LookupSymbolSet): Set<ClassId> =
+    private fun findReferencedClassIds(allSnapshots: List<KlibFileSnapshot>, lookupSymbols: LookupSymbolSet): Set<ClassId> =
         allSnapshots
             .flatMap { it.classIds() }
             .filterToSetOrEmpty { classId ->
@@ -68,14 +68,14 @@ internal object KlibSnapshotShrinker {
             }
 
     /** The returned set is *inclusive* (it contains [referencedClassIds] + their supertypes, directly or transitively). */
-    private fun findTransitivelyReferencedClassIds(allSnapshots: List<KlibSnapshot>, referencedClassIds: Set<ClassId>): Set<ClassId> {
+    private fun findTransitivelyReferencedClassIds(allSnapshots: List<KlibFileSnapshot>, referencedClassIds: Set<ClassId>): Set<ClassId> {
         if (referencedClassIds.isEmpty()) return emptySet()
 
         val impactingClassesResolver = KlibAllImpacts.getReverseResolver(allSnapshots)
         return findReachableNodes(referencedClassIds, impactingClassesResolver::getImpactingClasses)
     }
 
-    private fun KlibSnapshot.classIds(): List<ClassId> = when (this) {
+    private fun KlibFileSnapshot.classIds(): List<ClassId> = when (this) {
         is PackageFragmentSnapshot -> classInfos.map { it.classId }
     }
 }

@@ -25,6 +25,6 @@ object KlibEntrySnapshotter {
         val fragmentSnapshots = metrics.measure(SNAPSHOT_CLASSES) {
             PackageFragmentSnapshotter.snapshot(library.metadata, settings)
         }
-        return KlibEntrySnapshot(klibSnapshots = fragmentSnapshots)
+        return KlibEntrySnapshot(klibFileSnapshots = fragmentSnapshots)
     }
 }

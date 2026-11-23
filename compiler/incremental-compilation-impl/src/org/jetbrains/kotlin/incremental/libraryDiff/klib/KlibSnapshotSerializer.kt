@@ -23,17 +23,17 @@ import java.io.DataOutput
 internal object KlibEntrySnapshotExternalizer : DataExternalizer<KlibEntrySnapshot> {
 
     override fun save(output: DataOutput, snapshot: KlibEntrySnapshot) {
-        SetExternalizer(KlibSnapshotExternalizer).save(output, snapshot.klibSnapshots)
+        SetExternalizer(KlibSnapshotExternalizer).save(output, snapshot.klibFileSnapshots)
     }
 
     override fun read(input: DataInput): KlibEntrySnapshot {
         return KlibEntrySnapshot(
-            klibSnapshots = SetExternalizer(KlibSnapshotExternalizer).read(input),
+            klibFileSnapshots = SetExternalizer(KlibSnapshotExternalizer).read(input),
         )
     }
 }
 
-internal object KlibSnapshotExternalizer : DataExternalizer<KlibSnapshot> by DelegateDataExternalizer(
+internal object KlibSnapshotExternalizer : DataExternalizer<KlibFileSnapshot> by DelegateDataExternalizer(
     types = listOf(PackageFragmentSnapshot::class.java),
     typesExternalizers = listOf(PackageFragmentSnapshotExternalizer),
 )
@@ -46,18 +46,23 @@ internal object PackageFragmentSnapshotExternalizer : DataExternalizer<PackageFr
         FqNameExternalizer.save(output, snapshot.packageName)
         ListExternalizer(KlibClassInfoExternalizer).save(output, snapshot.classInfos)
         SetExternalizer(StringExternalizer).save(output, snapshot.packageMemberNames)
-        NullableValueExternalizer(ListExternalizer(ByteArrayExternalizer)).save(output, snapshot.packageFragmentProto)
+        // The package name of `classMemberLevelSnapshot` is the same as the snapshot's, so only the fragment bytes are saved
+        NullableValueExternalizer(ListExternalizer(ByteArrayExternalizer)).save(output, snapshot.classMemberLevelSnapshot?.packageFragmentProto)
     }
 
     override fun read(input: DataInput): PackageFragmentSnapshot {
+        val id = StringExternalizer.read(input)
+        val contentHash = LongExternalizer.read(input)
+        // To reduce memory usage, apply object interning to the package name as it is commonly shared
+        val packageName = FqNameExternalizerWithInterning.read(input)
         return PackageFragmentSnapshot(
-            id = StringExternalizer.read(input),
-            contentHash = LongExternalizer.read(input),
-            // To reduce memory usage, apply object interning to the package name as it is commonly shared
-            packageName = FqNameExternalizerWithInterning.read(input),
+            id = id,
+            contentHash = contentHash,
+            packageName = packageName,
             classInfos = ListExternalizer(KlibClassInfoExternalizer).read(input),
             packageMemberNames = SetExternalizer(StringExternalizer).read(input),
-            packageFragmentProto = NullableValueExternalizer(ListExternalizer(ByteArrayExternalizer)).read(input),
+            classMemberLevelSnapshot = NullableValueExternalizer(ListExternalizer(ByteArrayExternalizer)).read(input)
+                ?.let { PackageFragmentInfo(packageName, it) },
         )
     }
 }

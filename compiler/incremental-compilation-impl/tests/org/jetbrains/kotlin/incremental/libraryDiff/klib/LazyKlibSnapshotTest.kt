@@ -34,7 +34,7 @@ class LazyKlibSnapshotTest : KlibSnapshotTestCommon() {
         val lazyKlibSnapshot = lazyKlibSnapshot(currentEntrySnapshots = listOf(firstKlib, secondKlib))
 
         assertEquals(
-            (firstKlib.klibSnapshots + secondKlib.klibSnapshots).associate { it.id to it.contentHash },
+            (firstKlib.klibFileSnapshots + secondKlib.klibFileSnapshots).associate { it.id to it.contentHash },
             lazyKlibSnapshot.getCurrentKlibSnapshot(OnClasspathDiffComputation).associate { it.id to it.contentHash },
         )
     }
@@ -49,7 +49,7 @@ class LazyKlibSnapshotTest : KlibSnapshotTestCommon() {
 
     @Test
     fun testSavedShrunkSnapshot() {
-        val shrunkSnapshot = firstKlib.klibSnapshots.filter { it.id == "com/example/BaseKt" }
+        val shrunkSnapshot = firstKlib.klibFileSnapshots.filter { it.id == "com/example/BaseKt" }
         val lazyKlibSnapshot = lazyKlibSnapshot(shrunkPreviousSnapshot = shrunkSnapshot)
 
         assertEquals(
@@ -104,7 +104,7 @@ class LazyKlibSnapshotTest : KlibSnapshotTestCommon() {
 
     private fun lazyKlibSnapshot(
         currentEntrySnapshots: List<KlibEntrySnapshot> = emptyList(),
-        shrunkPreviousSnapshot: List<KlibSnapshot> = emptyList(),
+        shrunkPreviousSnapshot: List<KlibFileSnapshot> = emptyList(),
     ): LazyKlibSnapshot {
         val currentSnapshotFiles = currentEntrySnapshots.mapIndexed { index, entrySnapshot ->
             File(tmpDir, "current-$index.bin").also { KlibEntrySnapshotExternalizer.saveToFile(it, entrySnapshot) }

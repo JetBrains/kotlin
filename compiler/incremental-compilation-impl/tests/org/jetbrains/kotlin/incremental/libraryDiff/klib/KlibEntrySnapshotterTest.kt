@@ -24,7 +24,7 @@ class KlibEntrySnapshotterTest : KlibSnapshotTestCommon() {
 
     @Test
     fun testOneSnapshotPerSourceFile() {
-        val snapshots = snapshotKlib(classesAndPackageMembersDir).klibSnapshots
+        val snapshots = snapshotKlib(classesAndPackageMembersDir).klibFileSnapshots
 
         assertEquals(
             setOf("com/example/ClassesKt", "com/example/TopLevelKt", "com/example/ClassAndTopLevelMembersKt"),
@@ -39,7 +39,7 @@ class KlibEntrySnapshotterTest : KlibSnapshotTestCommon() {
 
     @Test
     fun testAccessibleClassesAndSupertypes() {
-        val snapshots = snapshotKlib(classesAndPackageMembersDir).klibSnapshots.associateBy { it.id }
+        val snapshots = snapshotKlib(classesAndPackageMembersDir).klibFileSnapshots.associateBy { it.id }
         val snapshot = assertIs<PackageFragmentSnapshot>(snapshots.getValue("com/example/ClassesKt"))
         val classInfos = snapshot.classInfos.associateBy { it.classId }
 
@@ -61,7 +61,7 @@ class KlibEntrySnapshotterTest : KlibSnapshotTestCommon() {
 
     @Test
     fun testNonPrivatePackageMemberNames() {
-        val snapshots = snapshotKlib(classesAndPackageMembersDir).klibSnapshots.associateBy { it.id }
+        val snapshots = snapshotKlib(classesAndPackageMembersDir).klibFileSnapshots.associateBy { it.id }
 
         assertEquals(
             setOf("publicFunction", "publicProperty", "internalFunction", "PublicTypeAlias"),
@@ -72,7 +72,7 @@ class KlibEntrySnapshotterTest : KlibSnapshotTestCommon() {
 
     @Test
     fun testClassAndTopLevelMembersInOneFile() {
-        val snapshots = snapshotKlib(classesAndPackageMembersDir).klibSnapshots.associateBy { it.id }
+        val snapshots = snapshotKlib(classesAndPackageMembersDir).klibFileSnapshots.associateBy { it.id }
         val snapshot = assertIs<PackageFragmentSnapshot>(snapshots.getValue("com/example/ClassAndTopLevelMembersKt"))
 
         assertEquals(listOf(ClassId.fromString("com/example/SomeClass")), snapshot.classInfos.map { it.classId })
@@ -81,18 +81,18 @@ class KlibEntrySnapshotterTest : KlibSnapshotTestCommon() {
 
     @Test
     fun testGranularity() {
-        fun KlibSnapshot.memberLevelData(): Any? = when (this) {
-            is PackageFragmentSnapshot -> packageFragmentProto
+        fun KlibFileSnapshot.memberLevelData(): Any? = when (this) {
+            is PackageFragmentSnapshot -> classMemberLevelSnapshot
         }
 
-        snapshotKlib(classesAndPackageMembersDir, CLASS_MEMBER_LEVEL).klibSnapshots.forEach { assertNotNull(it.memberLevelData()) }
-        snapshotKlib(classesAndPackageMembersDir, CLASS_LEVEL).klibSnapshots.forEach { assertNull(it.memberLevelData()) }
+        snapshotKlib(classesAndPackageMembersDir, CLASS_MEMBER_LEVEL).klibFileSnapshots.forEach { assertNotNull(it.memberLevelData()) }
+        snapshotKlib(classesAndPackageMembersDir, CLASS_LEVEL).klibFileSnapshots.forEach { assertNull(it.memberLevelData()) }
     }
 
     @Test
     fun testContentHashIsStable() {
-        val first = snapshotKlib(classesAndPackageMembersDir).klibSnapshots.associate { it.id to it.contentHash }
-        val second = snapshotKlib(classesAndPackageMembersDir).klibSnapshots.associate { it.id to it.contentHash }
+        val first = snapshotKlib(classesAndPackageMembersDir).klibFileSnapshots.associate { it.id to it.contentHash }
+        val second = snapshotKlib(classesAndPackageMembersDir).klibFileSnapshots.associate { it.id to it.contentHash }
 
         assertEquals(first, second)
     }
@@ -100,7 +100,7 @@ class KlibEntrySnapshotterTest : KlibSnapshotTestCommon() {
     @Test
     fun testContentHashChangesOnlyOnAbiChange() {
         fun contentHashes(dir: String) = snapshotKlib(File(testDataDir, "testContentHash/src/$dir"))
-            .klibSnapshots.associate { it.id to it.contentHash }
+            .klibFileSnapshots.associate { it.id to it.contentHash }
 
         val current = contentHashes("current")
         val previous = contentHashes("previous")

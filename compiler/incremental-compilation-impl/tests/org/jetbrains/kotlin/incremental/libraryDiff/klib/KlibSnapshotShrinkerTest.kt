@@ -13,8 +13,8 @@ import kotlin.test.assertEquals
 /** Unlike `ClasspathSnapshotShrinkerTest`, there are no `package-info` / `module-info` cases: klibs don't have them. */
 class KlibSnapshotShrinkerTest : KlibSnapshotTestCommon() {
 
-    private val allSnapshots: List<KlibSnapshot> by lazy {
-        snapshotKlib(File(klibTestDataDir, "KlibSnapshotShrinkerTest/src")).klibSnapshots.toList()
+    private val allSnapshots: List<KlibFileSnapshot> by lazy {
+        snapshotKlib(File(klibTestDataDir, "KlibSnapshotShrinkerTest/src")).klibFileSnapshots.toList()
     }
 
     private fun shrink(vararg lookupSymbols: LookupSymbolKey): Set<String> =

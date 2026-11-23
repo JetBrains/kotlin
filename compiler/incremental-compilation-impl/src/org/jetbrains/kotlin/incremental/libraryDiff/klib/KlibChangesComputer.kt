@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClassMembers
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ProgramSymbolSet
 import org.jetbrains.kotlin.incremental.snapshots.LazySnapshotLoadingMetrics
-import org.jetbrains.kotlin.library.metadata.parsePackageFragment
-import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import kotlin.math.max
 
@@ -63,12 +61,12 @@ internal object KlibChangesComputer {
      * NOTE: Each list of snapshots must not contain duplicate ids (see [toKlibSnapshots]).
      */
     fun computeChangedAndImpactedSet(
-        currentSnapshots: List<KlibSnapshot>,
-        previousSnapshots: List<KlibSnapshot>,
+        currentSnapshots: List<KlibFileSnapshot>,
+        previousSnapshots: List<KlibFileSnapshot>,
         reporter: ClasspathSnapshotBuildReporter,
     ): ProgramSymbolSet {
-        val current: Map<String, KlibSnapshot> = currentSnapshots.associateBy { it.id }
-        val previous: Map<String, KlibSnapshot> = previousSnapshots.associateBy { it.id }
+        val current: Map<String, KlibFileSnapshot> = currentSnapshots.associateBy { it.id }
+        val previous: Map<String, KlibFileSnapshot> = previousSnapshots.associateBy { it.id }
 
         val changedCurrentSnapshots = current.values.filter { it.contentHash != previous[it.id]?.contentHash }
         val changedPreviousSnapshots = previous.values.filter { it.contentHash != current[it.id]?.contentHash }
@@ -105,8 +103,8 @@ internal object KlibChangesComputer {
      * Snapshots without member-level data, or whose granularity changed between builds, are compared at the coarse level.
      */
     private fun computePackageChanges(
-        currentSnapshots: List<KlibSnapshot>,
-        previousSnapshots: List<KlibSnapshot>,
+        currentSnapshots: List<KlibFileSnapshot>,
+        previousSnapshots: List<KlibFileSnapshot>,
     ): ProgramSymbolSet {
         val granularityChangedIds = findSnapshotsWithGranularityChange(currentSnapshots, previousSnapshots)
 
@@ -122,8 +120,8 @@ internal object KlibChangesComputer {
     }
 
     private fun findSnapshotsWithGranularityChange(
-        currentSnapshots: List<KlibSnapshot>,
-        previousSnapshots: List<KlibSnapshot>,
+        currentSnapshots: List<KlibFileSnapshot>,
+        previousSnapshots: List<KlibFileSnapshot>,
     ): Set<String> {
         val current = currentSnapshots.associateBy { it.id }
         val previous = previousSnapshots.associateBy { it.id }
@@ -133,13 +131,13 @@ internal object KlibChangesComputer {
         }
     }
 
-    private fun KlibSnapshot.hasMemberLevelData(): Boolean = when (this) {
-        is PackageFragmentSnapshot -> packageFragmentProto != null
+    private fun KlibFileSnapshot.hasMemberLevelData(): Boolean = when (this) {
+        is PackageFragmentSnapshot -> classMemberLevelSnapshot != null
     }
 
     private fun computeCoarseGrainedChanges(
-        currentSnapshots: List<KlibSnapshot>,
-        previousSnapshots: List<KlibSnapshot>,
+        currentSnapshots: List<KlibFileSnapshot>,
+        previousSnapshots: List<KlibFileSnapshot>,
     ): ProgramSymbolSet {
         // Note: We have removed unchanged snapshots earlier in computeChangedAndImpactedSet method, so here we only have changed ones.
         return ProgramSymbolSet.Collector().run {
@@ -156,8 +154,8 @@ internal object KlibChangesComputer {
     }
 
     private fun computeFineGrainedChanges(
-        currentSnapshots: List<KlibSnapshot>,
-        previousSnapshots: List<KlibSnapshot>,
+        currentSnapshots: List<KlibFileSnapshot>,
+        previousSnapshots: List<KlibFileSnapshot>,
     ): ProgramSymbolSet {
         val previousProtoDataMap = previousSnapshots.associate { it.id to createProtoData(it) }
         val currentProtoDataMap = currentSnapshots.associate { it.id to createProtoData(it) }
@@ -181,30 +179,13 @@ internal object KlibChangesComputer {
         }
     }
 
-    private fun createProtoData(snapshot: KlibSnapshot): List<ProtoData> {
-        val result = mutableListOf<ProtoData>()
-
-        when (snapshot) {
-            is PackageFragmentSnapshot -> {
-                val accessibleClassIds = snapshot.classInfos.mapTo(HashSet(), KlibClassInfo::classId)
-
-                for (proto in requireNotNull(snapshot.packageFragmentProto)) {
-                    val fragment = parsePackageFragment(proto)
-                    val nameResolver = NameResolverImpl(fragment.strings, fragment.qualifiedNames)
-
-                    for (classProto in fragment.class_List) {
-                        val classId = nameResolver.getClassId(classProto.fqName)
-                        if (classId in accessibleClassIds) {
-                            result.add(ClassProtoData(classProto, nameResolver))
-                        }
-                    }
-
-                    result.add(PackagePartProtoData(fragment.`package`, nameResolver, snapshot.packageName))
-                }
+    private fun createProtoData(snapshot: KlibFileSnapshot): List<ProtoData> = when (snapshot) {
+        is PackageFragmentSnapshot -> {
+            val accessibleClassIds = snapshot.classInfos.mapTo(HashSet(), KlibClassInfo::classId)
+            requireNotNull(snapshot.classMemberLevelSnapshot).proto.filter { protoData ->
+                protoData !is ClassProtoData || protoData.nameResolver.getClassId(protoData.proto.fqName) in accessibleClassIds
             }
         }
-
-        return result
     }
 
     private fun ProgramSymbolSet.Collector.collectClassProtoChanges(
@@ -261,7 +242,7 @@ internal object KlibChangesComputer {
      *
      * The returned set is *inclusive* (it contains [changes] + the impacted symbols).
      */
-    private fun computeImpactedSymbols(changes: ProgramSymbolSet, allSnapshots: Iterable<KlibSnapshot>): ProgramSymbolSet {
+    private fun computeImpactedSymbols(changes: ProgramSymbolSet, allSnapshots: Iterable<KlibFileSnapshot>): ProgramSymbolSet {
         val impactedSymbolsResolver = KlibAllImpacts.getResolver(allSnapshots)
 
         return ProgramSymbolSet.Collector().apply {
