@@ -696,6 +696,26 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     }
 
     @Test
+    fun testPatchModuleRepeated() {
+        // Like javac, -Xpatch-module can be given once for each of several modules, and all of them are patched.
+        val lib = module("lib")
+        val other = module("other")
+        val libExtra = module("libExtra", destination = File(tmpdir, "libExtra"))
+        val otherExtra = module("otherExtra", destination = File(tmpdir, "otherExtra"))
+        val patches = listOf("-Xpatch-module=lib=${libExtra.path}", "-Xpatch-module=other=${otherExtra.path}")
+        module(
+            "main", listOf(lib, other), listOf("lib", "other"), patches,
+            checkKotlinOutput = assertCompilationError(
+                "does not export package 'lib.extra'", "does not export package 'other.extra'",
+            ),
+        )
+        module(
+            "main", listOf(lib, other), listOf("lib", "other"),
+            patches + listOf("-Xadd-exports=lib/lib.extra=ALL-UNNAMED", "-Xadd-exports=other/other.extra=ALL-UNNAMED"),
+        )
+    }
+
+    @Test
     fun testPatchModuleOutsideGraph() {
         // Like javac, a patch of a module outside the module graph has no effect, so the classes in the patch path stay in the unnamed
         // module.
