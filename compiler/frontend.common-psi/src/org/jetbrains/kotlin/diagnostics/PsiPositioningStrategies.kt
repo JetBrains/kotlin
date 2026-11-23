@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
-object PositioningStrategies {
+object PsiPositioningStrategies {
     open class DeclarationHeader<T : PsiElement>(private val checkValidity: Boolean) : PositioningStrategy<T>() {
         @OptIn(DiagnosticLossRisk::class)
         override fun isValid(element: T): Boolean {
