@@ -193,7 +193,7 @@ object PositioningStrategies {
             } else if (element is KtPropertyAccessor) {
                 return markElement(element.namePlaceholder)
             }
-            return DEFAULT.mark(element)
+            return NAME_IDENTIFIER.mark(element)
         }
     }
 

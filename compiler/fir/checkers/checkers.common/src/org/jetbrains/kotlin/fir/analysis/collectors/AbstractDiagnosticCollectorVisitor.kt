@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFr
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
+import org.jetbrains.kotlin.fir.scopes.impl.isCompilerGeneratedCompanion
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -92,7 +93,16 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
         withAnnotationContainer(regularClass) {
-            visitWithDeclaration(regularClass)
+            visitWithDeclaration(regularClass) {
+                visitNestedElements(regularClass)
+
+                // A compiler generated companion object must report diagnostics.
+                val companionObjectSymbol = regularClass.companionObjectSymbol
+                if (companionObjectSymbol?.isCompilerGeneratedCompanion() == true) {
+                    @OptIn(SymbolInternals::class)
+                    visitRegularClass(companionObjectSymbol.fir, data)
+                }
+            }
         }
     }
 

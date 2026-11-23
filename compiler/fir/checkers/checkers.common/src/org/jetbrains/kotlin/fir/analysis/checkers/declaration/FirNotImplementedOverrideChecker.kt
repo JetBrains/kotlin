@@ -55,7 +55,12 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
         if (declaration.isExpect && !context.languageVersionSettings.getFlag(AnalysisFlags.metadataCompilation)) return
         val source = declaration.source ?: return
         val sourceKind = source.kind
-        if (sourceKind is KtFakeSourceElementKind && sourceKind != KtFakeSourceElementKind.EnumInitializer) return
+        if (
+            sourceKind is KtFakeSourceElementKind &&
+            sourceKind != KtFakeSourceElementKind.EnumInitializer &&
+            sourceKind != KtFakeSourceElementKind.PluginGenerated.Default
+        ) return
+
         val modality = declaration.modality()
         val classKind = declaration.classKind
         if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.ENUM_CLASS) return
