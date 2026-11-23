@@ -1,0 +1,33 @@
+FILE: dataStaticConstructorWithExplicitConstructor_kotlin.kt
+    @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final class A : R|kotlin/Any| {
+        private constructor(a: R|kotlin/Int|, b: R|kotlin/String|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+
+        public final val b: R|kotlin/String| = R|<local>/b|
+            public get(): R|kotlin/String|
+
+        public open override fun toString(): R|kotlin/String|
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public open override fun hashCode(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun of(a: R|kotlin/Int|, b: R|kotlin/String|): R|A|
+
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval viaStaticConstructor: R|A| = Q|A(.<companion>)|.R|/A.Companion.of|(Int(1), String(1))
+        R|kotlin/test/assertEquals|<R|A|>(Q|A(.<companion>)|.R|/A.Companion.of|(Int(1), String(1)), R|<local>/viaStaticConstructor|)
+        ^box String(OK)
+    }
