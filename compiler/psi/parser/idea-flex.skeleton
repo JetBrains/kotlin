@@ -1,0 +1,240 @@
+
+  /** This character denotes the end of file */
+  public static final int YYEOF = -1;
+
+  /** initial size of the lookahead buffer */
+--- private static final int ZZ_BUFFERSIZE = ...;
+
+  /** lexical states */
+---  lexical states, charmap
+
+  /* error codes */
+  private static final int ZZ_UNKNOWN_ERROR = 0;
+  private static final int ZZ_NO_MATCH = 1;
+  private static final int ZZ_PUSHBACK_2BIG = 2;
+
+  /* error messages for the codes above */
+  private static final String[] ZZ_ERROR_MSG = {
+    "Unknown internal scanner error",
+    "Error: could not match input",
+    "Error: pushback value was too large"
+  };
+
+--- isFinal list
+  /** the input device */
+  private java.io.Reader zzReader;
+
+  /** the current state of the DFA */
+  private int zzState;
+
+  /** the current lexical state */
+  private int zzLexicalState = YYINITIAL;
+
+  /** this buffer contains the current text to be matched and is
+      the source of the yytext() string */
+  private CharSequence zzBuffer = "";
+
+  /** the textposition at the last accepting state */
+  private int zzMarkedPos;
+
+  /** the current text position in the buffer */
+  private int zzCurrentPos;
+
+  /** startRead marks the beginning of the yytext() string in the buffer */
+  private int zzStartRead;
+
+  /** endRead marks the last character in the buffer, that has been read
+      from input */
+  private int zzEndRead;
+
+  /** zzAtEOF == true <=> the scanner is at the EOF */
+  private boolean zzAtEOF;
+
+--- user class code
+
+--- constructor declaration
+
+  public final int getTokenStart() {
+    return zzStartRead;
+  }
+
+  public final int getTokenEnd() {
+    return getTokenStart() + yylength();
+  }
+
+  public void reset(CharSequence buffer, int start, int end, int initialState) {
+    zzBuffer = buffer;
+    zzCurrentPos = zzMarkedPos = zzStartRead = start;
+    zzAtEOF  = false;
+    zzAtBOL = true;
+    zzEndRead = end;
+    yybegin(initialState);
+  }
+
+  /**
+   * Refills the input buffer.
+   *
+   * @return      {@code false}, iff there was new input.
+   *
+   * @exception   java.io.IOException  if any I/O-Error occurs
+   */
+  private boolean zzRefill() throws java.io.IOException {
+    return true;
+  }
+
+
+  /**
+   * Returns the current lexical state.
+   */
+  public final int yystate() {
+    return zzLexicalState;
+  }
+
+
+  /**
+   * Enters a new lexical state
+   *
+   * @param newState the new lexical state
+   */
+  public final void yybegin(int newState) {
+    zzLexicalState = newState;
+  }
+
+
+  /**
+   * Returns the text matched by the current regular expression.
+   */
+  public final CharSequence yytext() {
+    return zzBuffer.subSequence(zzStartRead, zzMarkedPos);
+  }
+
+
+  /**
+   * Returns the character at position {@code pos} from the
+   * matched text.
+   *
+   * It is equivalent to yytext().charAt(pos), but faster
+   *
+   * @param pos the position of the character to fetch.
+   *            A value from 0 to yylength()-1.
+   *
+   * @return the character at position pos
+   */
+  public final char yycharat(int pos) {
+    return zzBuffer.charAt(zzStartRead+pos);
+  }
+
+
+  /**
+   * Returns the length of the matched text region.
+   */
+  public final int yylength() {
+    return zzMarkedPos-zzStartRead;
+  }
+
+
+  /**
+   * Reports an error that occurred while scanning.
+   *
+   * In a wellformed scanner (no or only correct usage of
+   * yypushback(int) and a match-all fallback rule) this method
+   * will only be called with things that "Can't Possibly Happen".
+   * If this method is called, something is seriously wrong
+   * (e.g. a JFlex bug producing a faulty scanner etc.).
+   *
+   * Usual syntax/scanner level error handling should be done
+   * in error fallback rules.
+   *
+   * @param   errorCode  the code of the errormessage to display
+   */
+--- zzScanError declaration
+    String message;
+    try {
+      message = ZZ_ERROR_MSG[errorCode];
+    }
+    catch (ArrayIndexOutOfBoundsException e) {
+      message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
+    }
+
+--- throws clause
+  }
+
+
+  /**
+   * Pushes the specified amount of characters back into the input stream.
+   *
+   * They will be read again by then next call of the scanning method
+   *
+   * @param number  the number of characters to be read again.
+   *                This number must not be greater than yylength()!
+   */
+--- yypushback decl (contains zzScanError exception)
+    if ( number > yylength() )
+      zzScanError(ZZ_PUSHBACK_2BIG);
+
+    zzMarkedPos -= number;
+  }
+
+
+--- zzDoEOF
+  /**
+   * Resumes scanning until the next regular expression is matched,
+   * the end of input is encountered or an I/O-Error occurs.
+   *
+   * @return      the next token
+   * @exception   java.io.IOException  if any I/O-Error occurs
+   */
+--- yylex declaration
+    int zzInput;
+    int zzAction;
+
+    // cached fields:
+    int zzCurrentPosL;
+    int zzMarkedPosL;
+    int zzEndReadL = zzEndRead;
+    CharSequence zzBufferL = zzBuffer;
+
+--- local declarations
+
+    while (true) {
+      zzMarkedPosL = zzMarkedPos;
+
+--- start admin (line, char, col count)
+      zzAction = -1;
+
+      zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;
+
+--- start admin (lexstate etc)
+
+      zzForAction: {
+        while (true) {
+
+--- next input, line, col, char count, next transition, isFinal action
+            zzAction = zzState;
+            zzMarkedPosL = zzCurrentPosL;
+--- line count update
+          }
+
+        }
+      }
+
+      // store back cached position
+      zzMarkedPos = zzMarkedPosL;
+--- char count update
+
+      if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
+        zzAtEOF = true;
+--- eofvalue
+      }
+      else {
+--- actions
+          default:
+--- no match
+          }
+      }
+    }
+  }
+
+--- main
+
+}
