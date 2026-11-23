@@ -7,8 +7,8 @@
         <list>
           <option value=":compiler:multiplatform-parsing:generateKDocLexer" />
           <option value=":compiler:multiplatform-parsing:generateKotlinLexer" />
-          <option value=":compiler:psi:parser:lexer" />
-          <option value="--no-configuration-cache" />
+          <option value=":compiler:psi:parser:generateKDocLexer" />
+          <option value=":compiler:psi:parser:generateKotlinLexer" />
         </list>
       </option>
     </ExternalSystemSettings>
