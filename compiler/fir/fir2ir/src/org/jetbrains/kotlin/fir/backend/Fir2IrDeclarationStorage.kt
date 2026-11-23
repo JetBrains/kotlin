@@ -1497,7 +1497,7 @@ annotation class LeakedDeclarationCaches
  *   to easily track all places left when we need to extract owner from symbol
  */
 @UnsafeDuringIrConstructionAPI
-internal fun <D : IrDeclaration> IrBindableSymbol<*, D>.ownerIfBound(): D? {
+internal fun <D : IrDeclaration> IrBindableSymbol<D>.ownerIfBound(): D? {
     return runIf(isBound) { owner }
 }
 

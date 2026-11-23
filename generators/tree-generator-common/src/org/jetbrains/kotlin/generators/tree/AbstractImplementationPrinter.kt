@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.withIndent
 
@@ -20,7 +21,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
               Field : AbstractField<Field> {
 
 
-    protected abstract val implementationOptInAnnotation: PrintableAnnotation
+    protected open val implementationOptInAnnotation: PrintableAnnotation? get() = null
 
     protected abstract fun getPureAbstractElementType(implementation: Implementation): ClassRef<*>
 
@@ -42,7 +43,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
             printKDoc(implementation.kDoc)
             buildSet {
                 if (implementation.requiresOptIn) {
-                    add(implementationOptInAnnotation)
+                    addIfNotNull(implementationOptInAnnotation)
                 }
 
                 for (field in implementation.fieldsInConstructor) {
@@ -75,7 +76,9 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
             ) {
                 var printConstructor = false
                 if (implementation.isPublic && implementation.isConstructorPublic && implementation.putImplementationOptInInConstructor) {
-                    print(" " + implementationOptInAnnotation.render())
+                    implementationOptInAnnotation?.let {
+                        print(" " + it.render())
+                    }
                     printConstructor = true
                 }
                 if (implementation.isPublic && !implementation.isConstructorPublic) {

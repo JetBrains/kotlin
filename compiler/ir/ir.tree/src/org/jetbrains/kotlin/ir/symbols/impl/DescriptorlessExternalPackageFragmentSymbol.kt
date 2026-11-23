@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.symbols.impl
 
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
@@ -13,11 +12,6 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSymbol {
-    override val descriptor: PackageFragmentDescriptor
-        get() = error("Operation is unsupported")
-
-    override val hasDescriptor: Boolean
-        get() = error("Operation is unsupported")
 
     private var _owner: IrExternalPackageFragment? = null
     override val owner get() = _owner!!

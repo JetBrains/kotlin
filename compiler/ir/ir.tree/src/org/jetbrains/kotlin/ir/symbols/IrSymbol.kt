@@ -16,12 +16,9 @@
 
 package org.jetbrains.kotlin.ir.symbols
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -67,22 +64,6 @@ interface IrSymbol : DeclarationSymbolMarker {
     val owner: IrSymbolOwner
 
     /**
-     * If [hasDescriptor] is `true`, returns the [DeclarationDescriptor] of the declaration that this symbol was created for.
-     * Otherwise, returns a dummy [IrBasedDeclarationDescriptor] that serves as a descriptor-like view to [owner].
-     */
-    @ObsoleteDescriptorBasedAPI
-    val descriptor: DeclarationDescriptor
-
-    /**
-     * Returns `true` if this symbol was created from a [DeclarationDescriptor] either emitted by the K1 (aka classic) frontend,
-     * or from deserialized metadata.
-     *
-     * @see descriptor
-     */
-    @ObsoleteDescriptorBasedAPI
-    val hasDescriptor: Boolean
-
-    /**
      * Whether this symbol has already been resolved to its [owner].
      */
     val isBound: Boolean
@@ -122,12 +103,9 @@ val IrSymbol.isPublicApi: Boolean
  *
  * Only leaf interfaces in the symbol hierarchy inherit from this interface.
  */
-interface IrBindableSymbol<out Descriptor : DeclarationDescriptor, Owner : IrSymbolOwner> : IrSymbol {
+interface IrBindableSymbol<Owner : IrSymbolOwner> : IrSymbol {
     @UnsafeDuringIrConstructionAPI
     override val owner: Owner
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: Descriptor
 
     /**
      * Sets this symbol's owner.

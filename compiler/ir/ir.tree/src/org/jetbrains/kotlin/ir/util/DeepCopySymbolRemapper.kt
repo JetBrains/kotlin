@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -38,7 +37,7 @@ open class DeepCopySymbolRemapper() : IrVisitorVoid(), SymbolRemapper {
         element.acceptChildrenVoid(this)
     }
 
-    protected inline fun <D : DeclarationDescriptor, B : IrSymbolOwner, reified S : IrBindableSymbol<D, B>>
+    protected inline fun <B : IrSymbolOwner, reified S : IrBindableSymbol<B>>
             remapSymbol(map: MutableMap<S, S>, owner: B, createNewSymbol: (S) -> S) {
         val symbol = owner.symbol as S
         map[symbol] = createNewSymbol(symbol)

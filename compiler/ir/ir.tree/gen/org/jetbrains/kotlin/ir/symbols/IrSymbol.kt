@@ -8,8 +8,6 @@
 
 package org.jetbrains.kotlin.ir.symbols
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -23,10 +21,7 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrSymbolTree.packageFragmentSymbol]
  */
-sealed interface IrPackageFragmentSymbol : IrSymbol {
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: PackageFragmentDescriptor
-}
+sealed interface IrPackageFragmentSymbol : IrSymbol
 
 /**
  * A symbol whose [owner] is [IrFile].
@@ -39,14 +34,14 @@ sealed interface IrPackageFragmentSymbol : IrSymbol {
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrSymbolTree.fileSymbol]
  */
-interface IrFileSymbol : IrPackageFragmentSymbol, IrBindableSymbol<PackageFragmentDescriptor, IrFile>
+interface IrFileSymbol : IrPackageFragmentSymbol, IrBindableSymbol<IrFile>
 
 /**
  * A symbol whose [owner] is [IrExternalPackageFragment].
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrSymbolTree.externalPackageFragmentSymbol]
  */
-interface IrExternalPackageFragmentSymbol : IrPackageFragmentSymbol, IrBindableSymbol<PackageFragmentDescriptor, IrExternalPackageFragment>
+interface IrExternalPackageFragmentSymbol : IrPackageFragmentSymbol, IrBindableSymbol<IrExternalPackageFragment>
 
 /**
  * A symbol whose [owner] is [IrAnonymousInitializer].
@@ -58,7 +53,7 @@ interface IrExternalPackageFragmentSymbol : IrPackageFragmentSymbol, IrBindableS
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrSymbolTree.anonymousInitializerSymbol]
  */
-interface IrAnonymousInitializerSymbol : IrBindableSymbol<ClassDescriptor, IrAnonymousInitializer>
+interface IrAnonymousInitializerSymbol : IrBindableSymbol<IrAnonymousInitializer>
 
 /**
  * A symbol whose [owner] is [IrEnumEntry].
@@ -67,7 +62,7 @@ interface IrAnonymousInitializerSymbol : IrBindableSymbol<ClassDescriptor, IrAno
  *
  * @see IrGetEnumValue.symbol
  */
-interface IrEnumEntrySymbol : IrBindableSymbol<ClassDescriptor, IrEnumEntry>, EnumEntrySymbolMarker
+interface IrEnumEntrySymbol : IrBindableSymbol<IrEnumEntry>, EnumEntrySymbolMarker
 
 /**
  * A symbol whose [owner] is [IrField].
@@ -78,7 +73,7 @@ interface IrEnumEntrySymbol : IrBindableSymbol<ClassDescriptor, IrEnumEntry>, En
  * @see IrGetField.symbol
  * @see IrSetField.symbol
  */
-interface IrFieldSymbol : IrBindableSymbol<PropertyDescriptor, IrField>, FieldSymbolMarker
+interface IrFieldSymbol : IrBindableSymbol<IrField>, FieldSymbolMarker
 
 /**
  * A symbol whose [owner] is [IrClass], [IrScript] or [IrTypeParameter].
@@ -88,10 +83,7 @@ interface IrFieldSymbol : IrBindableSymbol<PropertyDescriptor, IrField>, FieldSy
  * @see IrClassReference.symbol
  * @see IrSimpleType.classifier
  */
-sealed interface IrClassifierSymbol : IrSymbol, TypeConstructorMarker {
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassifierDescriptor
-}
+sealed interface IrClassifierSymbol : IrSymbol, TypeConstructorMarker
 
 /**
  * A symbol whose [owner] is [IrClass].
@@ -109,7 +101,7 @@ sealed interface IrClassifierSymbol : IrSymbol, TypeConstructorMarker {
  * @see IrCall.superQualifierSymbol
  * @see IrInstanceInitializerCall.classSymbol
  */
-interface IrClassSymbol : IrClassifierSymbol, IrBindableSymbol<ClassDescriptor, IrClass>, RegularClassSymbolMarker
+interface IrClassSymbol : IrClassifierSymbol, IrBindableSymbol<IrClass>, RegularClassSymbolMarker
 
 /**
  * A symbol whose [owner] is [IrScript].
@@ -119,21 +111,21 @@ interface IrClassSymbol : IrClassifierSymbol, IrBindableSymbol<ClassDescriptor, 
  * @see IrScript.importedScripts
  * @see IrScript.earlierScripts
  */
-interface IrScriptSymbol : IrClassifierSymbol, IrBindableSymbol<ScriptDescriptor, IrScript>
+interface IrScriptSymbol : IrClassifierSymbol, IrBindableSymbol<IrScript>
 
 /**
  * A symbol whose [owner] is [IrReplSnippet].
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrSymbolTree.replSnippetSymbol]
  */
-interface IrReplSnippetSymbol : IrBindableSymbol<Nothing, IrReplSnippet>, TypeConstructorMarker
+interface IrReplSnippetSymbol : IrBindableSymbol<IrReplSnippet>, TypeConstructorMarker
 
 /**
  * A symbol whose [owner] is [IrTypeParameter].
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrSymbolTree.typeParameterSymbol]
  */
-interface IrTypeParameterSymbol : IrClassifierSymbol, IrBindableSymbol<TypeParameterDescriptor, IrTypeParameter>, TypeParameterMarker, TypeParameterSymbolMarker
+interface IrTypeParameterSymbol : IrClassifierSymbol, IrBindableSymbol<IrTypeParameter>, TypeParameterMarker, TypeParameterSymbolMarker
 
 /**
  * A symbol whose [owner] is either [IrValueParameter] or [IrVariable].
@@ -144,9 +136,6 @@ interface IrTypeParameterSymbol : IrClassifierSymbol, IrBindableSymbol<TypeParam
  * @see IrSetValue.symbol
  */
 sealed interface IrValueSymbol : IrSymbol {
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: ValueDescriptor
-
     @UnsafeDuringIrConstructionAPI
     override val owner: IrValueDeclaration
 }
@@ -156,7 +145,7 @@ sealed interface IrValueSymbol : IrSymbol {
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrSymbolTree.valueParameterSymbol]
  */
-interface IrValueParameterSymbol : IrValueSymbol, IrBindableSymbol<ParameterDescriptor, IrValueParameter>, ValueParameterSymbolMarker
+interface IrValueParameterSymbol : IrValueSymbol, IrBindableSymbol<IrValueParameter>, ValueParameterSymbolMarker
 
 /**
  * A symbol whose [owner] is [IrVariable].
@@ -165,7 +154,7 @@ interface IrValueParameterSymbol : IrValueSymbol, IrBindableSymbol<ParameterDesc
  *
  * @see IrLocalDelegatedPropertyReference.delegate
  */
-interface IrVariableSymbol : IrValueSymbol, IrBindableSymbol<VariableDescriptor, IrVariable>
+interface IrVariableSymbol : IrValueSymbol, IrBindableSymbol<IrVariable>
 
 /**
  * A symbol whose [owner] is either [IrFunction] or [IrReturnableBlock].
@@ -175,9 +164,6 @@ interface IrVariableSymbol : IrValueSymbol, IrBindableSymbol<VariableDescriptor,
  * @see IrReturn.returnTargetSymbol
  */
 sealed interface IrReturnTargetSymbol : IrSymbol {
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor
-
     @UnsafeDuringIrConstructionAPI
     override val owner: IrReturnTarget
 }
@@ -207,7 +193,7 @@ sealed interface IrFunctionSymbol : IrReturnTargetSymbol, FunctionSymbolMarker {
  * @see IrDelegatingConstructorCall.symbol
  * @see IrEnumConstructorCall.symbol
  */
-interface IrConstructorSymbol : IrFunctionSymbol, IrBindableSymbol<ClassConstructorDescriptor, IrConstructor>, ConstructorSymbolMarker
+interface IrConstructorSymbol : IrFunctionSymbol, IrBindableSymbol<IrConstructor>, ConstructorSymbolMarker
 
 /**
  * A symbol whose [owner] is [IrSimpleFunction].
@@ -221,14 +207,14 @@ interface IrConstructorSymbol : IrFunctionSymbol, IrBindableSymbol<ClassConstruc
  * @see IrLocalDelegatedPropertyReference.setter
  * @see IrRichFunctionReference.overriddenFunctionSymbol
  */
-interface IrSimpleFunctionSymbol : IrFunctionSymbol, IrBindableSymbol<FunctionDescriptor, IrSimpleFunction>, SimpleFunctionSymbolMarker
+interface IrSimpleFunctionSymbol : IrFunctionSymbol, IrBindableSymbol<IrSimpleFunction>, SimpleFunctionSymbolMarker
 
 /**
  * A symbol whose [owner] is [IrReturnableBlock].
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrSymbolTree.returnableBlockSymbol]
  */
-interface IrReturnableBlockSymbol : IrReturnTargetSymbol, IrBindableSymbol<FunctionDescriptor, IrReturnableBlock>
+interface IrReturnableBlockSymbol : IrReturnTargetSymbol, IrBindableSymbol<IrReturnableBlock>
 
 /**
  * A symbol whose [owner] is either [IrProperty] or [IrLocalDelegatedProperty].
@@ -251,7 +237,7 @@ sealed interface IrDeclarationWithAccessorsSymbol : IrSymbol
  * @see IrSimpleFunction.correspondingPropertySymbol
  * @see IrPropertyReference.symbol
  */
-interface IrPropertySymbol : IrBindableSymbol<PropertyDescriptor, IrProperty>, IrDeclarationWithAccessorsSymbol, PropertySymbolMarker
+interface IrPropertySymbol : IrBindableSymbol<IrProperty>, IrDeclarationWithAccessorsSymbol, PropertySymbolMarker
 
 /**
  * A symbol whose [owner] is [IrLocalDelegatedProperty].
@@ -260,11 +246,11 @@ interface IrPropertySymbol : IrBindableSymbol<PropertyDescriptor, IrProperty>, I
  *
  * @see IrLocalDelegatedPropertyReference.symbol
  */
-interface IrLocalDelegatedPropertySymbol : IrDeclarationWithAccessorsSymbol, IrBindableSymbol<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>
+interface IrLocalDelegatedPropertySymbol : IrDeclarationWithAccessorsSymbol, IrBindableSymbol<IrLocalDelegatedProperty>
 
 /**
  * A symbol whose [owner] is [IrTypeAlias].
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrSymbolTree.typeAliasSymbol]
  */
-interface IrTypeAliasSymbol : IrBindableSymbol<TypeAliasDescriptor, IrTypeAlias>, TypeAliasSymbolMarker
+interface IrTypeAliasSymbol : IrBindableSymbol<IrTypeAlias>, TypeAliasSymbolMarker

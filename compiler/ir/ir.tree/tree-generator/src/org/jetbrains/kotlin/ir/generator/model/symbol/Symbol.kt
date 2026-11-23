@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.generator.model.symbol
 
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.ir.generator.IrSymbolTree
 import org.jetbrains.kotlin.ir.generator.Packages
 import org.jetbrains.kotlin.ir.generator.model.Element
 
@@ -27,8 +26,6 @@ class Symbol(
     override var kind: ImplementationKind?
         get() = if (isSealed) ImplementationKind.SealedInterface else ImplementationKind.Interface
         set(_) {}
-
-    var descriptor: ClassRef<*>? = null
 
     var owner: Element? = null
 }

@@ -357,7 +357,7 @@ abstract class SymbolTableExtension<
             addUnbound(globalTypeParameterSlice)
         }
 
-    private inline fun <D : Declaration, Symbol : IrBindableSymbol<*, SymbolOwner>, SymbolOwner : IrSymbolOwner> reference(
+    private inline fun <D : Declaration, Symbol : IrBindableSymbol<SymbolOwner>, SymbolOwner : IrSymbolOwner> reference(
         declaration: D,
         slice: SymbolTableSlice<D, SymbolOwner, Symbol>,
         referenceBySignature: SymbolTable.(IdSignature, () -> Symbol, () -> Symbol) -> Symbol,

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
-import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
@@ -64,7 +62,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     fun initializeTargetShapeFromSymbol() {
         @Suppress("UNCHECKED_CAST")
-        val target = (symbol as IrBindableSymbol<*, IrSymbolOwner>).getRealOwner()
+        val target = (symbol as IrBindableSymbol<IrSymbolOwner>).getRealOwner()
         when (target) {
             is IrFunction -> {
                 initializeTargetShapeExplicitly(target.parameters.size)
@@ -156,7 +154,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         }
 
     private fun hasDispatchReceiver(): Boolean {
-        val target = (symbol as IrBindableSymbol<*, *>).getRealOwner()
+        val target = (symbol as IrBindableSymbol<*>).getRealOwner()
         return when (target) {
             is IrFunction -> target.dispatchReceiverParameter != null
             // These two branches won't be needed once old IR callable references (IrPropertyReferenceImpl etc.) are dropped.
@@ -178,7 +176,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         }
     }
 
-    private fun <S : IrBindableSymbol<*, D>, D : IrSymbolOwner> S.getRealOwner(): D {
+    private fun <S : IrBindableSymbol<D>, D : IrSymbolOwner> S.getRealOwner(): D {
         var symbol = this
         while (symbol is IrFakeOverrideSymbolBase<*, *, *>) {
             @Suppress("UNCHECKED_CAST")

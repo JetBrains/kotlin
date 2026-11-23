@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.symbols.impl
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -17,14 +16,11 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-abstract class IrFakeOverrideSymbolBase<S : IrBindableSymbol<D, I>, I : IrDeclaration, D : CallableDescriptor>(
+abstract class IrFakeOverrideSymbolBase<S : IrBindableSymbol<I>, I : IrDeclaration, D : CallableDescriptor>(
     val originalSymbol: S,
     val containingClassSymbol: IrClassSymbol,
     override val signature: IdSignature?
-) : IrBindableSymbol<D, I> {
-    @ObsoleteDescriptorBasedAPI
-    override val hasDescriptor: Boolean
-        get() = false
+) : IrBindableSymbol<I> {
 
     override val isBound: Boolean
         get() = false
@@ -38,11 +34,6 @@ abstract class IrFakeOverrideSymbolBase<S : IrBindableSymbol<D, I>, I : IrDeclar
     @UnsafeDuringIrConstructionAPI
     @Deprecated("Fake-override symbols never has its owner", level = DeprecationLevel.HIDDEN)
     override val owner: I
-        get() = shouldNotBeCalled()
-
-    @ObsoleteDescriptorBasedAPI
-    @Deprecated("Fake-override symbols never has its owner", level = DeprecationLevel.HIDDEN)
-    override val descriptor: D
         get() = shouldNotBeCalled()
 
     @Deprecated("Fake-override symbols never has its owner", level = DeprecationLevel.HIDDEN)

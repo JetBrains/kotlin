@@ -17,18 +17,13 @@ import org.jetbrains.kotlin.ir.generator.model.symbol.SymbolImplementation
 class SymbolImplementationPrinter(
     printer: ImportCollectingPrinter,
 ) : AbstractImplementationPrinter<SymbolImplementation, Symbol, SymbolField>(printer) {
-
-    override val implementationOptInAnnotation: PrintableAnnotation
-        get() = obsoleteDescriptorBasedApiAnnotation
-
     override fun getPureAbstractElementType(implementation: SymbolImplementation): ClassRef<*> =
         (if (implementation.hasSignature) irSymbolWithSignatureType else irSymbolBaseType)
-            .withArgs(implementation.element.descriptor!!, implementation.element.owner!!)
+            .withArgs(implementation.element.owner!!)
 
     override fun makeFieldPrinter(printer: ImportCollectingPrinter) = object : AbstractFieldPrinter<SymbolField>(printer) {}
 
     override fun ImportCollecting.parentConstructorArguments(implementation: SymbolImplementation): List<String> = buildList {
-        add("null")
         if (implementation.hasSignature) {
             add("signature")
         }

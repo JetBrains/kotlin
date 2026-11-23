@@ -5,32 +5,14 @@
 
 package org.jetbrains.kotlin.ir.symbols.impl
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor, Owner : IrSymbolOwner>(
-    descriptor: Descriptor?,
+abstract class IrSymbolBase<Owner : IrSymbolOwner>(
 ) : IrSymbol {
-    private val _descriptor: Descriptor? = descriptor
-
-    @ObsoleteDescriptorBasedAPI
-    @Suppress("UNCHECKED_CAST")
-    final override val descriptor: Descriptor
-        get() = _descriptor ?: (owner as IrDeclaration).toIrBasedDescriptor() as Descriptor
-
-    @ObsoleteDescriptorBasedAPI
-    override val hasDescriptor: Boolean
-        get() = _descriptor != null
-
     private var _owner: Owner? = null
     final override val owner: Owner
         get() = _owner // Please keep `_owner` and `?: error()` at separate lines to make it easier to set different breakpoints.
@@ -40,23 +22,6 @@ abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor, Owner : IrSy
         get() = null
 
     final override var privateSignature: IdSignature? = null
-
-    init {
-        assert(descriptor == null || isOriginalDescriptor(descriptor)) {
-            "Substituted descriptor $descriptor for ${descriptor!!.original}"
-        }
-        if (!isPublicApi && descriptor != null) {
-            val containingDeclaration = descriptor.containingDeclaration
-            assert(containingDeclaration == null || isOriginalDescriptor(containingDeclaration)) {
-                "Substituted containing declaration: $containingDeclaration\nfor descriptor: $descriptor"
-            }
-        }
-    }
-
-    private fun isOriginalDescriptor(descriptor: DeclarationDescriptor): Boolean =
-        // TODO fix declaring/referencing value parameters: compute proper original descriptor
-        descriptor is ValueParameterDescriptor && isOriginalDescriptor(descriptor.containingDeclaration) ||
-                descriptor == descriptor.original
 
     final override val isBound: Boolean
         get() = _owner != null
@@ -74,12 +39,10 @@ abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor, Owner : IrSy
         return if (isPublicApi)
             "Unbound public symbol ${this::class.java.simpleName}: $signature"
         else
-            "Unbound private symbol " +
-                    if (_descriptor != null) "${this::class.java.simpleName}: $_descriptor" else super.toString()
+            "Unbound private symbol ${this::class.java.simpleName}: ${super.toString()}"
     }
 }
 
-abstract class IrSymbolWithSignature<out Descriptor : DeclarationDescriptor, Owner : IrSymbolOwner>(
-    descriptor: Descriptor?,
+abstract class IrSymbolWithSignature<Owner : IrSymbolOwner>(
     override val signature: IdSignature?,
-) : IrSymbolBase<Descriptor, Owner>(descriptor)
+) : IrSymbolBase<Owner>()

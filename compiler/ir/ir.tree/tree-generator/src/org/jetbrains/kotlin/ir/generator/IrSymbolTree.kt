@@ -5,39 +5,26 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import org.jetbrains.kotlin.generators.tree.StandardTypes.boolean
 import org.jetbrains.kotlin.generators.tree.config.element
 import org.jetbrains.kotlin.generators.tree.config.sealedElement
 import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.generators.tree.withArgs
 import org.jetbrains.kotlin.ir.generator.IrTree.anonymousInitializer
-import org.jetbrains.kotlin.ir.generator.IrTree.call
 import org.jetbrains.kotlin.ir.generator.IrTree.`class`
-import org.jetbrains.kotlin.ir.generator.IrTree.classReference
 import org.jetbrains.kotlin.ir.generator.IrTree.constructor
-import org.jetbrains.kotlin.ir.generator.IrTree.constructorCall
 import org.jetbrains.kotlin.ir.generator.IrTree.declaration
 import org.jetbrains.kotlin.ir.generator.IrTree.enumEntry
 import org.jetbrains.kotlin.ir.generator.IrTree.externalPackageFragment
 import org.jetbrains.kotlin.ir.generator.IrTree.field
-import org.jetbrains.kotlin.ir.generator.IrTree.fieldAccessExpression
 import org.jetbrains.kotlin.ir.generator.IrTree.file
 import org.jetbrains.kotlin.ir.generator.IrTree.function
-import org.jetbrains.kotlin.ir.generator.IrTree.functionReference
-import org.jetbrains.kotlin.ir.generator.IrTree.getEnumValue
-import org.jetbrains.kotlin.ir.generator.IrTree.getField
-import org.jetbrains.kotlin.ir.generator.IrTree.getValue
 import org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedProperty
 import org.jetbrains.kotlin.ir.generator.IrTree.property
 import org.jetbrains.kotlin.ir.generator.IrTree.replSnippet
-import org.jetbrains.kotlin.ir.generator.IrTree.`return`
 import org.jetbrains.kotlin.ir.generator.IrTree.returnTarget
 import org.jetbrains.kotlin.ir.generator.IrTree.returnableBlock
 import org.jetbrains.kotlin.ir.generator.IrTree.script
-import org.jetbrains.kotlin.ir.generator.IrTree.setField
-import org.jetbrains.kotlin.ir.generator.IrTree.setValue
 import org.jetbrains.kotlin.ir.generator.IrTree.simpleFunction
-import org.jetbrains.kotlin.ir.generator.IrTree.symbolOwner
 import org.jetbrains.kotlin.ir.generator.IrTree.typeAlias
 import org.jetbrains.kotlin.ir.generator.IrTree.typeParameter
 import org.jetbrains.kotlin.ir.generator.IrTree.valueDeclaration
@@ -47,7 +34,6 @@ import org.jetbrains.kotlin.ir.generator.config.symbol.AbstractIrSymbolTreeBuild
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.mpp.*
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
@@ -64,20 +50,17 @@ object IrSymbolTree : AbstractIrSymbolTreeBuilder() {
         doPrint = false
     }
 
-    private fun Symbol.bindableSymbolParent(descriptorTypeName: String, owner: Element) {
-        val descriptorType = type(Packages.descriptors, descriptorTypeName)
-        parent(bindableSymbol.withArgs("Descriptor" to descriptorType, "Owner" to owner))
-        this.descriptor = descriptorType
+    private fun Symbol.bindableSymbolParent(owner: Element) {
+        parent(bindableSymbol.withArgs("Owner" to owner))
         this.owner = owner
     }
 
     val packageFragmentSymbol by sealedElement {
-        +descriptorField("PackageFragmentDescriptor")
     }
 
     val fileSymbol by element {
         parent(packageFragmentSymbol)
-        bindableSymbolParent("PackageFragmentDescriptor", file)
+        bindableSymbolParent(file)
 
         kDoc = """
         Such a symbol is always module-private.
@@ -90,11 +73,11 @@ object IrSymbolTree : AbstractIrSymbolTreeBuilder() {
 
     val externalPackageFragmentSymbol by element {
         parent(packageFragmentSymbol)
-        bindableSymbolParent("PackageFragmentDescriptor", externalPackageFragment)
+        bindableSymbolParent(externalPackageFragment)
     }
 
     val anonymousInitializerSymbol by element {
-        bindableSymbolParent("ClassDescriptor", anonymousInitializer)
+        bindableSymbolParent(anonymousInitializer)
 
         kDoc = """
         It's not very useful on its own, but since [${anonymousInitializer.render()}] is an [${declaration.render()}], and [${declaration.render()}]s must have symbols,
@@ -105,62 +88,58 @@ object IrSymbolTree : AbstractIrSymbolTreeBuilder() {
     }
 
     val enumEntrySymbol by element {
-        bindableSymbolParent("ClassDescriptor", enumEntry)
+        bindableSymbolParent(enumEntry)
         parent(type<EnumEntrySymbolMarker>())
     }
 
     val fieldSymbol by element {
-        bindableSymbolParent("PropertyDescriptor", field)
+        bindableSymbolParent(field)
         parent(type<FieldSymbolMarker>())
     }
 
     val classifierSymbol by sealedElement {
         parent(type<TypeConstructorMarker>())
-
-        +descriptorField("ClassifierDescriptor")
     }
 
     val classSymbol by element {
         parent(classifierSymbol)
-        bindableSymbolParent("ClassDescriptor", `class`)
+        bindableSymbolParent(`class`)
         parent(type<RegularClassSymbolMarker>())
     }
 
     val scriptSymbol by element {
         parent(classifierSymbol)
-        bindableSymbolParent("ScriptDescriptor", script)
+        bindableSymbolParent(script)
     }
 
     val replSnippetSymbol by element {
         parent(type<TypeConstructorMarker>())
-        bindableSymbolParent("Nothing", replSnippet)
+        bindableSymbolParent(replSnippet)
     }
 
     val typeParameterSymbol by element {
         parent(classifierSymbol)
-        bindableSymbolParent("TypeParameterDescriptor", typeParameter)
+        bindableSymbolParent(typeParameter)
         parent(type<TypeParameterMarker>())
         parent(type<TypeParameterSymbolMarker>())
     }
 
     val valueSymbol by sealedElement {
-        +descriptorField("ValueDescriptor")
         +ownerField(valueDeclaration)
     }
 
     val valueParameterSymbol by element {
         parent(valueSymbol)
-        bindableSymbolParent("ParameterDescriptor", valueParameter)
+        bindableSymbolParent(valueParameter)
         parent(type<ValueParameterSymbolMarker>())
     }
 
     val variableSymbol by element {
         parent(valueSymbol)
-        bindableSymbolParent("VariableDescriptor", variable)
+        bindableSymbolParent(variable)
     }
 
     val returnTargetSymbol by sealedElement {
-        +descriptorField("FunctionDescriptor")
         +ownerField(returnTarget)
     }
 
@@ -174,19 +153,19 @@ object IrSymbolTree : AbstractIrSymbolTreeBuilder() {
 
     val constructorSymbol by element {
         parent(functionSymbol)
-        bindableSymbolParent("ClassConstructorDescriptor", constructor)
+        bindableSymbolParent(constructor)
         parent(type<ConstructorSymbolMarker>())
     }
 
     val simpleFunctionSymbol by element {
         parent(functionSymbol)
-        bindableSymbolParent("FunctionDescriptor", simpleFunction)
+        bindableSymbolParent(simpleFunction)
         parent(type<SimpleFunctionSymbolMarker>())
     }
 
     val returnableBlockSymbol by element {
         parent(returnTargetSymbol)
-        bindableSymbolParent("FunctionDescriptor", returnableBlock)
+        bindableSymbolParent(returnableBlock)
     }
 
     val declarationWithAccessorsSymbol by element {
@@ -194,18 +173,18 @@ object IrSymbolTree : AbstractIrSymbolTreeBuilder() {
     }
 
     val propertySymbol by element {
-        bindableSymbolParent("PropertyDescriptor", property)
+        bindableSymbolParent(property)
         parent(declarationWithAccessorsSymbol)
         parent(type<PropertySymbolMarker>())
     }
 
     val localDelegatedPropertySymbol by element {
         parent(declarationWithAccessorsSymbol)
-        bindableSymbolParent("VariableDescriptorWithAccessors", localDelegatedProperty)
+        bindableSymbolParent(localDelegatedProperty)
     }
 
     val typeAliasSymbol by element {
-        bindableSymbolParent("TypeAliasDescriptor", typeAlias)
+        bindableSymbolParent(typeAlias)
         parent(type<TypeAliasSymbolMarker>())
     }
 }
