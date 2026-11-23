@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.utils.threadLocal
 
 @ObsoleteDescriptorBasedAPI
@@ -116,16 +114,6 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         return IrEnumEntrySymbolImpl(declaration)
     }
 
-    override fun defaultEnumEntryFactory(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        enumEntry: ClassDescriptor,
-        symbol: IrEnumEntrySymbol,
-    ): IrEnumEntry {
-        return irFactory.createEnumEntry(startOffset, endOffset, origin, nameProvider.nameForDeclaration(enumEntry), symbol)
-    }
-
     // ------------------------------------ field ------------------------------------
 
     override fun createPublicFieldSymbol(declaration: PropertyDescriptor, signature: IdSignature): IrFieldSymbol {
@@ -136,31 +124,6 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         return IrFieldSymbolImpl(declaration)
     }
 
-    override fun defaultFieldFactory(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: PropertyDescriptor,
-        type: IrType,
-        visibility: DescriptorVisibility?,
-        symbol: IrFieldSymbol,
-    ): IrField {
-        return irFactory.createField(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            name = nameProvider.nameForDeclaration(declaration),
-            visibility = visibility ?: symbol.descriptor.visibility,
-            symbol = symbol,
-            type = type,
-            isFinal = !symbol.descriptor.isVar,
-            isStatic = symbol.descriptor.dispatchReceiverParameter == null,
-            isExternal = symbol.descriptor.isEffectivelyExternal(),
-        ).apply {
-            metadata = DescriptorMetadataSource.Property(symbol.descriptor)
-        }
-    }
-
     // ------------------------------------ property ------------------------------------
 
     override fun createPublicPropertySymbol(declaration: PropertyDescriptor, signature: IdSignature): IrPropertySymbol {
@@ -169,34 +132,6 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
 
     override fun createPrivatePropertySymbol(declaration: PropertyDescriptor): IrPropertySymbol {
         return IrPropertySymbolImpl(declaration)
-    }
-
-    override fun defaultPropertyFactory(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: PropertyDescriptor,
-        isDelegated: Boolean,
-        symbol: IrPropertySymbol,
-    ): IrProperty {
-        return irFactory.createProperty(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            name = nameProvider.nameForDeclaration(declaration),
-            visibility = declaration.visibility,
-            modality = declaration.modality,
-            symbol = symbol,
-            isVar = declaration.isVar,
-            isConst = declaration.isConst,
-            isLateinit = declaration.isLateInit,
-            isDelegated = isDelegated,
-            isExternal = declaration.isEffectivelyExternal(),
-            isExpect = declaration.isExpect,
-            isFakeOverride = declaration.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
-        ).apply {
-            metadata = DescriptorMetadataSource.Property(symbol.descriptor)
-        }
     }
 
     // ------------------------------------ typealias ------------------------------------
@@ -227,25 +162,6 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
 
     override fun createPrivateTypeParameterSymbol(declaration: TypeParameterDescriptor): IrTypeParameterSymbol {
         return IrTypeParameterSymbolImpl(declaration)
-    }
-
-    override fun defaultTypeParameterFactory(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: TypeParameterDescriptor,
-        symbol: IrTypeParameterSymbol,
-    ): IrTypeParameter {
-        return irFactory.createTypeParameter(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            name = nameProvider.nameForDeclaration(declaration),
-            symbol = symbol,
-            variance = symbol.descriptor.variance,
-            index = symbol.descriptor.index,
-            isReified = symbol.descriptor.isReified
-        )
     }
 
     // ------------------------------------ value parameter ------------------------------------
