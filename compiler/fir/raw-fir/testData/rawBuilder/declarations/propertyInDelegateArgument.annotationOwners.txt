@@ -1,0 +1,4 @@
+@Suppress(String())
+owner -> FirRegularPropertySymbol /C.annotated
+context -> FirLocalPropertySymbol <local>/x
+context -> FirLocalPropertySymbol <local>/x

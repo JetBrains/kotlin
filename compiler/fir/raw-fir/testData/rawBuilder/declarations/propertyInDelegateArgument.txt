@@ -1,0 +1,27 @@
+FILE: propertyInDelegateArgument.kt
+    public? final? fun foo(a: Any): Lazy<Int> {
+        ^foo lazy#(<L> = lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            IntegerLiteral(1)
+        }
+        )
+    }
+    public final? class C : R|kotlin/Any| {
+        public? [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val annotated: <implicit> by foo#(ERROR_EXPR(Argument is absent))
+            public? [ContainingClassKey=C] get(): <implicit> {
+                ^ this@R|/C|.D|/C.annotated|.getValue#(this@R|/C|, ::R|/C.annotated|)
+            }
+
+        public? final? val binary: <implicit> by foo#(IntegerLiteral(1).plus#(ERROR_EXPR(No right operand)))
+            public? [ContainingClassKey=C] get(): <implicit> {
+                ^ this@R|/C|.D|/C.binary|.getValue#(this@R|/C|, ::R|/C.binary|)
+            }
+
+    }
+    public? final? val topLevel: <implicit> by foo#(IntegerLiteral(1).plus#(ERROR_EXPR(No right operand)))
+        public? get(): <implicit> {
+            ^ D|/topLevel|.getValue#(Null(null), ::R|/topLevel|)
+        }

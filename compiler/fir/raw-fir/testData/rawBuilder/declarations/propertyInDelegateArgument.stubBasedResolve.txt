@@ -1,0 +1,16 @@
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] propertyInDelegateArgument.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Any|): <ERROR TYPE REF: Symbol not found for Lazy> { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class C : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(CONTRACTS)] val annotated: <implicit> by LAZY_EXPRESSION
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+        public final [ResolvedTo(CONTRACTS)] val binary: <implicit> by LAZY_EXPRESSION
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=C] get(): <implicit> { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] val topLevel: <implicit> by LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
