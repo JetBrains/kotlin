@@ -1,0 +1,5 @@
+expression: "abc
+constant: "abc"
+constantValueKind: StringValue
+constantValueSource: STRING_TEMPLATE
+constantValueSourceText: "abc

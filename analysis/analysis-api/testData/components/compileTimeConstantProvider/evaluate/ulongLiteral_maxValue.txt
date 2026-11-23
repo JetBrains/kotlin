@@ -1,0 +1,5 @@
+expression: 0xFFFF_FFFF_FFFF_FFFFu
+constant: 18446744073709551615uL
+constantValueKind: ULongValue
+constantValueSource: INTEGER_CONSTANT
+constantValueSourceText: 0xFFFF_FFFF_FFFF_FFFFu

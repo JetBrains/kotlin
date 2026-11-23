@@ -51,6 +51,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   }
 
   @Test
+  @TestMetadata("annotatedLiteral.kt")
+  public void testAnnotatedLiteral() {
+    run("annotatedLiteral.kt");
+  }
+
+  @Test
   @TestMetadata("arrayLiteral.kt")
   public void testArrayLiteral() {
     run("arrayLiteral.kt");
@@ -72,6 +78,24 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   @TestMetadata("binaryExpressionWithString.kt")
   public void testBinaryExpressionWithString() {
     run("binaryExpressionWithString.kt");
+  }
+
+  @Test
+  @TestMetadata("booleanLiteral.kt")
+  public void testBooleanLiteral() {
+    run("booleanLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("booleanLiteral_not_justLiteral.kt")
+  public void testBooleanLiteral_not_justLiteral() {
+    run("booleanLiteral_not_justLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("booleanLiteral_not_justLiteralInAnnotation.kt")
+  public void testBooleanLiteral_not_justLiteralInAnnotation() {
+    run("booleanLiteral_not_justLiteralInAnnotation.kt");
   }
 
   @Test
@@ -114,6 +138,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   @TestMetadata("charFromCode_IntrinsicConstEvaluationDisabled.kt")
   public void testCharFromCode_IntrinsicConstEvaluationDisabled() {
     run("charFromCode_IntrinsicConstEvaluationDisabled.kt");
+  }
+
+  @Test
+  @TestMetadata("charLiteral.kt")
+  public void testCharLiteral() {
+    run("charLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("charLiteral_escaped.kt")
+  public void testCharLiteral_escaped() {
+    run("charLiteral_escaped.kt");
   }
 
   @Test
@@ -177,6 +213,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   }
 
   @Test
+  @TestMetadata("doubleLiteral_minusOne_justOne.kt")
+  public void testDoubleLiteral_minusOne_justOne() {
+    run("doubleLiteral_minusOne_justOne.kt");
+  }
+
+  @Test
   @TestMetadata("doubleLiteralsPlusAndEqual.kt")
   public void testDoubleLiteralsPlusAndEqual() {
     run("doubleLiteralsPlusAndEqual.kt");
@@ -219,6 +261,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   }
 
   @Test
+  @TestMetadata("floatLiteral_outOfRange.kt")
+  public void testFloatLiteral_outOfRange() {
+    run("floatLiteral_outOfRange.kt");
+  }
+
+  @Test
   @TestMetadata("floatLiteralsPlusAndEqual.kt")
   public void testFloatLiteralsPlusAndEqual() {
     run("floatLiteralsPlusAndEqual.kt");
@@ -258,6 +306,54 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   @TestMetadata("intMinValue_minusPlus_inner.kt")
   public void testIntMinValue_minusPlus_inner() {
     run("intMinValue_minusPlus_inner.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_anonymousFunctionWithExpectedType.kt")
+  public void testIntegerLiteral_anonymousFunctionWithExpectedType() {
+    run("integerLiteral_anonymousFunctionWithExpectedType.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_expectedLongArgument.kt")
+  public void testIntegerLiteral_expectedLongArgument() {
+    run("integerLiteral_expectedLongArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_implicitFunctionReturnType.kt")
+  public void testIntegerLiteral_implicitFunctionReturnType() {
+    run("integerLiteral_implicitFunctionReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_implicitGetterType.kt")
+  public void testIntegerLiteral_implicitGetterType() {
+    run("integerLiteral_implicitGetterType.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_implicitPropertyType.kt")
+  public void testIntegerLiteral_implicitPropertyType() {
+    run("integerLiteral_implicitPropertyType.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_implicitTypeAnnotated.kt")
+  public void testIntegerLiteral_implicitTypeAnnotated() {
+    run("integerLiteral_implicitTypeAnnotated.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_implicitTypeLabeled.kt")
+  public void testIntegerLiteral_implicitTypeLabeled() {
+    run("integerLiteral_implicitTypeLabeled.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_implicitTypeParenthesized.kt")
+  public void testIntegerLiteral_implicitTypeParenthesized() {
+    run("integerLiteral_implicitTypeParenthesized.kt");
   }
 
   @Test
@@ -351,6 +447,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   }
 
   @Test
+  @TestMetadata("labeledLiteral.kt")
+  public void testLabeledLiteral() {
+    run("labeledLiteral.kt");
+  }
+
+  @Test
   @TestMetadata("logicExpressionWithVariableAndParentheses.kt")
   public void testLogicExpressionWithVariableAndParentheses() {
     run("logicExpressionWithVariableAndParentheses.kt");
@@ -369,6 +471,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   }
 
   @Test
+  @TestMetadata("longLiteral.kt")
+  public void testLongLiteral() {
+    run("longLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("longLiteralWithoutSuffix_implicitPropertyType.kt")
+  public void testLongLiteralWithoutSuffix_implicitPropertyType() {
+    run("longLiteralWithoutSuffix_implicitPropertyType.kt");
+  }
+
+  @Test
   @TestMetadata("longLiteralWithoutSuffix_minus_entire.kt")
   public void testLongLiteralWithoutSuffix_minus_entire() {
     run("longLiteralWithoutSuffix_minus_entire.kt");
@@ -378,6 +492,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   @TestMetadata("longLiteralWithoutSuffix_minus_justLiteral.kt")
   public void testLongLiteralWithoutSuffix_minus_justLiteral() {
     run("longLiteralWithoutSuffix_minus_justLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("longLiteral_minusOne_justOne.kt")
+  public void testLongLiteral_minusOne_justOne() {
+    run("longLiteral_minusOne_justOne.kt");
+  }
+
+  @Test
+  @TestMetadata("longLiteral_minusOne_justOne_outsideAnnotation.kt")
+  public void testLongLiteral_minusOne_justOne_outsideAnnotation() {
+    run("longLiteral_minusOne_justOne_outsideAnnotation.kt");
   }
 
   @Test
@@ -444,6 +570,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   @TestMetadata("nullLiteral.kt")
   public void testNullLiteral() {
     run("nullLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("parenthesizedLiteral.kt")
+  public void testParenthesizedLiteral() {
+    run("parenthesizedLiteral.kt");
   }
 
   @Test
@@ -579,6 +711,30 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   }
 
   @Test
+  @TestMetadata("stringLiteral_empty.kt")
+  public void testStringLiteral_empty() {
+    run("stringLiteral_empty.kt");
+  }
+
+  @Test
+  @TestMetadata("stringLiteral_escapes.kt")
+  public void testStringLiteral_escapes() {
+    run("stringLiteral_escapes.kt");
+  }
+
+  @Test
+  @TestMetadata("stringLiteral_multiDollarInterpolation.kt")
+  public void testStringLiteral_multiDollarInterpolation() {
+    run("stringLiteral_multiDollarInterpolation.kt");
+  }
+
+  @Test
+  @TestMetadata("stringLiteral_raw.kt")
+  public void testStringLiteral_raw() {
+    run("stringLiteral_raw.kt");
+  }
+
+  @Test
   @TestMetadata("string_compareTo.kt")
   public void testString_compareTo() {
     run("string_compareTo.kt");
@@ -711,6 +867,36 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
   }
 
   @Test
+  @TestMetadata("uintLiteral_expectedULong.kt")
+  public void testUintLiteral_expectedULong() {
+    run("uintLiteral_expectedULong.kt");
+  }
+
+  @Test
+  @TestMetadata("uintLiteral_implicitPropertyType.kt")
+  public void testUintLiteral_implicitPropertyType() {
+    run("uintLiteral_implicitPropertyType.kt");
+  }
+
+  @Test
+  @TestMetadata("ulongLiteral.kt")
+  public void testUlongLiteral() {
+    run("ulongLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("ulongLiteralWithoutSuffix_implicitPropertyType.kt")
+  public void testUlongLiteralWithoutSuffix_implicitPropertyType() {
+    run("ulongLiteralWithoutSuffix_implicitPropertyType.kt");
+  }
+
+  @Test
+  @TestMetadata("ulongLiteral_maxValue.kt")
+  public void testUlongLiteral_maxValue() {
+    run("ulongLiteral_maxValue.kt");
+  }
+
+  @Test
   @TestMetadata("unaryOnComplexIntLiteral.kt")
   public void testUnaryOnComplexIntLiteral() {
     run("unaryOnComplexIntLiteral.kt");
@@ -814,6 +1000,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
     }
 
     @Test
+    @TestMetadata("doubleLiteral_expectedFloat.kt")
+    public void testDoubleLiteral_expectedFloat() {
+      run("doubleLiteral_expectedFloat.kt");
+    }
+
+    @Test
     @TestMetadata("errorQualifier.kt")
     public void testErrorQualifier() {
       run("errorQualifier.kt");
@@ -826,9 +1018,105 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
     }
 
     @Test
+    @TestMetadata("integerLiteral_getterOfPropertyWithInitializer.kt")
+    public void testIntegerLiteral_getterOfPropertyWithInitializer() {
+      run("integerLiteral_getterOfPropertyWithInitializer.kt");
+    }
+
+    @Test
+    @TestMetadata("integerLiteral_implicitTypeOverride.kt")
+    public void testIntegerLiteral_implicitTypeOverride() {
+      run("integerLiteral_implicitTypeOverride.kt");
+    }
+
+    @Test
     @TestMetadata("invalidEquals.kt")
     public void testInvalidEquals() {
       run("invalidEquals.kt");
+    }
+
+    @Test
+    @TestMetadata("literalInFunctionTypeParameterDefaultValue.kt")
+    public void testLiteralInFunctionTypeParameterDefaultValue() {
+      run("literalInFunctionTypeParameterDefaultValue.kt");
+    }
+
+    @Test
+    @TestMetadata("literalInWhenConditionWithoutSubject.kt")
+    public void testLiteralInWhenConditionWithoutSubject() {
+      run("literalInWhenConditionWithoutSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("longLiteralWithoutSuffix_expectedInt.kt")
+    public void testLongLiteralWithoutSuffix_expectedInt() {
+      run("longLiteralWithoutSuffix_expectedInt.kt");
+    }
+
+    @Test
+    @TestMetadata("longLiteralWithoutSuffix_implicitIntegerCoercion.kt")
+    public void testLongLiteralWithoutSuffix_implicitIntegerCoercion() {
+      run("longLiteralWithoutSuffix_implicitIntegerCoercion.kt");
+    }
+
+    @Test
+    @TestMetadata("longLiteral_expectedInt.kt")
+    public void testLongLiteral_expectedInt() {
+      run("longLiteral_expectedInt.kt");
+    }
+
+    @Test
+    @TestMetadata("malformedCharLiteral.kt")
+    public void testMalformedCharLiteral() {
+      run("malformedCharLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("malformedCharLiteral_unterminated.kt")
+    public void testMalformedCharLiteral_unterminated() {
+      run("malformedCharLiteral_unterminated.kt");
+    }
+
+    @Test
+    @TestMetadata("malformedDoubleLiteral_emptyExponent.kt")
+    public void testMalformedDoubleLiteral_emptyExponent() {
+      run("malformedDoubleLiteral_emptyExponent.kt");
+    }
+
+    @Test
+    @TestMetadata("malformedIntLiteral_illegalUnderscore.kt")
+    public void testMalformedIntLiteral_illegalUnderscore() {
+      run("malformedIntLiteral_illegalUnderscore.kt");
+    }
+
+    @Test
+    @TestMetadata("malformedIntLiteral_leadingZeros.kt")
+    public void testMalformedIntLiteral_leadingZeros() {
+      run("malformedIntLiteral_leadingZeros.kt");
+    }
+
+    @Test
+    @TestMetadata("malformedIntLiteral_outOfLongRange.kt")
+    public void testMalformedIntLiteral_outOfLongRange() {
+      run("malformedIntLiteral_outOfLongRange.kt");
+    }
+
+    @Test
+    @TestMetadata("malformedLongLiteral.kt")
+    public void testMalformedLongLiteral() {
+      run("malformedLongLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("malformedStringLiteral_illegalEscape.kt")
+    public void testMalformedStringLiteral_illegalEscape() {
+      run("malformedStringLiteral_illegalEscape.kt");
+    }
+
+    @Test
+    @TestMetadata("malformedULongLiteral.kt")
+    public void testMalformedULongLiteral() {
+      run("malformedULongLiteral.kt");
     }
 
     @Test
@@ -871,6 +1159,30 @@ public class FirIdeDependentAnalysisSourceLikeModuleCompileTimeConstantEvaluator
     @TestMetadata("nullableConstValAlias.kt")
     public void testNullableConstValAlias() {
       run("nullableConstValAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("stringLiteral_unterminated.kt")
+    public void testStringLiteral_unterminated() {
+      run("stringLiteral_unterminated.kt");
+    }
+
+    @Test
+    @TestMetadata("uintLiteral_withoutStdlib.kt")
+    public void testUintLiteral_withoutStdlib() {
+      run("uintLiteral_withoutStdlib.kt");
+    }
+
+    @Test
+    @TestMetadata("ulongLiteralWithoutSuffix_expectedUInt.kt")
+    public void testUlongLiteralWithoutSuffix_expectedUInt() {
+      run("ulongLiteralWithoutSuffix_expectedUInt.kt");
+    }
+
+    @Test
+    @TestMetadata("ulongLiteral_withoutStdlib.kt")
+    public void testUlongLiteral_withoutStdlib() {
+      run("ulongLiteral_withoutStdlib.kt");
     }
   }
 }

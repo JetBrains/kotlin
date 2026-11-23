@@ -1,0 +1,5 @@
+expression: @Suppress("UNUSED") 1L
+constant: 1
+constantValueKind: LongValue
+constantValueSource: INTEGER_CONSTANT
+constantValueSourceText: 1L
