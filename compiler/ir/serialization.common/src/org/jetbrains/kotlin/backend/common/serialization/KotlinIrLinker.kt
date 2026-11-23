@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.utils.putToMultiMap
 @RequiresOptIn("Internal API of the IR linker. Not supposed to be used outside the linker.")
 annotation class IrLinkerInternalApi
 
+@OptIn(IrLinkerInternalApi::class)
 abstract class KotlinIrLinker(
     val symbolTable: SymbolTable,
     private val friendModules: Map<KotlinLibrary, Collection<KotlinLibrary>>,
@@ -64,7 +65,10 @@ abstract class KotlinIrLinker(
     val unitClass = symbolTable.referenceClass(StandardClassIds.Unit.toIdSignature())
     val nothingClass = symbolTable.referenceClass(StandardClassIds.Nothing.toIdSignature())
 
+    @IrLinkerInternalApi
     val irInterner = IrInterningService()
+
+    @IrLinkerInternalApi
     val fileEntryDeserializer = FileEntryDeserializer(irInterner)
 
     protected val fileLocalSymbolProvider = object : FileLocalSymbolProvider {
@@ -102,6 +106,7 @@ abstract class KotlinIrLinker(
      * deserialization in that module have been actually deserialized. Later the module can be enqueued
      * once again to deserialize other top-level declaration(s). This process can be repeated multiple times.
      */
+    @IrLinkerInternalApi
     val modulesWithReachableTopLevels = linkedSetOf<IrModuleDeserializer>()
 
     protected val klibDeserializers = linkedMapOf<KotlinLibrary, IrModuleDeserializer>()
@@ -129,6 +134,7 @@ abstract class KotlinIrLinker(
     // In case if a symbol was asked after deserialization, we would like to make sure that it is correctly and fully linked.
     private var finished = false
 
+    @IrLinkerInternalApi
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
         idSignature: IdSignature,
         symbolKind: BinarySymbolData.SymbolKind,

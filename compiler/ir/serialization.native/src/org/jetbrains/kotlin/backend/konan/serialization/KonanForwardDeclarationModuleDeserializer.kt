@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.backend.common.serialization.IrLinkerInternalApi
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 
+@OptIn(IrLinkerInternalApi::class)
 internal class KonanForwardDeclarationModuleDeserializer(
     moduleFragment: IrModuleFragment,
     private val linker: KonanIrLinker,
