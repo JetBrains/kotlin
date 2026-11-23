@@ -221,6 +221,21 @@ hashing. The audit fact that makes this worth revisiting: the resolve
 BuiltIn calls are direct remaps, not cell-routed — resolve-first has
 no bootstrap circle.
 
+### 10. Plain third-party klibs under the hot link
+
+A hot multimodule link that includes a PLAIN-compiled third-party
+klib (kotlin-test as the repro) fails with a missing layout-plan
+resolver key (`hot.reload.payload/payload<$kotlin/Enum>`). The
+stdlib-only world dodges it by ordering; real apps link plain
+kotlinx/ktor klibs, so this blocks the production story. The klib
+itself needs nothing hot-specific — the resolver must tolerate
+(klib-declared classes' payload types before the stdlib fragments
+that declare them), or hot compiles of the dependency klibs must be
+produced. Box-suite A/B context (2026-11-23): 55 manually-run box
+tests (no kotlin.test, single-file) show ZERO hot-vs-plain
+divergence — 35 pass hot and plain alike, 19 fail identically in
+both arms (test-infra deps: helpers, WITH_COROUTINES, multi-FILE).
+
 ## Operational notes
 
 - After `./gradlew dist`: delete the IC caches AND the cached stdlib
