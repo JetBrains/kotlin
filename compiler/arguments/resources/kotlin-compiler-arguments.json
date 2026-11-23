@@ -20615,8 +20615,14 @@
                                             }
                                         },
                                         "valueDescription": {
-                                            "current": "{program|static|dynamic|framework|library|bitcode}",
-                                            "valueInVersions": []
+                                            "current": "{program|static|dynamic|framework|library}",
+                                            "valueInVersions": [
+                                                {
+                                                    "minReleaseVersion": "1.5.20",
+                                                    "maxReleaseVersion": "2.5.0",
+                                                    "value": "{program|static|dynamic|framework|library|bitcode}"
+                                                }
+                                            ]
                                         },
                                         "releaseVersionsMetadata": {
                                             "introducedVersion": "1.5.20",
