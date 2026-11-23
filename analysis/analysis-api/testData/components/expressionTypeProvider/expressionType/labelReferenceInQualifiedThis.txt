@@ -1,0 +1,3 @@
+expression: @A
+expression PSI: KtLabelReferenceExpression
+type: kotlin.Nothing
