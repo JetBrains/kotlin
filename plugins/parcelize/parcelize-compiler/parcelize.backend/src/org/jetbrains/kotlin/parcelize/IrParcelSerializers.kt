@@ -232,8 +232,7 @@ class IrDataClassParcelSerializer(
     override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression =
         irBlock {
             val temporary = irTemporary(value)
-            val substitutionMap = type.classOrFail.owner.typeParameters.map { it.symbol }
-                .zip((type as IrSimpleType).arguments.map { it.typeOrNull ?: context.irBuiltIns.anyNType }).toMap()
+            val substitutionMap = type.classOrFail.owner.typeParameterMapping(type)
             properties.forEach { [member, serializer] ->
                 val receiverValue = irGet(temporary)
                 val propertyType = member.owner.getter?.returnType
