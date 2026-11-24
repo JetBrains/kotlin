@@ -80,10 +80,7 @@ object ComposeErrors : KtDiagnosticsContainer() {
     )
 
     val COMPOSE_APPLIER_CALL_MISMATCH by warning2<String, String>(
-        SourceElementPositioningStrategy(
-            LightTreePositioningStrategies.REFERENCED_NAME_BY_QUALIFIED,
-            PsiPositioningStrategies.CALL_EXPRESSION
-        )
+        SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
     )
 
     val COMPOSE_APPLIER_PARAMETER_MISMATCH by warning2<String, String>()
@@ -99,10 +96,7 @@ object ComposeErrors : KtDiagnosticsContainer() {
     val ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE by error1<LanguageVersion>()
 
     val KEY_CALL_WITH_NO_ARGUMENTS by error0(
-        SourceElementPositioningStrategy(
-            LightTreePositioningStrategies.REFERENCED_NAME_BY_QUALIFIED,
-            PsiPositioningStrategies.CALL_EXPRESSION
-        )
+        SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
     )
 
     val COMPOSE_CONFIGURATION_ERROR by errorWithoutSource()

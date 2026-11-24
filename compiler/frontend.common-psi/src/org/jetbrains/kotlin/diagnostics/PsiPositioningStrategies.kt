@@ -665,16 +665,6 @@ object PsiPositioningStrategies {
     }
 
     @JvmField
-    val CALL_EXPRESSION: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
-        override fun mark(element: PsiElement): List<TextRange> {
-            if (element is KtCallExpression) {
-                return markRange(element, element.typeArgumentList ?: element.calleeExpression ?: element)
-            }
-            return markElement(element)
-        }
-    }
-
-    @JvmField
     val VALUE_ARGUMENTS_LIST: PsiPositioningStrategy<KtElement> = object : PsiPositioningStrategy<KtElement>() {
         override fun mark(element: KtElement): List<TextRange> {
             return markElement(element.getChildOfType<KtValueArgumentList>() ?: element)
