@@ -13,6 +13,8 @@ import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
+import org.jetbrains.kotlin.psi.stubs.StubUtils.readNullableFqName
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinDestructuringDeclarationEntryStubImpl
 
@@ -40,12 +42,14 @@ internal object KtDestructuringDeclarationEntryStubSerializingElementFactory :
     ): KotlinDestructuringDeclarationEntryStubImpl = KotlinDestructuringDeclarationEntryStubImpl(
         parent = parentStub,
         name = StringRef.fromString(psi.name),
+        fqName = psi.safeFqNameForLazyResolve(),
         isVar = psi.isVar,
         isSingleUnderscore = psi.nameIdentifier?.textMatches("_") == true,
     )
 
     override fun serialize(stub: KotlinDestructuringDeclarationEntryStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.getName())
+        dataStream.writeName(stub.fqName?.asString())
         dataStream.writeBoolean(stub.isVar)
         dataStream.writeBoolean(stub.isSingleUnderscore)
     }
@@ -56,6 +60,7 @@ internal object KtDestructuringDeclarationEntryStubSerializingElementFactory :
     ): KotlinDestructuringDeclarationEntryStubImpl = KotlinDestructuringDeclarationEntryStubImpl(
         parent = parentStub,
         name = dataStream.readName(),
+        fqName = dataStream.readNullableFqName(),
         isVar = dataStream.readBoolean(),
         isSingleUnderscore = dataStream.readBoolean(),
     )
