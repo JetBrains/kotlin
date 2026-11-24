@@ -213,14 +213,14 @@ private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(sy
 }
 
 /**
- * Recursively resolves the upper bound, returning `null` for no (a.k.a `Any?`) or multiple upper bounds.
+ * Recursively resolves the upper bound.
  */
 context(session: KaSession)
 public tailrec fun KaTypeParameterSymbol.resolveUpperBound(
     isMarkedNullable: Boolean = false,
-): KaType? {
-    val type = upperBounds.singleOrNull()
-    if (type !is KaTypeParameterType) return if (isMarkedNullable) type?.withNullability(true) else type
+): KaType {
+    val type = upperBounds.singleOrNull() ?: session.builtinTypes.nullableAny
+    if (type !is KaTypeParameterType) return if (isMarkedNullable) type.withNullability(true) else type
     return type.symbol.resolveUpperBound(isMarkedNullable || type.isMarkedNullable)
 }
 
@@ -228,7 +228,7 @@ public tailrec fun KaTypeParameterSymbol.resolveUpperBound(
  * Returns the upper bound in case `this` is a `KaTypeParameterType`.
  */
 context(session: KaSession)
-public fun KaType.resolveUpperBound(): KaType? {
+public fun KaType.resolveUpperBound(): KaType {
     if (this !is KaTypeParameterType) return this
     return symbol.resolveUpperBound(isMarkedNullable)
 }
