@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.incremental.libraryDiff.klib
 
 import org.jetbrains.kotlin.incremental.ClassProtoData
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
+import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -40,17 +41,21 @@ class KlibFileInfo(
     val packageName: FqName,
     val packageFragmentProto: ByteArray,
 ) {
-    private val fragment by lazy { parsePackageFragment(packageFragmentProto) }
-    private val nameResolver by lazy { NameResolverImpl(fragment.strings, fragment.qualifiedNames) }
-
     /** Like [KlibFileSnapshot.classInfos], includes only accessible classes. */
-    val classProtoData: List<ClassProtoData> by lazy {
-        val classes = fragment.class_List.associateBy { nameResolver.getClassId(it.fqName) }
-        classes.filterKeys { it.isAccessibleIn(classes) }.values.map { ClassProtoData(it, nameResolver) }
-    }
+    val proto: List<ProtoData> by lazy {
+        buildList {
+            val fragment = parsePackageFragment(packageFragmentProto)
+            val nameResolver = NameResolverImpl(fragment.strings, fragment.qualifiedNames)
 
-    val packagePartProtoData: PackagePartProtoData by lazy {
-        PackagePartProtoData(fragment.`package`, nameResolver, packageName)
+            val classes = fragment.class_List.associateBy { nameResolver.getClassId(it.fqName) }
+            for ([classId, classProto] in classes) {
+                if (classId.isAccessibleIn(classes)) {
+                    add(ClassProtoData(classProto, nameResolver))
+                }
+            }
+
+            add(PackagePartProtoData(fragment.`package`, nameResolver, packageName))
+        }
     }
 }
 

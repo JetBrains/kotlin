@@ -11,15 +11,14 @@ import org.jetbrains.kotlin.build.report.metrics.COMPUTE_CLASS_CHANGES
 import org.jetbrains.kotlin.build.report.metrics.COMPUTE_IMPACTED_SET
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getNonPrivateMembers
 import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findReachableNodes
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassMembers
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ProgramSymbolSet
 import org.jetbrains.kotlin.incremental.snapshots.LazySnapshotLoadingMetrics
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import kotlin.math.max
 
 /** Computes changes between two klib snapshots. */
 internal object KlibChangesComputer {
@@ -55,7 +54,7 @@ internal object KlibChangesComputer {
      * Computes changes between the current and previous lists of snapshots, plus unchanged elements that are impacted by the changes.
      *
      * Snapshots are matched by content hash, and each snapshot can be matched to only one snapshot of the other build. The content hash
-     * is enough because a snapshot's package and source file are derived from its content.
+     * is enough because a snapshot's package is derived from its content.
      */
     fun computeChangedAndImpactedSet(
         currentSnapshots: List<KlibFileSnapshot>,
@@ -118,20 +117,21 @@ internal object KlibChangesComputer {
                 computeFineGrainedPackageFragmentChanges(fineGrainedPrevious, fineGrainedCurrent)
     }
 
+    /** Fine-grained changes are computed per package, so if a package's granularity changes, all its snapshots are coarse-grained. */
     private fun findPackageFragmentWithGranularityChanges(
         currentSnapshots: List<KlibFileSnapshot>,
         previousSnapshots: List<KlibFileSnapshot>,
     ): Set<Long> {
-        val current = currentSnapshots.groupBy { it.packageName to it.sourceFile }
-        val previous = previousSnapshots.groupBy { it.packageName to it.sourceFile }
+        val current = currentSnapshots.groupBy { it.packageName }
+        val previous = previousSnapshots.groupBy { it.packageName }
 
         return buildSet {
-            for (key in current.keys intersect previous.keys) {
-                if (current.getValue(key).any { it.classMemberLevelSnapshot == null } !=
-                    previous.getValue(key).any { it.classMemberLevelSnapshot == null }
+            for (packageName in current.keys intersect previous.keys) {
+                if (current.getValue(packageName).any { it.classMemberLevelSnapshot == null } !=
+                    previous.getValue(packageName).any { it.classMemberLevelSnapshot == null }
                 ) {
-                    current.getValue(key).mapTo(this) { it.contentHash }
-                    previous.getValue(key).mapTo(this) { it.contentHash }
+                    current.getValue(packageName).mapTo(this) { it.contentHash }
+                    previous.getValue(packageName).mapTo(this) { it.contentHash }
                 }
             }
         }
@@ -155,20 +155,26 @@ internal object KlibChangesComputer {
         previousSnapshots: List<KlibFileSnapshot>,
         currentSnapshots: List<KlibFileSnapshot>,
     ): ProgramSymbolSet {
-        val previousBySourceFile = previousSnapshots.groupBy { it.packageName to it.sourceFile }
-        val currentBySourceFile = currentSnapshots.groupBy { it.packageName to it.sourceFile }
+        fun List<KlibFileSnapshot>.groupProtoDataByPackage(): Map<FqName, List<ProtoData>> =
+            groupBy({ it.packageName }, { requireNotNull(it.classMemberLevelSnapshot).proto }).mapValues { it.value.flatten() }
+
+        val previousProtoDataMap = previousSnapshots.groupProtoDataByPackage()
+        val currentProtoDataMap = currentSnapshots.groupProtoDataByPackage()
 
         return ProgramSymbolSet.Collector().run {
-            // Classes are matched by ClassId across all files, so a class that moves to another file is not reported
-            collectClassProtoChanges(
-                previousSnapshots.flatMap { it.classMemberLevelSnapshot!!.classProtoData },
-                currentSnapshots.flatMap { it.classMemberLevelSnapshot!!.classProtoData },
-            )
+            for (packageName in previousProtoDataMap.keys + currentProtoDataMap.keys) {
+                val previousProtoData = previousProtoDataMap[packageName].orEmpty()
+                val currentProtoData = currentProtoDataMap[packageName].orEmpty()
 
-            for (sourceFile in previousBySourceFile.keys + currentBySourceFile.keys) {
+                collectClassProtoChanges(
+                    previousProtoData.filterIsInstance<ClassProtoData>(),
+                    currentProtoData.filterIsInstance<ClassProtoData>(),
+                )
+
                 collectPackagePartProtoChanges(
-                    previousBySourceFile[sourceFile].orEmpty().map { it.classMemberLevelSnapshot!!.packagePartProtoData },
-                    currentBySourceFile[sourceFile].orEmpty().map { it.classMemberLevelSnapshot!!.packagePartProtoData },
+                    packageName,
+                    previousProtoData.filterIsInstance<PackagePartProtoData>(),
+                    currentProtoData.filterIsInstance<PackagePartProtoData>(),
                 )
             }
 
@@ -214,24 +220,12 @@ internal object KlibChangesComputer {
         }
 
     private fun ProgramSymbolSet.Collector.collectPackagePartProtoChanges(
+        packageName: FqName,
         previousPackagePartProtoData: List<PackagePartProtoData>,
         currentPackagePartProtoData: List<PackagePartProtoData>,
     ) {
-        for (i in 0 until max(previousPackagePartProtoData.size, currentPackagePartProtoData.size)) {
-            val previousPackagePartProto = previousPackagePartProtoData.getOrNull(i)
-            val currentPackagePartProto = currentPackagePartProtoData.getOrNull(i)
-
-            when {
-                previousPackagePartProto == null ->
-                    addPackageMembers(currentPackagePartProto!!.packageFqName, currentPackagePartProto.getNonPrivateMembers())
-                currentPackagePartProto == null ->
-                    addPackageMembers(previousPackagePartProto.packageFqName, previousPackagePartProto.getNonPrivateMembers())
-                else -> {
-                    val difference = DifferenceCalculatorForPackageFacade(previousPackagePartProto, currentPackagePartProto).difference()
-                    addPackageMembers(previousPackagePartProto.packageFqName, difference.changedMembersNames)
-                }
-            }
-        }
+        val difference = DifferenceCalculatorForPackageFacades(previousPackagePartProtoData, currentPackagePartProtoData).difference()
+        addPackageMembers(packageName, difference.changedMembersNames)
     }
 
     /**

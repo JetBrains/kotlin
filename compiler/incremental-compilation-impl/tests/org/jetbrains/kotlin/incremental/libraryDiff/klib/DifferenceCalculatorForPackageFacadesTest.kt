@@ -32,5 +32,5 @@ class DifferenceCalculatorForPackageFacadesTest : KlibSnapshotTestCommon() {
 
     private fun packageParts(version: String): List<PackagePartProtoData> =
         snapshotKlib(File(testDataDir, "testDuplicateMembers/src/$version")).klibFileSnapshots
-            .map { it.classMemberLevelSnapshot!!.packagePartProtoData }
+            .flatMap { it.classMemberLevelSnapshot!!.proto.filterIsInstance<PackagePartProtoData>() }
 }

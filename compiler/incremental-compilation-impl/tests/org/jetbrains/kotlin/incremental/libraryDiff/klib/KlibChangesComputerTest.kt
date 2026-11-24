@@ -106,6 +106,10 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
         ).assertEquals(computeChanges(snapshotWithMixedGranularities("current"), snapshotWithMixedGranularities("previous")))
     }
 
+    /**
+     * Unlike the JVM, moving a top-level member to another file of the same package is not reported: klibs link top-level members
+     * by signature, which does not include the file.
+     */
     @Test
     fun testTopLevelMembers() {
         Changes(
@@ -113,11 +117,9 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
                 LookupSymbol(name = "modifiedTopLevelProperty", scope = "com.example"),
                 LookupSymbol(name = "addedTopLevelProperty", scope = "com.example"),
                 LookupSymbol(name = "removedTopLevelProperty", scope = "com.example"),
-                LookupSymbol(name = "movedTopLevelProperty", scope = "com.example"),
                 LookupSymbol(name = "modifiedTopLevelFunction", scope = "com.example"),
                 LookupSymbol(name = "addedTopLevelFunction", scope = "com.example"),
                 LookupSymbol(name = "removedTopLevelFunction", scope = "com.example"),
-                LookupSymbol(name = "movedTopLevelFunction", scope = "com.example"),
             ),
             fqNames = setOf("com.example")
         ).assertEquals(computeChanges("testTopLevelMembers"))
@@ -146,6 +148,20 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
             ),
             fqNames = setOf("com.example.ChangedClass", "com.example.UnchangedClass", "com.example")
         ).assertEquals(computeChanges("testClassAndTopLevelMembersInOneFile", CLASS_LEVEL))
+    }
+
+    /** All changed files of a package are compared, not just one of them. */
+    @Test
+    fun testSeveralChangedFilesInOnePackage() {
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "changedMember", scope = "com.example.FirstClass"),
+                LookupSymbol(name = "changedMember", scope = "com.example.SecondClass"),
+                LookupSymbol(name = "changedFirstTopLevelFunction", scope = "com.example"),
+                LookupSymbol(name = "changedSecondTopLevelFunction", scope = "com.example"),
+            ),
+            fqNames = setOf("com.example.FirstClass", "com.example.SecondClass", "com.example")
+        ).assertEquals(computeChanges("testSeveralChangedFilesInOnePackage"))
     }
 
     /** Same-named files of one package in two klibs are matched by content hash, not by package and source file alone. */
