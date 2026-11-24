@@ -77,7 +77,7 @@ private fun Context.renderKaContractBooleanExpression(value: KaContractBooleanEx
             is KaContractIsInstancePredicateExpression -> {
                 appendProperty(value::argument, ::renderKaContractParameterValue)
                 appendProperty(value::type, renderer = { type, _ ->
-                    appendLine(with(session) { symbolRenderer.renderType(useSiteSession, type) })
+                    appendLine(symbolRenderer.renderType(session, type))
                 })
                 appendSimpleProperty(value::isNegated, endWithNewLine)
             }

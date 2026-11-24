@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.name.StandardClassIds
 import kotlin.contracts.ExperimentalContracts
@@ -53,13 +50,13 @@ public interface KaFlexibleTypeRenderer {
             type: KaFlexibleType,
             typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
-        ): Unit = with(analysisSession) {
+        ): Unit = context(analysisSession) {
             printer {
                 val lower = type.lowerBound
                 val upper = type.upperBound
 
                 when {
-                    analysisSession.isNullabilityFlexibleType(lower, upper) -> {
+                    isNullabilityFlexibleType(lower, upper) -> {
                         typeRenderer.renderType(analysisSession, lower, printer)
                         append("!")
                     }
@@ -84,7 +81,8 @@ public interface KaFlexibleTypeRenderer {
             }
         }
 
-        private fun KaSession.isNullabilityFlexibleType(lower: KaType, upper: KaType): Boolean {
+        context(session: KaSession)
+        private fun isNullabilityFlexibleType(lower: KaType, upper: KaType): Boolean {
             val isTheSameType = lower is KaClassType && upper is KaClassType && lower.classId == upper.classId ||
                     lower is KaTypeParameterType && upper is KaTypeParameterType && lower.symbol == upper.symbol
             if (isTheSameType &&

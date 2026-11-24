@@ -7,25 +7,6 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPackage
-import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analysis.api.*
-import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
-import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
-import org.jetbrains.kotlin.analysis.api.contracts.description.Context
-import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
-import org.jetbrains.kotlin.analysis.api.projectStructure.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
-import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
-import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.types.Variance
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -35,6 +16,27 @@ import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.isAccessible
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
+import org.jetbrains.kotlin.analysis.api.components.dispatchReceiverType
+import org.jetbrains.kotlin.analysis.api.contracts.description.Context
+import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName
+import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
+import org.jetbrains.kotlin.analysis.api.visibility.isPublicApi
+import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.types.Variance
 
 @KaNonPublicApi
 @OptIn(KaExperimentalApi::class, KaImplementationDetail::class, KaIdeApi::class)
@@ -46,23 +48,32 @@ public class KaDebugRenderer(
 ) {
 
     public fun render(analysisSession: KaSession, symbol: KaSymbol): String = prettyPrint {
-        analysisSession.renderSymbol(symbol, this, linkedSetOf())
+        context(analysisSession) {
+            renderSymbol(symbol, this, linkedSetOf())
+        }
     }
 
     public fun renderAnnotationApplication(analysisSession: KaSession, application: KaAnnotation): String = prettyPrint {
-        analysisSession.renderAnnotationApplication(application, this, linkedSetOf())
+        context(analysisSession) {
+            renderAnnotationApplication(application, this, linkedSetOf())
+        }
     }
 
     public fun renderType(analysisSession: KaSession, type: KaType): String = prettyPrint {
-        analysisSession.renderType(type, this, linkedSetOf())
+        context(analysisSession) {
+            renderType(type, this, linkedSetOf())
+        }
     }
 
     @TestOnly
     public fun renderForSubstitutionOverrideUnwrappingTest(analysisSession: KaSession, symbol: KaSymbol): String = prettyPrint {
-        analysisSession.renderForSubstitutionOverrideUnwrappingTest(symbol, this, linkedSetOf())
+        context(analysisSession) {
+            renderForSubstitutionOverrideUnwrappingTest(symbol, this, linkedSetOf())
+        }
     }
 
-    private fun KaSession.renderSymbol(symbol: KaSymbol, printer: PrettyPrinter, currentSymbolStack: LinkedHashSet<KaSymbol>) {
+    context(session: KaSession)
+    private fun renderSymbol(symbol: KaSymbol, printer: PrettyPrinter, currentSymbolStack: LinkedHashSet<KaSymbol>) {
         currentSymbolStack += symbol
         try {
             renderSymbolInternals(symbol, printer, currentSymbolStack)
@@ -109,7 +120,7 @@ public class KaDebugRenderer(
 
                 if (renderIsPublicApi) {
                     if (symbol is KaDeclarationSymbol) {
-                        renderComputedValue("isPublicApi", printer, currentSymbolStack) { isPublicApi(symbol) }
+                        renderComputedValue("isPublicApi", printer, currentSymbolStack) { symbol.isPublicApi }
                     }
                 }
             }
@@ -118,7 +129,8 @@ public class KaDebugRenderer(
         }
     }
 
-    private fun KaSession.renderForSubstitutionOverrideUnwrappingTest(
+    context(session: KaSession)
+    private fun renderForSubstitutionOverrideUnwrappingTest(
         symbol: KaSymbol,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
@@ -139,7 +151,8 @@ public class KaDebugRenderer(
         }
     }
 
-    private fun KaSession.renderComputedValue(
+    context(session: KaSession)
+    private fun renderComputedValue(
         name: String,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
@@ -158,7 +171,8 @@ public class KaDebugRenderer(
         renderValue(value, printer, currentSymbolStack)
     }
 
-    private fun KaSession.renderProperty(
+    context(session: KaSession)
+    private fun renderProperty(
         property: KProperty<*>,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
@@ -168,7 +182,8 @@ public class KaDebugRenderer(
         renderFunctionCall(property.getter, printer, currentSymbolStack, args)
     }
 
-    private fun KaSession.renderFunctionCall(
+    context(session: KaSession)
+    private fun renderFunctionCall(
         function: KFunction<*>,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
@@ -182,7 +197,8 @@ public class KaDebugRenderer(
         }
     }
 
-    private fun KaSession.renderSymbolInternals(symbol: KaSymbol, printer: PrettyPrinter, currentSymbolStack: LinkedHashSet<KaSymbol>) {
+    context(session: KaSession)
+    private fun renderSymbolInternals(symbol: KaSymbol, printer: PrettyPrinter, currentSymbolStack: LinkedHashSet<KaSymbol>) {
         renderFrontendIndependentKClassNameOf(symbol, printer)
         val apiClass = getApiKClassOf(symbol)
         printer.withIndent {
@@ -202,7 +218,8 @@ public class KaDebugRenderer(
         printer.append(apiClass.simpleName).append(':')
     }
 
-    private fun KaSession.renderList(
+    context(session: KaSession)
+    private fun renderList(
         values: List<*>,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
@@ -217,7 +234,8 @@ public class KaDebugRenderer(
         }
     }
 
-    private fun KaSession.renderSymbolTag(
+    context(session: KaSession)
+    private fun renderSymbolTag(
         symbol: KaSymbol,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
@@ -254,7 +272,8 @@ public class KaDebugRenderer(
         printer.append(KaAnnotationValueRenderer.render(value))
     }
 
-    private fun KaSession.renderNamedConstantValue(
+    context(session: KaSession)
+    private fun renderNamedConstantValue(
         value: KaNamedAnnotationValue,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
@@ -263,7 +282,8 @@ public class KaDebugRenderer(
         renderValue(value.expression, printer, currentSymbolStack)
     }
 
-    private fun KaSession.renderType(type: KaType, printer: PrettyPrinter, currentSymbolStack: LinkedHashSet<KaSymbol>) {
+    context(session: KaSession)
+    private fun renderType(type: KaType, printer: PrettyPrinter, currentSymbolStack: LinkedHashSet<KaSymbol>) {
         val typeToRender = if (renderExpandedTypes) type.fullyExpandedType else type
 
         renderFrontendIndependentKClassNameOf(typeToRender, printer)
@@ -294,7 +314,8 @@ public class KaDebugRenderer(
         }
     }
 
-    private fun KaSession.renderByPropertyNames(value: Any, printer: PrettyPrinter, currentSymbolStack: LinkedHashSet<KaSymbol>) {
+    context(session: KaSession)
+    private fun renderByPropertyNames(value: Any, printer: PrettyPrinter, currentSymbolStack: LinkedHashSet<KaSymbol>) {
         val members = value::class.members
             .asSequence()
             .filter { it.name !in ignoredPropertyNames }
@@ -309,7 +330,8 @@ public class KaDebugRenderer(
         }
     }
 
-    private fun KaSession.renderAnnotationApplication(
+    context(session: KaSession)
+    private fun renderAnnotationApplication(
         call: KaAnnotation,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
@@ -345,7 +367,8 @@ public class KaDebugRenderer(
         }
     }
 
-    private fun KaSession.renderValue(
+    context(session: KaSession)
+    private fun renderValue(
         value: Any?,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
@@ -357,7 +380,7 @@ public class KaDebugRenderer(
             is KaTypeProjection -> renderTypeProjection(value, printer, currentSymbolStack)
             is KaClassTypeQualifier -> renderRegularValue(value, printer, currentSymbolStack)
             is KaAnnotationValue -> renderAnnotationValue(value, printer)
-            is KaContractEffectDeclaration -> Context(this@renderValue, printer, this@KaDebugRenderer)
+            is KaContractEffectDeclaration -> Context(session, printer, this@KaDebugRenderer)
                 .renderKaContractEffectDeclaration(value, endWithNewLine = false)
             is KaNamedAnnotationValue -> renderNamedConstantValue(value, printer, currentSymbolStack)
             is KaInitializerValue -> renderKaInitializerValue(value, printer)
@@ -392,7 +415,8 @@ public class KaDebugRenderer(
         }
     }
 
-    private fun KaSession.renderTypeProjection(
+    context(session: KaSession)
+    private fun renderTypeProjection(
         value: KaTypeProjection,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
@@ -408,7 +432,8 @@ public class KaDebugRenderer(
         }
     }
 
-    private fun KaSession.renderRegularValue(
+    context(session: KaSession)
+    private fun renderRegularValue(
         value: Any,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
@@ -472,7 +497,8 @@ public class KaDebugRenderer(
         append(')')
     }
 
-    private fun KaSession.renderAnnotationsList(
+    context(session: KaSession)
+    private fun renderAnnotationsList(
         value: KaAnnotationList,
         printer: PrettyPrinter,
         currentSymbolStack: LinkedHashSet<KaSymbol>,
