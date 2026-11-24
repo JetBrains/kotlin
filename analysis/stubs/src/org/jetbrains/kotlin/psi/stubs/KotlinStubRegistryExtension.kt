@@ -356,11 +356,6 @@ internal object KtStubElementFactories {
             psiFactory = ::KtConstructorCalleeExpression,
         )
 
-        registerStubSerializingFactory(
-            type = KtStubElementTypes.CONTEXT_RECEIVER,
-            factory = KtContextReceiverStubSerializingElementFactory,
-        )
-
         registerPlaceHolderFactory(
             type = KtStubElementTypes.CONTEXT_PARAMETER_LIST,
             psiFactory = ::KtContextReceiverList,

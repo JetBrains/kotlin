@@ -292,7 +292,6 @@ org.jetbrains.kotlin.psi.KtContainerNodeForControlStructureBody:constructor(ASTN
 org.jetbrains.kotlin.psi.KtContextParameterList:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtContextParameterList:constructor(KotlinPlaceHolderStub<KtContextParameterList>)
 org.jetbrains.kotlin.psi.KtContextReceiver:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtContextReceiver:constructor(KotlinContextReceiverStub)
 org.jetbrains.kotlin.psi.KtContextReceiverList:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtContextReceiverList:constructor(KotlinPlaceHolderStub<KtContextParameterList>)
 org.jetbrains.kotlin.psi.KtContinueExpression:constructor(ASTNode)
@@ -876,8 +875,6 @@ org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub.value
 org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isDelegatedCallToThis
 org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isExplicitDelegationCall
-org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
-org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub.label
 org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationEntryStub
 org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub
 org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub.hasInitializer
