@@ -23,6 +23,8 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.support.ParameterDeclarations
+import java.net.URL
+import java.util.*
 import java.util.stream.Stream
 
 class BtaV2StrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
@@ -244,18 +246,9 @@ class BtaVersionsCompilationTestArgumentProvider : ArgumentsProvider {
                 val temporaryKotlinToolchains = kotlinToolchainsProvider()
                 val version = temporaryKotlinToolchains.getCompilerVersion()
 
-                @Suppress("DEPRECATION_ERROR") val kotlinToolchainV1Adapter =
+                val kotlinToolchainV1Adapter =
                     if (KotlinToolingVersion(version) < KotlinToolingVersion(2, 4, 0, null)) {
-                        {
-                            val asKotlinToolchainsMethod =
-                                btaClassloader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1AdapterKt")
-                                    .getDeclaredMethod("asKotlinToolchains", CompilationService::class.java)
-                            asKotlinToolchainsMethod.invoke(
-                                null, CompilationService.loadImplementation(
-                                    btaClassloader
-                                )
-                            ) as KotlinToolchains
-                        }
+                        { KotlinToolchains.loadImplementation(btaClassloader.withoutV2Implementation()) }
                     } else null
                 if (kotlinToolchainV1Adapter != null) {
                     add(
@@ -270,6 +263,11 @@ class BtaVersionsCompilationTestArgumentProvider : ArgumentsProvider {
             }
         }
     }
+}
+
+private fun ClassLoader.withoutV2Implementation(): ClassLoader = object : ClassLoader(this) {
+    override fun getResources(name: String): Enumeration<URL> =
+        if (name == "META-INF/services/${KotlinToolchains::class.java.name}") Collections.emptyEnumeration() else super.getResources(name)
 }
 
 typealias ProjectCreator = BaseCompilationTest.(ProjectAction) -> Unit
