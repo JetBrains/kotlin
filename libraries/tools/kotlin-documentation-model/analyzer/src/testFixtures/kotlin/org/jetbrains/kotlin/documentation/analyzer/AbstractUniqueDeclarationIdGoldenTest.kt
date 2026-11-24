@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 
 /**
@@ -106,9 +104,8 @@ internal fun dumpUnhashedIds(
     val ids = LinkedHashMap<String, MutableList<PsiElement?>>()
     fun add(symbol: KaSymbol) {
         try {
-            generateDeclarationId(symbol, hashSignature = false)?.let { id ->
-                ids.getOrPut(id) { mutableListOf() }.add(symbol.realPsi)
-            }
+            val id = generateDeclarationId(symbol, hashSignature = false)
+            ids.getOrPut(id) { mutableListOf() }.add(symbol.realPsi)
         } catch (e: IllegalArgumentException) {
             error("Failed to generate a declaration ID for $symbol: ${e.message}")
         }

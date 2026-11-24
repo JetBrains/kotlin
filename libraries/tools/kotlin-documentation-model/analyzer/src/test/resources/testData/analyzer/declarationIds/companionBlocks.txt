@@ -16,6 +16,6 @@ sample/TwoBlocks#Dimensions#kind=property; companion;
 sample/TwoBlocks##kind=function;
 sample/WithCompanion
 sample/WithCompanion#interfaceCompanionMember#kind=function; companion;
-sample#topLevelExtension#kind=function; receiver=sample/Outercompanion;   // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION
-sample#topLevelExtensionProperty#kind=property; receiver=sample/Outercompanion;   // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION
-sample#extensionOnNamed#kind=function; receiver=sample/Namedcompanion;   // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION
+sample#topLevelExtension#kind=function; receiver=sample/Outer; companion;   // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION
+sample#topLevelExtensionProperty#kind=property; receiver=sample/Outer; companion;   // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION
+sample#extensionOnNamed#kind=function; receiver=sample/Named; companion;   // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION

@@ -18,7 +18,7 @@ sample/MarkerAlias
 sample#viaAlias#kind=function; parameters=[sample/MarkerAlias];
 sample#annotatedGetter#kind=property;
 sample#annotatedAccessors#kind=property;
-sample#annotatedReceiver#kind=function; receiver=sample/Marker
+sample#annotatedReceiver#kind=function; receiver=sample/Marker;
 sample/Carrying
 sample/Carrying##kind=function; parameters=[kotlin/Int];
 sample/Carrying#method#kind=function;

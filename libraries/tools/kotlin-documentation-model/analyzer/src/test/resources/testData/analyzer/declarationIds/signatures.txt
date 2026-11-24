@@ -2,10 +2,10 @@ sample
 sample#noArgs#kind=function;
 sample#stringParam#kind=function; parameters=[kotlin/String];
 sample#nullableString#kind=function; parameters=[kotlin/String?];
-sample#stringReceiver#kind=function; receiver=kotlin/String
-sample#intReceiver#kind=function; receiver=kotlin/Int
+sample#stringReceiver#kind=function; receiver=kotlin/String;
+sample#intReceiver#kind=function; receiver=kotlin/Int;
 sample#contextReceiver#kind=function; contextParameters=[kotlin/String];
-sample#suspended#kind=function;  suspend;
+sample#suspended#kind=function; suspend;
 sample#varargParam#kind=function; parameters=[vararg kotlin/String];
 sample#arrayOut#kind=function; parameters=[kotlin/Array<out kotlin/String>];
 sample#generic#kind=function; typeParameters=[<T0_0>: ]; parameters=[<T0_0>];
@@ -13,7 +13,7 @@ sample#bounded#kind=function; typeParameters=[<T0_0>: kotlin/CharSequence]; para
 sample#functionType#kind=function; parameters=[(kotlin/String) -> kotlin/Unit];
 sample#suspendFunctionType#kind=function; parameters=[suspend (kotlin/String) -> kotlin/Unit];
 sample#extensionFunctionType#kind=function; parameters=[kotlin/String.() -> kotlin/Unit];
-sample#complex#kind=function; typeParameters=[<T0_0>: kotlin/CharSequence]; contextParameters=[kotlin/String]; receiver=kotlin/Intparameters=[vararg <T0_0>];  suspend;
+sample#complex#kind=function; typeParameters=[<T0_0>: kotlin/CharSequence]; contextParameters=[kotlin/String]; receiver=kotlin/Int; parameters=[vararg <T0_0>]; suspend;
 sample#mapAndLambda#kind=function; parameters=[kotlin.collections/Map<kotlin/String, kotlin.collections/List<kotlin/Int>>, (kotlin/String) -> kotlin/Unit];
 sample/Text
 sample#aliased#kind=function; parameters=[sample/Text];
@@ -25,7 +25,7 @@ sample/Outer##kind=function; typeParameters=[<T0_0>: , <T0_1>: ];
 sample#computed#kind=property;
 sample#mutable#kind=property;
 sample#contextual#kind=property; contextParameters=[kotlin/String];   // REDECLARATION
-sample#extensionValue#kind=property; typeParameters=[<T0_0>: ]; receiver=<T0_0>
+sample#extensionValue#kind=property; typeParameters=[<T0_0>: ]; receiver=<T0_0>;
 sample/WithAccessors
 sample/WithAccessors#counter#kind=property;
 sample/WithAccessors##kind=function;

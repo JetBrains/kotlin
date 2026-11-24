@@ -19,8 +19,8 @@ sample/Choice##kind=function;
 sample#top#kind=function;
 sample#top#kind=property;
 sample/JavaClass
-sample/JavaClass#field#kind=field;
-sample/JavaClass#staticField#kind=field; companion;
+sample/JavaClass#field#kind=property;
+sample/JavaClass#staticField#kind=property; companion;
 sample/JavaClass#method#kind=function;
 sample/JavaClass#staticMethod#kind=function; companion;
 sample/JavaClass#getText#kind=function;
