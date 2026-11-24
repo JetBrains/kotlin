@@ -3026,6 +3026,18 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("destructuringEntryFqNames.kt")
+    public void testDestructuringEntryFqNames() {
+      run("destructuringEntryFqNames.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringEntryFqNamesScript.kts")
+    public void testDestructuringEntryFqNamesScript() {
+      run("destructuringEntryFqNamesScript.kts");
+    }
+
+    @Test
     @TestMetadata("freezeKt79951.kt")
     public void testFreezeKt79951() {
       run("freezeKt79951.kt");
