@@ -21,15 +21,15 @@ MODULE_FRAGMENT name:<main>
                 receiver: GET_VAR '<this>: test.Color declared in test.Color.<get-rgb>' type=test.Color origin=null
       ENUM_ENTRY name:RED signature:test/Color.RED|null[0]
         init: EXPRESSION_BODY
-          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (rgb: kotlin.Int) [primary] declared in test.Color'
+          ENUM_CONSTRUCTOR_CALL 'test/Color.<init>|<init>(kotlin.Int){}[0]'
             ARG rgb: CONST Int type=kotlin.Int value=16711680
       ENUM_ENTRY name:GREEN signature:test/Color.GREEN|null[0]
         init: EXPRESSION_BODY
-          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (rgb: kotlin.Int) [primary] declared in test.Color'
+          ENUM_CONSTRUCTOR_CALL 'test/Color.<init>|<init>(kotlin.Int){}[0]'
             ARG rgb: CONST Int type=kotlin.Int value=65280
       ENUM_ENTRY name:BLUE signature:test/Color.BLUE|null[0]
         init: EXPRESSION_BODY
-          ENUM_CONSTRUCTOR_CALL 'private constructor <init> (rgb: kotlin.Int) [primary] declared in test.Color'
+          ENUM_CONSTRUCTOR_CALL 'test/Color.<init>|<init>(kotlin.Int){}[0]'
             ARG rgb: CONST Int type=kotlin.Int value=255
       FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:test/Color.values|values#static(){}[0] visibility:public modality:FINAL returnType:kotlin.Array<test.Color> [companion]
         SYNTHETIC_BODY kind=ENUM_VALUES
