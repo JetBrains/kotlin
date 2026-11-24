@@ -72,6 +72,7 @@ object Comparators {
         get(): String = when (this) {
             is SirExistentialType -> "Any" + protocols.count() + this.protocols.joinToString(separator = "_") { it.first.name }
             is SirNominalType -> typeDeclaration.name
+            is SirTypeParameterType -> typeParameter.name
             is SirErrorType -> "SirErrorType"
             is SirUnsupportedType -> "SirUnsupportedType"
             is SirFunctionalType -> "SirFunctionalType"

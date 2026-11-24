@@ -28,6 +28,7 @@ class SirFunctionBuilder {
     var isInstance: Boolean = true
     var modality: SirModality = SirModality.UNSPECIFIED
     lateinit var name: String
+    val typeParameters: MutableList<SirTypeParameter> = []
     var contextParameter: SirParameter? = null
     var extensionReceiverParameter: SirParameter? = null
     val parameters: MutableList<SirParameter> = []
@@ -48,6 +49,7 @@ class SirFunctionBuilder {
             isInstance,
             modality,
             name,
+            typeParameters,
             contextParameter,
             extensionReceiverParameter,
             parameters,
@@ -84,6 +86,7 @@ inline fun buildFunctionCopy(original: SirFunction, init: SirFunctionBuilder.() 
     copyBuilder.isInstance = original.isInstance
     copyBuilder.modality = original.modality
     copyBuilder.name = original.name
+    copyBuilder.typeParameters.addAll(original.typeParameters)
     copyBuilder.contextParameter = original.contextParameter
     copyBuilder.extensionReceiverParameter = original.extensionReceiverParameter
     copyBuilder.parameters.addAll(original.parameters)

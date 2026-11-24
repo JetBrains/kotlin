@@ -45,18 +45,25 @@ internal open class SirFunctionFromKtSymbol(
     override val name: String by lazyWithSessions {
         ktSymbol.sirDeclarationName()
     }
+    private val resolveToUpperBounds: Boolean by lazy {
+        hasUnsupportedTypeParameters()
+    }
+    override val typeParameters: List<SirTypeParameter> by lazy {
+        if (resolveToUpperBounds) return@lazy emptyList()
+        translateTypeParameters()
+    }
     internal val contextParameters: Pair<SirParameter, List<SirParameter>>? by lazy {
-        translateContextParameters()
+        translateContextParameters(resolveToUpperBounds)
     }
     override val contextParameter: SirParameter? get() = contextParameters?.first
     override val extensionReceiverParameter: SirParameter? by lazy {
-        translateExtensionParameter()
+        translateExtensionParameter(resolveToUpperBounds)
     }
     override val parameters: List<SirParameter> by lazy {
-        translateParameters()
+        translateParameters(resolveToUpperBounds)
     }
     override val returnType: SirType by lazy {
-        translateReturnType()
+        translateReturnType(resolveToUpperBounds)
     }
     private val kdocElements: KDocElements? by lazyWithSessions {
         KDocElements(this)

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.SirTypeParameter
 
 public open class KotlinSource(
     public val symbol: KaSymbol,
@@ -40,6 +41,8 @@ public sealed class KotlinParameterOrigin : SirParameter.Origin {
     public class ValueParameter(public val parameter: KaValueParameterSymbol) : KotlinParameterOrigin()
     public class ReceiverParameter(public val parameter: KaReceiverParameterSymbol) : KotlinParameterOrigin()
 }
+
+public class KotlinTypeParameterOrigin(public val parameter: KaTypeParameterSymbol) : SirTypeParameter.Origin
 
 /**
  * Convenience accessor which provides direct access to [KaSymbol].

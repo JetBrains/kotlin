@@ -54,6 +54,7 @@ private val SirType.render: String
             "${protocol.swiftFqName}${typeArguments?.joinToString(prefix = "<", postfix = ">", separator = ",") { it.render } ?: ""}"
         } ?: "Any"
         is SirNominalType -> typeDeclaration.swiftFqName
+        is SirTypeParameterType -> typeParameter.name.swiftIdentifier
         is SirErrorType -> "<ERROR>"
         is SirUnsupportedType -> "<UNSUPPORTED>"
         is SirFunctionalType -> "(${parameterTypes.joinToString { it.render }}) -> ${returnType.render}"

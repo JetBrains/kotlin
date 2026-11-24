@@ -173,6 +173,7 @@ public class SirCustomTypeTranslatorImpl(
                 ctx.reportUnsupportedType,
                 ctx.processTypeImports,
                 ctx.requiresHashableAsAny,
+                ctx.resolveToUpperBounds,
             )
         }
     }

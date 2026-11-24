@@ -126,6 +126,56 @@ class SirAsSwiftSourcesPrinterTests {
     }
 
     @Test
+    fun `should print type parameters`() {
+        val module = buildModule {
+            name = "Test"
+
+            declarations.add(
+                buildFunction {
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                    name = "foo"
+                    val typeParamA = SirTypeParameter(
+                        name = "A"
+                    ).also(typeParameters::add)
+                    val typeParamB = SirTypeParameter(
+                        name = "B",
+                        constraint = SirNominalType(SirSwiftModule.anyClass)
+                    ).also(typeParameters::add)
+                    val typeParamC = SirTypeParameter(
+                        name = "C",
+                        constraint = SirTypeParameterType(typeParamA)
+                    ).also(typeParameters::add)
+                    parameters.add(
+                        SirParameter(
+                            argumentName = "arg1",
+                            type = SirTypeParameterType(typeParamA)
+                        )
+                    )
+                    parameters.add(
+                        SirParameter(
+                            argumentName = "arg2",
+                            type = SirTypeParameterType(typeParamB)
+                        )
+                    )
+                    parameters.add(
+                        SirParameter(
+                            argumentName = "arg3",
+                            type = SirTypeParameterType(typeParamC)
+                        )
+                    )
+                    returnType = SirNominalType(SirSwiftModule.bool)
+                }
+            )
+        }.attachDeclarations()
+
+        runTest(
+            module,
+            "testData/type_parameters"
+        )
+    }
+
+    @Test
     fun `should all types as parameter be handled`() {
         val module = buildModule {
             name = "Test"

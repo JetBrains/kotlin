@@ -258,7 +258,9 @@ internal class SirAsSwiftSourcesPrinter private constructor(
             printModifiers()
             printOverride()
         }
-        print("subscript(")
+        print("subscript")
+        printTypeParameters()
+        print("(")
         parameters.print()
         print(")")
         print(" -> ${returnType.swiftRender(SirTypeVariance.CONTRAVARIANT)}")
@@ -279,6 +281,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         printPreNameKeywords()
         printName()
         printPostNameKeywords()
+        printTypeParameters()
         if (this is SirAccessor) {
             if (this is SirSetter && this.parameterName != "newValue") {
                 // newValue is the default implicit setter parameter name in swift
@@ -524,6 +527,26 @@ internal class SirAsSwiftSourcesPrinter private constructor(
             -> print("")
     }
 
+    private fun SirDeclaration.printTypeParameters() = when (this) {
+        is SirFunction -> typeParameters.print()
+        is SirSubscript -> typeParameters.print()
+        else -> print("")
+    }
+
+    private fun List<SirTypeParameter>.print() = when {
+        isEmpty() -> print("")
+        else -> joinToString(
+            prefix = "<",
+            separator = ", ",
+            postfix = ">",
+        ) { typeParameter ->
+            val name = typeParameter.name.swiftIdentifier
+            typeParameter.constraint?.let {
+                "$name: ${it.swiftRender(SirTypeVariance.INVARIANT, allowSelf = false)}"
+            } ?: name
+        }.let(::print)
+    }
+
     private fun SirCallable.collectParameters(): List<SirParameter> = when (this) {
         is SirGetter -> emptyList()
         is SirSetter -> emptyList()
@@ -578,11 +601,11 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         }
 
 
-    private fun SirType.swiftRender(position: SirTypeVariance): String {
+    private fun SirType.swiftRender(position: SirTypeVariance, allowSelf: Boolean = true): String {
         val attributesString = (attributes.render(position).takeUnless { it.isBlank() }?.let { "$it " } ?: "")
         val renderedType = "Self"
             .takeIf {
-                currentContext.declaration
+                allowSelf && currentContext.declaration
                     .let { it is SirExtension && it.extendedType == this && it.extendedType.isBivariantSelf == true }
             }
             ?: when (this) {
@@ -664,6 +687,6 @@ private fun List<SirAttribute>.render(position: SirTypeVariance): String = mapNo
 private val SirType.isBivariantSelf: Boolean? get() = when (this) {
         is SirErrorType, is SirUnsupportedType -> null
         is SirExistentialType, is SirFunctionalType -> true
-        is SirTupleType, is SirType.Metatype -> false
+        is SirTupleType, is SirType.Metatype, is SirTypeParameterType -> false
         is SirNominalType -> parent == null && typeArguments.isEmpty() && typeDeclaration !is SirClass /* also not actors */
     }
