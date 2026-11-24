@@ -7,10 +7,10 @@ annotation class derived
 @base
 class correct(x: Int) {
   @base
-  constructor()
+  val x: Int
 
   @base
-  val x: Int
+  constructor()
 }
 
 @base

@@ -3,9 +3,9 @@ interface Context2<A> {
 }
 
 class Context2Impl<A>(value: A) : Context2<A> {
-  override fun getContextElement(): A
-
   val value: A
+
+  override fun getContextElement(): A
 }
 
 context(b@B, `fun`@A)

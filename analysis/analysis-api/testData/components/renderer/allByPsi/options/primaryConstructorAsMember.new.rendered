@@ -5,11 +5,11 @@ class Simple {
 }
 
 class WithSecondary {
-  constructor()
-
   constructor(x: Int)
 
   val x: Int
+
+  constructor()
 }
 
 class WithAnnotatedConstructor {
