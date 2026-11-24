@@ -36,7 +36,7 @@ internal fun ExceptionAttachmentBuilder.withSymbolAttachment(name: String, symbo
 
         recursionGuard.set(true)
         try {
-            KaDebugRenderer(renderExtra = true).render(session, symbol)
+            KaDebugRenderer(renderExtra = true).render(symbol)
         } finally {
             recursionGuard.set(false)
         }

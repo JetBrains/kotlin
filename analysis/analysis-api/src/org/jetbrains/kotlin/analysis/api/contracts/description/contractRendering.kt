@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.*
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -77,7 +76,7 @@ private fun Context.renderKaContractBooleanExpression(value: KaContractBooleanEx
             is KaContractIsInstancePredicateExpression -> {
                 appendProperty(value::argument, ::renderKaContractParameterValue)
                 appendProperty(value::type, renderer = { type, _ ->
-                    appendLine(symbolRenderer.renderType(session, type))
+                    appendLine(symbolRenderer.renderType(type, session = session))
                 })
                 appendSimpleProperty(value::isNegated, endWithNewLine)
             }
@@ -93,7 +92,7 @@ private fun Context.renderKaContractBooleanExpression(value: KaContractBooleanEx
 
 @KaNonPublicApi
 private fun Context.renderKaParameterSymbol(value: KaSymbol, endWithNewLine: Boolean = true) {
-    val renderedValue = symbolRenderer.render(session, value)
+    val renderedValue = symbolRenderer.render(value, session = session)
     if (endWithNewLine) printer.appendLine(renderedValue) else printer.append(renderedValue)
 }
 

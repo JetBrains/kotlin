@@ -101,7 +101,7 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
                     val classTypeByClassId = buildClassType(classId, builderConfiguration)
                     appendLine("TYPE:")
                     appendLine(
-                        KaDebugRenderer(renderTypeByProperties = true).renderType(useSiteSession, classTypeByClassId)
+                        KaDebugRenderer(renderTypeByProperties = true).renderType(classTypeByClassId)
                     )
                     appendLine("RENDERED TYPE:")
                     appendLine(
@@ -118,7 +118,7 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
                 appendLine("CLASS_TYPE_BY_SYMBOL")
                 appendLine("TYPE:")
                 appendLine(
-                    KaDebugRenderer(renderTypeByProperties = true).renderType(useSiteSession, classTypeBySymbol)
+                    KaDebugRenderer(renderTypeByProperties = true).renderType(classTypeBySymbol)
                 )
                 appendLine("RENDERED TYPE:")
                 appendLine(

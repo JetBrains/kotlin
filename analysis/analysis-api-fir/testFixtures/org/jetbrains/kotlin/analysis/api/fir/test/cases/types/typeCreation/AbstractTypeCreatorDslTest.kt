@@ -112,7 +112,7 @@ object TypeCreatorDslTestRenderer {
             this.capturedTypeRenderer = KaCapturedTypeRenderer.AS_CAPTURED_TYPE_WITH_PROJECTION
         }
 
-        fun debug(type: KaType): String = KaDebugRenderer(renderTypeByProperties = true).renderType(session, type)
+        fun debug(type: KaType): String = KaDebugRenderer(renderTypeByProperties = true).renderType(type)
 
         return buildString {
             fun appendDebugPart(vararg lines: String) {

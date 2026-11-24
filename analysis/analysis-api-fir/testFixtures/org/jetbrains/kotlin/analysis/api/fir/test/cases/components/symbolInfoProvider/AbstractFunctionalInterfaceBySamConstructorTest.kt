@@ -32,10 +32,10 @@ abstract class AbstractFunctionalInterfaceBySamConstructorTest : AbstractAnalysi
 
                 buildString {
                     appendLine("CONSTRUCTOR:")
-                    appendLine("  ${samConstructorSymbol?.let { symbolRenderer.render(useSiteSession, it) }}")
+                    appendLine("  ${samConstructorSymbol?.let { symbolRenderer.render(it) }}")
                     appendLine()
                     appendLine("FUNCTIONAL INTERFACE:")
-                    appendLine("  ${functionalInterface?.let { symbolRenderer.render(useSiteSession, it) }}")
+                    appendLine("  ${functionalInterface?.let { symbolRenderer.render(it) }}")
                 }
             }
         }

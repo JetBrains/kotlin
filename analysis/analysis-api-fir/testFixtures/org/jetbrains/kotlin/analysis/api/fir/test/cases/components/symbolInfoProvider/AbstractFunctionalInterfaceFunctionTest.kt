@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolInfoProvider
 
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.functionalInterfaceFunction
 import org.jetbrains.kotlin.analysis.api.symbols.samConstructor
@@ -39,13 +38,13 @@ abstract class AbstractFunctionalInterfaceFunctionTest : AbstractAnalysisApiBase
 
                 buildString {
                     appendLine("CLASS:")
-                    appendLine("  ${symbolRenderer.render(useSiteSession, classSymbol)}")
+                    appendLine("  ${symbolRenderer.render(classSymbol)}")
                     appendLine()
                     appendLine("FUNCTIONAL INTERFACE FUNCTION:")
-                    appendLine("  ${functionalInterfaceFunction?.let { symbolRenderer.render(useSiteSession, it) }}")
+                    appendLine("  ${functionalInterfaceFunction?.let { symbolRenderer.render(it) }}")
                     appendLine()
                     appendLine("SAM CONSTRUCTOR:")
-                    appendLine("  ${samConstructor?.let { symbolRenderer.render(useSiteSession, it) }}")
+                    appendLine("  ${samConstructor?.let { symbolRenderer.render(it) }}")
                 }
             }
         }

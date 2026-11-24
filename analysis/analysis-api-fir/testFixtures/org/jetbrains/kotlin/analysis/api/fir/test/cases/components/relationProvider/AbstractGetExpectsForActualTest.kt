@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclaratio
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -81,7 +80,7 @@ abstract class AbstractGetExpectsForActualByCoordinatesTest : AbstractGetExpects
                     val errorMessage = buildString {
                         append("Multiple symbols found:")
                         for (symbol in symbols) {
-                            appendLine().append(renderer.render(useSiteSession, symbol))
+                            appendLine().append(renderer.render(symbol))
                         }
                     }
                     error(errorMessage)

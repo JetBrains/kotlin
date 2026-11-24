@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.annotations
 
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.types.type
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -27,7 +26,7 @@ abstract class AbstractAnalysisApiAnnotationsOnTypesTest : AbstractAnalysisApiBa
                 appendLine("${KtTypeReference::class.simpleName}: ${contextTypeReference.text}")
                 appendLine("annotations: [")
                 for (annotation in annotations) {
-                    appendLine(KaDebugRenderer().renderAnnotationApplication(useSiteSession, annotation).indented(indent = 2))
+                    appendLine(KaDebugRenderer().renderAnnotationApplication(annotation).indented(indent = 2))
                 }
                 appendLine("]")
             }

@@ -32,7 +32,7 @@ object TestAnnotationRenderer {
     ) {
         appendLine("$prefix[".indented(indent))
         for (annotation in annotations) {
-            appendLine(KaDebugRenderer().renderAnnotationApplication(session, annotation).indented(indent = indent + 2))
+            appendLine(KaDebugRenderer().renderAnnotationApplication(annotation).indented(indent = indent + 2))
             if (currentMetaAnnotations != null) {
                 val classId = annotation.classId ?: continue
                 if (classId in currentMetaAnnotations) {
@@ -40,7 +40,7 @@ object TestAnnotationRenderer {
                     continue
                 }
 
-                val metaAnnotations = context(session) { findClass(classId)?.annotations }
+                val metaAnnotations = findClass(classId)?.annotations
                 if (metaAnnotations != null) {
                     renderAnnotationsRecursive(metaAnnotations, currentMetaAnnotations + classId, indent = indent + 4)
                 } else {

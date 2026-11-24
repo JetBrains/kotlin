@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingM
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaFunctionalTypeRenderer
 import org.jetbrains.kotlin.analysis.api.scopes.fileScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
@@ -149,7 +148,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                     PointerWithRenderedSymbol(
                         pointerResult = safePointer(symbol),
                         rendered = when (symbol) {
-                            is KaReceiverParameterSymbol -> KaDebugRenderer().render(useSiteSession, symbol)
+                            is KaReceiverParameterSymbol -> KaDebugRenderer().render(symbol)
                             is KaPackageSymbol -> "package ${symbol.fqName}"
                             is KaDeclarationSymbol -> symbol.render(prettyRenderer)
                             is KaFileSymbol -> prettyPrint {
@@ -534,7 +533,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             renderIsPublicApi = RENDER_IS_PUBLIC_API in directives
         )
 
-        return renderer.render(analysisSession, symbol)
+        return renderer.render(symbol)
     }
 }
 

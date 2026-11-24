@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.javaInteroperabilityComponent
 
 import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.types.type
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -27,7 +26,7 @@ abstract class AbstractIsPrimitiveBackedTest : AbstractAnalysisApiBasedTest() {
 
                 val actualText = buildString {
                     appendLine("Type:")
-                    appendLine(KaDebugRenderer().renderType(useSiteSession, type))
+                    appendLine(KaDebugRenderer().renderType(type))
                     appendLine()
                     appendLine("isPrimitiveBacked:")
                     appendLine(type.isPrimitiveBacked)

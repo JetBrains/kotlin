@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeProvider
 
 import org.jetbrains.kotlin.analysis.api.renderer.render
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
@@ -33,9 +32,9 @@ abstract class AbstractDefaultTypeTest : AbstractAnalysisApiBasedTest() {
             val defaultTypeWithStarProjections = symbol.defaultTypeWithStarProjections
             val actual = buildString {
                 appendLine("DEFAULT TYPE:")
-                appendLine(KaDebugRenderer().renderType(useSiteSession, defaultType))
+                appendLine(KaDebugRenderer().renderType(defaultType))
                 appendLine("DEFAULT TYPE WITH STAR PROJECTIONS:")
-                appendLine(KaDebugRenderer().renderType(useSiteSession, defaultTypeWithStarProjections))
+                appendLine(KaDebugRenderer().renderType(defaultTypeWithStarProjections))
             }
             testServices.assertions.assertEqualsToTestOutputFile(actual)
 

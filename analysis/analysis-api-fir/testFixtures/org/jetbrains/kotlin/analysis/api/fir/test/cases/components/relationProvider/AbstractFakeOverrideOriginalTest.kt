@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.relationProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -27,7 +26,7 @@ abstract class AbstractFakeOverrideOriginalTest : AbstractAnalysisApiBasedTest()
                 appendLine("IS_THE_SAME_SYMBOL: ${original == symbol}")
                 appendLine("FAKE_OVERRIDE_ORIGINAL:")
                 withIndent {
-                    appendLine(renderer.render(useSiteSession, original))
+                    appendLine(renderer.render(original))
                     withIndent {
                         appendLine("containingDeclaration: ${original.containingDeclaration?.qualifiedNameString()}")
                     }

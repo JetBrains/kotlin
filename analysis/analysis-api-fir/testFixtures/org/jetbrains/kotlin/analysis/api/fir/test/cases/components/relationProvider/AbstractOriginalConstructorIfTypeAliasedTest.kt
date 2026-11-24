@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.relationProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.originalConstructorIfTypeAliased
@@ -32,13 +31,13 @@ abstract class AbstractOriginalConstructorIfTypeAliasedTest : AbstractAnalysisAp
                 prettyPrint {
                     appendLine("Resolved constructor:")
                     withIndent {
-                        appendLine(symbolRenderer.render(useSiteSession, referencedConstructor))
+                        appendLine(symbolRenderer.render(referencedConstructor))
                     }
                     appendLine()
                     appendLine("Original constructor if type aliased:")
                     withIndent {
                         append("")
-                        appendLine(originalConstructor?.let { symbolRenderer.render(useSiteSession, it) }.toString())
+                        appendLine(originalConstructor?.let { symbolRenderer.render(it) }.toString())
                     }
                 }
             }
