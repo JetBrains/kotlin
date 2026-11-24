@@ -1,4 +1,4 @@
-main.1.ktimport kotlin.test.*
+import kotlin.test.*
 import test.*
 
 @Test fun runTest() {
