@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.psi.*
 import com.intellij.psi.util.ClassUtil
 import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.javaInterop.mapToJvmTypeDescriptor
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
@@ -23,8 +24,8 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.MethodSignature
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedJavaCollectionStubMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedKotlinCollectionMethod
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.ClassId
@@ -314,7 +315,7 @@ private fun createPsiSubstitutor(
     javaCollection: PsiClass,
     kotlinCollection: KaClassType,
     containingClass: SymbolLightClassForClassOrObject,
-): PsiSubstitutor = with(session) {
+): PsiSubstitutor {
     val substitutionMap = buildMap<PsiTypeParameter, PsiType> {
         javaCollection.typeParameters.zip(kotlinCollection.typeArguments).forEach { [typeParameter, typeArgument] ->
             val psiType = typeArgument.type?.asPsiType(

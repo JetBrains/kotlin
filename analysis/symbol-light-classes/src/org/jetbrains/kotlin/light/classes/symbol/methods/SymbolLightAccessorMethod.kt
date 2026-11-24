@@ -406,10 +406,10 @@ internal class SymbolLightAccessorMethod private constructor(
                     suppressStatic: Boolean,
                     isTopLevel: Boolean,
                     staticsFromCompanion: Boolean,
-                ): Context = with(session) {
+                ): Context {
                     // The type of the property is inspected only if it is explicitly declared
                     val hasInlineClassInPropertyType = hasInlineClassInReturnType(property)
-                    Context(
+                    return Context(
                         property = property,
                         destinationLightClass = destinationLightClass,
                         suppressStatic = suppressStatic,
