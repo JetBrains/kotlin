@@ -455,6 +455,24 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
   }
 
   @Test
+  @TestMetadata("SealedClass.kt")
+  public void testSealedClass() {
+    run("SealedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("SealedInterface.kt")
+  public void testSealedInterface() {
+    run("SealedInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("SealedInterfaceOpenClass.kt")
+  public void testSealedInterfaceOpenClass() {
+    run("SealedInterfaceOpenClass.kt");
+  }
+
+  @Test
   @TestMetadata("SimpleObject.kt")
   public void testSimpleObject() {
     run("SimpleObject.kt");
