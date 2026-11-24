@@ -7,15 +7,21 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTopLevel
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
+import org.jetbrains.kotlin.js.config.artifactConfigurations
 
 class JsPropertyAccessorInlineLowering(
     val context: JsIrBackendContext
 ) : PropertyAccessorInlineLowering(context) {
-    override fun IrProperty.isSafeToInline(accessContainer: IrDeclaration): Boolean {
+    override fun IrProperty.isSafeToInline(accessContainer: IrDeclaration, callee: IrSimpleFunction): Boolean {
         if (!isSafeToInlineInClosedWorld())
             return false
 
@@ -35,10 +41,36 @@ class JsPropertyAccessorInlineLowering(
             return true
         }
 
+        // In per-class mode, a use site inside a class slice is emitted into an artifact separate
+        // from the rest artifact holding the accessed top-level property. An inlined accessor emits
+        // a raw field reference that cannot cross an artifact boundary, while an accessor call is
+        // an ordinary import. Use sites inside eager initializers are kept as accessor calls too.
+        // Getter is safe to lower into backing field's export/import directly, so it is always
+        // lowered in all granularities.
+        if (
+            callee == setter &&
+            isTopLevel &&
+            context.configuration.artifactConfigurations.any { it.granularity == JsGenerationGranularity.PER_CLASS } &&
+            accessContainer.isEmittedIntoSeparateArtifact()
+        ) {
+            return false
+        }
+
         // TODO: teach the deserializer to load constant property initializers
         val accessFile = accessContainer.fileOrNull ?: return false
         val file = fileOrNull ?: return false
 
         return accessFile == file
+    }
+
+    private fun IrDeclaration.isEmittedIntoSeparateArtifact(): Boolean {
+        val eagerInitialization = context.propertyLazyInitialization.eagerInitialization
+        var current: IrDeclaration? = this
+        while (current != null) {
+            if (current is IrClass) return true
+            if (current is IrField && current.correspondingPropertySymbol?.owner?.hasAnnotation(eagerInitialization) == true) return true
+            current = current.parent as? IrDeclaration
+        }
+        return false
     }
 }
