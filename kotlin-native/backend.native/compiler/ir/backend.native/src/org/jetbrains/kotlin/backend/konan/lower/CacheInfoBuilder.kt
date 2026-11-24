@@ -38,6 +38,17 @@ private fun IrDeclarationWithVisibility.isExportedFromCompilerCache(moduleDeseri
     }
 }
 
+private fun IrFunction.isInlineFunctionExportedFromCompilerCache(moduleDeserializer: KonanPartialModuleDeserializer): Boolean {
+    // For older klibs (without the first-stage inliner) we need to export even private inline functions:
+    // private inline foo() = ...
+    // internal inline bar() = foo()
+    // When `bar()` is used in a different module (e.g. a friend module), that module also needs access to the private `foo`.
+    // TODO(KT-91880): remove inline function bodies from caches altogether.
+    return isInline && with(KonanManglerIr) {
+        isExported(compatibleMode = moduleDeserializer.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations)
+    }
+}
+
 /**
  * Cache information built before the lowerings are run:
  * * `klibHash`
@@ -65,7 +76,7 @@ internal class PreLoweringsCacheInfoBuilder(
                     // Don't need to visit the children here: classes would be all local and wouldn't be handled anyway,
                     // as for functions - both their callees will be handled and inline bodies will be built for the top function.
 
-                    if (!declaration.isFakeOverride && declaration.isInline && declaration.isExportedFromCompilerCache(moduleDeserializer)) {
+                    if (!declaration.isFakeOverride && declaration.isInlineFunctionExportedFromCompilerCache(moduleDeserializer)) {
                         val inlineFunctionSerializer = InlineFunctionSerializer(moduleDeserializer)
                         generationState.inlineFunctionBodies.add(inlineFunctionSerializer.buildInlineFunctionReference(declaration))
                         trackCallees(declaration)
@@ -93,7 +104,7 @@ internal class PreLoweringsCacheInfoBuilder(
                 if (generationState.context.moduleDeserializerProvider.getDeserializerOrNull(function) == null) {
                     function.isCalledFromExportedInlineFunction = true
                     (function as? IrConstructor)?.constructedClass?.isConstructedFromExportedInlineFunctions = true
-                    if (function.isInline && !function.isExportedFromCompilerCache(moduleDeserializer)) {
+                    if (function.isInline && !function.isInlineFunctionExportedFromCompilerCache(moduleDeserializer)) {
                         // An exported inline function calls a non-exported inline function:
                         // should track its callees as well as it won't be handled by the main visitor.
                         trackCallees(function)
