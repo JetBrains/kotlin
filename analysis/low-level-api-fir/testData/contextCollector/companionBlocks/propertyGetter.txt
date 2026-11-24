@@ -1,0 +1,50 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNameAwareOnlyCallablesScope
+            Properties:
+                FirRegularPropertySymbol public final static val companionProperty: R|kotlin/Int|
+                    public static get(): R|kotlin/Int|
+                FirRegularPropertySymbol public final static val foo: R|kotlin/Int|
+                    public static get(): R|kotlin/Int|
+        Static scope owner symbol: FirRegularClassSymbol public final class Owner<T> : R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirBackingFieldSymbol private final static backing field field: R|kotlin/Int|
+    Element 8
+        Scope: FirLocalScope
+Expression Stability: STABLE_VALUE
+
+FILE: [ResolvedTo(IMPORTS)] propertyGetter.kt
+    public final [ResolvedTo(STATUS)] class Owner<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] constructorProperty: R|kotlin/Int|): R|Owner<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val constructorProperty: R|kotlin/Int| = R|<local>/constructorProperty|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] val memberProperty: R|kotlin/Int| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+        public final static [ResolvedTo(STATUS)] val companionProperty: R|kotlin/Int| = LAZY_EXPRESSION
+            public static [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+        public final static [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/Int|
+            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ Q|Owner|.R|/Owner.companionProperty|
+            }
+
+    }
