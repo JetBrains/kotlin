@@ -93,9 +93,11 @@ class JvmSymbols(
         classKind: ClassKind = ClassKind.CLASS,
         classModality: Modality = Modality.FINAL,
         classIsValue: Boolean = false,
+        classOrigin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
         block: (IrClass) -> Unit = {},
     ): IrClassSymbol =
         irFactory.buildClass {
+            origin = classOrigin
             name = fqName.shortName()
             kind = classKind
             modality = classModality
@@ -882,7 +884,7 @@ class JvmSymbols(
         irFactory.buildProperty {
             name = Name.identifier("javaObjectType")
         }.apply {
-            parent = createClass(FqName("kotlin.jvm.JvmClassMappingKt")).owner
+            parent = createClass(FqName("kotlin.jvm.JvmClassMappingKt"), classOrigin = IrDeclarationOrigin.FILE_CLASS).owner
             addGetter().apply {
                 annotations = listOf(
                     IrAnnotationImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
