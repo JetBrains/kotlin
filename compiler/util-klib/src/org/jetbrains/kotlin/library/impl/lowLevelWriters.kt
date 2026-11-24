@@ -79,7 +79,7 @@ class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>)
         var dataOffset = INDEX_HEADER_SIZE + SINGLE_INDEX_RECORD_SIZE * declarations.size
 
         for (d in declarations) {
-            dataOutput.writeInt(d.id)
+            dataOutput.writeInt(d.signatureId)
             dataOutput.writeInt(dataOffset)
             dataOutput.writeInt(d.size)
             dataOffset += d.size
