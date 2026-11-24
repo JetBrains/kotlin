@@ -1102,9 +1102,12 @@ fun Name?.safeNameForLazyResolve(): Name = this?.takeUnless(Name::isSpecial) ?: 
  *   qualified name;
  * - enum entries are named using the real names of their containing classes, e.g. `MyEnum.Entry`, or `null` if
  *   any containing class has no name.
+ *
+ * A destructuring declaration entry is named like a property declared in place of its destructuring declaration.
  */
 fun KtNamedDeclaration.safeFqNameForLazyResolve(): FqName? {
-    val containingClass = (parent as? KtClassBody)?.containingClassOrObject
+    val container = if (this is KtDestructuringDeclarationEntry) destructuringDeclaration.parent else parent
+    val containingClass = (container as? KtClassBody)?.containingClassOrObject
     val parentFqName = if (containingClass != null && containingClass !is KtEnumEntry && this !is KtEnumEntry) {
         containingClass.safeFqNameForLazyResolve()
     } else {

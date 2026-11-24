@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 internal class KotlinDestructuringDeclarationEntryStubImpl(
     parent: StubElement<*>?,
     private val name: StringRef?,
+    override val fqName: FqName?,
     override val isVar: Boolean,
     override val isSingleUnderscore: Boolean,
 ) : KotlinStubBaseImpl<KtDestructuringDeclarationEntry>(parent, KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY),
@@ -24,14 +25,12 @@ internal class KotlinDestructuringDeclarationEntryStubImpl(
 
     override fun getName(): String? = StringRef.toString(name)
 
-    // destructuring declaration entries don't have FqNames
-    override val fqName: FqName? get() = null
-
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinDestructuringDeclarationEntryStubImpl =
         KotlinDestructuringDeclarationEntryStubImpl(
             parent = newParent,
             name = name,
+            fqName = fqName,
             isVar = isVar,
             isSingleUnderscore = isSingleUnderscore,
         )
@@ -40,6 +39,7 @@ internal class KotlinDestructuringDeclarationEntryStubImpl(
     override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
         other is KotlinDestructuringDeclarationEntryStubImpl &&
                 other.name == name &&
+                other.fqName == fqName &&
                 other.isVar == isVar &&
                 other.isSingleUnderscore == isSingleUnderscore
 }
