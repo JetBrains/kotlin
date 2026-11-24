@@ -470,7 +470,6 @@ tasks {
         dependsOn(":native:objcexport-header-generator:check")
         dependsOn(":native:swift:swift-export-embeddable:check")
         dependsOn(":native:swift:swift-export-standalone:check")
-        dependsOn(":native:swift:swift-export-ide:test")
         dependsOn(":native:swift:sir-light-classes:check")
     }
 

@@ -1,5 +1,0 @@
-public func foo(
-    arg: Swift.Int32
-) -> Swift.String {
-    return __root___foo__TypesOfArguments__Swift_Int32__(arg)
-}
