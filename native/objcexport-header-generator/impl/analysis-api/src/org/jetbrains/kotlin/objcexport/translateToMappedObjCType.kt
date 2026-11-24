@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.allSupertypes
+import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.NSNumberKind
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClassType
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
@@ -23,9 +25,9 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * Returns `null` if the type is not mapped to any ObjC equivalent
  */
 internal fun ObjCExportContext.translateToMappedObjCTypeOrNull(type: KaType): ObjCClassType? {
-    val allSuperTypes = with(analysisSession) { type.allSupertypes }
+    val allSuperTypes = context(analysisSession) { type.allSupertypes }
     return listOf(type).plus(allSuperTypes).firstNotNullOfOrNull find@{ type ->
-        val classId = with(analysisSession) { type.expandedSymbol }?.classId ?: return@find null
+        val classId = context(analysisSession) { type.expandedSymbol }?.classId ?: return@find null
         mappedObjCTypeNames[classId]?.let { mappedTypeName ->
             return@find ObjCClassType(mappedTypeName, translateTypeArgumentsToObjC(type))
         }
@@ -77,7 +79,8 @@ internal val ObjCExportContext.mappedObjCTypeNames: Map<ClassId, String>
         }
     }
 
-internal fun KaSession.isMappedObjCType(type: KaType?): Boolean {
+context(session: KaSession)
+internal fun isMappedObjCType(type: KaType?): Boolean {
     if (type == null) return false
     return mappedObjCTypes.contains(type.expandedSymbol?.classId)
 }

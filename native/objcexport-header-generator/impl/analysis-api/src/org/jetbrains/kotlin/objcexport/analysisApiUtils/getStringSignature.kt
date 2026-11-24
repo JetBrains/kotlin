@@ -1,11 +1,16 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
-import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.name
+import org.jetbrains.kotlin.analysis.api.symbols.receiverType
+import org.jetbrains.kotlin.analysis.api.types.*
 
 /**
  * Returns function signature.
@@ -20,7 +25,8 @@ import org.jetbrains.kotlin.analysis.api.types.symbol
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorKt.makeMethodsOrderStable]
  */
 @OptIn(KaExperimentalApi::class)
-internal fun KaSession.getStringSignature(symbol: KaFunctionSymbol): String {
+context(session: KaSession)
+internal fun getStringSignature(symbol: KaFunctionSymbol): String {
     return buildString {
         append(symbol.name)
 
@@ -37,7 +43,7 @@ internal fun KaSession.getStringSignature(symbol: KaFunctionSymbol): String {
                 "0:${symbol.typeParameters.indexOf(type.symbol)}"
             } else {
                 if (parameter.isVararg) {
-                    if (type.isPrimitive) {
+                    if (type.classId in KaStandardTypeClassIds.PRIMITIVES) {
                         toPrimitiveArraySignature(type)
                     } else {
                         toNonPrimitiveArraySignature(type)
@@ -65,15 +71,16 @@ internal fun KaSession.getStringSignature(symbol: KaFunctionSymbol): String {
     }
 }
 
-private fun KaSession.toPrimitiveArraySignature(type: KaType): String {
+context(session: KaSession)
+private fun toPrimitiveArraySignature(type: KaType): String {
     return when {
-        type.isIntType -> IntArray::class.qualifiedName.toString()
-        type.isBooleanType -> BooleanArray::class.qualifiedName.toString()
-        type.isByteType -> ByteArray::class.qualifiedName.toString()
-        type.isCharType -> CharArray::class.qualifiedName.toString()
-        type.isDoubleType -> DoubleArray::class.qualifiedName.toString()
-        type.isLongType -> LongArray::class.qualifiedName.toString()
-        type.isShortType -> ShortArray::class.qualifiedName.toString()
+        type.classId == KaStandardTypeClassIds.INT -> IntArray::class.qualifiedName.toString()
+        type.classId == KaStandardTypeClassIds.BOOLEAN -> BooleanArray::class.qualifiedName.toString()
+        type.classId == KaStandardTypeClassIds.BYTE -> ByteArray::class.qualifiedName.toString()
+        type.classId == KaStandardTypeClassIds.CHAR -> CharArray::class.qualifiedName.toString()
+        type.classId == KaStandardTypeClassIds.DOUBLE -> DoubleArray::class.qualifiedName.toString()
+        type.classId == KaStandardTypeClassIds.LONG -> LongArray::class.qualifiedName.toString()
+        type.classId == KaStandardTypeClassIds.SHORT -> ShortArray::class.qualifiedName.toString()
         else -> ""
     }
 }

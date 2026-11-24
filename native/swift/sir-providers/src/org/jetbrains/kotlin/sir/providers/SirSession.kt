@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -81,8 +81,8 @@ public interface SirSession :
 
     override fun KaModule.sirModule(): SirModule = with(moduleProvider) { this@sirModule.sirModule() }
 
+    context(ka: KaSession)
     override fun KaType.translateType(
-        ktAnalysisSession: KaSession,
         position: SirTypeVariance,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
@@ -91,7 +91,6 @@ public interface SirSession :
     ): SirType =
         with(typeProvider) {
             this@translateType.translateType(
-                ktAnalysisSession,
                 position,
                 reportErrorType,
                 reportUnsupportedType,
@@ -394,8 +393,8 @@ public interface SirTypeProvider {
      *
      * [processTypeImports] is called with the imports required to use the resulting type properly.
      */
+    context(ka: KaSession)
     public fun KaType.translateType(
-        ktAnalysisSession: KaSession,
         position: SirTypeVariance,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
@@ -410,7 +409,7 @@ public fun KaType.translateType(
     reportErrorType: (String) -> Nothing,
     reportUnsupportedType: () -> Nothing,
     processTypeImports: (List<SirImport>) -> Unit,
-): SirType = with(sir) { translateType(ka, position, reportErrorType, reportUnsupportedType, processTypeImports) }
+): SirType = with(sir) { translateType(position, reportErrorType, reportUnsupportedType, processTypeImports) }
 
 context(kaSession: KaSession, sir: SirSession)
 public fun KaUsualClassType.toSirTypeBridge(ctx: TypeTranslationCtx): SirCustomTypeTranslator.BridgeWrapper? =

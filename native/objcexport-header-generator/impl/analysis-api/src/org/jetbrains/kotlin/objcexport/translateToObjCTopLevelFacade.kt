@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStubOrigin
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
@@ -47,9 +46,9 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrPr
  */
 fun ObjCExportContext.translateToObjCTopLevelFacade(file: KtResolvedObjCExportFile): ObjCInterface? {
     val topLevelCallables = file.callableSymbols
-        .filter { analysisSession.getClassIfCategory(it) == null }
+        .filter { getClassIfCategory(it, session = analysisSession) == null }
         .toList()
-        .sortedWith(analysisSession.getStableCallableOrder())
+        .sortedWith(getStableCallableOrder(session = analysisSession))
         .flatMap { translateToObjCExportStub(it) }
 
     val fileName = getObjCFileClassOrProtocolName(file)

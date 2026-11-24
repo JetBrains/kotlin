@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getFunctionOrFail
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getStringSignature
@@ -152,10 +151,9 @@ class FunctionSignatureTest(
     ) {
         val file = createTestFile(code.trimIndent())
         analyze(file) {
-            val session = useSiteSession
             assertEquals(
                 expected,
-                session.getStringSignature(file.getFunctionOrFail("foo", session))
+                getStringSignature(getFunctionOrFail(file, "foo"))
             )
         }
     }

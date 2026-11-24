@@ -1,6 +1,12 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
@@ -31,7 +37,7 @@ private const val extensionsCategoryName = "Extensions"
  */
 internal fun ObjCExportContext.translateToObjCExtensionFacades(files: List<KtObjCExportFile>): Map<KaClassSymbol, ObjCClass> {
     return files
-        .flatMap { file -> translateToObjCExtensionFacades(with(file) { analysisSession.resolve() }).entries }
+        .flatMap { file -> translateToObjCExtensionFacades(file.resolve(session = analysisSession)).entries }
         .groupBy({ it.key }, { it.value })
         .mapValues { [_, facades] ->
             mergeExtensionFacades(facades.first().name, facades) //all facades has the same name, so just pick first one
@@ -80,11 +86,11 @@ internal fun ObjCExportContext.translateToObjCExtensionFacades(files: List<KtObj
  */
 private fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedObjCExportFile): Map<KaClassSymbol, ObjCClass> {
     val extensions = file.callableSymbols
-        .filter { analysisSession.getClassIfCategory(it) != null && it.isExtension }
-        .sortedWith(analysisSession.getStableCallableOrder())
+        .filter { getClassIfCategory(it, session = analysisSession) != null && it.isExtension }
+        .sortedWith(getStableCallableOrder(session = analysisSession))
         .groupBy {
             val type = it.receiverParameter?.returnType
-            if (analysisSession.isMappedObjCType(type)) return@groupBy null
+            if (isMappedObjCType(type, session = analysisSession)) return@groupBy null
             else {
                 /**
                  * Mapped types extensions should be handled as top level facades
@@ -92,7 +98,7 @@ private fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedOb
                  * @see [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper.getClassIfCategory] which K1 uses
                  * to differentiate extensions and top level callables
                  */
-                val expandedSymbol = with(analysisSession) { type?.expandedSymbol }
+                val expandedSymbol = context(analysisSession) { type?.expandedSymbol }
                 if (expandedSymbol == null) return@groupBy null
                 else getObjCClassOrProtocolName(expandedSymbol).objCName
             }

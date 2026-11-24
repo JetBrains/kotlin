@@ -167,7 +167,6 @@ public class SirCustomTypeTranslatorImpl(
         is KaStarTypeProjection -> ctx.anyRepresentativeType()
         is KaTypeArgumentWithVariance -> with(session) {
             type.translateType(
-                kaSession,
                 ctx.currentPosition,
                 ctx.reportErrorType,
                 ctx.reportUnsupportedType,

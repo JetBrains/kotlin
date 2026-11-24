@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.export.test.getFunctionOrFail
@@ -30,9 +29,8 @@ class IsTopLevelTests(
         )
 
         analyze(ktFile) {
-            val session = useSiteSession
-            assertTrue(session.isTopLevel(ktFile.getFunctionOrFail("topFun", session)))
-            assertFalse(session.isTopLevel(ktFile.getClassOrFail("TopClass", session).getFunctionOrFail("classFun", session)))
+            assertTrue(isTopLevel(getFunctionOrFail(ktFile, "topFun")))
+            assertFalse(isTopLevel(getFunctionOrFail(getClassOrFail(ktFile, "TopClass"), "classFun")))
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,7 +26,7 @@ internal val KaSymbol.isConstructor: Boolean
     get() = this is KaConstructorSymbol
 
 fun ObjCExportContext.translateToObjCMethod(symbol: KaFunctionSymbol): ObjCMethod? {
-    if (!analysisSession.isVisibleInObjC(symbol)) return null
+    if (!isVisibleInObjC(symbol, session = analysisSession)) return null
     if (symbol.isFakeOverride) return null
     return buildObjCMethod(symbol)
 }
@@ -38,7 +38,7 @@ fun ObjCExportContext.getBaseFunctionMethodBridge(symbol: KaFunctionSymbol): Met
          * So in case of function we need to call [getFunctionMethodBridge] on [baseMethod]
          */
         is KaNamedFunctionSymbol -> {
-            getFunctionMethodBridge(analysisSession.getBaseMethod(symbol))
+            getFunctionMethodBridge(getBaseMethod(symbol, session = analysisSession))
         }
         else -> getFunctionMethodBridge(symbol)
     }
@@ -59,8 +59,8 @@ internal fun ObjCExportContext.buildObjCMethod(
     val swiftName = getSwiftName(symbol, bridge)
 
     val returnBridge = bridge.returnBridge
-    val comment = analysisSession.translateToObjCComment(symbol, bridge, parameters)
-    val throws = analysisSession.getDefinedThrows(symbol).map { it }.toList()
+    val comment = translateToObjCComment(symbol, bridge, parameters, session = analysisSession)
+    val throws = getDefinedThrows(symbol, session = analysisSession).map { it }.toList()
 
     val isMethodInstance = bridge.isInstance
 
@@ -76,14 +76,14 @@ internal fun ObjCExportContext.buildObjCMethod(
             attributes += "swift_error(nonnull_error)" // Means "failure <=> (error != nil)".
         }
 
-        if (symbol.isConstructor && !analysisSession.isArrayConstructor(symbol)) { // TODO: check methodBridge instead.
+        if (symbol.isConstructor && !isArrayConstructor(symbol, session = analysisSession)) { // TODO: check methodBridge instead.
             attributes += "objc_designated_initializer"
         }
 
         if (unavailable) {
             attributes += "unavailable"
         } else {
-            attributes.addIfNotNull(analysisSession.getObjCDeprecationStatus(symbol))
+            attributes.addIfNotNull(getObjCDeprecationStatus(symbol, session = analysisSession))
         }
 
         if (this.exportSession.configuration.explicitMethodFamilyName && !symbol.isConstructor && selector.isASpecialName()) {
@@ -95,7 +95,7 @@ internal fun ObjCExportContext.buildObjCMethod(
 
     return ObjCMethod(
         comment = comment,
-        origin = analysisSession.getObjCExportStubOrigin(symbol),
+        origin = getObjCExportStubOrigin(symbol, session = analysisSession),
         isInstanceMethod = isMethodInstance,
         returnType = returnType,
         selectors = selectors,
@@ -132,7 +132,7 @@ internal fun ObjCExportContext.getSwiftName(symbol: KaFunctionSymbol, methodBrid
     val parameters = valueParametersAssociated(methodBridge, symbol)
     val method = symbol
 
-    if (anyMethodSelector != null && analysisSession.overridesAnyMethod(symbol)) {
+    if (anyMethodSelector != null && overridesAnyMethod(symbol, session = analysisSession)) {
         return anyMethodSelector
     }
 
@@ -250,7 +250,7 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
         return reservedNameSelector
     }
 
-    if (anyMethodSelector != null && analysisSession.overridesAnyMethod(symbol)) {
+    if (anyMethodSelector != null && overridesAnyMethod(symbol, session = analysisSession)) {
         return anyMethodSelector
     }
 
@@ -309,7 +309,7 @@ fun ObjCExportContext.getMangledName(symbol: KaFunctionSymbol, forSwift: Boolean
     val explicitMethodFamilyName = this.exportSession.configuration.explicitMethodFamilyName
 
     return if (symbol.isConstructor) {
-        if (analysisSession.isArrayConstructor(symbol) && !forSwift) "array" else "init"
+        if (isArrayConstructor(symbol, session = analysisSession) && !forSwift) "array" else "init"
     } else {
         val name = getObjCFunctionName(symbol).name(forSwift)
         if (!explicitMethodFamilyName || name == "init" || name.startsWith("initWith")) {

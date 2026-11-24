@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -56,7 +56,7 @@ private fun ObjCExportContext.getObjCName(
             .handleSpecialNames("get")
     }
 
-    with(analysisSession) {
+    context(analysisSession) {
         symbol.containingDeclaration?.let { it as? KaClassLikeSymbol }?.let { containingClass ->
             return getObjCName(containingClass) + objCName.capitalizeAsciiOnly()
         }
@@ -84,7 +84,7 @@ private fun ObjCExportContext.getSwiftName(
         return swiftName
     }
 
-    with(analysisSession) {
+    context(analysisSession) {
         classSymbol.containingDeclaration?.let { it as? KaClassLikeSymbol }?.let { containingClass ->
             val containingClassSwiftName = getSwiftName(containingClass)
             return buildString {
@@ -151,7 +151,7 @@ private fun mangleSwiftNestedClassName(name: String): String = when (name) {
 }
 
 private fun ObjCExportContext.getObjCModuleNamePrefix(symbol: KaSymbol): String? {
-    val module = with(analysisSession) { symbol.containingModule }
+    val module = context(analysisSession) { symbol.containingModule }
     val moduleName = getObjCKotlinModuleName(module) ?: return null
     val isExported = with(exportSession) { isExported(module) }
     if (moduleName == "stdlib" || moduleName == "kotlin-stdlib-common") return "Kotlin"

@@ -88,7 +88,7 @@ class ManglingConflictsTest(
         val file = inlineSourceCodeAnalysis.createKtFile(code.trimMargin())
         analyze(file) {
             val session = useSiteSession
-            val foo = session.getClassOrFail(file, "Foo")
+            val foo = getClassOrFail(file, "Foo")
             withKtObjCExportSession(KtObjCExportConfiguration()) {
                 with(ObjCExportContext(analysisSession = session, exportSession = this)) {
                     run(foo)

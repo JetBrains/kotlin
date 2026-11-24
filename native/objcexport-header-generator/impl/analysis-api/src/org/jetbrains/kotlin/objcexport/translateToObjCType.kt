@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,7 +40,7 @@ internal fun ObjCExportContext.translateToObjCType(type: KaType, typeBridge: Typ
             ObjCValueType.FLOAT -> ObjCPrimitiveType.float
             ObjCValueType.DOUBLE -> ObjCPrimitiveType.double
             ObjCValueType.VECTOR_FLOAT_128 -> ObjCPrimitiveType.vectorFloat128
-            ObjCValueType.POINTER -> ObjCPointerType(ObjCVoidType, analysisSession.isBinaryRepresentationNullable(type))
+            ObjCValueType.POINTER -> ObjCPointerType(ObjCVoidType, isBinaryRepresentationNullable(type, session = analysisSession))
         }
     }
 }
@@ -50,14 +50,14 @@ internal fun ObjCExportContext.translateToObjCType(type: KaType, typeBridge: Typ
  */
 internal fun ObjCExportContext.translateToObjCReferenceType(type: KaType): ObjCReferenceType {
     val referenceType = mapToReferenceTypeIgnoringNullability(type)
-    return analysisSession.withNullabilityOf(referenceType, type)
+    return withNullabilityOf(referenceType, type, session = analysisSession)
 }
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceTypeIgnoringNullability]
  */
 internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaType): ObjCNonNullReferenceType {
-    with(analysisSession) {
+    context(analysisSession) {
 
         val fullyExpandedType = type.fullyExpandedType
 
@@ -67,7 +67,7 @@ internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaTyp
             return translateToObjCErrorType(type, moduleContext)
         }
 
-        if (type.isAnyType) {
+        if (type.classId == KaStandardTypeClassIds.ANY) {
             return ObjCIdType
         }
 
@@ -195,7 +195,7 @@ internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaTyp
 }
 
 private fun ObjCExportContext.getObjCTypeName(type: KaClassType): String {
-    val clazz = analysisSession.findClass(type.classId)
+    val clazz = findClass(type.classId, session = analysisSession)
     return if (clazz != null) {
         getObjCClassOrProtocolName(clazz).objCName
     } else {
@@ -213,7 +213,7 @@ internal fun ObjCExportContext.translateTypeArgumentsToObjC(type: KaType): List<
         when (typeArgument) {
             is KaStarTypeProjection -> ObjCIdType
             is KaTypeArgumentWithVariance -> {
-                val isNullable = with(analysisSession) { typeArgument.type.isNullable }
+                val isNullable = context(analysisSession) { typeArgument.type.isNullable }
                 /*
                 Kotlin `null` keys and values are represented as `NSNull` singleton in collections
                 */

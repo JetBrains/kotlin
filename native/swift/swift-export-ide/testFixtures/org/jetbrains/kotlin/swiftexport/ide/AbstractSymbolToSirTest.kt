@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.ide
 
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
+import org.jetbrains.kotlin.analysis.api.symbols.containingModule
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -25,15 +26,14 @@ abstract class AbstractSymbolToSirTest : AbstractAnalysisApiBasedTest() {
         copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val kaDeclaration = testServices
                 .expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(contextFile).symbol
-            val actual: String = with(useSiteSession) {
-                withSirSession(moduleToTranslate = kaDeclaration.containingModule) {
-                    kaDeclaration
-                        .toSir()
-                        .allDeclarations
-                        .joinToString(separator = "\n") {
-                            it.print(into = kaDeclaration.containingModule.sirModule())
-                        }
-                }
+            val containingModule = kaDeclaration.containingModule
+            val actual: String = useSiteSession.withSirSession(moduleToTranslate = containingModule) {
+                kaDeclaration
+                    .toSir()
+                    .allDeclarations
+                    .joinToString(separator = "\n") {
+                        it.print(into = containingModule.sirModule())
+                    }
             }
 
             testServices.assertions.assertEqualsToTestOutputFile(actual)

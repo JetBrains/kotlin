@@ -1,15 +1,15 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.export.utilities.isCompanion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
-import org.jetbrains.kotlin.analysis.api.export.utilities.isCompanion
 import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
 import org.jetbrains.kotlin.objcexport.extras.originClassId
 import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
  */
 internal fun ObjCExportContext.buildCompanionProperty(classSymbol: KaClassSymbol): ObjCProperty {
 
-    val propertyName = if (classSymbol.isCompanion || analysisSession.hasCompanionObject(classSymbol))
+    val propertyName = if (classSymbol.isCompanion || hasCompanionObject(classSymbol, session = analysisSession))
         ObjCPropertyNames.companionObjectPropertyName else ObjCPropertyNames.objectPropertyName
 
-    val companion = if (analysisSession.hasCompanionObject(classSymbol)) analysisSession.getCompanion(classSymbol) else classSymbol
+    val companion = if (hasCompanionObject(classSymbol, session = analysisSession)) getCompanion(classSymbol, session = analysisSession) else classSymbol
     val typeName = getObjCClassOrProtocolName(companion as KaClassSymbol)
-    val origin = analysisSession.getObjCExportStubOrigin(companion)
+    val origin = getObjCExportStubOrigin(companion, session = analysisSession)
 
     return ObjCProperty(
         name = propertyName,

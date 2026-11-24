@@ -35,7 +35,7 @@ fun InlineSourceCodeAnalysis.createObjCExportFile(
         val kaSession = useSiteSession
         withKtObjCExportSession(KtObjCExportConfiguration()) {
             with(ObjCExportContext(analysisSession = kaSession, exportSession = this)) {
-                run(analyze(ktFile) { with(useSiteSession) { with(KtObjCExportFile(ktFile)) { resolve() } } })
+                run(analyze(ktFile) { KtObjCExportFile(ktFile).resolve() })
             }
         }
     }

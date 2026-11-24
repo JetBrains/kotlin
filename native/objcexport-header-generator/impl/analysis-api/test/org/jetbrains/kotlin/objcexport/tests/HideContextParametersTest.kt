@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.export.test.getFunctionOrFail
@@ -28,8 +27,7 @@ class HideContextParametersTest(
             """.trimMargin()
         )
         analyze(file) {
-            val session = useSiteSession
-            assertFalse(session.isVisibleInObjC(file.getFunctionOrFail("foo", session)))
+            assertFalse(isVisibleInObjC(getFunctionOrFail(file, "foo")))
         }
     }
 
@@ -47,10 +45,9 @@ class HideContextParametersTest(
             """.trimMargin()
         )
         analyze(file) {
-            val session = useSiteSession
             assertFalse(
-                session.isVisibleInObjC(
-                    file.getClassOrFail("Foo", session).getFunctionOrFail("bar", session)
+                isVisibleInObjC(
+                    getFunctionOrFail(getClassOrFail(file, "Foo"), "bar")
                 )
             )
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -43,14 +43,14 @@ public fun KlibDeclarationAddress.getSymbols(): Sequence<KaSymbol> {
 context(session: KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 public fun KlibClassAddress.getClassOrObjectSymbol(): KaClassSymbol? {
-    return session.findClass(classId)
+    return findClass(classId)
         ?.takeIf { symbol -> symbol in this }
 }
 
 context(session: KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 public fun KlibTypeAliasAddress.getTypeAliasSymbol(): KaTypeAliasSymbol? {
-    return session.findTypeAlias(classId)
+    return findTypeAlias(classId)
         ?.takeIf { symbol -> symbol in this }
 }
 
@@ -72,7 +72,7 @@ public fun KlibCallableAddress.getCallableSymbols(): Sequence<KaCallableSymbol> 
 context(session: KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 public fun KlibFunctionAddress.getFunctionSymbols(): Sequence<KaNamedFunctionSymbol> {
-    return session.findTopLevelCallables(packageFqName, callableName)
+    return findTopLevelCallables(packageFqName, callableName)
         .filterIsInstance<KaNamedFunctionSymbol>()
         .filter { symbol -> symbol in this }
 }
@@ -83,7 +83,7 @@ public fun KlibFunctionAddress.getFunctionSymbols(): Sequence<KaNamedFunctionSym
 context(session: KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 public fun KlibPropertyAddress.getPropertySymbols(): Sequence<KaPropertySymbol> {
-    return session.findTopLevelCallables(packageFqName, callableName)
+    return findTopLevelCallables(packageFqName, callableName)
         .filterIsInstance<KaPropertySymbol>()
         .filter { symbol -> symbol in this }
 }
@@ -92,8 +92,8 @@ context(session: KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @OptIn(KaNonPublicApi::class)
 private operator fun KlibDeclarationAddress.contains(symbol: KaDeclarationSymbol): Boolean {
-    val symbolKlibSourceFileName = with(session) { symbol.klibSourceFileName }
-    val symbolLibraryModule = with(session) { symbol.containingModule as? KaLibraryModule ?: return false }
+    val symbolKlibSourceFileName = symbol.klibSourceFileName
+    val symbolLibraryModule = symbol.containingModule as? KaLibraryModule ?: return false
 
     /* check if symbol comes from the same klib library: symbolKlibSourceFile not known -> checking library module */
     if (libraryPath !in symbolLibraryModule.binaryRoots) {

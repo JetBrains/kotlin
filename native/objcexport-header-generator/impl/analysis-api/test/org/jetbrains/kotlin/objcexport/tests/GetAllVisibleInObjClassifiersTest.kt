@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
@@ -23,8 +22,7 @@ class GetAllVisibleInObjClassifiersTest(
     fun `test - no classifiers in file`() {
         val file = inlineSourceCodeAnalysis.createKtFile("val foo = 42")
         analyze(file) {
-            val session = useSiteSession
-            assertEquals(emptyList(), session.getAllVisibleInObjClassifiers(file.symbol))
+            assertEquals(emptyList(), getAllVisibleInObjClassifiers(file.symbol))
         }
     }
 
@@ -32,8 +30,7 @@ class GetAllVisibleInObjClassifiersTest(
     fun `test - single class in file`() {
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(file) {
-            val session = useSiteSession
-            assertEquals(listOf(session.getClassOrFail(file, "Foo")), session.getAllVisibleInObjClassifiers(file.symbol))
+            assertEquals(listOf(getClassOrFail(file, "Foo")), getAllVisibleInObjClassifiers(file.symbol))
         }
     }
 
@@ -54,16 +51,15 @@ class GetAllVisibleInObjClassifiersTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
             assertEquals(
                 listOf(
-                    session.getClassOrFail(file, "A"),
-                    session.getClassOrFail(file, "D"),
-                    session.getClassOrFail(file, "A").memberScope.getClassOrFail("B"),
-                    session.getClassOrFail(file, "D").memberScope.getClassOrFail("E"),
-                    session.getClassOrFail(file, "A").memberScope.getClassOrFail("B").memberScope.getClassOrFail("C")
+                    getClassOrFail(file, "A"),
+                    getClassOrFail(file, "D"),
+                    getClassOrFail(file, "A").memberScope.getClassOrFail("B"),
+                    getClassOrFail(file, "D").memberScope.getClassOrFail("E"),
+                    getClassOrFail(file, "A").memberScope.getClassOrFail("B").memberScope.getClassOrFail("C")
                 ),
-                session.getAllVisibleInObjClassifiers(file.symbol)
+                getAllVisibleInObjClassifiers(file.symbol)
             )
         }
     }

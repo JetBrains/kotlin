@@ -150,7 +150,7 @@ private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(sy
 }
 
 context(session: KaSession)
-private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(symbol: KaClassLikeSymbol): Unit = with(session) {
+private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(symbol: KaClassLikeSymbol): Unit {
     // Add supertype opt-in markers
     (symbol as? KaClassSymbol)?.superTypes.orEmpty().mapNotNull { type ->
         type.symbol as? KaClassSymbol
@@ -170,11 +170,11 @@ context(session: KaSession)
 private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(
     type: KaType,
     shouldExpand: Boolean = true,
-): Unit = with(session) {
+): Unit {
     if (shouldExpand) {
         allRequiredOptInClassIds(type.fullyExpandedType, shouldExpand = false)
         type.abbreviation?.let { allRequiredOptInClassIds(it, shouldExpand = false) }
-        return@with
+        return
     }
     when (type) {
         is KaFunctionType -> {
@@ -192,7 +192,7 @@ private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(
 }
 
 context(session: KaSession)
-private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(symbol: KaCallableSymbol): Unit = with(session) {
+private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(symbol: KaCallableSymbol): Unit {
     // Add opt-in markers from lexical scope
     symbol.containingDeclaration?.let { allRequiredOptInClassIds(it) }
 

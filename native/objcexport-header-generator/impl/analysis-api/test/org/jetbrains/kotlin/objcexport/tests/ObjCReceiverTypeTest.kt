@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.objcexport.tests
 
-import org.jetbrains.kotlin.analysis.api.components.buildClassType
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
+import org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
@@ -37,13 +37,12 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val session = useSiteSession
-            val outerClass = session.getClassOrFail(file, "Outer")
+            val outerClass = getClassOrFail(file, "Outer")
             val innerClass = outerClass.memberScope.getClassOrFail("Inner")
             val innerClassConstructor = innerClass.memberScope.constructors.first()
 
             assertEquals(
-                session.getObjCReceiverType(innerClassConstructor)?.expandedSymbol?.classId,
+                getObjCReceiverType(innerClassConstructor)?.expandedSymbol?.classId,
                 outerClass.classId
             )
         }
@@ -63,14 +62,13 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val session = useSiteSession
-            val outerClass = session.getClassOrFail(file, "Outer")
+            val outerClass = getClassOrFail(file, "Outer")
             val innerClass = outerClass.memberScope.getClassOrFail("Inner")
             val foo = innerClass.memberScope.getFunctionOrFail("foo")
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames.string.toSafe()),
-                session.getObjCReceiverType(foo)?.expandedSymbol?.classId
+                getObjCReceiverType(foo)?.expandedSymbol?.classId
             )
         }
     }
@@ -90,14 +88,13 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val session = useSiteSession
-            val outerClass = session.getClassOrFail(file, "Outer")
+            val outerClass = getClassOrFail(file, "Outer")
             val innerClass = outerClass.memberScope.getClassOrFail("Inner")
             val getter = innerClass.memberScope.getPropertyOrFail("prop").getter
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames._boolean.toSafe()),
-                session.getObjCReceiverType(getter)?.expandedSymbol?.classId
+                getObjCReceiverType(getter)?.expandedSymbol?.classId
             )
         }
     }
@@ -118,19 +115,19 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val session = useSiteSession
-            val outerClass = session.getClassOrFail(file, "Outer")
+            val outerClass = getClassOrFail(file, "Outer")
             val innerClass = outerClass.memberScope.getClassOrFail("Inner")
             val setter = innerClass.memberScope.getPropertyOrFail("prop").setter
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames.string.toSafe()),
-                session.getObjCReceiverType(setter)?.expandedSymbol?.classId
+                getObjCReceiverType(setter)?.expandedSymbol?.classId
             )
         }
     }
 
     @Test
+    @OptIn(KaExperimentalApi::class)
     fun `test - regular extensions`() {
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
@@ -147,15 +144,14 @@ class ObjCReceiverTypeTest(
 
         analyze(file) {
 
-            val session = useSiteSession
-            val fooClass = session.getClassOrFail(file, "Foo")
+            val fooClass = getClassOrFail(file, "Foo")
             val foo = fooClass.memberScope.getFunctionOrFail("foo")
             val setter = fooClass.memberScope.getPropertyOrFail("prop").setter
             val getter = fooClass.memberScope.getPropertyOrFail("prop").getter
 
-            assertEquals(buildClassType(StandardClassIds.Boolean), session.getObjCReceiverType(foo))
-            assertEquals(buildClassType(StandardClassIds.String), session.getObjCReceiverType(setter))
-            assertEquals(buildClassType(StandardClassIds.String), session.getObjCReceiverType(getter))
+            assertEquals(typeCreator.classType(StandardClassIds.Boolean), getObjCReceiverType(foo))
+            assertEquals(typeCreator.classType(StandardClassIds.String), getObjCReceiverType(setter))
+            assertEquals(typeCreator.classType(StandardClassIds.String), getObjCReceiverType(getter))
         }
     }
 }

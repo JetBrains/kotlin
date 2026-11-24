@@ -10,11 +10,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaTypeParameterTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaTypeProjectionRenderer
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.sir.providers.utils.resolveUpperBound
 
@@ -32,7 +28,7 @@ private object UpperBoundTypeParameterTypeRenderer : KaTypeParameterTypeRenderer
         printer: PrettyPrinter
     ) {
         val type = context(analysisSession) {
-            type.resolveUpperBound() ?: analysisSession.builtinTypes.nullableAny
+            type.resolveUpperBound() ?: builtinTypes.nullableAny
         }
         typeRenderer.renderType(analysisSession, type, printer)
     }
@@ -48,7 +44,7 @@ private object UpperBoundTypeProjectionRenderer : KaTypeProjectionRenderer {
         when (projection) {
             is KaStarTypeProjection -> printer.append('*')
             is KaTypeArgumentWithVariance -> context(analysisSession) {
-                val type = projection.type.resolveUpperBound() ?: analysisSession.builtinTypes.nullableAny
+                val type = projection.type.resolveUpperBound() ?: builtinTypes.nullableAny
                 typeRenderer.renderType(analysisSession, type, printer)
             }
         }

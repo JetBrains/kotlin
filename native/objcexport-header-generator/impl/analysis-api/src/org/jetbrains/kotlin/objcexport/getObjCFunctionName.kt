@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFunctionName
 
 fun ObjCExportContext.getObjCFunctionName(symbol: KaFunctionSymbol): ObjCExportFunctionName {
     val annotationName =
-        if (symbol is KaPropertyAccessorSymbol) with(analysisSession) { symbol.containingDeclaration }?.resolveObjCNameAnnotation()
+        if (symbol is KaPropertyAccessorSymbol) context(analysisSession) { symbol.containingDeclaration }?.resolveObjCNameAnnotation()
         else symbol.resolveObjCNameAnnotation()
     return ObjCExportFunctionName(
         swiftName = getObjCFunctionName(symbol, annotationName?.swiftName ?: annotationName?.objCName),
@@ -36,7 +36,7 @@ private fun ObjCExportContext.getTranslationName(symbol: KaFunctionSymbol): Stri
 }
 
 private fun ObjCExportContext.formatPropertyName(symbol: KaPropertyAccessorSymbol, annotationName: String? = null): String {
-    val propertySymbol = analysisSession.getPropertySymbol(symbol)
+    val propertySymbol = getPropertySymbol(symbol, session = analysisSession)
     val name = annotationName ?: exportSession.overrideObjCNameOrSymbolName(propertySymbol)
     return when (symbol) {
         is KaPropertyGetterSymbol -> name

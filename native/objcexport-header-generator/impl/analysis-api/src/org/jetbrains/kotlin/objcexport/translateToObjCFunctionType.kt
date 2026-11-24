@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.export.utilities.getValueFromParameterNameAnnotation
@@ -15,7 +20,7 @@ internal fun ObjCExportContext.translateToObjCFunctionType(type: KaType, returns
             ObjCVoidType
         } else {
             val returnType = type.getReturnTypeFromFunctionType()
-            if (returnType is KaFunctionType) translateToObjCFunctionType(returnType, analysisSession.isObjCVoid(returnType))
+            if (returnType is KaFunctionType) translateToObjCFunctionType(returnType, isObjCVoid(returnType, session = analysisSession))
             else translateToObjCReferenceType(returnType)
         },
         parameters = listOfNotNull(type.receiverType).plus(type.parameterTypes).map { parameterType ->
@@ -28,7 +33,7 @@ internal fun ObjCExportContext.translateToObjCFunctionType(type: KaType, returns
             )
         }
     )
-    return analysisSession.withNullabilityOf(objCBlockPointerType, type)
+    return withNullabilityOf(objCBlockPointerType, type, session = analysisSession)
 }
 
 private fun ObjCExportContext.blockParameterName(parameterType: KaType, usedNames: MutableSet<String>): String {

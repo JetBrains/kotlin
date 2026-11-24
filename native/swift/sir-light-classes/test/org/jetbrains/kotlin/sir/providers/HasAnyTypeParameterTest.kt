@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,17 +31,17 @@ class HasAnyTypeParameterTest(val inlineSourceCodeAnalysis: InlineSourceCodeAnal
         )
 
         withAnalysisSession(file) { ktFile ->
-            val parentGeneric = ktFile.getClassOrFail("ParentGeneric", this)
-            val childGeneric = ktFile.getClassOrFail("ChildGeneric", this)
+            val parentGeneric = getClassOrFail(ktFile, "ParentGeneric")
+            val childGeneric = getClassOrFail(ktFile, "ChildGeneric")
 
-            val parentNoGeneric = ktFile.getClassOrFail("ParentNoGeneric", this)
-            val childNoGeneric = ktFile.getClassOrFail("ChildNoGeneric", this)
+            val parentNoGeneric = getClassOrFail(ktFile, "ParentNoGeneric")
+            val childNoGeneric = getClassOrFail(ktFile, "ChildNoGeneric")
 
-            assertTrue(parentGeneric.hasTypeParameter(this))
-            assertTrue(childGeneric.hasTypeParameter(this))
+            assertTrue(parentGeneric.hasTypeParameter())
+            assertTrue(childGeneric.hasTypeParameter())
 
-            assertFalse(parentNoGeneric.hasTypeParameter(this))
-            assertFalse(childNoGeneric.hasTypeParameter(this))
+            assertFalse(parentNoGeneric.hasTypeParameter())
+            assertFalse(childNoGeneric.hasTypeParameter())
         }
     }
 }

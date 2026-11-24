@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
@@ -14,17 +14,18 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
 import org.jetbrains.kotlin.objcexport.extras.originClassId
 import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? = withClassifierContext(symbol) {
     require(symbol.classKind == KaClassKind.OBJECT || symbol.classKind == KaClassKind.COMPANION_OBJECT)
-    if (!analysisSession.isVisibleInObjC(symbol)) return@withClassifierContext null
+    if (!isVisibleInObjC(symbol, session = analysisSession)) return@withClassifierContext null
 
     val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
     val final = symbol.modality == KaSymbolModality.FINAL
     val name = getObjCClassOrProtocolName(symbol)
     val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
-    val comment: ObjCComment? = analysisSession.translateToObjCComment(symbol.annotations)
-    val origin = analysisSession.getObjCExportStubOrigin(symbol)
+    val comment: ObjCComment? = translateToObjCComment(symbol.annotations, session = analysisSession)
+    val origin = getObjCExportStubOrigin(symbol, session = analysisSession)
     val superProtocols: List<String> = superProtocols(symbol)
     val categoryName: String? = null
     val generics: List<ObjCGenericTypeDeclaration> = emptyList()
@@ -33,7 +34,7 @@ fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? =
     val objectMembers = mutableListOf<ObjCExportStub>()
     objectMembers += translateToObjCConstructors(symbol)
     objectMembers += getDefaultMembers(symbol, objectMembers)
-    objectMembers += with(analysisSession) {
+    objectMembers += context(analysisSession) {
         symbol.declaredMemberScope.callables
             .sortedWith(getStableCallableOrder())
             .flatMap { translateToObjCExportStub(it) }
@@ -67,7 +68,7 @@ private fun ObjCExportContext.getDefaultMembers(symbol: KaClassSymbol, members: 
             propertyAttributes = listOf("class", "readonly"),
             getterName = getObjectPropertySelector(symbol),
             declarationAttributes = listOf(swiftNameAttribute(ObjCPropertyNames.objectPropertyName)),
-            origin = analysisSession.getObjCExportStubOrigin(symbol),
+            origin = getObjCExportStubOrigin(symbol, session = analysisSession),
         )
     )
     return result
