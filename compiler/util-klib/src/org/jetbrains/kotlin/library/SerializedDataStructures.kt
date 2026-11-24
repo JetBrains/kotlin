@@ -12,8 +12,8 @@ class SerializedMetadata(
     val metadataVersion: IntArray,
 )
 
-class SerializedDeclaration(val signatureId: Int, val bytes: ByteArray) {
-    val size = bytes.size
+class SerializedDeclaration(val signatureId: Int, val symbolId: Long, val bytes: ByteArray) {
+    val size: Int get() = bytes.size
 }
 
 class SerializedIrFile(

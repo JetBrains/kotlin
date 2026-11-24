@@ -1600,9 +1600,13 @@ open class IrFileSerializer(
                     compatibleMode = false,
                     recordInSignatureClashDetector = false
                 )
-                val sigIndex = signatureSerializer.protoIdSignature(idSig)
+                val signatureId = signatureSerializer.protoIdSignature(idSig)
 
-                SerializedDeclaration(sigIndex, byteArray)
+                SerializedDeclaration(
+                    signatureId = signatureId,
+                    symbolId = BinarySymbolData.encode(BinarySymbolData.SymbolKind.FUNCTION_SYMBOL, signatureId),
+                    bytes = byteArray,
+                )
             }
         }
 
@@ -1652,8 +1656,13 @@ open class IrFileSerializer(
         }
 
         // TODO: keep order similar
-        val sigIndex = signatureSerializer[idSig] ?: error("Not found ID for $idSig (${topLevelDeclaration.render()})")
-        return SerializedDeclaration(sigIndex, byteArray)
+        val signatureId = signatureSerializer[idSig] ?: error("Not found ID for $idSig (${topLevelDeclaration.render()})")
+
+        return SerializedDeclaration(
+            signatureId,
+            symbolId = BinarySymbolData.encode(topLevelDeclaration.symbol.kind(), signatureId),
+            byteArray,
+        )
     }
 
     private fun IrFileEntry.matchAndNormalizeFilePath(): String =
