@@ -8,11 +8,8 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
-import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaFunctionTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeCreator
@@ -28,7 +25,7 @@ import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeParameterTypeB
 @KaExperimentalApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaTypeCreatorProvider : KaSessionComponent {
+public interface KaTypeCreatorProvider : KaLifetimeOwner {
     /**
      * A single entry point for the type building infrastructure.
      */

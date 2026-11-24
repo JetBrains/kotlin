@@ -9,7 +9,6 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.caches.NullableCaffeineCache
@@ -23,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtElement
 /**
  * This is a dedicated place for caches stored directly inside [KaSession].
  *
- * For [KaSessionComponent] it is possible to have such a cache directly near the use site,
+ * For [KaFirSessionComponent] it is possible to have such a cache directly near the use site,
  * but for non-components it is impossible if they are not a part of the session.
  *
  * In addition, this storage provides entry points like [softCachedValueWithPsiKey] to unify the UX.

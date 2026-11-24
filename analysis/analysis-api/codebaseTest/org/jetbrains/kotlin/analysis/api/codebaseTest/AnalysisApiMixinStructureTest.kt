@@ -17,7 +17,7 @@ import java.io.File
 
 
 /**
- * The test checks that all [KaSessionComponent][org.jetbrains.kotlin.analysis.api.components.KaSessionComponent] implementations
+ * The test checks that all session components (interfaces marked with `@KaSessionComponentImplementationDetail`)
  * are properly marked to not leak them as types to user code
  */
 class AnalysisApiMixinStructureTest : AbstractAnalysisApiSurfaceCodebaseValidationTest() {

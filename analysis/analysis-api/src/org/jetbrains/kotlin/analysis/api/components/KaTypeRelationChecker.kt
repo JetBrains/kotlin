@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaObsoleteComponentApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
 )
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaTypeRelationChecker : KaSessionComponent {
+public interface KaTypeRelationChecker : KaLifetimeOwner {
     /**
      * Returns whether this [KaType] is semantically equal to [other].
      *

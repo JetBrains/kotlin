@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtExpression
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
 )
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaExpressionInformationProvider : KaSessionComponent {
+public interface KaExpressionInformationProvider : KaLifetimeOwner {
     /**
      * Computes the missing cases of the given [KtWhenExpression].
      *

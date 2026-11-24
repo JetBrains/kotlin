@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaObsoleteComponentApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
 )
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaResolver : KaSessionComponent {
+public interface KaResolver : KaLifetimeOwner {
     /**
      * Attempts to resolve a symbol for the given [KtResolvable].
      *

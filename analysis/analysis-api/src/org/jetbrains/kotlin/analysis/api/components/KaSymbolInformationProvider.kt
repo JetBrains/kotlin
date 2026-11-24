@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.FqName
 
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 @KaExperimentalApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaSymbolInformationProvider : KaSessionComponent {
+public interface KaSymbolInformationProvider : KaLifetimeOwner {
     /**
      * The deprecation status of the given symbol, or `null` if the symbol is not deprecated.
      *

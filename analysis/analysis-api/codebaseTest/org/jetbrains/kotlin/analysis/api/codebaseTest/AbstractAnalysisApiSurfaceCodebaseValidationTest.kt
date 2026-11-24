@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.codebaseTest
 
 import org.jetbrains.kotlin.AbstractAnalysisApiCodebaseValidationTest
 import org.jetbrains.kotlin.analysis.api.codebaseTest.AnalysisApiSurfaceNames.KA_SESSION
-import org.jetbrains.kotlin.analysis.api.codebaseTest.AnalysisApiSurfaceNames.KA_SESSION_COMPONENT
+import org.jetbrains.kotlin.analysis.api.codebaseTest.AnalysisApiSurfaceNames.KA_SESSION_COMPONENTS
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -44,4 +44,4 @@ internal fun KtFile.findSessionComponent(): KtClassOrObject? {
 }
 
 internal val KtClassOrObject.isSessionComponent: Boolean
-    get() = superTypeListEntries.any { it.textMatches(KA_SESSION_COMPONENT) } || name == KA_SESSION
+    get() = fqName?.asString() in KA_SESSION_COMPONENTS || name == KA_SESSION

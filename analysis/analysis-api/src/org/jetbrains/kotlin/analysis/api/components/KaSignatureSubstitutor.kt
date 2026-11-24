@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 @KaExperimentalApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaSignatureSubstitutor : KaSessionComponent {
+public interface KaSignatureSubstitutor : KaLifetimeOwner {
     /**
      * Applies a [substitutor] to the given symbol and returns a [KaCallableSignature] with substituted types.
      *

@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 @KaNonPublicApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaSourceProvider : KaSessionComponent {
+public interface KaSourceProvider : KaLifetimeOwner {
     /**
      * The source file name for the given [KtDeclaration] located in a Kotlin library (klib), or `null` if the declaration is not located in
      * a klib, or when the source file name is not available.

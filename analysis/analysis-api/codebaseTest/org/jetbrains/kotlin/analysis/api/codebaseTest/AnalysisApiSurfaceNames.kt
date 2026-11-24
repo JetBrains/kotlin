@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.analysis.api.codebaseTest
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternals
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 
 internal object AnalysisApiSurfaceNames {
-    @Suppress("OPT_IN_USAGE", "DEPRECATION") // Suppress instead of @OptIn because the annotation is not available in the test sources
-    val KA_SESSION_COMPONENT: String = KaSessionComponent::class.simpleName!!
-
     val KA_SESSION: String = KaSession::class.simpleName!!
+
+    /**
+     * Fully qualified names of the session components: the interfaces mixed into [KaSession], except [KaLifetimeOwner].
+     */
+    val KA_SESSION_COMPONENTS: Set<String> =
+        KaSession::class.java.interfaces.mapTo(mutableSetOf()) { it.name } - KaLifetimeOwner::class.java.name
 
     @OptIn(KaImplementationDetail::class)
     val KA_INTERNALS: String = KaInternals::class.simpleName!!
