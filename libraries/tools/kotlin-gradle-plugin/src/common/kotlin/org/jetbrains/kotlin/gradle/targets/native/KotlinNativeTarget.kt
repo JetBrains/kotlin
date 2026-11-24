@@ -78,7 +78,8 @@ abstract class KotlinNativeTarget @Inject constructor(
 
         // Unsupported hosts require cross-compilation enabled and no cinterops
         KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
-        crossCompilationEnabled && compilations.none { it.cinterops.isNotEmpty() }
+        crossCompilationEnabled && HostManager.hostOrNull in hostManager.hostsWithFullTargetSet &&
+            compilations.none { it.cinterops.isNotEmpty() }
     }
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
@@ -166,15 +167,19 @@ abstract class KotlinNativeTarget @Inject constructor(
 
 private val hostManager by lazy { HostManager() }
 
-private val targetsEnabledOnAllHosts by lazy { hostManager.enabledByHost.values.reduce { acc, targets -> acc intersect targets } }
+private val targetsEnabledOnAllFullHosts by lazy {
+    hostManager.hostsWithFullTargetSet
+        .map { hostManager.enabledByHost.getValue(it) }
+        .reduce { acc, targets -> acc intersect targets }
+}
 
 /**
  * The set of konanTargets is considered 'host specific' if the shared compilation of said set can *not* be built
- * on *all* potential hosts. e.g. a set like (iosX64, macosX64) can only be built on macos hosts, and is therefore considered
- * 'host specific'.
+ * on all hosts supporting the common Native targets. E.g. a set like (iosX64, macosX64) can only
+ * be built on macos hosts, and is therefore considered 'host specific'.
  */
 internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean =
-    konanTargets.none { target -> target in targetsEnabledOnAllHosts }
+    konanTargets.none { target -> target in targetsEnabledOnAllFullHosts }
 
 internal suspend fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
     return project.kotlinExtension.awaitSourceSets().filter {

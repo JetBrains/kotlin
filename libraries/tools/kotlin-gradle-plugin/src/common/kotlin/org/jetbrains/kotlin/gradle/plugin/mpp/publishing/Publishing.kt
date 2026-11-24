@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 private val Project.kotlinMultiplatformRootPublicationImpl: CompletableFuture<MavenPublication?>
         by projectStoredProperty { CompletableFuture() }
@@ -83,7 +84,8 @@ private suspend fun Project.shouldDisablePublishingDueToIncompatibleHost(): Bool
             KotlinToolingDiagnostics.PublishingDisabledOnUnsupportedHost(
                 name,
                 HostManager.platformName(),
-                HostManager().supportedHosts
+                HostManager().supportedHosts,
+                experimentalLinuxArm64HostDisabled = HostManager.hostOrNull == KonanTarget.LINUX_ARM64,
             )
         )
         return true

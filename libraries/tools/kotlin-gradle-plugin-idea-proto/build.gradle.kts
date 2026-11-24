@@ -95,6 +95,7 @@ run {
                     MACOS_X64 -> "osx-x86_64"
                     MINGW_X64 -> "windows-x86_64"
                     LINUX_X64 -> "linux-x86_64"
+                    LINUX_ARM64 -> "linux-aarch_64"
                     else -> null
                 }
             }
@@ -103,6 +104,7 @@ run {
         val protocVersion = libs.versions.protobuf.get()
 
         implicitDependencies("com.google.protobuf:protoc:$protocVersion:linux-x86_64@exe")
+        implicitDependencies("com.google.protobuf:protoc:$protocVersion:linux-aarch_64@exe")
         implicitDependencies("com.google.protobuf:protoc:$protocVersion:osx-aarch_64@exe")
         implicitDependencies("com.google.protobuf:protoc:$protocVersion:osx-x86_64@exe")
         implicitDependencies("com.google.protobuf:protoc:$protocVersion:windows-x86_64@exe")
