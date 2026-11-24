@@ -9,11 +9,9 @@ import com.intellij.lang.impl.PsiBuilderImpl
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.LightTreeParseTreeKind
-import org.jetbrains.kotlin.diagnostics.ParseTreeKind
+import org.jetbrains.kotlin.diagnostics.NonSuppressingDiagnosticContext
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.parsing.KotlinLightParser
@@ -22,12 +20,11 @@ fun DiagnosticReporter.toKotlinParsingErrorListener(
     sourceFile: KtSourceFile,
     languageVersionSettings: LanguageVersionSettings
 ): KotlinLightParser.LightTreeParsingErrorListener {
-    val diagnosticContext = object : DiagnosticContext {
-        override val containingFile: KtSourceFile = sourceFile
-        override val languageVersionSettings: LanguageVersionSettings get() = languageVersionSettings
-        override val parseTreeKind: ParseTreeKind get() = LightTreeParseTreeKind
-        override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
-    }
+    val diagnosticContext = NonSuppressingDiagnosticContext(
+        containingFile = sourceFile,
+        languageVersionSettings = languageVersionSettings,
+        parseTreeKind = LightTreeParseTreeKind,
+    )
     return KotlinLightParser.LightTreeParsingErrorListener { node, syntaxErrorType ->
         val source = KtOffsetsOnlySourceElement(node.startOffset, node.endOffset)
         when (syntaxErrorType) {

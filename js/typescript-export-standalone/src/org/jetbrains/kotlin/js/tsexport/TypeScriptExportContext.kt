@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.NoParseTreeKind
 import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.diagnostics.report
 import java.io.File
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 internal class TypeScriptExportContext(
     val config: TypeScriptExportConfig,
@@ -26,7 +26,7 @@ internal class TypeScriptExportContext(
     override val languageVersionSettings: LanguageVersionSettings get() = LanguageVersionSettingsImpl.DEFAULT
 
     override val parseTreeKind: ParseTreeKind
-        get() = shouldNotBeCalled("Only sourceless diagnostics are reported, so they aren't linked to a parse tree")
+        get() = NoParseTreeKind
 
     override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
 
