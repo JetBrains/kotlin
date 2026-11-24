@@ -1,0 +1,131 @@
+FILE: deprecations.kt
+    package p
+
+    @R|kotlin/RequiresOptIn|() public final annotation class Experimental : R|kotlin/Annotation| {
+        public constructor(): R|p/Experimental| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|p/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|]) @R|p/Experimental|() public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|p/A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|p/A.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|p/Experimental|() @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.WARNING| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.WARNING|]) public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|p/A.Nested.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|p/B| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|p/B.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final static fun R|p/A|.foo(): R|kotlin/Unit| {
+        ^foo Q|kotlin/Unit|
+    }
+    public final static val R|p/A|.bar: R|kotlin/Unit|
+        public static get(): R|kotlin/Unit| {
+            ^ Q|kotlin/Unit|
+        }
+    public final static operator fun R|p/A|.invoke(x: R|kotlin/Int|): R|kotlin/Unit| {
+        ^invoke Q|kotlin/Unit|
+    }
+    public final static fun R|p/A|.test(): R|kotlin/Unit| {
+        Q|p/A|.R|p/foo*s|()
+        Q|p/A|.R|p/bar*s|
+        ::R|p/foo*s|
+        ::R|p/bar*s|
+    }
+    public final static fun R|p/B|.foo(): R|kotlin/Unit| {
+        ^foo Q|kotlin/Unit|
+    }
+    public final static val R|p/B|.bar: R|kotlin/Unit|
+        public static get(): R|kotlin/Unit| {
+            ^ Q|kotlin/Unit|
+        }
+    public final static fun R|p/B|.test(): R|kotlin/Unit| {
+        Q|p/B|.R|p/foo*s|()
+        Q|p/B|.R|p/bar*s|
+        ::R|p/foo*s|
+        ::R|p/bar*s|
+    }
+    public final static fun R|p/A.Nested|.foo(): R|kotlin/Unit| {
+        ^foo Q|kotlin/Unit|
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|p/A(.<companion>)|.R|p/foo*s|()
+        Q|p/A(.<companion>)|.R|p/bar*s|
+        Q|p/A(.<companion>)|.R|p/invoke*s|(Int(42))
+        Q|p/B(.<companion>)|.R|p/foo*s|()
+        Q|p/B(.<companion>)|.R|p/bar*s|
+        Q|p/A.Nested(.<companion>)|.R|p/foo*s|()
+        Q|p/A(.<companion>)|::R|p/foo*s|
+        Q|p/A(.<companion>)|::R|p/bar*s|
+        Q|p/B(.<companion>)|::R|p/foo*s|
+        Q|p/B(.<companion>)|::R|p/bar*s|
+        Q|p/A.Nested(.<companion>)|::R|p/foo*s|
+    }
+FILE: enumInitializer.kt
+    package q
+
+    public final enum class E : R|kotlin/Enum<q/E>| {
+        private constructor(x: R|kotlin/Int|): R|q/E| {
+            super<R|kotlin/Enum<q/E>|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final static enum entry A: R|q/E| = object : R|q/E| {
+            private constructor(): R|q/<anonymous>| {
+                super<R|q/E|>(Q|q/E(.<companion>)|.R|q/init*s|)
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|q/E.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<q/E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|q/E| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<q/E>|
+            public static get(): R|kotlin/enums/EnumEntries<q/E>|
+
+    }
+    public final static val R|q/E|.init: R|kotlin/Int| = Int(1)
+        public static get(): R|kotlin/Int|
