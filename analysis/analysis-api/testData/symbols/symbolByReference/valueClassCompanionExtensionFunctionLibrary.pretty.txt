@@ -1,1 +1,1 @@
-fun ValueClass.static1()
+companion fun ValueClass.static1()
