@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.builtinTypes
 import org.jetbrains.kotlin.fir.builder.parseCharacter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -25,7 +26,7 @@ internal fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
             hasDeclaredReturnType() -> return null
 
             // A function with a block body returns `Unit` unless it declares the return type
-            hasBlockBody() -> return analysisSession.builtinTypes.unit
+            hasBlockBody() -> return builtinTypes.unit
 
             // An anonymous function takes its return type from the expected type, like a lambda
             isAnonymous -> return null
@@ -63,7 +64,7 @@ internal fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
 context(analysisSession: KaFirSession)
 internal fun KtExpression.getExpressionTypeByPsiOrNull(noExpectedType: Boolean): KaType? {
     val unwrappedExpression = unwrapParenthesesLabelsAndAnnotations()
-    return with(analysisSession.builtinTypes) {
+    return with(builtinTypes) {
         when (unwrappedExpression) {
             is KtStringTemplateExpression -> string
 

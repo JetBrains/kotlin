@@ -290,8 +290,8 @@ internal fun ConeDiagnostic.asKaDiagnostic(
     source: KtSourceElement,
     analysisSession: KaFirSession
 ): KaDiagnosticWithPsi<*>? {
-    with(analysisSession) {
-        val firDiagnostic = toFirDiagnostics(firSession, source, callOrAssignmentSource = null).firstOrNull() ?: return null
+    context(analysisSession) {
+        val firDiagnostic = toFirDiagnostics(analysisSession.firSession, source, callOrAssignmentSource = null).firstOrNull() ?: return null
         check(firDiagnostic is KtDiagnosticWithSource)
         return firDiagnostic.asKaDiagnostic()
     }

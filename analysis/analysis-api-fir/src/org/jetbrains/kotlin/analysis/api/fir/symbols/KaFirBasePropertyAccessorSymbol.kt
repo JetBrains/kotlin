@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.builtinTypes
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -163,13 +164,13 @@ internal interface KaFirBasePropertyGetterSymbol : KaFirBasePropertyAccessorSymb
 
 internal interface KaFirBasePropertySetterSymbol : KaFirBasePropertyAccessorSymbol {
     override val returnTypeImpl: KaType
-        get() = withValidityAssertion { analysisSession.builtinTypes.unit }
+        get() = withValidityAssertion { context(analysisSession) { builtinTypes.unit } }
 
     override val isOverrideImpl: Boolean
         get() = withValidityAssertion {
             // The existence of the `override` keyword doesn't guarantee that the setter overrides something
             // as its base version may have `val`
-            owningKaProperty.isOverride && with(analysisSession) {
+            owningKaProperty.isOverride && context(analysisSession) {
                 val originalSymbol = owningKaProperty.fakeOverrideOriginal
                     .takeIf { it.origin != owningKaProperty.origin } as? KaPropertySymbol
 
@@ -181,7 +182,7 @@ internal interface KaFirBasePropertySetterSymbol : KaFirBasePropertyAccessorSymb
 
     val parameterImpl: KaValueParameterSymbol
         get() = withValidityAssertion {
-            with(analysisSession) {
+            context(analysisSession) {
                 backingPsi?.valueParameters?.firstOrNull()?.symbol as? KaValueParameterSymbol
             } ?: firSymbol.createKtValueParameters(builder).single()
         }

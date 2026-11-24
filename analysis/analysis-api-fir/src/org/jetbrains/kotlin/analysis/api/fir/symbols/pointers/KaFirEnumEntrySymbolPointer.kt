@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
@@ -27,7 +28,7 @@ internal class KaFirEnumEntrySymbolPointer(
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaEnumEntrySymbol? {
         require(analysisSession is KaFirSession)
-        val owner = with(analysisSession) {
+        val owner = context(analysisSession) {
             ownerPointer.restoreSymbol()
         }
 

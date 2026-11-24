@@ -9,6 +9,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.file.PsiPackageImpl
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.platform.utils.forEachNonKotlinPsiElementFinder
+import org.jetbrains.kotlin.analysis.api.session.analysisScope
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
@@ -48,7 +49,7 @@ internal object DeclarationsInPackageProvider {
                 analysisSession.targetPlatform.isJvm() -> {
                     val psiPackage = PsiPackageImpl(PsiManager.getInstance(analysisSession.project), packageFqName.asString())
                     forEachNonKotlinPsiElementFinder(analysisSession.project) { finder ->
-                        finder.getClassNames(psiPackage, analysisSession.analysisScope)
+                        finder.getClassNames(psiPackage, context(analysisSession) { analysisScope })
                             .mapNotNullTo(this, Name::identifier)
                     }
                 }

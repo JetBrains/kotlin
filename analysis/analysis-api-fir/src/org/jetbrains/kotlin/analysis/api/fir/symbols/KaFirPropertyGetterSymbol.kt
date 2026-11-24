@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.CallableId
@@ -92,7 +93,7 @@ internal class KaFirPropertyGetterSymbol(
     companion object {
         fun create(declaration: KtPropertyAccessor, session: KaFirSession): KaPropertyGetterSymbol {
             val property = declaration.property
-            val owningKaProperty = with(session) {
+            val owningKaProperty = context(session) {
                 @Suppress("UNCHECKED_CAST")
                 property.symbol as KaFirKotlinPropertySymbol<KtProperty>
             }

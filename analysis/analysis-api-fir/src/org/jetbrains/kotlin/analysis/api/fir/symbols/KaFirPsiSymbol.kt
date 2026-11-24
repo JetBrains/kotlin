@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.builtinTypes
+import org.jetbrains.kotlin.analysis.api.types.defaultType
+import org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -183,27 +186,30 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.cre
 /**
  * We cannot optimize super types by psi if at least one compiler plugin may generate additional types
  */
-private fun KaFirSession.hasCompilerPluginForSupertypes(declaration: KtClassOrObject): Boolean {
+context(analysisSession: KaFirSession)
+private fun hasCompilerPluginForSupertypes(declaration: KtClassOrObject): Boolean {
     val declarationSiteModule = declaration.kaModule
-    val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
+    val declarationSiteSession = analysisSession.resolutionFacade.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.supertypeGenerators.isNotEmpty()
 }
 
 /**
  * We cannot optimize some declaration creations if at least one compiler plugin may generate additional declarations
  */
-internal fun KaFirSession.hasDeclarationGeneratorCompilerPlugin(declaration: KtClassOrObject): Boolean {
+context(analysisSession: KaFirSession)
+internal fun hasDeclarationGeneratorCompilerPlugin(declaration: KtClassOrObject): Boolean {
     val declarationSiteModule = declaration.kaModule
-    val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
+    val declarationSiteSession = analysisSession.resolutionFacade.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.declarationGenerators.isNotEmpty()
 }
 
 /**
  * We cannot optimize the status by psi if at least one compiler plugin may transform it
  */
-internal fun KaFirSession.hasDeclarationStatusCompilerPlugin(declaration: KtDeclaration): Boolean {
+context(analysisSession: KaFirSession)
+internal fun hasDeclarationStatusCompilerPlugin(declaration: KtDeclaration): Boolean {
     val declarationSiteModule = declaration.kaModule
-    val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
+    val declarationSiteSession = analysisSession.resolutionFacade.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.statusTransformerExtensions.isNotEmpty()
 }
 
@@ -217,7 +223,7 @@ context(symbol: KaFirSymbol<*>)
 internal inline fun <T> KtDeclaration.ifNoStatusCompilerPluginPresent(action: () -> T): T? {
     contract { callsInPlace(action, InvocationKind.AT_MOST_ONCE) }
 
-    return if (symbol.analysisSession.hasDeclarationStatusCompilerPlugin(this)) {
+    return if (context(symbol.analysisSession) { hasDeclarationStatusCompilerPlugin(this) }) {
         null
     } else {
         action()
@@ -272,26 +278,26 @@ internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperT
      */
     val backingPsi = ifSource { backingPsi }
 
-    if (backingPsi?.superTypeListEntries?.isNotEmpty() != false || analysisSession.hasCompilerPluginForSupertypes(backingPsi)) {
+    if (backingPsi?.superTypeListEntries?.isNotEmpty() != false || context(analysisSession) { hasCompilerPluginForSupertypes(backingPsi) }) {
         return firSymbol.superTypesList(builder)
     }
 
     val specialSuperType = when {
         backingPsi !is KtClass || this !is KaNamedClassSymbol -> null
-        backingPsi.isAnnotation() -> analysisSession.builtinTypes.annotationType
-        backingPsi.isEnum() -> with(analysisSession) {
-            val enumFirSymbol = firSession.builtinTypes.enumType.toRegularClassSymbol(firSession)
+        backingPsi.isAnnotation() -> context(analysisSession) { builtinTypes.annotationType }
+        backingPsi.isEnum() -> context(analysisSession) {
+            val enumFirSymbol = analysisSession.firSession.builtinTypes.enumType.toRegularClassSymbol(analysisSession.firSession)
                 ?: return firSymbol.superTypesList(builder) // something goes wrong here
 
             val enumKaSymbol = builder.classifierBuilder.buildNamedClassSymbol(enumFirSymbol)
-            buildClassType(enumKaSymbol) {
-                argument(defaultType)
+            typeCreator.classType(enumKaSymbol) {
+                invariantTypeArgument(defaultType)
             }
         }
 
         backingPsi.isData() && JvmStandardClassIds.Annotations.JvmRecord in annotations -> {
-            val jvmRecordSymbol = analysisSession.findClass(JvmStandardClassIds.Java.Record) as? KaNamedClassSymbol
-            with(analysisSession) {
+            context(analysisSession) {
+                val jvmRecordSymbol = findClass(JvmStandardClassIds.Java.Record)
                 jvmRecordSymbol?.defaultType
             }
         }
@@ -302,7 +308,7 @@ internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperT
         }
     }
 
-    return listOf(specialSuperType ?: analysisSession.builtinTypes.any)
+    return listOf(specialSuperType ?: context(analysisSession) { builtinTypes.any })
 }
 
 /**
@@ -376,7 +382,7 @@ internal inline fun <R> KaFirPsiSymbol<*, *>.ifNotLibrarySource(action: () -> R)
 
 internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaValueParameters(): List<KaValueParameterSymbol>? =
     ifNotLibrarySource {
-        with(analysisSession) {
+        context(analysisSession) {
             backingPsi?.valueParameters?.map { it.symbol as KaValueParameterSymbol }
         }
     }
@@ -389,7 +395,7 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaContextParamet
             ?.takeIf { it.isNotEmpty() }
             ?: return emptyList() // no context receivers/parameters
 
-        with(analysisSession) {
+        context(analysisSession) {
             lists.flatMap { list ->
                 val contextParameters = list.contextParameters
                 if (contextParameters.isNotEmpty()) {
@@ -404,7 +410,7 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaContextParamet
 internal fun KaFirKtBasedSymbol<KtTypeParameterListOwner, *>.createKaTypeParameters(): List<KaTypeParameterSymbol>? =
     ifNotLibrarySource {
         val backingPsi = backingPsi ?: return@ifNotLibrarySource null
-        val typeParameters = with(analysisSession) {
+        val typeParameters = context(analysisSession) {
             backingPsi.typeParameters.map { it.symbol }
         }
 
@@ -436,12 +442,12 @@ internal val KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.isO
             val hasModifier = declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)
             when {
                 hasModifier -> true
-                !analysisSession.hasDeclarationStatusCompilerPlugin(declaration) -> false
+                !context(analysisSession) { hasDeclarationStatusCompilerPlugin(declaration) } -> false
                 else -> null
             }
         } ?: firSymbol.isOverride // Resolved status is needed as compiler plugins might add the modifier
 
-        return isOverride || origin == KaSymbolOrigin.LIBRARY && with(analysisSession) {
+        return isOverride || origin == KaSymbolOrigin.LIBRARY && context(analysisSession) {
             // A workaround for the case when the library declaration is analyzed as sources
             directlyOverriddenSymbols.any()
         }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirScript
@@ -24,7 +25,7 @@ internal class KaFirScriptSymbolPointer(
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaScriptSymbol? {
         require(analysisSession is KaFirSession)
-        val file = with(analysisSession) {
+        val file = context(analysisSession) {
             filePointer.restoreSymbol()?.firSymbol?.fir as? FirFile
         } ?: return null
 

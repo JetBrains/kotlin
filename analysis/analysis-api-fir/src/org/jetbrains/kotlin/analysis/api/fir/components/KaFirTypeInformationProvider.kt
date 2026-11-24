@@ -115,7 +115,7 @@ internal class KaFirTypeInformationProvider(
     }
 
     override fun isDenotable(type: KaType): Boolean = type.withValidityAssertion {
-        with(analysisSession) {
+        context(analysisSession) {
             type.approximateToDenotableSupertype(allowLocalDenotableTypes = true) == null
         }
     }

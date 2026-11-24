@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,12 +15,12 @@ class TypeProjectionCreatorDslTestCases(session: KaSession, caretToType: Map<Str
     DslTypeCreationTestCases(session, caretToType) {
     fun testIntWithInVariance(): KaTypeArgumentWithVariance {
         val type = getTypeByCaret("type")
-        return session.typeCreator.typeProjection(Variance.IN_VARIANCE, type)
+        return typeCreator.typeProjection(Variance.IN_VARIANCE, type)
     }
 
     fun testInvariantStringTypeMarkedNullable(): KaTypeArgumentWithVariance {
         val symbol = getClassLikeSymbolByCaret("type")
-        return session.typeCreator.typeProjection(Variance.INVARIANT) {
+        return typeCreator.typeProjection(Variance.INVARIANT) {
             classType(symbol) {
                 isMarkedNullable = true
             }

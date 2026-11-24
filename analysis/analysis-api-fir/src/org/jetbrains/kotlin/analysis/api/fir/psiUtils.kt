@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaAbstractFirDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaUnstableDiagnosticApi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
+import org.jetbrains.kotlin.analysis.api.session.analysisScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLDiagnostic
@@ -80,7 +81,7 @@ internal fun KaFirSymbol<*>.findPsi(): PsiElement? {
         backingPsi?.let { return it }
     }
 
-    return firSymbol.findPsi(analysisSession.analysisScope)
+    return firSymbol.findPsi(context(analysisSession) { analysisScope })
 }
 
 /**

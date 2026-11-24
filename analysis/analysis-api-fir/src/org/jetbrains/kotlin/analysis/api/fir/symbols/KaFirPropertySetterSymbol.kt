@@ -95,7 +95,7 @@ internal class KaFirPropertySetterSymbol(
     companion object {
         fun create(declaration: KtPropertyAccessor, session: KaFirSession): KaPropertySetterSymbol {
             val property = declaration.property
-            val owningKaProperty = with(session) {
+            val owningKaProperty = context(session) {
                 @Suppress("UNCHECKED_CAST")
                 property.symbol as KaFirKotlinPropertySymbol<KtProperty>
             }

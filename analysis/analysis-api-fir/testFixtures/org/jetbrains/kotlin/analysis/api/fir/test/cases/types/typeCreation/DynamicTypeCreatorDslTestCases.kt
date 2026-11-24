@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
 class DynamicTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
     DslTypeCreationTestCases(session, caretToType) {
     fun testDynamicType(): KaType {
-        return session.typeCreator.dynamicType()
+        return typeCreator.dynamicType()
     }
 
     fun testWithAnnotations(): KaType {
@@ -21,7 +21,7 @@ class DynamicTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String
         val annotationClassId2 = ClassId.fromString("MyAnno2")
         val annotationClassId3 = ClassId.fromString("MyAnno3")
 
-        return session.typeCreator.dynamicType {
+        return typeCreator.dynamicType {
             annotation(annotationClassId1)
             annotation(annotationClassId2)
             annotation(annotationClassId3)
@@ -29,7 +29,7 @@ class DynamicTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String
     }
 
     fun testWithAttributeAnnotations(): KaType {
-        return session.typeCreator.dynamicType {
+        return typeCreator.dynamicType {
             annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
         }
     }

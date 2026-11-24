@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
@@ -77,7 +78,7 @@ internal class KaFirContextReceiverBasedContextParameterSymbol private construct
     override fun createPointer(): KaSymbolPointer<KaContextParameterSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaContextParameterSymbol>()?.let { return it }
 
-        val ownerSymbol = with(analysisSession) { containingDeclaration }
+        val ownerSymbol = context(analysisSession) { containingDeclaration }
             ?: error("Containing declaration is expected for a context parameter symbol")
 
         val parameters = ownerSymbol.firSymbol.fir.contextParameters

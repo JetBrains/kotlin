@@ -118,8 +118,8 @@ private fun buildNamedFunctionCall(firFunctionCall: FirFunctionCall): KaFunction
     val firTypeArgumentsMapping = firFunctionCall.toFirTypeArgumentsMapping(functionSymbol)
     val typeArgumentsMapping = firTypeArgumentsMapping.asKaTypeParametersMapping()
 
-    val kaSignature = with(analysisSession) {
-        val substitutor = substitutorByMap(firTypeArgumentsMapping, firSession).toKaSubstitutor()
+    val kaSignature = context(analysisSession) {
+        val substitutor = substitutorByMap(firTypeArgumentsMapping, analysisSession.firSession).toKaSubstitutor()
         functionSymbol.toKaSignature().substitute(substitutor)
     }
 

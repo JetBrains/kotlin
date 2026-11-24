@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.internals.KaInternalsRenderer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -19,13 +20,13 @@ internal class KaRendererImpl(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaInternalsRenderer, KaFirSessionComponent() {
     override fun render(symbol: KaDeclarationSymbol, renderer: KaDeclarationRenderer): String = withValidityAssertion {
-        return with(analysisSession) {
+        return context(analysisSession) {
             prettyPrint { renderer.renderDeclaration(useSiteSession, symbol, this) }
         }
     }
 
     override fun render(type: KaType, renderer: KaTypeRenderer, position: Variance): String = withValidityAssertion {
-        return with(analysisSession) {
+        return context(analysisSession) {
             val approximatedType = renderer.typeApproximator.approximateType(useSiteSession, type, position)
             prettyPrint { renderer.renderType(useSiteSession, approximatedType, this) }
         }

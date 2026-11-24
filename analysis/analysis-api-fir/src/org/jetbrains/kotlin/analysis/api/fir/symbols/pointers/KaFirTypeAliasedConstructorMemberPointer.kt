@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirCallableSignature
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -38,21 +39,22 @@ internal class KaFirTypeAliasedConstructorMemberPointer(
 ) : KaFirCachedSymbolPointer<KaConstructorSymbol>(originalSymbol) {
     override fun restoreIfNotCached(analysisSession: KaSession): KaConstructorSymbol? {
         require(analysisSession is KaFirSession)
-        val scope = with(analysisSession) {
+        val scope = context(analysisSession) {
             val ownerSymbol = ownerPointer.restoreSymbol() ?: return null
             val owner = ownerSymbol.firSymbol
             getSearchScope(analysisSession, owner)
         } ?: return null
 
-        return analysisSession.chooseCandidateAndCreateSymbol(scope)
+        return context(analysisSession) { chooseCandidateAndCreateSymbol(scope) }
     }
 
-    private fun KaFirSession.chooseCandidateAndCreateSymbol(candidates: FirScope): KaConstructorSymbol? {
+    context(analysisSession: KaFirSession)
+    private fun chooseCandidateAndCreateSymbol(candidates: FirScope): KaConstructorSymbol? {
         val firConstructor = candidates.findDeclarationWithSignature<FirConstructor>(signature) {
             processDeclaredConstructors(it)
         } ?: return null
 
-        return firSymbolBuilder.functionBuilder.buildConstructorSymbol(firConstructor.symbol)
+        return analysisSession.firSymbolBuilder.functionBuilder.buildConstructorSymbol(firConstructor.symbol)
     }
 
     private fun getSearchScope(analysisSession: KaFirSession, typeAlias: FirTypeAliasSymbol): FirScope? {

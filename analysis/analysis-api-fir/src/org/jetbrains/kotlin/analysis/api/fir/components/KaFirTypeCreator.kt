@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
+import org.jetbrains.kotlin.analysis.api.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -33,7 +34,7 @@ internal class KaFirTypeCreator(
     override fun buildStarTypeProjection(): KaStarTypeProjection = KaFirStarTypeProjection(token)
 
     override fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        with(analysisSession) {
+        context(analysisSession) {
             val builder = KaFirArrayTypeBuilder.ByElementType(elementType, token).apply(init)
 
             val builderElementType = builder.elementType

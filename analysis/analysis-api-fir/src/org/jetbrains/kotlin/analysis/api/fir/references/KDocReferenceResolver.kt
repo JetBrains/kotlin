@@ -529,7 +529,7 @@ internal object KDocReferenceResolver {
     context(session: KaSession)
     private fun Iterable<KaSymbol>.getThrowableSymbols(): List<KaClassLikeSymbol> =
         this.filterIsInstance<KaClassLikeSymbol>().filter { symbol ->
-            symbol.defaultType.isSubtypeOf(session.builtinTypes.throwable)
+            symbol.defaultType.isSubtypeOf(builtinTypes.throwable)
         }
 
     /**

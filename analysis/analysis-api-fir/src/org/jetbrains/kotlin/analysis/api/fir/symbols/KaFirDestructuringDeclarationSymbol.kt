@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDestructuringDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -53,7 +54,7 @@ internal class KaFirDestructuringDeclarationSymbol private constructor(
 
     override val entries: List<KaVariableSymbol>
         get() = withValidityAssertion {
-            with(analysisSession) {
+            context(analysisSession) {
                 psi.entries.map { entry ->
                     entry.symbol
                 }

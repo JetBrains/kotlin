@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.analysis.api.internals.KaInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
+import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
+import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.exceptions.buildAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -51,7 +53,7 @@ class KaFirIllegalPsiException private constructor(
 
     @KaImplementationDetail
     companion object {
-        fun create(session: KaSession, psi: PsiElement): KaFirIllegalPsiException = with(session) {
+        fun create(session: KaSession, psi: PsiElement): KaFirIllegalPsiException = context(session) {
             val psiModule = psi.kaModule
             KaFirIllegalPsiException(useSiteModule, psiModule, psi)
         }
@@ -88,7 +90,7 @@ internal fun PsiElement.checkValidity() {
     } else {
         // This `else` branch is a temporal workaround for the swift-export which creates its own KaSession implementation
         // It has to be removed after the swift-export dropped this API violation
-        with(session) {
+        context(session) {
             canBeAnalysed()
         }
     }

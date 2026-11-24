@@ -35,7 +35,7 @@ internal object TestScopeRenderer {
         printPretty: Boolean = false,
         fullyPrintScope: (KaScopeKind) -> Boolean,
     ) {
-        with(analysisSession) {
+        context(analysisSession) {
             with(printer) {
                 appendLine("implicit values:")
                 withIndent {

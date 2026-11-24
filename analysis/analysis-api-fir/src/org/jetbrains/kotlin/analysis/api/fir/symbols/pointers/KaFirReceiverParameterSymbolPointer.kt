@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 
 internal class KaFirReceiverParameterSymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaCallableSymbol>,
@@ -18,7 +19,7 @@ internal class KaFirReceiverParameterSymbolPointer(
 ) : KaFirCachedSymbolPointer<KaReceiverParameterSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaReceiverParameterSymbol? {
-        val callableSymbol = with(analysisSession) {
+        val callableSymbol = context(analysisSession) {
             ownerPointer.restoreSymbol()
         }
 

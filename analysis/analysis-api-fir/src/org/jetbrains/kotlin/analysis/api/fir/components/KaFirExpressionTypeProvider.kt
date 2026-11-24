@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.builtinTypes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
@@ -97,7 +99,7 @@ internal class KaFirExpressionTypeProvider(
             val superTypes = containingClass?.resolvedSuperTypes
             when (superTypes?.size) {
                 null -> fir.resolvedType.asKaType()
-                0 -> analysisSession.builtinTypes.any
+                0 -> context(analysisSession) { builtinTypes.any }
                 1 -> superTypes.single().asKaType()
                 else -> @OptIn(DelicateIntersectionConstructor::class) ConeIntersectionType(superTypes, null).asKaType()
             }
@@ -109,12 +111,12 @@ internal class KaFirExpressionTypeProvider(
             } else if (expression is KtUnaryExpression && expression.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
                 fir.rValue.resolvedType.asKaType()
             } else {
-                analysisSession.builtinTypes.unit
+                context(analysisSession) { builtinTypes.unit }
             }
         }
         is FirExpression -> fir.resolvedType.asKaType()
         is FirNamedReference -> fir.getCorrespondingTypeIfPossible()?.asKaType()
-        is FirStatement -> with(analysisSession) { builtinTypes.unit }
+        is FirStatement -> context(analysisSession) { builtinTypes.unit }
         is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel, is FirTypeParameterRef -> null
 
         // `listOf<_>(1)` where `expression` is `_`
@@ -263,7 +265,7 @@ internal class KaFirExpressionTypeProvider(
             return firParameter.returnTypeRef.coneType.asKaType()
         }
 
-        return when (val symbol = with(analysisSession) { declaration.symbol }) {
+        return when (val symbol = context(analysisSession) { declaration.symbol }) {
             // The symbol has the element type, while the declaration is consumed as an array at the use site
             is KaFirValueParameterSymbol if symbol.isVararg -> symbol.firSymbol.resolvedReturnType.asKaType()
             is KaCallableSymbol -> symbol.returnType

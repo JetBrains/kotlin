@@ -11,13 +11,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.samConstructor
 
 internal class KaFirSamConstructorSymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaClassLikeSymbol>,
     originalSymbol: KaSamConstructorSymbol?,
 ) : KaFirCachedSymbolPointer<KaSamConstructorSymbol>(originalSymbol) {
     @KaImplementationDetail
-    override fun restoreIfNotCached(analysisSession: KaSession): KaSamConstructorSymbol? = with(analysisSession) {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaSamConstructorSymbol? = context(analysisSession) {
         ownerPointer.restoreSymbol()?.samConstructor
     }
 

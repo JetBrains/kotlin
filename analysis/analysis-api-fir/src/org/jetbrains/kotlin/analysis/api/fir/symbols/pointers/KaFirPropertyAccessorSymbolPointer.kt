@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 
 internal sealed class KaFirPropertyAccessorSymbolPointer<T : KaPropertyAccessorSymbol>(
     private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     originalSymbol: T?,
 ) : KaFirCachedSymbolPointer<T>(originalSymbol) {
-    protected fun restorePropertySymbol(analysisSession: KaSession): KaPropertySymbol? = with(analysisSession) {
+    protected fun restorePropertySymbol(analysisSession: KaSession): KaPropertySymbol? = context(analysisSession) {
         return propertySymbolPointer.restoreSymbol()
     }
 

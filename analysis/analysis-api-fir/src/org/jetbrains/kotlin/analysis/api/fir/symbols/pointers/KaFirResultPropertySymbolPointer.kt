@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -25,7 +26,7 @@ internal class KaFirResultPropertySymbolPointer(
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaKotlinPropertySymbol? {
         require(analysisSession is KaFirSession)
-        val script = with(analysisSession) {
+        val script = context(analysisSession) {
             scriptPointer.restoreSymbol()?.firSymbol?.fir as? FirScript
         } ?: return null
 

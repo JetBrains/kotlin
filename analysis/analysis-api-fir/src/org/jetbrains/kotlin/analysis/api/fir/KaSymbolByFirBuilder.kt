@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
+import org.jetbrains.kotlin.analysis.api.signatures.asSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -207,7 +208,7 @@ internal class KaSymbolByFirBuilder(
             if (fir is FirNamedFunctionSymbol && fir.origin != FirDeclarationOrigin.SamConstructor)
                 return buildNamedFunctionSignature(fir)
 
-            return with(analysisSession) { buildFunctionSymbol(fir).asSignature() }
+            return context(analysisSession) { buildFunctionSymbol(fir).asSignature() }
         }
 
         fun buildNamedFunctionSymbol(firSymbol: FirNamedFunctionSymbol): KaNamedFunctionSymbol {
@@ -287,7 +288,7 @@ internal class KaSymbolByFirBuilder(
                 return buildPropertySignature(firSymbol)
             }
 
-            return with(analysisSession) { buildVariableSymbol(firSymbol).asSignature() }
+            return context(analysisSession) { buildVariableSymbol(firSymbol).asSignature() }
         }
 
         fun buildPropertySymbol(firSymbol: FirPropertySymbol): KaVariableSymbol {
@@ -443,7 +444,7 @@ internal class KaSymbolByFirBuilder(
         }
 
         fun buildCallableSignature(firSymbol: FirCallableSymbol<*>): KaCallableSignature<KaCallableSymbol> = when (firSymbol) {
-            is FirPropertyAccessorSymbol -> with(analysisSession) { functionBuilder.buildPropertyAccessorSymbol(firSymbol).asSignature() }
+            is FirPropertyAccessorSymbol -> context(analysisSession) { functionBuilder.buildPropertyAccessorSymbol(firSymbol).asSignature() }
             is FirFunctionSymbol<*> -> functionBuilder.buildFunctionSignature(firSymbol)
             is FirVariableSymbol<*> -> variableBuilder.buildVariableLikeSignature(firSymbol)
             else -> throwUnexpectedElementError(firSymbol)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,14 +17,14 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
     DslTypeCreationTestCases(session, caretToType) {
     fun testBasicFunWithIntReturnType(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             returnType = type
         }
     }
 
     fun testBasicFunWithIntReturnTypeAndReceiver(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             returnType = type
             receiverType = type
         }
@@ -32,30 +32,30 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
 
     fun testBasicNullableFunWithUserReturnType(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             returnType = type
             isMarkedNullable = true
         }
     }
 
     fun testWithDefaultValues(): KaType {
-        return session.typeCreator.functionType()
+        return typeCreator.functionType()
     }
 
     fun testReflectWithDefaultValues(): KaType {
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             isReflectType = true
         }
     }
 
     fun testSuspendWithDefaultValues(): KaType {
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             isSuspend = true
         }
     }
 
     fun testReflectAndSuspendWithDefaultValues(): KaType {
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             isReflectType = true
             isSuspend = true
         }
@@ -63,7 +63,7 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
 
     fun testFourIntValueParameters(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             valueParameter(Name.identifier("first"), type)
             valueParameter(Name.identifier("second")) {
                 type
@@ -77,7 +77,7 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
 
     fun testWithSingleContextParameter(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             contextParameter {
                 type
             }
@@ -86,7 +86,7 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
 
     fun testReflectWithSingleContextParameter(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             contextParameter {
                 type
             }
@@ -97,7 +97,7 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
 
     fun testWithContextParameterReceiverAndValueParameter(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             contextParameter(type)
             receiverType = type
             valueParameter(Name.identifier("myParameter"), type)
@@ -106,14 +106,14 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
 
     fun testWithPluginAnnotation(): KaType {
         val annotationClassId = PluginFunctionalNames.MY_INLINEABLE_ANNOTATION_CLASS_ID
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             annotation(annotationClassId)
         }
     }
 
     fun testReflectWithStringReceiver(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             receiverType = type
             isReflectType = true
         }
@@ -121,7 +121,7 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
 
     fun testWithAnnotation(): KaType {
         val annotationClassId = ClassId.fromString("MyAnno")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             annotation { annotationClassId }
         }
     }
@@ -129,7 +129,7 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
     fun testWithAnnotationReceiverAndContextParameter(): KaType {
         val annotationClassId = ClassId.fromString("MyAnno")
         val type = getTypeByCaret("type")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             receiverType = type
             contextParameter { type }
             annotation(annotationClassId)
@@ -139,7 +139,7 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
     fun testWithAttributeAnnotations(): KaType {
         val stringType = getTypeByCaret("string")
         val intType = getTypeByCaret("int")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             valueParameter(name = null, stringType)
             returnType = intType
             annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
@@ -164,7 +164,7 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
 
     private fun functionTypeWithIntValueParameters(arity: Int, isSuspend: Boolean): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             this.isSuspend = isSuspend
             repeat(arity) {
                 valueParameter(name = null, type)
@@ -175,7 +175,7 @@ class FunctionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
     fun testWithReceiverAndAttributeAnnotations(): KaType {
         val stringType = getTypeByCaret("string")
         val intType = getTypeByCaret("int")
-        return session.typeCreator.functionType {
+        return typeCreator.functionType {
             receiverType = stringType
             returnType = intType
             annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)

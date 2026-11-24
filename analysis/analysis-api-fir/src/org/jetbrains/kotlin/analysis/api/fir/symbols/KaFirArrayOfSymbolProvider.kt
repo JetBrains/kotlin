@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.Name
 
 internal object KaFirArrayOfSymbolProvider {
-    internal fun KaFirSession.arrayOfSymbol(identifier: Name): KaNamedFunctionSymbol? {
-        val firSymbol = firSession.symbolProvider.getTopLevelCallableSymbols(
+    context(analysisSession: KaFirSession)
+    internal fun arrayOfSymbol(identifier: Name): KaNamedFunctionSymbol? {
+        val firSymbol = analysisSession.firSession.symbolProvider.getTopLevelCallableSymbols(
             packageFqName = StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
             name = identifier,
         ).firstOrNull {
@@ -28,12 +29,13 @@ internal object KaFirArrayOfSymbolProvider {
             (it as? FirNamedFunctionSymbol)?.fir?.valueParameters?.singleOrNull()?.isVararg == true
         } as? FirNamedFunctionSymbol ?: return null
 
-        return firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firSymbol)
+        return analysisSession.firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firSymbol)
     }
 
-    internal fun KaFirSession.arrayOfSymbol(collectionLiteral: FirCollectionLiteral): KaNamedFunctionSymbol? {
+    context(analysisSession: KaFirSession)
+    internal fun arrayOfSymbol(collectionLiteral: FirCollectionLiteral): KaNamedFunctionSymbol? {
         val type = collectionLiteral.resolvedType as? ConeClassLikeType ?: return null
-        val factoryName = toArrayOfFactoryName(type, firSession, eagerlyReturnNonPrimitive = true) ?: return null
+        val factoryName = toArrayOfFactoryName(type, analysisSession.firSession, eagerlyReturnNonPrimitive = true) ?: return null
         return arrayOfSymbol(factoryName)
     }
 }

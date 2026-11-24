@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,7 @@ class DefinitelyNotNullTypeCreatorDslTestCases(session: KaSession, caretToType: 
     DslTypeCreationTestCases(session, caretToType) {
     fun testCapturedTypeIntOut(): KaType? {
         val type = getTypeByCaret("type")
-        with(session.typeCreator) {
+        with(typeCreator) {
             val projection = typeProjection(Variance.OUT_VARIANCE, type)
             val capturedType = capturedType(projection) ?: return null
             return definitelyNotNullType(capturedType)
@@ -24,7 +24,7 @@ class DefinitelyNotNullTypeCreatorDslTestCases(session: KaSession, caretToType: 
     }
 
     fun testCapturedTypeWithStarProjection(): KaType? {
-        with(session.typeCreator) {
+        with(typeCreator) {
             val projection = starTypeProjection()
             val capturedType = capturedType(projection) ?: return null
             return definitelyNotNullType(capturedType)
@@ -33,22 +33,22 @@ class DefinitelyNotNullTypeCreatorDslTestCases(session: KaSession, caretToType: 
 
     fun testNullableTypeParameter(): KaType {
         val type = getTypeByCaret("type") as KaTypeParameterType? ?: error("Type under `type` is not a type parameter")
-        return session.typeCreator.definitelyNotNullType(type)
+        return typeCreator.definitelyNotNullType(type)
     }
 
     fun testTypeParameter(): KaType {
         val type = getTypeByCaret("type") as KaTypeParameterType? ?: error("Type under `type` is not a type parameter")
-        return session.typeCreator.definitelyNotNullType(type)
+        return typeCreator.definitelyNotNullType(type)
     }
 
     fun testTypeParameterWithAnyUpperBound(): KaType {
         val type = getTypeByCaret("type") as KaTypeParameterType? ?: error("Type under `type` is not a type parameter")
-        return session.typeCreator.definitelyNotNullType(type)
+        return typeCreator.definitelyNotNullType(type)
     }
 
     fun testTypeParameterWithNullableIntUpperBound(): KaType {
         val type = getTypeByCaret("type") as KaTypeParameterType? ?: error("Type under `type` is not a type parameter")
-        return session.typeCreator.definitelyNotNullType(type)
+        return typeCreator.definitelyNotNullType(type)
     }
 
     fun testWithAnnotations(): KaType {
@@ -57,7 +57,7 @@ class DefinitelyNotNullTypeCreatorDslTestCases(session: KaSession, caretToType: 
         val annotationClassId3 = ClassId.fromString("MyAnno3")
 
         val type = getTypeByCaret("type") as KaTypeParameterType? ?: error("Type under `type` is not a type parameter")
-        return session.typeCreator.definitelyNotNullType(type) {
+        return typeCreator.definitelyNotNullType(type) {
             annotation { annotationClassId1 }
             annotation(annotationClassId2)
             annotations(listOf(annotationClassId3))
@@ -66,14 +66,14 @@ class DefinitelyNotNullTypeCreatorDslTestCases(session: KaSession, caretToType: 
 
     fun testWithAttributeAnnotations(): KaType {
         val type = getTypeByCaret("type") as KaTypeParameterType? ?: error("Type under `type` is not a type parameter")
-        return session.typeCreator.definitelyNotNullType(type) {
+        return typeCreator.definitelyNotNullType(type) {
             annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
         }
     }
 
     fun testCapturedNullableTypeOutProjection(): KaType? {
         val type = getTypeByCaret("type")
-        with(session.typeCreator) {
+        with(typeCreator) {
             val projection = typeProjection(Variance.OUT_VARIANCE, type)
             val capturedType = capturedType(projection) ?: return null
             return definitelyNotNullType(capturedType)

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.fir.components.KaFirResolver
 import org.jetbrains.kotlin.analysis.api.fir.components.analysisSession
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
+import org.jetbrains.kotlin.analysis.api.signatures.substitute
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
@@ -65,7 +66,7 @@ internal fun FirCollectionLiteral.createArgumentMapping(
     for (firExpression in arguments) {
         mapArgumentExpressionToParameter(
             firExpression,
-            with(analysisSession) { parameterSymbol.substitute(substitutor) },
+            parameterSymbol.substitute(substitutor, session = analysisSession),
             argumentMapping,
         )
     }

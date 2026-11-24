@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,47 +14,47 @@ import org.jetbrains.kotlin.types.Variance
 class CapturedTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
     DslTypeCreationTestCases(session, caretToType) {
     fun testFromAnotherCapturedTypeMarkedNullable(): KaType? {
-        val projection = session.typeCreator.starTypeProjection()
-        val capturedType = session.typeCreator.capturedType(projection) ?: return null
-        return session.typeCreator.capturedType(capturedType) {
+        val projection = typeCreator.starTypeProjection()
+        val capturedType = typeCreator.capturedType(projection) ?: return null
+        return typeCreator.capturedType(capturedType) {
             isMarkedNullable = true
         }
     }
 
     fun testOutIntProjection(): KaType? {
         val type = getTypeByCaret("type")
-        val projection = session.typeCreator.typeProjection(Variance.OUT_VARIANCE, type)
-        return session.typeCreator.capturedType(projection)
+        val projection = typeCreator.typeProjection(Variance.OUT_VARIANCE, type)
+        return typeCreator.capturedType(projection)
     }
 
     fun testStarProjection(): KaType? {
-        val projection = session.typeCreator.starTypeProjection()
-        return session.typeCreator.capturedType(projection)
+        val projection = typeCreator.starTypeProjection()
+        return typeCreator.capturedType(projection)
     }
 
     fun testStarProjectionMarkedNullable(): KaType? {
-        val projection = session.typeCreator.starTypeProjection()
-        return session.typeCreator.capturedType(projection) {
+        val projection = typeCreator.starTypeProjection()
+        return typeCreator.capturedType(projection) {
             isMarkedNullable = true
         }
     }
 
     fun testUserTypeInProjection(): KaType? {
         val type = getTypeByCaret("type")
-        val projection = session.typeCreator.typeProjection(Variance.IN_VARIANCE, type)
-        return session.typeCreator.capturedType(projection)
+        val projection = typeCreator.typeProjection(Variance.IN_VARIANCE, type)
+        return typeCreator.capturedType(projection)
     }
 
     fun testInvariantProjection(): KaType? {
         val type = getTypeByCaret("type")
-        val projection = session.typeCreator.typeProjection(Variance.INVARIANT, type)
-        return session.typeCreator.capturedType(projection)
+        val projection = typeCreator.typeProjection(Variance.INVARIANT, type)
+        return typeCreator.capturedType(projection)
     }
 
     fun testTypeParameterOutProjection(): KaType? {
         val type = getTypeByCaret("type")
-        val projection = session.typeCreator.typeProjection(Variance.OUT_VARIANCE, type)
-        return session.typeCreator.capturedType(projection)
+        val projection = typeCreator.typeProjection(Variance.OUT_VARIANCE, type)
+        return typeCreator.capturedType(projection)
     }
 
     fun testStarProjectionWithAnnotations(): KaType? {
@@ -62,15 +62,15 @@ class CapturedTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
         val annotationClassId2 = ClassId.fromString("MyAnno2")
         val annotationClassId3 = ClassId.fromString("MyAnno3")
 
-        val projection = session.typeCreator.starTypeProjection()
-        return session.typeCreator.capturedType(projection) {
+        val projection = typeCreator.starTypeProjection()
+        return typeCreator.capturedType(projection) {
             annotations(listOf(annotationClassId1, annotationClassId2, annotationClassId3))
         }
     }
 
     fun testWithAttributeAnnotations(): KaType? {
-        val projection = session.typeCreator.starTypeProjection()
-        return session.typeCreator.capturedType(projection) {
+        val projection = typeCreator.starTypeProjection()
+        return typeCreator.capturedType(projection) {
             annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
         }
     }

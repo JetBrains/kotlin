@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.name.Name
 
 internal class KaFirContextParameterSymbolPointer(
@@ -21,7 +22,7 @@ internal class KaFirContextParameterSymbolPointer(
 ) : KaFirCachedSymbolPointer<KaContextParameterSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaContextParameterSymbol? {
-        val callableSymbol = with(analysisSession) {
+        val callableSymbol = context(analysisSession) {
             ownerPointer.restoreSymbol()
         }
 

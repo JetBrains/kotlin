@@ -124,7 +124,7 @@ internal class KaFirConstructorSymbol private constructor(
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {
-            with(analysisSession) {
+            context(analysisSession) {
                 backingPsi?.getContainingClassOrObject()?.symbol?.typeParameters ?: firSymbol.createKtTypeParameters(builder)
             }
         }

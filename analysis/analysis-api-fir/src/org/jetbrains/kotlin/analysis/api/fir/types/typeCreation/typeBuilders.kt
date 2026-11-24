@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KaFunctionValueParameter
-import org.jetbrains.kotlin.analysis.api.types.KaIntersectionType
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -229,7 +226,7 @@ internal class KaFirFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, sess
             withValidityAssertion { field = value }
         }
 
-    override var returnType: KaType = session.builtinTypes.unit
+    override var returnType: KaType = context(session) { builtinTypes.unit }
         get() = withValidityAssertion { field }
         set(value) {
             withValidityAssertion { field = value }

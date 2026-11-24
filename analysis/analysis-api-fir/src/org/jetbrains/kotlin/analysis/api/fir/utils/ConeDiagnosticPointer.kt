@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.utils
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbolBase
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -42,7 +43,7 @@ private class ConeCannotInferTypeParameterTypeDiagnosticPointer(
     private val reason = coneDiagnostic.reason
 
     override fun restore(session: KaFirSession): ConeDiagnostic? {
-        val typeParameterSymbol = with(session) { typeParameterPointer.restoreSymbol() } as? KaFirTypeParameterSymbolBase<*> ?: return null
+        val typeParameterSymbol = context(session) { typeParameterPointer.restoreSymbol() } as? KaFirTypeParameterSymbolBase<*> ?: return null
         return ConeCannotInferTypeParameterType(typeParameterSymbol.firSymbol, reason)
     }
 }
@@ -111,7 +112,7 @@ private class ConeNoTypeArgumentsOnRhsErrorDiagnosticPointer(
     private val symbolPointer = builder.classifierBuilder.buildClassLikeSymbol(coneDiagnostic.symbol).createPointer()
 
     override fun restore(session: KaFirSession): ConeDiagnostic? {
-        val symbol = with(session) { symbolPointer.restoreSymbol() } ?: return null
+        val symbol = context(session) { symbolPointer.restoreSymbol() } ?: return null
         return ConeNoTypeArgumentsOnRhsError(desiredCount, symbol.firSymbol)
     }
 }
@@ -126,7 +127,7 @@ private class ConeWrongNumberOfTypeArgumentsErrorDiagnosticPointer(
     private val forDeprecation = coneDiagnostic.isDeprecationErrorForCallableReferenceLhs
 
     override fun restore(session: KaFirSession): ConeDiagnostic? {
-        val symbol = with(session) { symbolPointer.restoreSymbol() } ?: return null
+        val symbol = context(session) { symbolPointer.restoreSymbol() } ?: return null
         val source = sourcePointer.restore() ?: return null
         return ConeWrongNumberOfTypeArgumentsError(desiredCount, symbol.firSymbol, source, forDeprecation)
     }

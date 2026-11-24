@@ -23,13 +23,14 @@ internal abstract class KaTopLevelCallableSymbolPointer<S : KaCallableSymbol>(
     @KaImplementationDetail
     final override fun restoreIfNotCached(analysisSession: KaSession): S? {
         require(analysisSession is KaFirSession)
-        val candidates = analysisSession.getCallableSymbols(callableId)
+        val candidates = context(analysisSession) { getCallableSymbols(callableId) }
         if (candidates.isEmpty()) return null
         val session = candidates.first().fir.moduleData.session
-        return analysisSession.chooseCandidateAndCreateSymbol(candidates, session)
+        return context(analysisSession) { chooseCandidateAndCreateSymbol(candidates, session) }
     }
 
-    protected abstract fun KaFirSession.chooseCandidateAndCreateSymbol(
+    context(analysisSession: KaFirSession)
+    protected abstract fun chooseCandidateAndCreateSymbol(
         candidates: Collection<FirCallableSymbol<*>>,
         firSession: FirSession
     ): S?
@@ -38,6 +39,7 @@ internal abstract class KaTopLevelCallableSymbolPointer<S : KaCallableSymbol>(
     protected fun hasTheSameOwner(other: KaTopLevelCallableSymbolPointer<*>): Boolean = other.callableId == callableId
 }
 
-private fun KaFirSession.getCallableSymbols(callableId: CallableId) =
-    firSession.symbolProvider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
+context(analysisSession: KaFirSession)
+private fun getCallableSymbols(callableId: CallableId) =
+    analysisSession.firSession.symbolProvider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
 

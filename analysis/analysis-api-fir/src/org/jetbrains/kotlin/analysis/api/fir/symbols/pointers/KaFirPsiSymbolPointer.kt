@@ -15,9 +15,11 @@ import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -33,7 +35,7 @@ internal class KaFirPsiSymbolPointer<S : KaSymbol> private constructor(
     override fun restoreIfNotCached(analysisSession: KaSession): S? {
         val psi = psiPointer.element ?: return null
 
-        val symbol: KaSymbol = with(analysisSession) {
+        val symbol: KaSymbol = context(analysisSession) {
             if (!psi.canBeAnalysed()) return null
             when (psi) {
                 is KtDeclaration -> psi.symbol
