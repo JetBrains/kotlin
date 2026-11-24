@@ -15,14 +15,14 @@ public final inline value class Box<T> {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-@R|kotlin/jvm/JvmInline|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=element, underlyingType=T), HasNoEnumEntriesKey=true] class Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+@R|kotlin/jvm/JvmInline|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=element, underlyingType=T)] class Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|
 
-    public final companion [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] object Companion : R|kotlin/Any| {
+    public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
         public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> of([ResolvedTo(BODY_RESOLVE)] element: R|T|): R|Box<T>|
 
     }

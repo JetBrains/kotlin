@@ -27,7 +27,7 @@ public final class Marked public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-@R|kotlin/MustUseReturnValues|() public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Marked : R|kotlin/Any| {
+@R|kotlin/MustUseReturnValues|() public final [ResolvedTo(BODY_RESOLVE)] class Marked : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun alreadyApplied(): R|kotlin/String|
 
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] var prop: R|kotlin/String|
@@ -36,7 +36,7 @@ FIR element rendered:
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Marked] constructor(): R|Marked|
 
-    public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Unmarked : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] class Unmarked : R|kotlin/Any| {
         public final [ResolvedTo(BODY_RESOLVE)] fun getStuff(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] var prop: R|kotlin/String|

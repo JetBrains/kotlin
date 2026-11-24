@@ -10,7 +10,7 @@ public interface MyInterface {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public abstract [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=true] interface MyInterface : R|kotlin/Any| {
+public abstract [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=true] interface MyInterface : R|kotlin/Any| {
     @R|test/RegularAnno|() public abstract [ResolvedTo(BODY_RESOLVE)] fun function([ResolvedTo(BODY_RESOLVE)] @R|test/RegularAnno|() argument: R|@R|test/TypeAnno|()  kotlin/Int|): R|@R|test/TypeAnno|()  kotlin/Int|
 
     @PROPERTY:R|test/RegularAnno|() public abstract [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val property: R|@R|test/TypeAnno|()  kotlin/String|

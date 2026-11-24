@@ -15,12 +15,12 @@ public interface X {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public abstract [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=true] interface X : R|kotlin/Any| {
+public abstract [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=true] interface X : R|kotlin/Any| {
     public abstract [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/String|
 
     @R|kotlin/IgnorableReturnValue|() public abstract [ResolvedTo(BODY_RESOLVE)] fun ignorable(): R|kotlin/String|
 
-    public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Impl : R|X| {
+    public final [ResolvedTo(BODY_RESOLVE)] class Impl : R|X| {
         public open [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/String|
 
         public open [ResolvedTo(BODY_RESOLVE)] fun ignorable(): R|kotlin/String|

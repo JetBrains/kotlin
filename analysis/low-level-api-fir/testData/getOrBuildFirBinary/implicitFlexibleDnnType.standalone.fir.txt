@@ -8,7 +8,7 @@ public final class KotlinClass<T> public constructor(block: () -> T) {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class KotlinClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] class KotlinClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
     private final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val block: R|() -> T|
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinClass] get(): R|() -> T|
 

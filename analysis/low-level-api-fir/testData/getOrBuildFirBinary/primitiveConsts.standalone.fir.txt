@@ -22,7 +22,7 @@ public object Consts {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] object Consts : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] object Consts : R|kotlin/Any| {
     public final const [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val boolean: R|kotlin/Boolean| = Boolean(true)
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Consts] get(): R|kotlin/Boolean|
 

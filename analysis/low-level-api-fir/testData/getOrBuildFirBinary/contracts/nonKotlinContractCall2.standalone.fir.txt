@@ -10,7 +10,7 @@ public final class Main public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Main : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] class Main : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun testBuilder([ResolvedTo(BODY_RESOLVE)] id: R|kotlin/String| = STUB, [ResolvedTo(BODY_RESOLVE)] lambda: R|Test.() -> kotlin/Unit|): R|Test|
 
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit|

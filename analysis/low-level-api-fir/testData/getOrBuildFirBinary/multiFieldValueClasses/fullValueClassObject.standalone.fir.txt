@@ -13,7 +13,7 @@ public value object ValueObject {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[]), HasNoEnumEntriesKey=true] object ValueObject : R|kotlin/Any| {
+public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[])] object ValueObject : R|kotlin/Any| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
