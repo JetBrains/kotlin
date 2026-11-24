@@ -131,7 +131,7 @@ class Strings {
     }
 
     @Sample
-    fun groupByToKeysAndValues() {
+    fun groupByToWithValueTransform() {
         val text = "a1B2c3"
         val destination = mutableMapOf("letters" to mutableListOf("X"))
         val result = text.groupByTo(
