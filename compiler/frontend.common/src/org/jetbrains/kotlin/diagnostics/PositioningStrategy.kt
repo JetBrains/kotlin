@@ -9,8 +9,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.KtSourceElement
 
 /**
- * Base for parse-tree agnostic positioning strategies, KT-91911
- * Currently it only has implementations for psi and light-tree.
+ * A base for implementations of positioning strategies for a concrete parse tree.
  */
 abstract class PositioningStrategy {
     abstract fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange>
