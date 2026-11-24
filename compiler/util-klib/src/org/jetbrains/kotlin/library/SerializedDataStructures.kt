@@ -12,7 +12,7 @@ class SerializedMetadata(
     val metadataVersion: IntArray,
 )
 
-class SerializedDeclaration(val id: Int, val bytes: ByteArray) {
+class SerializedDeclaration(val signatureId: Int, val bytes: ByteArray) {
     val size = bytes.size
 }
 

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
-import org.jetbrains.kotlin.ir.util.IdSignature.CompositeSignature
 import org.jetbrains.kotlin.ir.util.IdSignature.FileSignature
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -1546,7 +1545,7 @@ open class IrFileSerializer(
 
             val serializedDeclaration = serializeTopLevelDeclaration(it, file)
             topLevelDeclarations.add(serializedDeclaration)
-            proto.addDeclarationId(serializedDeclaration.id)
+            proto.addDeclarationId(serializedDeclaration.signatureId)
         }
 
         val includeLineStartOffsets = !settings.publicAbiOnly || fileContainsInline
@@ -1611,7 +1610,7 @@ open class IrFileSerializer(
         // This way it could be possible to quickly look up for a specific preprocessed function in a KLIB.
         val fileProto = ProtoFile.newBuilder()
             .addAllFqName(stringSerializer.serializeFqName(file.packageFqName))
-            .addAllDeclarationId(topLevelDeclarations.map { /* signature index */ it.id })
+            .addAllDeclarationId(topLevelDeclarations.map { /* signature index */ it.signatureId })
 
         return SerializedIrFile(
             fileData = fileProto.build().toByteArray(),
