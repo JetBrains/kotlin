@@ -5,6 +5,7 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.combinedMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -112,7 +113,13 @@ internal abstract class SirAbstractClassFromKtSymbol(
     }
 
     override val declarations: List<SirDeclaration> by lazyWithSessions {
-        childDeclarations + intersectionOverrideDeclarations + syntheticDeclarations() + sealedTypeFunctions
+        buildList {
+            addAll(childDeclarations)
+            addAll(intersectionOverrideDeclarations)
+            addAll(syntheticDeclarations())
+            addAll(sealedTypeFunctions)
+            addIfNotNull((typedListDeclarations as? SirTypedListDeclarations.Concrete)?.elementTypeAlias)
+        }
     }
 
     override val attributes: List<SirAttribute> by lazy {
@@ -163,10 +170,24 @@ internal abstract class SirAbstractClassFromKtSymbol(
     }
 
     override val protocols: List<SirProtocol> by lazyWithSessions {
-        val isUnavailable = this.isUnavailable
-        val errorConformance = SirSwiftModule.error.takeIf { ktSymbol.classId == StandardClassIds.Throwable }
+        buildList {
+            if (ktSymbol.classId == StandardClassIds.Throwable) {
+                add(SirSwiftModule.error)
+            }
+            for (translatedProtocol in translatedProtocols) {
+                add(translatedProtocol)
+                add(translatedProtocol.implementationMarker)
+            }
+            val typedListDeclarations = typedListDeclarations
+            if (typedListDeclarations is SirTypedListDeclarations.Concrete) {
+                addAll(typedListDeclarations.typedListProtocols)
+            }
+        }
+    }
 
-        listOfNotNull(errorConformance) + ktSymbol.superTypes
+    internal val translatedProtocols: List<SirProtocolFromKtSymbol> by lazyWithSessions {
+        val isUnavailable = this.isUnavailable
+        ktSymbol.superTypes
             .asSequence()
             .filterIsInstance<KaClassType>()
             .mapNotNull { it.expandedSymbol }
@@ -182,7 +203,6 @@ internal abstract class SirAbstractClassFromKtSymbol(
             .filter { superClassDeclaration?.declaresConformance(it) != true }
             .toList()
             .also { protocols -> protocols.forEach { ktSymbol.containingModule.sirModule().updateImportFor(it) } }
-            .flatMap { listOf(it, it.implementationMarker) }
     }
 
     internal val sealedType: SirScopeDefiningDeclaration? by lazyWithSessions {
@@ -191,6 +211,10 @@ internal abstract class SirAbstractClassFromKtSymbol(
 
     private val sealedTypeFunctions: List<SirDeclaration> by lazyWithSessions {
         createSirSealedTypeFunctions(this).onEach { it.parent = this }
+    }
+
+    internal val typedListDeclarations: SirTypedListDeclarations? by lazyWithSessions {
+        createSirTypedListDeclarations(this)
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
