@@ -185,6 +185,15 @@ class FirJavaClass @FirImplementationDetail internal constructor(
      * TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
      */
     override val typeParameters: List<FirTypeParameterRef> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        enhanceTypeParameterBounds()
+        nonEnhancedTypeParameters
+    }
+
+    /**
+     * Enhances the bounds of [nonEnhancedTypeParameters].
+     * On return, the bounds are final unless the current thread is already enhancing them in the second round.
+     */
+    internal fun enhanceTypeParameterBounds() {
         val enhancement = FirSignatureEnhancement(
             this,
             moduleData.session,
@@ -193,7 +202,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         )
 
         enhancement.enhanceTypeParameterBounds(this, nonEnhancedTypeParameters, typeParameterBoundsResolveLock::withLock)
-        nonEnhancedTypeParameters
     }
 
     // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
