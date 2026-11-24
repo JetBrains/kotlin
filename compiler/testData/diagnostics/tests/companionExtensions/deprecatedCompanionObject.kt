@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: LOWERINGS
+// DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
 // FIR_DUMP
 
@@ -51,25 +52,25 @@ companion fun B.test() {
 companion fun A.Nested.foo() = Unit
 
 fun test() {
-    <!DEPRECATION_ERROR, OPT_IN_USAGE_ERROR!>A<!>.foo()
-    <!DEPRECATION_ERROR, OPT_IN_USAGE_ERROR!>A<!>.bar
-    <!DEPRECATION_ERROR, OPT_IN_USAGE_ERROR!>A<!>(42)
-    <!DEPRECATION_ERROR!>B<!>.foo()
-    <!DEPRECATION_ERROR!>B<!>.bar
-    A.<!DEPRECATION, OPT_IN_USAGE_ERROR!>Nested<!>.foo()
+    A.foo()
+    A.bar
+    A(42)
+    B.foo()
+    B.bar
+    A.Nested.foo()
 
-    <!DEPRECATION_ERROR, OPT_IN_USAGE_ERROR!>A<!>::foo
-    <!DEPRECATION_ERROR, OPT_IN_USAGE_ERROR!>A<!>::bar
-    <!DEPRECATION_ERROR!>B<!>::foo
-    <!DEPRECATION_ERROR!>B<!>::bar
-    A.<!DEPRECATION, OPT_IN_USAGE_ERROR!>Nested<!>::foo
+    A::foo
+    A::bar
+    B::foo
+    B::bar
+    A.Nested::foo
 }
 
 // FILE: enumInitializer.kt
 package q
 
 enum class E(val x: Int) {
-    A(<!UNINITIALIZED_ENUM_COMPANION!>E<!>.init);
+    A(E.init);
     companion object {}
 }
 

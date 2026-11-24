@@ -80,17 +80,17 @@ FILE: deprecations.kt
         ^foo Q|kotlin/Unit|
     }
     public final fun test(): R|kotlin/Unit| {
-        Q|p/A(.<companion>)|.R|p/foo*s|()
-        Q|p/A(.<companion>)|.R|p/bar*s|
-        Q|p/A(.<companion>)|.R|p/invoke*s|(Int(42))
-        Q|p/B(.<companion>)|.R|p/foo*s|()
-        Q|p/B(.<companion>)|.R|p/bar*s|
-        Q|p/A.Nested(.<companion>)|.R|p/foo*s|()
-        Q|p/A(.<companion>)|::R|p/foo*s|
-        Q|p/A(.<companion>)|::R|p/bar*s|
-        Q|p/B(.<companion>)|::R|p/foo*s|
-        Q|p/B(.<companion>)|::R|p/bar*s|
-        Q|p/A.Nested(.<companion>)|::R|p/foo*s|
+        Q|p/A|.R|p/foo*s|()
+        Q|p/A|.R|p/bar*s|
+        Q|p/A|.R|p/invoke*s|(Int(42))
+        Q|p/B|.R|p/foo*s|()
+        Q|p/B|.R|p/bar*s|
+        Q|p/A.Nested|.R|p/foo*s|()
+        Q|p/A|::R|p/foo*s|
+        Q|p/A|::R|p/bar*s|
+        Q|p/B|::R|p/foo*s|
+        Q|p/B|::R|p/bar*s|
+        Q|p/A.Nested|::R|p/foo*s|
     }
 FILE: enumInitializer.kt
     package q
@@ -105,7 +105,7 @@ FILE: enumInitializer.kt
 
         public final static enum entry A: R|q/E| = object : R|q/E| {
             private constructor(): R|q/<anonymous>| {
-                super<R|q/E|>(Q|q/E(.<companion>)|.R|q/init*s|)
+                super<R|q/E|>(Q|q/E|.R|q/init*s|)
             }
 
         }
