@@ -1,5 +1,5 @@
 // LANGUAGE: +IntrinsicConstEvaluation
-// IGNORE_BACKEND_MULTI_MODULE: JS_IR, WASM_JS
+// IGNORE_BACKEND_MULTI_MODULE: JS_IR
 // ^^^ These tests create modules that break FIR dump
 // FILE: 1.kt
 
