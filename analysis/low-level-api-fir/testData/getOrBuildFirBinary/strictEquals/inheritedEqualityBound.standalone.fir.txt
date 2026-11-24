@@ -6,7 +6,7 @@ public final class Inherited public constructor() : Base {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Inherited : R|Base| {
+public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Inherited : R|Base| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] [EqualityBoundType=Base] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inherited] constructor(): R|Inherited|

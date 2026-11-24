@@ -6,7 +6,7 @@ public final class Explicit public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Explicit : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Explicit : R|kotlin/Any| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] [EqualityBoundType=Explicit] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Explicit] constructor(): R|Explicit|

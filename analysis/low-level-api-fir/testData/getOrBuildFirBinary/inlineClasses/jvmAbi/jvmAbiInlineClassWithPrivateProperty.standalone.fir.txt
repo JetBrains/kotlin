@@ -11,7 +11,7 @@ public final inline value class ThreadLocalDelegate<T> public constructor(thread
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-@R|kotlin/jvm/JvmInline|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=threadLocal, underlyingType=java/lang/ThreadLocal<T>), HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class ThreadLocalDelegate<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+@R|kotlin/jvm/JvmInline|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=threadLocal, underlyingType=java/lang/ThreadLocal<T>), HasNoEnumEntriesKey=true] class ThreadLocalDelegate<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|

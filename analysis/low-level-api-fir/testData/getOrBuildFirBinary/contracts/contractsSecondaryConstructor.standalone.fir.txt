@@ -6,7 +6,7 @@ public final class MyClass {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class MyClass : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class MyClass : R|kotlin/Any| {
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Boolean|): R|test/MyClass|
 
 }

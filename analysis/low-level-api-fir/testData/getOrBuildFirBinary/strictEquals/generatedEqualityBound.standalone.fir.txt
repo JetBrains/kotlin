@@ -16,7 +16,7 @@ public final data class Data public constructor(value: kotlin.Int) {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final data [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Data : R|kotlin/Any| {
+public final data [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Data : R|kotlin/Any| {
     public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
 
     public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int| = STUB): R|Data|

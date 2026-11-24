@@ -13,7 +13,7 @@ public final class C public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class C : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class C : R|kotlin/Any| {
     context([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|)
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 

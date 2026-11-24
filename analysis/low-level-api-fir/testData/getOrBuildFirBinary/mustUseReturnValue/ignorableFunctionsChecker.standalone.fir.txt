@@ -22,7 +22,7 @@ public abstract [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlace
 
     @R|kotlin/IgnorableReturnValue|() public abstract [ResolvedTo(BODY_RESOLVE)] fun ignorable(): R|kotlin/String|
 
-    @R|kotlin/MustUseReturnValues|() public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Y : R|kotlin/Any| {
+    @R|kotlin/MustUseReturnValues|() public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Y : R|kotlin/Any| {
         public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|
 
         @R|kotlin/IgnorableReturnValue|() public final [ResolvedTo(BODY_RESOLVE)] fun ignorable(): R|kotlin/String|

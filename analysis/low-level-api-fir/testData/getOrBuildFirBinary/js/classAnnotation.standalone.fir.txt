@@ -6,7 +6,7 @@ public final class Cls public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-@R|Y|() public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Cls : R|kotlin/Any| {
+@R|Y|() public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Cls : R|kotlin/Any| {
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Cls] constructor(): R|Cls|
 
 }

@@ -6,7 +6,7 @@ public final class Aliased public constructor() : Base {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Aliased : R|Base| {
+public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Aliased : R|Base| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] [EqualityBoundType={BaseAlias=} Base] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Aliased] constructor(): R|Aliased|

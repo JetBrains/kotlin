@@ -16,7 +16,7 @@ public final inline value class LibraryValueClass public constructor(value: pack
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-@R|kotlin/jvm/JvmInline|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/LibraryValueClass.NestedClass), HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class LibraryValueClass : R|kotlin/Any| {
+@R|kotlin/jvm/JvmInline|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/LibraryValueClass.NestedClass), HasNoEnumEntriesKey=true] class LibraryValueClass : R|kotlin/Any| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
@@ -28,7 +28,7 @@ FIR element rendered:
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LibraryValueClass] constructor([ResolvedTo(BODY_RESOLVE)] value: R|pack/LibraryValueClass.NestedClass|): R|pack/LibraryValueClass|
 
-    public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class NestedClass : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class NestedClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedClass] constructor(): R|pack/LibraryValueClass.NestedClass|
 
     }

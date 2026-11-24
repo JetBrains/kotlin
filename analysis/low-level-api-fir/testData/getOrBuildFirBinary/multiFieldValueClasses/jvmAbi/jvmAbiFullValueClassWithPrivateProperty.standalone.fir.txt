@@ -10,7 +10,7 @@ public final value class Box<T> public constructor(element: T, name: kotlin.Stri
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(element, T), (name, kotlin/String)]), HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(element, T), (name, kotlin/String)]), HasNoEnumEntriesKey=true] class Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|

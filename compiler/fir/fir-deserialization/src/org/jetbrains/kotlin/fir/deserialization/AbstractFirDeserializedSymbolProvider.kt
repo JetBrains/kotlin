@@ -309,7 +309,9 @@ abstract class AbstractFirDeserializedSymbolProvider(
                     deserializeNestedClass = this::getClass,
                     deserializeNestedTypeAlias = this::getTypeAlias,
                 )
-                symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
+                if (isNewPlaceForBodyGeneration(classProto)) {
+                    symbol.fir.isNewPlaceForBodyGeneration = true
+                }
                 symbol to null
             }
             null -> null to null
