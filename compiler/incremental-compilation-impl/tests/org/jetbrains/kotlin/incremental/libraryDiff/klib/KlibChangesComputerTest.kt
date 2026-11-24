@@ -161,6 +161,25 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
             .assertEquals(computeChanges(current = unchangedKlib + current, previous = previous + unchangedKlib))
     }
 
+    /** Like the compiler, the first klib's copy of a duplicate class is compared, not the copies of later klibs. */
+    @Test
+    fun testDuplicateClasses() {
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "changedFunction", scope = "com.example.DuplicateClass"),
+                LookupSymbol(name = "otherKlibFunction", scope = "com.example"),
+            ),
+            fqNames = setOf("com.example.DuplicateClass", "com.example"),
+        ).assertEquals(
+            computeChanges(
+                current = snapshot("testDuplicateClasses", "current", CLASS_MEMBER_LEVEL) +
+                        snapshot("testDuplicateClasses", "otherKlibCurrent", CLASS_MEMBER_LEVEL),
+                previous = snapshot("testDuplicateClasses", "previous", CLASS_MEMBER_LEVEL) +
+                        snapshot("testDuplicateClasses", "otherKlibPrevious", CLASS_MEMBER_LEVEL),
+            )
+        )
+    }
+
     @Test
     fun testImpactComputation_SupertypesInheritors() {
         Changes(

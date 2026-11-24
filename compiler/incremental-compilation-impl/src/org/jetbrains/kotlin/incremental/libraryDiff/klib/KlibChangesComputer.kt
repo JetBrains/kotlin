@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClassMembers
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ProgramSymbolSet
 import org.jetbrains.kotlin.incremental.snapshots.LazySnapshotLoadingMetrics
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import kotlin.math.max
 
@@ -179,10 +180,8 @@ internal object KlibChangesComputer {
         previousClassProtoData: List<ClassProtoData>,
         currentClassProtoData: List<ClassProtoData>,
     ) {
-        val previousClassProtoDataMap =
-            previousClassProtoData.associateBy { (proto, nameResolver) -> nameResolver.getClassId(proto.fqName) }
-        val currentClassProtoDataMap =
-            currentClassProtoData.associateBy { (proto, nameResolver) -> nameResolver.getClassId(proto.fqName) }
+        val previousClassProtoDataMap = previousClassProtoData.associateFirstByClassId()
+        val currentClassProtoDataMap = currentClassProtoData.associateFirstByClassId()
 
         for (classId in previousClassProtoDataMap.keys + currentClassProtoDataMap.keys) {
             val previousClassProto = previousClassProtoDataMap[classId]
@@ -202,6 +201,17 @@ internal object KlibChangesComputer {
             }
         }
     }
+
+    /**
+     * If several klibs declare the same class, the compiler uses the copy from the first klib, so only changes to that copy matter.
+     * This relies on the snapshots being in classpath order.
+     */
+    private fun List<ClassProtoData>.associateFirstByClassId(): Map<ClassId, ClassProtoData> =
+        buildMap {
+            for (classProtoData in this@associateFirstByClassId) {
+                putIfAbsent(classProtoData.nameResolver.getClassId(classProtoData.proto.fqName), classProtoData)
+            }
+        }
 
     private fun ProgramSymbolSet.Collector.collectPackagePartProtoChanges(
         previousPackagePartProtoData: List<PackagePartProtoData>,
