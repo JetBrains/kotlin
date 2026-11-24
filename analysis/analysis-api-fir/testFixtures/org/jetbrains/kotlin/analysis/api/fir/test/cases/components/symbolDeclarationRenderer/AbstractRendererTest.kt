@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolDeclar
 
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.rendering.*
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
@@ -42,12 +41,9 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
                     val renderer = KaRenderer.default.copy {
                         applyDirectives(directives)
 
-                        // Reproduce the legacy member ordering (see `AbstractLegacyRenderingTest`).
+                        // Order the members by source position, as in `AbstractLegacyRenderingTest`.
                         set(KaRenderingOption.ClassMemberOrdering) { first, second ->
-                            fun renderToString(symbol: KaSymbol): String =
-                                KaRenderingOutput.plainString().also { KaRenderer.default.render(symbol, it) }.toString()
-
-                            renderToString(first).compareTo(renderToString(second))
+                            compareValues(first.psi?.textOffset, second.psi?.textOffset)
                         }
                     }
 

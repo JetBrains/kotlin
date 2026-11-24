@@ -30,17 +30,17 @@ abstract class AbstractLegacyRenderingTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val renderer = KaDeclarationRendererForSource.WITH_SHORT_NAMES.with {
             classifierBodyRenderer = KaClassifierBodyRenderer.BODY_WITH_MEMBERS
+
+            // Keep the order of the source. All members are declared in the test file, so the order is the same in every analysis mode.
             bodyMemberScopeSorter = object : KaRendererBodyMemberScopeSorter {
                 override fun sortMembers(
                     analysisSession: KaSession,
                     members: List<KaDeclarationSymbol>,
                     container: KaDeclarationContainerSymbol,
                 ): List<KaDeclarationSymbol> {
-                    with(analysisSession) {
-                        return KaRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
-                            .sortMembers(analysisSession, members, container)
-                            .sortedBy { it.render() }
-                    }
+                    // Enum entries go first, even when the properties declared in the primary constructor precede them in the source.
+                    return KaRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
+                        .sortMembers(analysisSession, members.sortedBy { it.psi?.textOffset }, container)
                 }
             }
         }

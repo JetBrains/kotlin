@@ -5,11 +5,11 @@ fun single(a: Int)
 fun several(a: Int, b: String, c: Boolean)
 
 class Owner(a: Int, b: String) {
+  val a: Int
+
   constructor(a: Int)
 
   fun member(x: Long, y: Long)
-
-  val a: Int
 
   var counted: Int
     set(value: Int)
