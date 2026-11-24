@@ -136,15 +136,17 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
             sourceSets.commonMain.get().compileSource("fun main() {}")
         }
         linkTestProject(gradleVersion, localBuildCacheDir, targets = targets) {
-            // Release, so the dSYM comes from light debug info rather than from -g
+            // Release, so the dSYM comes from light debug info rather than from -g.
+            // Gradle creates the declared dSYM directory itself, so check a file inside it.
+            val dwarf = "build/bin/macosArm64/releaseExecutable/empty.kexe.dSYM/Contents/Resources/DWARF/empty.kexe"
             build(":linkReleaseExecutableMacosArm64") {
-                assertDirectoryExists(projectPath.resolve("build/bin/macosArm64/releaseExecutable/empty.kexe.dSYM"))
+                assertFileInProjectExists(dwarf)
             }
             build("clean")
             build(":linkReleaseExecutableMacosArm64") {
                 assertTasksFromCache(":linkReleaseExecutableMacosArm64")
                 assertFileInProjectExists("build/bin/macosArm64/releaseExecutable/empty.kexe")
-                assertDirectoryExists(projectPath.resolve("build/bin/macosArm64/releaseExecutable/empty.kexe.dSYM"))
+                assertFileInProjectExists(dwarf)
             }
         }
     }

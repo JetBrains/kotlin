@@ -86,6 +86,17 @@ internal inline fun <reified T : Any> ObjectFactory.providerWithLazyConvention(
 internal inline fun <reified T : Any> ObjectFactory.newInstance(): T =
     newInstance(T::class.java)
 
+/**
+ * Makes consumers of this provider depend on [task]. Use it for a task output that is not
+ * annotated as one, so Gradle attaches no producer to it.
+ *
+ * Gradle has no API to add a task dependency to a [Provider], so the dependency comes from
+ * an empty file collection built by the task. `zip`, unlike `map`, still lets the value be
+ * read before the task has run.
+ */
+internal fun <T : Any> Provider<T>.builtBy(task: Any, objects: ObjectFactory): Provider<T> =
+    zip(objects.fileCollection().builtBy(task).elements) { value, _ -> value }
+
 internal inline fun <reified T : Any> ObjectFactory.newInstance(vararg parameters: Any): T =
     newInstance(T::class.java, *parameters)
 
