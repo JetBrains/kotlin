@@ -221,20 +221,21 @@ hashing. The audit fact that makes this worth revisiting: the resolve
 BuiltIn calls are direct remaps, not cell-routed — resolve-first has
 no bootstrap circle.
 
-### 10. Plain third-party klibs under the hot link
+### 10. Plain third-party klibs under the hot link — RETRACTED
 
-A hot multimodule link that includes a PLAIN-compiled third-party
-klib (kotlin-test as the repro) fails with a missing layout-plan
-resolver key (`hot.reload.payload/payload<$kotlin/Enum>`). The
-stdlib-only world dodges it by ordering; real apps link plain
-kotlinx/ktor klibs, so this blocks the production story. The klib
-itself needs nothing hot-specific — the resolver must tolerate
-(klib-declared classes' payload types before the stdlib fragments
-that declare them), or hot compiles of the dependency klibs must be
-produced. Box-suite A/B context (2026-11-23): 55 manually-run box
-tests (no kotlin.test, single-file) show ZERO hot-vs-plain
-divergence — 35 pass hot and plain alike, 19 fail identically in
-both arms (test-infra deps: helpers, WITH_COROUTINES, multi-FILE).
+Originally diagnosed as a resolver gap (a missing
+`hot.reload.payload/payload<$kotlin/Enum>` key when linking the
+plain kotlin-test klib); on re-verification the exception was an
+IC artifact of a mis-shaped CLI command (hot multimodule links
+REQUIRE `-Xcache-directory`, and the link's `-ir-output-name` must
+differ from the klib step's). With a well-formed command the PLAIN
+kotlin-test klib links and runs identically in hot and plain arms
+(eight kotlin.test-heavy box tests re-verified both ways), and the
+runtime side needed only a runner fix (library modules keep their
+real artifact name, `kotlin-<name>.wasm` — the app module alone is
+`_<name>_.wasm`). Plain third-party klibs are FINE in hot links:
+nothing blocks production apps on this front, and the Compose story
+reduces to the §8 upstream blocker alone.
 
 ## Operational notes
 
