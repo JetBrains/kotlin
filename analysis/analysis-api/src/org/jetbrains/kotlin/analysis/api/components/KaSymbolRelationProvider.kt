@@ -500,6 +500,7 @@ public val KaSymbol.containingFile: KaFileSymbol?
         "this.containingModule",
         "org.jetbrains.kotlin.analysis.api.symbols.containingModule",
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaSymbol.containingModule: KaModule

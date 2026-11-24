@@ -163,6 +163,7 @@ public val KaType.hasFlexibleNullability: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isUnitType: Boolean
@@ -180,6 +181,7 @@ public val KaType.isUnitType: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isIntType: Boolean
@@ -197,6 +199,7 @@ public val KaType.isIntType: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isLongType: Boolean
@@ -214,6 +217,7 @@ public val KaType.isLongType: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isShortType: Boolean
@@ -231,6 +235,7 @@ public val KaType.isShortType: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isByteType: Boolean
@@ -248,6 +253,7 @@ public val KaType.isByteType: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isFloatType: Boolean
@@ -265,6 +271,7 @@ public val KaType.isFloatType: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isDoubleType: Boolean
@@ -282,6 +289,7 @@ public val KaType.isDoubleType: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isCharType: Boolean
@@ -299,6 +307,7 @@ public val KaType.isCharType: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isBooleanType: Boolean
@@ -316,6 +325,7 @@ public val KaType.isBooleanType: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isStringType: Boolean
@@ -333,6 +343,7 @@ public val KaType.isStringType: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isCharSequenceType: Boolean
@@ -350,6 +361,7 @@ public val KaType.isCharSequenceType: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isAnyType: Boolean
@@ -367,6 +379,7 @@ public val KaType.isAnyType: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isNothingType: Boolean
@@ -384,6 +397,7 @@ public val KaType.isNothingType: Boolean
             "org.jetbrains.kotlin.name.StandardClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isUIntType: Boolean
@@ -401,6 +415,7 @@ public val KaType.isUIntType: Boolean
             "org.jetbrains.kotlin.name.StandardClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isULongType: Boolean
@@ -418,6 +433,7 @@ public val KaType.isULongType: Boolean
             "org.jetbrains.kotlin.name.StandardClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isUShortType: Boolean
@@ -435,6 +451,7 @@ public val KaType.isUShortType: Boolean
             "org.jetbrains.kotlin.name.StandardClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isUByteType: Boolean
@@ -511,6 +528,7 @@ public val KaType.isNestedArray: Boolean
             "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds",
         ]
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public val KaType.isPrimitive: Boolean

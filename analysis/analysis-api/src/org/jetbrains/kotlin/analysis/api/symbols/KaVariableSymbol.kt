@@ -363,7 +363,8 @@ public sealed class KaPropertySymbol : KaVariableSymbol() {
      */
     @Deprecated(
         "Use `KaKotlinProperty.primaryConstructorParameter` instead.",
-        ReplaceWith("primaryConstructorParameter != null")
+        ReplaceWith("primaryConstructorParameter != null"),
+        level = DeprecationLevel.ERROR,
     )
     public abstract val isFromPrimaryConstructor: Boolean
 
@@ -532,7 +533,8 @@ public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
 
     @Deprecated(
         "Use `KaKotlinProperty.primaryConstructorParameter` instead.",
-        ReplaceWith("primaryConstructorParameter != null")
+        ReplaceWith("primaryConstructorParameter != null"),
+        level = DeprecationLevel.ERROR,
     )
     final override val isFromPrimaryConstructor: Boolean get() = withValidityAssertion { false }
 
@@ -706,7 +708,7 @@ public abstract class KaValueParameterSymbol : KaParameterSymbol() {
      *
      * @see KaKotlinPropertySymbol.primaryConstructorParameter
      */
-    @Deprecated("Property was renamed. Use 'primaryConstructorProperty' instead.", ReplaceWith("primaryConstructorProperty"))
+    @Deprecated("Property was renamed. Use 'primaryConstructorProperty' instead.", ReplaceWith("primaryConstructorProperty"), level = DeprecationLevel.ERROR)
     public open val generatedPrimaryConstructorProperty: KaKotlinPropertySymbol? get() = primaryConstructorProperty
 
     /**

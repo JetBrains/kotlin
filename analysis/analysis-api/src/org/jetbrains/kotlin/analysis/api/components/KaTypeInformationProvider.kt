@@ -250,6 +250,7 @@ public interface KaTypeInformationProvider : KaSessionComponent {
             expression = "this.classId == classId",
             imports = ["org.jetbrains.kotlin.analysis.api.types.classId"],
         ),
+        level = DeprecationLevel.ERROR,
     )
     public fun KaType.isClassType(classId: ClassId): Boolean
 
@@ -1017,10 +1018,11 @@ public val KaType.isNestedArray: Boolean
         expression = "this.classId == classId",
         imports = ["org.jetbrains.kotlin.analysis.api.types.classId"],
     ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public fun KaType.isClassType(classId: ClassId): Boolean {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return with(session) {
         isClassType(
             classId = classId,

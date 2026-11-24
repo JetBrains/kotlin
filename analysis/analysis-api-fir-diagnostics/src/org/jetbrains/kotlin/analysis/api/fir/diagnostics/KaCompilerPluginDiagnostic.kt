@@ -64,7 +64,8 @@ public interface KaCompilerPluginDiagnostic4 : KaFirDiagnostic<PsiElement> {
     replaceWith = ReplaceWith(
         expression = "KaCompilerPluginDiagnostic0",
         imports = ["org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaCompilerPluginDiagnostic0"]
-    )
+    ),
+    level = DeprecationLevel.ERROR,
 )
 @OptIn(KaUnstableDiagnosticApi::class)
 public typealias KtCompilerPluginDiagnostic0 = KaCompilerPluginDiagnostic0
@@ -74,7 +75,8 @@ public typealias KtCompilerPluginDiagnostic0 = KaCompilerPluginDiagnostic0
     replaceWith = ReplaceWith(
         expression = "KaCompilerPluginDiagnostic1",
         imports = ["org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaCompilerPluginDiagnostic1"]
-    )
+    ),
+    level = DeprecationLevel.ERROR,
 )
 @OptIn(KaUnstableDiagnosticApi::class)
 public typealias KtCompilerPluginDiagnostic1 = KaCompilerPluginDiagnostic1
@@ -84,7 +86,8 @@ public typealias KtCompilerPluginDiagnostic1 = KaCompilerPluginDiagnostic1
     replaceWith = ReplaceWith(
         expression = "KaCompilerPluginDiagnostic2",
         imports = ["org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaCompilerPluginDiagnostic2"]
-    )
+    ),
+    level = DeprecationLevel.ERROR,
 )
 @OptIn(KaUnstableDiagnosticApi::class)
 public typealias KtCompilerPluginDiagnostic2 = KaCompilerPluginDiagnostic2
@@ -94,7 +97,8 @@ public typealias KtCompilerPluginDiagnostic2 = KaCompilerPluginDiagnostic2
     replaceWith = ReplaceWith(
         expression = "KaCompilerPluginDiagnostic3",
         imports = ["org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaCompilerPluginDiagnostic3"]
-    )
+    ),
+    level = DeprecationLevel.ERROR,
 )
 @OptIn(KaUnstableDiagnosticApi::class)
 public typealias KtCompilerPluginDiagnostic3 = KaCompilerPluginDiagnostic3
@@ -104,7 +108,8 @@ public typealias KtCompilerPluginDiagnostic3 = KaCompilerPluginDiagnostic3
     replaceWith = ReplaceWith(
         expression = "KaCompilerPluginDiagnostic4",
         imports = ["org.jetbrains.kotlin.analysis.api.fir.diagnostics.KaCompilerPluginDiagnostic4"]
-    )
+    ),
+    level = DeprecationLevel.ERROR,
 )
 @OptIn(KaUnstableDiagnosticApi::class)
 public typealias KtCompilerPluginDiagnostic4 = KaCompilerPluginDiagnostic4
