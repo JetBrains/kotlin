@@ -19,6 +19,11 @@ class KtStubElementTypesExternalIdTest {
     fun testExternalIds() {
         val serializationMapping = serializationMapping()
         for (declaredField in KtStubElementTypes::class.java.declaredFields) {
+            // Context receivers are parsed as context parameters without names, so their element type is kept only for
+            // compatibility and has no stubs.
+            // The next commit will deprecate the element type and replace this check with one for all deprecated element types.
+            if (declaredField.name == "CONTEXT_RECEIVER") continue
+
             // Every Kotlin element type is a plain node type, its stub support is provided by a separately registered factory
             val elementType = declaredField.get(null) as KtNodeType
             val fieldName = declaredField.name

@@ -3905,9 +3905,6 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinConstantExp
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinConstructorStub : org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase, org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub {
 }
 
-public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinContextReceiverStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-}
-
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
 }
 

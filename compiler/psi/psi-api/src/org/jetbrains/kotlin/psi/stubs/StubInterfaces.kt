@@ -433,12 +433,6 @@ interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
-interface KotlinContextReceiverStub : KotlinStubElement<KtContextReceiver> {
-    @KtImplementationDetail
-    val label: String?
-}
-
-@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinStringInterpolationPrefixStub : KotlinStubElement<KtStringInterpolationPrefix> {
     /**
      * The count of `$` characters in the string interpolation prefix.
