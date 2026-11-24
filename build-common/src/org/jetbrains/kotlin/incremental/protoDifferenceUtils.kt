@@ -381,7 +381,50 @@ private fun ProtoCompareGenerated.calcDifferenceForMembers(
     )
 }
 
-private class ProtoContext(val nameResolver: NameResolver, val typeTable: ProtoBuf.TypeTable) {
+class DifferenceCalculatorForPackageFacades(
+    private val oldData: List<PackagePartProtoData>,
+    private val newData: List<PackagePartProtoData>,
+) : DifferenceCalculator() {
+
+    private val compareObjects = HashMap<Pair<ProtoContext, ProtoContext>, ProtoCompareGenerated>()
+
+    private val differenceCalculatorForMembers = DifferenceCalculatorForMembers { old, new -> areEqual(old, new) }
+
+    override fun difference(): Difference {
+        val oldMembers = oldData.getNonPrivateMembers()
+        val newMembers = newData.getNonPrivateMembers()
+
+        return Difference(changedMembersNames = differenceCalculatorForMembers.difference(oldMembers, newMembers))
+    }
+
+    private fun areEqual(old: ProtoMember, new: ProtoMember): Boolean =
+        compareObject(old.context, new.context).checkEquals(old.proto, new.proto)
+
+    private fun compareObject(first: ProtoContext, second: ProtoContext): ProtoCompareGenerated =
+        compareObjects.getOrPut(first to second) {
+            ProtoCompareGenerated(first.nameResolver, second.nameResolver, first.typeTable, second.typeTable)
+        }
+
+    private fun List<PackagePartProtoData>.getNonPrivateMembers() =
+        buildList {
+            this@getNonPrivateMembers.forEach { (val proto, val nameResolver) ->
+                val context = ProtoContext(nameResolver, proto.typeTableOrNull)
+                proto.functionList.filterNot { it.isPrivate }.forEach { function ->
+                    add(ProtoMember(function, context))
+                }
+                proto.propertyList.filterNot { it.isPrivate }.forEach { property ->
+                    add(ProtoMember(property, context))
+                }
+                proto.typeAliasList.filterNot { it.isPrivate }.forEach { typeAlias ->
+                    add(ProtoMember(typeAlias, context))
+                }
+            }
+        }
+}
+
+private class ProtoContext(val nameResolver: NameResolver, typeTable: ProtoBuf.TypeTable?) {
+    val typeTable: ProtoBuf.TypeTable = typeTable ?: ProtoBuf.TypeTable.getDefaultInstance()
+
     private val stringHashCodes = HashMap<Int, Int>()
     private val classIdHashCodes = HashMap<Int, Int>()
 
