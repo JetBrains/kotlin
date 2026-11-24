@@ -1,2 +1,2 @@
-warning: '-Xadd-modules' is ignored with '-Xjdk-release=8'.
-OK
+error: '-Xadd-modules' is not allowed with '-Xjdk-release=8'.
+COMPILATION_ERROR

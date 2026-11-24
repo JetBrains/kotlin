@@ -147,12 +147,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS)
 
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
-    val jdkRelease = get(JVMConfigurationKeys.JDK_RELEASE)
-    if (jdkRelease != null && jdkRelease < 9 && arguments.additionalJavaModules.isNotEmpty()) {
-        // Modules are not resolved with a release below 9. javac rejects the option there, but it is only a warning here, since the
-        // option is not new.
-        this.report(COMPILER_ARGUMENTS_WARNING, "'-Xadd-modules' is ignored with '-Xjdk-release=$jdkRelease'.")
-    }
+    reportJavaModuleOptionBelowRelease9("-Xadd-modules", arguments.additionalJavaModules)
     addJavaModuleAccessOptions(
         JVMConfigurationKeys.ADDITIONAL_JAVA_MODULE_READS, "-Xadd-reads", arguments.additionalJavaModuleReads, isExports = false,
     )
