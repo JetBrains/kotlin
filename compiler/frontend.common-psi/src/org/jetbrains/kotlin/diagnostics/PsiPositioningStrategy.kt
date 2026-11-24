@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-// TODO: move back to frontend.common-psi after fixing KT-91911
 open class PsiPositioningStrategy<in E : PsiElement> : PositioningStrategy() {
     override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
         @Suppress("UNCHECKED_CAST")
