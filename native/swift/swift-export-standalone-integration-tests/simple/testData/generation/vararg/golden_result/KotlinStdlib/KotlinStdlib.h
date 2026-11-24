@@ -17,7 +17,11 @@ int64_t kotlin_Number_toLong__reverse_swift(void * self);
 
 int16_t kotlin_Number_toShort__reverse_swift(void * self);
 
+_Bool kotlin_collections_BooleanIterator_hasNext__reverse_swift(void * self);
+
 _Bool kotlin_collections_BooleanIterator_nextBoolean__reverse_swift(void * self);
+
+_Bool kotlin_collections_IntIterator_hasNext__reverse_swift(void * self);
 
 int32_t kotlin_collections_IntIterator_nextInt__reverse_swift(void * self);
 
@@ -55,11 +59,15 @@ int64_t kotlin_Number_toLong(void * self);
 
 int16_t kotlin_Number_toShort(void * self);
 
+_Bool kotlin_collections_BooleanIterator_hasNext(void * self);
+
 _Bool kotlin_collections_BooleanIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 _Bool kotlin_collections_BooleanIterator_next(void * self);
 
 _Bool kotlin_collections_BooleanIterator_nextBoolean(void * self);
+
+_Bool kotlin_collections_IntIterator_hasNext(void * self);
 
 _Bool kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 

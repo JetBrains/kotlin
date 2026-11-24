@@ -29,6 +29,8 @@ void * kotlin_collections_Collection_iterator__reverse_swift(void * self);
 
 int32_t kotlin_collections_Collection_size_get__reverse_swift(void * self);
 
+_Bool kotlin_collections_IntIterator_hasNext__reverse_swift(void * self);
+
 int32_t kotlin_collections_IntIterator_nextInt__reverse_swift(void * self);
 
 void * kotlin_collections_Iterable_iterator__reverse_swift(void * self);
@@ -70,6 +72,8 @@ void * kotlin_collections_List_listIterator__reverse_swift(void * self);
 int32_t kotlin_collections_List_size_get__reverse_swift(void * self);
 
 NSArray<id> * kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(void * self, int32_t fromIndex, int32_t toIndex);
+
+_Bool kotlin_collections_LongIterator_hasNext__reverse_swift(void * self);
 
 int64_t kotlin_collections_LongIterator_nextLong__reverse_swift(void * self);
 
@@ -151,7 +155,15 @@ void * kotlin_collections_Set_iterator__reverse_swift(void * self);
 
 int32_t kotlin_collections_Set_size_get__reverse_swift(void * self);
 
+void * _Nullable kotlin_coroutines_AbstractCoroutineContextElement_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable initial, void * operation);
+
+void * _Nullable kotlin_coroutines_AbstractCoroutineContextElement_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key____reverse_swift(void * self, void * key);
+
 void * kotlin_coroutines_AbstractCoroutineContextElement_key_get__reverse_swift(void * self);
+
+void * kotlin_coroutines_AbstractCoroutineContextElement_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key____reverse_swift(void * self, void * key);
+
+void * kotlin_coroutines_AbstractCoroutineContextElement_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext____reverse_swift(void * self, void * context);
 
 void * _Nullable kotlin_coroutines_ContinuationInterceptor_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key____reverse_swift(void * self, void * key);
 
@@ -301,6 +313,8 @@ _Bool kotlin_collections_IndexedValue_init_initialize__TypesOfArguments__Swift_U
 
 void * _Nullable kotlin_collections_IndexedValue_value_get(void * self);
 
+_Bool kotlin_collections_IntIterator_hasNext(void * self);
+
 _Bool kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 int32_t kotlin_collections_IntIterator_next(void * self);
@@ -346,6 +360,8 @@ void * kotlin_collections_List_listIterator__TypesOfArguments__Swift_Int32__(voi
 int32_t kotlin_collections_List_size_get(void * self);
 
 NSArray<id> * kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t fromIndex, int32_t toIndex);
+
+_Bool kotlin_collections_LongIterator_hasNext(void * self);
 
 _Bool kotlin_collections_LongIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
@@ -431,11 +447,27 @@ void * kotlin_collections_Set_iterator(void * self);
 
 int32_t kotlin_collections_Set_size_get(void * self);
 
+void * _Nullable kotlin_coroutines_AbstractCoroutineContextElement_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable initial, void * operation);
+
+void * _Nullable kotlin_coroutines_AbstractCoroutineContextElement_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable initial, void * operation);
+
+void * _Nullable kotlin_coroutines_AbstractCoroutineContextElement_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(void * self, void * key);
+
+void * _Nullable kotlin_coroutines_AbstractCoroutineContextElement_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key___direct(void * self, void * key);
+
 _Bool kotlin_coroutines_AbstractCoroutineContextElement_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(void * __kt, void * key);
 
 void * kotlin_coroutines_AbstractCoroutineContextElement_key_get(void * self);
 
 void * kotlin_coroutines_AbstractCoroutineContextElement_key_get_direct(void * self);
+
+void * kotlin_coroutines_AbstractCoroutineContextElement_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(void * self, void * key);
+
+void * kotlin_coroutines_AbstractCoroutineContextElement_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key___direct(void * self, void * key);
+
+void * kotlin_coroutines_AbstractCoroutineContextElement_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext__(void * self, void * context);
+
+void * kotlin_coroutines_AbstractCoroutineContextElement_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext___direct(void * self, void * context);
 
 _Bool kotlin_coroutines_AbstractCoroutineContextKey_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key_U28anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element___(void * __kt, void * baseKey, void * safeCast);
 
