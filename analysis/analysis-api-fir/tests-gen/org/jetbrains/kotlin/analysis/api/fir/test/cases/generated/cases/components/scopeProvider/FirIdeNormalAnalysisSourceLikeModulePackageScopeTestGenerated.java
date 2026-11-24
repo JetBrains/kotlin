@@ -90,4 +90,10 @@ public class FirIdeNormalAnalysisSourceLikeModulePackageScopeTestGenerated exten
   public void testSimpleScript() {
     run("simpleScript.kts");
   }
+
+  @Test
+  @TestMetadata("topLevelDestructuringDeclarations.kt")
+  public void testTopLevelDestructuringDeclarations() {
+    run("topLevelDestructuringDeclarations.kt");
+  }
 }

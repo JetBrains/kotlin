@@ -84,4 +84,10 @@ public class FirStandaloneNormalAnalysisSourceModulePackageScopeTestGenerated ex
   public void testSimple() {
     run("simple.kt");
   }
+
+  @Test
+  @TestMetadata("topLevelDestructuringDeclarations.kt")
+  public void testTopLevelDestructuringDeclarations() {
+    run("topLevelDestructuringDeclarations.kt");
+  }
 }

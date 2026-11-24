@@ -1,0 +1,24 @@
+Diagnostics from declarations.kt:
+  for PSI element of type KtDestructuringDeclaration at (8,1-22)
+    NON_LOCAL_DESTRUCTURING_DECLARATION      text ranges: [(110,116)]
+      PSI: KtDestructuringDeclaration at (8,1-22)
+
+Diagnostics from declarations.kts:
+  <NO DIAGNOSTICS>
+
+Diagnostics from other.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from main.kt:
+  for PSI element of type KtNameReferenceExpression at (32,5-6)
+    UNRESOLVED_REFERENCE      text ranges: [(109,110)]
+      PSI: KtNameReferenceExpression at (32,5-6)
+  for PSI element of type KtNameReferenceExpression at (33,5-6)
+    UNRESOLVED_REFERENCE      text ranges: [(115,116)]
+      PSI: KtNameReferenceExpression at (33,5-6)
+  for PSI element of type KtNameReferenceExpression at (35,5-6)
+    UNRESOLVED_REFERENCE      text ranges: [(127,128)]
+      PSI: KtNameReferenceExpression at (35,5-6)
+  for PSI element of type KtNameReferenceExpression at (36,5-6)
+    UNRESOLVED_REFERENCE      text ranges: [(133,134)]
+      PSI: KtNameReferenceExpression at (36,5-6)
