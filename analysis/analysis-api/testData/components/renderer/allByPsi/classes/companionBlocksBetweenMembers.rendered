@@ -1,5 +1,7 @@
 class StartsWithBlock {
-  fun first()
+  companion {
+    fun first()
+  }
 
   fun second()
 }
@@ -7,24 +9,32 @@ class StartsWithBlock {
 class BlocksBetweenMembers {
   fun first()
 
-  fun second()
+  companion {
+    fun second()
 
-  val third: Int
+    val third: Int
+  }
 
   class Nested
 
   fun fourth()
 
-  fun fifth()
+  companion {
+    fun fifth()
+  }
 }
 
 enum class EnumWithBlocks {
   A,
   B;
 
-  fun first(): EnumWithBlocks
+  companion {
+    fun first(): EnumWithBlocks
+  }
 
   fun second()
 
-  fun third()
+  companion {
+    fun third()
+  }
 }

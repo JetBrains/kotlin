@@ -1,11 +1,15 @@
 class Compact {
   fun member()
 
-  val x: Int
+  companion {
+    val x: Int
 
-  fun first()
+    fun first()
+  }
 
   fun last()
 
-  fun other()
+  companion {
+    fun other()
+  }
 }

@@ -1,7 +1,9 @@
 interface I {
   fun foo()
 
-  const val CONST: Int
+  companion {
+    const val CONST: Int
 
-  fun create(): I?
+    fun create(): I?
+  }
 }
