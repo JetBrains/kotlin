@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.config.Services;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.net.URISyntaxException;
+import java.security.CodeSource;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -257,15 +259,17 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     protected abstract void configureSpecificCompilerArguments(@NotNull A arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException;
 
     @NotNull
-    private List<String> getCompilerPluginClassPaths() {
-        ArrayList<String> result = new ArrayList<>();
-
-        List<File> files = new ArrayList<>();
+    private List<String> getCompilerPluginClassPaths(@NotNull Map<String, KotlinMavenPluginExtension> plugins) {
+        Set<File> files = new LinkedHashSet<>();
 
         ArtifactRepository localRepo = session == null ? null : session.getLocalRepository();
         List<ArtifactRepository> remoteRepos = session == null ? null : session.getCurrentProject().getPluginArtifactRepositories();
 
         for (Dependency dependency : mojoExecution.getPlugin().getDependencies()) {
+            if (CompilerPluginWrapperArtifacts.isWrapperArtifact(dependency.getGroupId(), dependency.getArtifactId())) {
+                getLog().warn(CompilerPluginWrapperArtifacts.mojoWarning(dependency.getArtifactId()));
+            }
+
             Artifact artifact = system.createDependencyArtifact(dependency);
 
             ArtifactResolutionRequest request = new ArtifactResolutionRequest().setArtifact(artifact);
@@ -284,6 +288,23 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             }
         }
 
+        // Compiler plugins provided by the plugin itself: the wrapper jars are already in the plugin classrealm,
+        // and each of them shades the compiler plugin classes it provides
+        for (KotlinMavenPluginExtension plugin : plugins.values()) {
+            CodeSource codeSource = plugin.getClass().getProtectionDomain().getCodeSource();
+            if (codeSource == null) continue;
+
+            try {
+                File file = new File(codeSource.getLocation().toURI());
+                if (file.isFile() && !file.getName().startsWith("kotlin-maven-plugin-")) {
+                    files.add(file);
+                }
+            } catch (URISyntaxException e) {
+                getLog().debug("Unable to locate the jar providing compiler plugin " + plugin.getCompilerPluginId());
+            }
+        }
+
+        List<String> result = new ArrayList<>(files.size());
         for (File file : files) {
             result.add(file.getAbsolutePath());
         }
@@ -324,14 +345,12 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     }
 
     @NotNull
-    private List<PluginOption> getCompilerPluginOptions() throws PluginNotFoundException, PluginOptionIllegalFormatException {
+    private List<PluginOption> getCompilerPluginOptions(@NotNull Map<String, KotlinMavenPluginExtension> plugins) throws PluginNotFoundException, PluginOptionIllegalFormatException {
         if (mojoExecution == null) {
             throw new IllegalStateException("No mojoExecution injected");
         }
 
         List<PluginOption> pluginOptions = new ArrayList<>();
-
-        Map<String, KotlinMavenPluginExtension> plugins = loadCompilerPlugins();
 
         // Get options for extension-provided compiler plugins
 
@@ -449,7 +468,14 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             getLog().info("Method inlining is turned off");
         }
 
-        List<String> pluginClassPaths = getCompilerPluginClassPaths();
+        Map<String, KotlinMavenPluginExtension> loadedPlugins;
+        try {
+            loadedPlugins = loadCompilerPlugins();
+        } catch (PluginNotFoundException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
+
+        List<String> pluginClassPaths = getCompilerPluginClassPaths(loadedPlugins);
         if (!pluginClassPaths.isEmpty()) {
             if (arguments.getPluginClasspaths() == null || arguments.getPluginClasspaths().length == 0) {
                 arguments.setPluginClasspaths(pluginClassPaths.toArray(new String[pluginClassPaths.size()]));
@@ -469,7 +495,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         List<String> pluginArguments;
         try {
-            pluginArguments = renderCompilerPluginOptions(getCompilerPluginOptions());
+            pluginArguments = renderCompilerPluginOptions(getCompilerPluginOptions(loadedPlugins));
         } catch (PluginNotFoundException | PluginOptionIllegalFormatException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }

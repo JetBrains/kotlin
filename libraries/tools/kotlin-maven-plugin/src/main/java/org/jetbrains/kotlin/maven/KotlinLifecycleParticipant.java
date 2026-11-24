@@ -18,6 +18,8 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -46,10 +48,35 @@ public class KotlinLifecycleParticipant extends AbstractMavenLifecycleParticipan
     public void afterProjectsRead(MavenSession session) {
         for (MavenProject project : session.getProjects()) {
             Plugin kotlinMavenPlugin = getKotlinMavenPlugin(project);
-            if (kotlinMavenPlugin != null && isExtensionsEnabled(kotlinMavenPlugin) && isSmartDefaultsEnabled(project)) {
-                configureSmartDefaults(project, kotlinMavenPlugin);
+            if (kotlinMavenPlugin != null) {
+                warnAboutRedundantWrapperDependencies(kotlinMavenPlugin);
+
+                if (isExtensionsEnabled(kotlinMavenPlugin) && isSmartDefaultsEnabled(project)) {
+                    configureSmartDefaults(project, kotlinMavenPlugin);
+                }
             }
         }
+    }
+
+    private void warnAboutRedundantWrapperDependencies(Plugin kotlinMavenPlugin) {
+        if (logger == null) return;
+
+        for (Dependency dependency : findRedundantWrapperDependencies(kotlinMavenPlugin)) {
+            logger.warn(CompilerPluginWrapperArtifacts.syncWarning(dependency.getArtifactId()));
+        }
+    }
+
+    static List<Dependency> findRedundantWrapperDependencies(Plugin kotlinMavenPlugin) {
+        List<Dependency> dependencies = kotlinMavenPlugin.getDependencies();
+        if (dependencies == null) return Collections.emptyList();
+
+        List<Dependency> redundant = new ArrayList<>();
+        for (Dependency dependency : dependencies) {
+            if (CompilerPluginWrapperArtifacts.isWrapperArtifact(dependency.getGroupId(), dependency.getArtifactId())) {
+                redundant.add(dependency);
+            }
+        }
+        return redundant;
     }
 
     private boolean isSmartDefaultsEnabled(MavenProject project) {

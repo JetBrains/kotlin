@@ -83,6 +83,7 @@
 
         <module>tools/maven-archetypes</module>
 
+        <module>tools/kotlin-maven-plugin-api</module>
         <module>tools/kotlin-maven-allopen</module>
         <module>tools/kotlin-maven-noarg</module>
         <module>tools/kotlin-maven-power-assert</module>

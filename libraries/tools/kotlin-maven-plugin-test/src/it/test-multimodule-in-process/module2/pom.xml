@@ -30,20 +30,14 @@
                     </execution>
                 </executions>
 
-                <!-- Apply a compiler plugin. It should currently lead to the creation of another classloader -->
+                <!-- Apply a compiler plugin. The wrapper artifact is provided by the plugin itself, so this module
+                     shares the same classrealm as the other modules -->
                 <configuration>
                     <compilerPlugins>
                        <plugin>all-open</plugin>
                     </compilerPlugins>
                 </configuration>
 
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-maven-allopen</artifactId>
-                        <version>${kotlin.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>

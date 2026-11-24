@@ -33,9 +33,10 @@ class MultiProjectSetupIT : KotlinMavenTestBase() {
                 environmentVariables = mapOf("MAVEN_OPTS" to "-XX:MaxMetaspaceSize=300M"),
                 expectedToFail = false
             ) {
-                // 1 classloader for modules 1, 3, 4, 5 (same compiler config)
-                // 1 classloader for module 2 (has all-open compiler plugin)
-                assertBuildLogLineCount("[DEBUG] Creating classloader", expectedCount = 2)
+                // Compiler plugin wrappers are provided by kotlin-maven-plugin itself (KT-91851), so a module
+                // applying a compiler plugin (module 2, all-open) no longer has its own plugin classrealm and
+                // BTA classloader: 1 classloader is shared by all modules, whatever their compiler configuration
+                assertBuildLogLineCount("[DEBUG] Creating classloader", expectedCount = 1)
             }
         }
     }
