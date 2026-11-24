@@ -3,8 +3,6 @@ plugins {
 }
 
 kotlin {
-    androidNativeArm64()
-    androidNativeX64()
     iosArm64()
     iosSimulatorArm64()
     iosX64()

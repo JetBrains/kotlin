@@ -40,10 +40,6 @@ class AbiValidationKmpIT : KGPBaseTest() {
                 linuxX64()
                 linuxArm64()
                 mingwX64()
-                androidNativeArm32()
-                androidNativeArm64()
-                androidNativeX64()
-                androidNativeX86()
             }
         }
     }
@@ -386,10 +382,6 @@ class AbiValidationKmpIT : KGPBaseTest() {
                     linuxX64("linux")
                     linuxArm64()
                     mingwX64()
-                    androidNativeArm32()
-                    androidNativeArm64()
-                    androidNativeX64()
-                    androidNativeX86()
                 }
             }
             abiValidation()
@@ -437,8 +429,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("updateKotlinAbi and checkKotlinAbi if all klib-targets are unavailable")
     fun testAllKlibTargetsUnavailable(gradleVersion: GradleVersion) {
-        val allTargetsBanned = "-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64,linuxX64,mingwX64," +
-                "androidNativeArm32,androidNativeArm64,androidNativeX64,androidNativeX86"
+        val allTargetsBanned = "-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64,linuxX64,mingwX64"
 
         project("base-kotlin-multiplatform-library", gradleVersion) {
             defaultKmpProject()
@@ -467,8 +458,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("checkKotlinAbi should fail with strict validation if all klib-targets are unavailable")
     fun testFailIfAllKlibTargetsUnavailable(gradleVersion: GradleVersion) {
-        val allTargetsBanned = "-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64,linuxX64,mingwX64," +
-                "androidNativeArm32,androidNativeArm64,androidNativeX64,androidNativeX86"
+        val allTargetsBanned = "-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64,linuxX64,mingwX64"
 
         project("base-kotlin-multiplatform-library", gradleVersion) {
             defaultNativeTargets()
@@ -570,7 +560,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
 
             buildAndFail("checkKotlinAbi") {
                 assertOutputContains(
-                    "  -// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64.linux, mingwX64]"
+                    "  -// Targets: [linuxArm64, linuxX64.linux, mingwX64]"
                 )
             }
         }
@@ -695,8 +685,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
             buildAndFail("checkKotlinAbi") {
                 assertTasksFailed(":checkKotlinAbi")
                 assertOutputContains(
-                    "-// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, " +
-                            "androidNativeX86, linuxArm64, linuxX64, mingwX64]"
+                    "-// Targets: [linuxArm64, linuxX64, mingwX64]"
                 )
                 assertOutputContains("+// Targets: [linuxArm64]")
             }
@@ -731,7 +720,7 @@ final fun org.different.pack/linuxArm64Specific(): kotlin/Int // org.different.p
 
 val SIMPLE_DUMP_KLIB = """
         // Klib ABI Dump
-        // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64, mingwX64]
+        // Targets: [linuxArm64, linuxX64, mingwX64]
         // Rendering settings:
         // - Signature version: 2
         // - Show manifest properties: true
@@ -748,7 +737,7 @@ val SIMPLE_DUMP_KLIB = """
 
 val FILTERED_DUMP_KLIB = """
     // Klib ABI Dump
-    // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64, mingwX64]
+    // Targets: [linuxArm64, linuxX64, mingwX64]
     // Rendering settings:
     // - Signature version: 2
     // - Show manifest properties: true
@@ -774,7 +763,7 @@ val EMPTY_DUMP_KLIB = """
 
 private val APPLE_DUMP_KLIB = """
     // Klib ABI Dump
-    // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, mingwX64, tvosArm64, tvosSimulatorArm64, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64]
+    // Targets: [iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, mingwX64, tvosArm64, tvosSimulatorArm64, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64]
     // Rendering settings:
     // - Signature version: 2
     // - Show manifest properties: true
@@ -791,7 +780,7 @@ private val APPLE_DUMP_KLIB = """
 
 private val RENAMED_TARGET_KLIB_DUMP = """
     // Klib ABI Dump
-    // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64.linux, mingwX64]
+    // Targets: [linuxArm64, linuxX64.linux, mingwX64]
     // Rendering settings:
     // - Signature version: 2
     // - Show manifest properties: true
@@ -808,7 +797,7 @@ private val RENAMED_TARGET_KLIB_DUMP = """
 
 private val MODIFIED_DUMP_KLIB = """
     // Klib ABI Dump
-    // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64, mingwX64]
+    // Targets: [linuxArm64, linuxX64, mingwX64]
     // Rendering settings:
     // - Signature version: 2
     // - Show manifest properties: true
@@ -843,7 +832,7 @@ private val LINUX_ONLY_X64_DUMP_KLIB = """
 
 private val WEB_DUMP_KLIB = """
     // Klib ABI Dump
-    // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, js, linuxArm64, linuxX64, mingwX64, wasmJs, wasmWasi]
+    // Targets: [js, linuxArm64, linuxX64, mingwX64, wasmJs, wasmWasi]
     // Rendering settings:
     // - Signature version: 2
     // - Show manifest properties: true
@@ -860,7 +849,7 @@ private val WEB_DUMP_KLIB = """
 
 private val GENERATED_SOURCES_DUMP_KLIB = """
     // Klib ABI Dump
-    // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64, mingwX64]
+    // Targets: [linuxArm64, linuxX64, mingwX64]
     // Rendering settings:
     // - Signature version: 2
     // - Show manifest properties: true
