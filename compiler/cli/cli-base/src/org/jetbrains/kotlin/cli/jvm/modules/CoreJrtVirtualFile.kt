@@ -31,11 +31,11 @@ import java.nio.file.attribute.BasicFileAttributes
 internal class CoreJrtVirtualFile(
     private val virtualFileSystem: CoreJrtFileSystem,
     private val jdkHomePath: String,
-    private val path: Path,
+    internal val jrtPath: Path,
     private val parent: CoreJrtVirtualFile?,
 ) : VirtualFile() {
     // TODO: catch IOException?
-    private val attributes: BasicFileAttributes get() = Files.readAttributes(path, BasicFileAttributes::class.java)
+    private val attributes: BasicFileAttributes get() = Files.readAttributes(jrtPath, BasicFileAttributes::class.java)
 
     /**
      * [JrtPath.getFileName][jdk.internal.jrtfs.JrtPath.getFileName] can be slow as it performs string manipulation, so we cache the name.
@@ -46,15 +46,15 @@ internal class CoreJrtVirtualFile(
 
     override fun getName(): String {
         _name?.let { return it }
-        return path.fileName.toString().also { _name = it }
+        return jrtPath.fileName.toString().also { _name = it }
     }
 
     override fun getPath(): String =
-        FileUtil.toSystemIndependentName(jdkHomePath + URLUtil.JAR_SEPARATOR + path)
+        FileUtil.toSystemIndependentName(jdkHomePath + URLUtil.JAR_SEPARATOR + jrtPath)
 
     override fun isWritable(): Boolean = false
 
-    override fun isDirectory(): Boolean = Files.isDirectory(path)
+    override fun isDirectory(): Boolean = Files.isDirectory(jrtPath)
 
     override fun isValid(): Boolean = true
 
@@ -66,7 +66,7 @@ internal class CoreJrtVirtualFile(
 
     private fun computeChildren(): Array<out VirtualFile> {
         val paths = try {
-            Files.newDirectoryStream(path).use(Iterable<Path>::toList)
+            Files.newDirectoryStream(jrtPath).use(Iterable<Path>::toList)
         } catch (_: IOException) {
             emptyList<Path>()
         }
@@ -80,7 +80,7 @@ internal class CoreJrtVirtualFile(
         throw UnsupportedOperationException()
 
     override fun contentsToByteArray(): ByteArray =
-        Files.readAllBytes(path)
+        Files.readAllBytes(jrtPath)
 
     override fun getTimeStamp(): Long =
         attributes.lastModifiedTime().toMillis()
@@ -90,13 +90,13 @@ internal class CoreJrtVirtualFile(
     override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) {}
 
     override fun getInputStream(): InputStream =
-        VfsUtilCore.inputStreamSkippingBOM(Files.newInputStream(path).buffered(), this)
+        VfsUtilCore.inputStreamSkippingBOM(Files.newInputStream(jrtPath).buffered(), this)
 
     override fun getModificationStamp(): Long = 0
 
     override fun equals(other: Any?): Boolean =
-        other is CoreJrtVirtualFile && path == other.path && fileSystem == other.fileSystem
+        other is CoreJrtVirtualFile && jrtPath == other.jrtPath && fileSystem == other.fileSystem
 
     override fun hashCode(): Int =
-        path.hashCode()
+        jrtPath.hashCode()
 }

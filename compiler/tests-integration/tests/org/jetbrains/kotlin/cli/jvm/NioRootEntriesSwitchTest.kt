@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinderFactory
 import org.jetbrains.kotlin.cli.jvm.index.JvmClasspathIndexes
 import org.jetbrains.kotlin.cli.jvm.index.VfsClassFileHandle
+import org.jetbrains.kotlin.cli.jvm.index.nio.JarClassFileHandle
 import org.jetbrains.kotlin.cli.jvm.index.nio.PathClassFileHandle
 import org.jetbrains.kotlin.cli.jvm.index.virtualFile
 import org.jetbrains.kotlin.config.useJavaDirect
@@ -43,20 +45,20 @@ class NioRootEntriesSwitchTest : JvmDependenciesIndexContractTestBase() {
 
     @Test
     fun nioEntriesAreOffByDefault() {
-        val indexes = JvmClasspathIndexes(KotlinTestUtils.newConfiguration())
+        val indexes = JvmClasspathIndexes(KotlinTestUtils.newConfiguration(), jarFileSystem = null)
         assertSame(indexes.javaFileManagerIndex, indexes.classFinderIndex)
     }
 
     @Test
     fun nioEntriesAreNotSelectedWithoutJavaDirect() {
-        val indexes = JvmClasspathIndexes(configuration(nio = true, javaDirect = false))
+        val indexes = JvmClasspathIndexes(configuration(nio = true, javaDirect = false), jarFileSystem = null)
         assertSame(indexes.javaFileManagerIndex, indexes.classFinderIndex)
     }
 
     @Test
     fun switchGivesTheClassFinderNioEntriesAndKeepsVfsEntriesForTheJavaFileManager() {
         val out = dir("out", "p/A.class")
-        val indexes = JvmClasspathIndexes(configuration(nio = true))
+        val indexes = JvmClasspathIndexes(configuration(nio = true), jarFileSystem = null)
         assertNotSame(indexes.javaFileManagerIndex, indexes.classFinderIndex)
 
         val vfsIndex = indexes.addRoots(listOf(out.dirRoot()))
@@ -68,11 +70,35 @@ class NioRootEntriesSwitchTest : JvmDependenciesIndexContractTestBase() {
         assertEquals(indexes.javaFileManagerIndex.indexedRoots.toList(), indexes.classFinderIndex.indexedRoots.toList())
     }
 
+    @Test
+    fun jarRootsGetNioEntriesOnlyIfJarsAreReadWithFastJar() {
+        val lib = jar("lib.jar", "q/B.class")
+        val fastJarFileSystem = newFastJarFileSystem()
+        try {
+            val withFastJar = JvmClasspathIndexes(configuration(nio = true), fastJarFileSystem)
+            withFastJar.addRoots(listOf(lib.jarRoot()))
+            assertInstanceOf(JarClassFileHandle::class.java, withFastJar.classFinderIndex.findClassFiles(classId("q/B"), CLASS).single())
+        } finally {
+            fastJarFileSystem.clearHandlersCache()
+        }
+
+        // E.g. with `-Xuse-fast-jar-file-system=false`: only jars lose their NIO entries.
+        val out = dir("out", "p/A.class")
+        val withCoreJarFileSystem = JvmClasspathIndexes(configuration(nio = true), CoreJarFileSystem())
+        withCoreJarFileSystem.addRoots(listOf(lib.jarRoot(), out.dirRoot()))
+        assertInstanceOf(
+            VfsClassFileHandle::class.java, withCoreJarFileSystem.classFinderIndex.findClassFiles(classId("q/B"), CLASS).single()
+        )
+        assertInstanceOf(
+            PathClassFileHandle::class.java, withCoreJarFileSystem.classFinderIndex.findClassFiles(classId("p/A"), CLASS).single()
+        )
+    }
+
     @OptIn(VirtualFileBasedApi::class)
     @Test
     fun virtualFileLookupsReadVfsEntriesWithTheSwitchOn() {
         val out = dir("out", "p/A.class")
-        val indexes = JvmClasspathIndexes(configuration(nio = true))
+        val indexes = JvmClasspathIndexes(configuration(nio = true), jarFileSystem = null)
         indexes.addRoots(listOf(out.dirRoot()))
         val factory = CliVirtualFileFinderFactory(
             indexes.classFinderIndex, enableSearchInCtSym = false, perfManager = null, vfsIndex = indexes.javaFileManagerIndex,

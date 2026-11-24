@@ -9,14 +9,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.JarArchiveCache
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
-import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntry
-import org.jetbrains.kotlin.cli.jvm.index.JvmRootEntryFactory
-import org.jetbrains.kotlin.cli.jvm.index.VfsRootEntry
 import org.jetbrains.kotlin.cli.jvm.index.nio.JarClassFileHandle
 import org.jetbrains.kotlin.cli.jvm.index.nio.JarRootEntry
-import org.jetbrains.kotlin.cli.jvm.index.nio.PathRootEntry
+import org.jetbrains.kotlin.cli.jvm.index.nio.NioRootEntryFactory
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.AfterEach
@@ -29,22 +26,11 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.outputStream
 import kotlin.io.path.writeBytes
-
-/** Roots of a test classpath with NIO entries: directories as [PathRootEntry], jars from FastJar [archives], others with VFS entries. */
-internal class NioTestRootEntryFactory(val archives: JarArchiveCache) : JvmRootEntryFactory {
-    override fun createRootEntry(root: JavaRoot) = when {
-        root.file.fileSystem.protocol == "file" && root.file.isDirectory -> PathRootEntry.root(Paths.get(root.file.path))
-        root.file.fileSystem.protocol == "jar" && root.file.parent == null ->
-            archives.rootEntry(Paths.get(root.file.path.substringBefore("!/")))
-        else -> VfsRootEntry(root.file)
-    }
-}
 
 /** The root entry of the [jar] archive of this cache. */
 internal fun JarArchiveCache.rootEntry(jar: Path): JarRootEntry =
@@ -52,17 +38,6 @@ internal fun JarArchiveCache.rootEntry(jar: Path): JarRootEntry =
 
 /** A FastJar file system for a test, whose archives are released by [FastJarFileSystem.clearHandlersCache] after the test. */
 internal fun newFastJarFileSystem(): FastJarFileSystem = checkNotNull(FastJarFileSystem.createIfUnmappingPossible())
-
-/** The shared contract over NIO directory and jar entries. */
-class JvmDependenciesIndexJarEntriesContractTest : AbstractJvmDependenciesIndexContractTest() {
-    private val fileSystem = newFastJarFileSystem()
-
-    @AfterEach
-    fun clearArchives() = fileSystem.clearHandlersCache()
-
-    override fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex =
-        JvmDependenciesIndexImpl(roots, NioTestRootEntryFactory(fileSystem.archives))
-}
 
 /** Behavior of the jar entries ([JarRootEntry]) over the archives of FastJar. */
 class JvmDependenciesIndexJarEntriesTest : JvmDependenciesIndexContractTestBase() {
@@ -74,7 +49,7 @@ class JvmDependenciesIndexJarEntriesTest : JvmDependenciesIndexContractTestBase(
     @AfterEach
     fun clearArchives() = fileSystem.clearHandlersCache()
 
-    private fun index(vararg roots: JavaRoot) = JvmDependenciesIndexImpl(roots.asList(), NioTestRootEntryFactory(archives))
+    private fun index(vararg roots: JavaRoot) = JvmDependenciesIndexImpl(roots.asList(), NioRootEntryFactory(archives))
 
     @Test
     fun readsDeflatedAndStoredEntries() {
@@ -142,11 +117,15 @@ class JvmDependenciesIndexJarEntriesTest : JvmDependenciesIndexContractTestBase(
     fun handlesAreEqualByRootAndPathInTheArchive() {
         val lib = jar("lib.jar", "p/A.class")
         val first = index(lib.jarRoot()).findClassFiles(classId("p/A"), CLASS).single()
-        val second = JvmDependenciesIndexImpl(
-            listOf(lib.jarRoot()), NioTestRootEntryFactory(newFastJarFileSystem().archives)
-        ).findClassFiles(classId("p/A"), CLASS).single()
-        assertEquals(first, second)
-        assertEquals(first.hashCode(), second.hashCode())
+        val otherFileSystem = newFastJarFileSystem()
+        try {
+            val second = JvmDependenciesIndexImpl(listOf(lib.jarRoot()), NioRootEntryFactory(otherFileSystem.archives))
+                .findClassFiles(classId("p/A"), CLASS).single()
+            assertEquals(first, second, "handles of distinct archive trees of the same jar")
+            assertEquals(first.hashCode(), second.hashCode())
+        } finally {
+            otherFileSystem.clearHandlersCache()
+        }
     }
 
     @Test

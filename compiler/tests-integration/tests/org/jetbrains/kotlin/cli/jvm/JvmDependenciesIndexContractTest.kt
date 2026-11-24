@@ -697,9 +697,15 @@ class JvmDependenciesIndexImplContractTest : AbstractJvmDependenciesIndexContrac
     override fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex = JvmDependenciesIndexImpl(roots)
 }
 
-/** The same contract holds for a [JvmDependenciesIndexImpl] whose directory roots have NIO entries ([NioRootEntryFactory]). */
+/** The same contract holds for a [JvmDependenciesIndexImpl] whose roots have NIO entries ([NioRootEntryFactory]). */
 class JvmDependenciesIndexNioEntriesContractTest : AbstractJvmDependenciesIndexContractTest() {
-    override fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex = JvmDependenciesIndexImpl(roots, NioRootEntryFactory)
+    private val fastJarFileSystem = newFastJarFileSystem()
+
+    @AfterEach
+    fun clearArchives() = fastJarFileSystem.clearHandlersCache()
+
+    override fun createIndex(roots: List<JavaRoot>): JvmDependenciesIndex =
+        JvmDependenciesIndexImpl(roots, NioRootEntryFactory(fastJarFileSystem.archives))
 }
 
 /** The same contract holds for a first-only [JvmDependenciesDynamicCompoundIndex] wrapping a single [JvmDependenciesIndexImpl]. */
