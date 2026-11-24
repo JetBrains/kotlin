@@ -177,7 +177,7 @@ class CoroutineTransformerMethodVisitor(
         }
         dropSuspendLambdaParameterMarkers(methodNode)
 
-        if (!config.nullOutSpilledCoroutineLocalsUsingStdlibFunction && !config.enableDebugMode) {
+        if (!config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) {
             updateLvtAccordingToLiveness(methodNode, isForNamedFunction, stateLabels)
         }
 
@@ -945,15 +945,10 @@ class CoroutineTransformerMethodVisitor(
                 insertBefore(suspension.suspensionCallBegin, withInstructionAdapter {
                     load(continuationIndex, AsmTypes.OBJECT_TYPE)
 
-                    if (!config.enableDebugMode && spillableVariable.shouldSpillNull) {
-                        if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) {
-                            putOnStack(spillableVariable)
-                            invokeNullOutSpilledVariable()
-                        } else {
-                            aconst(null)
-                        }
-                    } else {
-                        putOnStack(spillableVariable)
+                    putOnStack(spillableVariable)
+                    // Dead variables are spilled only with nullOutSpilledCoroutineLocalsUsingStdlibFunction.
+                    if (spillableVariable.shouldSpillNull) {
+                        invokeNullOutSpilledVariable()
                     }
 
                     putfield(
@@ -1118,8 +1113,7 @@ class CoroutineTransformerMethodVisitor(
                     checkWhetherVariableWillBeVisible(methodNode, slot, suspensionCallBeginIndex)
 
             val needToSpill = livenessFrame.isAlive(slot) ||
-                    (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction || config.enableDebugMode) &&
-                    (visibleByDebugger || willBeVisibleByDebugger)
+                    config.nullOutSpilledCoroutineLocalsUsingStdlibFunction && (visibleByDebugger || willBeVisibleByDebugger)
             if (!needToSpill) continue
 
             if (value === StrictBasicValue.NULL_VALUE) {

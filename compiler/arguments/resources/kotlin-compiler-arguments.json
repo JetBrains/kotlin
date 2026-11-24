@@ -7811,8 +7811,19 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Enable debug mode for compilation.\nCurrently this includes spilling all variables in a suspending context regardless of whether they are alive.\nIf API Level >= 2.2 -- no-op.",
-                                    "valueInVersions": []
+                                    "current": "Enable debug mode for compilation.\nCurrently, this option has no effect.",
+                                    "valueInVersions": [
+                                        {
+                                            "minReleaseVersion": "1.8.0",
+                                            "maxReleaseVersion": "2.1.0",
+                                            "value": "Enable debug mode for compilation.\nCurrently this includes spilling all variables in a suspending context regardless of whether they are alive."
+                                        },
+                                        {
+                                            "minReleaseVersion": "2.1.20",
+                                            "maxReleaseVersion": "2.5.0",
+                                            "value": "Enable debug mode for compilation.\nCurrently this includes spilling all variables in a suspending context regardless of whether they are alive.\nIf API Level >= 2.2 -- no-op."
+                                        }
+                                    ]
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,

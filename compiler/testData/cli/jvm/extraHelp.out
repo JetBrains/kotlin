@@ -21,8 +21,7 @@ where advanced options include:
                              The default value is 1.
   -Xbuild-file=<path>        Path to the .xml build file to compile.
   -Xdebug                    Enable debug mode for compilation.
-                             Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
-                             If API Level >= 2.2 -- no-op.
+                             Currently, this option has no effect.
   -Xdefault-script-extension=<script filename extension>
                              Compile expressions and unrecognized scripts passed with the -script argument as scripts with the given filename extension.
   -Xdirect-java-actualization Enable experimental direct Java actualization support.

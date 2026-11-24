@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EX
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.DUMP_SMAP
 import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.RUN_DEX_CHECKER
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENABLE_DEBUG_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
@@ -253,12 +252,6 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
     }
 
     configureModernJavaWhenNeeded()
-
-    forTestsMatching("compiler/testData/codegen/box(?:Jvm)?/coroutines/varSpilling/debugMode/*") {
-        defaultDirectives {
-            +ENABLE_DEBUG_MODE
-        }
-    }
 
     forTestsMatching("compiler/testData/codegen/box(?:Jvm)?/javaInterop/foreignAnnotationsTests/tests/*") {
         defaultDirectives {

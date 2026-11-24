@@ -821,9 +821,19 @@ This works like '--enable-preview' in Java. All class files are marked as compil
     compilerArgument {
         name = "Xdebug"
         compilerName = "enableDebugMode"
-        description = """Enable debug mode for compilation.
+        description = ReleaseDependent(
+            current = """Enable debug mode for compilation.
+Currently, this option has no effect.""",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v1_8_0..KotlinReleaseVersion.v2_1_0 to
+                        """Enable debug mode for compilation.
+Currently this includes spilling all variables in a suspending context regardless of whether they are alive.""",
+                KotlinReleaseVersion.v2_1_20..KotlinReleaseVersion.v2_5_0 to
+                        """Enable debug mode for compilation.
 Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
-If API Level >= 2.2 -- no-op.""".asReleaseDependent()
+If API Level >= 2.2 -- no-op.""",
+            )
+        )
         valueType = BooleanType.defaultFalse
 
         lifecycle(
