@@ -36,7 +36,7 @@ object KotlinStubVersions {
 
     @Deprecated(
         message = "Kotlin/JS metadata decompiler has been removed",
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     const val JS_STUB_VERSION = BINARY_STUB_VERSION + 4
 

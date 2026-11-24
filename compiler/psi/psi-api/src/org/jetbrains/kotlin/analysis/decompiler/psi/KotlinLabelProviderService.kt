@@ -27,7 +27,7 @@ abstract class KotlinLabelProviderService {
      */
     abstract fun getLabelForKlibMetaFileType(): String
 
-    @Deprecated("The function is unused. Its implementation should be dropped")
+    @Deprecated("The function is unused. Its implementation should be dropped", level = DeprecationLevel.ERROR)
     open fun getLabelForKotlinJavaScriptMetaFileType(): String = ""
 
     @KtPlatformInterface
