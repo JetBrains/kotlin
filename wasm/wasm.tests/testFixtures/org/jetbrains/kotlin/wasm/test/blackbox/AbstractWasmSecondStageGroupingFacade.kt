@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.wasm.test.blackbox
 
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.GroupingStageInputArtifact
-import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
@@ -72,10 +71,13 @@ abstract class AbstractWasmSecondStageGroupingFacade(
      * Collects the list of (testServices, testModule, KLib artifact) triples produced by the
      * NonGroupingStage that should participate in this Stage-2 batch.
      *
-     * Modules whose failures are ignored (e.g. via `IGNORE_BACKEND`) or that do not have a
-     * KLib artifact (e.g. because their Stage-1 compilation failed in an expected way) are
-     * silently skipped, and so is the [ReflectionPackageNameHelperModuleTransformer] helper module,
+     * Modules that do not have a KLib artifact (e.g. because their Stage-1 compilation failed in an expected way)
+     * are silently skipped, and so is the [ReflectionPackageNameHelperModuleTransformer] helper module,
      * which must never be linked (see [getTransitivesAndFriendsWithoutReflectionPackageNameHelper]).
+     *
+     * Muted tests (e.g. via `IGNORE_BACKEND`) are isolated into batches of their own,
+     * and executed, so that their failures are suppressed, or
+     * the test is reported as one that can be unmuted.
      */
     fun collectFilteredOutputs(
         inputArtifact: GroupingStageInputArtifact,
@@ -85,14 +87,12 @@ abstract class AbstractWasmSecondStageGroupingFacade(
             val services = output.testServices
             for (module in services.moduleStructure.modules) {
                 if (ReflectionPackageNameHelperModuleTransformer.isHelperModule(module)) continue
-                if (!services.codegenSuppressionChecker.failuresInModuleAreIgnored(module)) {
-                    val artifact = try {
-                        services.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
-                    } catch (_: Exception) {
-                        continue
-                    }
-                    filteredOutputs.add(PerTestOutput(services, module, artifact))
+                val artifact = try {
+                    services.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
+                } catch (_: Exception) {
+                    continue
                 }
+                filteredOutputs.add(PerTestOutput(services, module, artifact))
             }
         }
         return filteredOutputs
