@@ -1,0 +1,2 @@
+@androidx.annotation.RecentlyNonNull
+open fun bar(@androidx.annotation.RecentlyNonNull string: kotlin.String): kotlin.String

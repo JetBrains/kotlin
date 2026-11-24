@@ -108,6 +108,30 @@ public class FirIdeNormalAnalysisSourceLikeModuleRendererTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("companionBlocks.kt")
+    public void testCompanionBlocks() {
+      run("companionBlocks.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlocksBetweenMembers.kt")
+    public void testCompanionBlocksBetweenMembers() {
+      run("companionBlocksBetweenMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlocksInInterface.kt")
+    public void testCompanionBlocksInInterface() {
+      run("companionBlocksInInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlocksOnly.kt")
+    public void testCompanionBlocksOnly() {
+      run("companionBlocksOnly.kt");
+    }
+
+    @Test
     @TestMetadata("constructorVisibility.kt")
     public void testConstructorVisibility() {
       run("constructorVisibility.kt");
@@ -223,6 +247,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleRendererTestGenerated extends A
     @Test
     public void testAllFilesPresentInEnums() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/renderer/allByPsi/enums"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("enumWithCompanionBlock.kt")
+    public void testEnumWithCompanionBlock() {
+      run("enumWithCompanionBlock.kt");
     }
 
     @Test
@@ -429,6 +459,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleRendererTestGenerated extends A
     @TestMetadata("noExtraLineBetweenMembers.kt")
     public void testNoExtraLineBetweenMembers() {
       run("noExtraLineBetweenMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("noExtraLineBetweenMembersWithCompanionBlock.kt")
+    public void testNoExtraLineBetweenMembersWithCompanionBlock() {
+      run("noExtraLineBetweenMembersWithCompanionBlock.kt");
     }
 
     @Test
