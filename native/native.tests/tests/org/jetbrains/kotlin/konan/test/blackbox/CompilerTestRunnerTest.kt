@@ -15,9 +15,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.testFederation.MustRunAlways
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertContains
@@ -111,14 +113,17 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testWithLibrary() {
-        val library = compileToLibrary(testRoot.resolve("withLibrary/lib"))
-        runTest(
-            "withLibrary",
-            listOf(testRoot.resolve("withLibrary/library_user.kt")),
-            compilationArgs = listOf("-e", "main"),
-            executionArgs = listOf("--ktest_logger=SILENT"),
-            dependencies = listOf(library)
-        )
+        // KT-91210: with incremental compilation, the test binary registers tests from KLIB dependencies
+        Assumptions.assumingThat(!testRunSettings.get<CacheMode>().useIncrementalCompilation) {
+            val library = compileToLibrary(testRoot.resolve("withLibrary/lib"))
+            runTest(
+                "withLibrary",
+                listOf(testRoot.resolve("withLibrary/library_user.kt")),
+                compilationArgs = listOf("-e", "main"),
+                executionArgs = listOf("--ktest_logger=SILENT"),
+                dependencies = listOf(library)
+            )
+        }
     }
 
     @Test

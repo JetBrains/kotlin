@@ -3,6 +3,9 @@
 // INPUT_DATA_FILE: kt33364.in
 // OUTPUT_DATA_FILE: kt33364.out
 
+// Ignored due to KT-91198
+// IGNORE_NATIVE: cacheMode=INCREMENTAL_PER_FILE
+
 // FILE: kt33364.kt
 fun main() {
     val param = 3

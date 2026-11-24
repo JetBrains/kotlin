@@ -4,6 +4,8 @@
 // OUTPUT_DATA_FILE: kt61131.out
 // FILE: kt61131-1.kt
 
+// Ignored due to KT-91198
+// IGNORE_NATIVE: cacheMode=INCREMENTAL_PER_FILE
 
 
 class FooImpl : Foo {
