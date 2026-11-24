@@ -1,2 +1,17 @@
 KtNameReferenceExpression(37,38): 'b'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val b: kotlin.String
+        contextParameters = []
+        callableId = /b
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import org.jetbrains.kotlin.analysis.api.fir.hasNonLocalEntries
 import org.jetbrains.kotlin.analysis.api.fir.utils.callableId
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 
 abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysisApiBasedTest() {
@@ -63,6 +66,7 @@ abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysis
     private fun checkByVisitor(ktFile: KtFile, provider: KotlinFileBasedDeclarationProvider) {
         val topLevelFunctionIds = mutableSetOf<CallableId>()
         val topLevelPropertyIds = mutableSetOf<CallableId>()
+        val topLevelEntryIds = mutableSetOf<CallableId>()
 
         ktFile.accept(object : KtTreeVisitorVoid() {
             override fun visitClass(klass: KtClass) {
@@ -105,6 +109,33 @@ abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysis
                 processCallableDeclaration(property)
             }
 
+            override fun visitDestructuringDeclarationEntry(multiDeclarationEntry: KtDestructuringDeclarationEntry) {
+                super.visitDestructuringDeclarationEntry(multiDeclarationEntry)
+
+                // Entries of top-level destructuring declarations of the file or its script are top-level callables
+                val isTopLevel = multiDeclarationEntry.destructuringDeclaration.hasNonLocalEntries &&
+                        multiDeclarationEntry.containingClassOrObject == null
+                val callableId = CallableId(ktFile.packageFqName, multiDeclarationEntry.nameAsSafeName)
+                val callableNames = provider.getTopLevelCallableNamesInPackage(callableId.packageName)
+
+                val entries = provider.getTopLevelDestructuringDeclarationEntries(callableId)
+
+                if (isTopLevel) {
+                    assertContains(provider.getTopLevelCallableFiles(callableId), ktFile)
+                    assertContains(callableNames, callableId.callableName)
+                    assertContains(entries, multiDeclarationEntry)
+                    topLevelEntryIds += callableId
+                } else {
+                    assertFalse(callableId.callableName in callableNames, "Non-top-level entry $callableId is a top-level callable")
+                    assertFalse(ktFile in provider.getTopLevelCallableFiles(callableId), "Non-top-level entry $callableId is found")
+                    assertFalse(
+                        ktFile in provider.getTopLevelDestructuringDeclarationEntryFiles(callableId),
+                        "Non-top-level entry $callableId is found by entry files",
+                    )
+                    assertFalse(multiDeclarationEntry in entries, "Non-top-level entry $callableId is a top-level entry")
+                }
+            }
+
             private fun processCallableDeclaration(declaration: KtCallableDeclaration) {
                 val callableId = declaration.callableId ?: return
 
@@ -126,7 +157,7 @@ abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysis
             }
         })
 
-        for (callableId in topLevelFunctionIds + topLevelPropertyIds) {
+        for (callableId in topLevelFunctionIds + topLevelPropertyIds + topLevelEntryIds) {
             assertEquals(
                 callableId in topLevelFunctionIds,
                 ktFile in provider.getTopLevelFunctionFiles(callableId),
@@ -137,6 +168,12 @@ abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysis
                 callableId in topLevelPropertyIds,
                 ktFile in provider.getTopLevelPropertyFiles(callableId),
                 "Unexpected `getTopLevelPropertyFiles` result for $callableId",
+            )
+
+            assertEquals(
+                callableId in topLevelEntryIds,
+                ktFile in provider.getTopLevelDestructuringDeclarationEntryFiles(callableId),
+                "Unexpected `getTopLevelDestructuringDeclarationEntryFiles` result for $callableId",
             )
         }
     }
