@@ -33,13 +33,14 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.test.services.TestServices
 
 /**
- * Compares the unhashed declaration IDs of every symbol reachable from the fixture with a golden `.txt` file,
- * in source order, and checks that each ID identifies a single declaration.
+ * Compares the declaration IDs — unhashed and hashed — of every symbol reachable from the fixture with golden
+ * files, in source order, and checks that each ID identifies a single declaration.
  *
- * Declarations that the compiler reports ERROR diagnostics on get those diagnostics appended to their line in
- * the golden file. This pins down how declaration ID generation behaves on code that does not compile:
- * erroneous declarations still get IDs, and the IDs stay unique even when the errors are about declarations
- * clashing.
+ * The unhashed IDs go to `<name>.txt`, the hashed ones to `<name>.hashed.txt`; line-by-line, the two files
+ * correspond, so a signature change shows as the same affected lines in both. Declarations that the compiler
+ * reports ERROR diagnostics on get those diagnostics appended to their line in the golden files. This pins
+ * down how declaration ID generation behaves on code that does not compile: erroneous declarations still get
+ * IDs, and the IDs stay unique even when the errors are about declarations clashing.
  *
  * Runs on the Analysis API test framework in standalone mode, matching the sessions the KDM analyzer itself
  * creates.
@@ -56,7 +57,7 @@ abstract class AbstractUniqueDeclarationIdGoldenTest : AbstractAnalysisApiBasedT
         testServices: TestServices,
     ) {
         val contextFile = mainFile ?: mainModule.ktFiles.firstOrNull() ?: error("The fixture must contain a Kotlin file")
-        val actual = analyzeForTest(contextFile) {
+        analyzeForTest(contextFile) {
             val errorsByDeclaration = HashMap<PsiElement, MutableList<String>>()
             for (file in mainModule.psiFiles.filterIsInstance<KtFile>()) {
                 for (diagnostic in @OptIn(KaExperimentalApi::class) file.diagnostics()) {
@@ -65,9 +66,11 @@ abstract class AbstractUniqueDeclarationIdGoldenTest : AbstractAnalysisApiBasedT
                     errorsByDeclaration.getOrPut(declaration) { mutableListOf() }.add(diagnostic.factoryName)
                 }
             }
-            dumpUnhashedIds(mainModule.psiFiles, errorsByDeclaration)
+            val unhashed = dumpDeclarationIds(mainModule.psiFiles, errorsByDeclaration, hashSignature = false)
+            assertEqualsToTestOutputFile(unhashed, ".txt", variantChain = dokkaJavaSymbolsVariantChain)
+            val hashed = dumpDeclarationIds(mainModule.psiFiles, errorsByDeclaration, hashSignature = true)
+            assertEqualsToTestOutputFile(hashed, ".hashed.txt", variantChain = dokkaJavaSymbolsVariantChain)
         }
-        assertEqualsToTestOutputFile(actual, ".txt", variantChain = dokkaJavaSymbolsVariantChain)
     }
 
     /**
@@ -83,8 +86,8 @@ abstract class AbstractUniqueDeclarationIdGoldenTest : AbstractAnalysisApiBasedT
 }
 
 /**
- * One unhashed declaration ID per line, in the order the declarations appear in each source file, so the golden
- * file reads like the test data it was generated from. Each file first contributes the ID of its package; files
+ * One declaration ID per line, in the order the declarations appear in each source file, so the golden file
+ * reads like the test data it was generated from. Each file first contributes the ID of its package; files
  * sharing a package contribute it once, at the first file that declares it. Symbols with no declaration of their
  * own (default constructors, enum `values`/`valueOf`/`entries`, synthetic Java properties) follow the class body
  * that owns them; property accessors have no ID and are skipped. The order of the files themselves is not part
@@ -94,9 +97,10 @@ abstract class AbstractUniqueDeclarationIdGoldenTest : AbstractAnalysisApiBasedT
  * after the ID, as `// ERROR_NAME, ...`.
  */
 context(session: KaSession)
-internal fun dumpUnhashedIds(
+internal fun dumpDeclarationIds(
     files: Collection<PsiFile>,
     errorsByDeclaration: Map<PsiElement, List<String>> = emptyMap(),
+    hashSignature: Boolean,
 ): String {
     // ID -> the real PSI of every visited declaration. Compiler-generated symbols (default constructors,
     // enum `values`/`entries`, synthetic Java properties) and packages have no real PSI; the generated symbols
@@ -104,7 +108,7 @@ internal fun dumpUnhashedIds(
     val ids = LinkedHashMap<String, MutableList<PsiElement?>>()
     fun add(symbol: KaSymbol) {
         try {
-            val id = generateDeclarationId(symbol, hashSignature = false)
+            val id = generateDeclarationId(symbol, hashSignature = hashSignature)
             ids.getOrPut(id) { mutableListOf() }.add(symbol.realPsi)
         } catch (e: IllegalArgumentException) {
             error("Failed to generate a declaration ID for $symbol: ${e.message}")

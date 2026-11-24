@@ -1,0 +1,21 @@
+sample
+sample/Outer
+sample/Outer#sameName#hDKzvCWNlUY
+sample/Outer#CONSTANT#IfqD6rn7vBU
+sample/Outer#mutable#IfqD6rn7vBU
+sample/Outer#sameName#jIdvB92_wHY
+sample/Outer#genericMember#iy_bybph0mA
+sample/Outer##KK4ERoLQuv0
+sample/Named
+sample/Named#namedMember#jIdvB92_wHY
+sample/Named##KK4ERoLQuv0
+sample/TwoBlocks
+sample/TwoBlocks#Zero#IfqD6rn7vBU
+sample/TwoBlocks#normalize#KK4ERoLQuv0
+sample/TwoBlocks#Dimensions#IfqD6rn7vBU
+sample/TwoBlocks##KK4ERoLQuv0
+sample/WithCompanion
+sample/WithCompanion#interfaceCompanionMember#jIdvB92_wHY
+sample#topLevelExtension#ncADzUOqgOs  // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION
+sample#topLevelExtensionProperty#bOgsXttCnv4  // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION
+sample#extensionOnNamed#Z_Pd5cj6fNk  // UNSUPPORTED_FEATURE, WRONG_MODIFIER_CONTAINING_DECLARATION

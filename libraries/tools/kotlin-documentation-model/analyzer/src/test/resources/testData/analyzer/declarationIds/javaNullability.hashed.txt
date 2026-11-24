@@ -1,0 +1,13 @@
+sample
+sample/JavaClass
+sample/JavaClass#none#VMudsCHwk_c
+sample/JavaClass#notNull#P7n-P2YFLsg
+sample/JavaClass#nullable#T732qx_bee8
+sample/JavaClass#staticNone#MDImCBWrCtw
+sample/JavaClass#staticNotNull#CB-uEgm-Cpk
+sample/JavaClass##KK4ERoLQuv0
+org.jetbrains.annotations
+org.jetbrains.annotations/NotNull
+org.jetbrains.annotations/NotNull##KK4ERoLQuv0
+org.jetbrains.annotations/Nullable
+org.jetbrains.annotations/Nullable##KK4ERoLQuv0

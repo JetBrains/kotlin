@@ -1,0 +1,6 @@
+kotlin.jvm
+kotlin.jvm/JvmName
+kotlin.jvm/JvmName##P7n-P2YFLsg
+kotlin.jvm/JvmName#name#ctE8McQtNZQ
+sample
+sample#g#P7n-P2YFLsg  // CONFLICTING_OVERLOADS

@@ -1,0 +1,11 @@
+sample
+sample/Text
+sample#clashing#P7n-P2YFLsg  // CONFLICTING_OVERLOADS
+sample#clashing#SQP6n4e4G10  // CONFLICTING_OVERLOADS
+sample#unresolvedParameter#s6hwKpfeEZM  // UNRESOLVED_REFERENCE
+sample/BrokenSupertype  // UNRESOLVED_REFERENCE
+sample/BrokenSupertype##KK4ERoLQuv0
+sample#unresolvedBound#7r_waC5V8I0  // UNRESOLVED_REFERENCE
+sample/Container
+sample/Container#brokenMember#s6hwKpfeEZM  // UNRESOLVED_REFERENCE
+sample/Container##KK4ERoLQuv0

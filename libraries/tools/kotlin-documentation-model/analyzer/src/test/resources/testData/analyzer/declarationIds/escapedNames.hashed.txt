@@ -1,0 +1,13 @@
+sample%23
+sample%23/A%23B
+sample%23/A%23B##KK4ERoLQuv0
+sample%23/A%2523B
+sample%23/A%2523B##KK4ERoLQuv0
+sample%23#foo%23bar#KK4ERoLQuv0
+sample%23/when  // CONFLICTING_OVERLOADS
+sample%23/when##KK4ERoLQuv0
+sample%23#when#KK4ERoLQuv0  // CONFLICTING_OVERLOADS
+sample%23#with%20spaces#ctE8McQtNZQ
+sample%23#say%2520hello%2521#KK4ERoLQuv0
+sample%23#hashedClass#hr4ruo0JqvU
+sample%23#escapedHashClass#XiJO9ZvZJ9A
