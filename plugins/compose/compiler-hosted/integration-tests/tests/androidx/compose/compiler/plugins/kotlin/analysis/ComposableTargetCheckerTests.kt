@@ -466,7 +466,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
 
         class Invalid : Base() {
           override val p: Int
-            ${"<!COMPOSE_APPLIER_DECLARATION_MISMATCH!>"}@Composable @ComposableTarget("M") get() = 1${"<!>"}
+            @Composable @ComposableTarget("M") <!COMPOSE_APPLIER_DECLARATION_MISMATCH!>get<!>() = 1
         }
         """
     )

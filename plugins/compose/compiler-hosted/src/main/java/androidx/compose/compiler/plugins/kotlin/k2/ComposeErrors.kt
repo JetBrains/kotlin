@@ -16,8 +16,6 @@
 
 package androidx.compose.compiler.plugins.kotlin.k2
 
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -25,7 +23,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 object ComposeErrors : KtDiagnosticsContainer() {
     // error goes on the composable call in a non-composable function
@@ -65,7 +62,7 @@ object ComposeErrors : KtDiagnosticsContainer() {
     )
 
     val COMPOSABLE_PROPERTY_REFERENCE by error0(
-        ComposeSourceElementPositioningStrategies.DECLARATION_NAME_OR_DEFAULT
+        SourceElementPositioningStrategies.DECLARATION_NAME
     )
 
     val COMPOSABLE_PROPERTY_BACKING_FIELD by error0(
@@ -75,7 +72,7 @@ object ComposeErrors : KtDiagnosticsContainer() {
     val COMPOSABLE_VAR by error0(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     val COMPOSE_INVALID_DELEGATE by error0(
-        ComposeSourceElementPositioningStrategies.DECLARATION_NAME_OR_DEFAULT
+        SourceElementPositioningStrategies.DECLARATION_NAME
     )
 
     val MISMATCHED_COMPOSABLE_IN_EXPECT_ACTUAL by error0(
@@ -92,7 +89,7 @@ object ComposeErrors : KtDiagnosticsContainer() {
     val COMPOSE_APPLIER_PARAMETER_MISMATCH by warning2<String, String>()
 
     val COMPOSE_APPLIER_DECLARATION_MISMATCH by warning0(
-        ComposeSourceElementPositioningStrategies.DECLARATION_NAME_OR_DEFAULT
+        SourceElementPositioningStrategies.DECLARATION_NAME
     )
 
     val COMPOSABLE_INAPPLICABLE_TYPE by error1<ConeKotlinType>()
@@ -112,21 +109,4 @@ object ComposeErrors : KtDiagnosticsContainer() {
     val COMPOSE_CONFIGURATION_WARNING by warningWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = ComposeErrorMessages
-}
-
-object ComposeSourceElementPositioningStrategies {
-    private val PSI_DECLARATION_NAME_OR_DEFAULT: PsiPositioningStrategy<PsiElement> =
-        object : PsiPositioningStrategy<PsiElement>() {
-            override fun mark(element: PsiElement): List<TextRange> {
-                if (element is KtNamedDeclaration) {
-                    return PsiPositioningStrategies.DECLARATION_NAME.mark(element)
-                }
-                return PsiPositioningStrategies.DEFAULT.mark(element)
-            }
-        }
-
-    val DECLARATION_NAME_OR_DEFAULT = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.DECLARATION_NAME,
-        PSI_DECLARATION_NAME_OR_DEFAULT
-    )
 }
