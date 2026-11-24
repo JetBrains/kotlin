@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import javax.inject.Inject
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 
@@ -63,6 +64,63 @@ tasks.apiBuild {
     inputJar.value(embeddableJar.flatMap { it.archiveFile })
 }
 
+/**
+ * Task that copies the resolved protoc executable to [protocExecutable] and makes it
+ * executable, because the artifact in the dependency cache is not executable.
+ */
+abstract class SetupProtocTask : DefaultTask() {
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NAME_ONLY)
+    abstract val protocArtifact: ConfigurableFileCollection
+
+    @get:OutputFile
+    abstract val protocExecutable: RegularFileProperty
+
+    @get:Inject
+    abstract val fileSystemOperations: FileSystemOperations
+
+    @TaskAction
+    fun setup() {
+        val executable = protocExecutable.get().asFile
+        fileSystemOperations.copy {
+            from(protocArtifact.single())
+            into(executable.parentFile)
+            rename { executable.name }
+            filePermissions { unix("rwxr-xr-x") }
+        }
+    }
+}
+
+/**
+ * Task that unpacks the well-known schemas under `google/protobuf` from [protobufLibraries]
+ * into [includeDirectory], so protoc can resolve the schema's `google/protobuf` imports.
+ */
+abstract class SetupProtobufIncludesTask : DefaultTask() {
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NAME_ONLY)
+    abstract val protobufLibraries: ConfigurableFileCollection
+
+    @get:OutputDirectory
+    abstract val includeDirectory: DirectoryProperty
+
+    @get:Inject
+    abstract val archiveOperations: ArchiveOperations
+
+    @get:Inject
+    abstract val fileSystemOperations: FileSystemOperations
+
+    @TaskAction
+    fun setup() {
+        fileSystemOperations.sync {
+            for (library in protobufLibraries) from(archiveOperations.zipTree(library))
+            into(includeDirectory)
+            include("google/protobuf/*.proto")
+        }
+    }
+}
+
 run {
     val protoc = configurations.create("protoc") {
         isCanBeResolved = true
@@ -96,19 +154,13 @@ run {
         implicitDependencies("com.google.protobuf:protoc:$protocVersion:windows-x86_64@exe")
     }
 
-    val protocDirectory = layout.buildDirectory.dir("protoc/bin")
-    val protobufIncludeDirectory = layout.buildDirectory.dir("protoc/include")
-    val setupProtoc = tasks.register<Sync>("setupProtoc") {
-        from(protoc)
-        into(protocDirectory)
-        rename { "protoc" }
-        filePermissions { unix("rwxr-xr-x") }
+    val setupProtoc = tasks.register<SetupProtocTask>("setupProtoc") {
+        protocArtifact.from(protoc)
+        protocExecutable.set(layout.buildDirectory.file("protoc/bin/protoc"))
     }
-    val setupProtobufIncludes = tasks.register<Sync>("setupProtobufIncludes") {
-        from({ protobufIncludes.map { zipTree(it) } }) {
-            include("google/protobuf/*.proto")
-        }
-        into(protobufIncludeDirectory)
+    val setupProtobufIncludes = tasks.register<SetupProtobufIncludesTask>("setupProtobufIncludes") {
+        protobufLibraries.from(protobufIncludes)
+        includeDirectory.set(layout.buildDirectory.dir("protoc/include"))
     }
 
     // Regenerates the checked-in sources
@@ -119,9 +171,12 @@ run {
         val javaOutput = file("src/generated/java")
         val kotlinOutput = file("src/generated/kotlin")
 
-        inputs.file(proto)
-        inputs.files(setupProtoc).withPropertyName("protocExecutable")
-        inputs.files(setupProtobufIncludes).withPropertyName("protobufIncludes")
+        val protocExecutable = setupProtoc.flatMap { it.protocExecutable }
+        val protobufIncludeDirectory = setupProtobufIncludes.flatMap { it.includeDirectory }
+
+        inputs.file(proto).withPropertyName("proto").withPathSensitivity(PathSensitivity.RELATIVE)
+        inputs.file(protocExecutable).withPropertyName("protocExecutable").withPathSensitivity(PathSensitivity.NAME_ONLY)
+        inputs.dir(protobufIncludeDirectory).withPropertyName("protobufIncludes").withPathSensitivity(PathSensitivity.RELATIVE)
         outputs.dir(javaOutput)
         outputs.dir(kotlinOutput)
 
@@ -133,7 +188,7 @@ run {
         }
 
         workingDir(project.projectDir)
-        executable = protocDirectory.get().file("protoc").asFile.absolutePath
+        executable = protocExecutable.get().asFile.absolutePath
         argumentProviders.add {
             listOf(
                 "-I=$protoSources",
