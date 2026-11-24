@@ -208,6 +208,30 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
     )
 
     @Test
+    fun testReportFailureOnGenericAndQualifiedCalls() = check(
+        """
+        import androidx.compose.runtime.*
+
+        @Composable
+        @ComposableTarget("N")
+        fun T() {
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>G<Int><!>()
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>O.M()<!>
+        }
+
+        @Composable
+        @ComposableTarget("M")
+        fun <X> G() {}
+
+        object O {
+            @Composable
+            @ComposableTarget("M")
+            fun M() {}
+        }
+        """
+    )
+
+    @Test
     fun testGenericDisagreement() = check(
         """
         import androidx.compose.runtime.*
