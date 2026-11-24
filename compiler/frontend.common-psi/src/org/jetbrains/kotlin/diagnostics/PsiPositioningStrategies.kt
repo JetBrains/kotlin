@@ -177,10 +177,10 @@ object PsiPositioningStrategies {
     @JvmField
     val DECLARATION_NAME_WITH_VALIDITY_CHECK: PsiPositioningStrategy<KtDeclaration> = DeclarationName(true)
 
-    val DECLARATION_NAME: PsiPositioningStrategy<KtDeclaration> = DeclarationName(false)
+    val DECLARATION_NAME: PsiPositioningStrategy<PsiElement> = DeclarationName(false)
 
-    private class DeclarationName(checkValidity: Boolean) : DeclarationHeader<KtDeclaration>(checkValidity) {
-        override fun mark(element: KtDeclaration): List<TextRange> {
+    private class DeclarationName(checkValidity: Boolean) : DeclarationHeader<PsiElement>(checkValidity) {
+        override fun mark(element: PsiElement): List<TextRange> {
             if (element is KtNamedDeclaration) {
                 val nameIdentifier = element.nameIdentifier
                 if (nameIdentifier != null) {
