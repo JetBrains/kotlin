@@ -80,6 +80,34 @@ FILE: dataStaticConstructorClash.kt
         }
 
     }
+    @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) public final class NoClashByDifferentTypes : R|kotlin/Any| {
+        private constructor(name: R|kotlin/String|): R|NoClashByDifferentTypes| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|NoClashByDifferentTypes.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun of(name: R|kotlin/Int|): R|NoClashByDifferentTypes| {
+                ^of this@R|/NoClashByDifferentTypes.Companion|.R|/NoClashByDifferentTypes.Companion.of|(R|<local>/name|.R|kotlin/Int.toString|())
+            }
+
+            @R|kotlin/jvm/JvmStatic|() public final fun of(name: R|kotlin/String|): R|NoClashByDifferentTypes|
+
+        }
+
+        public open override fun toString(): R|kotlin/String|
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public open override fun hashCode(): R|kotlin/Int|
+
+    }
     @R|lombok/Data|(staticConstructor = String(of) [evaluated = String(of)]) @R|lombok/NoArgsConstructor|(force = Boolean(true) [evaluated = Boolean(true)]) public final class DataWithNoArgs : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|DataWithNoArgs| {
             super<R|kotlin/Any|>()
@@ -168,6 +196,8 @@ FILE: dataStaticConstructorClash.kt
         Q|NoClashByDifferentArity(.<companion>)|.R|/NoClashByDifferentArity.Companion.of|(String(name))
         Q|NoClashByDifferentArity(.<companion>)|.R|/NoClashByDifferentArity.Companion.of|()
         Q|NoClashByDifferentArityInClass(.<companion>)|.R|/NoClashByDifferentArityInClass.Companion.of|(String(name))
+        Q|NoClashByDifferentTypes(.<companion>)|.R|/NoClashByDifferentTypes.Companion.of|(Int(0))
+        Q|NoClashByDifferentTypes(.<companion>)|.R|/NoClashByDifferentTypes.Companion.of|(String(name))
         Q|DataWithNoArgs(.<companion>)|.R|/DataWithNoArgs.Companion.of|()
         Q|DataWithVararg(.<companion>)|.R|/DataWithVararg.Companion.of|()
         Q|DataObject|.R|/DataObject.of|()

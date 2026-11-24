@@ -419,7 +419,7 @@ fun remapTypeParameterBounds(
 internal fun FirClassSymbol<*>.primaryConstructorParameters(): List<FirValueParameter>? {
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     val primaryConstructor = fir.declarations.filterIsInstance<FirConstructor>().firstOrNull { it.isPrimary } ?: return null
-    return primaryConstructor.valueParameters.takeIf { parameters -> parameters.none { it.isVararg } }
+    return primaryConstructor.valueParameters
 }
 
 @OptIn(DirectDeclarationsAccess::class)

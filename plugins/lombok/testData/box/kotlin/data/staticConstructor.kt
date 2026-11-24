@@ -27,7 +27,7 @@ class WithSecondary(val x: Int, var y: String) {
 }
 
 // The factory is not generated when its name is taken, so the primary constructor stays public.
-@Data(staticConstructor = "create")
+<!STATIC_CONSTRUCTOR_ALREADY_EXISTS!>@Data(staticConstructor = "create")<!>
 class NameTaken(val x: Int) {
     companion object {
         fun create(x: Int): NameTaken = NameTaken(x + 100)

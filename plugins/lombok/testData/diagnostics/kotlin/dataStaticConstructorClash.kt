@@ -7,7 +7,7 @@ import lombok.*
 
 // The factory `of(name: String)` clashes with the declared one, so it is not generated:
 // `STATIC_CONSTRUCTOR_ALREADY_EXISTS` is expected here, but is missing.
-@Data(staticConstructor = "of")
+<!STATIC_CONSTRUCTOR_ALREADY_EXISTS!>@Data(staticConstructor = "of")<!>
 class ClashBySameArity(val name: String) {
     companion object {
         fun of(name: String): ClashBySameArity = ClashBySameArity(name + "!")
@@ -15,7 +15,7 @@ class ClashBySameArity(val name: String) {
 }
 
 // The factory `of(name: String)` is an overload of the declared `of()`, so it is generated: no warning is expected.
-<!STATIC_CONSTRUCTOR_ALREADY_EXISTS!>@Data(staticConstructor = "of")<!>
+@Data(staticConstructor = "of")
 class NoClashByDifferentArity(val name: String) {
     companion object {
         fun of(): NoClashByDifferentArity = NoClashByDifferentArity("default")
@@ -23,15 +23,24 @@ class NoClashByDifferentArity(val name: String) {
 }
 
 // The same for a function declared in the class itself.
-<!STATIC_CONSTRUCTOR_ALREADY_EXISTS!>@Data(staticConstructor = "of")<!>
+@Data(staticConstructor = "of")
 class NoClashByDifferentArityInClass(val name: String) {
     fun of() {}
+}
+
+// The factory `of(name: String)` is an overload of the declared `of(name: Int)`, so it is generated: no warning is expected.
+// Unlike getter etc., here Lombok does not perform "clash by parameter number" check
+@Data(staticConstructor = "of")
+class NoClashByDifferentTypes(val name: String) {
+    companion object {
+        fun of(name: Int): NoClashByDifferentTypes = of(name.toString())
+    }
 }
 
 // An explicit constructor annotation replaces the one `@Data` implies, `staticConstructor` included,
 // so `of` is never generated and no warning is expected.
 @Data(staticConstructor = "of")
-<!STATIC_CONSTRUCTOR_ALREADY_EXISTS!>@NoArgsConstructor(force = true)<!>
+@NoArgsConstructor(force = true)
 class DataWithNoArgs(val x: Int) {
     companion object {
         fun of(): DataWithNoArgs = DataWithNoArgs(1)
@@ -39,7 +48,7 @@ class DataWithNoArgs(val x: Int) {
 }
 
 // A vararg parameter: no factory, no warning expected.
-<!STATIC_CONSTRUCTOR_ALREADY_EXISTS!>@Data(staticConstructor = "of")<!>
+@Data(staticConstructor = "of")
 class DataWithVararg(vararg val items: String) {
     companion object {
         fun of(): DataWithVararg = DataWithVararg()
@@ -64,6 +73,8 @@ fun test() {
     NoClashByDifferentArity.of("name")
     NoClashByDifferentArity.of()
     NoClashByDifferentArityInClass.of("name")
+    NoClashByDifferentTypes.of(0)
+    NoClashByDifferentTypes.of("name")
     DataWithNoArgs.of()
     DataWithVararg.of()
     DataObject.of()

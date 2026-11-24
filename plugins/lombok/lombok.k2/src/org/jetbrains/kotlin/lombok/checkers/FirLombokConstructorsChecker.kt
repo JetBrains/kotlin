@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
+import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
 import org.jetbrains.kotlin.lombok.generators.isGeneratedConstructor
@@ -66,7 +67,8 @@ object FirLombokConstructorsChecker : FirRegularClassChecker(MppCheckerKind.Plat
             }
         }
 
-        val staticName = (noArgsConstructor?.staticName ?: data?.staticConstructor)?.let { Name.identifier(it) }
+        val constructorAnnotation = noArgsConstructor ?: data?.asRequiredArgsConstructor(declaration.symbol)
+        val staticName = constructorAnnotation?.staticName?.let { Name.identifier(it) }
         if (staticName != null && declaration.classKind == ClassKind.CLASS && !hasNoArgsWithUninitializedValProperty) {
             // If `staticName` is provided, we generate a companion object with a constructor function marked with `@JvmStatic`.
             // So, we need to check if it's resolved to prevent crashing on codegen.
@@ -79,7 +81,7 @@ object FirLombokConstructorsChecker : FirRegularClassChecker(MppCheckerKind.Plat
                 )
             }
 
-            if (declaresStaticConstructor(context.session, declaration, staticName)) {
+            if (declaresStaticConstructor(context.session, declaration, constructorAnnotation)) {
                 reporter.reportOn(source, LombokFirDiagnostics.STATIC_CONSTRUCTOR_ALREADY_EXISTS, staticName, declaration.name)
                 staticNameIsTaken = true
             }
@@ -134,18 +136,21 @@ object FirLombokConstructorsChecker : FirRegularClassChecker(MppCheckerKind.Plat
     }
 
     /**
-     * Whether the static factory named [staticName] is already taken for [declaration], either by the class itself,
+     * Whether the static factory from [constructorAnnotation] is already taken for [declaration], either by the class itself,
      * where it would shadow the factory, or by the companion object the factory is generated into.
      */
-    private fun declaresStaticConstructor(session: FirSession, declaration: FirRegularClass, staticName: Name): Boolean {
+    private fun declaresStaticConstructor(
+        session: FirSession,
+        declaration: FirRegularClass,
+        constructorAnnotation: ConeLombokAnnotations.ConstructorAnnotation,
+    ): Boolean {
         val containers = listOfNotNull<FirClassSymbol<*>>(declaration.symbol, declaration.symbol.resolvedCompanionObjectSymbol)
 
         return containers.any { container ->
-            container.declaredFunctions(session).any {
-                !it.origin.isGeneratedConstructor &&
-                        it.name == staticName &&
-                        !it.hasReceiverOrContextParameters &&
-                        it.valueParameterSymbols.isEmpty()
+            container.declaredFunctions(session).any { functionSymbol ->
+                !functionSymbol.origin.isGeneratedConstructor &&
+                        !functionSymbol.hasReceiverOrContextParameters &&
+                        constructorAnnotation.matchesGivenFunction(session, declaration.symbol, functionSymbol)
             }
         }
     }
