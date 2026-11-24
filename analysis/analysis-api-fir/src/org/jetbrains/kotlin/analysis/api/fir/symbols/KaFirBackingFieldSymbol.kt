@@ -28,7 +28,7 @@ internal class KaFirBackingFieldSymbol private constructor(
 ) : KaBackingFieldSymbol(), KaFirKtBasedSymbol<KtBackingField, FirBackingFieldSymbol> {
     constructor(declaration: KtBackingField, session: KaFirSession, owningProperty: KaFirKotlinPropertySymbol<*>) : this(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
         backingOwningProperty = owningProperty,
     )

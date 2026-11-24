@@ -43,7 +43,7 @@ internal class KaFirNamedClassSymbol private constructor(
 
     constructor(declaration: KtClassOrObject, session: KaFirSession) : this(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
     )
 
@@ -133,7 +133,7 @@ internal class KaFirNamedClassSymbol private constructor(
                 }
 
                 // No compiler plugin – no new companion object possibility
-                if (!context(analysisSession) { hasDeclarationGeneratorCompilerPlugin(backingPsi) }) {
+                if (!hasDeclarationGeneratorCompilerPlugin(backingPsi, analysisSession = analysisSession)) {
                     return null
                 }
             }

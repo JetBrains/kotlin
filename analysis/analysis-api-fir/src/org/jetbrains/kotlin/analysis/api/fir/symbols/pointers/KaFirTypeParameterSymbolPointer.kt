@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,11 +23,10 @@ internal class KaFirTypeParameterSymbolPointer(
     originalSymbol: KaTypeParameterSymbol?,
 ) : KaFirCachedSymbolPointer<KaTypeParameterSymbol>(originalSymbol) {
     @KaImplementationDetail
-    override fun restoreIfNotCached(analysisSession: KaSession): KaTypeParameterSymbol? {
-        require(analysisSession is KaFirSession)
-        val ownerSymbol = context(analysisSession) {
-            ownerPointer.restoreSymbol()
-        }
+    context(session: KaSession)
+    override fun restoreIfNotCached(): KaTypeParameterSymbol? {
+        require(session is KaFirSession)
+        val ownerSymbol = ownerPointer.restoreSymbol()
 
         return ownerSymbol?.typeParameters?.getOrNull(index)?.takeIf { it.name == name }
     }

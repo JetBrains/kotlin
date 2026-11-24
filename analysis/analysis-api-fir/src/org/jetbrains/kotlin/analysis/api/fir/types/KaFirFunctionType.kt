@@ -134,7 +134,7 @@ private class KaFirFunctionalClassTypePointer(
     override fun restore(session: KaSession): KaFunctionType? {
         requireIsInstance<KaFirSession>(session)
 
-        val coneType = coneTypePointer.restore(session) ?: return null
+        val coneType = coneTypePointer.restore(analysisSession = session) ?: return null
         if (!coneType.isSomeFunctionType(session.resolutionFacade.useSiteFirSession)) {
             return null
         }

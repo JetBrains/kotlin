@@ -13,16 +13,18 @@ import org.jetbrains.kotlin.analysis.test.framework.utils.indented
 import org.jetbrains.kotlin.name.ClassId
 
 object TestAnnotationRenderer {
-    fun renderAnnotations(analysisSession: KaSession, annotations: KaAnnotationList, prefix: String = "annotations: ") = buildString {
-        renderAnnotationsRecursive(analysisSession, annotations, currentMetaAnnotations = null, indent = 0, prefix)
+    context(session: KaSession)
+    fun renderAnnotations(annotations: KaAnnotationList, prefix: String = "annotations: ") = buildString {
+        renderAnnotationsRecursive(annotations, currentMetaAnnotations = null, indent = 0, prefix)
     }
 
-    fun renderAnnotationsWithMeta(analysisSession: KaSession, annotations: KaAnnotationList) = buildString {
-        renderAnnotationsRecursive(analysisSession, annotations, currentMetaAnnotations = setOf(), indent = 0)
+    context(session: KaSession)
+    fun renderAnnotationsWithMeta(annotations: KaAnnotationList) = buildString {
+        renderAnnotationsRecursive(annotations, currentMetaAnnotations = setOf(), indent = 0)
     }
 
+    context(session: KaSession)
     private fun StringBuilder.renderAnnotationsRecursive(
-        analysisSession: KaSession,
         annotations: KaAnnotationList,
         currentMetaAnnotations: Set<ClassId>?,
         indent: Int,
@@ -30,7 +32,7 @@ object TestAnnotationRenderer {
     ) {
         appendLine("$prefix[".indented(indent))
         for (annotation in annotations) {
-            appendLine(KaDebugRenderer().renderAnnotationApplication(analysisSession, annotation).indented(indent = indent + 2))
+            appendLine(KaDebugRenderer().renderAnnotationApplication(session, annotation).indented(indent = indent + 2))
             if (currentMetaAnnotations != null) {
                 val classId = annotation.classId ?: continue
                 if (classId in currentMetaAnnotations) {
@@ -38,9 +40,9 @@ object TestAnnotationRenderer {
                     continue
                 }
 
-                val metaAnnotations = context(analysisSession) { findClass(classId)?.annotations }
+                val metaAnnotations = context(session) { findClass(classId)?.annotations }
                 if (metaAnnotations != null) {
-                    renderAnnotationsRecursive(analysisSession, metaAnnotations, currentMetaAnnotations + classId, indent = indent + 4)
+                    renderAnnotationsRecursive(metaAnnotations, currentMetaAnnotations + classId, indent = indent + 4)
                 } else {
                     appendLine("<unknown meta-annotation ${classId}>".indented(indent + 4))
                 }

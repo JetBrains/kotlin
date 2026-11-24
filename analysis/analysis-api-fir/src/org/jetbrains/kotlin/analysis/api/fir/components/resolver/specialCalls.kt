@@ -57,10 +57,10 @@ context(resolver: KaFirResolver)
 internal fun FirCollectionLiteral.toKaResolutionAttempt(): KaCallResolutionAttempt? {
     val arrayOfSymbol = run {
         val type = resolvedType as? ConeClassLikeType ?: return run {
-            val defaultArrayOfSymbol = context(analysisSession) { arrayOfSymbol(ArrayFqNames.ARRAY_OF_FUNCTION) } ?: return null
+            val defaultArrayOfSymbol = arrayOfSymbol(ArrayFqNames.ARRAY_OF_FUNCTION, analysisSession = analysisSession) ?: return null
             val substitutor = createSubstitutorFromTypeArguments(defaultArrayOfSymbol)
             val partiallyAppliedSymbol = KaFirPartiallyAppliedSymbol(
-                backingSignature = context(analysisSession) { defaultArrayOfSymbol.substitute(substitutor) },
+                backingSignature = defaultArrayOfSymbol.substitute(substitutor, session = analysisSession),
                 dispatchReceiver = null,
                 extensionReceiver = null,
                 contextArguments = emptyList(),
@@ -84,7 +84,7 @@ internal fun FirCollectionLiteral.toKaResolutionAttempt(): KaCallResolutionAttem
             eagerlyReturnNonPrimitive = true
         ) ?: return null
 
-        context(analysisSession) { arrayOfSymbol(factoryName) }
+        arrayOfSymbol(factoryName, analysisSession = analysisSession)
     } ?: return null
 
     val substitutor = createSubstitutorFromTypeArguments(arrayOfSymbol)
@@ -151,9 +151,11 @@ internal fun FirEqualityOperatorCall.toKaResolutionAttempt(psi: KtElement): KaCa
 context(resolver: KaFirResolver)
 private fun FirEqualityOperatorCall.getEqualsSymbol(): FirNamedFunctionSymbol? {
     var equalsSymbol: FirNamedFunctionSymbol? = null
-    processEqualsFunctions(analysisSession.firSession, analysisSession) {
-        if (equalsSymbol != null) return@processEqualsFunctions
-        equalsSymbol = it
+    context(analysisSession) {
+        processEqualsFunctions(analysisSession.firSession) {
+            if (equalsSymbol != null) return@processEqualsFunctions
+            equalsSymbol = it
+        }
     }
 
     return equalsSymbol ?: resolver.equalsSymbolInAny

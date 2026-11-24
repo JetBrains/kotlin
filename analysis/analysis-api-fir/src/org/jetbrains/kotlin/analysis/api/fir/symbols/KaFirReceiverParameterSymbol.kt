@@ -85,9 +85,9 @@ internal class KaFirReceiverParameterSymbol private constructor(
     override fun hashCode(): Int = psiOrSymbolHashCode()
 
     companion object {
+        context(analysisSession: KaFirSession)
         fun create(
             owningBackingPsi: KtCallableDeclaration?,
-            analysisSession: KaFirSession,
             owningKaSymbol: KaCallableSymbol,
         ): KaFirReceiverParameterSymbol? {
             if (owningBackingPsi != null && owningBackingPsi.receiverTypeReference == null) return null

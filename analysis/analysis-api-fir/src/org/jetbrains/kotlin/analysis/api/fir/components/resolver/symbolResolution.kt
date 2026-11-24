@@ -134,13 +134,14 @@ private fun resolveKDocName(psi: KDocName): KaSymbolResolutionAttempt? {
     val selectedFqName = psi.getQualifiedNameAsFqName()
     val containedTagSectionIfSubject = psi.getTagIfSubject()?.knownTag
 
-    val symbols = KDocReferenceResolver.resolveKdocFqName(
-        analysisSession = analysisSession,
-        selectedFqName = selectedFqName,
-        fullFqName = fullFqName,
-        contextElement = psi,
-        containedTagSectionIfSubject = containedTagSectionIfSubject,
-    )
+    val symbols = context(analysisSession) {
+        KDocReferenceResolver.resolveKdocFqName(
+            selectedFqName = selectedFqName,
+            fullFqName = fullFqName,
+            contextElement = psi,
+            containedTagSectionIfSubject = containedTagSectionIfSubject,
+        )
+    }
 
     if (symbols.isEmpty()) return null
     return KaFirSimpleSymbolResolutionSuccess(backingSymbols = symbols.toList())

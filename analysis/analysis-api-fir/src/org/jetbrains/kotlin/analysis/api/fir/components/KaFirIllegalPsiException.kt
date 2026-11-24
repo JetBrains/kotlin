@@ -53,9 +53,10 @@ class KaFirIllegalPsiException private constructor(
 
     @KaImplementationDetail
     companion object {
-        fun create(session: KaSession, psi: PsiElement): KaFirIllegalPsiException = context(session) {
+        context(session: KaSession)
+        fun create(psi: PsiElement): KaFirIllegalPsiException {
             val psiModule = psi.kaModule
-            KaFirIllegalPsiException(useSiteModule, psiModule, psi)
+            return KaFirIllegalPsiException(useSiteModule, psiModule, psi)
         }
 
         /**
@@ -90,13 +91,11 @@ internal fun PsiElement.checkValidity() {
     } else {
         // This `else` branch is a temporal workaround for the swift-export which creates its own KaSession implementation
         // It has to be removed after the swift-export dropped this API violation
-        context(session) {
-            canBeAnalysed()
-        }
+        canBeAnalysed(session = session)
     }
 
     if (!canBeAnalyzed && Registry.`is`("kotlin.analysis.validate.psi.input", true) && !allowIllegalPsiAccess.get()) {
-        throw KaFirIllegalPsiException.create(session, this)
+        throw KaFirIllegalPsiException.create(this, session = session)
     }
 }
 

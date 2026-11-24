@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -37,15 +37,13 @@ internal class KaFirTypeAliasedConstructorMemberPointer(
     private val signature: FirCallableSignature,
     originalSymbol: KaConstructorSymbol?,
 ) : KaFirCachedSymbolPointer<KaConstructorSymbol>(originalSymbol) {
-    override fun restoreIfNotCached(analysisSession: KaSession): KaConstructorSymbol? {
-        require(analysisSession is KaFirSession)
-        val scope = context(analysisSession) {
-            val ownerSymbol = ownerPointer.restoreSymbol() ?: return null
-            val owner = ownerSymbol.firSymbol
-            getSearchScope(analysisSession, owner)
-        } ?: return null
+    context(session: KaSession)
+    override fun restoreIfNotCached(): KaConstructorSymbol? {
+        require(session is KaFirSession)
+        val ownerSymbol = ownerPointer.restoreSymbol() ?: return null
+        val scope = getSearchScope(ownerSymbol.firSymbol, analysisSession = session) ?: return null
 
-        return context(analysisSession) { chooseCandidateAndCreateSymbol(scope) }
+        return chooseCandidateAndCreateSymbol(scope, analysisSession = session)
     }
 
     context(analysisSession: KaFirSession)
@@ -57,7 +55,8 @@ internal class KaFirTypeAliasedConstructorMemberPointer(
         return analysisSession.firSymbolBuilder.functionBuilder.buildConstructorSymbol(firConstructor.symbol)
     }
 
-    private fun getSearchScope(analysisSession: KaFirSession, typeAlias: FirTypeAliasSymbol): FirScope? {
+    context(analysisSession: KaFirSession)
+    private fun getSearchScope(typeAlias: FirTypeAliasSymbol): FirScope? {
         val firSession = analysisSession.firSession
         val scopeSession = analysisSession.getScopeSessionFor(firSession)
 

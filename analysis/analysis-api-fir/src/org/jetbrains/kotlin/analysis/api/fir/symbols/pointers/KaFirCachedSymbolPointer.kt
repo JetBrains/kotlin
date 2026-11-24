@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -46,13 +46,13 @@ internal abstract class KaFirCachedSymbolPointer<out S : KaSymbol>(originalSymbo
             if (value != null && (value as S).token == analysisSession.token) {
                 value
             } else {
-                restoreIfNotCached(analysisSession).also {
+                restoreIfNotCached(session = analysisSession).also {
                     this.cachedSymbol = WeakReference(it)
                 }
             }
         }
-        NOT_CACHED -> restoreIfNotCached(analysisSession)
-        null -> restoreIfNotCached(analysisSession)?.also(::cacheWithIsCacheableCheck)
+        NOT_CACHED -> restoreIfNotCached(session = analysisSession)
+        null -> restoreIfNotCached(session = analysisSession)?.also(::cacheWithIsCacheableCheck)
         else -> errorWithAttachment("Unexpected value: ${cachedSymbol::class.simpleName}") {
             withEntry("cachedSymbol", cachedSymbol.toString())
         }
@@ -78,5 +78,6 @@ internal abstract class KaFirCachedSymbolPointer<out S : KaSymbol>(originalSymbo
             }
     }
 
-    protected abstract fun restoreIfNotCached(analysisSession: KaSession): S?
+    context(session: KaSession)
+    protected abstract fun restoreIfNotCached(): S?
 }

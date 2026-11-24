@@ -88,11 +88,12 @@ internal fun computeAnnotationArguments(annotation: FirAnnotation, builder: KaSy
         symbol.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
     }
 
-    return FirAnnotationValueConverter.toNamedConstantValue(
-        builder.analysisSession,
-        mapAnnotationParameters(annotation),
-        builder,
-    )
+    return context(builder.analysisSession) {
+        FirAnnotationValueConverter.toNamedConstantValue(
+            mapAnnotationParameters(annotation),
+            builder,
+        )
+    }
 }
 
 private fun computeTargetAnnotationArguments(

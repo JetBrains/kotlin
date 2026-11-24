@@ -11,18 +11,8 @@ import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.containingSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.directlyOverriddenSymbols
-import org.jetbrains.kotlin.analysis.api.symbols.symbol
-import org.jetbrains.kotlin.analysis.api.types.KaErrorType
-import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.arrayElementType
-import org.jetbrains.kotlin.analysis.api.types.builtinTypes
-import org.jetbrains.kotlin.analysis.api.types.createInheritanceTypeSubstitutor
-import org.jetbrains.kotlin.analysis.api.types.type
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
@@ -216,7 +206,7 @@ private fun getExpectedTypeOfInfixFunctionParameter(expression: PsiElement): KaT
 context(expressionTypeProvider: KaFirExpressionTypeProvider)
 private fun getExpectedTypeByReturnExpression(expression: PsiElement): KaType? {
     val returnParent = expression.getReturnExpressionWithThisType() ?: return null
-    val targetSymbol = context(analysisSession) { returnParent.resolveSuccessfulSymbol() } ?: return null
+    val targetSymbol = returnParent.resolveSuccessfulSymbol(session = analysisSession) ?: return null
     return targetSymbol.returnType
 }
 
@@ -303,7 +293,7 @@ private fun getExpectedTypeByCallableExpressionBody(expression: PsiElement): KaT
     return null
 }
 
-context(_: KaFirSession)
+context(analysisSession: KaFirSession)
 private fun KaCallableSymbol.returnTypeFromOverride(): KaType? {
     val overriddenSymbol = directlyOverriddenSymbols.firstOrNull() ?: return null
     val overriddenReturnType = overriddenSymbol.returnType.nonErrorTypeOrNull() ?: return null

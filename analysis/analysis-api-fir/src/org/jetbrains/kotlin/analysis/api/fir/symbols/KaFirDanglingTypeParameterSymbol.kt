@@ -45,7 +45,7 @@ internal class KaFirDanglingTypeParameterSymbol private constructor(
 ) : KaFirTypeParameterSymbolBase<KtSimpleNameExpression>() {
     constructor(subject: KtSimpleNameExpression, session: KaFirSession) : this(
         backingPsi = subject,
-        lazyFirSymbol = lazyPub { subject.resolveToDanglingTypeParameterSymbol(session) },
+        lazyFirSymbol = lazyPub { subject.resolveToDanglingTypeParameterSymbol(analysisSession = session) },
         analysisSession = session,
     )
 
@@ -112,14 +112,15 @@ internal fun KtTypeParameterListOwner.danglingTypeConstraintSubjects(): List<KtS
 private fun KtSimpleNameExpression.typeParameterListOwner(): KtTypeParameterListOwner? =
     getStrictParentOfType<KtTypeConstraint>()?.getStrictParentOfType<KtTypeParameterListOwner>()
 
-private fun KtSimpleNameExpression.resolveToDanglingTypeParameterSymbol(session: KaFirSession): FirTypeParameterSymbol {
+context(analysisSession: KaFirSession)
+private fun KtSimpleNameExpression.resolveToDanglingTypeParameterSymbol(): FirTypeParameterSymbol {
     val owner = typeParameterListOwner()
         ?: errorWithAttachment("Constraint subject without a type parameter list owner") {
             withPsiEntry("subject", this@resolveToDanglingTypeParameterSymbol)
         }
 
     val name = getReferencedNameAsName()
-    return owner.resolveToFirSymbol(session.resolutionFacade).typeParameterSymbols?.firstOrNull {
+    return owner.resolveToFirSymbol(analysisSession.resolutionFacade).typeParameterSymbols?.firstOrNull {
         it.name == name && it.origin == FirDeclarationOrigin.Synthetic.DanglingTypeParameter
     } ?: errorWithAttachment("No type parameter for an undeclared constraint subject") {
         withPsiEntry("subject", this@resolveToDanglingTypeParameterSymbol)

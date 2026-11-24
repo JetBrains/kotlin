@@ -261,40 +261,29 @@ private class KaGenericTypePointer<C : ConeKotlinType, T : KaType>(
     override fun restore(session: KaSession): T? {
         requireIsInstance<KaFirSession>(session)
 
-        val coneType = coneTypePointer.restore(session) ?: return null
+        val coneType = coneTypePointer.restore(analysisSession = session) ?: return null
         return typeFactory(coneType, session.firSymbolBuilder)
     }
 }
 
+context(analysisSession: KaFirSession)
 internal fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(
-    analysisSession: KaFirSession,
     discardErrorTypes: Boolean = false,
 ): KaSubstitutor? =
-    createConeSubstitutorFromTypeArguments(analysisSession.firSession, discardErrorTypes)?.toKaSubstitutor(analysisSession)
+    createConeSubstitutorFromTypeArguments(analysisSession.firSession, discardErrorTypes)?.toKaSubstitutor()
 
-internal fun ConeSubstitutor.toKaSubstitutor(analysisSession: KaFirSession): KaSubstitutor =
+context(analysisSession: KaFirSession)
+internal fun ConeSubstitutor.toKaSubstitutor(): KaSubstitutor =
     analysisSession.firSymbolBuilder.typeBuilder.buildSubstitutor(this)
 
 context(analysisSession: KaFirSession)
-internal fun ConeSubstitutor.toKaSubstitutor(): KaSubstitutor = toKaSubstitutor(analysisSession)
+internal fun ConeKotlinType.asKaType(): KaType = analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
 
 context(analysisSession: KaFirSession)
-internal fun ConeKotlinType.asKaType(): KaType = asKaType(analysisSession)
-
-internal fun ConeKotlinType.asKaType(analysisSession: KaFirSession): KaType = analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
-
-context(analysisSession: KaFirSession)
-internal fun ConeDiagnostic.asKaDiagnostic(source: KtSourceElement): KaDiagnosticWithPsi<*>? = asKaDiagnostic(source, analysisSession)
-
-internal fun ConeDiagnostic.asKaDiagnostic(
-    source: KtSourceElement,
-    analysisSession: KaFirSession
-): KaDiagnosticWithPsi<*>? {
-    context(analysisSession) {
-        val firDiagnostic = toFirDiagnostics(analysisSession.firSession, source, callOrAssignmentSource = null).firstOrNull() ?: return null
-        check(firDiagnostic is KtDiagnosticWithSource)
-        return firDiagnostic.asKaDiagnostic()
-    }
+internal fun ConeDiagnostic.asKaDiagnostic(source: KtSourceElement): KaDiagnosticWithPsi<*>? {
+    val firDiagnostic = toFirDiagnostics(analysisSession.firSession, source, callOrAssignmentSource = null).firstOrNull() ?: return null
+    check(firDiagnostic is KtDiagnosticWithSource)
+    return firDiagnostic.asKaDiagnostic()
 }
 
 internal val KaType.coneType: ConeKotlinType
@@ -305,20 +294,15 @@ internal val KaType.coneType: ConeKotlinType
 
 context(analysisSession: KaFirSession)
 internal val KaTypeProjection.coneTypeProjection: ConeTypeProjection
-    get() = coneTypeProjection(analysisSession)
-
-internal fun KaTypeProjection.coneTypeProjection(analysisSession: KaFirSession): ConeTypeProjection = when (this) {
-    is KaStarTypeProjection -> ConeStarProjection
-    is KaTypeArgumentWithVariance -> {
-        analysisSession.firSession.typeContext.createTypeArgument(type.coneType, variance.convertVariance()) as ConeTypeProjection
+    get() = when (this) {
+        is KaStarTypeProjection -> ConeStarProjection
+        is KaTypeArgumentWithVariance -> {
+            analysisSession.firSession.typeContext.createTypeArgument(type.coneType, variance.convertVariance()) as ConeTypeProjection
+        }
     }
-}
 
 context(analysisSession: KaFirSession)
-internal fun createTypeCheckerContext(errorTypePolicy: KaSubtypingErrorTypePolicy): TypeCheckerState =
-    createTypeCheckerContext(errorTypePolicy, analysisSession)
-
-internal fun createTypeCheckerContext(errorTypePolicy: KaSubtypingErrorTypePolicy, analysisSession: KaFirSession): TypeCheckerState {
+internal fun createTypeCheckerContext(errorTypePolicy: KaSubtypingErrorTypePolicy): TypeCheckerState {
     // TODO use correct session here,
     return analysisSession.resolutionFacade.useSiteFirSession.typeContext.newTypeCheckerState(
         errorTypesEqualToAnything = errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT,

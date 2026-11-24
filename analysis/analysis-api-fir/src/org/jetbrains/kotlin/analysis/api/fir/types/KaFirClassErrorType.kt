@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
+import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
+import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
@@ -116,8 +119,8 @@ private class KaFirClassErrorTypePointer(
     override fun restore(session: KaSession): KaClassErrorType? = session.withValidityAssertion {
         requireIsInstance<KaFirSession>(session)
 
-        val coneType = coneTypePointer.restore(session) as? ConeClassLikeType ?: return null
-        val coneDiagnostic = coneDiagnosticPointer.restore(session) ?: return null
+        val coneType = coneTypePointer.restore(analysisSession = session) as? ConeClassLikeType ?: return null
+        val coneDiagnostic = coneDiagnosticPointer.restore(analysisSession = session) ?: return null
 
         return KaFirClassErrorType(coneType, coneDiagnostic, session.firSymbolBuilder)
     }

@@ -161,8 +161,8 @@ internal class KaFirSymbolInformationProvider(
                     KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE, KaClassKind.ANNOTATION_CLASS -> symbol.isCompanion
                     KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> true
                     KaClassKind.ANONYMOUS_OBJECT -> errorWithAttachment("Anonymous object is not expected here since it cannot have ClassId") {
-                        withSymbolAttachment("symbol", analysisSession, symbol)
-                        withSymbolAttachment("containingClass", analysisSession, containingClass)
+                        withSymbolAttachment("symbol", symbol)
+                        withSymbolAttachment("containingClass", containingClass)
                     }
                 }
 

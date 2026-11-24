@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.fir.test.cases.annotations.TestAnnotati
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbols
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.containingFileAnnotations
@@ -64,7 +63,7 @@ abstract class AbstractContainingFileAnnotationProviderTest : AbstractAnalysisAp
                 buildString {
                     for ([symbol, stringRepresentation] in targetSymbols.entries.sortedBy { it.value }) {
                         val annotations = symbol.containingFileAnnotations ?: continue
-                        val annotationsString = TestAnnotationRenderer.renderAnnotations(useSiteSession, annotations, prefix = "")
+                        val annotationsString = TestAnnotationRenderer.renderAnnotations(annotations, prefix = "")
                         append(stringRepresentation).append(": ").appendLine(annotationsString)
                     }
                 }

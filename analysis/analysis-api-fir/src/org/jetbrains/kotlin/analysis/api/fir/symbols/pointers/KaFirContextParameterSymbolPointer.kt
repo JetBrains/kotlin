@@ -21,10 +21,9 @@ internal class KaFirContextParameterSymbolPointer(
     originalSymbol: KaContextParameterSymbol?,
 ) : KaFirCachedSymbolPointer<KaContextParameterSymbol>(originalSymbol) {
     @KaImplementationDetail
-    override fun restoreIfNotCached(analysisSession: KaSession): KaContextParameterSymbol? {
-        val callableSymbol = context(analysisSession) {
-            ownerPointer.restoreSymbol()
-        }
+    context(session: KaSession)
+    override fun restoreIfNotCached(): KaContextParameterSymbol? {
+        val callableSymbol = ownerPointer.restoreSymbol()
 
         return callableSymbol?.contextParameters?.getOrNull(index)?.takeIf { it.name == name }
     }

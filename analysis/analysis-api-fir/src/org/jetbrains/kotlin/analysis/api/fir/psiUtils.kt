@@ -232,18 +232,14 @@ internal val KaSymbolModality.isOpenFromInterface: Boolean
     get() = this == KaSymbolModality.OPEN && (callable.containingClassOrObject as? KtClass)?.isInterface() == true
 
 context(analysisSession: KaFirSession)
-internal fun KtDiagnosticWithSource.asKaDiagnostic(): KaDiagnosticWithPsi<*> = asKaDiagnostic(analysisSession)
-
-internal fun KtDiagnosticWithSource.asKaDiagnostic(analysisSession: KaFirSession): KaDiagnosticWithPsi<*> {
+internal fun KtDiagnosticWithSource.asKaDiagnostic(): KaDiagnosticWithPsi<*> {
     @OptIn(KaUnstableDiagnosticApi::class)
-    return KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as KtDiagnostic)
+    return KT_DIAGNOSTIC_CONVERTER.convert(this as KtDiagnostic)
 }
 
 context(analysisSession: KaFirSession)
-internal fun LLDiagnostic.asKaDiagnostic(): KaDiagnosticWithPsi<*> = asKaDiagnostic(analysisSession)
-
-internal fun LLDiagnostic.asKaDiagnostic(analysisSession: KaFirSession): KaDiagnosticWithPsi<*> {
-    val result = diagnostic.asKaDiagnostic(analysisSession)
+internal fun LLDiagnostic.asKaDiagnostic(): KaDiagnosticWithPsi<*> {
+    val result = diagnostic.asKaDiagnostic()
 
     // Every 'KaFirDiagnostic' implementation is a 'KaAbstractFirDiagnostic'
     (result as KaAbstractFirDiagnostic<*>).isSuppressed = isSuppressed

@@ -115,7 +115,7 @@ private class KaFirCompletionExtensionCandidateChecker(
             )
 
             val firResolvedCall = candidateResolver.resolveSingleCandidate(resolutionParameters) ?: return null
-            val substitutor = firResolvedCall.createSubstitutorFromTypeArguments(analysisSession) ?: return null
+            val substitutor = firResolvedCall.createSubstitutorFromTypeArguments(analysisSession = analysisSession) ?: return null
 
             val receiverCastRequired = firResolvedCall.calleeReference is FirErrorReferenceWithCandidate
 

@@ -53,7 +53,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
 
     constructor(declaration: KtNamedFunction, session: KaFirSession) : this(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
     )
 
@@ -85,7 +85,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {
-            KaFirReceiverParameterSymbol.create(backingPsi, analysisSession, this)
+            KaFirReceiverParameterSymbol.create(backingPsi, this, analysisSession = analysisSession)
         }
 
     override val contextReceivers: List<KaContextReceiver>

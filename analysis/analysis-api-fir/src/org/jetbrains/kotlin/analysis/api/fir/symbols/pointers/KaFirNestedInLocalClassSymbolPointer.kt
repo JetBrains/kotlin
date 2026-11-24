@@ -32,17 +32,19 @@ internal class KaFirNestedInLocalClassSymbolPointer<T : KaClassLikeSymbol>(
 ) : KaFirCachedSymbolPointer<T>(originalSymbol) {
 
     @KaImplementationDetail
-    override fun restoreIfNotCached(analysisSession: KaSession): T? {
-        require(analysisSession is KaFirSession)
-        val containingKaSymbol = containingClassPointer.restoreSymbol(analysisSession) ?: return null
+    context(session: KaSession)
+    override fun restoreIfNotCached(): T? {
+        require(session is KaFirSession)
+        val containingKaSymbol = containingClassPointer.restoreSymbol(session) ?: return null
         val containingFir = containingKaSymbol.firSymbol.fir as? FirRegularClass ?: return null
 
-        return analysisSession.firSession.nestedClassifierScope(containingFir)
+        return session.firSession.nestedClassifierScope(containingFir)
             ?.getClassifiers(name)
-            ?.firstNotNullOfOrNull { kaSymbolIfApplicable(it, analysisSession) }
+            ?.firstNotNullOfOrNull { kaSymbolIfApplicable(it, analysisSession = session) }
     }
 
-    private fun kaSymbolIfApplicable(symbol: FirClassifierSymbol<*>, analysisSession: KaFirSession): T? {
+    context(analysisSession: KaFirSession)
+    private fun kaSymbolIfApplicable(symbol: FirClassifierSymbol<*>): T? {
         if (symbol !is FirClassLikeSymbol || symbol.origin != firOrigin) return null
 
         val classLikeSymbol = analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(symbol)

@@ -20,7 +20,7 @@ internal class KaFirClassInitializerSymbol private constructor(
 ) : KaClassInitializerSymbol(), KaFirKtBasedSymbol<KtClassInitializer, FirAnonymousInitializerSymbol> {
     constructor(declaration: KtClassInitializer, session: KaFirSession) : this(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
     )
 

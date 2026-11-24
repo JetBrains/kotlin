@@ -116,7 +116,7 @@ internal fun KaFirPsiSymbol<*, *>.psiOrSymbolEquals(other: Any?): Boolean {
     if (backingPsi !is KtElement) {
         errorWithAttachment("Unexpected backingPsi class: ${backingPsi?.let { it::class.simpleName }}") {
             withPsiEntry("backingPsi", backingPsi)
-            withSymbolAttachment("this", analysisSession, this@psiOrSymbolEquals)
+            withSymbolAttachment("this", this@psiOrSymbolEquals)
         }
     }
 
@@ -223,7 +223,7 @@ context(symbol: KaFirSymbol<*>)
 internal inline fun <T> KtDeclaration.ifNoStatusCompilerPluginPresent(action: () -> T): T? {
     contract { callsInPlace(action, InvocationKind.AT_MOST_ONCE) }
 
-    return if (context(symbol.analysisSession) { hasDeclarationStatusCompilerPlugin(this) }) {
+    return if (hasDeclarationStatusCompilerPlugin(this, analysisSession = symbol.analysisSession)) {
         null
     } else {
         action()
@@ -278,7 +278,7 @@ internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperT
      */
     val backingPsi = ifSource { backingPsi }
 
-    if (backingPsi?.superTypeListEntries?.isNotEmpty() != false || context(analysisSession) { hasCompilerPluginForSupertypes(backingPsi) }) {
+    if (backingPsi?.superTypeListEntries?.isNotEmpty() != false || hasCompilerPluginForSupertypes(backingPsi, analysisSession = analysisSession)) {
         return firSymbol.superTypesList(builder)
     }
 
@@ -356,11 +356,9 @@ internal inline fun <reified S : KaSymbol> KaFirKtBasedSymbol<*, *>.psiBasedSymb
     }
 }
 
-internal inline fun <reified S : FirBasedSymbol<*>> lazyFirSymbol(
-    declaration: KtDeclaration,
-    session: KaFirSession,
-): Lazy<S> = lazyPub {
-    declaration.resolveToFirSymbolOfType<S>(session.resolutionFacade)
+context(analysisSession: KaFirSession)
+internal inline fun <reified S : FirBasedSymbol<*>> lazyFirSymbol(declaration: KtDeclaration): Lazy<S> = lazyPub {
+    declaration.resolveToFirSymbolOfType<S>(analysisSession.resolutionFacade)
 }
 
 /**
@@ -442,7 +440,7 @@ internal val KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.isO
             val hasModifier = declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)
             when {
                 hasModifier -> true
-                !context(analysisSession) { hasDeclarationStatusCompilerPlugin(declaration) } -> false
+                !hasDeclarationStatusCompilerPlugin(declaration, analysisSession = analysisSession) -> false
                 else -> null
             }
         } ?: firSymbol.isOverride // Resolved status is needed as compiler plugins might add the modifier

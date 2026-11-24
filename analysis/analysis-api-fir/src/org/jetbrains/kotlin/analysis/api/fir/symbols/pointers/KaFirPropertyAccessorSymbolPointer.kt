@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,9 +15,8 @@ internal sealed class KaFirPropertyAccessorSymbolPointer<T : KaPropertyAccessorS
     private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     originalSymbol: T?,
 ) : KaFirCachedSymbolPointer<T>(originalSymbol) {
-    protected fun restorePropertySymbol(analysisSession: KaSession): KaPropertySymbol? = context(analysisSession) {
-        return propertySymbolPointer.restoreSymbol()
-    }
+    context(session: KaSession)
+    protected fun restorePropertySymbol(): KaPropertySymbol? = propertySymbolPointer.restoreSymbol()
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean {
         return this === other ||
@@ -32,8 +31,9 @@ internal class KaFirPropertyGetterSymbolPointer(
     originalSymbol: KaPropertyGetterSymbol?,
 ) : KaFirPropertyAccessorSymbolPointer<KaPropertyGetterSymbol>(propertySymbolPointer, originalSymbol) {
     @KaImplementationDetail
-    override fun restoreIfNotCached(analysisSession: KaSession): KaPropertyGetterSymbol? {
-        return restorePropertySymbol(analysisSession)?.getter
+    context(session: KaSession)
+    override fun restoreIfNotCached(): KaPropertyGetterSymbol? {
+        return restorePropertySymbol()?.getter
     }
 }
 
@@ -42,7 +42,8 @@ internal class KaFirPropertySetterSymbolPointer(
     originalSymbol: KaPropertySetterSymbol?,
 ) : KaFirPropertyAccessorSymbolPointer<KaPropertySetterSymbol>(propertySymbolPointer, originalSymbol) {
     @KaImplementationDetail
-    override fun restoreIfNotCached(analysisSession: KaSession): KaPropertySetterSymbol? {
-        return restorePropertySymbol(analysisSession)?.setter
+    context(session: KaSession)
+    override fun restoreIfNotCached(): KaPropertySetterSymbol? {
+        return restorePropertySymbol()?.setter
     }
 }

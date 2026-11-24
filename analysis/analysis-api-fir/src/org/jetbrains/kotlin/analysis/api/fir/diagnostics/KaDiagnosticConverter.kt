@@ -38,7 +38,8 @@ internal fun interface KaFirDiagnostic5Creator<A, B, C, D, E> : KaFirDiagnosticC
 }
 
 internal class KaDiagnosticConverter(private val conversions: Map<KtDiagnosticFactoryN, KaFirDiagnosticCreator>) {
-    fun convert(analysisSession: KaFirSession, diagnostic: KtDiagnostic): KaFirDiagnostic<*> {
+    context(analysisSession: KaFirSession)
+    fun convert(diagnostic: KtDiagnostic): KaFirDiagnostic<*> {
         val creator = conversions[diagnostic.factory] ?: buildCreatorForPluginDiagnostic(diagnostic.factory)
 
         @Suppress("UNCHECKED_CAST")

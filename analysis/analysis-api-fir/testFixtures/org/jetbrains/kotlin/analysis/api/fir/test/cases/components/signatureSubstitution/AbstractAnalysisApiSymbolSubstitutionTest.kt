@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.signatureSub
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.renderer.render
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.signatures.substitute
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
@@ -29,7 +28,7 @@ abstract class AbstractAnalysisApiSymbolSubstitutionTest : AbstractAnalysisApiBa
         val actual = analyzeForTest(declaration) {
             val symbol = declaration.symbol as KaCallableSymbol
 
-            val substitutor = SubstitutionParser.parseSubstitutor(useSiteSession, mainFile, declaration)
+            val substitutor = SubstitutionParser.parseSubstitutor(mainFile, declaration)
 
             val signature = symbol.substitute(substitutor)
             prettyPrint {

@@ -28,12 +28,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.session.analysisScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.types.classId
-import org.jetbrains.kotlin.analysis.api.types.isNullable
-import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalClass
@@ -77,7 +72,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 internal class KaFirJavaInteroperabilityComponent(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsJavaInteroperabilityComponent {
-    private val jvmTypeMapper: FirJvmTypeMapper by lazy { createFirJvmTypeMapper(analysisSession) }
+    private val jvmTypeMapper: FirJvmTypeMapper by lazy { createFirJvmTypeMapper(analysisSession = analysisSession) }
 
     /**
      * [useSitePosition] is used as pure psi, so there is no need to validate it.
@@ -370,7 +365,7 @@ internal class KaFirJavaInteroperabilityComponent(
      * these methods are represented as a [KaSyntheticJavaPropertySymbol] in the scope.
      * This function retrieves the underlying getter/setter symbol for such cases.
      */
-    context(_: KaFirSession)
+    context(analysisSession: KaFirSession)
     private fun findJavaAccessorMethodBySyntheticProperty(psiMember: PsiMember, name: Name, scope: KaScope): KaCallableSymbol? {
         return scope.findSyntheticJavaPropertyAccessor(name) { propertySymbol, accessorKind, _ ->
             accessorKind.getJavaAccessorSymbol(propertySymbol)?.takeIf { it.psi == psiMember }

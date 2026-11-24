@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,12 +10,8 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.hasRegularGetter
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPropertyGetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.CallableId
@@ -91,12 +87,11 @@ internal class KaFirPropertyGetterSymbol(
     override fun hashCode(): Int = psiOrSymbolHashCode()
 
     companion object {
-        fun create(declaration: KtPropertyAccessor, session: KaFirSession): KaPropertyGetterSymbol {
+        context(analysisSession: KaFirSession)
+        fun create(declaration: KtPropertyAccessor): KaPropertyGetterSymbol {
             val property = declaration.property
-            val owningKaProperty = context(session) {
-                @Suppress("UNCHECKED_CAST")
-                property.symbol as KaFirKotlinPropertySymbol<KtProperty>
-            }
+            @Suppress("UNCHECKED_CAST")
+            val owningKaProperty = property.symbol as KaFirKotlinPropertySymbol<KtProperty>
 
             return if (property.hasRegularGetter) {
                 KaFirPropertyGetterSymbol(owningKaProperty)

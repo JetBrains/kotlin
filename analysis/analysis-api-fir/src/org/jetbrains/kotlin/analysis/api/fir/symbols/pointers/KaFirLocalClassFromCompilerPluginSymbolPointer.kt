@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,12 +27,13 @@ internal class KaFirLocalClassFromCompilerPluginSymbolPointer(
     private val compilerPluginOrigin: GeneratedDeclarationKey,
     originalSymbol: KaNamedClassSymbol?,
 ) : KaFirCachedSymbolPointer<KaNamedClassSymbol>(originalSymbol) {
-    override fun restoreIfNotCached(analysisSession: KaSession): KaNamedClassSymbol? {
-        require(analysisSession is KaFirSession)
-        val call = psiPointer.element?.getOrBuildFirSafe<FirFunctionCall>(analysisSession.resolutionFacade) ?: return null
-        val symbol = analysisSession.firSession.extensionService.callRefinementExtensions
+    context(session: KaSession)
+    override fun restoreIfNotCached(): KaNamedClassSymbol? {
+        require(session is KaFirSession)
+        val call = psiPointer.element?.getOrBuildFirSafe<FirFunctionCall>(session.resolutionFacade) ?: return null
+        val symbol = session.firSession.extensionService.callRefinementExtensions
             .firstNotNullOfOrNull { it.restoreSymbol(call, name) } ?: return null
-        return analysisSession.firSymbolBuilder.classifierBuilder.buildNamedClassSymbol(symbol)
+        return session.firSymbolBuilder.classifierBuilder.buildNamedClassSymbol(symbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean {
