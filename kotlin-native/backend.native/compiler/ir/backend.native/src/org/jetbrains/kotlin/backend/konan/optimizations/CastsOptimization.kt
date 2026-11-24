@@ -721,7 +721,9 @@ internal class CastsOptimization(val context: NativeGenerationState) : BodyLower
                 // We are going to use `this`'s type for a possible decision to optimize some cast/typecheck away.
                 // If the `this`'s type is a user-defined `class`, changing its superclass or superinterfaces must lead to
                 // reevaluating the optimization.
-                // This check is duplicated in IrToBitcode.kt for the case, when genericSafeCasts are disabled.
+                // This check is duplicated:
+                // * in CastsLowering.kt
+                // * in IrToBitcode.kt for the case, when genericSafeCasts are disabled
                 context.dependenciesTracker.add(it.owner)
             }
         }
