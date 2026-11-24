@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.annotations
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -19,8 +18,9 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractAnalysisApiAnnotationsOnDeclarationsTest : AbstractAnalysisApiBasedTest() {
-    open fun renderAnnotations(analysisSession: KaSession, annotations: KaAnnotationList): String {
-        return TestAnnotationRenderer.renderAnnotations(analysisSession, annotations)
+    context(session: KaSession)
+    open fun renderAnnotations(annotations: KaAnnotationList): String {
+        return TestAnnotationRenderer.renderAnnotations(annotations)
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
@@ -29,7 +29,7 @@ abstract class AbstractAnalysisApiAnnotationsOnDeclarationsTest : AbstractAnalys
             val declarationSymbol = contextDeclaration.symbol as KaAnnotatedSymbol
             buildString {
                 appendLine("${KtDeclaration::class.simpleName}: ${contextDeclaration::class.simpleName} ${contextDeclaration.name}")
-                append(renderAnnotations(useSiteSession, declarationSymbol.annotations))
+                append(renderAnnotations(declarationSymbol.annotations))
             }
         }
 

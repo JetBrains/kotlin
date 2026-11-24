@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -93,12 +93,11 @@ internal class KaFirPropertySetterSymbol(
     override fun hashCode(): Int = psiOrSymbolHashCode()
 
     companion object {
-        fun create(declaration: KtPropertyAccessor, session: KaFirSession): KaPropertySetterSymbol {
+        context(analysisSession: KaFirSession)
+        fun create(declaration: KtPropertyAccessor): KaPropertySetterSymbol {
             val property = declaration.property
-            val owningKaProperty = context(session) {
-                @Suppress("UNCHECKED_CAST")
-                property.symbol as KaFirKotlinPropertySymbol<KtProperty>
-            }
+            @Suppress("UNCHECKED_CAST")
+            val owningKaProperty = property.symbol as KaFirKotlinPropertySymbol<KtProperty>
 
             return if (property.hasRegularSetter) {
                 KaFirPropertySetterSymbol(owningKaProperty)

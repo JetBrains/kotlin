@@ -26,15 +26,13 @@ internal class KaBaseKDocReference(element: KDocName) : KDocReference(element), 
         return element.tryResolveSymbols()?.symbols.orEmpty()
     }
 
+    context(session: KaSession)
     override fun getResolvedToPsi(
-        analysisSession: KaSession,
         referenceTargetSymbols: Collection<KaSymbol>,
-    ): Collection<PsiElement> = context(analysisSession) {
-        referenceTargetSymbols.flatMap { symbol ->
-            when (symbol) {
-                is KaSyntheticJavaPropertySymbol -> listOfNotNull(symbol.javaGetterSymbol.psi, symbol.javaSetterSymbol?.psi)
-                is KaSymbol -> getPsiDeclarations(symbol)
-            }
+    ): Collection<PsiElement> = referenceTargetSymbols.flatMap { symbol ->
+        when (symbol) {
+            is KaSyntheticJavaPropertySymbol -> listOfNotNull(symbol.javaGetterSymbol.psi, symbol.javaSetterSymbol?.psi)
+            is KaSymbol -> getPsiDeclarations(symbol)
         }
     }
 

@@ -39,7 +39,7 @@ internal sealed class KaFirLocalOrErrorVariableSymbol(
 ) : KaLocalVariableSymbol(), KaFirKtBasedSymbol<KtDeclaration, FirVariableSymbol<*>> {
     constructor(declaration: KtDeclaration, session: KaFirSession) : this(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
     )
 

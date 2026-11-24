@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,8 +38,9 @@ internal class KaFirJavaSyntheticPropertySymbolPointer(
         return analysisSession.firSymbolBuilder.variableBuilder.buildSyntheticJavaPropertySymbol(syntheticProperty.symbol)
     }
 
-    override fun getSearchScope(analysisSession: KaFirSession, owner: FirClassSymbol<*>): FirScope? {
-        val baseScope = super.getSearchScope(analysisSession, owner) as? FirTypeScope ?: return null
+    context(analysisSession: KaFirSession)
+    override fun getSearchScope(owner: FirClassSymbol<*>): FirScope? {
+        val baseScope = super.getSearchScope(owner) as? FirTypeScope ?: return null
         return if (isSynthetic) {
             FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(
                 session = analysisSession.firSession,

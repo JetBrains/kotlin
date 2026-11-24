@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,15 +23,14 @@ internal class KaFirScriptSymbolPointer(
     originalSymbol: KaScriptSymbol?,
 ) : KaFirCachedSymbolPointer<KaScriptSymbol>(originalSymbol) {
     @KaImplementationDetail
-    override fun restoreIfNotCached(analysisSession: KaSession): KaScriptSymbol? {
-        require(analysisSession is KaFirSession)
-        val file = context(analysisSession) {
-            filePointer.restoreSymbol()?.firSymbol?.fir as? FirFile
-        } ?: return null
+    context(session: KaSession)
+    override fun restoreIfNotCached(): KaScriptSymbol? {
+        require(session is KaFirSession)
+        val file = filePointer.restoreSymbol()?.firSymbol?.fir as? FirFile ?: return null
 
         @OptIn(DirectDeclarationsAccess::class)
         val script = file.declarations.singleOrNull() as? FirScript ?: return null
-        return analysisSession.firSymbolBuilder.buildScriptSymbol(script.symbol)
+        return session.firSymbolBuilder.buildScriptSymbol(script.symbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

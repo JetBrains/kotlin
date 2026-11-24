@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.ge
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getNestedScopePossiblyContainingShortName
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getTypeQualifiedExtensions
 import org.jetbrains.kotlin.analysis.api.scopes.*
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -35,12 +34,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 internal object KDocReferenceResolver {
+    context(session: KaSession)
     fun resolveKdocFqName(
-        analysisSession: KaSession,
         fqName: FqName,
         contextElement: KtElement,
     ): Collection<KaSymbol> = KaAdditionalKDocResolutionProvider.EP_NAME.extensions.flatMap {
-        it.resolveKdocFqName(analysisSession, fqName, contextElement)
+        it.resolveKdocFqName(session, fqName, contextElement)
     }
 
     /**
@@ -84,36 +83,33 @@ internal object KDocReferenceResolver {
      * @return the set of [KaSymbol](s) resolved from the fully qualified name
      *         based on the selected FqName and context element
      */
+    context(session: KaSession)
     internal fun resolveKdocFqName(
-        analysisSession: KaSession,
         selectedFqName: FqName,
         fullFqName: FqName,
         contextElement: KtElement,
         containedTagSectionIfSubject: KDocKnownTag?
     ): Set<KaSymbol> {
-        context(analysisSession) {
-            val contextDeclarationOrSelf = contextElement.getContextElementOrSelf()
-            val fullSymbolsResolved =
-                resolveKdocFqName(fullFqName, contextDeclarationOrSelf, containedTagSectionIfSubject)
-            if (selectedFqName == fullFqName) {
-                return fullSymbolsResolved.mapTo(mutableSetOf()) { it.symbol }
-            }
-            if (fullSymbolsResolved.isEmpty()) {
-                val parentFqName = fullFqName.parent()
-                return resolveKdocFqName(
-                    analysisSession,
-                    selectedFqName = selectedFqName,
-                    fullFqName = parentFqName,
-                    contextElement = contextDeclarationOrSelf,
-                    containedTagSectionIfSubject = null
-                )
-            }
-            val goBackSteps = fullFqName.pathSegments().size - selectedFqName.pathSegments().size
-            check(goBackSteps > 0) {
-                "Selected FqName ($selectedFqName) should be smaller than the whole FqName ($fullFqName)"
-            }
-            return fullSymbolsResolved.mapNotNullTo(mutableSetOf()) { findParentSymbol(it, goBackSteps, selectedFqName) }
+        val contextDeclarationOrSelf = contextElement.getContextElementOrSelf()
+        val fullSymbolsResolved =
+            resolveKdocFqName(fullFqName, contextDeclarationOrSelf, containedTagSectionIfSubject)
+        if (selectedFqName == fullFqName) {
+            return fullSymbolsResolved.mapTo(mutableSetOf()) { it.symbol }
         }
+        if (fullSymbolsResolved.isEmpty()) {
+            val parentFqName = fullFqName.parent()
+            return resolveKdocFqName(
+                selectedFqName = selectedFqName,
+                fullFqName = parentFqName,
+                contextElement = contextDeclarationOrSelf,
+                containedTagSectionIfSubject = null
+            )
+        }
+        val goBackSteps = fullFqName.pathSegments().size - selectedFqName.pathSegments().size
+        check(goBackSteps > 0) {
+            "Selected FqName ($selectedFqName) should be smaller than the whole FqName ($fullFqName)"
+        }
+        return fullSymbolsResolved.mapNotNullTo(mutableSetOf()) { findParentSymbol(it, goBackSteps, selectedFqName) }
     }
 
     /**
@@ -480,7 +476,7 @@ internal object KDocReferenceResolver {
                     .ifNotEmpty { return this.toResolveResults() }
 
                 // Search for symbols provided via `AdditionalKDocResolutionProvider` extension point
-                resolveKdocFqName(useSiteSession, fqName, contextElement).getThrowableSymbols()
+                resolveKdocFqName(fqName, contextElement).getThrowableSymbols()
                     .ifNotEmpty { return this.toResolveResults() }
             }
 
@@ -514,7 +510,7 @@ internal object KDocReferenceResolver {
         }
 
         // Search for symbols provided via `AdditionalKDocResolutionProvider` extension point
-        resolveKdocFqName(useSiteSession, fqName, contextElement)
+        resolveKdocFqName(fqName, contextElement)
             .ifNotEmpty { return this.toResolveResults() }
 
         return emptyList()

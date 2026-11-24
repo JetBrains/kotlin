@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,9 +18,10 @@ internal class KaFirPackageSymbolPointer(
     originalSymbol: KaPackageSymbol?,
 ) : KaFirCachedSymbolPointer<KaPackageSymbol>(originalSymbol) {
     @KaImplementationDetail
-    override fun restoreIfNotCached(analysisSession: KaSession): KaPackageSymbol? {
-        check(analysisSession is KaFirSession)
-        return analysisSession.firSymbolBuilder.createPackageSymbolIfOneExists(fqName)
+    context(session: KaSession)
+    override fun restoreIfNotCached(): KaPackageSymbol? {
+        check(session is KaFirSession)
+        return session.firSymbolBuilder.createPackageSymbolIfOneExists(fqName)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

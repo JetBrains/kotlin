@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
 import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
@@ -16,7 +17,18 @@ import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 
 private val recursionGuard = ThreadLocal.withInitial { false }
 
-internal fun ExceptionAttachmentBuilder.withSymbolAttachment(name: String, analysisSession: KaSession, symbol: KaSymbol) {
+context(component: KaFirSessionComponent)
+internal fun ExceptionAttachmentBuilder.withSymbolAttachment(name: String, symbol: KaSymbol) {
+    withSymbolAttachment(name, symbol, session = component.analysisSession)
+}
+
+context(symbolOwner: KaFirSymbol<*>)
+internal fun ExceptionAttachmentBuilder.withSymbolAttachment(name: String, symbol: KaSymbol) {
+    withSymbolAttachment(name, symbol, session = symbolOwner.analysisSession)
+}
+
+context(session: KaSession)
+internal fun ExceptionAttachmentBuilder.withSymbolAttachment(name: String, symbol: KaSymbol) {
     withEntry(name, symbol) { symbol ->
         if (recursionGuard.get()) {
             return@withEntry "Recursion detected"
@@ -24,14 +36,14 @@ internal fun ExceptionAttachmentBuilder.withSymbolAttachment(name: String, analy
 
         recursionGuard.set(true)
         try {
-            KaDebugRenderer(renderExtra = true).render(analysisSession, symbol)
+            KaDebugRenderer(renderExtra = true).render(session, symbol)
         } finally {
             recursionGuard.set(false)
         }
     }
 
     val psi = symbol.psi
-    val psiModule = psi?.let { context(analysisSession) { it.kaModule } }
+    val psiModule = psi?.kaModule
     withPsiEntry("${name}Psi", psi, psiModule)
 
     if (symbol is KaFirSymbol<*>) {

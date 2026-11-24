@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.types
 
 import org.jetbrains.kotlin.analysis.api.renderer.render
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -25,7 +24,7 @@ abstract class AbstractAnalysisApiSubstitutorsTest : AbstractAnalysisApiBasedTes
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtCallableDeclaration>(contextFile)
-            val substitutor = SubstitutionParser.parseSubstitutor(useSiteSession, contextFile, declaration)
+            val substitutor = SubstitutionParser.parseSubstitutor(contextFile, declaration)
             val symbol = declaration.symbol as KaCallableSymbol
             val type = symbol.returnType
             val substituted = substitutor.substitute(type)

@@ -24,23 +24,22 @@ internal class KaFirPrimaryConstructorSymbolPointer(
     originalSymbol: KaConstructorSymbol?,
 ) : KaFirCachedSymbolPointer<KaConstructorSymbol>(originalSymbol = originalSymbol) {
     @KaImplementationDetail
-    override fun restoreIfNotCached(analysisSession: KaSession): KaConstructorSymbol? {
-        require(analysisSession is KaFirSession)
+    context(session: KaSession)
+    override fun restoreIfNotCached(): KaConstructorSymbol? {
+        require(session is KaFirSession)
 
-        val ownerSymbol = context(analysisSession) {
-            ownerPointer.restoreSymbol()
-        }
+        val ownerSymbol = ownerPointer.restoreSymbol()
 
         val firSymbol = ownerSymbol?.firSymbol
         val constructorSymbol = if (firSymbol?.origin is FirDeclarationOrigin.Java) {
-            val session = analysisSession.firSession
+            val firSession = session.firSession
             // This is required to trigger Java enhancement
-            firSymbol.getPrimaryConstructorSymbol(session, analysisSession.getScopeSessionFor(session))
+            firSymbol.getPrimaryConstructorSymbol(firSession, session.getScopeSessionFor(firSession))
         } else {
-            ownerSymbol?.firSymbol?.primaryConstructorIfAny(analysisSession.firSession)
+            ownerSymbol?.firSymbol?.primaryConstructorIfAny(session.firSession)
         } ?: return null
 
-        return analysisSession.firSymbolBuilder.functionBuilder.buildConstructorSymbol(constructorSymbol)
+        return session.firSymbolBuilder.functionBuilder.buildConstructorSymbol(constructorSymbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

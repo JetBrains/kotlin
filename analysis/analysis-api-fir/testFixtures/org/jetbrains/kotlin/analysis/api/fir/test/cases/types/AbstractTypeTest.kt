@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.Variance
 abstract class AbstractTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = analyzeForTest(mainFile) {
-            val type = getType(useSiteSession, mainFile, mainModule, testServices)
+            val type = getType(mainFile, mainModule, testServices)
 
             buildString {
                 appendLine(KaDebugRenderer(renderTypeByProperties = true).renderType(useSiteSession, type))
@@ -33,8 +33,8 @@ abstract class AbstractTypeTest : AbstractAnalysisApiBasedTest() {
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
+    context(session: KaSession)
     protected abstract fun getType(
-        analysisSession: KaSession,
         ktFile: KtFile,
         module: KtTestModule,
         testServices: TestServices,

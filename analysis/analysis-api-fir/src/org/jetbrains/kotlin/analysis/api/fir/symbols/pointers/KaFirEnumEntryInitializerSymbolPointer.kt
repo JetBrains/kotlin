@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,11 +19,10 @@ internal class KaFirEnumEntryInitializerSymbolPointer(
     originalSymbol: KaFirEnumEntryInitializerSymbol?,
 ) : KaFirCachedSymbolPointer<KaFirEnumEntryInitializerSymbol>(originalSymbol) {
     @KaImplementationDetail
-    override fun restoreIfNotCached(analysisSession: KaSession): KaFirEnumEntryInitializerSymbol? {
-        require(analysisSession is KaFirSession)
-        val owner = context(analysisSession) {
-            ownerPointer.restoreSymbol()
-        }
+    context(session: KaSession)
+    override fun restoreIfNotCached(): KaFirEnumEntryInitializerSymbol? {
+        require(session is KaFirSession)
+        val owner = ownerPointer.restoreSymbol()
         return owner?.initializer as? KaFirEnumEntryInitializerSymbol
     }
 

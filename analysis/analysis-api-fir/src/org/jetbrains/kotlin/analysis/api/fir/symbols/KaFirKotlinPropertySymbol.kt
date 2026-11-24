@@ -181,31 +181,26 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
     override fun hashCode(): Int = psiOrSymbolHashCode()
 
     companion object {
-        fun create(
-            declaration: KtProperty,
-            session: KaFirSession,
-        ): KaKotlinPropertySymbol = KaFirKotlinPropertyKtPropertyBasedSymbol(declaration, session)
+        context(analysisSession: KaFirSession)
+        fun create(declaration: KtProperty): KaKotlinPropertySymbol = KaFirKotlinPropertyKtPropertyBasedSymbol(declaration, analysisSession)
 
-        fun create(
-            declaration: KtParameter,
-            session: KaFirSession,
-        ): KaKotlinPropertySymbol = KaFirKotlinPropertyKtParameterBasedSymbol(declaration, session)
+        context(analysisSession: KaFirSession)
+        fun create(declaration: KtParameter): KaKotlinPropertySymbol = KaFirKotlinPropertyKtParameterBasedSymbol(declaration, analysisSession)
 
-        fun create(
-            declaration: KtDestructuringDeclarationEntry,
-            session: KaFirSession,
-        ): KaKotlinPropertySymbol = KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol(declaration, session)
+        context(analysisSession: KaFirSession)
+        fun create(declaration: KtDestructuringDeclarationEntry): KaKotlinPropertySymbol = KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol(declaration, analysisSession)
 
-        fun create(symbol: FirPropertySymbol, session: KaFirSession): KaKotlinPropertySymbol {
+        context(analysisSession: KaFirSession)
+        fun create(symbol: FirPropertySymbol): KaKotlinPropertySymbol {
             assert(symbol is FirRegularPropertySymbol)
             check(symbol !is FirSyntheticPropertySymbol)
             check(symbol.fir !is FirSyntheticProperty)
 
             return when (val psi = symbol.fir.getAllowedPsi()) {
-                is KtProperty -> create(psi, session)
-                is KtParameter -> create(psi, session)
-                is KtDestructuringDeclarationEntry -> create(psi, session)
-                else -> KaFirKotlinPropertyKtPropertyBasedSymbol(symbol, session)
+                is KtProperty -> create(psi)
+                is KtParameter -> create(psi)
+                is KtDestructuringDeclarationEntry -> create(psi)
+                else -> KaFirKotlinPropertyKtPropertyBasedSymbol(symbol, analysisSession)
             }
         }
 
@@ -228,7 +223,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
 
     constructor(declaration: KtProperty, session: KaFirSession) : super(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
     ) {
         require(!declaration.isLocal)
@@ -251,7 +246,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {
-            KaFirReceiverParameterSymbol.create(backingPsi, analysisSession, this)
+            KaFirReceiverParameterSymbol.create(backingPsi, this, analysisSession = analysisSession)
         }
 
     override val contextParameters: List<KaContextParameterSymbol>
@@ -573,7 +568,7 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
 private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : KaFirKotlinPropertySymbol<KtDestructuringDeclarationEntry> {
     constructor(declaration: KtDestructuringDeclarationEntry, session: KaFirSession) : super(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
     )
 

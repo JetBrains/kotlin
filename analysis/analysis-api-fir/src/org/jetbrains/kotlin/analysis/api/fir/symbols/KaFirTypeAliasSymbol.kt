@@ -37,7 +37,7 @@ internal class KaFirTypeAliasSymbol private constructor(
 ) : KaTypeAliasSymbol(), KaFirKtBasedSymbol<KtTypeAlias, FirTypeAliasSymbol> {
     constructor(declaration: KtTypeAlias, session: KaFirSession) : this(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
     )
 

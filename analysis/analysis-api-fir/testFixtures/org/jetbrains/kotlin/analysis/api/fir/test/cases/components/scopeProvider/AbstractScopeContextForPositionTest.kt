@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 import org.jetbrains.kotlin.analysis.api.components.scopeContext
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.scopeProvider.TestScopeRenderer.renderForTests
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -42,7 +41,7 @@ abstract class AbstractScopeContextForPositionTest : AbstractAnalysisApiBasedTes
         printPretty: Boolean = false,
     ): String = prettyPrint {
         appendLine("element: ${element.text}")
-        renderForTests(useSiteSession, scopeContext, this@prettyPrint, printPretty) { scopeKind ->
+        renderForTests(scopeContext, this@prettyPrint, printPretty) { scopeKind ->
             scopeKind !is KaScopeKind.DefaultSimpleImportingScope && scopeKind !is KaScopeKind.DefaultStarImportingScope
         }
     }

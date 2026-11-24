@@ -27,7 +27,7 @@ internal open class KaFirAnonymousObjectSymbol private constructor(
 
     constructor(declaration: KtObjectDeclaration, session: KaFirSession) : this(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
     )
 

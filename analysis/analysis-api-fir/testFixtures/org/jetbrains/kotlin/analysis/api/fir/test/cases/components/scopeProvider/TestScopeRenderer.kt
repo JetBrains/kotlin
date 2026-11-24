@@ -28,57 +28,55 @@ import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.name.Name
 
 internal object TestScopeRenderer {
+    context(session: KaSession)
     fun renderForTests(
-        analysisSession: KaSession,
         scopeContext: KaScopeContext,
         printer: PrettyPrinter,
         printPretty: Boolean = false,
         fullyPrintScope: (KaScopeKind) -> Boolean,
     ) {
-        context(analysisSession) {
-            with(printer) {
-                appendLine("implicit values:")
-                withIndent {
-                    printCollectionIfNotEmpty(scopeContext.implicitValues, separator = "\n\n", postfix = "\n\n") { implicitValue ->
-                        append(renderFrontendIndependentKClassNameOf(implicitValue))
-                        appendLine(':')
-                        withIndent {
-                            appendLine("${KaScopeImplicitValue::scopeIndexInTower.name} = ${implicitValue.scopeIndexInTower}")
-                            appendLine("${KaScopeImplicitValue::type.name} = ${renderType(implicitValue.type, printPretty)}")
-                            when (implicitValue) {
-                                is KaScopeImplicitArgumentValue -> {
-                                    appendSymbol(KaScopeImplicitArgumentValue::symbol.name, printer, implicitValue.symbol)
-                                }
+        with(printer) {
+            appendLine("implicit values:")
+            withIndent {
+                printCollectionIfNotEmpty(scopeContext.implicitValues, separator = "\n\n", postfix = "\n\n") { implicitValue ->
+                    append(renderFrontendIndependentKClassNameOf(implicitValue))
+                    appendLine(':')
+                    withIndent {
+                        appendLine("${KaScopeImplicitValue::scopeIndexInTower.name} = ${implicitValue.scopeIndexInTower}")
+                        appendLine("${KaScopeImplicitValue::type.name} = ${renderType(implicitValue.type, printPretty)}")
+                        when (implicitValue) {
+                            is KaScopeImplicitArgumentValue -> {
+                                appendSymbol(KaScopeImplicitArgumentValue::symbol.name, printer, implicitValue.symbol)
+                            }
 
-                                is KaScopeImplicitReceiverValue -> {
-                                    appendSymbol(KaScopeImplicitReceiverValue::ownerSymbol.name, printer, implicitValue.ownerSymbol)
+                            is KaScopeImplicitReceiverValue -> {
+                                appendSymbol(KaScopeImplicitReceiverValue::ownerSymbol.name, printer, implicitValue.ownerSymbol)
 
-                                    if (implicitValue is KaImplicitReceiver) {
-                                        appendLine()
-                                        appendLine("${KaImplicitReceiver::label.name} = ${implicitValue.label}")
-                                    }
+                                if (implicitValue is KaImplicitReceiver) {
+                                    appendLine()
+                                    appendLine("${KaImplicitReceiver::label.name} = ${implicitValue.label}")
                                 }
                             }
                         }
                     }
                 }
+            }
 
-                appendLine("scopes:")
+            appendLine("scopes:")
+            withIndent {
+                renderScopeContext(scopeContext, printer, printPretty, fullyPrintScope)
+            }
+
+            if (scopeContext.possibleSmartCasts.isNotEmpty()) {
+                appendLine("possible smart casts:")
                 withIndent {
-                    renderScopeContext(scopeContext, printer, printPretty, fullyPrintScope)
-                }
-
-                if (scopeContext.possibleSmartCasts.isNotEmpty()) {
-                    appendLine("possible smart casts:")
-                    withIndent {
-                        printCollection(scopeContext.possibleSmartCasts, separator = "\n\n") { smartCast ->
-                            appendSmartCastSource(KaSmartCastPossibility::source.name, smartCast.source, printer)
-                            append(KaSmartCastPossibility::isStable.name).append(" = ").append(smartCast.isStable.toString()).appendLine()
-                            append(KaSmartCastPossibility::smartCastTypes.name).appendLine(":")
-                            printCollection(smartCast.smartCastTypes, separator = "\n") { type ->
-                                withIndent {
-                                    append(renderType(type, printPretty))
-                                }
+                    printCollection(scopeContext.possibleSmartCasts, separator = "\n\n") { smartCast ->
+                        appendSmartCastSource(KaSmartCastPossibility::source.name, smartCast.source, printer)
+                        append(KaSmartCastPossibility::isStable.name).append(" = ").append(smartCast.isStable.toString()).appendLine()
+                        append(KaSmartCastPossibility::smartCastTypes.name).appendLine(":")
+                        printCollection(smartCast.smartCastTypes, separator = "\n") { type ->
+                            withIndent {
+                                append(renderType(type, printPretty))
                             }
                         }
                     }

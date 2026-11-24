@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,7 +35,7 @@ internal class KaFirStarImportingScope(
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import: Import ->
             if (import.relativeClassName == null) { // top level callable
-                DeclarationsInPackageProvider.getTopLevelCallableNamesInPackageProvider(import.packageFqName, analysisSession)
+                DeclarationsInPackageProvider.getTopLevelCallableNamesInPackageProvider(import.packageFqName, analysisSession = analysisSession)
             } else { //member
                 val classId = import.resolvedClassId ?: error("Class id should not be null as relativeClassName is not null")
                 firScope.getStaticsScope(classId)?.getCallableNames().orEmpty()
@@ -50,7 +50,7 @@ internal class KaFirStarImportingScope(
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import ->
             if (import.relativeClassName == null) {
-                DeclarationsInPackageProvider.getTopLevelClassifierNamesInPackageProvider(import.packageFqName, analysisSession)
+                DeclarationsInPackageProvider.getTopLevelClassifierNamesInPackageProvider(import.packageFqName, analysisSession = analysisSession)
             } else {
                 val classId = import.resolvedClassId ?: error("Class id should not be null as relativeClassName is not null")
                 firScope.getStaticsScope(classId)?.getClassifierNames().orEmpty()

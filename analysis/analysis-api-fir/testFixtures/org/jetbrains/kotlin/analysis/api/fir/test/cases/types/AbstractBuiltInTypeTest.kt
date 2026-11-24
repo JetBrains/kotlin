@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,15 +20,14 @@ abstract class AbstractBuiltInTypeTest : AbstractTypeTest() {
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(Directives)
 
-    override fun getType(analysisSession: KaSession, ktFile: KtFile, module: KtTestModule, testServices: TestServices): KaType {
-        context(analysisSession) {
-            val builtInTypeName = module.testModule.directives.singleValue(Directives.BUILTIN_TYPE_NAME)
-            val typeMethod = builtinTypes::class.java.methods.singleOrNull {
-                it.name == "get" + builtInTypeName.capitalizeAsciiOnly()
-            }!!
-            typeMethod.isAccessible = true
-            return typeMethod.invoke(builtinTypes) as KaType
-        }
+    context(session: KaSession)
+    override fun getType(ktFile: KtFile, module: KtTestModule, testServices: TestServices): KaType {
+        val builtInTypeName = module.testModule.directives.singleValue(Directives.BUILTIN_TYPE_NAME)
+        val typeMethod = builtinTypes::class.java.methods.singleOrNull {
+            it.name == "get" + builtInTypeName.capitalizeAsciiOnly()
+        }!!
+        typeMethod.isAccessible = true
+        return typeMethod.invoke(builtinTypes) as KaType
     }
 
     object Directives : SimpleDirectivesContainer() {

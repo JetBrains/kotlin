@@ -93,7 +93,7 @@ context(sessionOwner: KaFirSymbol<*>)
 internal inline fun <reified T : KaSymbol> KaSymbol.createOwnerPointer(): KaSymbolPointer<T> {
     val containingSymbol = context(sessionOwner.analysisSession) { this.containingDeclaration }
         ?: errorWithAttachment("Non-null containingDeclaration is expected for a member declaration for `${this@createOwnerPointer::class}`, expecting `${T::class}` type of owner") {
-            withSymbolAttachment("child", sessionOwner.analysisSession, this@createOwnerPointer)
+            withSymbolAttachment("child", this@createOwnerPointer)
         }
 
     requireIsInstance<T>(containingSymbol)

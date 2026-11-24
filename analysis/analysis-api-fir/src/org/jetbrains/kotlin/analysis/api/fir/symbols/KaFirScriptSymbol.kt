@@ -25,7 +25,7 @@ internal class KaFirScriptSymbol private constructor(
 ) : KaScriptSymbol(), KaFirKtBasedSymbol<KtScript, FirScriptSymbol> {
     constructor(declaration: KtScript, session: KaFirSession) : this(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
     )
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,12 +14,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.ProjectionKind.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 /**
@@ -64,7 +62,8 @@ internal class ConeTypeRecursionGuard {
         return pointer
     }
 
-    fun <T : ConeKotlinType> restorePointer(pointer: ConeTypePointer<T>, session: KaFirSession): T? {
+    context(analysisSession: KaFirSession)
+    fun <T : ConeKotlinType> restorePointer(pointer: ConeTypePointer<T>): T? {
         when (val state = restorationCache[pointer]) {
             is RestorationState.Completed<*> -> {
                 // Already restored, return the cached result
@@ -82,7 +81,7 @@ internal class ConeTypeRecursionGuard {
         }
 
         restorationCache[pointer] = RestorationState.InProgress<T>()
-        val restoredType = pointer.restore(session, guard = this)
+        val restoredType = pointer.restore(guard = this)
         restorationCache[pointer] = RestorationState.Completed(restoredType)
 
         return restoredType
@@ -111,16 +110,18 @@ private class ConeTypePointerWrapper<T : ConeKotlinType> {
         this.initialized = true
     }
 
-    fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): T? {
+    context(analysisSession: KaFirSession)
+    fun restore(guard: ConeTypeRecursionGuard): T? {
         require(initialized) { "PointerWrapper not initialized" }
         val pointer = pointer ?: return null
-        return guard.restorePointer(pointer, session)
+        return guard.restorePointer(pointer)
     }
 }
 
 private class DelegatingConeTypePointer<T : ConeKotlinType>(private val wrapper: ConeTypePointerWrapper<T>) : ConeTypePointer<T> {
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): T? {
-        return wrapper.restore(session, guard)
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): T? {
+        return wrapper.restore(guard)
     }
 }
 
@@ -159,7 +160,8 @@ internal interface ConeTypePointer<out T : ConeKotlinType> {
      * Restores the original type when possible, using a recursion guard to handle recursive types.
      * Returns `null` if restoration is impossible.
      */
-    fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard = ConeTypeRecursionGuard()): T?
+    context(analysisSession: KaFirSession)
+    fun restore(guard: ConeTypeRecursionGuard = ConeTypeRecursionGuard()): T?
 }
 
 private class ConeClassLikeTypePointer(
@@ -177,15 +179,16 @@ private class ConeClassLikeTypePointer(
     private val hasReceiverType = coneType.receiverType(builder.rootSession) != null
     private val contextParameterNumber = coneType.contextParameterNumberForFunctionType
 
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeClassLikeTypeImpl? {
-        val classLikeSymbol = lookupTag.toSymbol(session.firSession) ?: return null
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): ConeClassLikeTypeImpl? {
+        val classLikeSymbol = lookupTag.toSymbol(analysisSession.firSession) ?: return null
         when (classLikeSymbol) {
             is FirTypeAliasSymbol -> if (!isTypeAlias) return null
             is FirClassSymbol -> if (isTypeAlias) return null
         }
 
-        val typeArguments = typeArgumentPointers.map { it.restore(session, guard) ?: return null }
-        val abbreviatedType = abbreviatedTypePointer?.let { guard.restorePointer(it, session) ?: return null }
+        val typeArguments = typeArgumentPointers.map { it.restore(guard) ?: return null }
+        val abbreviatedType = abbreviatedTypePointer?.let { guard.restorePointer(it) ?: return null }
 
         val attributes = buildList {
             if (abbreviatedType != null) {
@@ -215,8 +218,9 @@ private class ConeTypeParameterTypePointer(
     private val typeParameterPointer = builder.classifierBuilder.buildTypeParameterSymbol(coneType.lookupTag.symbol).createPointer()
     private val isNullable = coneType.isMarkedNullable
 
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeTypeParameterType? {
-        val typeParameterSymbol = typeParameterPointer.restoreSymbol(session) ?: return null
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): ConeTypeParameterType? {
+        val typeParameterSymbol = typeParameterPointer.restoreSymbol(analysisSession) ?: return null
 
         val lookupTag = ConeTypeParameterLookupTag(typeParameterSymbol.firSymbol)
         return ConeTypeParameterType(lookupTag, isNullable)
@@ -239,8 +243,9 @@ private class ConeTypeVariableTypePointer(
         }
     }
 
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeTypeVariableType? {
-        val typeParameterSymbol = typeParameterSymbolPointer?.let { it.restoreSymbol(session) ?: return null }
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): ConeTypeVariableType? {
+        val typeParameterSymbol = typeParameterSymbolPointer?.let { it.restoreSymbol(analysisSession) ?: return null }
 
         val typeConstructor = ConeTypeVariableTypeConstructor(debugName, typeParameterSymbol?.firSymbol?.toLookupTag())
         return ConeTypeVariableType(isMarkedNullable, typeConstructor)
@@ -267,12 +272,13 @@ private class ConeCapturedTypePointer(
         }
     }
 
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeCapturedType? {
-        val lowerType = lowerTypePointer?.let { guard.restorePointer(it, session) ?: return null }
-        val constructorProjection = coneProjectionPointer.restore(session, guard) ?: return null
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): ConeCapturedType? {
+        val lowerType = lowerTypePointer?.let { guard.restorePointer(it) ?: return null }
+        val constructorProjection = coneProjectionPointer.restore(guard) ?: return null
 
         val constructorTypeParameterMarker = if (typeParameterSymbolPointer != null) {
-            val typeParameterSymbol = context(session) { typeParameterSymbolPointer.restoreSymbol() } ?: return null
+            val typeParameterSymbol = typeParameterSymbolPointer.restoreSymbol() ?: return null
             typeParameterSymbol.firSymbol.toLookupTag()
         } else {
             null
@@ -298,8 +304,9 @@ private class ConeCapturedTypePointer(
      * 2. Restore its supertypes, which may be the same as the type itself
      * 3. Make sure to *not* call this function for restored supertypes, as it would lead to an infinite loop
      */
-    fun restoreConstructorSupertypes(coneType: ConeCapturedType, session: KaFirSession, guard: ConeTypeRecursionGuard) {
-        val constructorSupertypes = constructorSupertypePointers?.restore(session, guard)
+    context(analysisSession: KaFirSession)
+    fun restoreConstructorSupertypes(coneType: ConeCapturedType, guard: ConeTypeRecursionGuard) {
+        val constructorSupertypes = constructorSupertypePointers?.restore(guard)
         coneType.constructor.supertypes = constructorSupertypes
     }
 }
@@ -312,9 +319,10 @@ private class ConeIntersectionTypePointer(
     private val intersectedTypePointers = coneType.intersectedTypes.map { it.createPointer(builder, guard) }
     private val upperBoundForApproximationPointer = coneType.upperBoundForApproximation?.createPointer(builder, guard)
 
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeIntersectionType? {
-        val intersectedTypes = intersectedTypePointers.restore(session, guard) ?: return null
-        val upperBoundForApproximation = upperBoundForApproximationPointer?.let { guard.restorePointer(it, session) ?: return null }
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): ConeIntersectionType? {
+        val intersectedTypes = intersectedTypePointers.restore(guard) ?: return null
+        val upperBoundForApproximation = upperBoundForApproximationPointer?.let { guard.restorePointer(it) ?: return null }
 
         @OptIn(DelicateIntersectionConstructor::class)
         return ConeIntersectionType(intersectedTypes, upperBoundForApproximation)
@@ -329,9 +337,10 @@ private abstract class AbstractConeFlexibleTypePointer<T : ConeFlexibleType>(
     private val lowerBoundPointer = coneType.lowerBound.createPointer(builder, guard)
     private val upperBoundPointer = coneType.upperBound.createPointer(builder, guard)
 
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): T? {
-        val lowerBound = guard.restorePointer(lowerBoundPointer, session) ?: return null
-        val upperBound = guard.restorePointer(upperBoundPointer, session) ?: return null
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): T? {
+        val lowerBound = guard.restorePointer(lowerBoundPointer) ?: return null
+        val upperBound = guard.restorePointer(upperBoundPointer) ?: return null
 
         return restore(lowerBound, upperBound)
     }
@@ -366,8 +375,9 @@ private class ConeDefinitelyNotNullTypePointer(
 ) : ConeTypePointer<ConeDefinitelyNotNullType> {
     private val originalTypePointer = coneType.original.createPointer(builder, guard)
 
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDefinitelyNotNullType? {
-        val originalType = guard.restorePointer(originalTypePointer, session) ?: return null
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): ConeDefinitelyNotNullType? {
+        val originalType = guard.restorePointer(originalTypePointer) ?: return null
         return ConeDefinitelyNotNullType(originalType)
     }
 }
@@ -382,8 +392,9 @@ private class ConeIntegerLiteralConstantTypePointer(
     private val isUnsigned = coneType.isUnsigned
     private val isMarkedNullable = coneType.isMarkedNullable
 
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeIntegerLiteralConstantType? {
-        val possibleTypes = possibleTypePointers.restore(session, guard) ?: return null
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): ConeIntegerLiteralConstantType? {
+        val possibleTypes = possibleTypePointers.restore(guard) ?: return null
         return ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, isMarkedNullable)
     }
 }
@@ -394,7 +405,8 @@ private class ConeIntegerConstantOperatorTypePointer(
     private val isUnsigned = coneType.isUnsigned
     private val isMarkedNullable = coneType.isMarkedNullable
 
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeIntegerConstantOperatorType {
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): ConeIntegerConstantOperatorType {
         return ConeIntegerConstantOperatorTypeImpl(isUnsigned, isMarkedNullable)
     }
 }
@@ -410,10 +422,11 @@ private class ConeErrorTypePointer(
     private val typeArgumentPointers = coneType.typeArguments.map { ConeTypeProjectionPointer(it, builder, guard) }
     private val nullable = coneType.nullable
 
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeErrorType? {
-        val coneDiagnostic = coneDiagnosticPointer.restore(session) ?: return null
-        val delegatedConeType = delegatedTypePointer?.let { guard.restorePointer(it, session) ?: return null }
-        val typeArguments = typeArgumentPointers.restore(session, guard) ?: return null
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): ConeErrorType? {
+        val coneDiagnostic = coneDiagnosticPointer.restore() ?: return null
+        val delegatedConeType = delegatedTypePointer?.let { guard.restorePointer(it) ?: return null }
+        val typeArguments = typeArgumentPointers.restore(guard) ?: return null
 
         return ConeErrorType(
             diagnostic = coneDiagnostic,
@@ -426,13 +439,15 @@ private class ConeErrorTypePointer(
 }
 
 private object ConeDynamicTypePointer : ConeTypePointer<ConeDynamicType> {
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDynamicType {
-        return ConeDynamicType.create(session.firSession)
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): ConeDynamicType {
+        return ConeDynamicType.create(analysisSession.firSession)
     }
 }
 
 private object ConeNeverRestoringTypePointer : ConeTypePointer<ConeKotlinType> {
-    override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeKotlinType? {
+    context(analysisSession: KaFirSession)
+    override fun restore(guard: ConeTypeRecursionGuard): ConeKotlinType? {
         return null
     }
 }
@@ -445,16 +460,17 @@ internal class ConeTypeProjectionPointer(
     private val kind = projection.kind
     private val typePointer: ConeTypePointer<*>? = projection.type?.createPointer(builder, guard)
 
-    fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard = ConeTypeRecursionGuard()): ConeTypeProjection? {
+    context(analysisSession: KaFirSession)
+    fun restore(guard: ConeTypeRecursionGuard = ConeTypeRecursionGuard()): ConeTypeProjection? {
         if (kind == STAR) {
             return ConeStarProjection
         }
 
         requireNotNull(typePointer)
-        val type = guard.restorePointer(typePointer, session) ?: return null
+        val type = guard.restorePointer(typePointer) ?: return null
 
         if (type is ConeCapturedType && typePointer !is DelegatingConeTypePointer<*>) {
-            (typePointer as ConeCapturedTypePointer).restoreConstructorSupertypes(type, session, guard)
+            (typePointer as ConeCapturedTypePointer).restoreConstructorSupertypes(type, guard)
         }
 
         return when (kind) {
@@ -471,8 +487,9 @@ internal class ConeTypeProjectionPointer(
  * Returns `null` if at least one pointer cannot be restored.
  */
 @JvmName("restoreTypes")
-private fun <T : ConeKotlinType> List<ConeTypePointer<T>>.restore(session: KaFirSession, guard: ConeTypeRecursionGuard): List<T>? {
-    return restoreAll { guard.restorePointer(it, session) }
+context(analysisSession: KaFirSession)
+private fun <T : ConeKotlinType> List<ConeTypePointer<T>>.restore(guard: ConeTypeRecursionGuard): List<T>? {
+    return restoreAll { guard.restorePointer(it) }
 }
 
 /**
@@ -480,8 +497,9 @@ private fun <T : ConeKotlinType> List<ConeTypePointer<T>>.restore(session: KaFir
  * Returns `null` if at least one pointer cannot be restored.
  */
 @JvmName("restoreTypeProjections")
-private fun List<ConeTypeProjectionPointer>.restore(session: KaFirSession, guard: ConeTypeRecursionGuard): List<ConeTypeProjection>? {
-    return restoreAll { it.restore(session, guard) }
+context(analysisSession: KaFirSession)
+private fun List<ConeTypeProjectionPointer>.restore(guard: ConeTypeRecursionGuard): List<ConeTypeProjection>? {
+    return restoreAll { it.restore(guard) }
 }
 
 private inline fun <T : Any, R : Any> List<T>.restoreAll(factory: (T) -> R?): List<R>? {

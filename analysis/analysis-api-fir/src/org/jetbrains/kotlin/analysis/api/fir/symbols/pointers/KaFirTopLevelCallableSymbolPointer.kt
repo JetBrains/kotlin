@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,12 +21,13 @@ internal abstract class KaTopLevelCallableSymbolPointer<S : KaCallableSymbol>(
     originalSymbol: S?,
 ) : KaFirCachedSymbolPointer<S>(originalSymbol) {
     @KaImplementationDetail
-    final override fun restoreIfNotCached(analysisSession: KaSession): S? {
-        require(analysisSession is KaFirSession)
-        val candidates = context(analysisSession) { getCallableSymbols(callableId) }
+    context(session: KaSession)
+    final override fun restoreIfNotCached(): S? {
+        require(session is KaFirSession)
+        val candidates = getCallableSymbols(callableId, analysisSession = session)
         if (candidates.isEmpty()) return null
-        val session = candidates.first().fir.moduleData.session
-        return context(analysisSession) { chooseCandidateAndCreateSymbol(candidates, session) }
+        val candidateSession = candidates.first().fir.moduleData.session
+        return chooseCandidateAndCreateSymbol(candidates, candidateSession, analysisSession = session)
     }
 
     context(analysisSession: KaFirSession)

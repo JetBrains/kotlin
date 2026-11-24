@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,11 +27,11 @@ internal class KaFirPackageScope(
     }
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
-        DeclarationsInPackageProvider.getTopLevelCallableNamesInPackageProvider(fqName, analysisSession)
+        DeclarationsInPackageProvider.getTopLevelCallableNamesInPackageProvider(fqName, analysisSession = analysisSession)
     }
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
-        DeclarationsInPackageProvider.getTopLevelClassifierNamesInPackageProvider(fqName, analysisSession)
+        DeclarationsInPackageProvider.getTopLevelClassifierNamesInPackageProvider(fqName, analysisSession = analysisSession)
     }
 
     override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {

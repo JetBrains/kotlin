@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.fir.contracts.description.KaFirContract
 import org.jetbrains.kotlin.analysis.api.fir.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration
 import org.jetbrains.kotlin.contracts.description.*
@@ -165,10 +164,10 @@ private class ConeContractDescriptionElementToAnalysisApi(
                     val containingClass = firFunctionSymbol.containingDeclaration
                     requireWithAttachment(containingClass is KaClassSymbol, { "Unexpected containing class" }) {
                         if (containingClass != null) {
-                            withSymbolAttachment("containingDeclaration", useSiteSession, containingClass)
+                            withSymbolAttachment("containingDeclaration", containingClass)
                         }
 
-                        withSymbolAttachment("functionSymbol", useSiteSession, firFunctionSymbol)
+                        withSymbolAttachment("functionSymbol", firFunctionSymbol)
                     }
 
                     return KaFirContractOwnerParameterValue(containingClass)

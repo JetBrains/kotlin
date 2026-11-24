@@ -160,8 +160,8 @@ private inline fun <T> processOverrides(
     when (containingDeclaration) {
         is KaFirNamedClassSymbolBase<*>, is KaFirAnonymousObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
         else -> errorWithAttachment("Expected the containing symbol to be a ${KaFirNamedClassSymbolBase::class.simpleName} or ${KaFirAnonymousObjectSymbol::class.simpleName}") {
-            withSymbolAttachment("callable", analysisSession, callableSymbol)
-            withSymbolAttachment("containingDeclaration", analysisSession, containingDeclaration)
+            withSymbolAttachment("callable", callableSymbol)
+            withSymbolAttachment("containingDeclaration", containingDeclaration)
         }
     }
 }

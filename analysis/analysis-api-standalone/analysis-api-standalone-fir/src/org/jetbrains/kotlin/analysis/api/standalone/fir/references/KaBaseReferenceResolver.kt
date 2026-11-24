@@ -12,7 +12,6 @@ import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.kotlin.analysis.api.permissions.*
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.idea.references.AbstractKtReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
@@ -33,7 +32,7 @@ internal object KaBaseReferenceResolver : ResolveCache.PolyVariantResolver<KtRef
             @OptIn(KaAllowProhibitedAnalyzeFromWriteAction::class)
             allowAnalysisFromWriteAction {
                 val resolveToPsiElements = try {
-                    analyze(ref.expression) { ref.getResolvedToPsi(useSiteSession) }
+                    analyze(ref.expression) { ref.getResolvedToPsi() }
                 } catch (exception: Exception) {
                     rethrowIntellijPlatformExceptionIfNeeded(exception)
 

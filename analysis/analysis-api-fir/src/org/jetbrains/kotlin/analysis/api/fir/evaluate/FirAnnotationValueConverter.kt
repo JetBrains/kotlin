@@ -37,20 +37,19 @@ import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
 internal object FirAnnotationValueConverter {
+    context(session: KaSession)
     fun toNamedConstantValue(
-        analysisSession: KaSession,
         argumentMapping: Map<Name, FirExpression>,
         builder: KaSymbolByFirBuilder,
     ): List<KaNamedAnnotationValue> = argumentMapping.map { [name, expression] ->
         KaFirNamedAnnotationValue(
             name,
-            expression.convertConstantExpression(builder) ?: KaUnsupportedAnnotationValueImpl(analysisSession.token),
+            expression.convertConstantExpression(builder) ?: KaUnsupportedAnnotationValueImpl(session.token),
         )
     }
 
-    private fun FirLiteralExpression.convertConstantExpression(
-        analysisSession: KaSession
-    ): KaAnnotationValue.ConstantValue? {
+    context(session: KaSession)
+    private fun FirLiteralExpression.convertConstantExpression(): KaAnnotationValue.ConstantValue? {
         val expression = psi as? KtElement
 
         @OptIn(UnresolvedExpressionTypeAccess::class)
@@ -74,7 +73,7 @@ internal object FirAnnotationValueConverter {
             else -> null
         }
 
-        return constantValue?.let { KaConstantAnnotationValueImpl(it, analysisSession.token) }
+        return constantValue?.let { KaConstantAnnotationValueImpl(it, session.token) }
     }
 
     private fun Collection<FirExpression>.convertVarargsExpression(
@@ -102,7 +101,7 @@ internal object FirAnnotationValueConverter {
         val sourcePsi = psi as? KtElement
 
         return when (this) {
-            is FirLiteralExpression -> convertConstantExpression(builder.analysisSession)
+            is FirLiteralExpression -> convertConstantExpression(session = builder.analysisSession)
             is FirNamedArgumentExpression -> {
                 expression.convertConstantExpression(builder)
             }
@@ -193,7 +192,7 @@ internal object FirAnnotationValueConverter {
 
             else -> null
         } ?: FirCompileTimeConstantEvaluator.evaluate(this, builder.rootSession)
-            ?.convertConstantExpression(builder.analysisSession)
+            ?.let { it.convertConstantExpression(session = builder.analysisSession) }
     }
 
     private fun createNestedAnnotation(
@@ -209,7 +208,7 @@ internal object FirAnnotationValueConverter {
                 classId = annotationSymbol.classId,
                 psi = psi.asKtCallElement(),
                 lazyArguments = if (argumentMapping.isNotEmpty())
-                    lazy { toNamedConstantValue(builder.analysisSession, argumentMapping, builder) }
+                    lazy { toNamedConstantValue(argumentMapping, builder, session = builder.analysisSession) }
                 else
                     lazyOf(emptyList()),
                 constructorSymbol = builder.functionBuilder.buildConstructorSymbol(primaryConstructor),

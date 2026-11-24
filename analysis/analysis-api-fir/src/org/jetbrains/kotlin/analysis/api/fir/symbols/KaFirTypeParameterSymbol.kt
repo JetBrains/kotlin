@@ -24,7 +24,7 @@ internal class KaFirTypeParameterSymbol private constructor(
 ) : KaFirTypeParameterSymbolBase<KtTypeParameter>(), KaFirKtBasedSymbol<KtTypeParameter, FirTypeParameterSymbol> {
     constructor(declaration: KtTypeParameter, session: KaFirSession) : this(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
     )
 

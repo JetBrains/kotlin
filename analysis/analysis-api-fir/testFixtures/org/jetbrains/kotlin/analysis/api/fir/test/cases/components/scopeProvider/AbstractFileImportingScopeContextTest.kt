@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 import org.jetbrains.kotlin.analysis.api.components.importingScopeContext
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.scopeProvider.TestScopeRenderer.renderForTests
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -40,7 +39,7 @@ abstract class AbstractFileImportingScopeContextTest : AbstractAnalysisApiBasedT
         renderDefaultImportingScope: Boolean,
         printPretty: Boolean = false,
     ): String = prettyPrint {
-        renderForTests(useSiteSession, importingScope, this@prettyPrint, printPretty) { ktScopeKind ->
+        renderForTests(importingScope, this@prettyPrint, printPretty) { ktScopeKind ->
             when (ktScopeKind) {
                 is KaScopeKind.PackageMemberScope -> false
                 is KaScopeKind.DefaultSimpleImportingScope -> renderDefaultImportingScope

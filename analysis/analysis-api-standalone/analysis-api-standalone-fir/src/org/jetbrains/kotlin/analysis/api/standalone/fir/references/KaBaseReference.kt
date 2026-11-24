@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.references
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.resolution.KaResolvableReferenceBridge
-import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.intersectionOverriddenSymbols
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.isConstructorOf
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -23,15 +19,15 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 internal sealed interface KaBaseReference : KtReference, KaResolvableReferenceBridge {
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol>
 
-    fun getResolvedToPsi(analysisSession: KaSession, referenceTargetSymbols: Collection<KaSymbol>): Collection<PsiElement> =
-        context(analysisSession) {
-            referenceTargetSymbols.flatMap { symbol ->
-                getPsiDeclarations(symbol)
-            }
+    context(session: KaSession)
+    fun getResolvedToPsi(referenceTargetSymbols: Collection<KaSymbol>): Collection<PsiElement> =
+        referenceTargetSymbols.flatMap { symbol ->
+            getPsiDeclarations(symbol)
         }
 
-    fun getResolvedToPsi(analysisSession: KaSession): Collection<PsiElement> =
-        getResolvedToPsi(analysisSession, with(analysisSession) { resolveToSymbols() })
+    context(session: KaSession)
+    fun getResolvedToPsi(): Collection<PsiElement> =
+        getResolvedToPsi(with(session) { resolveToSymbols() })
 
     override val resolver get() = KaBaseReferenceResolver
 

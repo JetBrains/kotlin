@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatform
  * The type mapper is only registered in JVM sessions. For non-JVM sessions, a custom instance is created so that Java-like types can still
  * be generated for multiplatform source sets.
  */
-internal fun createFirJvmTypeMapper(analysisSession: KaFirSession): FirJvmTypeMapper {
+context(analysisSession: KaFirSession)
+internal fun createFirJvmTypeMapper(): FirJvmTypeMapper {
     val rootModuleSession = analysisSession.resolutionFacade.useSiteFirSession
     return when {
         analysisSession.targetPlatform.has<JvmPlatform>() -> rootModuleSession.jvmTypeMapper

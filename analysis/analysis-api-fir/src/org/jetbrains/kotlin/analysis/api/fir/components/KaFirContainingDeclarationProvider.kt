@@ -199,7 +199,7 @@ private fun getContainingDeclarationForDependentDeclaration(symbol: KaSymbol): K
             containingFirSymbol.getContainingClassSymbol()
                 ?: containingFirSymbol.fir.getContainingFile()?.symbol
                 ?: errorWithAttachment("Containing element is expected for the dangling modifier symbol") {
-                    withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+                    withSymbolAttachment("symbolForContainingPsi", symbol)
                     withFirSymbolEntry("containingFirSymbol", containingFirSymbol)
                 }
         } else {
@@ -238,7 +238,7 @@ internal fun computeContainingModule(symbol: KaSymbol): KaModule = when (symbol)
     is KaFirSymbol<*> -> symbol.firSymbol.getContainingKtModule(resolutionFacade)
     is KaPackageSymbol -> analysisSession.useSiteModule
     else -> errorWithAttachment("Unsupported symbol type: ${symbol::class.simpleName}") {
-        withSymbolAttachment("symbol", analysisSession, symbol)
+        withSymbolAttachment("symbol", symbol)
     }
 }
 
@@ -246,19 +246,19 @@ context(relationProvider: KaFirSymbolRelationProvider)
 private fun getContainingPsi(symbol: KaSymbol): KtDeclaration? {
     val source = symbol.firSymbol.source
         ?: errorWithAttachment("PSI should present for declaration built by Kotlin code") {
-            withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+            withSymbolAttachment("symbolForContainingPsi", symbol)
         }
 
     getContainingPsiForFakeSource(source)?.let { return it }
 
     val psi = source.psi
         ?: errorWithAttachment("PSI not found for source kind '${source.kind}'") {
-            withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+            withSymbolAttachment("symbolForContainingPsi", symbol)
         }
 
     if (source.kind != KtRealSourceElementKind) {
         errorWithAttachment("Cannot compute containing PSI for unknown source kind '${source.kind}' (${psi::class.simpleName})") {
-            withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+            withSymbolAttachment("symbolForContainingPsi", symbol)
         }
     }
 
@@ -282,7 +282,7 @@ private fun getContainingPsi(symbol: KaSymbol): KtDeclaration? {
             }
 
             errorWithAttachment("Containing declaration should present for nested declaration ${psi::class}") {
-                withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+                withSymbolAttachment("symbolForContainingPsi", symbol)
             }
         }
 
@@ -290,7 +290,7 @@ private fun getContainingPsi(symbol: KaSymbol): KtDeclaration? {
     }
 
     errorWithAttachment("Unsupported declaration origin ${symbol.origin} ${psi::class}") {
-        withSymbolAttachment("symbolForContainingPsi", analysisSession, symbol)
+        withSymbolAttachment("symbolForContainingPsi", symbol)
     }
 }
 

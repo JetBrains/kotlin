@@ -29,7 +29,7 @@ internal class KaFirContextParameterSymbol private constructor(
 ) : KaContextParameterSymbol(), KaFirKtBasedSymbol<KtParameter, FirValueParameterSymbol> {
     constructor(declaration: KtParameter, session: KaFirSession) : this(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
     )
 

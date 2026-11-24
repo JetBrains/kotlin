@@ -77,7 +77,7 @@ private fun KaFirNamedClassSymbolBase<*>.createPointerForGeneratedLocalClass(): 
 
     return when (callRefinementExtensions.size) {
         0 -> errorWithAttachment("Generated local class should be owned by one ${FirFunctionCallRefinementExtension.NAME}, but none were found") {
-            withSymbolAttachment("symbol", analysisSession, this@createPointerForGeneratedLocalClass)
+            withSymbolAttachment("symbol", this@createPointerForGeneratedLocalClass)
         }
 
         1 -> {
@@ -88,7 +88,7 @@ private fun KaFirNamedClassSymbolBase<*>.createPointerForGeneratedLocalClass(): 
                 element is KtElement,
                 { "Element should be ${KtElement::class.simpleName} but was `${element?.let { it::class }}`" }
             ) {
-                withSymbolAttachment("symbol", analysisSession, this@createPointerForGeneratedLocalClass)
+                withSymbolAttachment("symbol", this@createPointerForGeneratedLocalClass)
                 withPsiEntry("element", element)
             }
             val firOrigin = firSymbol.fir.origin
@@ -96,7 +96,7 @@ private fun KaFirNamedClassSymbolBase<*>.createPointerForGeneratedLocalClass(): 
                 firOrigin is FirDeclarationOrigin.Plugin,
                 { "Expected `FirDeclarationOrigin.Plugin` but was $firOrigin" }
             ) {
-                withSymbolAttachment("symbol", analysisSession, this@createPointerForGeneratedLocalClass)
+                withSymbolAttachment("symbol", this@createPointerForGeneratedLocalClass)
             }
             val psiElementPointer = createCompatibleSmartPointer(element)
             KaFirLocalClassFromCompilerPluginSymbolPointer(psiElementPointer, name, firOrigin.key, this)
@@ -104,7 +104,7 @@ private fun KaFirNamedClassSymbolBase<*>.createPointerForGeneratedLocalClass(): 
 
         else -> {
             errorWithAttachment("Generated local class should be owned by one ${FirFunctionCallRefinementExtension.NAME}, but found ${callRefinementExtensions.map { it.extensionType }}") {
-                withSymbolAttachment("symbol", analysisSession, this@createPointerForGeneratedLocalClass)
+                withSymbolAttachment("symbol", this@createPointerForGeneratedLocalClass)
             }
         }
     }

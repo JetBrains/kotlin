@@ -421,7 +421,7 @@ private fun buildKaCall(
             functionSymbol is KaNamedFunctionSymbol,
             { "Expected ${KaNamedFunctionSymbol::class.simpleName}, but got ${functionSymbol::class.simpleName}" },
         ) {
-            withSymbolAttachment("function", analysisSession, functionSymbol)
+            withSymbolAttachment("function", functionSymbol)
         }
 
         @Suppress("UNCHECKED_CAST")

@@ -40,7 +40,7 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
 
     constructor(declaration: KtFunction, session: KaFirSession) : this(
         backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        lazyFirSymbol = lazyFirSymbol(declaration, analysisSession = session),
         analysisSession = session,
     )
 
@@ -72,12 +72,13 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {
-            KaFirReceiverParameterSymbol.create(
-                // We cannot use KtFunctionLiteral as the backing PSI as it doesn't receiver parameter in the code
-                backingPsi?.takeIf { it is KtNamedFunction },
-                analysisSession,
-                this,
-            )
+            context(analysisSession) {
+                KaFirReceiverParameterSymbol.create(
+                    // We cannot use KtFunctionLiteral as the backing PSI as it doesn't receiver parameter in the code
+                    backingPsi?.takeIf { it is KtNamedFunction },
+                    this,
+                )
+            }
         }
 
     override val contextReceivers: List<KaContextReceiver>

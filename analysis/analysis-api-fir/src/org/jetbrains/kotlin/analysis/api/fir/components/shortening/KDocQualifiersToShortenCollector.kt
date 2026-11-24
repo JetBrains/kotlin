@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.getTagIfSubject
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -80,7 +79,6 @@ internal class KDocQualifiersToShortenCollector(
 
             val resolvedSymbolsByShortName =
                 KDocReferenceResolver.resolveKdocFqName(
-                    useSiteSession,
                     selectedFqName = shortFqName,
                     fullFqName = shortFqName,
                     contextElement,
@@ -88,7 +86,6 @@ internal class KDocQualifiersToShortenCollector(
                 )
             val resolvedSymbolsByFQN =
                 KDocReferenceResolver.resolveKdocFqName(
-                    useSiteSession,
                     selectedFqName = fqName,
                     fullFqName = fqName,
                     contextElement,
