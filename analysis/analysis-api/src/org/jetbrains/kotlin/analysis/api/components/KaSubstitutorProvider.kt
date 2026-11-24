@@ -7,7 +7,11 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaObsoleteComponentApi
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
@@ -22,7 +26,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 @KaExperimentalApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaSubstitutorProvider : KaSessionComponent {
+public interface KaSubstitutorProvider : KaLifetimeOwner {
     /**
      * Creates a [KaSubstitutor] based on the given [mappings].
      *

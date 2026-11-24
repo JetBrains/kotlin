@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 )
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaSymbolRelationProvider : KaSessionComponent {
+public interface KaSymbolRelationProvider : KaLifetimeOwner {
     /**
      * The [KaSymbol] which contains this symbol, or `null` if there is no containing declaration:
      *

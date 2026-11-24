@@ -12,6 +12,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaJvmTarget
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -26,7 +27,7 @@ import java.io.File
 @KaExperimentalApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaCompilerFacility : KaSessionComponent {
+public interface KaCompilerFacility : KaLifetimeOwner {
     /**
      * Compiles the given [file] in-memory using the specified [options].
      *

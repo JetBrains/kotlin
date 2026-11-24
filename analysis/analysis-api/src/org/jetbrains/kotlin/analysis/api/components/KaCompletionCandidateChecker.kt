@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 @KaIdeApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaCompletionCandidateChecker : KaSessionComponent {
+public interface KaCompletionCandidateChecker : KaLifetimeOwner {
     /**
      * Returns an extension applicability checker for the given context [nameExpression].
      * The function is meant to only be used for providing auto-completion for Kotlin in IntelliJ IDEA.

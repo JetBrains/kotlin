@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
 @Deprecated(
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 )
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaAnalysisScopeProvider : KaSessionComponent {
+public interface KaAnalysisScopeProvider : KaLifetimeOwner {
     /**
      * A [GlobalSearchScope] which spans the files that can be analyzed by the current [KaSession].
      *

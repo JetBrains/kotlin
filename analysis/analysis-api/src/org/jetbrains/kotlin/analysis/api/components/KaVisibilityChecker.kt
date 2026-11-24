@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 )
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaVisibilityChecker : KaSessionComponent {
+public interface KaVisibilityChecker : KaLifetimeOwner {
     /**
      * Creates a visibility checker for the given use-site position.
      *

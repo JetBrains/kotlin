@@ -14,6 +14,7 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 )
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaJavaInteroperabilityComponent : KaSessionComponent {
+public interface KaJavaInteroperabilityComponent : KaLifetimeOwner {
     /**
      * Converts the given [KaType] to a [PsiType] in the context of the [useSitePosition].
      *

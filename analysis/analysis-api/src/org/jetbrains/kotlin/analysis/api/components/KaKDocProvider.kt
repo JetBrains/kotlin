@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.kdoc.psi.api.KDocCommentDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtNonPublicApi
 @KaNonPublicApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaKDocProvider : KaSessionComponent {
+public interface KaKDocProvider : KaLifetimeOwner {
 
     /**
      * Resolves KDoc for this [KtDeclaration].

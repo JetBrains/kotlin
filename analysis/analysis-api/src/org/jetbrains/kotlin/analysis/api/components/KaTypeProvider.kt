@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 )
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaTypeProvider : KaSessionComponent {
+public interface KaTypeProvider : KaLifetimeOwner {
     /**
      * [KaType] instances for built-in types.
      */

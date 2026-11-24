@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtFunction
 )
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaExpressionTypeProvider : KaSessionComponent {
+public interface KaExpressionTypeProvider : KaLifetimeOwner {
     /**
      * The type of the given [KtExpression], or `null` if it does not have a type.
      *

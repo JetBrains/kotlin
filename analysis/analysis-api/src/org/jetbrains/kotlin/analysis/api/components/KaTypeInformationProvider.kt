@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.name.ClassId
 )
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaTypeInformationProvider : KaSessionComponent {
+public interface KaTypeInformationProvider : KaLifetimeOwner {
     /**
      * Whether the [KaType] is denotable. A [denotable type](https://kotlinlang.org/spec/type-system.html#type-kinds) can be expressed in
      * Kotlin code, as opposed to being only constructible via compiler type operations (such as type inference).

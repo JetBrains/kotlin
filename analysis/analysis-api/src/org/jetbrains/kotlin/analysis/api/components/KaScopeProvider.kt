@@ -26,7 +26,7 @@ import java.util.*
 )
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaScopeProvider : KaSessionComponent {
+public interface KaScopeProvider : KaLifetimeOwner {
     /**
      * A [KaScope] containing *non-static* callable members (functions, properties, and constructors) and all classifier members
      * (classes and objects) of the given [KaDeclarationContainerSymbol]. The scope includes members inherited from the symbol's supertypes,

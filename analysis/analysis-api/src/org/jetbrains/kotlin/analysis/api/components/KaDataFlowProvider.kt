@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtReturnExpression
 )
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaDataFlowProvider : KaSessionComponent {
+public interface KaDataFlowProvider : KaLifetimeOwner {
     /**
      * [Smart cast information][KaSmartCastInfo] for the given [KtExpression], or `null` if smart casts are not applied to it.
      */

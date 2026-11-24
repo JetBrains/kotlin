@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaRendererTypeApproximator
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.types.Variance
 @KaExperimentalApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
-public interface KaRenderer : KaSessionComponent {
+public interface KaRenderer : KaLifetimeOwner {
     /**
      * Renders the given [KaDeclarationSymbol] to a string. The particular rendering strategy is defined by the [renderer].
      */
