@@ -31,7 +31,7 @@ object SubstitutionParser {
         check(directivesAsString.startsWith(SUBSTITUTOR_PREFIX))
         val substitutorAsMap = parseSubstitutions(directivesAsString.removePrefix(SUBSTITUTOR_PREFIX))
 
-        with(analysisSession) {
+        context(analysisSession) {
             return buildSubstitutor {
                 substitutorAsMap.forEach { [typeParameterName, typeString] ->
                     val typeParameterSymbol = getSymbolByNameSafe<KaTypeParameterSymbol>(scopeForTypeParameters, typeParameterName)

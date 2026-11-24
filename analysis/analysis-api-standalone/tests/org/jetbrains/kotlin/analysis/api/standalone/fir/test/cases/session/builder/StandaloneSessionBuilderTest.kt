@@ -6,17 +6,11 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder
 
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiPrimitiveType
-import com.intellij.psi.PsiTypes
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.components.resolveToCall
-import org.jetbrains.kotlin.analysis.api.components.resolveToSymbol
 import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalSourceOutOfBlockModificationEvent
@@ -28,8 +22,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AbstractStandaloneTest
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -40,7 +34,6 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryMod
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.light.classes.symbol.withMultiplatformLightClassSupport
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -471,7 +464,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
             assertEquals(fileSymbol.containingModule, codeFragmentModule)
 
             val referenceExpression = codeFragment.findDescendantOfType<KtSimpleNameExpression> { it.text == "x" }!!
-            val variableSymbol = referenceExpression.mainReference.resolveToSymbol()
+            val variableSymbol = referenceExpression.resolveSuccessfulSymbol()
             assert(variableSymbol is KaLocalVariableSymbol)
         }
     }
@@ -513,7 +506,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
             assertEquals(fileSymbol.containingModule, dummyModule)
 
             val callExpression = dummyFile.findDescendantOfType<KtCallExpression>()!!
-            val call = callExpression.resolveToCall()?.successfulFunctionCallOrNull() ?: error("Call inside a dummy file is unresolved")
+            val call = callExpression.resolveSuccessfulCall() ?: error("Call inside a dummy file is unresolved")
             assert(call.symbol is KaNamedFunctionSymbol)
         }
     }
@@ -559,7 +552,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
             Assertions.assertEquals(KaSymbolOrigin.SOURCE, functionSymbol.origin)
 
             val callExpression = outsideFile.findDescendantOfType<KtCallExpression>()!!
-            val call = callExpression.resolveToCall()?.successfulFunctionCallOrNull()
+            val call = callExpression.resolveSuccessfulCall()
                 ?: error("Call inside a file outside content roots is unresolved")
             Assertions.assertEquals(functionSymbol, call.symbol)
         }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.standalone.fir.references
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -19,9 +20,12 @@ import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 internal class KaBaseDefaultAnnotationArgumentReference(
     element: KtValueArgument,
 ) : KtDefaultAnnotationArgumentReference(element), KaBaseReference {
-    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = resolveToSymbolsInContext()
+
+    context(session: KaSession)
+    private fun resolveToSymbolsInContext(): Collection<KaSymbol> {
         val annotationEntry = element.getStrictParentOfType<KtAnnotationEntry>() ?: return emptyList()
-        val constructorSymbol = annotationEntry.resolveSymbol() ?: return emptyList()
+        val constructorSymbol = annotationEntry.resolveSuccessfulSymbol() ?: return emptyList()
         val firstParam = constructorSymbol.valueParameters.firstOrNull() ?: return emptyList()
         return listOfNotNull(firstParam.takeIf { it.psi?.isDefaultAnnotationMethod == true })
     }

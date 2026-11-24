@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.references
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
+import org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.idea.references.KDocReference
@@ -18,14 +19,17 @@ import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
 internal class KaBaseKDocReference(element: KDocName) : KDocReference(element), KaBaseReference {
-    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = resolveToSymbolsInContext()
+
+    context(session: KaSession)
+    private fun resolveToSymbolsInContext(): Collection<KaSymbol> {
         return element.tryResolveSymbols()?.symbols.orEmpty()
     }
 
     override fun getResolvedToPsi(
         analysisSession: KaSession,
         referenceTargetSymbols: Collection<KaSymbol>,
-    ): Collection<PsiElement> = with(analysisSession) {
+    ): Collection<PsiElement> = context(analysisSession) {
         referenceTargetSymbols.flatMap { symbol ->
             when (symbol) {
                 is KaSyntheticJavaPropertySymbol -> listOfNotNull(symbol.javaGetterSymbol.psi, symbol.javaSetterSymbol?.psi)

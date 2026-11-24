@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.intersectionOverriddenSymbols
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.isConstructorOf
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -23,16 +24,14 @@ internal sealed interface KaBaseReference : KtReference, KaResolvableReferenceBr
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol>
 
     fun getResolvedToPsi(analysisSession: KaSession, referenceTargetSymbols: Collection<KaSymbol>): Collection<PsiElement> =
-        with(analysisSession) {
+        context(analysisSession) {
             referenceTargetSymbols.flatMap { symbol ->
                 getPsiDeclarations(symbol)
             }
         }
 
     fun getResolvedToPsi(analysisSession: KaSession): Collection<PsiElement> =
-        with(analysisSession) {
-            getResolvedToPsi(analysisSession, resolveToSymbols())
-        }
+        getResolvedToPsi(analysisSession, with(analysisSession) { resolveToSymbols() })
 
     override val resolver get() = KaBaseReferenceResolver
 
@@ -64,7 +63,8 @@ internal sealed interface KaBaseReference : KtReference, KaResolvableReferenceBr
     }
 }
 
-internal fun KaSession.getPsiDeclarations(symbol: KaSymbol): Collection<PsiElement> {
+context(session: KaSession)
+internal fun getPsiDeclarations(symbol: KaSymbol): Collection<PsiElement> {
     val intersectionOverriddenSymbolsOrSingle = when {
         symbol.origin == KaSymbolOrigin.INTERSECTION_OVERRIDE && symbol is KaCallableSymbol -> symbol.intersectionOverriddenSymbols
         else -> listOf(symbol)

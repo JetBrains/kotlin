@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.references
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
+import org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
@@ -33,7 +35,10 @@ internal class KaBaseDestructuringDeclarationReference(
                 (element.parent as? KtDestructuringDeclaration)?.hasSquareBrackets() != true
     }
 
-    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = resolveToSymbolsInContext()
+
+    context(session: KaSession)
+    private fun resolveToSymbolsInContext(): Collection<KaSymbol> {
         val element = element
         // TODO(KT-82708): Only the initializer symbol is expected
         return listOf(element.symbol) + element.tryResolveSymbols()?.symbols.orEmpty()
