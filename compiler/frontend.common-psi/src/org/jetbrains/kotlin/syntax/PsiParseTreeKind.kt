@@ -14,5 +14,6 @@ object PsiParseTreeKind : ParseTreeKind() {
     override val isKmp: Boolean = false
 
     override val SourceElementPositioningStrategy.positioningStrategy: PsiPositioningStrategy<*>
-        get() = TODO("KT-91911")
+        get() = PsiPositioningStrategies.keyToStrategy[this]
+            ?: error("No PSI positioning strategy is registered for ${this::class.simpleName}")
 }

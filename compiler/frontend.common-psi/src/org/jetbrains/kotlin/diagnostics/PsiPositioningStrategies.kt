@@ -27,7 +27,18 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 
+@Suppress("UNUSED") // Most strategies are only accessed via `keyToStrategy`, where they are registered by `registerAs`
 object PsiPositioningStrategies {
+    val keyToStrategy: Map<SourceElementPositioningStrategy, PsiPositioningStrategy<*>>
+        field: MutableMap<SourceElementPositioningStrategy, PsiPositioningStrategy<*>> = mutableMapOf()
+
+    // Plugins can extend strategies in the future.
+    private fun <T : PsiPositioningStrategy<*>> T.registerAs(key: SourceElementPositioningStrategy): T {
+        require(key !in keyToStrategy) { "${key::class.simpleName} is already registered" }
+        keyToStrategy[key] = this
+        return this
+    }
+
     open class DeclarationHeader<T : PsiElement>(private val checkValidity: Boolean) : PsiPositioningStrategy<T>() {
         @OptIn(DiagnosticLossRisk::class)
         override fun isValid(element: KtSourceElement): Boolean {
@@ -70,7 +81,7 @@ object PsiPositioningStrategies {
                 }
             }
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.DEFAULT)
 
     val SYNTAX_ERROR: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
@@ -82,7 +93,7 @@ object PsiPositioningStrategies {
             if (element.unwrapPsi() is PsiErrorElement) return true
             return DEFAULT.isValid(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.SYNTAX_ERROR)
 
     @JvmField
     val SUPERTYPES_LIST: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
@@ -96,7 +107,7 @@ object PsiPositioningStrategies {
             else
                 markRange(supertypes[0], supertypes.last())
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.SUPERTYPES_LIST)
 
     @JvmField
     val DECLARATION_RETURN_TYPE: PsiPositioningStrategy<KtDeclaration> = object : PsiPositioningStrategy<KtDeclaration>() {
@@ -120,7 +131,7 @@ object PsiPositioningStrategies {
             if (nameIdentifierOrPlaceholder != null) return nameIdentifierOrPlaceholder
             return declaration
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
 
     @JvmField
     val DECLARATION_START_TO_NAME: PsiPositioningStrategy<KtDeclaration> = object : PsiPositioningStrategy<KtDeclaration>() {
@@ -158,14 +169,14 @@ object PsiPositioningStrategies {
                 else -> DEFAULT.mark(element)
             }
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.DECLARATION_START_TO_NAME)
 
     @JvmField
     val CONTEXT_KEYWORD: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> =
             element.descendants().firstIsInstanceOrNull<KtContextParameterList>()?.firstChild?.textRange?.let(::markRange)
                 ?: DEFAULT.mark(element)
-    }
+    }.registerAs(SourceElementPositioningStrategies.CONTEXT_KEYWORD)
 
     private fun findStartingPsiElementForDeclarationName(
         element: KtNamedDeclaration,
@@ -178,6 +189,7 @@ object PsiPositioningStrategies {
     val DECLARATION_NAME_WITH_VALIDITY_CHECK: PsiPositioningStrategy<KtDeclaration> = DeclarationName(true)
 
     val DECLARATION_NAME: PsiPositioningStrategy<PsiElement> = DeclarationName(false)
+        .registerAs(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     private class DeclarationName(checkValidity: Boolean) : DeclarationHeader<PsiElement>(checkValidity) {
         override fun mark(element: PsiElement): List<TextRange> {
@@ -212,12 +224,13 @@ object PsiPositioningStrategies {
             }
             return DEFAULT.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.DECLARATION_NAME_ONLY)
 
     @JvmField
     val DECLARATION_SIGNATURE_WITH_VALIDITY_CHECK: PsiPositioningStrategy<KtDeclaration> = DeclarationSignature(true)
 
     val DECLARATION_SIGNATURE: PsiPositioningStrategy<KtDeclaration> = DeclarationSignature(false)
+        .registerAs(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
 
     private class DeclarationSignature(checkValidity: Boolean) : DeclarationHeader<KtDeclaration>(checkValidity) {
         override fun mark(element: KtDeclaration): List<TextRange> {
@@ -301,7 +314,7 @@ object PsiPositioningStrategies {
                 DEFAULT.mark(element)
             }
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS)
 
     val DECLARATION_SIGNATURE_OR_DEFAULT: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
@@ -310,7 +323,7 @@ object PsiPositioningStrategies {
             else
                 DEFAULT.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     @JvmField
     val NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT: PsiPositioningStrategy<KtDeclaration> = object : PsiPositioningStrategy<KtDeclaration>() {
@@ -326,84 +339,100 @@ object PsiPositioningStrategies {
                     else -> element
                 }
             )
-    }
+    }.registerAs(SourceElementPositioningStrategies.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
 
     @JvmField
     val ABSTRACT_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.ABSTRACT_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.ABSTRACT_MODIFIER)
 
     @JvmField
     val OPEN_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.OPEN_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.OPEN_MODIFIER)
 
     @JvmField
     val OVERRIDE_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.OVERRIDE_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)
 
     @JvmField
     val PRIVATE_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.PRIVATE_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.PRIVATE_MODIFIER)
 
     @JvmField
     val LATEINIT_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.LATEINIT_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.LATEINIT_MODIFIER)
 
     @JvmField
     val VARIANCE_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> = projectionPosition()
+        .registerAs(SourceElementPositioningStrategies.VARIANCE_MODIFIER)
 
     @JvmField
     val CONST_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.CONST_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.CONST_MODIFIER)
 
     @JvmField
     val FUN_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.FUN_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.FUN_MODIFIER)
 
     @JvmField
     val SUSPEND_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.SUSPEND_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.SUSPEND_MODIFIER)
 
     @JvmField
     val DATA_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.DATA_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.DATA_MODIFIER)
 
     @JvmField
     val OPERATOR_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.OPERATOR_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.OPERATOR_MODIFIER)
 
     @JvmField
     val INFIX_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.INFIX_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.INFIX_MODIFIER)
 
     @JvmField
     val ENUM_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.ENUM_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.ENUM_MODIFIER)
 
     @JvmField
     val TAILREC_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.TAILREC_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.TAILREC_MODIFIER)
 
     @JvmField
     val EXTERNAL_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.EXTERNAL_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.EXTERNAL_MODIFIER)
 
     @JvmField
     val EXPECT_ACTUAL_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.EXPECT_KEYWORD, KtTokens.ACTUAL_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
 
     @JvmField
     val OBJECT_KEYWORD: PsiPositioningStrategy<KtObjectDeclaration> = object : PsiPositioningStrategy<KtObjectDeclaration>() {
         override fun mark(element: KtObjectDeclaration): List<TextRange> {
             return markElement(element.getObjectKeyword() ?: element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.OBJECT_KEYWORD)
 
     @JvmField
     val FIELD_KEYWORD: PsiPositioningStrategy<KtBackingField> = object : PsiPositioningStrategy<KtBackingField>() {
         override fun mark(element: KtBackingField): List<TextRange> {
             return markElement(element.fieldKeyword!!)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.FIELD_KEYWORD)
 
     @JvmField
     val PROPERTY_DELEGATE: PsiPositioningStrategy<KtProperty> = object : PsiPositioningStrategy<KtProperty>() {
@@ -415,7 +444,7 @@ object PsiPositioningStrategies {
                 DEFAULT.mark(element)
             }
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.PROPERTY_DELEGATE)
 
     @JvmStatic
     fun projectionPosition(): PsiPositioningStrategy<KtModifierListOwner> {
@@ -439,14 +468,14 @@ object PsiPositioningStrategies {
         override fun mark(element: KtArrayAccessExpression): List<TextRange> {
             return markElement(element.indicesNode)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.ARRAY_ACCESS)
 
     @JvmField
     val SAFE_ACCESS: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             return markElement(element.node.findChildByType(ALL_SAFE_ACCESSES)?.psi ?: element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.SAFE_ACCESS)
 
     private open class ModifierSetBasedPositioningStrategy(private val modifierSet: TokenSet) : PsiPositioningStrategy<PsiElement>() {
         constructor(vararg tokens: IElementType) : this(TokenSet.create(*tokens))
@@ -490,35 +519,42 @@ object PsiPositioningStrategies {
 
     @JvmField
     val VISIBILITY_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> = ModifierSetBasedPositioningStrategy(VISIBILITY_MODIFIERS)
+        .registerAs(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
 
     @JvmField
     val MODALITY_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> = ModifierSetBasedPositioningStrategy(MODALITY_MODIFIERS)
+        .registerAs(SourceElementPositioningStrategies.MODALITY_MODIFIER)
 
     @JvmField
     val INLINE_OR_VALUE_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.INLINE_KEYWORD, KtTokens.VALUE_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)
 
     @JvmField
     val VALUE_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.VALUE_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.VALUE_MODIFIER)
 
     @JvmField
     val INNER_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.INNER_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.INNER_MODIFIER)
 
     @JvmField
     val INLINE_PARAMETER_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.NOINLINE_KEYWORD, KtTokens.CROSSINLINE_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.INLINE_PARAMETER_MODIFIER)
 
     @JvmField
     val INLINE_FUN_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> = InlineFunPositioningStrategy()
+        .registerAs(SourceElementPositioningStrategies.INLINE_FUN_MODIFIER)
 
     @JvmField
     val PARAMETER_DEFAULT_VALUE: PsiPositioningStrategy<KtParameter> = object : PsiPositioningStrategy<KtParameter>() {
         override fun mark(element: KtParameter): List<TextRange> {
             return markNode(element.defaultValue!!.node)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.PARAMETER_DEFAULT_VALUE)
 
     @JvmField
     val PARAMETERS_WITH_DEFAULT_VALUE: PsiPositioningStrategy<KtFunction> = object : PsiPositioningStrategy<KtFunction>() {
@@ -527,7 +563,7 @@ object PsiPositioningStrategies {
                 ?: element.valueParameterList?.let { markNode(it.node) }
                 ?: element.nameIdentifier?.let { markNode(it.node) }
                 ?: markNode(element.node)
-    }
+    }.registerAs(SourceElementPositioningStrategies.PARAMETERS_WITH_DEFAULT_VALUE)
 
     @JvmField
     val PARAMETER_VARARG_MODIFIER: PsiPositioningStrategy<KtParameter> = object : PsiPositioningStrategy<KtParameter>() {
@@ -535,7 +571,7 @@ object PsiPositioningStrategies {
             val varargModifier = element.modifierList!!.getModifier(KtTokens.VARARG_KEYWORD)!!
             return markNode(varargModifier.node)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER)
 
     /**
      * Mark the name of a named argument. If the given element is not a named argument or doesn't have a name, then the entire given element
@@ -546,7 +582,7 @@ object PsiPositioningStrategies {
         override fun mark(element: KtValueArgument): List<TextRange> {
             return markElement(element.getArgumentName() ?: element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.NAME_OF_NAMED_ARGUMENT)
 
     @JvmField
     val CALL_ELEMENT_WITH_DOT: PsiPositioningStrategy<KtQualifiedExpression> = object : PsiPositioningStrategy<KtQualifiedExpression>() {
@@ -565,7 +601,7 @@ object PsiPositioningStrategies {
 
             return listOf(TextRange(dotRange.startOffset, callElementRange.endOffset))
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
 
     @JvmField
     val DECLARATION_WITH_BODY: PsiPositioningStrategy<KtDeclarationWithBody> = object : PsiPositioningStrategy<KtDeclarationWithBody>() {
@@ -576,7 +612,7 @@ object PsiPositioningStrategies {
             else
                 markElement(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.DECLARATION_WITH_BODY)
 
     @JvmField
     val VAL_OR_VAR_NODE: PsiPositioningStrategy<KtDeclaration> = object : PsiPositioningStrategy<KtDeclaration>() {
@@ -588,7 +624,7 @@ object PsiPositioningStrategies {
                 else -> markElement(element)
             }
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
 
     @JvmField
     val TRY_KEYWORD: PsiPositioningStrategy<KtTryExpression> =
@@ -599,35 +635,35 @@ object PsiPositioningStrategies {
                 }
                 return DEFAULT.mark(element)
             }
-        }
+        }.registerAs(SourceElementPositioningStrategies.TRY_KEYWORD)
 
     @JvmField
     val ELSE_ENTRY: PsiPositioningStrategy<KtWhenEntry> = object : PsiPositioningStrategy<KtWhenEntry>() {
         override fun mark(element: KtWhenEntry): List<TextRange> {
             return markElement(element.elseKeyword!!)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.ELSE_ENTRY)
 
     @JvmField
     val WHEN_EXPRESSION: PsiPositioningStrategy<KtWhenExpression> = object : PsiPositioningStrategy<KtWhenExpression>() {
         override fun mark(element: KtWhenExpression): List<TextRange> {
             return markElement(element.whenKeyword)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.WHEN_EXPRESSION)
 
     @JvmField
     val WHEN_GUARD: PsiPositioningStrategy<KtWhenEntry> = object : PsiPositioningStrategy<KtWhenEntry>() {
         override fun mark(element: KtWhenEntry): List<TextRange> {
             return markElement(element.guard ?: element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.WHEN_GUARD)
 
     @JvmField
     val IF_EXPRESSION: PsiPositioningStrategy<KtIfExpression> = object : PsiPositioningStrategy<KtIfExpression>() {
         override fun mark(element: KtIfExpression): List<TextRange> {
             return markElement(element.ifKeyword)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.IF_EXPRESSION)
 
     @JvmField
     val REDUNDANT_NULLABLE: PsiPositioningStrategy<KtTypeReference> = object : PsiPositioningStrategy<KtTypeReference>() {
@@ -651,7 +687,7 @@ object PsiPositioningStrategies {
 
             return super.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.REDUNDANT_NULLABLE)
 
     @JvmField
     val QUESTION_MARK_BY_TYPE: PsiPositioningStrategy<KtTypeReference> = object : PsiPositioningStrategy<KtTypeReference>() {
@@ -662,14 +698,14 @@ object PsiPositioningStrategies {
             }
             return super.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.QUESTION_MARK_BY_TYPE)
 
     @JvmField
     val VALUE_ARGUMENTS_LIST: PsiPositioningStrategy<KtElement> = object : PsiPositioningStrategy<KtElement>() {
         override fun mark(element: KtElement): List<TextRange> {
             return markElement(element.getChildOfType<KtValueArgumentList>() ?: element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.VALUE_ARGUMENTS_LIST)
 
     @JvmField
     val LONG_LITERAL_SUFFIX: PsiPositioningStrategy<KtElement> = object : PsiPositioningStrategy<KtElement>() {
@@ -682,18 +718,19 @@ object PsiPositioningStrategies {
             }
             return markElement(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.LONG_LITERAL_SUFFIX)
 
     @JvmField
     val AS_TYPE: PsiPositioningStrategy<KtBinaryExpressionWithTypeRHS> = object : PsiPositioningStrategy<KtBinaryExpressionWithTypeRHS>() {
         override fun mark(element: KtBinaryExpressionWithTypeRHS): List<TextRange> {
             return markRange(element.operationReference, element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.AS_TYPE)
 
     @JvmField
     val COMPANION_OBJECT: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.COMPANION_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.COMPANION_OBJECT)
 
     @JvmField
     val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: PsiPositioningStrategy<PsiElement> =
@@ -717,21 +754,21 @@ object PsiPositioningStrategies {
                     else -> markElement(element)
                 }
             }
-        }
+        }.registerAs(SourceElementPositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
 
     @JvmField
     val USELESS_ELVIS: PsiPositioningStrategy<KtBinaryExpression> = object : PsiPositioningStrategy<KtBinaryExpression>() {
         override fun mark(element: KtBinaryExpression): List<TextRange> {
             return listOf(TextRange(element.operationReference.startOffset, element.endOffset))
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.USELESS_ELVIS)
 
     @JvmField
     val USELESS_ELVIS_LEFT: PsiPositioningStrategy<KtBinaryExpression> = object : PsiPositioningStrategy<KtBinaryExpression>() {
         override fun mark(element: KtBinaryExpression): List<TextRange> {
             return listOf(TextRange(element.startOffset, element.operationReference.endOffset))
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.USELESS_ELVIS_LEFT)
 
     @JvmField
     val IMPORT_ALIAS: PsiPositioningStrategy<KtImportDirective> = object : PsiPositioningStrategy<KtImportDirective>() {
@@ -745,7 +782,7 @@ object PsiPositioningStrategies {
             }
             return markElement(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.IMPORT_ALIAS)
 
     @JvmField
     val RETURN_WITH_LABEL: PsiPositioningStrategy<KtReturnExpression> = object : PsiPositioningStrategy<KtReturnExpression>() {
@@ -757,7 +794,7 @@ object PsiPositioningStrategies {
 
             return markElement(element.returnKeyword)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.RETURN_WITH_LABEL)
 
     @JvmField
     val RECEIVER: PsiPositioningStrategy<KtCallableDeclaration> = object : PsiPositioningStrategy<KtCallableDeclaration>() {
@@ -776,14 +813,14 @@ object PsiPositioningStrategies {
                 else -> super.mark(element)
             }
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.OPERATOR)
 
     val REFERENCE_OR_OPERATOR: PsiPositioningStrategy<KtExpression> = object : PsiPositioningStrategy<KtExpression>() {
         override fun mark(element: KtExpression): List<TextRange> {
             (element as? KtBinaryExpression)?.right?.referenceIfShort()?.let { return super.mark(it) }
             return OPERATOR.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.REFERENCE_OR_OPERATOR)
 
     val DOT_BY_QUALIFIED: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
@@ -798,7 +835,7 @@ object PsiPositioningStrategies {
             // Fallback to mark the callee reference.
             return REFERENCE_BY_QUALIFIED.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.DOT_BY_QUALIFIED)
 
     val SELECTOR_BY_QUALIFIED: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
@@ -819,7 +856,7 @@ object PsiPositioningStrategies {
             }
             return super.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
 
     private fun KtTypeElement.getReferencedTypeExpression(): KtElement? {
         return when (this) {
@@ -846,14 +883,14 @@ object PsiPositioningStrategies {
 
             return DEFAULT.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.NAME_IDENTIFIER)
 
     @JvmField
     val SPREAD_OPERATOR: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             return super.mark((element as? KtValueArgument)?.getSpreadElement()?.node?.psi ?: element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.SPREAD_OPERATOR)
 
     @JvmField
     val FUN_INTERFACE: PsiPositioningStrategy<KtDeclaration> = object : PsiPositioningStrategy<KtDeclaration>() {
@@ -872,10 +909,12 @@ object PsiPositioningStrategies {
                 else -> markElement(element)
             }
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.FUN_INTERFACE)
 
     val REFERENCE_BY_QUALIFIED: PsiPositioningStrategy<PsiElement> = FindReferencePositioningStrategy(false)
+        .registerAs(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val REFERENCED_NAME_BY_QUALIFIED: PsiPositioningStrategy<PsiElement> = FindReferencePositioningStrategy(true)
+        .registerAs(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
     val RECEIVER_OF_DOT_QUALIFIED: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
@@ -884,10 +923,11 @@ object PsiPositioningStrategies {
             }
             return DEFAULT.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.RECEIVER_OF_DOT_QUALIFIED)
 
     val REIFIED_MODIFIER: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.REIFIED_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.REIFIED_MODIFIER)
 
     private fun KtExpression.referenceIfShort(): KtExpression? =
         when (this) {
@@ -924,9 +964,10 @@ object PsiPositioningStrategies {
                 else -> element
             }
         )
-    }
+    }.registerAs(SourceElementPositioningStrategies.VARIABLE_INITIALIZER)
 
     val WHOLE_ELEMENT: PsiPositioningStrategy<KtElement> = object : PsiPositioningStrategy<KtElement>() {}
+        .registerAs(SourceElementPositioningStrategies.WHOLE_ELEMENT)
 
     val TYPE_PARAMETERS_LIST: PsiPositioningStrategy<KtDeclaration> = object : PsiPositioningStrategy<KtDeclaration>() {
         override fun mark(element: KtDeclaration): List<TextRange> {
@@ -935,7 +976,7 @@ object PsiPositioningStrategies {
             }
             return markElement(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
 
     val FUNCTION_TYPE_RECEIVER: PsiPositioningStrategy<KtElement> = object : PsiPositioningStrategy<KtElement>() {
         override fun mark(element: KtElement): List<TextRange> {
@@ -946,13 +987,13 @@ object PsiPositioningStrategies {
                 ?: element
             return markElement(target)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.FUNCTION_TYPE_RECEIVER)
 
     val ANNOTATION_USE_SITE: PsiPositioningStrategy<KtAnnotationEntry> = object : PsiPositioningStrategy<KtAnnotationEntry>() {
         override fun mark(element: KtAnnotationEntry): List<TextRange> {
             return markElement(element.useSiteTarget ?: element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.ANNOTATION_USE_SITE)
 
     val IMPORT_LAST_NAME: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
@@ -965,7 +1006,7 @@ object PsiPositioningStrategies {
             }
             return super.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
 
     @OptIn(UnsafeCastFunction::class)
     val IMPORT_LAST_BUT_ONE_NAME: PsiPositioningStrategy<KtImportDirective> = object : PsiPositioningStrategy<KtImportDirective>() {
@@ -979,13 +1020,13 @@ object PsiPositioningStrategies {
 
             return super.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.IMPORT_LAST_BUT_ONE_NAME)
 
     val LABEL: PsiPositioningStrategy<KtElement> = object : PsiPositioningStrategy<KtElement>() {
         override fun mark(element: KtElement): List<TextRange> {
             return super.mark((element as? KtExpressionWithLabel)?.labelQualifier ?: element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.LABEL)
 
     val COMMAS: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
@@ -1000,30 +1041,31 @@ object PsiPositioningStrategies {
 
         @OptIn(DiagnosticLossRisk::class)
         override fun isValid(element: KtSourceElement): Boolean = true
-    }
+    }.registerAs(SourceElementPositioningStrategies.COMMAS)
 
     val NON_FINAL_MODIFIER_OR_NAME: PsiPositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.ABSTRACT_KEYWORD, KtTokens.OPEN_KEYWORD, KtTokens.SEALED_KEYWORD)
+            .registerAs(SourceElementPositioningStrategies.NON_FINAL_MODIFIER_OR_NAME)
 
     val DELEGATED_SUPERTYPE_BY_KEYWORD: PsiPositioningStrategy<KtTypeReference> = object : PsiPositioningStrategy<KtTypeReference>() {
         override fun mark(element: KtTypeReference): List<TextRange> {
             val parent = element.parent as? KtDelegatedSuperTypeEntry ?: return super.mark(element)
             return markElement(parent.byKeywordNode.psi ?: element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.DELEGATED_SUPERTYPE_BY_KEYWORD)
 
     val PROPERTY_DELEGATE_BY_KEYWORD: PsiPositioningStrategy<KtExpression> = object : PsiPositioningStrategy<KtExpression>() {
         override fun mark(element: KtExpression): List<TextRange> {
             return markElement((element.parent as? KtPropertyDelegate)?.byKeywordNode?.psi ?: element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.PROPERTY_DELEGATE_BY_KEYWORD)
 
     @JvmField
     val TYPEALIAS_TYPE_REFERENCE = object : PsiPositioningStrategy<KtTypeAlias>() {
         override fun mark(element: KtTypeAlias): List<TextRange> {
             return markElement(element.getTypeReference() ?: element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.TYPEALIAS_TYPE_REFERENCE)
 
     @JvmField
     val SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC = object : PsiPositioningStrategy<KtElement>() {
@@ -1038,7 +1080,7 @@ object PsiPositioningStrategies {
             }
             return markElement(elementToMark)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC)
 
     /**
      * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for
@@ -1114,7 +1156,7 @@ object PsiPositioningStrategies {
             }
             return super.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF)
 
     val TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
@@ -1127,21 +1169,21 @@ object PsiPositioningStrategies {
             }
             return super.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER)
 
     val PACKAGE_DIRECTIVE_NAME_EXPRESSION: PsiPositioningStrategy<KtElement> = object : PsiPositioningStrategy<KtElement>() {
         override fun mark(element: KtElement): List<TextRange> {
             val packageNameExpression = (element as? KtPackageDirective)?.packageNameExpression
             return super.mark(packageNameExpression ?: element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION)
 
     val OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             val parenthesized = element.getAssignmentLhsIfUnwrappable() ?: return super.mark(element)
             return super.mark(parenthesized)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS)
 
     /**
      * Marks the brackets of a destructuring declaration together with its entries, e.g., `(a, b)` in `val (a, b) = pair`.
@@ -1153,7 +1195,7 @@ object PsiPositioningStrategies {
                 val closing = element.rPar ?: element.entries.lastOrNull() ?: opening
                 return markRange(opening, closing)
             }
-        }
+        }.registerAs(SourceElementPositioningStrategies.DESTRUCTURING_DECLARATION_ENTRIES)
 
     val DEPRECATION: PsiPositioningStrategy<PsiElement> = object : PsiPositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
@@ -1161,7 +1203,7 @@ object PsiPositioningStrategies {
             if (element is KtTypeReference) return SELECTOR_BY_QUALIFIED.mark(element)
             return REFERENCED_NAME_BY_QUALIFIED.mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.DEPRECATION)
 
     val UNREACHABLE_CODE = object : PsiPositioningStrategy<PsiElement>() {
         override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
@@ -1175,7 +1217,7 @@ object PsiPositioningStrategies {
                 typed.b.mapNotNull { it.psi as? KtElement }.toSet()
             )
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.UNREACHABLE_CODE)
 
     val ACTUAL_DECLARATION_NAME = object : PsiPositioningStrategy<PsiElement>() {
         override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
@@ -1185,5 +1227,5 @@ object PsiPositioningStrategies {
             }
             return mark(element)
         }
-    }
+    }.registerAs(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
 }

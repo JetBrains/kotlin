@@ -3,6 +3,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("generated-sources")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -11,11 +12,22 @@ dependencies {
     api(project(":compiler:psi:psi-impl"))
     api(project(":compiler:psi:psi-frontend-utils"))
     compileOnly(intellijCore())
+
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(intellijCore())
+    testRuntimeOnly(libs.intellij.fastutil)
+    testRuntimeOnly(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" { projectDefault() }
+}
+
+projectTests {
+    testTask()
 }
 
 generatedSourcesTask(
