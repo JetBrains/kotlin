@@ -644,6 +644,17 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     }
 
     @Test
+    fun testAddModulesWithJdkRelease() {
+        val addModules = "-Xadd-modules=java.sql"
+        module(
+            "main", additionalKotlinArguments = listOf("-Xjdk-release=9", addModules),
+            checkKotlinOutput = { assertEquals("OK", it.trim()) },
+        )
+        // Modules are not resolved with a release below 9, where the option has no effect.
+        module("main", additionalKotlinArguments = listOf("-Xjdk-release=8", addModules))
+    }
+
+    @Test
     fun testAddReadsOnClasspathUpdate() = runWithDisposable { disposable ->
         // Roots added later, as for a script with dependencies, are resolved without the source module, which must not be reported
         // as missing from the module graph.
