@@ -10,10 +10,10 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
-import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsProvider
@@ -41,7 +41,7 @@ internal class SymbolLightSuspendContinuationParameter(
 
     private val _type by lazyPub {
         withFunctionSymbol { functionSymbol ->
-            val ktType = buildClassType(StandardClassIds.Continuation) { argument(functionSymbol.returnType) }
+            val ktType = typeCreator.classType(StandardClassIds.Continuation) { invariantTypeArgument(functionSymbol.returnType) }
             ktType.asPsiType(
                 this@SymbolLightSuspendContinuationParameter,
                 allowErrorTypes = true,

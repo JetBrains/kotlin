@@ -46,11 +46,7 @@ import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumE
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
-import org.jetbrains.kotlin.light.classes.symbol.utils.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.utils.copy
-import org.jetbrains.kotlin.light.classes.symbol.utils.isCompanionExtension
-import org.jetbrains.kotlin.light.classes.symbol.utils.isJvmField
-import org.jetbrains.kotlin.light.classes.symbol.utils.mapType
+import org.jetbrains.kotlin.light.classes.symbol.utils.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -376,7 +372,7 @@ private class ValueParameterMaskFilterByIntroducedAt(
             emptyList()
         } else {
             valueParameters.mapIndexedNotNullTo(ArrayList(pickMask.length())) { index, symbol ->
-                if (pickMask[index]) with(session) {
+                if (pickMask[index]) context(session) {
                     symbol.returnType.expandedSymbol?.classId ?: ERROR_CLASS_ID
                 } else {
                     null

@@ -9,10 +9,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
-import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
-import org.jetbrains.kotlin.analysis.api.scopes.delegatedMemberScope
-import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -186,7 +183,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     }
 
     context(session: KaSession)
-    private fun addMethodsFromDataClass(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol): Unit = with(session) {
+    private fun addMethodsFromDataClass(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
         if (!classSymbol.isData) return
 
         // NB: componentN and copy are added during RAW FIR, but synthetic members from `Any` are not.
@@ -215,7 +212,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     }
 
     context(session: KaSession)
-    private fun generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<PsiMethod>): Unit = with(session) {
+    private fun generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<PsiMethod>) {
         if (!classSymbol.isData && !classSymbol.isValue) return
 
         // Compiler will generate 'equals/hashCode/toString' for data/value class if they are not final. We want to mimic that.
