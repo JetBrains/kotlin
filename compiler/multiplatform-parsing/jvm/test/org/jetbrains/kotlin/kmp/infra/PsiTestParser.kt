@@ -12,13 +12,14 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class PsiTestParser(disposable: Disposable) : AbstractTestParser<PsiElement>(ParseMode.Full) {
     @OptIn(CoreEnvironmentDeprecation::class)
     private val environment: KotlinCoreEnvironment =
-        KotlinCoreEnvironment.create(disposable, CompilerConfiguration.create())
+        KotlinCoreEnvironment.create(disposable, CompilerConfiguration.create(parseTreeKind = PsiParseTreeKind))
     private val ktPsiFactory = KtPsiFactory(environment.project)
 
     override fun parse(fileName: String, text: String): TestParseNode<out PsiElement> {

@@ -14,6 +14,12 @@ import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 
+/**
+ * A parse-tree agnostic positioning strategy of a diagnostic.
+ * Its implementation for the concrete parse tree is provided by [ParseTreeKind.positioningStrategy].
+ *
+ * TODO: turn it into an abstract class, KT-91911
+ */
 @OptIn(DiagnosticLossRisk::class)
 class SourceElementPositioningStrategy(
     private val lightTreeStrategy: LightTreePositioningStrategy,

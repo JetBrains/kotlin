@@ -11,6 +11,7 @@ dependencies {
     testImplementation(kotlinStdlib())
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":compiler:cli"))
+    testImplementation(project(":compiler:frontend.common-psi"))
     testImplementation(intellijCore())
     testImplementation(libs.kotlinx.benchmark.runtime)
 }

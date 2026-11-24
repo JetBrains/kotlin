@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.countLinesOfCode
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.pipeline.jvm.asKtFilesList
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
@@ -46,10 +47,10 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 /**
- * Builds the raw FIR of [files] with the raw FIR builder of [CompilerConfiguration.parserMode], then resolves it and runs
+ * Builds the raw FIR of [files] with the raw FIR builder of [CompilerConfiguration.parseTreeKind], then resolves it and runs
  * the common checkers. Syntax errors and source statistics are reported while the raw FIR is built.
  *
- * [files] must be the sources of [collectSources], which match the parser mode.
+ * [files] must be the sources of [collectSources], which match the parse tree kind.
  */
 fun buildResolveAndCheckFir(
     session: FirSession,
@@ -59,15 +60,15 @@ fun buildResolveAndCheckFir(
     val diagnosticsCollector = configuration.diagnosticsCollector
     val perfManager = configuration.perfManager
     val reportFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
-    val rawFirFiles = when (val parserMode = configuration.parserMode) {
-        ParserMode.Psi -> {
+    val rawFirFiles = when (configuration.parseTreeKind.isPsi) {
+        true -> {
             val ktFiles = files.asKtFilesList()
             ktFiles.forEach { SyntaxErrorReporter.reportSyntaxErrors(it, diagnosticsCollector) }
             reportFilesAndLines?.invoke(ktFiles.size, ktFiles.countLinesOfCode())
             session.buildFirFromKtFiles(ktFiles)
         }
-        ParserMode.LightTree, ParserMode.KmpTree -> session.buildFirViaLightTree(
-            files, diagnosticsCollector, useMultiplatformParsing = parserMode == ParserMode.KmpTree, reportFilesAndLines,
+        false -> session.buildFirViaLightTree(
+            files, diagnosticsCollector, useMultiplatformParsing = configuration.parseTreeKind.isKmp, reportFilesAndLines,
         )
     }
     return resolveAndCheckFir(session, rawFirFiles, diagnosticsCollector)

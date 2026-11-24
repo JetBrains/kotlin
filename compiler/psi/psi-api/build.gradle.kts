@@ -26,6 +26,7 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
 
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
+    testFixturesImplementation(project(":compiler:frontend.common-psi"))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesCompileOnly(intellijCore())
     testCompileOnly(intellijCore())

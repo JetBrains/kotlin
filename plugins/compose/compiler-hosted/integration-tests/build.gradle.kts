@@ -49,6 +49,7 @@ dependencies {
     testImplementation(project(":compiler:cli"))
     testImplementation(project(":compiler:cli-base"))
     testImplementation(project(":compiler:cli-jvm"))
+    testImplementation(project(":compiler:frontend.common-psi"))
     testImplementation(project(":compiler:backend.jvm"))
     testImplementation(project(":compiler:fir:fir2ir:jvm-backend"))
     testImplementation(project(":compiler:backend.jvm.entrypoint"))

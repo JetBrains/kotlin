@@ -16,6 +16,7 @@ dependencies {
     compileOnly(project(":compiler:fir:fir2ir:jvm-backend"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-jvm"))
+    compileOnly(project(":compiler:frontend.common-psi"))
     compileOnly(project(":core:reflection.common.jvm"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend.jvm.entrypoint"))

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.HmppCliModuleStructure
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.MessageCollectorAccess
-import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.incremental.components.*
@@ -37,7 +36,6 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val IMPORT_TRACKER by key<ImportTracker>(throwOnNull = false)
     val METADATA_VERSION by key<BinaryVersion>()
     val USE_FIR by key<Boolean>()
-    val PARSER_MODE by key<ParserMode>(defaultValue = "ParserMode.Default")
     val HMPP_MODULE_STRUCTURE by key<HmppCliModuleStructure>()
     val METADATA_KLIB by key<Boolean>()
     val USE_FIR_EXTRA_CHECKERS by key<Boolean>()

@@ -12,19 +12,25 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
+import org.jetbrains.kotlin.diagnostics.LightTreeParseTreeKind
+import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
+
+val DEFAULT_PARSE_TREE_KIND: ParseTreeKind = LightTreeParseTreeKind
 
 /**
  * Default way for creating `CompilerConfiguration`.
  * Creates a new configuration and registers default services.
  *
  * If [diagnosticsCollector] is not provided, a new [DiagnosticsCollectorImpl] is created.
+ * If [parseTreeKind] is not provided, [DEFAULT_PARSE_TREE_KIND] is used.
  */
 @JvmOverloads
 fun CompilerConfiguration.Companion.create(
     diagnosticsCollector: BaseDiagnosticsCollector? = null,
     messageCollector: MessageCollector? = null,
+    parseTreeKind: ParseTreeKind = DEFAULT_PARSE_TREE_KIND,
 ): CompilerConfiguration {
     @OptIn(CompilerConfiguration.Internals::class)
     return CompilerConfiguration().apply {
@@ -33,6 +39,7 @@ fun CompilerConfiguration.Companion.create(
         this.diagnosticsCollector = diagnosticsCollector ?: DiagnosticsCollectorImpl()
         @OptIn(MessageCollectorAccess::class) // write access
         messageCollector?.let { this.messageCollector = it }
+        this.parseTreeKind = parseTreeKind
     }
 }
 

@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.allSourceFilesSequence
 import org.jetbrains.kotlin.cli.jvm.compiler.findFileByPath
 import org.jetbrains.kotlin.cli.jvm.compiler.getSourceRootsCheckingForDuplicates
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.config.dontSortSourceFiles
-import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -142,9 +141,9 @@ fun collectSources(
         }
 
     val sources = GroupedKtSources(platformSources, commonSources, sourcesByModuleName)
-    return when (compilerConfiguration.parserMode) {
-        ParserMode.Psi -> sources.toPsiSources(projectEnvironment.project)
-        ParserMode.LightTree, ParserMode.KmpTree -> sources
+    return when (compilerConfiguration.parseTreeKind.isPsi) {
+        true -> sources.toPsiSources(projectEnvironment.project)
+        false -> sources
     }
 }
 

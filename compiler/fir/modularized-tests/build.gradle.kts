@@ -24,6 +24,7 @@ dependencies {
     testFixturesApi(project(":compiler:fir:resolve"))
     testFixturesApi(project(":compiler:fir:semantics.api"))
     testFixturesImplementation(project(":compiler:config.jvm"))
+    testFixturesImplementation(project(":compiler:frontend.common-psi"))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils.common")))
     testImplementation(project(":compiler:fir:plugin.api"))
 

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.konan.isNative
@@ -189,7 +190,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
     }
 
     private fun createPsiFactory(): KtPsiFactory {
-        val configuration = CompilerConfiguration.create()
+        val configuration = CompilerConfiguration.create(parseTreeKind = PsiParseTreeKind) // KT-91411 ?
 
         @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.create(

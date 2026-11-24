@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.fir.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -433,7 +434,7 @@ internal class LLFirSessionFactory(
 
         val compilerArguments = makeScriptCompilerArguments(scriptDefinition.compilerOptions.toList())
         val commandLineProcessors = listOf(AssignmentCommandLineProcessor())
-        val compilerConfiguration = CompilerConfiguration.create()
+        val compilerConfiguration = CompilerConfiguration.create(parseTreeKind = PsiParseTreeKind)
         processCompilerPluginsOptions(
             compilerConfiguration, compilerArguments.pluginOptions.asIterable(), commandLineProcessors
         )

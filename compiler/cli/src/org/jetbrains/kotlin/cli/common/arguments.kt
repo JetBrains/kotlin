@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.DEPRECATED_CLI_ARG
 import org.jetbrains.kotlin.cli.CliDiagnostics.REMOVED_CLI_ARG
+import org.jetbrains.kotlin.cli.FrontendConfigurationKeys
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENTS_ARG_NAME
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_DEPENDENCIES_ARG_NAME
 import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.cli.DEFAULT_PARSE_TREE_KIND
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.FlexibleTypeImpl
@@ -86,7 +88,7 @@ fun CompilerConfiguration.setupCommonArguments(
     checkRedundantArguments(arguments)
 
     put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
-    put(CommonConfigurationKeys.PARSER_MODE, ParserMode.LightTree)
+    put(FrontendConfigurationKeys.PARSE_TREE_KIND, DEFAULT_PARSE_TREE_KIND)
 
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
 

@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.MessageCollectorAccess
-import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.useFir
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.test.updateWithBaseCompilerArguments
@@ -142,7 +142,7 @@ class ScriptTest {
                 configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, saveClassesDir)
             }
             configuration.useFir = true
-            configuration.parserMode = ParserMode.Psi // `ScriptJvmCompilerFromEnvironment` builds FIR from PSI files, KT-91411
+            configuration.parseTreeKind = PsiParseTreeKind // `ScriptJvmCompilerFromEnvironment` builds FIR from PSI files, KT-91411
 
             loadScriptingPlugin(configuration, rootDisposable)
 

@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":core:language.targets.jvm"))
     implementation(project(":compiler:config.jvm"))
     implementation(project(":compiler:backend.jvm"))
+    implementation(project(":compiler:frontend.common-psi"))
     api(project(":compiler:cli-js"))
     api(project(":compiler:cli-metadata"))
     api(project(":compiler:fir:entrypoint"))

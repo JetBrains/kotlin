@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
@@ -62,7 +62,7 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ): ScriptCompilerProxy {
         val configuration = environment.configuration
-        return if (configuration.useFir && configuration.parserMode.treeBased) {
+        return if (configuration.useFir && !configuration.parseTreeKind.isPsi) {
             ScriptJvmK2CompilerFromEnvironment(
                 environment,
                 ((configuration.scriptingHostConfiguration as? ScriptingHostConfiguration) ?: defaultJvmScriptingHostConfiguration).with {

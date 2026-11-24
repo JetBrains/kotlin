@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -42,7 +43,8 @@ fun classesFqNames(files: Set<File>): Set<String> {
 }
 
 private fun classesFqNames(kotlinFiles: Collection<File>, disposable: Disposable): Set<String> {
-    val config = CompilerConfiguration.create()
+    // The class names are collected from the PSI of the Kotlin files, KT-91411
+    val config = CompilerConfiguration.create(parseTreeKind = PsiParseTreeKind)
     config.put(JVMConfigurationKeys.NO_JDK, true)
     @OptIn(MessageCollectorAccess::class) // write access
     config.messageCollector = MessageCollector.NONE
