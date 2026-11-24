@@ -240,7 +240,8 @@ public interface KaTypeProvider : KaSessionComponent {
         message = "The API is obsolete. Use `scopeContext` instead.",
         replaceWith = ReplaceWith(
             expression = "position.containingKtFile.scopeContext(position).implicitReceivers.map { it.type }",
-        )
+        ),
+        level = DeprecationLevel.ERROR,
     )
     public fun collectImplicitReceiverTypes(position: KtElement): List<KaType>
 
@@ -579,11 +580,12 @@ public fun KaType.hasCommonSubtypeWith(that: KaType): Boolean {
     replaceWith = ReplaceWith(
         expression = "position.containingKtFile.scopeContext(position).implicitReceivers.map { it.type }",
         imports = ["org.jetbrains.kotlin.analysis.api.components.scopeContext"],
-    )
+    ),
+    level = DeprecationLevel.ERROR,
 )
 context(session: KaSession)
 public fun collectImplicitReceiverTypes(position: KtElement): List<KaType> {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     return with(session) {
         collectImplicitReceiverTypes(
             position = position,

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtElement
         expression = "analyze(useSiteElement, action)",
         imports = ["org.jetbrains.kotlin.analysis.api.session.analyze"],
     ),
+    level = DeprecationLevel.ERROR,
 )
 public inline fun <R> analyze(
     useSiteElement: KtElement,
@@ -47,6 +48,7 @@ public inline fun <R> analyze(
         expression = "analyze(useSiteModule, action)",
         imports = ["org.jetbrains.kotlin.analysis.api.session.analyze"],
     ),
+    level = DeprecationLevel.ERROR,
 )
 public inline fun <R> analyze(
     useSiteModule: KaModule,
@@ -70,6 +72,7 @@ public inline fun <R> analyze(
         expression = "analyzeCopy(useSiteElement, resolutionMode, action)",
         imports = ["org.jetbrains.kotlin.analysis.api.session.analyzeCopy"],
     ),
+    level = DeprecationLevel.ERROR,
 )
 public inline fun <R> analyzeCopy(
     useSiteElement: KtElement,
