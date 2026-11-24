@@ -5,6 +5,19 @@
     {
       "interfaces": [
         "java.rmi.Remote",
+        "org.jetbrains.kotlin.daemon.common.CompilationResults"
+      ]
+    },
+    {
+      "interfaces": [
+        "java.rmi.Remote",
+        "org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade",
+        "org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade"
+      ]
+    },
+    {
+      "interfaces": [
+        "java.rmi.Remote",
         "org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase"
       ]
     },

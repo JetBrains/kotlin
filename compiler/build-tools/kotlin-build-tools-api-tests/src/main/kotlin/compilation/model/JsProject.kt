@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilati
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.assumeNotNativeImageProcess
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinJsStdlibKlibLocation
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -72,6 +73,7 @@ fun BaseCompilationTest.jsProject(
     action: JsProject.() -> Unit,
 ) {
     kotlinToolchain.assumeJsIsSupported()
+    strategyConfig.assumeNotNativeImageProcess()
     JsProject(kotlinToolchain, strategyConfig, workingDirectory, useRichDtsGenerator).use { project ->
         project.action()
     }

@@ -21,6 +21,18 @@ import org.junit.jupiter.params.provider.ArgumentsSource
 annotation class DefaultStrategyAgnosticCompilationTest
 
 /**
+ * Annotation for parameterized JPS tests. JPS-managed incremental compilation is not supported
+ * by the native image process execution policy, so that policy is not included in the matrix.
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(
+    BtaV2JpsStrategyAgnosticCompilationTestArgumentProvider::class
+)
+annotation class BtaV2JpsStrategyAgnosticCompilationTest
+
+/**
  * Annotation for parameterized tests that evaluate compilation behavior using only BTAv2
  * This involves the variants: daemon, in-process
  */

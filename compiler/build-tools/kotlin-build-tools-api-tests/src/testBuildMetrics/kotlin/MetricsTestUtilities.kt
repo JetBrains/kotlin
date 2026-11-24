@@ -23,6 +23,7 @@ fun <O : BaseCompilationOperation, B : BaseCompilationOperation.Builder> Module<
     compilationAction: (O) -> Unit = {},
     assertions: context(ModuleContext) CompilationOutcome.(TestBuildMetricsCollector) -> Unit = {},
 ): CompilationResult {
+    strategyConfig.assumeDetailedMetricsAreCollected()
     val metricsCollector = TestBuildMetricsCollector()
     return compile(strategyConfig, forceOutput, compilationConfigAction = {
         compilationConfigAction(it)
@@ -46,6 +47,7 @@ fun <O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, IC: Bas
     icOptionsConfigAction: (IC) -> Unit = {},
     assertions: context(ModuleContext) CompilationOutcome.(TestBuildMetricsCollector) -> Unit = {},
 ): CompilationResult {
+    strategyConfig.assumeDetailedMetricsAreCollected()
     val metricsCollector = TestBuildMetricsCollector()
     return compileIncrementally(
         sourcesChanges,

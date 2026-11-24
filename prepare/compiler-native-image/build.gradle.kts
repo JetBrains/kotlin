@@ -35,6 +35,7 @@ val pluginsRuntime = configurations.create("pluginsRuntime") {
 
 dependencies {
     nativeImageClasspath(project(":kotlin-compiler-embeddable", configuration = "runtimeElements"))
+    nativeImageClasspath(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
     // Bundled plugins
     nativeImageClasspath(project(":kotlin-scripting-compiler-embeddable"))
     nativeImageClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable"))

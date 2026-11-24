@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.nativeImageProcessExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.metadataProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.MetadataProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -33,7 +34,7 @@ class NativeImageProcessErrorHandlingTest : BaseCompilationTest() {
             this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = workingDirectory.resolve("dist")
         }
 
-        metadataProject(kotlinToolchains to policy) {
+        metadataProjectWithoutNativeImageProcessAssumption(kotlinToolchains to policy) {
             val module = module("empty")
             module.compile {
                 expectFail()
@@ -118,6 +119,15 @@ class NativeImageProcessErrorHandlingTest : BaseCompilationTest() {
                     Regex(".*Failed to run the native image compiler\\."),
                 )
             }
+        }
+    }
+
+    private fun BaseCompilationTest.metadataProjectWithoutNativeImageProcessAssumption(
+        executionStrategy: CompilerExecutionStrategyConfiguration,
+        action: MetadataProject.() -> Unit,
+    ) {
+        MetadataProject(executionStrategy.first, executionStrategy.second, workingDirectory).use { project ->
+            project.action()
         }
     }
 }

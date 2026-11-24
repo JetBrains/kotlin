@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.assumeNotNativeImageProcess
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinNativeStdlibKlibLocation
-import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.jetbrains.kotlin.buildtools.tests.isDaemonBased
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import java.nio.file.Path
 
 class NativeProject(
@@ -26,7 +28,7 @@ class NativeProject(
 ) {
     init {
         // Skips (rather than fails) every Native variant of a test that runs with the daemon policy
-        assumeTrue(defaultStrategyConfig !is ExecutionPolicy.WithDaemon) {
+        assumeFalse(defaultStrategyConfig.isDaemonBased) {
             "Kotlin/Native compilation via the daemon is not supported yet"
         }
     }
@@ -65,6 +67,7 @@ fun BaseCompilationTest.nativeProject(
     strategyConfig: ExecutionPolicy,
     action: NativeProject.() -> Unit,
 ) {
+    strategyConfig.assumeNotNativeImageProcess()
     NativeProject(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
         project.action()
     }

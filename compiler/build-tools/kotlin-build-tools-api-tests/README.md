@@ -34,6 +34,9 @@ The module defines test suites using the `jvm-test-suite` plugin.
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testExample` to run them
 * Native image execution policies: verifies the native image execution policies work correctly; excluded from the default `check` task
     * Use `./gradlew -Pkotlin.build.native-image.kotlin-daemon=true :compiler:build-tools:kotlin-build-tools-api-tests:testNativeImage` to run them
+    * To additionally run all the parameterized execution policy tests of the other suites with the native image daemon execution policy,
+      add `-Pkotlin.build-tools-api.test.native-image-policies=true` (together with `-Pkotlin.build.native-image.kotlin-daemon=true`)
+      and run a regular check task: `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:check -Pkotlin.build.native-image.kotlin-daemon=true -Pkotlin.build-tools-api.test.native-image-policies=true`
 
 #### How to work with the tests
 

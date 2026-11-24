@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompi
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.assumeNotNativeImageProcess
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinWasmStdlibKlibLocation
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -60,6 +61,7 @@ class WasmProject(
 
 fun BaseCompilationTest.wasmProject(kotlinToolchain: KotlinToolchains, strategyConfig: ExecutionPolicy, action: WasmProject.() -> Unit) {
     kotlinToolchain.assumeWasmIsSupported()
+    strategyConfig.assumeNotNativeImageProcess()
     WasmProject(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
         project.action()
     }

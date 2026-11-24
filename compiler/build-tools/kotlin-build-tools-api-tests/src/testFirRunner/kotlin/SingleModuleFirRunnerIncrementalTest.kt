@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.assumeIncrementalCompilationIsSupported
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -29,6 +30,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
     @DisplayName("Adding and removing the class")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testScenario1(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.second.assumeIncrementalCompilationIsSupported()
         jvmScenario(strategyConfig) {
             val module1 = moduleWithFir("basic-multimodule-project/module-1")
 
@@ -63,6 +65,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
     @DisplayName("Throws an exception on using LV 1.9")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testScenario2(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.second.assumeIncrementalCompilationIsSupported()
         jvmScenario(strategyConfig) {
             assertThrows<IllegalStateException>(
                 message = "Compilation does not fail on LV 1.9"
@@ -83,6 +86,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
     @DisplayName("Throws an exception on missing -Xuse-fir-ic")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testScenario3(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.second.assumeIncrementalCompilationIsSupported()
         jvmScenario(strategyConfig) {
             assertThrows<IllegalStateException>(
                 message = "Compilation does not fail on missing -Xuse-fir-ic"

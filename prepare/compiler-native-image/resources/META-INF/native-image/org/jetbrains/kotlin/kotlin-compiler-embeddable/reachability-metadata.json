@@ -23,6 +23,179 @@
       "serializable": true
     },
     {
+      "type": "com.sun.tools.javac.api.DiagnosticFormatter$PositionKind",
+      "methods": [
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.code.Source",
+      "methods": [
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.comp.AttrContext",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.file.CacheFSInfo",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.file.JavacFileManager",
+      "methods": [
+        {
+          "name": "handleOption",
+          "parameterTypes": [
+            "com.sun.tools.javac.main.Option",
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.jvm.ClassFile",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.main.JavaCompiler",
+      "methods": [
+        {
+          "name": "initModules",
+          "parameterTypes": [
+            "com.sun.tools.javac.util.List"
+          ]
+        },
+        {
+          "name": "initProcessAnnotations",
+          "parameterTypes": [
+            "java.lang.Iterable",
+            "java.util.Collection",
+            "java.util.Collection"
+          ]
+        },
+        {
+          "name": "processAnnotations",
+          "parameterTypes": [
+            "com.sun.tools.javac.util.List",
+            "java.util.Collection"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.main.Option",
+      "methods": [
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.parser.Tokens$TokenKind",
+      "methods": [
+        {
+          "name": "values",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.processing.JavacFiler",
+      "fields": [
+        {
+          "name": "generatedSourceNames"
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.processing.JavacProcessingEnvironment",
+      "fields": [
+        {
+          "name": "filer"
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.processing.JavacRoundEnvironment",
+      "fields": [
+        {
+          "name": "processingEnv"
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.processing.PrintingProcessor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.tree.JCTree$JCImport"
+    },
+    {
+      "type": "com.sun.tools.javac.tree.TreeTranslator",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.sun.tools.javac.util.Context",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "example.ExampleAnnotationProcessor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "example.KotlinFilerGeneratingProcessor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "gnu.trove.TObjectHashingStrategy"
     },
     {
@@ -124,6 +297,10 @@
       "type": "java.lang.Comparable"
     },
     {
+      "type": "java.lang.Comparable[]",
+      "serializable": true
+    },
+    {
       "type": "java.lang.Double"
     },
     {
@@ -166,6 +343,34 @@
       "serializable": true
     },
     {
+      "type": "java.lang.Module",
+      "methods": [
+        {
+          "name": "getPackages",
+          "parameterTypes": []
+        },
+        {
+          "name": "implAddOpens",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.ModuleLayer",
+      "methods": [
+        {
+          "name": "boot",
+          "parameterTypes": []
+        },
+        {
+          "name": "modules",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "java.lang.NoClassDefFoundError",
       "serializable": true
     },
@@ -178,6 +383,15 @@
     },
     {
       "type": "java.lang.Object[]"
+    },
+    {
+      "type": "java.lang.ReflectiveOperationException",
+      "serializable": true,
+      "fields": [
+        {
+          "name": "serialVersionUID"
+        }
+      ]
     },
     {
       "type": "java.lang.Runtime",
@@ -214,15 +428,6 @@
       ]
     },
     {
-      "type": "java.lang.ReflectiveOperationException",
-      "fields": [
-        {
-          "name": "serialVersionUID"
-        }
-      ],
-      "serializable": true
-    },
-    {
       "type": "java.lang.Short"
     },
     {
@@ -255,8 +460,30 @@
       "type": "java.lang.annotation.Annotation"
     },
     {
+      "type": "java.lang.invoke.MethodHandles$Lookup"
+    },
+    {
+      "type": "java.lang.reflect.Method",
+      "fields": [
+        {
+          "name": "modifiers"
+        }
+      ]
+    },
+    {
       "type": "java.lang.reflect.Proxy",
       "serializable": true
+    },
+    {
+      "type": "java.nio.Bits",
+      "fields": [
+        {
+          "name": "MAX_MEMORY"
+        },
+        {
+          "name": "RESERVED_MEMORY"
+        }
+      ]
     },
     {
       "type": "java.rmi.MarshalException",
@@ -321,11 +548,11 @@
       "serializable": true
     },
     {
-      "type": "java.util.Collection"
-    },
-    {
       "type": "java.util.CollSer",
       "serializable": true
+    },
+    {
+      "type": "java.util.Collection"
     },
     {
       "type": "java.util.Collections$EmptyList",
@@ -333,6 +560,10 @@
     },
     {
       "type": "java.util.Collections$SingletonList",
+      "serializable": true
+    },
+    {
+      "type": "java.util.Collections$SingletonMap",
       "serializable": true
     },
     {
@@ -344,10 +575,18 @@
       "serializable": true
     },
     {
+      "type": "java.util.HashSet",
+      "serializable": true
+    },
+    {
       "type": "java.util.Iterator"
     },
     {
       "type": "java.util.LinkedHashMap",
+      "serializable": true
+    },
+    {
+      "type": "java.util.LinkedHashSet",
       "serializable": true
     },
     {
@@ -410,6 +649,15 @@
       "type": "jdk.internal.jrtfs.JrtFileSystemProvider"
     },
     {
+      "type": "jdk.internal.misc.VM",
+      "methods": [
+        {
+          "name": "maxDirectMemory",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "jdk.internal.vm.VMSupport",
       "methods": [
         {
@@ -428,19 +676,7 @@
       "type": "kotlin.Boolean"
     },
     {
-      "type": "kotlin.collections.EmptyList",
-      "fields": [
-        {
-          "name": "serialVersionUID"
-        }
-      ],
-      "methods": [
-        {
-          "name": "readResolve",
-          "parameterTypes": []
-        }
-      ],
-      "serializable": true
+      "type": "kotlin.Int"
     },
     {
       "type": "kotlin.Metadata",
@@ -484,6 +720,29 @@
     },
     {
       "type": "kotlin.String"
+    },
+    {
+      "type": "kotlin.collections.EmptyList",
+      "serializable": true,
+      "fields": [
+        {
+          "name": "serialVersionUID"
+        }
+      ],
+      "methods": [
+        {
+          "name": "readResolve",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "kotlin.collections.EmptyMap",
+      "serializable": true
+    },
+    {
+      "type": "kotlin.collections.builders.SerializedMap",
+      "serializable": true
     },
     {
       "type": "kotlin.jvm.internal.BooleanCompanionObject"
@@ -582,6 +841,20 @@
           "name": "VARIABLES"
         }
       ]
+    },
+    {
+      "type": "kotlin.script.experimental.api.ScriptEvaluationConfiguration"
+    },
+    {
+      "type": "kotlin.script.experimental.api.ScriptEvaluationConfiguration$Default",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "kotlin.script.experimental.templates.ScriptWithArgs"
     },
     {
       "type": "kotlin.script.templates.standard.ScriptTemplateWithArgs"
@@ -1239,6 +1512,10 @@
       "serializable": true
     },
     {
+      "type": "org.jetbrains.kotlin.build.report.metrics.CustomBuildTimeMetric",
+      "serializable": true
+    },
+    {
       "type": "org.jetbrains.kotlin.build.report.metrics.DAEMON_INCREASED_MEMORY",
       "serializable": true
     },
@@ -1427,6 +1704,10 @@
       "serializable": true
     },
     {
+      "type": "org.jetbrains.kotlin.build.report.metrics.KlibSizeMetric",
+      "serializable": true
+    },
+    {
       "type": "org.jetbrains.kotlin.build.report.metrics.LOAD_CLASSES_PATHS_ONLY",
       "serializable": true
     },
@@ -1611,6 +1892,20 @@
       "serializable": true
     },
     {
+      "type": "org.jetbrains.kotlin.buildtools.tests.compilation.GreetScriptCustomExtensionTemplate"
+    },
+    {
+      "type": "org.jetbrains.kotlin.buildtools.tests.compilation.GreetScriptDefinition",
+      "fields": [
+        {
+          "name": "INSTANCE"
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.buildtools.tests.compilation.GreetScriptTemplate"
+    },
+    {
       "type": "org.jetbrains.kotlin.cli.CliDiagnosticReportingKt",
       "methods": [
         {
@@ -1634,6 +1929,82 @@
       "allDeclaredMethods": true
     },
     {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments",
+      "methods": [
+        {
+          "name": "setIncludes",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIrModuleName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIrPerModuleOutputName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setIrProduceJs",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setIrProduceKlibDir",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setIrProduceKlibFile",
+          "parameterTypes": [
+            "java.lang.Boolean"
+          ]
+        },
+        {
+          "name": "setLibraries",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setModuleName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setNopack",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setOutputDir",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments",
+      "methods": [
+        {
+          "name": "setPartialLinkageLogLevel",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments",
       "allDeclaredMethods": true
     },
@@ -1642,8 +2013,80 @@
       "allDeclaredMethods": true
     },
     {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments",
+      "methods": [
+        {
+          "name": "setExportKDoc",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setIrPerFile",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setIrPerModule",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setModuleKind",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments",
       "allDeclaredMethods": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments",
+      "methods": [
+        {
+          "name": "setClasspath",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setDestination",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        },
+        {
+          "name": "setLegacyMetadataJar",
+          "parameterTypes": [
+            "boolean"
+          ]
+        },
+        {
+          "name": "setModuleName",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments"
+    },
+    {
+      "type": "org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments",
+      "methods": [
+        {
+          "name": "setWasmTarget",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
     },
     {
       "type": "org.jetbrains.kotlin.cli.common.arguments.RemovedCompilerArguments",
@@ -1867,6 +2310,9 @@
       ]
     },
     {
+      "type": "org.jetbrains.kotlin.com.intellij.util.io.DirectBufferWrapper"
+    },
+    {
       "type": "org.jetbrains.kotlin.compiler.plugin.CliOption",
       "allDeclaredConstructors": true
     },
@@ -1951,6 +2397,9 @@
       "serializable": true
     },
     {
+      "type": "org.jetbrains.kotlin.daemon.common.CompilationResults"
+    },
+    {
       "type": "org.jetbrains.kotlin.daemon.common.CompileIterationResult",
       "serializable": true
     },
@@ -1983,6 +2432,9 @@
       "serializable": true
     },
     {
+      "type": "org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade"
+    },
+    {
       "type": "org.jetbrains.kotlin.daemon.common.CompilerId",
       "serializable": true
     },
@@ -2011,6 +2463,9 @@
       "serializable": true
     },
     {
+      "type": "org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade"
+    },
+    {
       "type": "org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface$AbstractClientLoopbackSocketFactory",
       "serializable": true
     },
@@ -2020,6 +2475,10 @@
     },
     {
       "type": "org.jetbrains.kotlin.daemon.common.MultiModuleICSettings",
+      "serializable": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.daemon.common.RmiFriendlyCompilationCanceledException",
       "serializable": true
     },
     {
@@ -2192,6 +2651,677 @@
       "type": "org.jetbrains.kotlin.io.opentelemetry.api.incubator.trace.ExtendedDefaultTracerProvider"
     },
     {
+      "type": "org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin"
+    },
+    {
+      "type": "org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin$Companion",
+      "methods": [
+        {
+          "name": "getADAPTER_FOR_CALLABLE_REFERENCE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getADAPTER_FOR_SUSPEND_CONVERSION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getBRIDGE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getBRIDGE_SPECIAL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCATCH_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCONTINUATION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDEFAULT_CONSTRUCTOR_MARKER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDEFAULT_PROPERTY_ACCESSOR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDEFINED",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDELEGATE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDELEGATED_MEMBER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDELEGATED_PROPERTY_ACCESSOR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDESTRUCTURED_OBJECT_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getENUM_CLASS_SPECIAL_MEMBER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getERROR_CLASS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFAKE_OVERRIDE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFIELD_FOR_CLASS_CONTEXT_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFIELD_FOR_ENUM_ENTRIES",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFIELD_FOR_ENUM_ENTRY",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFIELD_FOR_ENUM_VALUES",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFIELD_FOR_OBJECT_INSTANCE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFIELD_FOR_OUTER_THIS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFILE_CLASS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFILLED_FOR_UNBOUND_SYMBOL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_IMPLICIT_VARIABLE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_ITERATOR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_VARIABLE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFUNCTION_FOR_DEFAULT_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFUNCTION_INTERFACE_MEMBER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGENERATED_DATA_CLASS_MEMBER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGENERATED_FULL_VALUE_CLASS_MEMBER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGENERATED_INLINE_CLASS_MEMBER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGENERATED_SAM_IMPLEMENTATION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGENERATED_SETTER_GETTER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINLINE_LAMBDA",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINSTANCE_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_BUILTINS_STUB",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_DESTRUCTURED_PARAMETER_VARIABLE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_EXTERNAL_DECLARATION_STUB",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_EXTERNAL_JAVA_DECLARATION_STUB",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_TEMPORARY_VARIABLE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getJVM_MULTIFILE_CLASS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLAMBDA_EXTENSION_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLOCAL_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLOCAL_FUNCTION_FOR_LAMBDA",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLOWERED_SUSPEND_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMASK_FOR_DEFAULT_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMETHOD_HANDLER_IN_DEFAULT_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMOVED_CONTEXT_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMOVED_DISPATCH_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMOVED_EXTENSION_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPRIMARY_CONSTRUCTOR_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPROPERTY_BACKING_FIELD",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPROPERTY_DELEGATE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPROPERTY_FOR_ENUM_ENTRIES",
+          "parameterTypes": []
+        },
+        {
+          "name": "getREPL_EVAL_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getREPL_FROM_OTHER_SNIPPET",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_CALL_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_CLASS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_EARLIER_SCRIPTS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_IMPLICIT_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_PROVIDED_PROPERTY",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_RESULT_PROPERTY",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_STATEMENT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSCRIPT_THIS_RECEIVER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSHARED_VARIABLE_IN_EVALUATOR_FRAGMENT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSTUB_FOR_LENIENT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSTUB_FOR_TYPE_SWITCH",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_ACCESSOR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_ACCESSOR_CAPTURED_TYPE_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_CONSTRUCTOR_MARKER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_FILE_CLASS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_GENERATED_SAM_IMPLEMENTATION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_HELPER_FOR_ENUM_ENTRIES",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_HELPER_FOR_ENUM_VALUES",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_JAVA_PROPERTY_DELEGATE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUNDERSCORE_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVERSION_OVERLOAD_WRAPPER",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.ir.expressions.IrStatementOrigin"
+    },
+    {
+      "type": "org.jetbrains.kotlin.ir.expressions.IrStatementOrigin$Companion",
+      "methods": [
+        {
+          "name": "getADAPTED_FUNCTION_REFERENCE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getANDAND",
+          "parameterTypes": []
+        },
+        {
+          "name": "getANONYMOUS_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getARGUMENTS_REORDERING_FOR_CALL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getBRIDGE_DELEGATION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getCOLLECTION_LITERAL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDEFAULT_DISPATCH_CALL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDEFAULT_VALUE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDESTRUCTURING_DECLARATION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDIV",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDIVEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getDO_WHILE_LOOP",
+          "parameterTypes": []
+        },
+        {
+          "name": "getELVIS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEQEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEQEQEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getERROR_SAFE_CALL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEXCL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEXCLEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEXCLEQEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getEXCLEXCL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_HAS_NEXT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_INNER_WHILE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_ITERATOR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFOR_LOOP_NEXT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFUNCTION_TYPE_EXPRESSION_CONVERSION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getFUN_INTERFACE_CONSTRUCTOR_REFERENCE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGET_ARRAY_ELEMENT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGET_LOCAL_PROPERTY",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGET_PROPERTY",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getGTEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIF",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIMPLICIT_ARGUMENT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getIN",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINITIALIZE_FIELD",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINITIALIZE_PROPERTY_FROM_PARAMETER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINLINED_FUNCTION_REFERENCE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINLINE_ARGS_CONTAINER",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINLINE_LAMBDA",
+          "parameterTypes": []
+        },
+        {
+          "name": "getINVOKE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLAMBDA",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLT",
+          "parameterTypes": []
+        },
+        {
+          "name": "getLTEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMINUS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMINUSEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMUL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getMULTEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getNOT_IN",
+          "parameterTypes": []
+        },
+        {
+          "name": "getOBJECT_LITERAL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getOROR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPARTIAL_LINKAGE_RUNTIME_ERROR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPERC",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPERCEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPLUS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPLUSEQ",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPOSTFIX_DECR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPOSTFIX_INCR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPREFIX_DECR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPREFIX_INCR",
+          "parameterTypes": []
+        },
+        {
+          "name": "getPROPERTY_REFERENCE_FOR_DELEGATE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getRANGE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getRANGE_UNTIL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSAFE_CALL",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSTATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHESIZED_INIT_BLOCK",
+          "parameterTypes": []
+        },
+        {
+          "name": "getSYNTHETIC_NOT_AUTOBOXED_CHECK",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUMINUS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getUPLUS",
+          "parameterTypes": []
+        },
+        {
+          "name": "getVARIABLE_AS_FUNCTION",
+          "parameterTypes": []
+        },
+        {
+          "name": "getWHEN",
+          "parameterTypes": []
+        },
+        {
+          "name": "getWHEN_COMMA",
+          "parameterTypes": []
+        },
+        {
+          "name": "getWHILE_LOOP",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl"
+    },
+    {
+      "type": "org.jetbrains.kotlin.js.backend.ast.JsExpression[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.kapt.KaptCommandLineProcessor",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.kapt.KaptCompilerPluginRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.kapt.base.javac.KaptJavaCompiler"
+    },
+    {
       "type": "org.jetbrains.kotlin.load.java.ErasedOverridabilityCondition"
     },
     {
@@ -2226,6 +3356,13 @@
           "parameterTypes": []
         }
       ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.metadata.ProtoBuf$Visibility[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.modules.TargetId",
+      "serializable": true
     },
     {
       "type": "org.jetbrains.kotlin.name.ClassId",
@@ -2297,6 +3434,15 @@
     },
     {
       "type": "org.jetbrains.kotlin.noarg.NoArgComponentRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.plugin.sandbox.fir.FirPluginPrototypeComponentRegistrar",
       "methods": [
         {
           "name": "<init>",
@@ -3086,6 +4232,9 @@
       "type": "org.jetbrains.kotlin.resolve.jvm.extensions.SyntheticJavaResolveExtension[]"
     },
     {
+      "type": "org.jetbrains.kotlin.resolve.konan.platform.ObjCOverridabilityCondition"
+    },
+    {
       "type": "org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor",
       "methods": [
         {
@@ -3270,6 +4419,9 @@
       ]
     },
     {
+      "type": "sun.misc.VM"
+    },
+    {
       "type": "sun.net.www.protocol.jar.Handler",
       "methods": [
         {
@@ -3366,6 +4518,15 @@
       ]
     },
     {
+      "type": "sun.security.provider.SHA2$SHA256",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "sun.text.resources.cldr.FormatData"
     },
     {
@@ -3373,6 +4534,15 @@
     },
     {
       "type": "sun.util.resources.cldr.CalendarData"
+    },
+    {
+      "type": "sun.util.resources.cldr.TimeZoneNames"
+    },
+    {
+      "type": "sun.util.resources.cldr.TimeZoneNames_en"
+    },
+    {
+      "type": "sun.util.resources.cldr.TimeZoneNames_en_US"
     },
     {
       "type": {
@@ -3390,6 +4560,15 @@
         ]
       },
       "serializable": true
+    },
+    {
+      "type": {
+        "proxy": [
+          "java.rmi.Remote",
+          "org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade",
+          "org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade"
+        ]
+      }
     },
     {
       "type": {
@@ -3476,6 +4655,18 @@
       "glob": "META-INF/services/org.jetbrains.kotlin.util.ModuleVisibilityHelper"
     },
     {
+      "glob": "com/sun/tools/javac/resources/compiler_en.properties"
+    },
+    {
+      "glob": "com/sun/tools/javac/resources/compiler_en_NL.properties"
+    },
+    {
+      "glob": "com/sun/tools/javac/resources/javac_en.properties"
+    },
+    {
+      "glob": "com/sun/tools/javac/resources/javac_en_NL.properties"
+    },
+    {
       "glob": "kotlin/annotation/annotation.kotlin_builtins"
     },
     {
@@ -3500,6 +4691,9 @@
       "glob": "kotlin/reflect/reflect.kotlin_builtins"
     },
     {
+      "glob": "kotlin/script/experimental/api/api.kotlin_builtins"
+    },
+    {
       "glob": "kotlin/script/experimental/templates/ScriptWithArgs.class"
     },
     {
@@ -3521,12 +4715,41 @@
       "glob": "org/jetbrains/kotlin/scripting/definitions/AutoloadedScriptDefinitions.class"
     },
     {
+      "glob": "org/jetbrains/kotlin/utils/PathUtil.class"
+    },
+    {
+      "module": "java.base",
+      "glob": "jdk/internal/icu/impl/data/icudt76b/nfc.nrm"
+    },
+    {
       "module": "java.logging",
       "glob": "sun/util/logging/resources/logging_en.properties"
     },
     {
       "module": "java.logging",
       "glob": "sun/util/logging/resources/logging_en_NL.properties"
+    },
+    {
+      "module": "jdk.compiler",
+      "glob": "com/sun/tools/javac/resources/compiler_en.properties"
+    },
+    {
+      "module": "jdk.compiler",
+      "glob": "com/sun/tools/javac/resources/compiler_en_NL.properties"
+    },
+    {
+      "module": "jdk.compiler",
+      "glob": "com/sun/tools/javac/resources/javac_en.properties"
+    },
+    {
+      "module": "jdk.compiler",
+      "glob": "com/sun/tools/javac/resources/javac_en_NL.properties"
+    },
+    {
+      "bundle": "com.sun.tools.javac.resources.compiler"
+    },
+    {
+      "bundle": "com.sun.tools.javac.resources.javac"
     },
     {
       "bundle": "sun.util.logging.resources.logging"

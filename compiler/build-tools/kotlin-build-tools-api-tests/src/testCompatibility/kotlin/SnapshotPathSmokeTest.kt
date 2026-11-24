@@ -29,6 +29,7 @@ class SnapshotPathSmokeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
     fun testDeprecatedBuilderIgnoresCustomSnapshotFilename(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.second.assumeNotNativeImageProcess()
         jvmProject(strategyConfig) {
             val module1 = module("basic-multimodule-project/module-1")
             val customSnapshotDir = module1.buildDirectory.resolve("my-custom-snapshot")
@@ -64,6 +65,7 @@ class SnapshotPathSmokeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
     fun testNewBuilderAutoGeneratesSnapshotPath(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.second.assumeNotNativeImageProcess()
         jvmProject(strategyConfig) {
             val module1 = module("basic-multimodule-project/module-1")
             val icWorkDir = module1.buildDirectory.resolve("ic-work")

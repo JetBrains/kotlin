@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2JpsStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -20,7 +20,7 @@ import org.junit.jupiter.api.DisplayName
 class EnumWhenTrackerJpsTest : BaseJpsTest() {
 
     @DisplayName("A `when` expression over a Java enum is reported")
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2JpsStrategyAgnosticCompilationTest
     @TestMetadata("jps-enum-when")
     fun whenOverJavaEnumIsReported(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val fixture = "jps-enum-when"

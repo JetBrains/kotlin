@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
@@ -14,8 +15,10 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogCon
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.Scenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.DisplayName
 
 @MustRunOnChangesInCompilerPlugins
@@ -26,6 +29,8 @@ class SandboxPluginTest : BaseCompilationTest() {
     @TestMetadata("sandbox-plugin")
     fun testGeneratingTopLevelCallables(scenario: ScenarioCreator) {
         scenario {
+            assumeNotNativeImageDaemon()
+
             val module = module("sandbox-plugin", compilationConfigAction = { operation: BaseCompilationOperation.Builder ->
                 operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
             })
@@ -46,6 +51,8 @@ class SandboxPluginTest : BaseCompilationTest() {
     @TestMetadata("sandbox-plugin")
     fun testGeneratingThenRemovingTopLevelCallables(scenario: ScenarioCreator) {
         scenario {
+            assumeNotNativeImageDaemon()
+
             val module = module("sandbox-plugin", compilationConfigAction = { operation: BaseCompilationOperation.Builder ->
                 operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
             })
@@ -64,6 +71,8 @@ class SandboxPluginTest : BaseCompilationTest() {
     @TestMetadata("sandbox-plugin")
     fun testChangingGeneratedFileName(scenario: ScenarioCreator) {
         scenario {
+            assumeNotNativeImageDaemon()
+
             val module = module("sandbox-plugin", compilationConfigAction = { operation: BaseCompilationOperation.Builder ->
                 operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
             })
@@ -81,6 +90,8 @@ class SandboxPluginTest : BaseCompilationTest() {
     @TestMetadata("sandbox-plugin")
     fun testDeletingSourceFileThatTriggersCallableGeneration(scenario: ScenarioCreator) {
         scenario {
+            assumeNotNativeImageDaemon()
+
             val module = module("sandbox-plugin", compilationConfigAction = { operation: BaseCompilationOperation.Builder ->
                 operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
             })
@@ -98,6 +109,8 @@ class SandboxPluginTest : BaseCompilationTest() {
     @TestMetadata("sandbox-plugin")
     fun testGeneratingRemovingAndRegeneratingTopLevelCallables(scenario: ScenarioCreator) {
         scenario {
+            assumeNotNativeImageDaemon()
+
             val module = module("sandbox-plugin", compilationConfigAction = { operation: BaseCompilationOperation.Builder ->
                 operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
             })
@@ -120,6 +133,8 @@ class SandboxPluginTest : BaseCompilationTest() {
     @TestMetadata("sandbox-plugin")
     fun testRemovedGeneratedCallablesAreUnresolved(scenario: ScenarioCreator) {
         scenario {
+            assumeNotNativeImageDaemon()
+
             val module = module("sandbox-plugin", compilationConfigAction = { operation: BaseCompilationOperation.Builder ->
                 operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
             })
@@ -146,6 +161,8 @@ class SandboxPluginTest : BaseCompilationTest() {
     @TestMetadata("sandbox-plugin")
     fun testReplacingGeneratedCallablesWithUserDeclaredOnes(scenario: ScenarioCreator) {
         scenario {
+            assumeNotNativeImageDaemon()
+
             val module = module("sandbox-plugin", compilationConfigAction = { operation: BaseCompilationOperation.Builder ->
                 operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
             })
@@ -155,6 +172,12 @@ class SandboxPluginTest : BaseCompilationTest() {
                 assertCompiledSources("main.kt")
                 assertLogContainsLines(LogLevel.DEBUG, "Incremental compilation completed")
             }
+        }
+    }
+
+    private fun Scenario<*, *>.assumeNotNativeImageDaemon() {
+        assumeFalse(strategyConfig is ExecutionPolicy.NativeImageDaemon) {
+            "The sandbox compiler plugin is not bundled into the Kotlin native image"
         }
     }
 }

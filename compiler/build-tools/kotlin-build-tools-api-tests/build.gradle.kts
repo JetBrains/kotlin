@@ -61,6 +61,14 @@ val (nativeStdlibKlib: FileCollection, nativeCompilerClasspath: FileCollection?)
     files(bootstrapNativeDistribution.map { it.stdlib }) to files(bootstrapNativeDistribution.map { it.compilerClasspath })
 }
 
+val isNativeImageDaemonEnabled = kotlinBuildProperties.booleanProperty("kotlin.build.native-image.kotlin-daemon").get()
+val includeNativeImagePolicies =
+    kotlinBuildProperties.booleanProperty("kotlin.build-tools-api.test.native-image-policies").get()
+check(!includeNativeImagePolicies || isNativeImageDaemonEnabled) {
+    "kotlin.build-tools-api.test.native-image-policies=true requires kotlin.build.native-image.kotlin-daemon=true"
+}
+val nativeImageDistribution = files(rootDir.resolve("prepare/compiler-native-image/build/dist"))
+
 class PlatformDefinition(
     val name: String,
     val attributesAction: AttributeContainer.() -> Unit,
@@ -339,6 +347,10 @@ testing {
                     if (isRegular && isKotlinNativeEnabled) {
                         addClasspathProperty(nativeStdlibKlib, NATIVE_STDLIB_CLASSPATH_PROPERTY)
                     }
+                    if (includeNativeImagePolicies || this@configureSuite.name == "testNativeImage") {
+                        dependsOn(":kotlin-compiler-native-image:kotlincNativeImageDist")
+                        addClasspathProperty(nativeImageDistribution, KOTLIN_NATIVE_IMAGE_DIST_PATH)
+                    }
                 }
             }
         }
@@ -361,12 +373,7 @@ testing {
             }
             targets.all {
                 testTask.configure {
-                    enabled = kotlinBuildProperties.booleanProperty("kotlin.build.native-image.kotlin-daemon", false).get()
-                    dependsOn(":kotlin-compiler-native-image:kotlincNativeImageDist")
-                    addClasspathProperty(
-                        files(rootDir.resolve("prepare/compiler-native-image/build/dist")),
-                        KOTLIN_NATIVE_IMAGE_DIST_PATH,
-                    )
+                    enabled = isNativeImageDaemonEnabled
                 }
             }
         }

@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerTargetId
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2JpsStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -32,7 +32,7 @@ private class RecordingIncrementalCache : EmptyIncrementalCache() {
 class IncrementalCacheJpsTest : BaseJpsTest() {
 
     @DisplayName("The compiler asks the JPS components for the cache of the module being compiled")
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2JpsStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-3")
     fun componentsAreQueried(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {

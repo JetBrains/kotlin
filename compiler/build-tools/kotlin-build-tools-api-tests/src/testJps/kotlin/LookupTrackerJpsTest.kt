@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompi
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2JpsStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
@@ -24,7 +24,7 @@ import org.junit.jupiter.api.DisplayName
 class LookupTrackerJpsTest : BaseJpsTest() {
 
     @DisplayName("The JPS lookup tracker receives lookups")
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2JpsStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
     fun lookupsAreReported(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
@@ -39,7 +39,7 @@ class LookupTrackerJpsTest : BaseJpsTest() {
     }
 
     @DisplayName("The JPS lookup tracker reports a top-level function lookup with the PACKAGE scope kind")
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2JpsStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
     fun packageLevelLookupKeepsScopeKind(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
@@ -59,7 +59,7 @@ class LookupTrackerJpsTest : BaseJpsTest() {
     }
 
     @DisplayName("The JPS lookup tracker takes precedence over the operation-level one, with a warning")
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2JpsStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
     fun jpsLookupTrackerTakesPrecedence(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
@@ -83,7 +83,7 @@ class LookupTrackerJpsTest : BaseJpsTest() {
     }
 
     @DisplayName("The operation-level lookup tracker receives lookups when the JPS one is not set")
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2JpsStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
     fun operationLookupTrackerIsUsedAsFallback(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
