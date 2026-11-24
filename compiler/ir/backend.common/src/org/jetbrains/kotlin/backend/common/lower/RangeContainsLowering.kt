@@ -199,36 +199,9 @@ private class Transformer(
             else -> return null
         }
 
-        // The transformed expression is `A <= X && X <= B`. If the argument expression X can have side effects, it must be stored in a
-        // temp variable before the expression so it does not get evaluated twice. If A and/or B can have side effects, they must also be
-        // stored in temp variables BEFORE X.
-        //
-        // On the other hand, if X can NOT have side effects, it does NOT need to be stored in a temp variable. However, because of
-        // short-circuit evaluation of &&, if A and/or B can have side effects, we need to make sure they get evaluated regardless.
-        // We accomplish this be storing it in a temp variable (the alternative is to duplicate A/B in a block in the "else" branch before
-        // returning false). We can also switch the order of the clauses to ensure evaluation. See below for the expected outcomes:
-        //
-        //   =======|=======|=======|======================|================|=======================
-        //   Can have side effects? | (Note B is "upper")  |                |
-        //      X   |   A   |   B   | shouldUpperComeFirst | Temp var order | Transformed expression
-        //   =======|=======|=======|======================|================|=======================
-        //    True  | True  | True  | False                | A -> B -> X    | A <= X && X <= B *
-        //    True  | True  | True  | True                 | B -> A -> X    | A <= X && X <= B *
-        //    True  | True  | False | False/True           | A -> X         | A <= X && X <= B *
-        //    True  | False | True  | False/True           | B -> X         | A <= X && X <= B *
-        //    True  | False | False | False/True           | X              | A <= X && X <= B *
-        //   -------|-------|-------|----------------------|----------------|-----------------------
-        //    False | True  | True  | False                | A **           | X <= B && A <= X ***
-        //    False | True  | True  | True                 | B **           | A <= X && X <= B ***
-        //    False | True  | False | False/True           | [None]         | A <= X && X <= B ***
-        //    False | False | True  | False/True           | [None]         | X <= B && A <= X ***
-        //    False | False | False | False/True           | [None]         | A <= X && X <= B *
-        //   =======|=======|=======|======================|================|=======================
-        //
-        // *   - Order does not matter.
-        // **  - Bound with side effect is stored in a temp variable to ensure evaluation even if right side is short-circuited.
-        // *** - Bound with side effect is on left side of && to make sure it always gets evaluated.
-
+        // Evaluate side-effectful bounds before the argument, in range construction order, even if
+        // the lower comparison short-circuits. Do not reorder the comparisons to force evaluation:
+        // Comparable.compareTo itself may have side effects and must check the lower bound first.
         var arg = argument
         val builtIns = context.irBuiltIns
         val comparisonClass = if (isNumericRange) {
@@ -246,41 +219,17 @@ private class Transformer(
         }
 
         val [argVar, argExpression] = createTemporaryVariableIfNecessary(arg, "containsArg")
-        var lowerExpression: IrExpression
-        var upperExpression: IrExpression
-        val useLowerClauseOnLeftSide: Boolean
-        if (argVar != null) {
-            val [lowerVar, tmpLowerExpression] = createTemporaryVariableIfNecessary(lower, "containsLower")
-            val [upperVar, tmpUpperExpression] = createTemporaryVariableIfNecessary(upper, "containsUpper")
-            if (shouldUpperComeFirst) {
-                additionalStatements.addIfNotNull(upperVar)
-                additionalStatements.addIfNotNull(lowerVar)
-            } else {
-                additionalStatements.addIfNotNull(lowerVar)
-                additionalStatements.addIfNotNull(upperVar)
-            }
-            lowerExpression = tmpLowerExpression.shallowCopy()
-            upperExpression = tmpUpperExpression.shallowCopy()
-            useLowerClauseOnLeftSide = true
-        } else if (lower.canHaveSideEffects && upper.canHaveSideEffects) {
-            if (shouldUpperComeFirst) {
-                val [upperVar, tmpUpperExpression] = createTemporaryVariableIfNecessary(upper, "containsUpper")
-                additionalStatements.add(upperVar!!)
-                lowerExpression = lower
-                upperExpression = tmpUpperExpression.shallowCopy()
-                useLowerClauseOnLeftSide = true
-            } else {
-                val [lowerVar, tmpLowerExpression] = createTemporaryVariableIfNecessary(lower, "containsLower")
-                additionalStatements.add(lowerVar!!)
-                lowerExpression = tmpLowerExpression.shallowCopy()
-                upperExpression = upper
-                useLowerClauseOnLeftSide = false
-            }
+        val [lowerVar, tmpLowerExpression] = createTemporaryVariableIfNecessary(lower, "containsLower")
+        val [upperVar, tmpUpperExpression] = createTemporaryVariableIfNecessary(upper, "containsUpper")
+        if (shouldUpperComeFirst) {
+            additionalStatements.addIfNotNull(upperVar)
+            additionalStatements.addIfNotNull(lowerVar)
         } else {
-            lowerExpression = lower
-            upperExpression = upper
-            useLowerClauseOnLeftSide = true
+            additionalStatements.addIfNotNull(lowerVar)
+            additionalStatements.addIfNotNull(upperVar)
         }
+        var lowerExpression = tmpLowerExpression.shallowCopy()
+        var upperExpression = tmpUpperExpression.shallowCopy()
         additionalStatements.addIfNotNull(argVar)
 
         if (isNumericRange) {
@@ -334,8 +283,8 @@ private class Transformer(
         }
 
         val contains = context.andand(
-            if (useLowerClauseOnLeftSide) lowerClause else upperClause,
-            if (useLowerClauseOnLeftSide) upperClause else lowerClause,
+            lowerClause,
+            upperClause,
             origin
         )
         return if (additionalStatements.isEmpty()) {
