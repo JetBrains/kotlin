@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.name.Name
 
 @KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -55,10 +54,6 @@ public interface KaInternalsJavaInteroperabilityComponent {
     public fun callableSymbol(psiMember: PsiMember): KaCallableSymbol?
 
     public fun containingJvmClassName(symbol: KaCallableSymbol): String?
-
-    public fun javaGetterName(symbol: KaPropertySymbol): Name
-
-    public fun javaSetterName(symbol: KaPropertySymbol): Name?
 
     public fun javaMethodName(function: KaFunctionSymbol): String?
 }

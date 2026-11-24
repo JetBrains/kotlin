@@ -11,14 +11,8 @@ import org.jetbrains.kotlin.analysis.api.fir.annotations.KaAnnotationImpl
 import org.jetbrains.kotlin.analysis.api.fir.annotations.computeAnnotationArguments
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
-import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.toAnnotationNonErrorClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnreportedDuplicateDiagnostic
@@ -39,7 +33,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -135,14 +128,6 @@ internal fun FirRegularClassSymbol.findAnnotationConstructor(): FirConstructorSy
  */
 internal val FirResolvedQualifier.isImplicitDispatchReceiver: Boolean
     get() = source?.kind == KtFakeSourceElementKind.ImplicitReceiver
-
-internal fun FirAnnotationContainer.getJvmNameFromAnnotation(session: FirSession, target: AnnotationUseSiteTarget? = null): String? {
-    val annotationCalls = getAnnotationsByClassId(JvmStandardClassIds.Annotations.JvmName, session)
-    return annotationCalls.firstNotNullOfOrNull { call ->
-        call.getStringArgument(StandardNames.NAME)
-            ?.takeIf { target == null || call.useSiteTarget == target }
-    }
-}
 
 internal fun FirElement.unwrapSafeCall(): FirElement =
     (this as? FirSafeCallExpression)?.selector ?: this

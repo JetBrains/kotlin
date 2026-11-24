@@ -37,7 +37,4 @@ internal class KaFirForLoopCallResolutionAttempt(
     override val nextCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingNextCallAttempt }
     override val simpleAttempts: List<KaSimpleCallResolutionAttempt>
         get() = withValidityAssertion { listOf(backingIteratorCallAttempt, backingHasNextCallAttempt, backingNextCallAttempt) }
-
-    @Deprecated("Use 'simpleAttempts' instead", ReplaceWith("simpleAttempts"))
-    override val attempts: List<KaSimpleCallResolutionAttempt> get() = simpleAttempts
 }
