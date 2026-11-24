@@ -45,7 +45,7 @@ class IrFileDeserializer(
      * the signature and the kind of the declaration mapped to its ID in the KLIB (see [IrLibraryFile.declaration]).
      */
     val topLevelDeclarationIndex: Map<SignatureAndKind, Int> = buildMap {
-        for (declarationIndex in fileProto.declarationIdList) {
+        for (declarationIndex in fileProto.legacyTopLevelDeclarationSignaturesList) {
             val signature: IdSignature = symbolDeserializer.deserializeIdSignature(declarationIndex)
 
             val kind: BinarySymbolData.SymbolKind = when (val declarationKind = libraryFile.declarationKind(declarationIndex)) {

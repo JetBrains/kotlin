@@ -115,7 +115,7 @@ internal class JKlibIrOnlyDeclarationDeserializer(
             buildMap {
                 for (fileIndex in 0 until ir.irFileCount) {
                     val file = FileDeserializer(ir, fileIndex)
-                    for (index in file.fileProto.declarationIdList) {
+                    for (index in file.fileProto.legacyTopLevelDeclarationSignaturesList) {
                         put(file.symbolDeserializer.deserializeIdSignature(index), TopLevelDeclaration(file, index))
                     }
                 }

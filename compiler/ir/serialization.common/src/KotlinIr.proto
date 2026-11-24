@@ -23,7 +23,7 @@ message FileEntry {
 }
 
 message IrFile {
-  repeated int32 declaration_id = 1 [packed=true];
+  repeated int32 legacy_top_level_declaration_signatures = 1 [packed=true];
   optional FileEntry file_entry = 2; // Required: either `file_entry` or `file_entry_id` is present.
   optional int32 file_entry_id = 7;  // Required: either `file_entry` or `file_entry_id` is present.
   repeated int32 fq_name = 3 [packed=true];
