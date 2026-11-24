@@ -14,6 +14,9 @@ import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.KotlinLowMemoryCacheCleanupListener
+import org.jetbrains.kotlin.analysis.api.platform.KotlinLowMemoryCacheCleanupListener.WaitOutcome
+import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.cache.LLFirSessionInvalidationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
@@ -80,8 +83,10 @@ private object KaFirNoOpCacheCleaner : KaFirCacheCleaner {
  * So [KaFirStopWorldCacheCleaner] registers cleanup events and waits until all analysis blocks finish executing.
  * Once a cleanup is requested, the class also prevents all new analysis blocks from running until it's complete (see the [cleanupLatch]).
  * If there is no ongoing analysis, though, caches can be cleaned up immediately.
+ *
+ * Cleanups and the waits for them are reported to [KotlinLowMemoryCacheCleanupListener].
  */
-private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCacheCleaner {
+internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCacheCleaner {
     private companion object {
         private val LOG = logger<KaFirStopWorldCacheCleaner>()
 
@@ -168,6 +173,8 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
             return
         }
 
+        var completedCleanup: CompletedCleanup? = null
+
         synchronized(lock) {
             // Unregister a top-level analysis block
             analyzerCount -= 1
@@ -184,7 +191,7 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
                 val existingLatch = cleanupLatch
                 if (existingLatch != null) {
                     try {
-                        performCleanup()
+                        completedCleanup = performCleanup(isDeferred = true)
                     } finally {
                         // Unpause all waiting analyses.
                         // Even if some new block comes before the 'cleanupLatch' is set to `null`, the old latch will be already open.
@@ -194,6 +201,9 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
                 }
             }
         }
+
+        // Publish outside the lock, after the waiting analyses have been allowed to continue.
+        completedCleanup?.let(::publishCleanup)
     }
 
     /**
@@ -248,15 +258,27 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
         val existingLatch = cleanupLatch ?: return
 
         val enterTime = System.currentTimeMillis()
-        do {
-            ProgressManager.checkCanceled()
+        var outcome = WaitOutcome.CANCELED
+        try {
+            while (true) {
+                ProgressManager.checkCanceled()
 
-            if (threadsWithAnalyze.none { it.state == Thread.State.RUNNABLE }) {
-                val totalMs = System.currentTimeMillis() - enterTime
-                LOG.trace { "A deadlock detected in K2 cache cleanup, ${Thread.currentThread()} is recovered after $totalMs ms" }
-                break
+                if (threadsWithAnalyze.none { it.state == Thread.State.RUNNABLE }) {
+                    val totalMs = System.currentTimeMillis() - enterTime
+                    LOG.trace { "A deadlock detected in K2 cache cleanup, ${Thread.currentThread()} is recovered after $totalMs ms" }
+                    outcome = WaitOutcome.DEADLOCK_SUSPECTED
+                    break
+                }
+
+                if (existingLatch.await(CACHE_CLEANER_LOCK_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
+                    outcome = WaitOutcome.CLEANUP_COMPLETED
+                    break
+                }
             }
-        } while (!existingLatch.await(CACHE_CLEANER_LOCK_TIMEOUT_MS, TimeUnit.MILLISECONDS))
+        } finally {
+            val waitDurationMs = System.currentTimeMillis() - enterTime
+            publishEvent { it.afterWaitingForCleanup(waitDurationMs, outcome) }
+        }
     }
 
     private fun incAnalysisDepth() {
@@ -270,6 +292,8 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
     }
 
     override fun scheduleCleanup() {
+        var completedCleanup: CompletedCleanup? = null
+
         synchronized(lock) {
             val existingLatch = cleanupLatch
 
@@ -281,7 +305,7 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
                 cleanupScheduleMs = System.currentTimeMillis()
 
                 try {
-                    performCleanup()
+                    completedCleanup = performCleanup(isDeferred = false)
                 } finally {
                     if (existingLatch != null) {
                         // Error recovery in case if things went really bad.
@@ -298,6 +322,8 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
                 cleanupLatch = CountDownLatch(1)
             }
         }
+
+        completedCleanup?.let(::publishCleanup)
     }
 
     /**
@@ -305,13 +331,16 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
      *
      * Must always run in `synchronized(lock)` to prevent concurrent cleanups.
      *
+     * @return The completed cleanup, which should be [published][publishCleanup] outside `synchronized(lock)`, or `null` if no cleanup
+     *  was performed.
+     *
      * N.B.: May re-throw exceptions from IJ Platform [rethrowIntellijPlatformExceptionIfNeeded].
      */
-    private fun performCleanup() {
+    private fun performCleanup(isDeferred: Boolean): CompletedCleanup? {
         try {
             // `performCleanup` might be called from the low-memory watcher's thread even after project disposal. Cleaning the caches of a
             // disposed project is unnecessary, so we skip invalidation. This also avoids potential exceptions and undefined behavior.
-            if (project.isDisposed) return
+            if (project.isDisposed) return null
 
             analysisSessionStatistics?.lowMemoryCacheCleanupInvocationCounter?.add(1)
 
@@ -326,10 +355,37 @@ private class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirCa
             LOG.trace { "K2 cache cleanup complete from ${Thread.currentThread()} in $cleanupMs ms ($totalMs ms after the request)" }
 
             LLFlightRecorder.stopWorldSessionInvalidationComplete()
+
+            return CompletedCleanup(cleanupMs, totalMs, isDeferred)
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
 
             LOG.error("Could not clean up K2 caches", e)
+            return null
+        }
+    }
+
+    private class CompletedCleanup(val invalidationDurationMs: Long, val requestToCompletionDurationMs: Long, val isDeferred: Boolean)
+
+    private fun publishCleanup(cleanup: CompletedCleanup) {
+        publishEvent {
+            it.afterCleanup(cleanup.invalidationDurationMs, cleanup.requestToCompletionDurationMs, cleanup.isDeferred)
+        }
+    }
+
+    /**
+     * Publishes a [KotlinLowMemoryCacheCleanupListener] event. Exceptions from listeners are logged, so that they cannot break the
+     * cleanup or the analysis which waited for it.
+     */
+    private inline fun publishEvent(action: (KotlinLowMemoryCacheCleanupListener) -> Unit) {
+        if (project.isDisposed) return
+
+        try {
+            action(project.analysisMessageBus.syncPublisher(KotlinLowMemoryCacheCleanupListener.TOPIC))
+        } catch (e: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
+
+            LOG.error("Could not publish a K2 cache cleanup event", e)
         }
     }
 }
