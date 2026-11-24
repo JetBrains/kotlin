@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -61,7 +61,7 @@ class WasmBackendContext(
     fun getExcludedPackageFragmentOrCreate(fqName: FqName, module: IrModuleFragment): IrPackageFragment =
         excludedDeclarations.getOrPut(fqName) {
             IrExternalPackageFragmentImpl(
-                DescriptorlessExternalPackageFragmentSymbol(),
+                IrExternalPackageFragmentSymbolImpl(),
                 fqName,
                 module,
             )
@@ -138,7 +138,7 @@ class WasmBackendContext(
 
     override val bodilessBuiltInsPackageFragment: IrPackageFragment by lazy {
         IrExternalPackageFragmentImpl(
-            DescriptorlessExternalPackageFragmentSymbol(),
+            IrExternalPackageFragmentSymbolImpl(),
             FqName("kotlin"),
             module = irBuiltIns.moduleFragment,
         )
