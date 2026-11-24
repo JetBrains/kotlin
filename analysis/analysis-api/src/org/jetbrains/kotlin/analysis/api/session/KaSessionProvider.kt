@@ -38,11 +38,6 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     // functionality into `beforeEnteringAnalysis` and/or `afterLeavingAnalysis`.
 
     public inline fun <R> analyze(
-        useSiteElement: KtElement,
-        action: KaSession.() -> R,
-    ): R = analyze(useSiteElement as PsiElement, action)
-
-    public inline fun <R> analyze(
         useSiteElement: PsiElement,
         action: context(KaSession) () -> R,
     ): R {
