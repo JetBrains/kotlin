@@ -200,19 +200,17 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         commonFiles: List<SourceFile>,
     ): GenerationState {
         val frontendResult = frontend(platformFiles, commonFiles)
-        val irModuleFragment = frontendResult.irModuleFragment
         val components = frontendResult.components
 
         val generationState = GenerationState(
             VirtualFileFinder.getInstance(project),
-            irModuleFragment.descriptor,
             configuration,
             ClassBuilderFactories.TEST,
             jvmBackendClassResolver = FirJvmBackendClassResolver(components),
         )
 
         val backendInput = JvmIrCodegenFactory.BackendInput(
-            irModuleFragment,
+            frontendResult.irModuleFragment,
             frontendResult.pluginContext.irBuiltIns,
             frontendResult.symbolTable,
             debuggerExtensions = null,

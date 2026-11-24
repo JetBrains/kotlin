@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.incrementalCompilationComponents
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -31,11 +30,10 @@ import org.jetbrains.org.objectweb.asm.Type
 
 class GenerationState(
     val virtualFileFinder: VirtualFileFinder,
-    val module: ModuleDescriptor,
     configuration: CompilerConfiguration,
     builderFactory: ClassBuilderFactory = ClassBuilderFactories.BINARIES,
     val targetId: TargetId? = null,
-    moduleName: String? = configuration.moduleName,
+    val moduleName: String = configuration.moduleName ?: error("No module name specified"),
     val jvmBackendClassResolver: JvmBackendClassResolver,
     diagnosticReporter: DiagnosticReporter? = null,
     compiledCodeProvider: CompiledCodeProvider = CompiledCodeProvider.Empty
@@ -50,15 +48,11 @@ class GenerationState(
     val inlineCache: InlineCache = InlineCache(compiledCodeProvider)
 
     val incrementalCacheForThisTarget: IncrementalCache? = configuration.incrementalCompilationComponents?.let { components ->
-        val targetId = targetId
-            ?: moduleName?.let {
-                // hack for Gradle IC, Gradle does not use build.xml file, so there is no way to pass target id
-                TargetId(it, "java-production")
-            } ?: error("Target ID should be specified for incremental compilation")
+        // hack for Gradle IC, Gradle does not use build.xml file, so there is no way to pass target id
+        val targetId = targetId ?: TargetId(moduleName, "java-production")
         components.getIncrementalCache(targetId)
     }
 
-    val moduleName: String = moduleName ?: ModuleNameUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
 
     val globalInlineContext: GlobalInlineContext = GlobalInlineContext()

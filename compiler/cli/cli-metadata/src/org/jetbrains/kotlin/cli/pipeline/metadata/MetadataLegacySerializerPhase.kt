@@ -72,7 +72,7 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
                 }.addMetadataPart(destFile.nameWithoutExtension)
             }
         }
-        val kotlinModuleFile = File(destDir, ModuleNameUtil.getMappingFileName(ModuleNameUtil.prepareModuleName(session.moduleData.name)))
+        val kotlinModuleFile = File(destDir, ModuleNameUtil.getMappingFileName(session.moduleData.name.asStringStripSpecialMarkers()))
         val packageTableBytes = JvmModuleProtoBuf.Module.newBuilder().apply {
             for (table in packageTable.values) {
                 table.addTo(this)

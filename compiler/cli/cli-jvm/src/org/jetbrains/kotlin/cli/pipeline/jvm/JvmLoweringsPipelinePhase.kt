@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.JvmBackendClassResolver
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
@@ -41,7 +40,6 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
 ) {
     override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmLoweredIrPipelineArtifact {
         (val fir2IrResult = result, val configuration, val environment, val allSourceFiles = sourceFiles, val mainClassFqName) = input
-        val moduleDescriptor = fir2IrResult.irModuleFragment.descriptor
         val diagnosticsCollector = configuration.diagnosticsCollector
         val project = environment.project
         val classResolver = FirJvmBackendClassResolver(fir2IrResult.components)
@@ -90,8 +88,7 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
             }
 
             codegenInputs += runLowerings(
-                project, configurationForModule, moduleDescriptor, module,
-                codegenFactory, backendInput, diagnosticsCollector, classResolver,
+                project, configurationForModule, module, codegenFactory, backendInput, diagnosticsCollector, classResolver,
             )
         }
 
@@ -101,7 +98,6 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
     private fun runLowerings(
         project: Project,
         configuration: CompilerConfiguration,
-        moduleDescriptor: ModuleDescriptor,
         module: Module?,
         codegenFactory: JvmIrCodegenFactory,
         backendInput: JvmIrCodegenFactory.BackendInput,
@@ -110,11 +106,10 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
     ): JvmIrCodegenFactory.CodegenInput {
         val state = GenerationState(
             VirtualFileFinder.getInstance(project),
-            moduleDescriptor,
             configuration,
             builderFactory = configuration.get(customClassBuilderFactory, ClassBuilderFactories.BINARIES),
             targetId = module?.let(::TargetId),
-            moduleName = module?.getModuleName() ?: configuration.moduleName,
+            moduleName = module?.getModuleName() ?: configuration.moduleName ?: error("No module name specified"),
             diagnosticReporter = diagnosticsReporter,
             jvmBackendClassResolver = backendClassResolver,
         )

@@ -87,7 +87,6 @@ internal fun runJvmIrCodeGen(
 
     val generationState = GenerationState(
         VirtualFileFinder.getInstance(project),
-        fir2IrResult.irModuleFragment.descriptor,
         configuration,
         classBuilderFactory,
         jvmBackendClassResolver = FirJvmBackendClassResolver(fir2IrResult.components),

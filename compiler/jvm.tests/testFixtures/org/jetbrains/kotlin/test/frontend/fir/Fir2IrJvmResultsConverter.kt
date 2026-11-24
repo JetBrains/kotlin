@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
-import org.jetbrains.kotlin.fir.pipeline.*
+import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
+import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
+import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
+import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
@@ -119,12 +122,6 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : Frontend2BackendCo
             diagnosticReporter,
             inputArtifact,
             fir2irResult,
-            Fir2KlibMetadataSerializer(
-                compilerConfiguration,
-                firResult.outputs,
-                fir2irResult,
-                produceHeaderKlib = false,
-            ),
         )
     }
 
@@ -139,7 +136,6 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : Frontend2BackendCo
         diagnosticReporter: BaseDiagnosticsCollector,
         inputArtifact: FirOutputArtifact,
         fir2IrResult: Fir2IrActualizedResult,
-        fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
     ): IrBackendInput {
         // TODO: handle fir from light tree
         val sourceFiles = inputArtifact.mainFirFilesByTestFile.mapNotNull { it.value.sourceFile }
@@ -159,7 +155,6 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : Frontend2BackendCo
         val project = testServices.compilerConfigurationProvider.getProject(module)
         val generationState = GenerationState(
             VirtualFileFinder.getInstance(project),
-            fir2IrResult.irModuleFragment.descriptor,
             compilerConfiguration,
             ClassBuilderFactories.TEST,
             jvmBackendClassResolver = FirJvmBackendClassResolver(fir2IrResult.components),

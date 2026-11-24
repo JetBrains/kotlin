@@ -39,8 +39,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirTargetElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
@@ -51,9 +50,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.pipeline.IrGenerationExtensionException
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -336,6 +333,7 @@ internal class KaFirCompilerFacility(
         val configuration = options.configuration.copy().apply {
             put(CommonConfigurationKeys.USE_FIR, true)
             put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, session.languageVersionSettings)
+            putIfAbsent(CommonConfigurationKeys.MODULE_NAME, session.moduleData.name.asStringStripSpecialMarkers())
         }
 
         val baseFir2IrExtensions = JvmFir2IrExtensions()
