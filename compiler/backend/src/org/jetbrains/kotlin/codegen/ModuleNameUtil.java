@@ -5,30 +5,11 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
-import org.jetbrains.kotlin.name.Name;
 
 public class ModuleNameUtil {
     private ModuleNameUtil() {
-    }
-
-    @NotNull
-    public static String getModuleName(ModuleDescriptor module) {
-        Name stableName = module.getStableName();
-        if (stableName == null) {
-            // Defensive fallback to possibly unstable name, to not fail with exception
-            return prepareModuleName(module.getName());
-        } else {
-            return prepareModuleName(stableName);
-        }
-    }
-
-    @NotNull
-    public static String prepareModuleName(@NotNull Name name) {
-        return StringsKt.removeSurrounding(name.asString(), "<", ">");
     }
 
     @NotNull

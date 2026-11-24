@@ -116,7 +116,6 @@ internal fun generateCodeFromIr(
 ): GenerationState {
     val generationState = GenerationState(
         VirtualFileFinder.getInstance(environment.projectEnvironment.project),
-        input.irModuleFragment.descriptor,
         input.configuration,
         ClassBuilderFactories.BINARIES,
         targetId = input.targetId,
