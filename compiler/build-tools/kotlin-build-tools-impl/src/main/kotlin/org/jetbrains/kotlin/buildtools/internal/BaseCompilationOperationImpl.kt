@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollec
 import org.jetbrains.kotlin.buildtools.internal.daemon.CompilerMessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.daemon.IcEventVisitor
 import org.jetbrains.kotlin.buildtools.internal.daemon.LookupMessageVisitor
-import org.jetbrains.kotlin.buildtools.internal.daemon.Message
+import org.jetbrains.kotlin.daemon.common.serialization.Message
 import org.jetbrains.kotlin.buildtools.internal.daemon.MessageReportingMessageCollectorWithDiagnosticId
-import org.jetbrains.kotlin.buildtools.internal.daemon.MessageVisitor
+import org.jetbrains.kotlin.daemon.common.serialization.MessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.daemon.cast
 import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter

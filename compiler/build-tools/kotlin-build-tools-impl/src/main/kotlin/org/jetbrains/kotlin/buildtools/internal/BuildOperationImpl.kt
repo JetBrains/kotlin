@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,9 +9,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
-import org.jetbrains.kotlin.buildtools.internal.daemon.HasSerializationHooks
-import org.jetbrains.kotlin.buildtools.internal.daemon.Message
-import org.jetbrains.kotlin.buildtools.internal.daemon.MessageVisitor
+import org.jetbrains.kotlin.daemon.common.serialization.HasSerializationHooks
+import org.jetbrains.kotlin.daemon.common.serialization.Message
+import org.jetbrains.kotlin.daemon.common.serialization.MessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.daemon.MetricsCollectorVisitor
 import org.jetbrains.kotlin.buildtools.internal.daemon.cast
 import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound

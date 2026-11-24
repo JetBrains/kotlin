@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.buildtools.internal.KotlinLoggerMessageCollectorAdapter
+import org.jetbrains.kotlin.daemon.common.serialization.Message
+import org.jetbrains.kotlin.daemon.common.serialization.MessageVisitor
 
 internal class MetricsCollectorVisitor(private val metricsCollector: BuildMetricsCollector) : MessageVisitor {
 
