@@ -198,7 +198,7 @@ private fun hotLayoutsUpdateInstance(cell: Any?, classId: Long, toLayout: HotLay
 internal fun hotLayoutsSlotValue(cell: Any?, nameTag: Long, typeTag: Long): anyref {
     val classId = wasmGetRttiKlassId(cell)
     val layout = hotLayoutsCurrent[classId]
-        ?: error("hot reload: no current layout for class $classId")
+        ?: error("hot reload: slot $nameTag of class $classId has no current layout")
     var p = wasmGetPayload(cell)
     if (wasmGetPayloadLayout(p) !== layout) {
         p = hotLayoutsUpdateInstance(cell, classId, layout)
@@ -214,7 +214,7 @@ internal fun hotLayoutsSlotValue(cell: Any?, nameTag: Long, typeTag: Long): anyr
 internal fun hotLayoutsSetSlotValue(cell: Any?, nameTag: Long, typeTag: Long, value: anyref) {
     val classId = wasmGetRttiKlassId(cell)
     val layout = hotLayoutsCurrent[classId]
-        ?: error("hot reload: no current layout for class $classId")
+        ?: error("hot reload: slot $nameTag of class $classId has no current layout")
     val p = if (wasmGetPayloadLayout(wasmGetPayload(cell)) !== layout) {
         hotLayoutsUpdateInstance(cell, classId, layout)
     } else {

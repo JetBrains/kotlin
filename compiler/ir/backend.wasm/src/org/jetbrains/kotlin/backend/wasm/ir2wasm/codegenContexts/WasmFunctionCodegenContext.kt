@@ -114,6 +114,18 @@ class WasmFunctionCodegenContext(
                 WasmRefNullType(typeContext.referenceHeapType(backendContext.irBuiltIns.anyClass))
         }
 
+    /**
+     * A FRESH local, never reused across sites — for hot lowerings whose
+     * stash must survive NESTED hot accesses in a later-generated
+     * subexpression (the shared [referenceLocal]/[referenceTempLocal]
+     * pools are per-function and would be clobbered).
+     */
+    fun referenceFreshLocal(name: String, type: WasmType): WasmLocal {
+        val local = WasmLocal(wasmFunction.locals.size, name, type, isParameter = false)
+        wasmFunction.locals += local
+        return local
+    }
+
     fun referenceLocal(type: SyntheticLocalType): WasmLocal = wasmSyntheticLocals.getOrPut(type) {
         WasmLocal(
             wasmFunction.locals.size,

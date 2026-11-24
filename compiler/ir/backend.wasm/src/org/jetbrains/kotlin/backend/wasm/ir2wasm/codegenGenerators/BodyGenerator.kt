@@ -171,7 +171,16 @@ class BodyGenerator(
         // the layout registered)
         val fieldStructType = plan.currentStruct.fields[getStructFieldId(field)].type
         val fieldValueType = HotReloadPayloads.slotValueType(fieldStructType)
-        val cellLocal = functionContext.referenceLocal(SyntheticLocalType.HOT_LAYOUT_CELL)
+        // per-SITE, not the shared HOT_LAYOUT_CELL: the receiver stash
+        // must survive the VALUE expression, which can contain its own
+        // hot field accesses (an elvis unboxing an Int box is one —
+        // every box unbox is a hot read on the box class) — a shared
+        // local gets clobbered by the nested access and the write arms
+        // would then target the WRONG receiver cell
+        val cellLocal = functionContext.referenceFreshLocal(
+            "hotCell~write",
+            WasmRefNullType(typeCodegenContext.referenceHeapType(irBuiltIns.anyClass)),
+        )
         val tempLocal = functionContext.referenceTempLocal(fieldValueType)
         val anyGcType = typeCodegenContext.referenceGcType(irBuiltIns.anyClass)
         // through the tracked context: the ROOT payload type must land
