@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-91284
 // FILE: A.java
 
@@ -21,10 +22,10 @@ public class A {
 
 // FILE: test.kt
 
-import kotlin.test.assertEquals
-
-fun box(): String {
+fun foo() {
     val viaStaticConstructor = A.of(1, "1")
-    assertEquals(A(1, "1"), viaStaticConstructor)
-    return "OK"
+    val direct = <!INVISIBLE_REFERENCE!>A<!>(1, "1")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, localProperty, propertyDeclaration,
+stringLiteral */
