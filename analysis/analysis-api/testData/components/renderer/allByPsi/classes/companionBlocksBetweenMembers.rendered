@@ -1,0 +1,30 @@
+class StartsWithBlock {
+  fun first()
+
+  fun second()
+}
+
+class BlocksBetweenMembers {
+  fun first()
+
+  fun second()
+
+  val third: Int
+
+  class Nested
+
+  fun fourth()
+
+  fun fifth()
+}
+
+enum class EnumWithBlocks {
+  A,
+  B;
+
+  fun first(): EnumWithBlocks
+
+  fun second()
+
+  fun third()
+}

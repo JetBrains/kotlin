@@ -1,0 +1,10 @@
+// LANGUAGE: +CompanionBlocks
+interface I {
+    fun foo()
+
+    companion {
+        const val CONST: Int = 1
+
+        fun create(): I? = null
+    }
+}
