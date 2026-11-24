@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.incremental.classpathDiff.InaccessibleClassSnapshot
 import org.jetbrains.kotlin.incremental.impl.hashToLong
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
-import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -42,7 +41,6 @@ internal object KlibFileSnapshotter {
                 snapshots += KlibFileSnapshot(
                     contentHash = KlibFileInfoExternalizer.toByteArray(klibFileInfo).hashToLong(),
                     packageName = packageFqName,
-                    sourceFile = fragment.sourceFileName(nameResolver),
                     classInfos = getClassInfos(fragment, nameResolver),
                     packageMemberNames = packageMembers.toSet(),
                     classMemberLevelSnapshot = klibFileInfo.takeIf { settings.granularity == CLASS_MEMBER_LEVEL },
@@ -66,15 +64,6 @@ internal object KlibFileSnapshotter {
                     .map { nameResolver.getClassId(it.className) },
             )
         }
-    }
-
-    // TODO(KT-91548): read it from the fragment itself once it is stored at the package fragment level.
-    private fun ProtoBuf.PackageFragment.sourceFileName(nameResolver: NameResolver): String {
-        val fileId = class_List.firstNotNullOfOrNull { it.getExtensionOrNull(KlibMetadataProtoBuf.classFile) }
-            ?: `package`.functionList.firstNotNullOfOrNull { it.getExtensionOrNull(KlibMetadataProtoBuf.functionFile) }
-            ?: `package`.propertyList.firstNotNullOfOrNull { it.getExtensionOrNull(KlibMetadataProtoBuf.propertyFile) }
-            ?: `package`.typeAliasList.firstNotNullOfOrNull { it.getExtensionOrNull(KlibMetadataProtoBuf.typeAliasFile) }
-        return fileId?.let { nameResolver.getString(it) } ?: "<package>"
     }
 }
 

@@ -21,15 +21,13 @@ class KlibEntrySnapshot(
 /**
  * A snapshot of one package fragment of a klib.
  *
- * [packageName] and [sourceFile] (e.g. `Base.kt`) are not unique: one source file may have several package fragments, and same-named
- * source files of a package in different klibs have the same ones. Fragments with the same ones are compared together.
+ * [packageName] is not unique: a package may have several fragments, also across klibs. Fine-grained changes are computed per package.
  *
  * [classInfos] and [packageMemberNames] include only accessible classes and non-private package members.
  */
 class KlibFileSnapshot(
     val contentHash: Long,
     val packageName: FqName,
-    val sourceFile: String,
 
     val classInfos: List<KlibClassInfo>,
     val packageMemberNames: Set<String>,

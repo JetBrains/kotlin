@@ -37,7 +37,6 @@ internal object KlibSnapshotExternalizer : DataExternalizer<KlibFileSnapshot> {
     override fun save(output: DataOutput, snapshot: KlibFileSnapshot) {
         LongExternalizer.save(output, snapshot.contentHash)
         FqNameExternalizer.save(output, snapshot.packageName)
-        StringExternalizer.save(output, snapshot.sourceFile)
         ListExternalizer(KlibClassInfoExternalizer).save(output, snapshot.classInfos)
         SetExternalizer(StringExternalizer).save(output, snapshot.packageMemberNames)
         NullableValueExternalizer(KlibFileInfoExternalizer).save(output, snapshot.classMemberLevelSnapshot)
@@ -50,7 +49,6 @@ internal object KlibSnapshotExternalizer : DataExternalizer<KlibFileSnapshot> {
         return KlibFileSnapshot(
             contentHash = contentHash,
             packageName = packageName,
-            sourceFile = StringExternalizer.read(input),
             classInfos = ListExternalizer(KlibClassInfoExternalizer).read(input),
             packageMemberNames = SetExternalizer(StringExternalizer).read(input),
             classMemberLevelSnapshot = NullableValueExternalizer(KlibFileInfoExternalizer).read(input),

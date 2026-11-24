@@ -32,7 +32,6 @@ class KlibSnapshotSerializerTest {
     private fun assertSnapshotEquals(expected: KlibFileSnapshot, actual: KlibFileSnapshot) {
         assertEquals(expected.contentHash, actual.contentHash)
         assertEquals(expected.packageName, actual.packageName)
-        assertEquals(expected.sourceFile, actual.sourceFile)
         assertEquals(expected.classInfos.map { it.classId to it.supertypes }, actual.classInfos.map { it.classId to it.supertypes })
         assertEquals(expected.packageMemberNames, actual.packageMemberNames)
         assertEquals(expected.classMemberLevelSnapshot?.packageName, actual.classMemberLevelSnapshot?.packageName)
@@ -51,7 +50,6 @@ class KlibSnapshotSerializerTest {
         private fun snapshot(granularity: ClassSnapshotGranularity) = KlibFileSnapshot(
             contentHash = 42L,
             packageName = FqName("com.example"),
-            sourceFile = "ClassAndTopLevelMembers.kt",
             classInfos = listOf(
                 KlibClassInfo(
                     ClassId.fromString("com/example/SomeClass"),

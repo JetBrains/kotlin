@@ -14,18 +14,24 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.parsePackageFragment
+import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Files
-
-/** E.g. `com/example/Base.kt`, to identify snapshots in test expectations. */
-val KlibFileSnapshot.sourceFilePath: String
-    get() = if (packageName.isRoot) sourceFile else "${packageName.asString().replace('.', '/')}/$sourceFile"
 
 abstract class KlibSnapshotTestCommon {
 
     @field:TempDir
     lateinit var tmpDir: File
+
+    private val sourceFilePaths = mutableMapOf<Long, String>()
+
+    /** E.g. `com/example/Base.kt`, to identify snapshots in test expectations. Works for snapshots of klibs built by [snapshotKlib]. */
+    val KlibFileSnapshot.sourceFilePath: String
+        get() = sourceFilePaths.getValue(contentHash)
 
     val klibTestDataDir: File
         get() = ForTestCompileRuntime.transformTestDataPath("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/libraryDiff/klib")
@@ -40,8 +46,26 @@ abstract class KlibSnapshotTestCommon {
         granularity: ClassSnapshotGranularity = CLASS_MEMBER_LEVEL,
     ): KlibEntrySnapshot {
         val klib = compileToKlib(srcDir, Files.createTempDirectory(tmpDir.toPath(), "klib").toFile())
-        val settings = ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses = false, expandTypeAliases = false)
-        return KlibEntrySnapshotter.snapshot(klib, settings)
+        // The content hash does not depend on the granularity, so the class-member-level snapshot gives the paths for both
+        KlibEntrySnapshotter.snapshot(klib, settings(CLASS_MEMBER_LEVEL)).klibFileSnapshots.forEach {
+            sourceFilePaths[it.contentHash] = it.computeSourceFilePath()
+        }
+        return KlibEntrySnapshotter.snapshot(klib, settings(granularity))
+    }
+
+    private fun settings(granularity: ClassSnapshotGranularity) =
+        ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses = false, expandTypeAliases = false)
+
+    // TODO(KT-91548): read it from the fragment itself once it is stored at the package fragment level.
+    private fun KlibFileSnapshot.computeSourceFilePath(): String {
+        val fragment = parsePackageFragment(classMemberLevelSnapshot!!.packageFragmentProto)
+        val nameResolver = NameResolverImpl(fragment.strings, fragment.qualifiedNames)
+        val fileId = fragment.class_List.firstNotNullOfOrNull { it.getExtensionOrNull(KlibMetadataProtoBuf.classFile) }
+            ?: fragment.`package`.functionList.firstNotNullOfOrNull { it.getExtensionOrNull(KlibMetadataProtoBuf.functionFile) }
+            ?: fragment.`package`.propertyList.firstNotNullOfOrNull { it.getExtensionOrNull(KlibMetadataProtoBuf.propertyFile) }
+            ?: fragment.`package`.typeAliasList.firstNotNullOfOrNull { it.getExtensionOrNull(KlibMetadataProtoBuf.typeAliasFile) }
+        val sourceFile = fileId?.let { nameResolver.getString(it) } ?: "<package>"
+        return if (packageName.isRoot) sourceFile else "${packageName.asString().replace('.', '/')}/$sourceFile"
     }
 
     /** Compiles the Kotlin sources in [srcDir] to a klib file in [outputDir] and returns it. */
