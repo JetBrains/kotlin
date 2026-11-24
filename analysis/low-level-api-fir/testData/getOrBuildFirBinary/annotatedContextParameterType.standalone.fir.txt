@@ -11,7 +11,7 @@ public final class MyClass public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class MyClass : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class MyClass : R|kotlin/Any| {
     context([ResolvedTo(BODY_RESOLVE)] @R|MyAnnotation|() <unused var>: R|@R|MyAnnotation|()  ParameterizedInterface<@R|MyAnnotation|()  kotlin/String>|)
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 

@@ -12,7 +12,7 @@ public final value class DerivedValue public constructor(value: kotlin.String) :
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/String)]), HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class DerivedValue : R|pack/SealedValue| {
+public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/String)]), HasNoEnumEntriesKey=true] class DerivedValue : R|pack/SealedValue| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|

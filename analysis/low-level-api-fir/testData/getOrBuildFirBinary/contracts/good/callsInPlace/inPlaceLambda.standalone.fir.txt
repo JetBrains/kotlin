@@ -8,7 +8,7 @@ public final class Foo public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Foo : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Foo : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun bar([ResolvedTo(BODY_RESOLVE)] x: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <

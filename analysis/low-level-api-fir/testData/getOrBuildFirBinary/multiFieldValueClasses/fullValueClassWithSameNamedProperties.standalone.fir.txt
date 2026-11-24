@@ -19,7 +19,7 @@ public final value class ValueClass public constructor(value: kotlin.String) {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/String)]), HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class ValueClass : R|kotlin/Any| {
+public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/String)]), HasNoEnumEntriesKey=true] class ValueClass : R|kotlin/Any| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|

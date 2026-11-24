@@ -6,7 +6,7 @@ public final class FooBar public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class FooBar : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class FooBar : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun doSmth(): R|kotlin/Unit|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FooBar] constructor(): R|FooBar|

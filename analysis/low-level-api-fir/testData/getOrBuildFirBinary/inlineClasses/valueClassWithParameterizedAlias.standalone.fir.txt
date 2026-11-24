@@ -13,7 +13,7 @@ public final inline value class ValueClass<T> public constructor(value: kotlin.c
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-@R|kotlin/jvm/JvmInline|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType={pack/MyTypeAlias<T>=} kotlin/collections/List<T>), HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class ValueClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+@R|kotlin/jvm/JvmInline|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType={pack/MyTypeAlias<T>=} kotlin/collections/List<T>), HasNoEnumEntriesKey=true] class ValueClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|

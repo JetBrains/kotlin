@@ -5,7 +5,7 @@ public abstract value class AbstractValue public constructor(parameter: kotlin.I
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public abstract value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null), HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class AbstractValue : R|kotlin/Any| {
+public abstract value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null), HasNoEnumEntriesKey=true] class AbstractValue : R|kotlin/Any| {
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractValue] constructor([ResolvedTo(BODY_RESOLVE)] parameter: R|kotlin/Int|): R|AbstractValue|
 
 }

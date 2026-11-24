@@ -24,7 +24,7 @@ public final class Foo public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Foo : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Foo : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] var [ResolvedTo(RAW_FIR)] R|kotlin/Int?|.prop: R|kotlin/Int?|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Int?|
             [R|Contract description]
@@ -59,15 +59,15 @@ public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceFor
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo|
 
-    public sealed [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false, SealedClassInheritorsKey=[/Foo.Status.Error, /Foo.Status.Ok]] class Status : R|kotlin/Any| {
+    public sealed [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, SealedClassInheritorsKey=[/Foo.Status.Error, /Foo.Status.Ok]] class Status : R|kotlin/Any| {
         protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Status] constructor(): R|Foo.Status|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Ok : R|Foo.Status| {
+        public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Ok : R|Foo.Status| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ok] constructor(): R|Foo.Status.Ok|
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class Error : R|Foo.Status| {
+        public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Error : R|Foo.Status| {
             public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val message: R|kotlin/String|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Error] get(): R|kotlin/String|
 

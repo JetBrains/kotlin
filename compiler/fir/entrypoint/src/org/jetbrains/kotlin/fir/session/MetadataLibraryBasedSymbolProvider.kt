@@ -174,7 +174,9 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
                     )
                 }
 
-                symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
+                if (isNewPlaceForBodyGeneration(classProto)) {
+                    symbol.fir.isNewPlaceForBodyGeneration = true
+                }
 
                 val fileAnnotations = fragment.fileAnnotations
                 if (fileAnnotations.isNotEmpty()) {

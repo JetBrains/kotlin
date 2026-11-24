@@ -14,7 +14,7 @@ public final value class ValueClass<A, B> public constructor(first: A, second: k
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, A), (second, kotlin/collections/List<B>)]), HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class ValueClass<[ResolvedTo(BODY_RESOLVE)] A, [ResolvedTo(BODY_RESOLVE)] B> : R|kotlin/Any| {
+public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, A), (second, kotlin/collections/List<B>)]), HasNoEnumEntriesKey=true] class ValueClass<[ResolvedTo(BODY_RESOLVE)] A, [ResolvedTo(BODY_RESOLVE)] B> : R|kotlin/Any| {
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|

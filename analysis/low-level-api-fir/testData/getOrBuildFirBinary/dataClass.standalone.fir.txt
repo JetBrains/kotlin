@@ -26,7 +26,7 @@ public final data class MyDependency public constructor(b: one.B, d: one.D) {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final data [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class MyDependency : R|kotlin/Any| {
+public final data [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class MyDependency : R|kotlin/Any| {
     public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|one/B|
 
     public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|one/D|

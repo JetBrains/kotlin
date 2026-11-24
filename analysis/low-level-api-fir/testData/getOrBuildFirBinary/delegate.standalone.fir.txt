@@ -18,7 +18,7 @@ public final class I public constructor(p: A) : A {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=false] class I : R|A| {
+public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class I : R|A| {
     public open [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
     public open [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(RAW_FIR)] R|kotlin/Int|.smth(): R|kotlin/Short|
