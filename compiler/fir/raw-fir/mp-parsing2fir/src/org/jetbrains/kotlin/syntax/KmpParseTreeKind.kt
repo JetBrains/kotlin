@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.syntax
 
-import org.jetbrains.kotlin.diagnostics.PositioningStrategy
 import org.jetbrains.kotlin.diagnostics.PositioningStrategyKind
+import org.jetbrains.kotlin.diagnostics.KmpPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.KmpPositioningStrategy
 
 object KmpParseTreeKind : ParseTreeKind() {
     override val isPsi: Boolean = false
 
     override val isKmp: Boolean = true
 
-    override val PositioningStrategyKind.positioningStrategy: PositioningStrategy
-        get() = TODO("KT-91322")
+    override val PositioningStrategyKind.positioningStrategy: KmpPositioningStrategy
+        get() = KmpPositioningStrategies.kindToStrategy[this]
+            ?: error("No KMP positioning strategy is registered for ${this::class.simpleName}")
 }
