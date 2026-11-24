@@ -30,6 +30,7 @@ internal fun patchConfigAndLogIssues(modules: Set<InputModule>, config: SwiftExp
     }
 
     return config.copy(
-        enableCoroutinesSupport = modules.any { it.name.contains("KotlinxCoroutinesCore") }
+        enableCoroutinesSupport = modules.any { it.name.contains("KotlinxCoroutinesCore") },
+        collectionsV2 = modules.any { it.config.experimentalFeatures[SwiftModuleConfig.COLLECTIONS_V2]?.toBooleanStrictOrNull() ?: false }
     )
 }
