@@ -196,8 +196,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
 
     /**
      * Enable debug mode for compilation.
-     * Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
-     * If API Level >= 2.2 -- no-op.
+     * Currently, this option has no effect.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */

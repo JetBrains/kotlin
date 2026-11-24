@@ -131,9 +131,6 @@ object JVMConfigurationKeys {
     @JvmField
     val VALIDATE_BYTECODE = CompilerConfigurationKey.create<Boolean>("VALIDATE_BYTECODE")
 
-    @JvmField
-    val ENABLE_DEBUG_MODE = CompilerConfigurationKey.create<Boolean>("ENABLE_DEBUG_MODE")
-
     // Mark compiled generated code in coroutines.
     @JvmField
     val ENHANCED_COROUTINES_DEBUGGING = CompilerConfigurationKey.create<Boolean>("ENHANCED_COROUTINES_DEBUGGING")
@@ -311,10 +308,6 @@ var CompilerConfiguration.noStdlib: Boolean
 var CompilerConfiguration.validateBytecode: Boolean
     get() = getBoolean(JVMConfigurationKeys.VALIDATE_BYTECODE)
     set(value) { put(JVMConfigurationKeys.VALIDATE_BYTECODE, value) }
-
-var CompilerConfiguration.enableDebugMode: Boolean
-    get() = getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
-    set(value) { put(JVMConfigurationKeys.ENABLE_DEBUG_MODE, value) }
 
 var CompilerConfiguration.enhancedCoroutinesDebugging: Boolean
     get() = getBoolean(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING)

@@ -49,7 +49,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val NO_REFLECT by key<Boolean>("Don't automatically include kotlin-reflect.jar into the output if the output is a jar.")
     val NO_STDLIB by key<Boolean>("Don't automatically include the Kotlin/JVM stdlib and kotlin-reflect into the classpath.")
     val VALIDATE_BYTECODE by key<Boolean>()
-    val ENABLE_DEBUG_MODE by key<Boolean>()
     val ENHANCED_COROUTINES_DEBUGGING by key<Boolean>("Mark compiled generated code in coroutines.")
     val NO_NEW_JAVA_ANNOTATION_TARGETS by key<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes.")
     val SKIP_BODIES by key<Boolean>("Enable internal mode which causes FIR2IR to skip function bodies, used in KAPT.")

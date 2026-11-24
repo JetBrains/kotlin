@@ -63,8 +63,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Enable old mangling scheme for inline classes"
     )
 
-    val ENABLE_DEBUG_MODE by directive("Enable debug mode for compilation")
-
     val ENHANCED_COROUTINES_DEBUGGING by directive("Mark compiler generated code in coroutines")
 
     val DISABLE_OPTIMIZATION by directive("Disable optimization")
