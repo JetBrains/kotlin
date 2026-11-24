@@ -73,6 +73,7 @@ public interface KotlinToolchains {
      *
      * The implementation may return the same instance of a `Toolchain` for subsequent calls.
      *
+     * @throws UnsupportedToolchainException if the loaded implementation does not provide a toolchain of the given [type]
      * @see JvmPlatformToolchain
      */
     public fun <T : Toolchain> getToolchain(type: Class<T>): T
@@ -230,6 +231,7 @@ public interface KotlinToolchains {
  *
  * The implementation may return the same instance of a `Toolchain` for subsequent calls.
  *
+ * @throws UnsupportedToolchainException if the loaded implementation does not provide a toolchain of the given type [T]
  * @see JvmPlatformToolchain
  */
 @ExperimentalBuildToolsApi

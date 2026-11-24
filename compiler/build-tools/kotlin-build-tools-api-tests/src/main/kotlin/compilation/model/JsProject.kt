@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.UnsupportedToolchainException
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
@@ -92,10 +93,8 @@ fun BaseCompilationTest.jsProject(
 fun KotlinToolchains.assumeJsIsSupported() {
     try {
         js
-    } catch (e: Throwable) {
-        if (e.message?.startsWith("Unsupported") == true) {
-            assumeTrue(false) { "Kotlin/JS is not supported on this version" }
-        } else throw e
+    } catch (_: UnsupportedToolchainException) {
+        assumeTrue(false) { "Kotlin/JS is not supported on this version" }
     }
 }
 
