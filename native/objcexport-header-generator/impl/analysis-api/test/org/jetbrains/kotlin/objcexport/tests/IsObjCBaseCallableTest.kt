@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.export.test.getFunctionOrFail
@@ -23,9 +22,8 @@ class IsObjCBaseCallableTest(
     fun `test - top level function`() {
         val file = inlineSourceCodeAnalysis.createKtFile("fun foo() = Unit")
         analyze(file) {
-            val session = useSiteSession
-            val fooSymbol = session.getFunctionOrFail(file, "foo")
-            assertTrue(session.isObjCBaseCallable(fooSymbol))
+            val fooSymbol = getFunctionOrFail(file, "foo")
+            assertTrue(isObjCBaseCallable(fooSymbol))
         }
     }
 
@@ -45,10 +43,9 @@ class IsObjCBaseCallableTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
-            val fooSymbol = session.getClassOrFail(file, "Foo")
+            val fooSymbol = getClassOrFail(file, "Foo")
             val xSymbol = fooSymbol.memberScope.getFunctionOrFail("x")
-            assertFalse(session.isObjCBaseCallable(xSymbol))
+            assertFalse(isObjCBaseCallable(xSymbol))
         }
     }
 
@@ -66,10 +63,9 @@ class IsObjCBaseCallableTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
-            val fooSymbol = session.getClassOrFail(file, "Foo")
+            val fooSymbol = getClassOrFail(file, "Foo")
             val xSymbol = fooSymbol.memberScope.getFunctionOrFail("x")
-            assertTrue(session.isObjCBaseCallable(xSymbol))
+            assertTrue(isObjCBaseCallable(xSymbol))
         }
     }
 }

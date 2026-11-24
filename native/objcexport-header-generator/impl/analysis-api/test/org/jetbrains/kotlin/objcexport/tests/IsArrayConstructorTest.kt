@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.findClass
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
@@ -26,9 +25,8 @@ class IsArrayConstructorTest(
     fun `test - regular function`() {
         val file = inlineSourceCodeAnalysis.createKtFile("fun foo() = Unit")
         analyze(file) {
-            val session = useSiteSession
-            val foo = session.getFunctionOrFail(file, "foo")
-            assertFalse(session.isArrayConstructor(foo))
+            val foo = getFunctionOrFail(file, "foo")
+            assertFalse(isArrayConstructor(foo))
         }
     }
 
@@ -36,10 +34,9 @@ class IsArrayConstructorTest(
     fun `test - regular constructor`() {
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo(val x: Int)")
         analyze(file) {
-            val session = useSiteSession
-            val foo = session.getClassOrFail(file, "Foo")
+            val foo = getClassOrFail(file, "Foo")
             val constructor = foo.memberScope.constructors.singleOrNull() ?: fail("No single constructor found")
-            assertFalse(session.isArrayConstructor(constructor))
+            assertFalse(isArrayConstructor(constructor))
         }
     }
 
@@ -58,7 +55,6 @@ class IsArrayConstructorTest(
     private fun doTestForArray(classId: ClassId) {
         val file = inlineSourceCodeAnalysis.createKtFile("")
         analyze(file) {
-            val session = useSiteSession
             val arraySymbol = findClass(classId)
                 ?: fail("Missing $$classId symbol")
 
@@ -66,7 +62,7 @@ class IsArrayConstructorTest(
                 .ifEmpty { fail("No constructors found on $classId") }
                 .forEach { constructor ->
                     assertTrue(
-                        session.isArrayConstructor(constructor),
+                        isArrayConstructor(constructor),
                         "Expected $classId constructor to be detected as array constructor"
                     )
                 }

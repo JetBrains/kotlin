@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.fileScope
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.session.useSiteModule
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.SirDeclaration
@@ -81,9 +80,9 @@ inline fun <R> translate(
 
 inline fun <R> withAnalysisSession(
     file: KtFile,
-    action: KaSession.(KtFile) -> R
+    action: context(KaSession) (KtFile) -> R
 ) {
     analyze(file) {
-        useSiteSession.action(file)
+        action(file)
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,8 @@ import kotlin.io.path.isDirectory
 
 interface KtObjCExportModuleNaming {
 
-    fun KaSession.getModuleName(module: KaModule): String?
+    context(session: KaSession)
+    fun getModuleName(module: KaModule): String?
 
     companion object {
         val default = KtObjCExportModuleNaming(listOf(KtKlibObjCExportModuleNaming, KtSimpleObjCExportModuleNaming))
@@ -30,9 +31,7 @@ interface KtObjCExportModuleNaming {
 
 internal fun ObjCExportContext.getObjCKotlinModuleName(module: KaModule): String? {
     return exportSession.cached(GetObjCKotlinModuleNameCacheKey(module)) {
-        with(exportSession.internal.moduleNaming) {
-            analysisSession.getModuleName(module)
-        }
+        exportSession.internal.moduleNaming.getModuleName(module, session = analysisSession)
     }
 }
 
@@ -48,7 +47,8 @@ fun KtObjCExportModuleNaming(implementations: List<KtObjCExportModuleNaming>): K
 
 internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
     @OptIn(KaExperimentalApi::class)
-    override fun KaSession.getModuleName(module: KaModule): String? {
+    context(session: KaSession)
+    override fun getModuleName(module: KaModule): String? {
         /*
         In this implementation, we're actually looking into the klib file, trying to resolve
         the contained manifest to get the 'shortName' or 'uniqueName'.
@@ -84,7 +84,8 @@ internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
 
 internal object KtSimpleObjCExportModuleNaming : KtObjCExportModuleNaming {
     @OptIn(KaExperimentalApi::class)
-    override fun KaSession.getModuleName(module: KaModule): String? {
+    context(session: KaSession)
+    override fun getModuleName(module: KaModule): String? {
         return when (module) {
             is KaSourceModule -> module.stableModuleName ?: module.name
             is KaLibraryModule -> module.libraryName
@@ -94,11 +95,10 @@ internal object KtSimpleObjCExportModuleNaming : KtObjCExportModuleNaming {
 }
 
 internal class KtCompositeObjCExportModuleNaming(private val implementations: List<KtObjCExportModuleNaming>) : KtObjCExportModuleNaming {
-    override fun KaSession.getModuleName(module: KaModule): String? {
+    context(session: KaSession)
+    override fun getModuleName(module: KaModule): String? {
         return implementations.firstNotNullOfOrNull { implementation ->
-            with(implementation) {
-                getModuleName(module)
-            }
+            implementation.getModuleName(module)
         }
     }
 }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.objcexport.hasCompanionObject
@@ -28,8 +27,7 @@ class NeedsCompanionPropertyTest(
         """.trimIndent()
         )
         analyze(file) {
-            val session = useSiteSession
-            assertFalse(session.hasCompanionObject(session.getClassOrFail(file, "NoCompanion")))
+            assertFalse(hasCompanionObject(getClassOrFail(file, "NoCompanion")))
         }
     }
 
@@ -43,8 +41,7 @@ class NeedsCompanionPropertyTest(
         """.trimIndent()
         )
         analyze(file) {
-            val session = useSiteSession
-            assertTrue(session.hasCompanionObject(session.getClassOrFail(file, "EmptyCompanion")))
+            assertTrue(hasCompanionObject(getClassOrFail(file, "EmptyCompanion")))
         }
     }
 
@@ -60,8 +57,7 @@ class NeedsCompanionPropertyTest(
         """.trimIndent()
         )
         analyze(file) {
-            val session = useSiteSession
-            assertTrue(session.hasCompanionObject(session.getClassOrFail(file, "SimpleCompanion")))
+            assertTrue(hasCompanionObject(getClassOrFail(file, "SimpleCompanion")))
         }
     }
 }

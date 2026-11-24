@@ -1,10 +1,13 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
-import org.jetbrains.kotlin.analysis.api.components.KaDeprecationLevel
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 
 /**
  * Returns `deprecated`, `unavailable` or null
@@ -18,7 +21,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
  * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper.getDeprecation]
  */
 @OptIn(KaExperimentalApi::class)
-internal fun KaSession.getObjCDeprecationStatus(symbol: KaSymbol): String? {
+context(session: KaSession)
+internal fun getObjCDeprecationStatus(symbol: KaSymbol): String? {
     return symbol.deprecation?.toDeprecationAttribute() ?: if (symbol.isConstructor) {
         symbol.containingDeclaration?.deprecation?.toDeprecationAttribute()
     } else null

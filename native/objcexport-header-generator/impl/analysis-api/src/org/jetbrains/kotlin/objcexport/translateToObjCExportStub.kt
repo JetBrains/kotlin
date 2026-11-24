@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaCallableSymbo
     val result = mutableListOf<ObjCExportStub>()
     when (symbol) {
         is KaPropertySymbol -> {
-            if (analysisSession.isObjCProperty(symbol)) {
+            if (isObjCProperty(symbol, session = analysisSession)) {
                 result.addIfNotNull(translateToObjCProperty(symbol))
                 if (symbol.getter != null) {
                     val selector = getSelector(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,8 +9,10 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.klib.reader.*
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.scopes.fileScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllVisibleInObjClassifiers
 import org.jetbrains.kotlin.psi.KtFile
@@ -19,7 +21,8 @@ interface KtObjCExportFile {
     val fileName: String
     val packageFqName: FqName
 
-    fun KaSession.resolve(): KtResolvedObjCExportFile
+    context(session: KaSession)
+    fun resolve(): KtResolvedObjCExportFile
 }
 
 /**
@@ -86,7 +89,8 @@ private class KtPsiObjCExportFile(
     /**
      * See [KtResolvedObjCExportFile]
      */
-    override fun KaSession.resolve(): KtResolvedObjCExportFile {
+    context(session: KaSession)
+    override fun resolve(): KtResolvedObjCExportFile {
         val symbol = file.symbol
         return KtResolvedObjCExportFile(
             fileName = fileName,
@@ -120,7 +124,8 @@ private class KtKlibObjCExportFile(
         return result
     }
 
-    override fun KaSession.resolve(): KtResolvedObjCExportFile {
+    context(session: KaSession)
+    override fun resolve(): KtResolvedObjCExportFile {
         val classifierAddresses = addresses.filterIsInstance<KlibClassAddress>()
         val callableAddresses = addresses.filterIsInstance<KlibCallableAddress>()
         val symbols = classifierAddresses.mapNotNull { classAddress -> classAddress.getClassOrObjectSymbol() }

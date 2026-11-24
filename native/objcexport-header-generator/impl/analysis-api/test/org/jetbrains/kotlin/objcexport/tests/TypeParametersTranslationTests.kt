@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
@@ -195,8 +196,8 @@ class TypeParametersTranslationTests(
             class Bar : Foo<UpperBound>(t = null!!)
         """
         ) { file ->
-            val foo = analysisSession.getClassOrFail(file, "Foo")
-            val bar = analysisSession.getClassOrFail(file, "Bar")
+            val foo = getClassOrFail(file, "Foo", session = analysisSession)
+            val bar = getClassOrFail(file, "Bar", session = analysisSession)
 
             val fooObjC = translateToObjCClass(foo)?.objCClass
             val barObjC = translateToObjCClass(bar)?.objCClass
@@ -216,16 +217,16 @@ class TypeParametersTranslationTests(
 
     private fun doTestOnProperty(@Language("kotlin") code: String, run: ObjCExportContext.(property: KaPropertySymbol) -> Unit) {
         doTest(code) { file ->
-            val foo = analysisSession.getClassOrFail(file, "Foo")
-            val property = with(analysisSession) { foo.declaredMemberScope.getPropertyOrFail("bar") }
+            val foo = getClassOrFail(file, "Foo", session = analysisSession)
+            val property = context(analysisSession) { foo.declaredMemberScope.getPropertyOrFail("bar") }
             run(property)
         }
     }
 
     private fun doTestOnMethod(@Language("kotlin") code: String, run: ObjCExportContext.(property: KaNamedFunctionSymbol) -> Unit) {
         doTest(code) { file ->
-            val foo = analysisSession.getClassOrFail(file, "Foo")
-            val func = with(analysisSession) { foo.declaredMemberScope.getFunctionOrFail("bar") }
+            val foo = getClassOrFail(file, "Foo", session = analysisSession)
+            val func = context(analysisSession) { foo.declaredMemberScope.getFunctionOrFail("bar") }
             run(func)
         }
     }

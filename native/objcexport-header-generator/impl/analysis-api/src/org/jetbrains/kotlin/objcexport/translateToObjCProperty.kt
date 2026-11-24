@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.backend.konan.objCMacroDefinitions
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
@@ -14,9 +13,10 @@ import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getBridgeReceiverType
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun ObjCExportContext.translateToObjCProperty(symbol: KaPropertySymbol): ObjCProperty? {
-    if (!analysisSession.isVisibleInObjC(symbol)) return null
+    if (!isVisibleInObjC(symbol, session = analysisSession)) return null
     return buildProperty(symbol)
 }
 
@@ -33,18 +33,18 @@ fun ObjCExportContext.buildProperty(symbol: KaPropertySymbol): ObjCProperty {
     val attributes = mutableListOf<String>()
     val declarationAttributes = mutableListOf(symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(swiftName))
 
-    if (!analysisSession.getBridgeReceiverType(symbol).isInstance) attributes += "class"
+    if (!getBridgeReceiverType(symbol, session = analysisSession).isInstance) attributes += "class"
 
-    if (symbol.setter == null || !analysisSession.isVisibleInObjC(symbol.setter)) {
+    if (symbol.setter == null || !isVisibleInObjC(symbol.setter, session = analysisSession)) {
         attributes += "readonly"
     }
 
-    declarationAttributes.addIfNotNull(analysisSession.getObjCDeprecationStatus(symbol))
+    declarationAttributes.addIfNotNull(getObjCDeprecationStatus(symbol, session = analysisSession))
 
     return ObjCProperty(
         name = objCName,
-        comment = analysisSession.translateToObjCComment(symbol.annotations),
-        origin = analysisSession.getObjCExportStubOrigin(symbol),
+        comment = translateToObjCComment(symbol.annotations, session = analysisSession),
+        origin = getObjCExportStubOrigin(symbol, session = analysisSession),
         type = type,
         propertyAttributes = attributes,
         setterName = getObjCPropertySetter(symbol, objCName),

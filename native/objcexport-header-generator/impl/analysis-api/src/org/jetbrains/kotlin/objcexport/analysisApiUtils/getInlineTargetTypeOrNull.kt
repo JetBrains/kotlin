@@ -1,27 +1,33 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.isMarkedNullable
+import org.jetbrains.kotlin.analysis.api.types.withNullability
 import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 
 
-internal fun KaSession.getInlineTargetTypeOrNull(type: KaType): KaType? {
+context(session: KaSession)
+internal fun getInlineTargetTypeOrNull(type: KaType): KaType? {
     if (type !is KaClassType) return null
     val classSymbol = type.symbol as? KaNamedClassSymbol ?: return null
     val inlinedType = getInlineTargetTypeOrNull(classSymbol) ?: return null
     return markNullableIf(inlinedType, type.isMarkedNullable)
 }
 
-internal fun KaSession.getInlineTargetTypeOrNull(symbol: KaNamedClassSymbol): KaType? {
+context(session: KaSession)
+internal fun getInlineTargetTypeOrNull(symbol: KaNamedClassSymbol): KaType? {
     if (!isInlineIncludingKotlinNativeSpecialClasses(symbol)) return null
 
     val constructor = symbol.declaredMemberScope.constructors
@@ -45,7 +51,8 @@ internal fun KaSession.getInlineTargetTypeOrNull(symbol: KaNamedClassSymbol): Ka
  * However, there seemingly exist classes like 'kotlin.native.internal.NativePtr' which shall also be considered 'inline'
  * despite no modifier being present. This is considered a 'special Kotlin Native' class in the context of this function.
  */
-private fun KaSession.isInlineIncludingKotlinNativeSpecialClasses(symbol: KaNamedClassSymbol): Boolean {
+context(session: KaSession)
+private fun isInlineIncludingKotlinNativeSpecialClasses(symbol: KaNamedClassSymbol): Boolean {
     if (symbol.isInline) return true
     val classId = symbol.classId ?: return false
 
@@ -63,11 +70,13 @@ private fun KaSession.isInlineIncludingKotlinNativeSpecialClasses(symbol: KaName
     return false
 }
 
-private fun KaSession.markNullable(type: KaType): KaType {
+context(session: KaSession)
+private fun markNullable(type: KaType): KaType {
     if (type.isMarkedNullable) return type
     return type.withNullability(isMarkedNullable = true)
 }
 
-private fun KaSession.markNullableIf(type: KaType, shouldMarkNullable: Boolean): KaType {
+context(session: KaSession)
+private fun markNullableIf(type: KaType, shouldMarkNullable: Boolean): KaType {
     return if (shouldMarkNullable) markNullable(type) else type
 }

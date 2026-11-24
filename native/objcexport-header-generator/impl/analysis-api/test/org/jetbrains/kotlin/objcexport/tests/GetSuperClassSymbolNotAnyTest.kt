@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.export.utilities.getSuperClassSymbolNotAny
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.junit.jupiter.api.Test
@@ -22,9 +21,8 @@ class GetSuperClassSymbolNotAnyTest(
     fun `test - no declared superclass - returns null`() {
         val file = inlineSourceCodeAnalysis.createKtFile("""class Foo""")
         analyze(file) {
-            val session = useSiteSession
-            val foo = session.getClassOrFail(file, "Foo")
-            assertNull(session.getSuperClassSymbolNotAny(foo))
+            val foo = getClassOrFail(file, "Foo")
+            assertNull(getSuperClassSymbolNotAny(foo))
         }
     }
 
@@ -38,10 +36,9 @@ class GetSuperClassSymbolNotAnyTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
-            val fooSymbol = session.getClassOrFail(file, "Foo")
-            val barSymbol = session.getSuperClassSymbolNotAny(fooSymbol)
-            assertEquals(barSymbol, session.getClassOrFail(file, "Bar"))
+            val fooSymbol = getClassOrFail(file, "Foo")
+            val barSymbol = getSuperClassSymbolNotAny(fooSymbol)
+            assertEquals(barSymbol, getClassOrFail(file, "Bar"))
         }
     }
 
@@ -56,14 +53,13 @@ class GetSuperClassSymbolNotAnyTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
-            val aSymbol = session.getClassOrFail(file, "A")
-            val bSymbol = session.getClassOrFail(file, "B")
-            val cSymbol = session.getClassOrFail(file, "C")
+            val aSymbol = getClassOrFail(file, "A")
+            val bSymbol = getClassOrFail(file, "B")
+            val cSymbol = getClassOrFail(file, "C")
 
-            assertEquals(session.getSuperClassSymbolNotAny(cSymbol), bSymbol)
-            assertEquals(session.getSuperClassSymbolNotAny(bSymbol), aSymbol)
-            assertNull(session.getSuperClassSymbolNotAny(aSymbol))
+            assertEquals(getSuperClassSymbolNotAny(cSymbol), bSymbol)
+            assertEquals(getSuperClassSymbolNotAny(bSymbol), aSymbol)
+            assertNull(getSuperClassSymbolNotAny(aSymbol))
         }
     }
 
@@ -79,15 +75,14 @@ class GetSuperClassSymbolNotAnyTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
-            val aSymbol = session.getClassOrFail(file, "A")
-            val i1Symbol = session.getClassOrFail(file, "I1")
-            val i2Symbol = session.getClassOrFail(file, "I2")
-            val fooSymbol = session.getClassOrFail(file, "Foo")
+            val aSymbol = getClassOrFail(file, "A")
+            val i1Symbol = getClassOrFail(file, "I1")
+            val i2Symbol = getClassOrFail(file, "I2")
+            val fooSymbol = getClassOrFail(file, "Foo")
 
-            assertEquals(session.getSuperClassSymbolNotAny(fooSymbol), aSymbol)
-            assertNull(session.getSuperClassSymbolNotAny(i1Symbol))
-            assertNull(session.getSuperClassSymbolNotAny(i2Symbol))
+            assertEquals(getSuperClassSymbolNotAny(fooSymbol), aSymbol)
+            assertNull(getSuperClassSymbolNotAny(i1Symbol))
+            assertNull(getSuperClassSymbolNotAny(i2Symbol))
         }
     }
 }

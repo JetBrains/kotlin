@@ -20,12 +20,7 @@ import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 import org.jetbrains.kotlin.sir.providers.sirModule
-import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
-import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
-import org.jetbrains.kotlin.sir.providers.utils.hasNonPublicOptIns
-import org.jetbrains.kotlin.sir.providers.utils.isAbstract
-import org.jetbrains.kotlin.sir.providers.utils.isFromTemporarilyIgnoredPackage
-import org.jetbrains.kotlin.sir.providers.utils.resolveUpperBound
+import org.jetbrains.kotlin.sir.providers.utils.*
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.types.Variance
@@ -329,8 +324,8 @@ private fun hasUnboundInputTypeParameters(
     if (typeParameters.isEmpty()) return@let false
     typeParameters.zipIfSizesAreEqual(classType.typeArguments)?.any { [param, arg] ->
         if (param.variance == Variance.IN_VARIANCE) return@any false
-        val upperBound = param.resolveUpperBound() ?: ka.builtinTypes.nullableAny
-        val type = arg.type?.let { it.resolveUpperBound() ?: ka.builtinTypes.nullableAny }
+        val upperBound = param.resolveUpperBound() ?: builtinTypes.nullableAny
+        val type = arg.type?.let { it.resolveUpperBound() ?: builtinTypes.nullableAny }
         type?.let { it != upperBound } ?: false // .type == null indicates star projection
     } ?: false
 } ?: false

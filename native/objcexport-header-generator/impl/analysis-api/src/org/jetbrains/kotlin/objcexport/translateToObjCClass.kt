@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.analysis.api.export.utilities.isCompanion
 import org.jetbrains.kotlin.analysis.api.export.utilities.isThrowable
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.memberScope
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
+import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
-
 
 
 fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCExportTranslatedClass? = withClassifierContext(symbol) {
@@ -25,7 +27,7 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCExportTra
     ) {
         "Unsupported symbol.classKind: ${symbol.classKind}"
     }
-    if (!analysisSession.isVisibleInObjC(symbol)) return@withClassifierContext null
+    if (!isVisibleInObjC(symbol, session = analysisSession)) return@withClassifierContext null
 
     val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
     val final = symbol.modality == KaSymbolModality.FINAL
@@ -33,8 +35,8 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCExportTra
     val name = getObjCClassOrProtocolName(symbol)
     val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
 
-    val comment: ObjCComment? = analysisSession.translateToObjCComment(symbol.annotations)
-    val origin = analysisSession.getObjCExportStubOrigin(symbol)
+    val comment: ObjCComment? = translateToObjCComment(symbol.annotations, session = analysisSession)
+    val origin = getObjCExportStubOrigin(symbol, session = analysisSession)
 
     val superClass = translateSuperClass(symbol)
     val superProtocols: List<String> = superProtocols(symbol)
@@ -44,12 +46,12 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCExportTra
         /* The order of members tries to replicate the K1 implementation explicitly */
         this += translateToObjCConstructors(symbol)
 
-        if (symbol.isCompanion || analysisSession.hasVisibleCompanionObject(symbol)) {
+        if (symbol.isCompanion || hasVisibleCompanionObject(symbol, session = analysisSession)) {
             this += buildCompanionProperty(symbol)
         }
 
-        this += analysisSession.getCallableSymbolsForObjCMemberTranslation(symbol)
-            .sortedWith(analysisSession.getStableCallableOrder())
+        this += getCallableSymbolsForObjCMemberTranslation(symbol, session = analysisSession)
+            .sortedWith(getStableCallableOrder(session = analysisSession))
             .flatMap { translateToObjCExportStub(it) }
 
         if (symbol.classKind == KaClassKind.ENUM_CLASS) {
@@ -59,7 +61,7 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCExportTra
             this += translateEnumMembers(symbol)
         }
 
-        if (analysisSession.isThrowable(symbol)) {
+        if (isThrowable(symbol, session = analysisSession)) {
             this += buildThrowableAsErrorMethod()
         }
     }
@@ -92,7 +94,7 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCExportTra
 }
 
 /**
- * Resolves all [KtCallableSymbol] symbols that are to be translated to ObjC for [this] [KaClassSymbol].
+ * Resolves all [KtCallableSymbol] symbols that are to be translated to ObjC for the [symbol] class.
  * Note: This will return only 'declared' members (aka members written on this class/interface/object) and 'synthetic'/'generated' members.
  *
  * ## Example regular class
@@ -119,7 +121,8 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCExportTra
  * Note: Some methods like `hashCode`, `toString`, ... have predefined selectors and ObjC names.
  * @see [Predefined]
  */
-internal fun KaSession.getCallableSymbolsForObjCMemberTranslation(symbol: KaClassSymbol): Set<KaCallableSymbol> {
+context(session: KaSession)
+internal fun getCallableSymbolsForObjCMemberTranslation(symbol: KaClassSymbol): Set<KaCallableSymbol> {
     val generatedCallableSymbols = symbol.memberScope
         .callables
         .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
@@ -133,6 +136,6 @@ internal fun KaSession.getCallableSymbolsForObjCMemberTranslation(symbol: KaClas
 }
 
 internal fun ObjCExportContext.getSuperClassName(type: KaClassType): ObjCExportClassOrProtocolName? {
-    val symbol = with(analysisSession) { type.expandedSymbol } ?: return null
+    val symbol = context(analysisSession) { type.expandedSymbol } ?: return null
     return getObjCClassOrProtocolName(symbol)
 }

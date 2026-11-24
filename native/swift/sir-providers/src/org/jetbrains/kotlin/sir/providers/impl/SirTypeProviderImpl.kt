@@ -45,8 +45,8 @@ public class SirTypeProviderImpl(
             if (requiresHashableAsAny) SirType.anyHashable else KotlinRuntimeSupportModule.kotlinBridgeableType
     }
 
+    context(ka: KaSession)
     override fun KaType.translateType(
-        ktAnalysisSession: KaSession,
         position: SirTypeVariance,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,

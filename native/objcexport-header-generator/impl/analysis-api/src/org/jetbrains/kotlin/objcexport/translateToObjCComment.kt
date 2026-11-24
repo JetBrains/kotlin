@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.renderAsSourceCode
+import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridge
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCComment
@@ -19,9 +20,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getEffectiveThrows
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getObjCDocumentedAnnotations
-import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
 
-internal fun KaSession.translateToObjCComment(list: KaAnnotationList): ObjCComment? {
+context(session: KaSession)
+internal fun translateToObjCComment(list: KaAnnotationList): ObjCComment? {
     val annotations = getObjCDocumentedAnnotations(list)
         .mapNotNull { annotation -> renderAnnotation(annotation) }
 
@@ -32,7 +33,8 @@ internal fun KaSession.translateToObjCComment(list: KaAnnotationList): ObjCComme
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildComment]
  */
-internal fun KaSession.translateToObjCComment(
+context(session: KaSession)
+internal fun translateToObjCComment(
     function: KaFunctionSymbol,
     bridge: MethodBridge,
     parameters: List<ObjCParameter>,
@@ -81,7 +83,8 @@ internal fun KaSession.translateToObjCComment(
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mustBeDocumentedParamAttributeList]
  */
-private fun KaSession.renderedObjCDocumentedParamAnnotations(parameter: ObjCParameter, parameterSymbol: KaParameterSymbol): String? {
+context(session: KaSession)
+private fun renderedObjCDocumentedParamAnnotations(parameter: ObjCParameter, parameterSymbol: KaParameterSymbol): String? {
     val renderedAnnotationsString = getObjCDocumentedAnnotations(parameterSymbol)
         .mapNotNull { annotation -> renderAnnotation(annotation) }
         .ifEmpty { return null }

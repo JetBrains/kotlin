@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.analysis.api.klib.reader.*
 import org.jetbrains.kotlin.analysis.api.klib.reader.testUtils.providedTestProjectKlib
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
+import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -199,7 +200,7 @@ class GetSymbolsTest {
      * Runs the given [block] in an analysis session that will have the built library in its dependencies.
      */
     @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun <T> withTestProjectLibraryAnalysisSession(block: KaSession.(KaLibraryModule) -> T): T {
+    private fun <T> withTestProjectLibraryAnalysisSession(block: context(KaSession) (KaLibraryModule) -> T): T {
         var mainModule: KaSourceModule? = null
         var libraryModule: KaLibraryModule? = null
 
@@ -233,7 +234,7 @@ class GetSymbolsTest {
 
         // We have to analyze the KLIB from a source use-site module because `KaLibraryModule`s aren't supported as use sites (KT-76042).
         return analyze(mainModule) {
-            useSiteSession.block(libraryModule)
+            block(libraryModule)
         }
     }
 }

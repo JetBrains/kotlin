@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.objcexport.tests
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.export.utilities.hasExportForCompilerAnnotation
+import org.jetbrains.kotlin.analysis.api.scopes.scope
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getPropertyOrFail
@@ -33,22 +33,22 @@ class HasExportForCompilerAnnotationTest(
         )
 
         analyze(ktFile) {
-            val session = useSiteSession
             assertTrue(
-                session.verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("array", session))
+                verifyHasExportForCompilerAnnotation(getPropertyOrFail(ktFile, "array"))
             )
             assertFalse(
-                session.verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("iterator", session))
+                verifyHasExportForCompilerAnnotation(getPropertyOrFail(ktFile, "iterator"))
             )
             assertFalse(
-                session.verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("foo", session))
+                verifyHasExportForCompilerAnnotation(getPropertyOrFail(ktFile, "foo"))
             )
         }
     }
 }
 
 @OptIn(KaExperimentalApi::class)
-private fun KaSession.verifyHasExportForCompilerAnnotation(property: KaPropertySymbol): Boolean {
+context(session: KaSession)
+private fun verifyHasExportForCompilerAnnotation(property: KaPropertySymbol): Boolean {
     return property
         .returnType
         .scope?.getConstructors()?.toList()?.any { it.hasExportForCompilerAnnotation }

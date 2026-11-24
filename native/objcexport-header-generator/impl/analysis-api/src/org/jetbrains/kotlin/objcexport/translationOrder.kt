@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,14 +14,16 @@ internal val StableFileOrder: Comparator<KtObjCExportFile>
     get() = compareBy<KtObjCExportFile> { file -> file.packageFqName.asString() }
         .thenComparing { file -> file.fileName }
 
-internal fun KaSession.getStableFunctionOrder(): Comparator<KaNamedFunctionSymbol> = compareBy(
+context(session: KaSession)
+internal fun getStableFunctionOrder(): Comparator<KaNamedFunctionSymbol> = compareBy(
     { it.isConstructor },
     { it.name },
     { it.valueParameters.size },
     { getStringSignature(it) }
 )
 
-internal fun KaSession.getStableConstructorOrder(): Comparator<KaConstructorSymbol> = compareBy(
+context(session: KaSession)
+internal fun getStableConstructorOrder(): Comparator<KaConstructorSymbol> = compareBy(
     { it.valueParameters.size },
     { getStringSignature(it) }
 )
@@ -49,7 +51,8 @@ internal val StableClassifierOrder: Comparator<KaClassifierSymbol> =
 //    }
 internal val StableNamedOrder: Comparator<KaNamedSymbol> = compareBy { it.name.toString() }
 
-internal fun KaSession.getStableCallableOrder(): Comparator<KaCallableSymbol> = compareBy<KaCallableSymbol> {
+context(session: KaSession)
+internal fun getStableCallableOrder(): Comparator<KaCallableSymbol> = compareBy<KaCallableSymbol> {
     when (it) {
         is KaConstructorSymbol -> -1
         is KaNamedFunctionSymbol -> 1

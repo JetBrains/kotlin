@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,20 +7,24 @@ package org.jetbrains.kotlin.objcexport.analysisApiUtils
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaDeprecationLevel
 import org.jetbrains.kotlin.analysis.api.export.utilities.getSuperClassSymbolNotAny
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.types.classId
+import org.jetbrains.kotlin.analysis.api.types.defaultType
+import org.jetbrains.kotlin.analysis.api.visibility.isPublicApi
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 
-internal fun KaSession.isVisibleInObjC(symbol: KaSymbol?): Boolean = when (symbol) {
+context(session: KaSession)
+internal fun isVisibleInObjC(symbol: KaSymbol?): Boolean = when (symbol) {
     is KaCallableSymbol -> isVisibleInObjC(symbol)
     is KaClassSymbol -> isVisibleInObjC(symbol)
     else -> false
@@ -29,7 +33,8 @@ internal fun KaSession.isVisibleInObjC(symbol: KaSymbol?): Boolean = when (symbo
 /**
  * Doesn't check visibility of containing symbol, so nested callables are visible
  */
-internal fun KaSession.isVisibleInObjC(symbol: KaCallableSymbol): Boolean {
+context(session: KaSession)
+internal fun isVisibleInObjC(symbol: KaCallableSymbol): Boolean {
     if (symbol.hasContextParameters()) return false
     if (symbol.hasNoProvidedName()) return false
     if (!isPublic(symbol)) return false
@@ -43,7 +48,8 @@ internal fun KaSession.isVisibleInObjC(symbol: KaCallableSymbol): Boolean {
     return true
 }
 
-internal fun KaSession.isVisibleInObjC(symbol: KaClassSymbol): Boolean {
+context(session: KaSession)
+internal fun isVisibleInObjC(symbol: KaClassSymbol): Boolean {
     if (symbol.hasNoProvidedName()) return false
     if (!isPublic(symbol)) return false
     if (isHiddenFromObjCByDeprecation(symbol)) return false
@@ -71,26 +77,29 @@ internal fun KaCallableSymbol.hasContextParameters(): Boolean {
 Private utility functions
  */
 
-private fun KaSession.isPublic(symbol: KaDeclarationSymbol): Boolean {
+context(session: KaSession)
+private fun isPublic(symbol: KaDeclarationSymbol): Boolean {
     /**
      * Visibility check is a temp workaround, since AA doesn't have something similar to K1 [DeclarationDescriptorWithVisibility.isEffectivelyPublicApi]
      * Remove when KT-69122 is implemented
      *
      * See details at [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.shouldBeExposed]
      */
-    return symbol.visibility != KaSymbolVisibility.INTERNAL && isPublicApi(symbol)
+    return symbol.visibility != KaSymbolVisibility.INTERNAL && symbol.isPublicApi
 }
 
-private fun KaSession.isSealedClassConstructor(symbol: KaSymbol): Boolean {
+context(session: KaSession)
+private fun isSealedClassConstructor(symbol: KaSymbol): Boolean {
     if (symbol !is KaConstructorSymbol) return false
     val containingSymbol = symbol.containingDeclaration ?: return false
     return containingSymbol.modality == KaSymbolModality.SEALED
 }
 
 @OptIn(ExperimentalContracts::class)
-private fun KaSession.isComponentNMethod(symbol: KaSymbol): Boolean {
+context(session: KaSession)
+private fun isComponentNMethod(symbol: KaSymbol): Boolean {
     contract {
-        returns(true) implies (this@isComponentNMethod is KaNamedFunctionSymbol)
+        returns(true) implies (symbol is KaNamedFunctionSymbol)
     }
 
     if (symbol !is KaNamedFunctionSymbol) return false
@@ -100,20 +109,22 @@ private fun KaSession.isComponentNMethod(symbol: KaSymbol): Boolean {
     return DataClassResolver.isComponentLike(symbol.name)
 }
 
-private fun KaSession.isHiddenFromObjCByAnnotation(callable: KaCallableSymbol): Boolean {
+context(session: KaSession)
+private fun isHiddenFromObjCByAnnotation(callable: KaCallableSymbol): Boolean {
     val overwrittenSymbols = callable.directlyOverriddenSymbols.toList()
     if (overwrittenSymbols.isNotEmpty()) return isHiddenFromObjCByAnnotation(overwrittenSymbols.first())
     return containsHidesFromObjCAnnotation(callable)
 }
 
-private fun KaSession.isHiddenFromObjCByAnnotation(symbol: KaClassSymbol): Boolean {
+context(session: KaSession)
+private fun isHiddenFromObjCByAnnotation(symbol: KaClassSymbol): Boolean {
     val containingSymbol = symbol.containingDeclaration
     if (containingSymbol is KaClassSymbol && isHiddenFromObjCByAnnotation(containingSymbol)) return true
     return containsHidesFromObjCAnnotation(symbol)
 }
 
 /**
- * Returns if [this] symbol is annotated with some annotation that effectively hides the symbol from ObjC.
+ * Returns if [symbol] is annotated with some annotation that effectively hides the symbol from ObjC.
  *
  * **Example: Using pre-defined 'HiddenFromObjC' annotation**
  * ```kotlin
@@ -131,7 +142,8 @@ private fun KaSession.isHiddenFromObjCByAnnotation(symbol: KaClassSymbol): Boole
  * ```
  *
  */
-private fun KaSession.containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol): Boolean {
+context(session: KaSession)
+private fun containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol): Boolean {
     return symbol.annotations.any { annotation ->
         val annotationClassId = annotation.classId ?: return@any false
         val annotationClassSymbol = findClass(annotationClassId) ?: return@any false
@@ -140,7 +152,8 @@ private fun KaSession.containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol)
 }
 
 @OptIn(KaExperimentalApi::class)
-private fun KaSession.isHiddenFromObjCByDeprecation(callable: KaCallableSymbol): Boolean {
+context(session: KaSession)
+private fun isHiddenFromObjCByDeprecation(callable: KaCallableSymbol): Boolean {
     /*
     Note: ObjCExport generally expect overrides of exposed methods to be exposed.
     So don't hide a "deprecated hidden" method which overrides non-hidden one:
@@ -160,7 +173,8 @@ private fun KaSession.isHiddenFromObjCByDeprecation(callable: KaCallableSymbol):
 }
 
 @OptIn(KaExperimentalApi::class)
-private fun KaSession.isHiddenFromObjCByDeprecation(symbol: KaClassSymbol): Boolean {
+context(session: KaSession)
+private fun isHiddenFromObjCByDeprecation(symbol: KaClassSymbol): Boolean {
     if (symbol.deprecation?.level == KaDeprecationLevel.HIDDEN) return true
 
     // Note: ObjCExport requires super class of exposed class to be exposed.
@@ -181,16 +195,18 @@ private fun KaSession.isHiddenFromObjCByDeprecation(symbol: KaClassSymbol): Bool
     return false
 }
 
-private fun KaSession.isInlined(symbol: KaClassSymbol): Boolean {
+context(session: KaSession)
+private fun isInlined(symbol: KaClassSymbol): Boolean {
     if (symbol !is KaNamedClassSymbol) return false
     if (isUnsignedPrimitive(symbol)) return false
     if (symbol.isInline) return true
     return false
 }
 
-private fun KaSession.isUnsignedPrimitive(symbol: KaClassSymbol): Boolean {
+context(session: KaSession)
+private fun isUnsignedPrimitive(symbol: KaClassSymbol): Boolean {
     return symbol.defaultType.run {
-        isUShortType || isUByteType || isUIntType || isULongType
+        classId == StandardClassIds.UShort || classId == StandardClassIds.UByte || classId == StandardClassIds.UInt || classId == StandardClassIds.ULong
     }
 }
 

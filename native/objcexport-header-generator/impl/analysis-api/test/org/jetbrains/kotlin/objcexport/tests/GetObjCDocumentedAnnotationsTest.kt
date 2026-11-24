@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getObjCDocumentedAnnotations
@@ -21,9 +20,8 @@ class GetObjCDocumentedAnnotationsTest(
     fun `test - no annotation present`() {
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(file) {
-            val session = useSiteSession
-            val foo = session.getClassOrFail(file, "Foo")
-            val objCDocumentedAnnotations = session.getObjCDocumentedAnnotations(foo)
+            val foo = getClassOrFail(file, "Foo")
+            val objCDocumentedAnnotations = getObjCDocumentedAnnotations(foo)
             if (objCDocumentedAnnotations.isNotEmpty())
                 fail("Expected no 'ObjC Documented Annotation present, Found. $objCDocumentedAnnotations")
         }
@@ -43,9 +41,8 @@ class GetObjCDocumentedAnnotationsTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
-            val foo = session.getClassOrFail(file, "Foo")
-            val objCDocumentedAnnotations = session.getObjCDocumentedAnnotations(foo)
+            val foo = getClassOrFail(file, "Foo")
+            val objCDocumentedAnnotations = getObjCDocumentedAnnotations(foo)
             if (objCDocumentedAnnotations.size != 1)
                 fail("Expected single documented annotation. Found: $objCDocumentedAnnotations")
 
@@ -70,9 +67,8 @@ class GetObjCDocumentedAnnotationsTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
-            val foo = session.getClassOrFail(file, "Foo")
-            val objCDocumentedAnnotations = session.getObjCDocumentedAnnotations(foo)
+            val foo = getClassOrFail(file, "Foo")
+            val objCDocumentedAnnotations = getObjCDocumentedAnnotations(foo)
             if (objCDocumentedAnnotations.size != 1)
                 fail("Expected single documented annotation. Found: $objCDocumentedAnnotations")
 

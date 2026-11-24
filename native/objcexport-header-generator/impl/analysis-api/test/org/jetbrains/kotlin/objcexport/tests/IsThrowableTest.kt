@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.export.utilities.isThrowable
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
@@ -28,8 +27,7 @@ class IsThrowableTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
-            assertFalse(session.isThrowable(session.getClassOrFail(file, "Throwable")))
+            assertFalse(isThrowable(getClassOrFail(file, "Throwable")))
         }
     }
 
@@ -42,8 +40,7 @@ class IsThrowableTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
-            val isThrowable = session.isThrowable(session.getPropertyOrFail(file, "foo").returnType.expandedSymbol)
+            val isThrowable = isThrowable(getPropertyOrFail(file, "foo").returnType.expandedSymbol)
             assertTrue(isThrowable)
         }
     }

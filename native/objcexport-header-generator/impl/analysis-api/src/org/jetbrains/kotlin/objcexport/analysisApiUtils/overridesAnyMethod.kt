@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.objcexport.analysisApiUtils
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols
+import org.jetbrains.kotlin.analysis.api.symbols.containingSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
 
 /**
  * True if this symbol is (transitively) overriding any method of kotlin.Any
  */
-internal fun KaSession.overridesAnyMethod(function: KaFunctionSymbol): Boolean {
+context(session: KaSession)
+internal fun overridesAnyMethod(function: KaFunctionSymbol): Boolean {
     return function.allOverriddenSymbols.any { overridden ->
         (overridden.containingSymbol as? KaClassSymbol)?.classId == KaStandardTypeClassIds.ANY
     }

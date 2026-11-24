@@ -1,18 +1,23 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.export.utilities.getDeclaredSuperInterfaceSymbols
 import org.jetbrains.kotlin.analysis.api.export.utilities.getSuperClassSymbolNotAny
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.findClass
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
-import org.jetbrains.kotlin.objcexport.extras.*
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.errorInterface
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFileContainingModule
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.hasErrorTypes
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
+import org.jetbrains.kotlin.objcexport.extras.originClassId
+import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
+import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
 import org.jetbrains.kotlin.objcexport.mangling.mangleClassForwards
 import org.jetbrains.kotlin.objcexport.mangling.mangleObjCStubs
 
@@ -107,12 +112,12 @@ private class KtObjCExportHeaderGenerator(
 
 
     private fun ObjCExportContext.translateClass(classId: ClassId) {
-        val classOrObjectSymbol = analysisSession.findClass(classId) ?: return
+        val classOrObjectSymbol = findClass(classId, session = analysisSession) ?: return
         translateClassOrObjectSymbol(classOrObjectSymbol)
     }
 
     private fun ObjCExportContext.translateFileClassifiers(file: KtObjCExportFile) {
-        val resolvedFile = with(file) { analysisSession.resolve() }
+        val resolvedFile = file.resolve(session = analysisSession)
         withModuleContext(getFileContainingModule(file)) {
             resolvedFile.classifierSymbols.sortedWith(StableClassifierOrder).forEach { classOrObjectSymbol ->
                 translateClassOrObjectSymbol(classOrObjectSymbol)
@@ -132,7 +137,7 @@ private class KtObjCExportHeaderGenerator(
     }
 
     private fun ObjCExportContext.translateTopLevelFacade(file: KtObjCExportFile) {
-        val resolvedFile = with(file) { analysisSession.resolve() }
+        val resolvedFile = file.resolve(session = analysisSession)
 
         withModuleContext(getFileContainingModule(resolvedFile)) {
             translateToObjCTopLevelFacade(resolvedFile)?.let { topLevelFacade ->
@@ -164,14 +169,14 @@ private class KtObjCExportHeaderGenerator(
         2) Super interface / superclass symbol export stubs (result of translation) have to be present in the stubs list before the
         original stub
          */
-        analysisSession.getDeclaredSuperInterfaceSymbols(symbol).filter { analysisSession.isVisibleInObjC(it) }
+        getDeclaredSuperInterfaceSymbols(symbol, session = analysisSession).filter { isVisibleInObjC(it, session = analysisSession) }
             .forEach { superInterfaceSymbol ->
                 translateClassOrObjectSymbol(superInterfaceSymbol)?.let {
                     objCProtocolForwardDeclarations += it.name
                 }
             }
 
-        analysisSession.getSuperClassSymbolNotAny(symbol)?.takeIf { analysisSession.isVisibleInObjC(it) }?.let { superClassSymbol ->
+        getSuperClassSymbolNotAny(symbol, session = analysisSession)?.takeIf { isVisibleInObjC(it, session = analysisSession) }?.let { superClassSymbol ->
             translateClassOrObjectSymbol(superClassSymbol)?.let {
                 objCClassForwardDeclarations += ObjCClassKey(it.name, superClassSymbol.classId?.packageFqName?.asString())
             }

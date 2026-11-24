@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -26,9 +25,8 @@ class GetInlineTargetTypeOrNullTest(
     fun `test - no inlined class`() {
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(file) {
-            val session = useSiteSession
-            val foo = session.getClassOrFail(file, "Foo")
-            assertNull(session.getInlineTargetTypeOrNull(foo))
+            val foo = getClassOrFail(file, "Foo")
+            assertNull(getInlineTargetTypeOrNull(foo))
         }
     }
 
@@ -41,9 +39,8 @@ class GetInlineTargetTypeOrNullTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
-            val foo = session.getClassOrFail(file, "Foo")
-            val inlineTargetType = assertNotNull(session.getInlineTargetTypeOrNull(foo))
+            val foo = getClassOrFail(file, "Foo")
+            val inlineTargetType = assertNotNull(getInlineTargetTypeOrNull(foo))
             assertEquals(KaStandardTypeClassIds.INT, inlineTargetType.classIdOrFail())
         }
     }
@@ -60,9 +57,8 @@ class GetInlineTargetTypeOrNullTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
-            val foo = session.getPropertyOrFail(file, "foo")
-            assertEquals(KaStandardTypeClassIds.INT, session.getInlineTargetTypeOrNull(foo.returnType).classIdOrFail())
+            val foo = getPropertyOrFail(file, "foo")
+            assertEquals(KaStandardTypeClassIds.INT, getInlineTargetTypeOrNull(foo.returnType).classIdOrFail())
         }
     }
 
@@ -78,10 +74,9 @@ class GetInlineTargetTypeOrNullTest(
         )
 
         analyze(file) {
-            val session = useSiteSession
-            val foo = session.getPropertyOrFail(file, "foo")
-            assertEquals(KaStandardTypeClassIds.INT, session.getInlineTargetTypeOrNull(foo.returnType).classIdOrFail())
-            assertTrue(session.getInlineTargetTypeOrNull(foo.returnType)?.isMarkedNullable ?: false)
+            val foo = getPropertyOrFail(file, "foo")
+            assertEquals(KaStandardTypeClassIds.INT, getInlineTargetTypeOrNull(foo.returnType).classIdOrFail())
+            assertTrue(getInlineTargetTypeOrNull(foo.returnType)?.isMarkedNullable ?: false)
         }
     }
 

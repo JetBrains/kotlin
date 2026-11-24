@@ -1,16 +1,16 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.scopes.fileScope
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportClassOrProtocolName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFunctionName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
@@ -83,11 +83,12 @@ class KtObjCExportNamerTest(
     }
 
     @Test
+    @OptIn(KaExperimentalApi::class)
     fun `test - function signature override`() {
         getSymbol<KaFunctionSymbol>("fun foo(param1: Boolean, param2: String) {}", "foo", KaScope::callables) { symbol ->
-            val type1 = with(analysisSession) { buildClassType(StandardClassIds.Int) }
-            val type2 = with(analysisSession) { buildClassType(StandardClassIds.Double) }
-            val returnType = with(analysisSession) { buildClassType(StandardClassIds.Float) }
+            val type1 = context(analysisSession) { typeCreator.classType(StandardClassIds.Int) }
+            val type2 = context(analysisSession) { typeCreator.classType(StandardClassIds.Double) }
+            val returnType = context(analysisSession) { typeCreator.classType(StandardClassIds.Float) }
 
             val valueParams = listOf(
                 bridgeParameter(type1) to KtObjCParameterData(Name.identifier("intParam"), false, type1, false),
@@ -119,7 +120,7 @@ class KtObjCExportNamerTest(
     ) {
         val file = inlineSourceCodeAnalysis.createKtFile(sourceCode)
         analyzeWithObjCExport(file) {
-            val symbol = with(analysisSession) { file.symbol.fileScope.symbolsGetter(Name.identifier(name)).single() as T }
+            val symbol = context(analysisSession) { file.symbol.fileScope.symbolsGetter(Name.identifier(name)).single() as T }
             action(this, symbol)
         }
     }

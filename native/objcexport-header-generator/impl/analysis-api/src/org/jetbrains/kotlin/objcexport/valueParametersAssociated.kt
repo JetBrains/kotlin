@@ -1,14 +1,16 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.dispatchReceiverType
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
+import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridge
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridgeValueParameter
 import org.jetbrains.kotlin.name.Name
@@ -29,7 +31,7 @@ fun ObjCExportContext.valueParametersAssociated(
     val functionParameters = function.valueParameters
     val bridgeParameters = bridge.valueParameters
 
-    analysisSession.addReceiver(result, bridgeParameters, function)
+    addReceiver(result, bridgeParameters, function, session = analysisSession)
 
     if (function is KaPropertySetterSymbol) {
         /**
@@ -73,7 +75,8 @@ private fun KtObjCExportSession.mapParameters(
     }.filterNotNull()
 }
 
-private fun KaSession.addReceiver(
+context(session: KaSession)
+private fun addReceiver(
     list: MutableList<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>,
     parameters: List<MethodBridgeValueParameter>,
     function: KaFunctionSymbol,
@@ -94,7 +97,8 @@ private fun KaSession.addReceiver(
     }
 }
 
-private fun KaSession.getObjCReceiverTypeName(type: KaType?): Name? {
+context(session: KaSession)
+private fun getObjCReceiverTypeName(type: KaType?): Name? {
     return if (type?.expandedSymbol != null) type.expandedSymbol?.name
     else if (type is KaTypeParameterType) type.name else null
 }
@@ -140,7 +144,8 @@ data class KtObjCParameterData(
  *
  * Also see [isObjCProperty]
  */
-internal fun KaSession.getObjCReceiverType(symbol: KaFunctionSymbol?): KaType? {
+context(session: KaSession)
+internal fun getObjCReceiverType(symbol: KaFunctionSymbol?): KaType? {
     if (symbol == null) return null
     return if (symbol.isConstructor) {
         /**
