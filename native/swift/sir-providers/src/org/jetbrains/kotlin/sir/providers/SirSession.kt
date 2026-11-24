@@ -192,6 +192,10 @@ public sealed interface SirTranslationResult {
         override val primaryDeclaration: SirDeclaration? get() = declaration
     }
 
+    public sealed interface Supplementable : SirTranslationResult {
+        public fun supplement(declarations: List<SirDeclaration>): Supplementable
+    }
+
     public data class Untranslatable(public val origin: SirOrigin) : SirTranslationResult {
         override val allDeclarations: List<SirDeclaration> get() = emptyList()
         override val primaryDeclaration: SirDeclaration? get() = null
@@ -243,9 +247,16 @@ public sealed interface SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = getter
     }
 
-    public data class RegularFunction(public val declaration: SirFunction) : SirTranslationResult {
-        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+    public data class RegularFunction(
+        public val declaration: SirFunction,
+        public val supplementaryDeclarations: List<SirDeclaration> = emptyList(),
+    ) : SirTranslationResult, Supplementable {
+        override val allDeclarations: List<SirDeclaration> = listOf(declaration) + supplementaryDeclarations
         override val primaryDeclaration: SirDeclaration get() = declaration
+
+        override fun supplement(declarations: List<SirDeclaration>): RegularFunction = copy(
+            supplementaryDeclarations = supplementaryDeclarations + declarations
+        )
     }
 
     public data class OperatorFunction(

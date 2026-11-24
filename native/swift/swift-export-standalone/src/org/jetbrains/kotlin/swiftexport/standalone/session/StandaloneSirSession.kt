@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.SirCustomTypeTrans
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 import org.jetbrains.sir.lightclasses.StubbingSirDeclarationProvider
+import org.jetbrains.sir.lightclasses.SupplementingSirDeclarationProvider
 
 internal class StandaloneSirSession(
     override val useSiteModule: KaModule,
@@ -43,8 +44,11 @@ internal class StandaloneSirSession(
         declarationsProvider = ObservingSirDeclarationProvider(
             declarationsProvider = StubbingSirDeclarationProvider(
                 sirSession = sirSession,
-                declarationsProvider = SirDeclarationFromKtSymbolProvider(
+                declarationsProvider = SupplementingSirDeclarationProvider(
                     sirSession = sirSession,
+                    declarationsProvider = SirDeclarationFromKtSymbolProvider(
+                        sirSession = sirSession,
+                    )
                 )
             ),
             kaClassReferenceHandler = referencedTypeHandler

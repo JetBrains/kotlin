@@ -19,13 +19,13 @@ func assertEquals<T: Equatable>(actual: any KotlinRuntimeSupport.List<T>, expect
     }
 }
 
-// TODO: Create generic toList functions KT-88831
 let array = [4, 8, 5, 16, 23, 42]
 
 @Test
 func testArrayOfInt() throws {
-    let original = ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(4), 8, 5, 16, 23, 42)
-    try assertReversed(reversed: reverseList(l: original), original: original)
+    // TODO: find fix for nullability mismatches KT-88831
+    let original = array.map { Int32($0) }.toList()
+    try assertReversed(reversed: reverseListNonNull(l: original), original: original)
 }
 
 @Test

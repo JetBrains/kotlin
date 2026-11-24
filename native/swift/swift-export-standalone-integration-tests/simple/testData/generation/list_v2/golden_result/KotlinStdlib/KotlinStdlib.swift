@@ -3,6 +3,12 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+extension Swift.Array where Element : KotlinRuntimeSupport._KotlinBridgeable {
+    public func toList() -> any ExportedKotlinPackages.kotlin.collections.List_Typed<Element> {
+        let elements = self
+        return ExportedKotlinPackages.kotlin.collections.List_TypedImpl<Element>(rawList: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_listOf__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___Vararg___(elements), conformsTo: ExportedKotlinPackages.kotlin.collections.List.Type.self) as! any ExportedKotlinPackages.kotlin.collections.List, conformsTo: { $0 is Element })
+    }
+}
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.Collection where Self : ExportedKotlinPackages.kotlin.collections.__Collection {
     public var size: Swift.Int32 {
