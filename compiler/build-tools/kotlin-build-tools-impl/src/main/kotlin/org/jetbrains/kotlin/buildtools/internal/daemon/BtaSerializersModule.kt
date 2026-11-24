@@ -10,15 +10,22 @@ import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.abi.AbiFilters
 import org.jetbrains.kotlin.buildtools.api.js.JsIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.internal.abi.AbiFiltersImpl
+import org.jetbrains.kotlin.buildtools.internal.abi.operations.CompareAbiTextFilesOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.abi.operations.DumpJvmAbiToStringOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.abi.operations.DumpKlibAbiToStringOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsKlibCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsLinkingOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.operations.DiscoverScriptExtensionsOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmClasspathSnapshottingOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.metadata.operations.KotlinMetadataKlibCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl
@@ -35,6 +42,11 @@ internal val btaSerializersModule: SerializersModule = SerializersModule {
         subclass(KotlinMetadataKlibCompilationOperationImpl::class)
         subclass(JsLinkingOperationImpl::class)
         subclass(WasmLinkingOperationImpl::class)
+        subclass(DiscoverScriptExtensionsOperationImpl::class)
+        subclass(CompareAbiTextFilesOperationImpl::class)
+        subclass(DumpKlibAbiToStringOperationImpl::class)
+        subclass(DumpJvmAbiToStringOperationImpl::class)
+        subclass(JvmClasspathSnapshottingOperationImpl::class)
     }
     polymorphic(JvmIncrementalCompilationConfiguration::class) {
         subclass(
@@ -59,6 +71,9 @@ internal val btaSerializersModule: SerializersModule = SerializersModule {
         subclass(
             WasmHistoryBasedIncrementalCompilationConfigurationImpl::class
         )
+    }
+    polymorphic(AbiFilters::class) {
+        subclass(AbiFiltersImpl::class)
     }
     contextual<CompilerMessageSourceLocation>(CompilerMessageSourceLocationSerializer)
     contextual<IcEvent>(IcEventSerializer)
