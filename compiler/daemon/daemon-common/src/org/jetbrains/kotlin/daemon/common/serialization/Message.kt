@@ -3,9 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.internal.daemon
+@file:OptIn(ExperimentalBuildToolsApi::class)
 
+package org.jetbrains.kotlin.daemon.common.serialization
+
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
@@ -13,45 +17,54 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 
 @Serializable
-public sealed class Message {
+sealed class Message {
     @Serializable
-    public data class CollectMetricMessage(
-        public val name: String,
-        public val type: BuildMetricsCollector.ValueType,
-        public val value: Long,
+    data class CollectMetricMessage(
+        val name: String,
+        val type: BuildMetricsCollector.ValueType,
+        val value: Long,
     ) : Message()
 
-    public object LookupTracker {
+    object LookupTracker {
         @Serializable
-        public data class Record(
-            public val filePath: String,
-            public val scopeFqName: String,
-            public val scopeKind: CompilerLookupTracker.ScopeKind,
-            public val name: String,
+        data class Record(
+            val filePath: String,
+            val scopeFqName: String,
+            val scopeKind: CompilerLookupTracker.ScopeKind,
+            val name: String,
         ) : Message()
 
         @Serializable
-        public object Clear : Message()
+        object Clear : Message()
     }
 
-    public object CompilerMessage {
+    object CompilerMessage {
         @Serializable
-        public data class Report(
-            public val severity: CompilerMessageSeverity,
-            public val message: String,
-            @Serializable(with = CompilerMessageSourceLocationSerializer::class)
-            public val location: CompilerMessageSourceLocation? = null,
-            public val diagnosticId: String?,
+        data class Report(
+            val severity: CompilerMessageSeverity,
+            val message: String,
+            @Contextual
+            val location: CompilerMessageSourceLocation? = null,
+            val diagnosticId: String?,
         ) : Message()
 
         @Serializable
-        public object Clear : Message()
+        object Clear : Message()
     }
 
-    public object IcEventCollector {
+    object IcEventCollector {
         @Serializable
-        public data class CollectEvents(
-            public val events: List<@Serializable(with = IcEventSerializer::class) IcEvent>,
+        data class CollectEvents(
+            val events: List<@Contextual IcEvent>,
+        ) : Message()
+    }
+
+    object Logger {
+        @Serializable
+        data class LogLine(
+            val level: String,
+            val logLine: String,
+            val throwable: ByteArray? = null
         ) : Message()
     }
 }

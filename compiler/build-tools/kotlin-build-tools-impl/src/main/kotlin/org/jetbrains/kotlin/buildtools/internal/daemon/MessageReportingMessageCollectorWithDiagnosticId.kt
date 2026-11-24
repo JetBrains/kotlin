@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.internal.daemon
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
+import org.jetbrains.kotlin.daemon.common.serialization.Message
 
 internal class MessageReportingMessageCollectorWithDiagnosticId(private val messageReporter: (Message) -> Unit) :
     MessageCollectorWithDiagnosticId {
