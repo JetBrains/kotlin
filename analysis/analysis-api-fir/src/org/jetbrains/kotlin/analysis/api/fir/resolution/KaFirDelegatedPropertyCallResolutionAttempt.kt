@@ -47,7 +47,4 @@ internal class KaFirDelegatedPropertyCallResolutionAttempt(
                 backingProvideDelegateCallAttempt,
             )
         }
-
-    @Deprecated("Use 'simpleAttempts' instead", ReplaceWith("simpleAttempts"))
-    override val attempts: List<KaSimpleCallResolutionAttempt> get() = simpleAttempts
 }

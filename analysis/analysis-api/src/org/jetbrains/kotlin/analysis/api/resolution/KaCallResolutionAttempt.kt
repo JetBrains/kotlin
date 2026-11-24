@@ -39,21 +39,6 @@ public sealed interface KaCallResolutionAttempt : KaLifetimeOwner
 public sealed interface KaSimpleCallResolutionAttempt : KaCallResolutionAttempt
 
 /**
- * The former name of [KaSimpleCallResolutionAttempt].
- *
- * @see KaSimpleCallResolutionAttempt
- */
-@Deprecated(
-    message = "Use 'KaSimpleCallResolutionAttempt' instead",
-    replaceWith = ReplaceWith(
-        expression = "KaSimpleCallResolutionAttempt",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionAttempt"],
-    ),
-)
-@KaExperimentalApi
-public typealias KaSingleCallResolutionAttempt = KaSimpleCallResolutionAttempt
-
-/**
  * Represents an error that occurred during the resolution of a [KtResolvableCall]
  *
  * A failed [KaMultiCallResolutionAttempt] is *not* an instance of this type, so a type check against this type is
@@ -92,28 +77,13 @@ public interface KaSimpleCallResolutionError : KaSimpleCallResolutionAttempt {
 }
 
 /**
- * The former name of [KaSimpleCallResolutionError].
- *
- * @see KaSimpleCallResolutionError
- */
-@Deprecated(
-    message = "Use 'KaSimpleCallResolutionError' instead",
-    replaceWith = ReplaceWith(
-        expression = "KaSimpleCallResolutionError",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionError"],
-    ),
-)
-@KaExperimentalApi
-public typealias KaCallResolutionError = KaSimpleCallResolutionError
-
-/**
  * Represents a successful resolution of a simple [KtResolvableCall].
  *
  * For compound calls (e.g., `i += 1`, `for (x in list)`), see [KaMultiCallResolutionAttempt] instead.
  *
  * Success means that the resolution produced a call: the callee was resolved and carries no diagnostic of its own.
  * It does not mean that the element is free of diagnostics, as they may be attached elsewhere in the call, e.g. to an
- * argument. Use [diagnostics][org.jetbrains.kotlin.analysis.api.components.diagnostics] to check the element itself.
+ * argument. Use [diagnostics][org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics] to check the element itself.
  *
  * @see KaResolver.tryResolveCall
  * @see KaResolver.resolveCall
@@ -126,21 +96,6 @@ public interface KaSimpleCallResolutionSuccess : KaSimpleCallResolutionAttempt {
      */
     public val call: KaSimpleCall<*, *>
 }
-
-/**
- * The former name of [KaSimpleCallResolutionSuccess].
- *
- * @see KaSimpleCallResolutionSuccess
- */
-@Deprecated(
-    message = "Use 'KaSimpleCallResolutionSuccess' instead",
-    replaceWith = ReplaceWith(
-        expression = "KaSimpleCallResolutionSuccess",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionSuccess"],
-    ),
-)
-@KaExperimentalApi
-public typealias KaCallResolutionSuccess = KaSimpleCallResolutionSuccess
 
 /**
  * Represents an attempt to resolve a compound (multi) call, such as a for-loop, delegated property access,
@@ -166,16 +121,6 @@ public sealed interface KaMultiCallResolutionAttempt : KaCallResolutionAttempt {
      */
     public val simpleAttempts: List<KaSimpleCallResolutionAttempt>
 
-    /**
-     * The former name of [simpleAttempts].
-     *
-     * @see simpleAttempts
-     */
-    @Deprecated(
-        message = "Use 'simpleAttempts' instead",
-        replaceWith = ReplaceWith(expression = "simpleAttempts"),
-    )
-    public val attempts: List<KaSimpleCallResolutionAttempt>
 }
 
 /**
@@ -462,22 +407,6 @@ public val KaCallResolutionAttempt.isSuccessful: Boolean
 
         return successful != null
     }
-
-/**
- * The former name of [successful].
- *
- * @see successful
- */
-@Deprecated(
-    message = "Use 'successful' instead",
-    replaceWith = ReplaceWith(
-        expression = "successful",
-        imports = ["org.jetbrains.kotlin.analysis.api.resolution.successful"],
-    ),
-)
-@KaExperimentalApi
-public val KaCallResolutionAttempt.successfulCall: KaSimpleOrMultiCall?
-    get() = successful
 
 /**
  * Folds over a [KaCallResolutionAttempt] depending on whether the resolution succeeded.

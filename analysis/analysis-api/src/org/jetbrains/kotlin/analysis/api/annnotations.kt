@@ -118,17 +118,6 @@ public annotation class KaK1Unsupported
 internal annotation class KaNoContextParameterBridgeRequired
 
 /**
- * Marks a context parameter bridge that wasn't auto-generated.
- *
- * @see KaContextParameterApi
- */
-@Target(
-    AnnotationTarget.PROPERTY,
-    AnnotationTarget.FUNCTION,
-)
-internal annotation class KaCustomContextParameterBridge
-
-/**
  * Marks a class designed as a service provider interface.
  *
  * Apply this to classes that are intended to be subclassed or implemented by external clients.
