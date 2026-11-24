@@ -72,4 +72,4 @@ var IrModuleFragment.moduleVisibilityProvider: ModuleVisibilityProvider? by irAt
 /**
  * The module of this source file before actualization. Only available at the first stage of compilation.
  */
-var IrFile.platformModule: IrModuleFragment? by irAttribute(copyByDefault = true)
+var IrFile.declaringSourceSetModule: IrModuleFragment? by irAttribute(copyByDefault = true)

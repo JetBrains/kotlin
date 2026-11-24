@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.platformModule
+import org.jetbrains.kotlin.ir.declaringSourceSetModule
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -1152,7 +1152,7 @@ private fun getContainingDeclaration(declaration: IrDeclaration): DeclarationDes
         when (it) {
             is IrDeclaration -> it.toIrBasedDescriptor()
             is IrPackageFragment -> {
-                val module = (it as? IrFile)?.platformModule ?: it.module
+                val module = (it as? IrFile)?.declaringSourceSetModule ?: it.module
                 EmptyPackageFragmentDescriptor(module.descriptor, it.packageFqName)
             }
             else -> error("Unexpected declaration parent: $it")
