@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.ir.symbols.impl
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -16,7 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-abstract class IrFakeOverrideSymbolBase<S : IrBindableSymbol<I>, I : IrDeclaration, D : CallableDescriptor>(
+abstract class IrFakeOverrideSymbolBase<S : IrBindableSymbol<I>, I : IrDeclaration>(
     val originalSymbol: S,
     val containingClassSymbol: IrClassSymbol,
     override val signature: IdSignature?
@@ -46,7 +43,7 @@ class IrFunctionFakeOverrideSymbol(
     originalSymbol: IrSimpleFunctionSymbol,
     containingClassSymbol: IrClassSymbol,
     idSignature: IdSignature?
-) : IrFakeOverrideSymbolBase<IrSimpleFunctionSymbol, IrSimpleFunction, FunctionDescriptor>(
+) : IrFakeOverrideSymbolBase<IrSimpleFunctionSymbol, IrSimpleFunction>(
     originalSymbol, containingClassSymbol, idSignature
 ), IrSimpleFunctionSymbol
 
@@ -54,7 +51,7 @@ class IrPropertyFakeOverrideSymbol(
     originalSymbol: IrPropertySymbol,
     containingClassSymbol: IrClassSymbol,
     idSignature: IdSignature?
-) : IrFakeOverrideSymbolBase<IrPropertySymbol, IrProperty, PropertyDescriptor>(
+) : IrFakeOverrideSymbolBase<IrPropertySymbol, IrProperty>(
     originalSymbol, containingClassSymbol, idSignature
 ), IrPropertySymbol
 
@@ -63,6 +60,6 @@ class IrFieldFakeOverrideSymbol(
     containingClassSymbol: IrClassSymbol,
     idSignature: IdSignature?,
     val correspondingPropertySymbol: IrPropertySymbol
-) : IrFakeOverrideSymbolBase<IrFieldSymbol, IrField, PropertyDescriptor>(
+) : IrFakeOverrideSymbolBase<IrFieldSymbol, IrField>(
     originalSymbol, containingClassSymbol, idSignature
 ), IrFieldSymbol

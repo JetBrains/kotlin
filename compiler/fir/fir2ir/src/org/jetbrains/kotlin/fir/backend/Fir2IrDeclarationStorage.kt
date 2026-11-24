@@ -175,7 +175,7 @@ class Fir2IrDeclarationStorage(
 
     private inline fun <S : IrSymbol> Collection<S>.forEachSkipFakeOverrides(block: (S) -> Unit) {
         for (symbol in this) {
-            if (symbol is IrFakeOverrideSymbolBase<*, *, *>) continue
+            if (symbol is IrFakeOverrideSymbolBase<*, *>) continue
             block(symbol)
         }
     }

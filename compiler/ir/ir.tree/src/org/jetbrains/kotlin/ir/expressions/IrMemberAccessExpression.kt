@@ -178,7 +178,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     private fun <S : IrBindableSymbol<D>, D : IrSymbolOwner> S.getRealOwner(): D {
         var symbol = this
-        while (symbol is IrFakeOverrideSymbolBase<*, *, *>) {
+        while (symbol is IrFakeOverrideSymbolBase<*, *>) {
             @Suppress("UNCHECKED_CAST")
             symbol = symbol.originalSymbol as S
         }
