@@ -8,17 +8,17 @@ public interface IrFileOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+   * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
    */
-  java.util.List<java.lang.Integer> getDeclarationIdList();
+  java.util.List<java.lang.Integer> getLegacyTopLevelDeclarationSignaturesList();
   /**
-   * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+   * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
    */
-  int getDeclarationIdCount();
+  int getLegacyTopLevelDeclarationSignaturesCount();
   /**
-   * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+   * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
    */
-  int getDeclarationId(int index);
+  int getLegacyTopLevelDeclarationSignatures(int index);
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
