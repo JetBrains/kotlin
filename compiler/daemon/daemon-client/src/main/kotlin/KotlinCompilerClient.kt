@@ -629,7 +629,6 @@ object KotlinCompilerClient {
         )
     }
 
-    // TODO: KT-72161. Investigate IDEA's JSR223 Kotlin Script integration. Possibly transform this into regular arguments
     private fun initiatorInfoAsSystemProperties(initialClientInfo: InitialClientInformation): List<String> = listOfNotNull(
         initialClientInfo.aliveFlagFile?.absolutePath?.let {
             "-D${CompilerSystemProperties.COMPILE_DAEMON_INITIATOR_MARKER_FILE.property}=$it"
@@ -640,10 +639,11 @@ object KotlinCompilerClient {
         daemonLogOptions: DaemonLogOptions,
         daemonOptions: DaemonOptions,
         compilerId: CompilerId,
-    ): List<String> =
-        daemonLogOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
-                daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
-                compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
+    ): List<String> = buildList {
+        daemonLogOptions.mappers.flatMapTo(this) { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
+        daemonOptions.mappers.flatMapTo(this) { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
+        compilerId.mappers.flatMapTo(this) { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
+    }
 
     private fun startDaemonProcess(
         args: List<String>,

@@ -159,13 +159,14 @@ public sealed interface ExecutionPolicy {
     }
 
     /**
-     * Execution policy that runs the build operation in a new native image process.
+     * Execution policy that runs the build operation in a newly created native image process.
      *
      * @since 2.5.20
      */
     public interface NativeImageProcess : ExecutionPolicy {
         /**
-         * The path to the native image distribution that contains the compiler executable.
+         * The path to the directory that contains the exploded native image distribution with the native image compiler
+         * executable in `distPath/bin/`.
          */
         public val distPath: Path
     }
@@ -177,7 +178,8 @@ public sealed interface ExecutionPolicy {
      */
     public interface NativeImageDaemon : ExecutionPolicy {
         /**
-         * The path to the native image distribution that contains the daemon and compiler executables.
+         * The path to the directory that contains the exploded native image distribution with the native image daemon
+         * executable in `distPath/bin/`.
          */
         public val distPath: Path
 
