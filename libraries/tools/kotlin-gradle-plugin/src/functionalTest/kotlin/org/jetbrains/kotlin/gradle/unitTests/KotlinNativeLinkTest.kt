@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.maxParallelUsagesOf
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.jetbrains.kotlin.util.assertThrows
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -115,4 +116,97 @@ class KotlinNativeLinkTest {
         assertFalse(project.isParallelismLimitServiceRegistered<KotlinNativeLink>())
     }
 
+    @Test
+    fun `KT-89241 - outputFile carries a dependency on the link task`() {
+        val project = buildProjectWithMPP {
+            kotlin { linuxX64().binaries.executable() }
+        }.evaluate()
+        val linkTask = project.tasks.named("linkDebugExecutableLinuxX64", KotlinNativeLink::class.java)
+
+        val outputFile = linkTask.flatMap { it.outputFile }
+        val builtBy = project.files(outputFile).buildDependencies.getDependencies(null).map { it.name }
+        assertEquals(listOf("linkDebugExecutableLinuxX64"), builtBy)
+        // Still readable at configuration time
+        assertEquals("test.kexe", outputFile.get().name)
+    }
+
+    @Test
+    fun `KT-89241 - link task declares produced files as outputs - not the whole destination directory`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                linuxX64 {
+                    binaries.executable()
+                    binaries.staticLib()
+                    binaries.sharedLib()
+                }
+                mingwX64 { binaries.sharedLib() }
+                iosSimulatorArm64 {
+                    binaries.executable()
+                    binaries.sharedLib()
+                    binaries.staticLib()
+                    binaries.framework()
+                    binaries.framework("static") { isStatic = true }
+                    binaries.framework("staticArg") { freeCompilerArgs += "-Xstatic-framework" }
+                    binaries.executable("noLightDebug") { freeCompilerArgs += "-Xadd-light-debug=disable" }
+                }
+            }
+        }.evaluate()
+
+        fun outputsOf(taskName: String): Set<File> = (project.tasks.getByName(taskName) as KotlinNativeLink).outputs.files.files
+        fun bin(target: String, binary: String, vararg names: String): Set<File> {
+            val dir = project.layout.buildDirectory.dir("bin/$target/$binary").get().asFile
+            return names.map { dir.resolve(it) }.toSet()
+        }
+
+        assertEquals(bin("linuxX64", "debugExecutable", "test.kexe"), outputsOf("linkDebugExecutableLinuxX64"))
+        assertEquals(bin("linuxX64", "debugTest", "test.kexe"), outputsOf("linkDebugTestLinuxX64"))
+        assertEquals(bin("linuxX64", "debugStatic", "libtest.a", "libtest_api.h"), outputsOf("linkDebugStaticLinuxX64"))
+        assertEquals(bin("linuxX64", "debugShared", "libtest.so", "libtest_api.h"), outputsOf("linkDebugSharedLinuxX64"))
+        assertEquals(bin("mingwX64", "debugShared", "test.dll", "test_api.h", "test.def"), outputsOf("linkDebugSharedMingwX64"))
+
+        // Apple binaries get a dSYM, release ones too because light debug info is on by default.
+        // Static archives don't.
+        assertEquals(
+            bin("iosSimulatorArm64", "debugExecutable", "test.kexe", "test.kexe.dSYM"),
+            outputsOf("linkDebugExecutableIosSimulatorArm64")
+        )
+        assertEquals(
+            bin("iosSimulatorArm64", "releaseExecutable", "test.kexe", "test.kexe.dSYM"),
+            outputsOf("linkReleaseExecutableIosSimulatorArm64")
+        )
+        assertEquals(
+            bin("iosSimulatorArm64", "debugShared", "libtest.dylib", "libtest_api.h", "libtest.dylib.dSYM"),
+            outputsOf("linkDebugSharedIosSimulatorArm64")
+        )
+        assertEquals(
+            bin("iosSimulatorArm64", "debugStatic", "libtest.a", "libtest_api.h"),
+            outputsOf("linkDebugStaticIosSimulatorArm64")
+        )
+        assertEquals(
+            bin("iosSimulatorArm64", "debugFramework", "test.framework", "test.framework.dSYM"),
+            outputsOf("linkDebugFrameworkIosSimulatorArm64")
+        )
+        assertEquals(
+            bin("iosSimulatorArm64", "releaseFramework", "test.framework", "test.framework.dSYM"),
+            outputsOf("linkReleaseFrameworkIosSimulatorArm64")
+        )
+        assertEquals(
+            bin("iosSimulatorArm64", "staticDebugFramework", "static.framework"),
+            outputsOf("linkStaticDebugFrameworkIosSimulatorArm64")
+        )
+
+        // Free compiler args change what the compiler writes
+        assertEquals(
+            bin("iosSimulatorArm64", "staticArgDebugFramework", "staticArg.framework"),
+            outputsOf("linkStaticArgDebugFrameworkIosSimulatorArm64")
+        )
+        assertEquals(
+            bin("iosSimulatorArm64", "noLightDebugReleaseExecutable", "noLightDebug.kexe"),
+            outputsOf("linkNoLightDebugReleaseExecutableIosSimulatorArm64")
+        )
+        assertEquals(
+            bin("iosSimulatorArm64", "noLightDebugDebugExecutable", "noLightDebug.kexe", "noLightDebug.kexe.dSYM"),
+            outputsOf("linkNoLightDebugDebugExecutableIosSimulatorArm64")
+        )
+    }
 }
