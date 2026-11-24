@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.references
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
+import org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -18,7 +19,10 @@ import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 internal class KaBasePropertyDelegationMethodsReference(
     element: KtPropertyDelegate,
 ) : KtPropertyDelegationMethodsReference(element), KaBaseReference {
-    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = resolveToSymbolsInContext()
+
+    context(session: KaSession)
+    private fun resolveToSymbolsInContext(): Collection<KaSymbol> {
         return element.tryResolveSymbols()?.symbols.orEmpty()
     }
 

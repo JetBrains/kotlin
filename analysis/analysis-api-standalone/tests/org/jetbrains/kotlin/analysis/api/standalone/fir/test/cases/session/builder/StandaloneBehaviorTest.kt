@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AbstractStandaloneTest
+import org.jetbrains.kotlin.analysis.api.symbols.findPackage
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.builtinTypes
@@ -50,12 +51,7 @@ import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.deleteRecursively
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertIs
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class StandaloneBehaviorTest : AbstractStandaloneTest() {
     override val suiteName: Path
@@ -410,7 +406,7 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
                 packageProvider.doesPackageExist(packageFqName, targetPlatform)
             }
             check(isKotlinOnly || isPlatform, "Package '$packageFqName' must be visible through 'KaSession.findPackage()'") {
-                with(session) { findPackage(packageFqName) != null }
+                findPackage(packageFqName, session = session) != null
             }
             check(isKotlinOnly, "Kotlin-only package '$packageFqName' must exist") {
                 packageProvider.doesKotlinOnlyPackageExist(packageFqName)

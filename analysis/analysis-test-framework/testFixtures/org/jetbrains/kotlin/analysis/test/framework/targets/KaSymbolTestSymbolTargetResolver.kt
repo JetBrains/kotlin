@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.test.framework.targets
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.*
 import org.jetbrains.kotlin.name.CallableId
@@ -13,12 +15,12 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) : TestSymbolTargetResolver<KaSymbol>() {
-    override fun resolvePackageTarget(target: PackageTarget): List<KaSymbol> = with(session) {
+    override fun resolvePackageTarget(target: PackageTarget): List<KaSymbol> = context(session) {
         val symbol = findPackage(target.packageFqName) ?: error("Cannot find a symbol for the package `${target.packageFqName}`.")
         listOf(symbol)
     }
 
-    override fun resolveClassTarget(target: ClassTarget): List<KaSymbol> = with(session) {
+    override fun resolveClassTarget(target: ClassTarget): List<KaSymbol> = context(session) {
         val symbol = resolveClass(target.classId)
         listOf(symbol)
     }
@@ -27,27 +29,27 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
     private fun resolveClass(classId: ClassId): KaClassSymbol =
         findClass(classId) ?: error("Cannot find a symbol for the class `$classId`.")
 
-    override fun resolveScriptTarget(target: ScriptTarget): List<KaSymbol> = with(session) {
+    override fun resolveScriptTarget(target: ScriptTarget): List<KaSymbol> = context(session) {
         val script = target.file.script ?: error("The file `${target.file.name}` is not a script.")
         listOf(script.symbol)
     }
 
-    override fun resolveTypeAliasTarget(target: TypeAliasTarget): List<KaSymbol> = with(session) {
+    override fun resolveTypeAliasTarget(target: TypeAliasTarget): List<KaSymbol> = context(session) {
         val symbol = findTypeAlias(target.classId) ?: error("Cannot find a symbol for the type alias `${target.classId}`.")
         listOf(symbol)
     }
 
-    override fun resolveCallableTarget(target: CallableTarget): List<KaSymbol> = with(session) {
+    override fun resolveCallableTarget(target: CallableTarget): List<KaSymbol> = context(session) {
         val symbols = findCallables(target.callableId)
         symbols.ifEmpty { error("Cannot find a symbol for the callable `${target.callableId}`.") }
     }
 
-    override fun resolvePropertyTarget(target: PropertyTarget): List<KaSymbol> = with(session) {
+    override fun resolvePropertyTarget(target: PropertyTarget): List<KaSymbol> = context(session) {
         val properties = findCallables(target.callableId).filterIsInstance<KaPropertySymbol>()
         properties.ifEmpty { error("Cannot find a property for `${target.callableId}`.") }
     }
 
-    override fun resolveFunctionTarget(target: FunctionTarget): List<KaSymbol> = with(session) {
+    override fun resolveFunctionTarget(target: FunctionTarget): List<KaSymbol> = context(session) {
         var functions = findCallables(target.callableId).filterIsInstance<KaNamedFunctionSymbol>()
         if (target.parameterNames != null) {
             functions = functions.filter { it.matchesParameterNames(target.parameterNames) }
@@ -55,7 +57,7 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
         functions.ifEmpty { error("Cannot find a function for `$target`.") }
     }
 
-    override fun resolveConstructorTarget(target: ConstructorTarget): List<KaSymbol> = with(session) {
+    override fun resolveConstructorTarget(target: ConstructorTarget): List<KaSymbol> = context(session) {
         val classSymbol = resolveClass(target.classId)
         var constructors = classSymbol.declaredMemberScope.constructors.toList()
         if (target.parameterNames != null) {
@@ -79,13 +81,12 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
         return valueParameters.map { it.name } == expected
     }
 
-    override fun resolveEnumEntryInitializerTarget(target: EnumEntryInitializerTarget): List<KaSymbol> = with(session) {
+    override fun resolveEnumEntryInitializerTarget(target: EnumEntryInitializerTarget): List<KaSymbol> = context(session) {
         val enumEntryId = target.enumEntryId
 
         val classSymbol = enumEntryId.classId?.let { findClass(it) }
             ?: error("Cannot find a symbol for the enum class `${enumEntryId.classId}`.")
 
-        require(classSymbol is KaNamedClassSymbol) { "`${enumEntryId.classId}` must be a named class." }
         require(classSymbol.classKind == KaClassKind.ENUM_CLASS) { "`${enumEntryId.classId}` must be an enum class." }
 
         val enumEntrySymbol = classSymbol.staticDeclaredMemberScope
@@ -99,7 +100,7 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
         listOf(initializerSymbol)
     }
 
-    override fun resolveSamConstructorTarget(target: SamConstructorTarget): List<KaSymbol> = with(session) {
+    override fun resolveSamConstructorTarget(target: SamConstructorTarget): List<KaSymbol> = context(session) {
         val symbol = findClassLike(target.classId) ?: error("Cannot find a symbol for the class `${target.classId}`.")
         val samConstructor = symbol.samConstructor ?: error("Cannot find a symbol for the SAM constructor of `${target.classId}`.")
         listOf(samConstructor)

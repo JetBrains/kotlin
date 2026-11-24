@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
 internal class KaBaseInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KaBaseReference {
-    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = when (val callResult = element.tryResolveCall()) {
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = resolveToSymbolsInContext()
+
+    context(session: KaSession)
+    private fun resolveToSymbolsInContext(): Collection<KaSymbol> = when (val callResult = element.tryResolveCall()) {
         // There is no way to distinguish between the error regular and implicit calls, so by default only relevant errors are shown
         is KaSimpleCallResolutionError -> callResult.candidateCalls.filterIsInstance<KaImplicitInvokeCall>().map { it.symbol }
         is KaSimpleCallResolutionSuccess -> when (val call = callResult.call) {
