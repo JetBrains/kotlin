@@ -151,7 +151,7 @@ private class LibraryDeserializer(
 
         init {
             val proto = ProtoFile.parseFrom(ir.irFile(fileIndex).codedInputStream, IrLibraryFileFromBytes.extensionRegistryLite)
-            topLevelDeclarationIds = proto.legacyTopLevelDeclarationSignaturesList
+            topLevelDeclarationIds = proto.getSignatureIdsOfTopLevelDeclarations()
 
             val packageFQN = fileReader.deserializeFqName(proto.fqNameList)
             packageName = AbiCompoundName(packageFQN)
