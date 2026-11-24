@@ -47,9 +47,19 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
                 NativePlatformToolchain::class.java -> NativePlatformToolchainImpl(getCompilerVersion())
                 CriToolchain::class.java -> CriToolchainImpl()
                 AbiValidationToolchain::class.java -> AbiValidationToolchainImpl()
-                else -> error("Unsupported platform toolchain type: $type.")
+                else -> throw unsupportedToolchainException(type)
             }
         } as T
+    }
+
+    private fun unsupportedToolchainException(type: Class<*>): IllegalStateException {
+        val apiVersion = getBtaApiVersion()
+        // Consumers on an older Build Tools API lack UnsupportedToolchainException, so they get the old exception
+        if (apiVersion is BtaApiVersion.Exact && apiVersion.version >= KotlinToolingVersion(2, 5, 20, "snapshot")) {
+            @Suppress("UNCHECKED_CAST")
+            return UnsupportedToolchainException(type as Class<out KotlinToolchains.Toolchain>, getCompilerVersion())
+        }
+        return IllegalStateException("Unsupported platform toolchain type: $type.")
     }
 
     override fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess = InProcessExecutionPolicyImpl
