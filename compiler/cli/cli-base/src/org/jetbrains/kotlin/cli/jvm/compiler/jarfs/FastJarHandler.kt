@@ -5,13 +5,14 @@
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
 import com.intellij.openapi.vfs.VirtualFile
-import java.io.File
+import java.nio.file.Path
 
 class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
-    internal val archive: JarArchive = fileSystem.archives[path]
+    private val archive: JarArchive = fileSystem.archives[path]
 
-    internal val file: File
-        get() = archive.file
+    /** The archive path only for the VFS-based implementation [FastJarVirtualFile]. */
+    internal val path: Path
+        get() = archive.path
 
     private val myRoot: VirtualFile = archive.buildTree(VirtualFileFactory())
 

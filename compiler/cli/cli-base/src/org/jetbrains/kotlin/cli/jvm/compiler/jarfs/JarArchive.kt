@@ -4,21 +4,25 @@
  */
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
-import java.io.File
 import java.io.FileNotFoundException
-import java.io.RandomAccessFile
 import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
+import java.nio.file.Path
+import java.nio.file.StandardOpenOption
 
 /**
- * The archive [file] with its parsed central directory and manifest.
+ * The archive [path] with its parsed central directory and manifest.
  */
 class JarArchive(
-    val file: File,
+    /**
+     * The path of the archive in the default file system, as only its files can be mapped.
+     * Read outside this class only by the VFS-based implementation [FastJarVirtualFile].
+     */
+    internal val path: Path,
     unmapBuffer: MappedByteBuffer.() -> Unit,
-    onInvalidArchive: (File, Exception) -> Unit,
-    private val readContents: (File, ZipEntryDescription) -> ByteArray,
+    onInvalidArchive: (Path, Exception) -> Unit,
+    private val readContents: (Path, ZipEntryDescription) -> ByteArray,
 ) {
     /** The entries of the central directory, in its order. */
     private val entries: List<ZipEntryDescription>
@@ -26,11 +30,11 @@ class JarArchive(
     private val cachedManifest: ByteArray?
 
     init {
-        RandomAccessFile(file, "r").use { randomAccessFile ->
+        FileChannel.open(path, StandardOpenOption.READ).use { channel ->
             val largeBuffer =
                 LargeDynamicMappedBuffer(
-                    randomAccessFile.length(),
-                    { offset, size -> randomAccessFile.channel.map(FileChannel.MapMode.READ_ONLY, offset, size) },
+                    channel.size(),
+                    { offset, size -> channel.map(FileChannel.MapMode.READ_ONLY, offset, size) },
                     unmapBuffer,
                     defaultByteOrder = ByteOrder.LITTLE_ENDIAN,
                 )
@@ -38,7 +42,7 @@ class JarArchive(
                 entries = try {
                     largeBuffer.parseCentralDirectory()
                 } catch (e: Exception) {
-                    onInvalidArchive(file, e)
+                    onInvalidArchive(path, e)
                     emptyList()
                 }
                 cachedManifest =
@@ -71,8 +75,8 @@ class JarArchive(
 
     fun contentsToByteArray(entry: ZipEntryDescription): ByteArray {
         val relativePath = entry.relativePath
-        if (MANIFEST_PATH.contentEquals(relativePath)) return cachedManifest ?: throw FileNotFoundException("$file!/$relativePath")
-        return readContents(file, entry)
+        if (MANIFEST_PATH.contentEquals(relativePath)) return cachedManifest ?: throw FileNotFoundException("$path!/$relativePath")
+        return readContents(path, entry)
     }
 
     private class TreeBuilder<N : Any>(root: N, private val factory: JarTreeFactory<N>) {

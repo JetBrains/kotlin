@@ -4,11 +4,12 @@
  */
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
-import java.io.File
-import java.io.RandomAccessFile
 import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
 import java.util.concurrent.ConcurrentHashMap
 
 // The sizes of the FileAccessorCache that FastJar used before.
@@ -17,20 +18,20 @@ private const val PROBATIONAL_OPEN_ARCHIVES = 10
 
 class JarArchiveCache(
     private val unmapBuffer: MappedByteBuffer.() -> Unit,
-    private val onInvalidArchive: (File, Exception) -> Unit,
+    private val onInvalidArchive: (Path, Exception) -> Unit,
 ) {
     private val archives = ConcurrentHashMap<String, JarArchive>()
 
     private val droppedArchives = ArrayList<OpenArchive>()
 
-    private val openArchives = SegmentedLruMap<File, OpenArchive>(PROTECTED_OPEN_ARCHIVES, PROBATIONAL_OPEN_ARCHIVES) {
+    private val openArchives = SegmentedLruMap<Path, OpenArchive>(PROTECTED_OPEN_ARCHIVES, PROBATIONAL_OPEN_ARCHIVES) {
         droppedArchives += it
     }
 
     operator fun get(path: String): JarArchive {
         archives[path]?.let { return it }
         // Parsed outside the map, so that parsing one archive does not block requests for others.
-        val archive = JarArchive(File(path), unmapBuffer, onInvalidArchive, ::readContents)
+        val archive = JarArchive(Paths.get(path), unmapBuffer, onInvalidArchive, ::readContents)
         return archives.putIfAbsent(path, archive) ?: archive
     }
 
@@ -46,8 +47,8 @@ class JarArchiveCache(
         releaseDroppedArchives()
     }
 
-    private fun readContents(file: File, entry: ZipEntryDescription): ByteArray {
-        val openArchive = acquire(file)
+    private fun readContents(path: Path, entry: ZipEntryDescription): ByteArray {
+        val openArchive = acquire(path)
         try {
             return synchronized(openArchive) {
                 openArchive.buffer.contentsToByteArray(entry)
@@ -57,22 +58,22 @@ class JarArchiveCache(
         }
     }
 
-    private fun acquire(file: File): OpenArchive {
+    private fun acquire(path: Path): OpenArchive {
         synchronized(openArchives) {
-            openArchives[file]?.let {
+            openArchives[path]?.let {
                 it.referenceCount++
                 return it
             }
         }
-        val created = OpenArchive(file)
+        val created = OpenArchive(path)
         val existing = synchronized(openArchives) {
-            val existing = openArchives[file]
+            val existing = openArchives[path]
             if (existing != null) {
                 existing.referenceCount++
             } else {
                 // One reference of the cache and one of the reader.
                 created.referenceCount = 2
-                openArchives.put(file, created)
+                openArchives.put(path, created)
             }
             existing
         }
@@ -96,21 +97,26 @@ class JarArchiveCache(
         if (unused) openArchive.close()
     }
 
-    private inner class OpenArchive(file: File) {
-        private val randomAccessFile = RandomAccessFile(file, "r")
+    private inner class OpenArchive(path: Path) {
+        private val channel = FileChannel.open(path, StandardOpenOption.READ)
 
-        val buffer = LargeDynamicMappedBuffer(
-            randomAccessFile.length(),
-            { offset, size -> randomAccessFile.channel.map(FileChannel.MapMode.READ_ONLY, offset, size) },
-            unmapBuffer,
-            defaultByteOrder = ByteOrder.LITTLE_ENDIAN,
-        )
+        val buffer = try {
+            LargeDynamicMappedBuffer(
+                channel.size(),
+                { offset, size -> channel.map(FileChannel.MapMode.READ_ONLY, offset, size) },
+                unmapBuffer,
+                defaultByteOrder = ByteOrder.LITTLE_ENDIAN,
+            )
+        } catch (e: Throwable) {
+            channel.close()
+            throw e
+        }
 
         /** Guarded by [openArchives]. */
         var referenceCount = 0
 
         fun close() {
-            randomAccessFile.close()
+            channel.close()
             buffer.unmap()
         }
     }

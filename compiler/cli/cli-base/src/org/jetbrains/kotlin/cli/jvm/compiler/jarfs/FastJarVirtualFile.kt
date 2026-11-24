@@ -41,12 +41,12 @@ internal class FastJarVirtualFile(
     }
 
     override fun getContainingLibraryPath(): Path {
-        return handler.file.toPath()
+        return handler.path
     }
 
     override fun getPath(): String {
         if (parent == null) {
-            return FileUtil.toSystemIndependentName(handler.file.path) + "!/"
+            return FileUtil.toSystemIndependentName(handler.path.toString()) + "!/"
         }
         val parentPath = parent.path
         val answer = StringBuilder(parentPath.length + 1 + name.length)

@@ -15,10 +15,10 @@ import java.util.concurrent.ConcurrentHashMap
 
 class FastJarFileSystem private constructor(unmapBuffer: MappedByteBuffer.() -> Unit) : DeprecatedVirtualFileSystem() {
 
-    val archives = JarArchiveCache(unmapBuffer) { file, e ->
+    val archives = JarArchiveCache(unmapBuffer) { path, e ->
         // copying the behavior of ArchiveHandler (and therefore ZipHandler)
         // TODO: consider propagating to compiler error or warning, but take into account that both javac and K1 simply ignore invalid jars in such cases
-        System.err.println("WARN: Error while reading zip file: ${file.path}: $e")
+        System.err.println("WARN: Error while reading zip file: $path: $e")
         e.printStackTrace(System.err)
     }
 
