@@ -23,7 +23,7 @@ object KlibEntrySnapshotter {
             ?: error("Failed to load klib $klib: ${result.problematicLibraries.joinToString { it.problemCase.toString() }}")
 
         val fragmentSnapshots = metrics.measure(SNAPSHOT_CLASSES) {
-            PackageFragmentSnapshotter.snapshot(library.metadata, settings)
+            KlibFileSnapshotter.snapshot(library.metadata, settings)
         }
         return KlibEntrySnapshot(klibFileSnapshots = fragmentSnapshots)
     }

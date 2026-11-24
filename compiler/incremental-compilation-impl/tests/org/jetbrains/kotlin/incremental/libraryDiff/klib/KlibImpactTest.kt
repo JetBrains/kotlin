@@ -19,8 +19,8 @@ class KlibImpactTest {
     private val any = ClassId.fromString("kotlin/Any")
 
     private val snapshots = listOf(
-        snapshot("com/example/BaseKt", KlibClassInfo(base, listOf(any))),
-        snapshot("com/example/SubKt", KlibClassInfo(sub, listOf(base, any)), KlibClassInfo(subSub, listOf(sub))),
+        snapshot("Base.kt", KlibClassInfo(base, listOf(any))),
+        snapshot("Sub.kt", KlibClassInfo(sub, listOf(base, any)), KlibClassInfo(subSub, listOf(sub))),
     )
 
     @Test
@@ -52,11 +52,11 @@ class KlibImpactTest {
         assertEquals(emptySet(), reverseResolver.getImpactingClasses(base))
     }
 
-    private fun snapshot(id: String, vararg classInfos: KlibClassInfo): KlibFileSnapshot =
-        PackageFragmentSnapshot(
-            id = id,
+    private fun snapshot(sourceFile: String, vararg classInfos: KlibClassInfo): KlibFileSnapshot =
+        KlibFileSnapshot(
             contentHash = 0,
             packageName = FqName("com.example"),
+            sourceFile = sourceFile,
             classInfos = classInfos.toList(),
             packageMemberNames = emptySet(),
             classMemberLevelSnapshot = null,

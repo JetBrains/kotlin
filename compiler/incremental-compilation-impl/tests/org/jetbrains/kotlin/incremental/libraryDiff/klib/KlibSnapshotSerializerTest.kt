@@ -30,34 +30,28 @@ class KlibSnapshotSerializerTest {
     }
 
     private fun assertSnapshotEquals(expected: KlibFileSnapshot, actual: KlibFileSnapshot) {
-        assertEquals(expected.javaClass, actual.javaClass)
-        when (expected) {
-            is PackageFragmentSnapshot -> {
-                actual as PackageFragmentSnapshot
-                assertEquals(expected.id, actual.id)
-                assertEquals(expected.contentHash, actual.contentHash)
-                assertEquals(expected.packageName, actual.packageName)
-                assertEquals(expected.classInfos.map { it.classId to it.supertypes }, actual.classInfos.map { it.classId to it.supertypes })
-                assertEquals(expected.packageMemberNames, actual.packageMemberNames)
-                assertEquals(expected.classMemberLevelSnapshot?.packageName, actual.classMemberLevelSnapshot?.packageName)
-                assertEquals(
-                    expected.classMemberLevelSnapshot?.packageFragmentProto?.map { it.toList() },
-                    actual.classMemberLevelSnapshot?.packageFragmentProto?.map { it.toList() },
-                )
-            }
-        }
+        assertEquals(expected.contentHash, actual.contentHash)
+        assertEquals(expected.packageName, actual.packageName)
+        assertEquals(expected.sourceFile, actual.sourceFile)
+        assertEquals(expected.classInfos.map { it.classId to it.supertypes }, actual.classInfos.map { it.classId to it.supertypes })
+        assertEquals(expected.packageMemberNames, actual.packageMemberNames)
+        assertEquals(expected.classMemberLevelSnapshot?.packageName, actual.classMemberLevelSnapshot?.packageName)
+        assertEquals(
+            expected.classMemberLevelSnapshot?.packageFragmentProto?.toList(),
+            actual.classMemberLevelSnapshot?.packageFragmentProto?.toList(),
+        )
     }
 
     companion object {
         @JvmStatic
         fun snapshots(): List<Named<KlibFileSnapshot>> = ClassSnapshotGranularity.entries.map { granularity ->
-            named("[PackageFragmentSnapshot][$granularity]", packageFragmentSnapshot(granularity))
+            named("[$granularity]", snapshot(granularity))
         }
 
-        private fun packageFragmentSnapshot(granularity: ClassSnapshotGranularity) = PackageFragmentSnapshot(
-            id = "com/example/ClassAndTopLevelMembersKt",
+        private fun snapshot(granularity: ClassSnapshotGranularity) = KlibFileSnapshot(
             contentHash = 42L,
             packageName = FqName("com.example"),
+            sourceFile = "ClassAndTopLevelMembers.kt",
             classInfos = listOf(
                 KlibClassInfo(
                     ClassId.fromString("com/example/SomeClass"),
@@ -68,7 +62,7 @@ class KlibSnapshotSerializerTest {
             packageMemberNames = setOf("topLevelFunction", "topLevelProperty"),
             classMemberLevelSnapshot = when (granularity) {
                 CLASS_LEVEL -> null
-                CLASS_MEMBER_LEVEL -> PackageFragmentInfo(FqName("com.example"), listOf(byteArrayOf(1, 2, 3), byteArrayOf()))
+                CLASS_MEMBER_LEVEL -> KlibFileInfo(FqName("com.example"), byteArrayOf(1, 2, 3))
             },
         )
     }

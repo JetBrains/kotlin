@@ -35,7 +35,7 @@ internal class LazyKlibSnapshot(
         return reporter.measure(metricToReportIfComputing.loadClasspathSnapshotTag) {
             val entrySnapshots = currentSnapshotFiles.map { KlibEntrySnapshotExternalizer.loadFromFile(it) }
             reporter.measure(metricToReportIfComputing.removeDuplicateClassesTag) {
-                entrySnapshots.toKlibSnapshots()
+                entrySnapshots.flatMap { it.klibFileSnapshots }
             }
         }.also { currentSnapshot = it }
     }
@@ -59,15 +59,4 @@ internal class LazyKlibSnapshot(
             ListExternalizer(KlibSnapshotExternalizer).loadFromFile(shrunkPreviousSnapshotFile)
         }.also { savedShrunkSnapshot = it }
     }
-}
-
-// TODO(KT-90559): handle duplicate ids across klibs. Until then, fail instead of silently missing changes.
-/** Flattens the snapshots of all klibs. */
-internal fun List<KlibEntrySnapshot>.toKlibSnapshots(): List<KlibFileSnapshot> {
-    val snapshots = flatMap { it.klibFileSnapshots }
-
-    val duplicateIds = snapshots.groupingBy { it.id }.eachCount().filterValues { it > 1 }.keys
-    check(duplicateIds.isEmpty()) { "Klib snapshots with duplicate ids are not supported yet: ${duplicateIds.sorted()}" }
-
-    return snapshots
 }

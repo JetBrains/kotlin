@@ -11,48 +11,43 @@ import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.classpathDiff.InaccessibleClassSnapshot
 import org.jetbrains.kotlin.incremental.impl.hashToLong
+import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
-internal object PackageFragmentSnapshotter {
+internal object KlibFileSnapshotter {
 
     /**
-     * Returns the snapshots of all package fragments in [metadata].
-     *
-     * Fragments of the same package that come from the same source file are merged into one snapshot.
+     * Returns one snapshot per package fragment in [metadata].
      */
-    fun snapshot(metadata: KlibMetadataComponent, settings: ClasspathEntrySnapshotter.Settings): Set<PackageFragmentSnapshot> {
-        val snapshots = LinkedHashSet<PackageFragmentSnapshot>()
+    fun snapshot(metadata: KlibMetadataComponent, settings: ClasspathEntrySnapshotter.Settings): List<KlibFileSnapshot> {
+        val snapshots = mutableListOf<KlibFileSnapshot>()
 
         for (packageName in metadata.getPackageNames()) {
             val packageFqName = FqName(packageName)
-            val builders = LinkedHashMap<String, PackageFragmentSnapshotBuilder>()
 
             for (fragmentName in metadata.getPackageFragmentNames(packageName)) {
                 val bytes = metadata.getPackageFragment(packageName, fragmentName)
                 val fragment = parsePackageFragment(bytes)
-
                 val nameResolver = NameResolverImpl(fragment.strings, fragment.qualifiedNames)
-                val sourceFile = fragment.sourceFileName(nameResolver)
-
-                val classInfos = getClassInfos(fragment, nameResolver)
                 val packageMembers = PackagePartProtoData(fragment.`package`, nameResolver, packageFqName).getNonPrivateMembers()
+                val klibFileInfo = KlibFileInfo(packageFqName, bytes)
 
-                builders.getOrPut(sourceFile) { PackageFragmentSnapshotBuilder(packageFqName, sourceFile) }.apply {
-                    this.classInfos.addAll(classInfos)
-                    this.packageMemberNames.addAll(packageMembers)
-                    this.fragmentsBytes.add(bytes)
-                }
+                snapshots += KlibFileSnapshot(
+                    contentHash = KlibFileInfoExternalizer.toByteArray(klibFileInfo).hashToLong(),
+                    packageName = packageFqName,
+                    sourceFile = fragment.sourceFileName(nameResolver),
+                    classInfos = getClassInfos(fragment, nameResolver),
+                    packageMemberNames = packageMembers.toSet(),
+                    classMemberLevelSnapshot = klibFileInfo.takeIf { settings.granularity == CLASS_MEMBER_LEVEL },
+                )
             }
-
-            builders.values.mapTo(snapshots) { it.build(settings) }
         }
 
         return snapshots
@@ -79,9 +74,7 @@ internal object PackageFragmentSnapshotter {
             ?: `package`.functionList.firstNotNullOfOrNull { it.getExtensionOrNull(KlibMetadataProtoBuf.functionFile) }
             ?: `package`.propertyList.firstNotNullOfOrNull { it.getExtensionOrNull(KlibMetadataProtoBuf.propertyFile) }
             ?: `package`.typeAliasList.firstNotNullOfOrNull { it.getExtensionOrNull(KlibMetadataProtoBuf.typeAliasFile) }
-        val fileName = fileId?.let { PackagePartClassUtils.getFilePartShortName(nameResolver.getString(it)) }
-
-        return fileName ?: "<package>"
+        return fileId?.let { nameResolver.getString(it) } ?: "<package>"
     }
 }
 
@@ -98,28 +91,4 @@ internal fun ClassId.isAccessibleIn(classes: Map<ClassId, ProtoBuf.Class>): Bool
 
     val outerClassId = outerClassId ?: return true
     return outerClassId !in classes || outerClassId.isAccessibleIn(classes)
-}
-
-private class PackageFragmentSnapshotBuilder(private val packageName: FqName, private val sourceFile: String) {
-    val fragmentsBytes = mutableListOf<ByteArray>()
-    val classInfos = mutableListOf<KlibClassInfo>()
-    val packageMemberNames = mutableSetOf<String>()
-
-    fun build(settings: ClasspathEntrySnapshotter.Settings): PackageFragmentSnapshot {
-        check(fragmentsBytes.isNotEmpty()) { "No package fragments were added for $sourceFile in package $packageName" }
-
-        return PackageFragmentSnapshot(
-            id = getId(packageName, sourceFile),
-            packageName = packageName,
-            contentHash = fragmentsBytes.map { it.hashToLong() }.reduce { acc, hash -> acc * 31 + hash },
-            classInfos = classInfos.toList(),
-            packageMemberNames = packageMemberNames.toSet(),
-            classMemberLevelSnapshot = if (settings.granularity == CLASS_MEMBER_LEVEL) {
-                PackageFragmentInfo(packageName, fragmentsBytes.toList())
-            } else null,
-        )
-    }
-
-    private fun getId(packageName: FqName, sourceFile: String) =
-        if (packageName.isRoot) sourceFile else "${packageName.asString().replace('.', '/')}/$sourceFile"
 }

@@ -18,6 +18,10 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Files
 
+/** E.g. `com/example/Base.kt`, to identify snapshots in test expectations. */
+val KlibFileSnapshot.sourceFilePath: String
+    get() = if (packageName.isRoot) sourceFile else "${packageName.asString().replace('.', '/')}/$sourceFile"
+
 abstract class KlibSnapshotTestCommon {
 
     @field:TempDir

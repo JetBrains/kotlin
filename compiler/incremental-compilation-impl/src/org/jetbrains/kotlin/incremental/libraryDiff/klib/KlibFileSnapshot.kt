@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.incremental.libraryDiff.klib
 
 import org.jetbrains.kotlin.incremental.ClassProtoData
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
-import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -15,47 +14,43 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 class KlibEntrySnapshot(
-    val klibFileSnapshots: Set<KlibFileSnapshot>,
+    val klibFileSnapshots: List<KlibFileSnapshot>,
 )
 
-sealed interface KlibFileSnapshot {
-    val id: String
-    val contentHash: Long
-}
-
-/** [classInfos] and [packageMemberNames] include only accessible classes and non-private package members. */
-class PackageFragmentSnapshot(
-    override val id: String,
-    override val contentHash: Long,
+/**
+ * A snapshot of one package fragment of a klib.
+ *
+ * [packageName] and [sourceFile] (e.g. `Base.kt`) are not unique: one source file may have several package fragments, and same-named
+ * source files of a package in different klibs have the same ones. Fragments with the same ones are compared together.
+ *
+ * [classInfos] and [packageMemberNames] include only accessible classes and non-private package members.
+ */
+class KlibFileSnapshot(
+    val contentHash: Long,
     val packageName: FqName,
+    val sourceFile: String,
 
     val classInfos: List<KlibClassInfo>,
     val packageMemberNames: Set<String>,
 
-    val classMemberLevelSnapshot: PackageFragmentInfo?,
-) : KlibFileSnapshot
+    val classMemberLevelSnapshot: KlibFileInfo?,
+)
 
-class PackageFragmentInfo(
+class KlibFileInfo(
     val packageName: FqName,
-    val packageFragmentProto: List<ByteArray>,
+    val packageFragmentProto: ByteArray,
 ) {
-    /** Like [PackageFragmentSnapshot.classInfos], includes only accessible classes. */
-    val proto: List<ProtoData> by lazy {
-        buildList {
-            for (fragmentBytes in packageFragmentProto) {
-                val fragment = parsePackageFragment(fragmentBytes)
-                val nameResolver = NameResolverImpl(fragment.strings, fragment.qualifiedNames)
+    private val fragment by lazy { parsePackageFragment(packageFragmentProto) }
+    private val nameResolver by lazy { NameResolverImpl(fragment.strings, fragment.qualifiedNames) }
 
-                val classes = fragment.class_List.associateBy { nameResolver.getClassId(it.fqName) }
-                for ([classId, classProto] in classes) {
-                    if (classId.isAccessibleIn(classes)) {
-                        add(ClassProtoData(classProto, nameResolver))
-                    }
-                }
+    /** Like [KlibFileSnapshot.classInfos], includes only accessible classes. */
+    val classProtoData: List<ClassProtoData> by lazy {
+        val classes = fragment.class_List.associateBy { nameResolver.getClassId(it.fqName) }
+        classes.filterKeys { it.isAccessibleIn(classes) }.values.map { ClassProtoData(it, nameResolver) }
+    }
 
-                add(PackagePartProtoData(fragment.`package`, nameResolver, packageName))
-            }
-        }
+    val packagePartProtoData: PackagePartProtoData by lazy {
+        PackagePartProtoData(fragment.`package`, nameResolver, packageName)
     }
 }
 
@@ -63,9 +58,4 @@ class KlibClassInfo(
     val classId: ClassId,
     val supertypes: List<ClassId>,
 )
-
-/** Classes declared in this file; empty for snapshot types without classes. */
-internal fun KlibFileSnapshot.classInfos(): List<KlibClassInfo> = when (this) {
-    is PackageFragmentSnapshot -> classInfos
-}
 

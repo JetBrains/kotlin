@@ -53,18 +53,23 @@ internal object KlibChangesComputer {
     /**
      * Computes changes between the current and previous lists of snapshots, plus unchanged elements that are impacted by the changes.
      *
-     * NOTE: Each list of snapshots must not contain duplicate ids (see [toKlibSnapshots]).
+     * Snapshots are matched by content hash, and each snapshot can be matched to only one snapshot of the other build. The content hash
+     * is enough because a snapshot's package and source file are derived from its content.
      */
     fun computeChangedAndImpactedSet(
         currentSnapshots: List<KlibFileSnapshot>,
         previousSnapshots: List<KlibFileSnapshot>,
         reporter: ClasspathSnapshotBuildReporter,
     ): ProgramSymbolSet {
-        val current: Map<String, KlibFileSnapshot> = currentSnapshots.associateBy { it.id }
-        val previous: Map<String, KlibFileSnapshot> = previousSnapshots.associateBy { it.id }
+        val currentSnapshotsByHash = currentSnapshots.groupBy { it.contentHash }
+        val previousSnapshotsByHash = previousSnapshots.groupBy { it.contentHash }
 
-        val changedCurrentSnapshots = current.values.filter { it.contentHash != previous[it.id]?.contentHash }
-        val changedPreviousSnapshots = previous.values.filter { it.contentHash != current[it.id]?.contentHash }
+        val changedCurrentSnapshots = currentSnapshotsByHash.flatMap { [hash, snapshots] ->
+            snapshots.drop(previousSnapshotsByHash[hash]?.size ?: 0)
+        }
+        val changedPreviousSnapshots = previousSnapshotsByHash.flatMap { [hash, snapshots] ->
+            snapshots.drop(currentSnapshotsByHash[hash]?.size ?: 0)
+        }
 
         val changedSet = reporter.measure(COMPUTE_CLASS_CHANGES) {
             computeKlibFileChanges(changedCurrentSnapshots, changedPreviousSnapshots)
@@ -99,54 +104,41 @@ internal object KlibChangesComputer {
         currentSnapshots: List<KlibFileSnapshot>,
         previousSnapshots: List<KlibFileSnapshot>,
     ): ProgramSymbolSet {
-        val [currentPackageFragmentSnapshots, currentUnsupportedSnapshots] = currentSnapshots.partition { it is PackageFragmentSnapshot }
-        val [previousPackageFragmentSnapshots, previousUnsupportedSnapshots] = previousSnapshots.partition { it is PackageFragmentSnapshot }
-
-        val unsupportedSnapshots = currentUnsupportedSnapshots + previousUnsupportedSnapshots
-        if (unsupportedSnapshots.isNotEmpty()) {
-            error("Unexpected snapshot types: ${unsupportedSnapshots.map { it.javaClass.simpleName }.distinct()}")
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        return computePackageFragmentChanges(
-            currentPackageFragmentSnapshots as List<PackageFragmentSnapshot>,
-            previousPackageFragmentSnapshots as List<PackageFragmentSnapshot>
-        )
-    }
-
-    /** Package fragments without member-level data, or whose granularity changed between builds, are compared at the coarse level. */
-    private fun computePackageFragmentChanges(
-        currentSnapshots: List<PackageFragmentSnapshot>,
-        previousSnapshots: List<PackageFragmentSnapshot>,
-    ): ProgramSymbolSet {
-        val granularityChangedIds = findPackageFragmentWithGranularityChanges(currentSnapshots, previousSnapshots)
+        val granularityChangedHashes = findPackageFragmentWithGranularityChanges(currentSnapshots, previousSnapshots)
 
         val [coarseGrainedCurrent, fineGrainedCurrent] = currentSnapshots.partition {
-            it.classMemberLevelSnapshot == null || it.id in granularityChangedIds
+            it.classMemberLevelSnapshot == null || it.contentHash in granularityChangedHashes
         }
         val [coarseGrainedPrevious, fineGrainedPrevious] = previousSnapshots.partition {
-            it.classMemberLevelSnapshot == null || it.id in granularityChangedIds
+            it.classMemberLevelSnapshot == null || it.contentHash in granularityChangedHashes
         }
 
-        return computeCoarseGrainedPackageFragmentChanges(coarseGrainedCurrent, coarseGrainedPrevious) +
-                computeFineGrainedPackageFragmentChanges(fineGrainedCurrent, fineGrainedPrevious)
+        return computeCoarseGrainedPackageFragmentChanges(coarseGrainedPrevious, coarseGrainedCurrent) +
+                computeFineGrainedPackageFragmentChanges(fineGrainedPrevious, fineGrainedCurrent)
     }
 
     private fun findPackageFragmentWithGranularityChanges(
-        currentSnapshots: List<PackageFragmentSnapshot>,
-        previousSnapshots: List<PackageFragmentSnapshot>,
-    ): Set<String> {
-        val current = currentSnapshots.associateBy { it.id }
-        val previous = previousSnapshots.associateBy { it.id }
+        currentSnapshots: List<KlibFileSnapshot>,
+        previousSnapshots: List<KlibFileSnapshot>,
+    ): Set<Long> {
+        val current = currentSnapshots.groupBy { it.packageName to it.sourceFile }
+        val previous = previousSnapshots.groupBy { it.packageName to it.sourceFile }
 
-        return (current.keys intersect previous.keys).filterTo(mutableSetOf()) { id ->
-            (current.getValue(id).classMemberLevelSnapshot == null) != (previous.getValue(id).classMemberLevelSnapshot == null)
+        return buildSet {
+            for (key in current.keys intersect previous.keys) {
+                if (current.getValue(key).any { it.classMemberLevelSnapshot == null } !=
+                    previous.getValue(key).any { it.classMemberLevelSnapshot == null }
+                ) {
+                    current.getValue(key).mapTo(this) { it.contentHash }
+                    previous.getValue(key).mapTo(this) { it.contentHash }
+                }
+            }
         }
     }
 
     private fun computeCoarseGrainedPackageFragmentChanges(
-        currentSnapshots: List<PackageFragmentSnapshot>,
-        previousSnapshots: List<PackageFragmentSnapshot>,
+        previousSnapshots: List<KlibFileSnapshot>,
+        currentSnapshots: List<KlibFileSnapshot>,
     ): ProgramSymbolSet {
         // Note: We have removed unchanged snapshots earlier in computeChangedAndImpactedSet method, so here we only have changed ones.
         return ProgramSymbolSet.Collector().run {
@@ -159,24 +151,23 @@ internal object KlibChangesComputer {
     }
 
     private fun computeFineGrainedPackageFragmentChanges(
-        currentSnapshots: List<PackageFragmentSnapshot>,
-        previousSnapshots: List<PackageFragmentSnapshot>,
+        previousSnapshots: List<KlibFileSnapshot>,
+        currentSnapshots: List<KlibFileSnapshot>,
     ): ProgramSymbolSet {
-        val previousProtoDataMap = previousSnapshots.associate { it.id to requireNotNull(it.classMemberLevelSnapshot?.proto) }
-        val currentProtoDataMap = currentSnapshots.associate { it.id to requireNotNull(it.classMemberLevelSnapshot?.proto) }
+        val previousBySourceFile = previousSnapshots.groupBy { it.packageName to it.sourceFile }
+        val currentBySourceFile = currentSnapshots.groupBy { it.packageName to it.sourceFile }
 
         return ProgramSymbolSet.Collector().run {
-            for (id in previousProtoDataMap.keys + currentProtoDataMap.keys) {
-                val previousProtoData = previousProtoDataMap[id].orEmpty()
-                val currentProtoData = currentProtoDataMap[id].orEmpty()
+            // Classes are matched by ClassId across all files, so a class that moves to another file is not reported
+            collectClassProtoChanges(
+                previousSnapshots.flatMap { it.classMemberLevelSnapshot!!.classProtoData },
+                currentSnapshots.flatMap { it.classMemberLevelSnapshot!!.classProtoData },
+            )
 
-                collectClassProtoChanges(
-                    previousProtoData.filterIsInstance<ClassProtoData>(),
-                    currentProtoData.filterIsInstance<ClassProtoData>(),
-                )
+            for (sourceFile in previousBySourceFile.keys + currentBySourceFile.keys) {
                 collectPackagePartProtoChanges(
-                    previousProtoData.filterIsInstance<PackagePartProtoData>(),
-                    currentProtoData.filterIsInstance<PackagePartProtoData>(),
+                    previousBySourceFile[sourceFile].orEmpty().map { it.classMemberLevelSnapshot!!.packagePartProtoData },
+                    currentBySourceFile[sourceFile].orEmpty().map { it.classMemberLevelSnapshot!!.packagePartProtoData },
                 )
             }
 

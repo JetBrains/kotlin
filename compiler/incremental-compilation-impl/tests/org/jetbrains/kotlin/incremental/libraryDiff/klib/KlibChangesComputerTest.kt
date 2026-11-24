@@ -148,6 +148,19 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
         ).assertEquals(computeChanges("testClassAndTopLevelMembersInOneFile", CLASS_LEVEL))
     }
 
+    /** Same-named files of one package in two klibs are matched by content hash, not by package and source file alone. */
+    @Test
+    fun testDuplicateSourceFiles() {
+        val previous = snapshot("testTopLevelMembers", "previous", CLASS_MEMBER_LEVEL)
+        val current = snapshot("testTopLevelMembers", "current", CLASS_MEMBER_LEVEL)
+        val unchangedKlib = snapshot("testTopLevelMembers", "previous", CLASS_MEMBER_LEVEL)
+
+        Changes(lookupSymbols = emptySet(), fqNames = emptySet())
+            .assertEquals(computeChanges(current = unchangedKlib + previous, previous = previous + unchangedKlib))
+        computeChanges("testTopLevelMembers")
+            .assertEquals(computeChanges(current = unchangedKlib + current, previous = previous + unchangedKlib))
+    }
+
     @Test
     fun testImpactComputation_SupertypesInheritors() {
         Changes(
@@ -202,7 +215,7 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
     )
 
     private fun snapshot(testName: String, version: String, granularity: ClassSnapshotGranularity): List<KlibFileSnapshot> =
-        snapshotKlib(File(testDataDir, "$testName/src/$version"), granularity).klibFileSnapshots.toList()
+        snapshotKlib(File(testDataDir, "$testName/src/$version"), granularity).klibFileSnapshots
 
     private fun computeChanges(testName: String, granularity: ClassSnapshotGranularity = CLASS_MEMBER_LEVEL): Changes =
         computeChanges(snapshot(testName, "current", granularity), snapshot(testName, "previous", granularity))
@@ -212,10 +225,10 @@ class KlibChangesComputerTest : KlibSnapshotTestCommon() {
      * file name (`<previous build granularity>FirstBuild_<current build granularity>SecondBuild_Class`).
      */
     private fun snapshotWithMixedGranularities(version: String): List<KlibFileSnapshot> {
-        val coarse = snapshot("testMixedClassSnapshotGranularities", version, CLASS_LEVEL).associateBy { it.id }
+        val coarse = snapshot("testMixedClassSnapshotGranularities", version, CLASS_LEVEL).associateBy { it.sourceFilePath }
         val fineMarker = if (version == "previous") "FineGrainedFirstBuild" else "FineGrainedSecondBuild"
         return snapshot("testMixedClassSnapshotGranularities", version, CLASS_MEMBER_LEVEL)
-            .map { if (fineMarker in it.id) it else coarse.getValue(it.id) }
+            .map { if (fineMarker in it.sourceFilePath) it else coarse.getValue(it.sourceFilePath) }
     }
 
     private fun computeChanges(current: List<KlibFileSnapshot>, previous: List<KlibFileSnapshot>): Changes =

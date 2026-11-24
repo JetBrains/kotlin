@@ -14,36 +14,36 @@ import kotlin.test.assertEquals
 class KlibSnapshotShrinkerTest : KlibSnapshotTestCommon() {
 
     private val allSnapshots: List<KlibFileSnapshot> by lazy {
-        snapshotKlib(File(klibTestDataDir, "KlibSnapshotShrinkerTest/src")).klibFileSnapshots.toList()
+        snapshotKlib(File(klibTestDataDir, "KlibSnapshotShrinkerTest/src")).klibFileSnapshots
     }
 
     private fun shrink(vararg lookupSymbols: LookupSymbolKey): Set<String> =
-        KlibSnapshotShrinker.shrink(allSnapshots, lookupSymbols.toList()).mapTo(mutableSetOf()) { it.id }
+        KlibSnapshotShrinker.shrink(allSnapshots, lookupSymbols.toList()).mapTo(mutableSetOf()) { it.sourceFilePath }
 
     @Test
     fun testReferencedClassIsRetained() {
-        assertEquals(setOf("com/example/BaseKt"), shrink(LookupSymbolKey(name = "Base", scope = "com.example")))
+        assertEquals(setOf("com/example/Base.kt"), shrink(LookupSymbolKey(name = "Base", scope = "com.example")))
     }
 
     @Test
     fun testSupertypesOfReferencedClassAreRetained() {
-        assertEquals(setOf("com/example/SubKt", "com/example/BaseKt"), shrink(LookupSymbolKey(name = "Sub", scope = "com.example")))
+        assertEquals(setOf("com/example/Sub.kt", "com/example/Base.kt"), shrink(LookupSymbolKey(name = "Sub", scope = "com.example")))
     }
 
     @Test
     fun testClassReferencedByMemberLookupIsRetained() {
-        assertEquals(setOf("com/example/BaseKt"), shrink(LookupSymbolKey(name = "someMember", scope = "com.example.Base")))
+        assertEquals(setOf("com/example/Base.kt"), shrink(LookupSymbolKey(name = "someMember", scope = "com.example.Base")))
     }
 
     @Test
     fun testReferencedPackageMemberIsRetained() {
-        assertEquals(setOf("com/example/TopLevelKt"), shrink(LookupSymbolKey(name = "topLevelFunction", scope = "com.example")))
+        assertEquals(setOf("com/example/TopLevel.kt"), shrink(LookupSymbolKey(name = "topLevelFunction", scope = "com.example")))
     }
 
     @Test
     fun testSupertypesOfUnreferencedClassesInRetainedFileAreNotRetained() {
         assertEquals(
-            setOf("com/example/SubAndTopLevelKt"),
+            setOf("com/example/SubAndTopLevel.kt"),
             shrink(LookupSymbolKey(name = "otherTopLevelFunction", scope = "com.example")),
         )
     }

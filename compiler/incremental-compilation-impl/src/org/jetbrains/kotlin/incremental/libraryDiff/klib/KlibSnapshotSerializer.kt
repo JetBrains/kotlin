@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClassIdExternalizerWithInt
 import org.jetbrains.kotlin.incremental.classpathDiff.FqNameExternalizerWithInterning
 import org.jetbrains.kotlin.incremental.storage.ByteArrayExternalizer
 import org.jetbrains.kotlin.incremental.storage.ClassIdExternalizer
-import org.jetbrains.kotlin.incremental.storage.DelegateDataExternalizer
 import org.jetbrains.kotlin.incremental.storage.FqNameExternalizer
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.LongExternalizer
@@ -23,46 +22,54 @@ import java.io.DataOutput
 internal object KlibEntrySnapshotExternalizer : DataExternalizer<KlibEntrySnapshot> {
 
     override fun save(output: DataOutput, snapshot: KlibEntrySnapshot) {
-        SetExternalizer(KlibSnapshotExternalizer).save(output, snapshot.klibFileSnapshots)
+        ListExternalizer(KlibSnapshotExternalizer).save(output, snapshot.klibFileSnapshots)
     }
 
     override fun read(input: DataInput): KlibEntrySnapshot {
         return KlibEntrySnapshot(
-            klibFileSnapshots = SetExternalizer(KlibSnapshotExternalizer).read(input),
+            klibFileSnapshots = ListExternalizer(KlibSnapshotExternalizer).read(input),
         )
     }
 }
 
-internal object KlibSnapshotExternalizer : DataExternalizer<KlibFileSnapshot> by DelegateDataExternalizer(
-    types = listOf(PackageFragmentSnapshot::class.java),
-    typesExternalizers = listOf(PackageFragmentSnapshotExternalizer),
-)
+internal object KlibSnapshotExternalizer : DataExternalizer<KlibFileSnapshot> {
 
-internal object PackageFragmentSnapshotExternalizer : DataExternalizer<PackageFragmentSnapshot> {
-
-    override fun save(output: DataOutput, snapshot: PackageFragmentSnapshot) {
-        StringExternalizer.save(output, snapshot.id)
+    override fun save(output: DataOutput, snapshot: KlibFileSnapshot) {
         LongExternalizer.save(output, snapshot.contentHash)
         FqNameExternalizer.save(output, snapshot.packageName)
+        StringExternalizer.save(output, snapshot.sourceFile)
         ListExternalizer(KlibClassInfoExternalizer).save(output, snapshot.classInfos)
         SetExternalizer(StringExternalizer).save(output, snapshot.packageMemberNames)
-        // The package name of `classMemberLevelSnapshot` is the same as the snapshot's, so only the fragment bytes are saved
-        NullableValueExternalizer(ListExternalizer(ByteArrayExternalizer)).save(output, snapshot.classMemberLevelSnapshot?.packageFragmentProto)
+        NullableValueExternalizer(KlibFileInfoExternalizer).save(output, snapshot.classMemberLevelSnapshot)
     }
 
-    override fun read(input: DataInput): PackageFragmentSnapshot {
-        val id = StringExternalizer.read(input)
+    override fun read(input: DataInput): KlibFileSnapshot {
         val contentHash = LongExternalizer.read(input)
         // To reduce memory usage, apply object interning to the package name as it is commonly shared
         val packageName = FqNameExternalizerWithInterning.read(input)
-        return PackageFragmentSnapshot(
-            id = id,
+        return KlibFileSnapshot(
             contentHash = contentHash,
             packageName = packageName,
+            sourceFile = StringExternalizer.read(input),
             classInfos = ListExternalizer(KlibClassInfoExternalizer).read(input),
             packageMemberNames = SetExternalizer(StringExternalizer).read(input),
-            classMemberLevelSnapshot = NullableValueExternalizer(ListExternalizer(ByteArrayExternalizer)).read(input)
-                ?.let { PackageFragmentInfo(packageName, it) },
+            classMemberLevelSnapshot = NullableValueExternalizer(KlibFileInfoExternalizer).read(input),
+        )
+    }
+}
+
+internal object KlibFileInfoExternalizer : DataExternalizer<KlibFileInfo> {
+
+    override fun save(output: DataOutput, info: KlibFileInfo) {
+        FqNameExternalizer.save(output, info.packageName)
+        ByteArrayExternalizer.save(output, info.packageFragmentProto)
+    }
+
+    override fun read(input: DataInput): KlibFileInfo {
+        return KlibFileInfo(
+            // To reduce memory usage, apply object interning to the package name as it is commonly shared
+            packageName = FqNameExternalizerWithInterning.read(input),
+            packageFragmentProto = ByteArrayExternalizer.read(input),
         )
     }
 }

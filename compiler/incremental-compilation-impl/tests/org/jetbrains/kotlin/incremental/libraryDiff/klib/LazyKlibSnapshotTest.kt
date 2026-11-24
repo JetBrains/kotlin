@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.saveToFile
 import org.junit.jupiter.api.Test
 import java.io.File
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlin.test.assertSame
 
 class LazyKlibSnapshotTest : KlibSnapshotTestCommon() {
@@ -34,27 +32,29 @@ class LazyKlibSnapshotTest : KlibSnapshotTestCommon() {
         val lazyKlibSnapshot = lazyKlibSnapshot(currentEntrySnapshots = listOf(firstKlib, secondKlib))
 
         assertEquals(
-            (firstKlib.klibFileSnapshots + secondKlib.klibFileSnapshots).associate { it.id to it.contentHash },
-            lazyKlibSnapshot.getCurrentKlibSnapshot(OnClasspathDiffComputation).associate { it.id to it.contentHash },
+            (firstKlib.klibFileSnapshots + secondKlib.klibFileSnapshots).associate { it.sourceFilePath to it.contentHash },
+            lazyKlibSnapshot.getCurrentKlibSnapshot(OnClasspathDiffComputation).associate { it.sourceFilePath to it.contentHash },
         )
     }
 
     @Test
-    fun testDuplicateIdsAcrossKlibsFail() {
+    fun testDuplicateSourceFilesAcrossKlibs() {
         val lazyKlibSnapshot = lazyKlibSnapshot(currentEntrySnapshots = listOf(firstKlib, firstKlib))
 
-        val exception = assertFailsWith<IllegalStateException> { lazyKlibSnapshot.getCurrentKlibSnapshot(OnClasspathDiffComputation) }
-        assertContains(exception.message.orEmpty(), "com/example/BaseKt")
+        assertEquals(
+            (firstKlib.klibFileSnapshots + firstKlib.klibFileSnapshots).map { it.sourceFilePath },
+            lazyKlibSnapshot.getCurrentKlibSnapshot(OnClasspathDiffComputation).map { it.sourceFilePath },
+        )
     }
 
     @Test
     fun testSavedShrunkSnapshot() {
-        val shrunkSnapshot = firstKlib.klibFileSnapshots.filter { it.id == "com/example/BaseKt" }
+        val shrunkSnapshot = firstKlib.klibFileSnapshots.filter { it.sourceFilePath == "com/example/Base.kt" }
         val lazyKlibSnapshot = lazyKlibSnapshot(shrunkPreviousSnapshot = shrunkSnapshot)
 
         assertEquals(
-            listOf("com/example/BaseKt"),
-            lazyKlibSnapshot.getSavedShrunkKlibSnapshotAgainstPreviousLookups(OnClasspathDiffComputation).map { it.id },
+            listOf("com/example/Base.kt"),
+            lazyKlibSnapshot.getSavedShrunkKlibSnapshotAgainstPreviousLookups(OnClasspathDiffComputation).map { it.sourceFilePath },
         )
     }
 
@@ -94,9 +94,9 @@ class LazyKlibSnapshotTest : KlibSnapshotTestCommon() {
         }
 
         assertEquals(
-            setOf("com/example/SubKt", "com/example/BaseKt"),
+            setOf("com/example/Sub.kt", "com/example/Base.kt"),
             LazyKlibSnapshot(emptyList(), shrunkSnapshotFile, reporter)
-                .getSavedShrunkKlibSnapshotAgainstPreviousLookups(OnClasspathDiffComputation).mapTo(mutableSetOf()) { it.id },
+                .getSavedShrunkKlibSnapshotAgainstPreviousLookups(OnClasspathDiffComputation).mapTo(mutableSetOf()) { it.sourceFilePath },
         )
     }
 
