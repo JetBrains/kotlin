@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaCompilationTarget as KaLeg
 import org.jetbrains.kotlin.analysis.api.components.KaCompiledClassHandler as KaLegacyCompiledClassHandler
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacilityModuleActualizer as KaLegacyCompilerFacilityModuleActualizer
 
+@Suppress("DEPRECATION")
 internal class KaFirCompilationOptions(
     override val token: KaLifetimeToken,
     val configuration: CompilerConfiguration,
@@ -72,6 +73,7 @@ internal class KaFirCompilationOptions(
     }
 }
 
+@Suppress("DEPRECATION")
 internal class KaFirCompilationOptionsBuilder(
     override val token: KaLifetimeToken,
     val configuration: CompilerConfiguration,
@@ -212,16 +214,19 @@ internal class KaFirCompilationOptionsBuilder(
     }
 }
 
+@Suppress("DEPRECATION")
 internal fun KaLegacyCompilationTarget.toNewCompilationTarget(): KaCompilationTarget =
     when (this) {
         KaLegacyCompilationTarget.JVM -> KaCompilationTarget.JVM
     }
 
+@Suppress("DEPRECATION")
 internal fun KaCompilationTarget.toLegacyCompilationTarget(): KaLegacyCompilationTarget =
     when (this) {
         KaCompilationTarget.JVM -> KaLegacyCompilationTarget.JVM
     }
 
+@Suppress("DEPRECATION")
 internal fun KaLegacyCompilerFacilityModuleActualizer.toNewModuleActualizer(): KaCompilerFacilityModuleActualizer =
     KaCompilerFacilityModuleActualizer { module, target ->
         actualize(module, target.toLegacyCompilationTarget())

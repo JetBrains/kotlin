@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.components.buildStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.expressions.expressionType
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForDebug
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.types.abbreviationOrSelf
 import org.jetbrains.kotlin.analysis.api.types.symbol
@@ -56,6 +55,7 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(Directives)
 
+    @Suppress("DEPRECATION") // The test covers the deprecated type builders from the `components` package; drop it together with them.
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val targetExpression = testServices.expressionMarkerProvider

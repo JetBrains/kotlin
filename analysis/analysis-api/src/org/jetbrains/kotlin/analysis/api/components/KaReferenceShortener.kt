@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.openapi.util.TextRange
@@ -21,6 +23,10 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaIdeApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
@@ -33,6 +39,18 @@ public interface KaReferenceShortener : KaSessionComponent {
      *
      * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShortenings' from the context-parameter" +
+                " API instead.",
+        replaceWith = ReplaceWith(
+            expression = "collectPossibleReferenceShortenings(file, selection, shortenOptions, classShortenStrategy, " +
+                    "callableShortenStrategy)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShortenings",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaIdeApi
     public fun collectPossibleReferenceShortenings(
         file: KtFile,
@@ -50,6 +68,18 @@ public interface KaReferenceShortener : KaSessionComponent {
      *
      * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement' from the" +
+                " context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "collectPossibleReferenceShorteningsInElement(element, shortenOptions, classShortenStrategy, " +
+                    "callableShortenStrategy)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaIdeApi
     public fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,

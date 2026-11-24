@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.types
 import org.jetbrains.kotlin.analysis.api.types.KaBuiltinFunctionTypeFamilies
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 
+@Suppress("DEPRECATION")
 internal object KaFirBuiltinFunctionTypeFamilies : KaBuiltinFunctionTypeFamilies,
     org.jetbrains.kotlin.analysis.api.components.KaBuiltinFunctionTypeFamilies {
     override val function: org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily =

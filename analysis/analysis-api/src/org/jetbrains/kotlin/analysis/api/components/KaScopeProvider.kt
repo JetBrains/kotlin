@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
@@ -18,6 +20,10 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaScopeProvider : KaSessionComponent {
@@ -31,6 +37,16 @@ public interface KaScopeProvider : KaSessionComponent {
      *
      * @see staticMemberScope
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.memberScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.memberScope",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.memberScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaDeclarationContainerSymbol.memberScope: KaScope
 
     /**
@@ -110,11 +126,31 @@ public interface KaScopeProvider : KaSessionComponent {
      *
      * @see memberScope
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.staticMemberScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.staticMemberScope",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.staticMemberScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaDeclarationContainerSymbol.staticMemberScope: KaScope
 
     /**
      * A [KaScope] containing *all* members from [memberScope] and [staticMemberScope].
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.combinedMemberScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.combinedMemberScope",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.combinedMemberScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaDeclarationContainerSymbol.combinedMemberScope: KaScope
         get() = withValidityAssertion {
             return listOf(memberScope, staticMemberScope).asCompositeScope()
@@ -130,6 +166,16 @@ public interface KaScopeProvider : KaSessionComponent {
      *
      * @see staticDeclaredMemberScope
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.declaredMemberScope",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
 
     /**
@@ -142,6 +188,16 @@ public interface KaScopeProvider : KaSessionComponent {
      *
      * @see declaredMemberScope
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.staticDeclaredMemberScope",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
 
     /**
@@ -149,6 +205,16 @@ public interface KaScopeProvider : KaSessionComponent {
      *
      * In contrast to [declaredMemberScope] and [staticDeclaredMemberScope], this scope contains both static and non-static members.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.combinedDeclaredMemberScope",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
 
     /**
@@ -180,21 +246,61 @@ public interface KaScopeProvider : KaSessionComponent {
      *
      * `regularProperty` is not contained in the delegated member scope because it is not a delegated property.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.delegatedMemberScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.delegatedMemberScope",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.delegatedMemberScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaDeclarationContainerSymbol.delegatedMemberScope: KaScope
 
     /**
      * A [KaScope] containing the top-level declarations (such as classes, functions and properties) in the given [KaFileSymbol].
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.fileScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.fileScope",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.fileScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaFileSymbol.fileScope: KaScope
 
     /**
      * A [KaScope] containing all members of the package represented by the given [KaPackageSymbol], not including members of subpackages.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.packageScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.packageScope",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.packageScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaPackageSymbol.packageScope: KaScope
 
     /**
      * Combines a list of [KaScope]s into a single composite [KaScope]. The resulting scope contains all members of its constituent scopes.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.asCompositeScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.asCompositeScope()",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.asCompositeScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun List<KaScope>.asCompositeScope(): KaScope
 
     /**
@@ -219,12 +325,32 @@ public interface KaScopeProvider : KaSessionComponent {
      * @see KaTypeProvider.type
      * @see KaExpressionTypeProvider.expressionType
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.scope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.scope",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.scope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaType.scope: KaTypeScope?
 
     /**
      * A [KaScope] containing unsubstituted declarations from the [KaType]'s underlying declaration.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.declarationScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.declarationScope",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.declarationScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaTypeScope.declarationScope: KaScope
 
@@ -232,6 +358,16 @@ public interface KaScopeProvider : KaSessionComponent {
      * A [KaTypeScope] containing the [synthetic Java properties](https://kotlinlang.org/docs/java-interop.html#getters-and-setters) created
      * for a given [KaType].
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.scopes.syntheticJavaPropertiesScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.syntheticJavaPropertiesScope",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.scopes.syntheticJavaPropertiesScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaType.syntheticJavaPropertiesScope: KaTypeScope?
 
@@ -239,6 +375,16 @@ public interface KaScopeProvider : KaSessionComponent {
      * Computes the lexical scope context for a given [position] in the [KtFile]. The scope context includes all scopes that are relevant
      * for the given position, together with all available implicit receivers.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.components.scopeContext' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.scopeContext(position)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.components.scopeContext",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun KtFile.scopeContext(position: KtElement): KaScopeContext
 
     /**
@@ -246,6 +392,16 @@ public interface KaScopeProvider : KaSessionComponent {
      *
      * By default, the scope context also includes default importing scopes, which can be filtered by [KaScopeKind].
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.components.importingScopeContext' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.importingScopeContext",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.components.importingScopeContext",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KtFile.importingScopeContext: KaScopeContext
 
     /**
@@ -254,6 +410,16 @@ public interface KaScopeProvider : KaSessionComponent {
      * The order of declarations corresponds to the order of their containing scopes, which are sorted according to their [indices][KaScopeKind.indexInTower]
      * in the scope tower.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.components.compositeScope' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.compositeScope(filter)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.components.compositeScope",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaScopeContext.compositeScope(filter: (KaScopeKind) -> Boolean = { true }): KaScope = withValidityAssertion {
         val subScopes = scopes.filter { filter(it.kind) }.map { it.scope }
         subScopes.asCompositeScope()

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
@@ -14,6 +16,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaExpressionInformationProvider : KaSessionComponent {
@@ -49,6 +55,16 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
      * }
      * ```
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.components.computeMissingCases' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.computeMissingCases()",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.components.computeMissingCases",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaIdeApi
     public fun KtWhenExpression.computeMissingCases(): List<KaWhenMissingCase>
 
@@ -72,6 +88,16 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
      *   - `run { x; println(50) }`
      *   - `when (x) { else -> ... }`
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.expressions.isUsedAsExpression' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isUsedAsExpression",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.expressions.isUsedAsExpression",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KtExpression.isUsedAsExpression: Boolean
 
     /**
@@ -95,6 +121,16 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
      *   - `{ if (true) { x } else { x } }`
      *   - `fun(x: Int) = x`
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.expressions.isUsedAsResultOfLambda' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isUsedAsResultOfLambda",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.expressions.isUsedAsResultOfLambda",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KtExpression.isUsedAsResultOfLambda: Boolean
 
@@ -150,6 +186,16 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
      * }
      * ```
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.expressions.isStableForSmartCasting' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isStableForSmartCasting",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.expressions.isStableForSmartCasting",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KtExpression.isStableForSmartCasting: Boolean
 }

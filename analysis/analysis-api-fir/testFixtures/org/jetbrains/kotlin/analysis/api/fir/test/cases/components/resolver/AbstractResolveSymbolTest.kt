@@ -108,6 +108,7 @@ internal object ResolveSymbolTestDirectives : SimpleDirectivesContainer() {
 /**
  * The function checks that all specific implementations of [KaResolver.resolveSymbol] are consistent.
  */
+@Suppress("DEPRECATION") // Checks the specialized members of the deprecated `KaResolver` component; drop this together with it.
 context(session: KaSession)
 internal fun assertSpecificResolutionApi(
     testServices: TestServices,

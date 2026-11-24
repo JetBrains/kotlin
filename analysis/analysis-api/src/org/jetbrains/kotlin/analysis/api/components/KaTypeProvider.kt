@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
@@ -17,12 +19,20 @@ import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaTypeProvider : KaSessionComponent {
     /**
      * [KaType] instances for built-in types.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.builtinTypes' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     public val builtinTypes: KaBuiltinTypes
 
     /**
@@ -34,6 +44,16 @@ public interface KaTypeProvider : KaSessionComponent {
      * @param allowLocalDenotableTypes Whether locally declared types should be approximated to local supertypes instead of non-local ones.
      * Local type approximation is sensible when the resulting [KaType] is analyzed in the same local context.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSupertype' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.approximateToDenotableSupertype(allowLocalDenotableTypes)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSupertype",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun KaType.approximateToDenotableSupertype(allowLocalDenotableTypes: Boolean): KaType?
 
@@ -43,6 +63,17 @@ public interface KaTypeProvider : KaSessionComponent {
      *
      * @see approximateToDenotableSupertype
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSupertypeOrSelf'" +
+                " from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.approximateToDenotableSupertypeOrSelf(allowLocalDenotableTypes)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSupertypeOrSelf",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun KaType.approximateToDenotableSupertypeOrSelf(allowLocalDenotableTypes: Boolean): KaType = withValidityAssertion {
         return approximateToDenotableSupertype(allowLocalDenotableTypes) ?: this
@@ -54,6 +85,16 @@ public interface KaTypeProvider : KaSessionComponent {
      * The function returns `null` if the type is already denotable and does not need approximation. Otherwise, for a type `T`, returns a
      * denotable type `S` such that `S <: T`, with all type arguments of `S` also being denotable.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSubtype' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.approximateToDenotableSubtype()",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSubtype",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun KaType.approximateToDenotableSubtype(): KaType?
 
@@ -63,6 +104,17 @@ public interface KaTypeProvider : KaSessionComponent {
      *
      * @see approximateToDenotableSupertype
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSubtypeOrSelf'" +
+                " from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.approximateToDenotableSubtypeOrSelf()",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSubtypeOrSelf",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun KaType.approximateToDenotableSubtypeOrSelf(): KaType = withValidityAssertion {
         return approximateToDenotableSubtype() ?: this
@@ -96,6 +148,16 @@ public interface KaTypeProvider : KaSessionComponent {
      * However, when approximating from `<position_1>`, the function returns `Any`, as `A` is not visible from this position,
      * so the only option left is `Any`.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSupertype' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.approximateToDenotableSupertype(position)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSupertype",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun KaType.approximateToDenotableSupertype(position: KtElement): KaType?
 
@@ -105,6 +167,17 @@ public interface KaTypeProvider : KaSessionComponent {
      *
      * @see approximateToDenotableSupertype
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSupertypeOrSelf'" +
+                " from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.approximateToDenotableSupertypeOrSelf(position)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.approximateToDenotableSupertypeOrSelf",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun KaType.approximateToDenotableSupertypeOrSelf(position: KtElement): KaType = withValidityAssertion {
         return approximateToDenotableSupertype(position) ?: this
@@ -133,6 +206,17 @@ public interface KaTypeProvider : KaSessionComponent {
      * - For `@androidx.annotation.RecentlyNullable X!` [augmentedByWarningLevelAnnotations] is `X?`.
      * - For `@androidx.annotation.RecentlyNonNull X!` [augmentedByWarningLevelAnnotations] is `X`.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.augmentedByWarningLevelAnnotations'" +
+                " from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "augmentedByWarningLevelAnnotations",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.augmentedByWarningLevelAnnotations",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaType.augmentedByWarningLevelAnnotations: KaType
 
@@ -143,6 +227,16 @@ public interface KaTypeProvider : KaSessionComponent {
      *
      * @see KaTypeCreator
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.defaultType' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "defaultType",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.defaultType",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaClassifierSymbol.defaultType: KaType
 
     /**
@@ -152,6 +246,16 @@ public interface KaTypeProvider : KaSessionComponent {
      *
      * @see KaTypeCreator
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.defaultTypeWithStarProjections' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "defaultTypeWithStarProjections",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.defaultTypeWithStarProjections",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaClassifierSymbol.defaultTypeWithStarProjections: KaType
 
@@ -163,6 +267,16 @@ public interface KaTypeProvider : KaSessionComponent {
      * If [this] is an invalid (e.g., in case of multiple `vararg` parameters) or useless (in anonymous functions) `vararg` parameter,
      * [varargArrayType] still contains a type for it.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.varargArrayType' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "varargArrayType",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.varargArrayType",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaValueParameterSymbol.varargArrayType: KaType?
 
@@ -171,6 +285,16 @@ public interface KaTypeProvider : KaSessionComponent {
      *
      * @throws IllegalArgumentException If the collection of types is empty.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.commonSupertype' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "commonSupertype",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.commonSupertype",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val Iterable<KaType>.commonSupertype: KaType
 
     /**
@@ -178,6 +302,16 @@ public interface KaTypeProvider : KaSessionComponent {
      *
      * @throws IllegalArgumentException If the array of types is empty.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.commonSupertype' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "commonSupertype",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.commonSupertype",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val Array<KaType>.commonSupertype: KaType
         get() = asList().commonSupertype
 
@@ -186,6 +320,16 @@ public interface KaTypeProvider : KaSessionComponent {
      *
      * This may raise an exception if the resolution ends up with an unexpected result.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.type' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "type",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.type",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KtTypeReference.type: KaType
 
     /**
@@ -206,16 +350,46 @@ public interface KaTypeProvider : KaSessionComponent {
      *
      * Here, `receiverType` for `foo::bar` is `Foo` (the type of `foo`).
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.receiverType' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "receiverType",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.receiverType",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KtDoubleColonExpression.receiverType: KaType?
 
     /**
      * Creates a new [KaType] based on the given type with the updated nullability specified by [isMarkedNullable].
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.withNullability' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.withNullability(isMarkedNullable)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.withNullability",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaType.withNullability(isMarkedNullable: Boolean): KaType
 
     /**
      * Returns the [KaFlexibleType]'s upper bound, or the type itself if it is not flexible.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.upperBoundIfFlexible' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.upperBoundIfFlexible()",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.upperBoundIfFlexible",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaType.upperBoundIfFlexible(): KaType = withValidityAssertion {
         (this as? KaFlexibleType)?.upperBound ?: this
     }
@@ -223,6 +397,16 @@ public interface KaTypeProvider : KaSessionComponent {
     /**
      * Returns the [KaFlexibleType]'s lower bound, or the type itself if it is not flexible.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.lowerBoundIfFlexible' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.lowerBoundIfFlexible()",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.lowerBoundIfFlexible",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaType.lowerBoundIfFlexible(): KaType = withValidityAssertion {
         (this as? KaFlexibleType)?.lowerBound ?: this
     }
@@ -230,6 +414,16 @@ public interface KaTypeProvider : KaSessionComponent {
     /**
      * Checks whether this [KaType] is compatible with [that] other type. If they are compatible, the types can have a common subtype.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.hasCommonSubtypeWith' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.hasCommonSubtypeWith(that)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.hasCommonSubtypeWith",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaType.hasCommonSubtypeWith(that: KaType): Boolean
 
     /**
@@ -259,6 +453,16 @@ public interface KaTypeProvider : KaSessionComponent {
      * supertype of `List<out String>` is `Collection<CAPTURED out String>`. With approximation set to `true`, `Collection<out String>` is
      * returned instead.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.directSupertypes' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.directSupertypes(shouldApproximate)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.directSupertypes",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType>
 
     /**
@@ -273,6 +477,16 @@ public interface KaTypeProvider : KaSessionComponent {
      *
      * Given `MutableList<String>`, [directSupertypes] contains `List<String>` and `MutableCollection<String>`
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.directSupertypes' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "directSupertypes",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.directSupertypes",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaType.directSupertypes: Sequence<KaType>
         get() = directSupertypes(shouldApproximate = false)
 
@@ -283,6 +497,16 @@ public interface KaTypeProvider : KaSessionComponent {
      * @param shouldApproximate Whether to approximate [non-denotable][KaTypeInformationProvider.isDenotable] types. See [directSupertypes]
      *  for more information.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.allSupertypes' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.allSupertypes(shouldApproximate)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.allSupertypes",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType>
 
     /**
@@ -291,6 +515,16 @@ public interface KaTypeProvider : KaSessionComponent {
      *
      * [Denotable][KaTypeInformationProvider.isDenotable] types are not approximated.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.allSupertypes' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "allSupertypes",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.allSupertypes",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaType.allSupertypes: Sequence<KaType>
         get() = allSupertypes(shouldApproximate = false)
 
@@ -312,12 +546,32 @@ public interface KaTypeProvider : KaSessionComponent {
     /**
      * The array type's element type if the given [KaType] is a primitive type array or [Array], and `null` otherwise.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.arrayElementType' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "arrayElementType",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.arrayElementType",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaType.arrayElementType: KaType?
 }
 
 /**
  * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.types.KaBuiltinTypes] instead.**
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.types.KaBuiltinTypes' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaBuiltinTypes",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.KaBuiltinTypes",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaBuiltinTypes : org.jetbrains.kotlin.analysis.api.types.KaBuiltinTypes {

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
@@ -15,6 +17,10 @@ import org.jetbrains.kotlin.psi.KtDeclarationWithReturnType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaExpressionTypeProvider : KaSessionComponent {
@@ -38,6 +44,16 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      * The expected type represents the type that is expected for an expression at a specific location in the code. This is determined by
      * the context in which the expression appears, such as a variable type for its initializer, or a parameter type for a function call.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.expressions.expressionType' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.expressionType",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.expressions.expressionType",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KtExpression.expressionType: KaType?
 
     /**
@@ -55,6 +71,16 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      * from [KaExpressionTypeProvider][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType] represents a
      * use-site perspective, which has to desugar `vararg` parameters because they are consumed as array types.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.expressions.returnType' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.returnType",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.expressions.returnType",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KtDeclarationWithReturnType.returnType: KaType
 
     /**
@@ -79,6 +105,16 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      * Depending on the function's attributes, such as `suspend` or reflective access, a different functional type such as
      * `SuspendFunction`, `KFunction`, or `KSuspendFunction` will be constructed.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.expressions.functionType' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.functionType",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.expressions.functionType",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KtFunction.functionType: KaType
 
     /**
@@ -87,6 +123,16 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      *
      * See [expressionType] for a discussion about the expression type vs. the expected type.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.expressions.expectedType' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.expectedType",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.expressions.expectedType",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val PsiElement.expectedType: KaType?
 
     /**
@@ -115,6 +161,16 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      *   }
      * ```
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.expressions.isDefinitelyNull' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isDefinitelyNull",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.expressions.isDefinitelyNull",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KtExpression.isDefinitelyNull: Boolean
 
     /**
@@ -122,6 +178,16 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      *
      * @see isDefinitelyNull
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.expressions.isDefinitelyNotNull' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isDefinitelyNotNull",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.expressions.isDefinitelyNotNull",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KtExpression.isDefinitelyNotNull: Boolean
 }
 

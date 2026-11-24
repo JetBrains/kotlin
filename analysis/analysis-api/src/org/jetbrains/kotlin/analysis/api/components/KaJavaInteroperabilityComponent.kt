@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiClass
@@ -17,6 +19,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaJavaInteroperabilityComponent : KaSessionComponent {
@@ -48,6 +54,17 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
      * @param allowNonJvmPlatforms Whether the [PsiType] should be computed even for non-JVM modules. The flag provides no validity
      * guarantees – the returned type may be unresolvable from Java, or `null`.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.components.asPsiType' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.asPsiType(useSitePosition, allowErrorTypes, mode, isAnnotationMethod, suppressWildcards, " +
+                    "preserveAnnotations, allowNonJvmPlatforms)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.components.asPsiType",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun KaType.asPsiType(
         useSitePosition: PsiElement,
@@ -69,6 +86,16 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
      *
      * @return The converted [KaType], or `null` if conversion is not possible. For example, [PsiType] might not be resolvable.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.javaInterop.asKaType' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.asKaType(useSitePosition)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.javaInterop.asKaType",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun PsiType.asKaType(useSitePosition: PsiElement): KaType?
 
@@ -77,6 +104,16 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
      * To learn more about JVM descriptors, check out the
      * [JVM specification](https://docs.oracle.com/javase/specs/jvms/se24/html/jvms-4.html#jvms-4.3).
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.javaInterop.mapToJvmTypeDescriptor' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.mapToJvmTypeDescriptor()",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.javaInterop.mapToJvmTypeDescriptor",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun KaType.mapToJvmTypeDescriptor(): String
 
@@ -95,6 +132,16 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
      *
      * For non-JVM modules, the result describes the equivalent JVM representation inferred from the Kotlin declaration.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isPrimitiveBacked",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaType.isPrimitiveBacked: Boolean
 
@@ -102,11 +149,31 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
      * A [KaNamedClassSymbol] for the given [PsiClass], or `null` for anonymous classes, local classes, type parameters (which are also
      * [PsiClass]es), and Kotlin light classes.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.namedClassSymbol",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
 
     /**
      * A [KaCallableSymbol] for the given [PsiMember] method or field, or `null` for local declarations and Kotlin light classes.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.callableSymbol",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val PsiMember.callableSymbol: KaCallableSymbol?
 
     /**
@@ -118,6 +185,16 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
      * Applicable only to JVM modules, and common modules with JVM targets.
      * [containingJvmClassName] is always `null` all other kinds of modules.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.containingJvmClassName",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaCallableSymbol.containingJvmClassName: String?
 

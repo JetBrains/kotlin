@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
@@ -18,6 +20,10 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaIdeApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
@@ -33,6 +39,17 @@ public interface KaCompletionCandidateChecker : KaSessionComponent {
      *     with a placeholder identifier inserted. Also see `CompletionUtilCore.DUMMY_IDENTIFIER` in IntelliJ IDEA.
      * @param explicitReceiver A receiver expression, if available (also from the in-memory copy of [originalFile]).
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.components.createExtensionCandidateChecker'" +
+                " from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "createExtensionCandidateChecker(originalFile, nameExpression, explicitReceiver)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.components.createExtensionCandidateChecker",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaIdeApi
     public fun createExtensionCandidateChecker(
         originalFile: KtFile,

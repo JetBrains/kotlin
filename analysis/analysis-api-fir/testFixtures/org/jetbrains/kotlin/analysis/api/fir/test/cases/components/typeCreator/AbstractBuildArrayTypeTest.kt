@@ -52,6 +52,7 @@ abstract class AbstractBuildArrayTypeTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(Directives)
 
+    @Suppress("DEPRECATION") // The test covers the deprecated type builders from the `components` package; drop it together with them.
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val targetExpression = testServices.expressionMarkerProvider

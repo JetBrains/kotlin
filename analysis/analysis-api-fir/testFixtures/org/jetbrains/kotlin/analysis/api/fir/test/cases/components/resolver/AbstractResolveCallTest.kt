@@ -28,6 +28,7 @@ internal fun AbstractResolveByElementTest.generateCallOutput(mainElement: KtElem
     ignoreStabilityIfNeeded {
         assertStableResult(testServices, attempt, secondAttempt)
         if (mainElement is KtResolvableCall) {
+            @Suppress("DEPRECATION") // The comparison with the old resolution API goes away together with it.
             val oldAttempt = mainElement.resolveToCall()?.asCallResolutionAttempt()
             // Old API collapses multi-calls into a single success/error, losing some symbols.
             // We only check that old API symbols are a subset of new API symbols.
@@ -48,6 +49,7 @@ internal fun AbstractResolveByElementTest.generateCallOutput(mainElement: KtElem
     return stringRepresentation(result)
 }
 
+@Suppress("DEPRECATION") // The old resolution API has no 1:1 replacement; drop this together with it.
 context(_: KaSession)
 private fun tryResolveCall(element: KtElement): Any? = if (element is KtResolvableCall) {
     element.tryResolveCall()
@@ -75,6 +77,7 @@ private fun Any.asCallResolutionAttempt(): KaCallResolutionAttempt = when (this)
 /**
  * The function checks that all specific implementations of [KaResolver.resolveCall] and [KaResolver.tryResolveCall] are consistent.
  */
+@Suppress("DEPRECATION") // Checks the specialized members of the deprecated `KaResolver` component; drop this together with it.
 context(session: KaSession)
 private fun assertSpecificCallResolutionApi(
     testServices: TestServices,

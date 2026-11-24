@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
@@ -10,6 +12,10 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaSymbolRelationProvider : KaSessionComponent {
@@ -21,6 +27,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *  - For class members, the containing class symbol.
      *  - For local declarations, the symbol of the containing declaration.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.containingSymbol' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.containingSymbol",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.containingSymbol",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaSymbol.containingSymbol: KaSymbol?
 
     /**
@@ -31,17 +47,47 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *  - For property members, the corresponding property.
      *  - For local declarations, the symbol of the containing declaration.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.containingDeclaration",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaSymbol.containingDeclaration: KaDeclarationSymbol?
 
     /**
      * The [KaFileSymbol] which contains this symbol, or `null` if this symbol is already a [KaFileSymbol], since it has no containing file.
      * Also `null` for Java and library declarations.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.containingFile' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.containingFile",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.containingFile",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaSymbol.containingFile: KaFileSymbol?
 
     /**
      * The [KaModule] which contains this symbol.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.containingModule' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.containingModule",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.containingModule",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaSymbol.containingModule: KaModule
 
     /**
@@ -61,6 +107,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * For `MyPredicate`, [samConstructor] is the symbol for the synthetic SAM constructor
      * that enables the `MyPredicate { ... }` lambda syntax.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.samConstructor' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.samConstructor",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.samConstructor",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
 
     /**
@@ -83,6 +139,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * @see KaNamedClassSymbol.isFun
      * @see samConstructor
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.functionalInterfaceFunction' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.functionalInterfaceFunction",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.functionalInterfaceFunction",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaClassLikeSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol?
 
@@ -101,6 +167,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *
      * For the `MyPredicate` SAM constructor symbol, [functionalInterface] is the symbol for the `MyPredicate` interface.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.functionalInterface' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.functionalInterface",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.functionalInterface",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaSamConstructorSymbol.functionalInterface: KaClassLikeSymbol
 
     /**
@@ -128,6 +204,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * @see KaClassLikeSymbol.functionalInterfaceFunction
      * @see functionalInterface
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.functionalInterfaceFunction' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.functionalInterfaceFunction",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.functionalInterfaceFunction",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaSamConstructorSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol
 
@@ -136,6 +222,17 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *
      * Currently, this property is marked as experimental because it might be joined with [fakeOverrideOriginal] in the future.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.originalConstructorIfTypeAliased'" +
+                " from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.originalConstructorIfTypeAliased",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.originalConstructorIfTypeAliased",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSymbol?
 
@@ -183,6 +280,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * @see directlyOverriddenSymbols
      * @see fakeOverrideOriginal
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.allOverriddenSymbols",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.allOverriddenSymbols",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
 
     /**
@@ -219,6 +326,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * @see allOverriddenSymbols
      * @see fakeOverrideOriginal
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.directlyOverriddenSymbols' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.directlyOverriddenSymbols",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.directlyOverriddenSymbols",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
 
     /**
@@ -226,6 +343,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *
      * The class is not considered to be a subclass of itself, so `myClass.isSubClassOf(myClass)` is always `false`.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.isSubClassOf' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isSubClassOf(superClass)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.isSubClassOf",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean
 
     /**
@@ -233,6 +360,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *
      * The class is not considered to be a direct subclass of itself, so `myClass.isDirectSubClassOf(myClass)` is always `false`.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.isDirectSubClassOf' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isDirectSubClassOf(superClass)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.isDirectSubClassOf",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean
 
     /**
@@ -261,6 +398,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *
      * @see KaSymbolOrigin.INTERSECTION_OVERRIDE
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.intersectionOverriddenSymbols' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.intersectionOverriddenSymbols",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.intersectionOverriddenSymbols",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
 
     /**
@@ -276,6 +423,10 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *
      * @see KaCallableImplementationState
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.implementationState' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassSymbol): KaCallableImplementationState?
 
@@ -304,12 +455,32 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * @see KaSymbolOrigin.SUBSTITUTION_OVERRIDE
      * @see KaSymbolOrigin.DELEGATED
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.fakeOverrideOriginal' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.fakeOverrideOriginal",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.fakeOverrideOriginal",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
 
     /**
      * Returns an `expect` symbol for the given `actual` symbol, if it is available. The function may return multiple `expect` symbols in
      * case of ambiguity errors.
      **/
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.getExpectsForActual' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.getExpectsForActual()",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.getExpectsForActual",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol>
 
@@ -323,6 +494,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *
      * @throws IllegalArgumentException if the given class is not a sealed class.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.sealedClassInheritors' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.sealedClassInheritors",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.sealedClassInheritors",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
 
     /**
@@ -351,6 +532,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *
      * These two functions `foo` and `bar` have signatures, which are conflicting on every platform.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.hasConflictingSignatureWith' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.hasConflictingSignatureWith(other, targetPlatform)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.hasConflictingSignatureWith",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaIdeApi
     public fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol, targetPlatform: TargetPlatform): Boolean
 }
@@ -365,6 +556,16 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
  *
  * @see KaSymbolRelationProvider.implementationState
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.KaCallableImplementationState' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaCallableImplementationState",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.symbols.KaCallableImplementationState",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 public sealed interface KaCallableImplementationState {

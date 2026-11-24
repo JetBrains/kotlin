@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
@@ -11,6 +13,10 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.FqName
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaExperimentalApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
@@ -21,6 +27,10 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      * This considers deprecation annotations applied to the symbol itself and, for property-related
      * symbols, deprecation annotations with appropriate use-site targets.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.deprecation' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaSymbol.deprecation: KaDeprecation?
 
@@ -29,6 +39,16 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      *
      * This is a convenience property equivalent to `deprecation != null`.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.isDeprecated' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isDeprecated",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.isDeprecated",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaSymbol.isDeprecated: Boolean
 
@@ -55,12 +75,32 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      * fun A.minus(): A = A() // canBeOperator = false, as `minus` is a binary operator and should have one parameter.
      * ```
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.canBeOperator' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.canBeOperator",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.canBeOperator",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaNamedFunctionSymbol.canBeOperator: Boolean
 
     /**
      * A set of applicable targets for an annotation class symbol, or `null` if the symbol is not an annotation class.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.applicableAnnotationTargets' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.applicableAnnotationTargets",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.applicableAnnotationTargets",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaClassSymbol.applicableAnnotationTargets: Set<KaAnnotationTarget>?
 
@@ -69,12 +109,32 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      * A property is considered `inline` when both of its accessors are `inline` or when it has the `inline` keyword.
      * The `inline` keyword on a property is syntactic sugar for marking both accessors as `inline`.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.isInline' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isInline",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.isInline",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaKotlinPropertySymbol.isInline: Boolean
 
     /**
      * A [FqName] which can be used to import the given symbol, or `null` if the symbol cannot be imported.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.importableFqName' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.importableFqName",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.importableFqName",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaIdeApi
     public val KaSymbol.importableFqName: FqName?
 
@@ -89,6 +149,16 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      * Check the [Annotation use-site targets](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets) documentation
      * for additional information.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.defaultAnnotationTargets' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.defaultAnnotationTargets",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.defaultAnnotationTargets",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaIdeApi
     @KaExperimentalApi
     public val KaSymbol.defaultAnnotationTargets: Set<KaAnnotationTarget>?
@@ -97,6 +167,10 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      * The return value status of the function (should it be used, or can it be ignored).
      * See the [KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0412-unused-return-value-checker.md) for details.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.returnValueStatus' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
 
@@ -106,6 +180,16 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      *
      * This API is only intended to be used by the TypeScript export utility.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.containingFileAnnotations' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.containingFileAnnotations",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.containingFileAnnotations",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaNonPublicApi
     public val KaDeclarationSymbol.containingFileAnnotations: KaAnnotationList?
 }
@@ -117,6 +201,16 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
  *
  * @see KaSymbolInformationProvider.deprecation
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.KaDeprecation' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaDeprecation",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.symbols.KaDeprecation",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -136,6 +230,16 @@ public interface KaDeprecation {
  * The levels form a progression from least to most restrictive: [WARNING] produces a compiler warning, [ERROR] produces a compiler
  * error, and [HIDDEN] makes the declaration invisible to new code.
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.KaDeprecationLevel' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaDeprecationLevel",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.symbols.KaDeprecationLevel",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 public class KaDeprecationLevel private constructor(public val name: String) {
@@ -176,6 +280,16 @@ public class KaDeprecationLevel private constructor(public val name: String) {
  * The return value status of the function (should it be used, or can it be ignored).
  * @see KaSymbolInformationProvider.returnValueStatus
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.KaReturnValueStatus' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaReturnValueStatus",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.symbols.KaReturnValueStatus",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 public sealed class KaReturnValueStatus(public val name: String) {

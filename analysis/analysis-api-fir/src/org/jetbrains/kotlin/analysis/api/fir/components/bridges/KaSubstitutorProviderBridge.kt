@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
@@ -22,16 +24,16 @@ internal class KaSubstitutorProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaSubstitutorProvider {
     override fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor =
-        context(analysisSession) { createSubstitutorEndpoint(mappings) }
+        createSubstitutorEndpoint(mappings, session = analysisSession)
 
     override fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor? =
-        context(analysisSession) { createInheritanceTypeSubstitutorEndpoint(subClass, superClass) }
+        createInheritanceTypeSubstitutorEndpoint(subClass, superClass, session = analysisSession)
 
     override fun createSubtypingUnificationSubstitutor(
         leftTypesToRightTypes: List<Pair<KaType, KaType>>,
         isFreeTypeParameter: (KaTypeParameterSymbol) -> Boolean,
     ): KaSubstitutor? =
-        context(analysisSession) { createSubtypingUnificationSubstitutorEndpoint(leftTypesToRightTypes, isFreeTypeParameter) }
+        createSubtypingUnificationSubstitutorEndpoint(leftTypesToRightTypes, isFreeTypeParameter, session = analysisSession)
 
     override fun createSubtypingUnificationSubstitutor(
         leftType: KaType,

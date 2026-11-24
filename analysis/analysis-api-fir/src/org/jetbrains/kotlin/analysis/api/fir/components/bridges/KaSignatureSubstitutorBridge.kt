@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.components.KaSignatureSubstitutor
@@ -22,20 +24,20 @@ internal class KaSignatureSubstitutorBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaSignatureSubstitutor {
     override fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCallableSignature<S> =
-        context(analysisSession) { substituteEndpoint(substitutor) }
+        substituteEndpoint(substitutor, session = analysisSession)
 
     override fun <S : KaFunctionSymbol> S.substitute(substitutor: KaSubstitutor): KaFunctionSignature<S> =
-        context(analysisSession) { substituteEndpoint(substitutor) }
+        substituteEndpoint(substitutor, session = analysisSession)
 
     override fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableSignature<S> =
-        context(analysisSession) { substituteEndpoint(substitutor) }
+        substituteEndpoint(substitutor, session = analysisSession)
 
     override fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S> =
-        context(analysisSession) { asSignatureEndpoint() }
+        asSignatureEndpoint(session = analysisSession)
 
     override fun <S : KaFunctionSymbol> S.asSignature(): KaFunctionSignature<S> =
-        context(analysisSession) { asSignatureEndpoint() }
+        asSignatureEndpoint(session = analysisSession)
 
     override fun <S : KaVariableSymbol> S.asSignature(): KaVariableSignature<S> =
-        context(analysisSession) { asSignatureEndpoint() }
+        asSignatureEndpoint(session = analysisSession)
 }

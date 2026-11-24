@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
@@ -13,6 +15,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaVisibilityChecker : KaSessionComponent {
@@ -24,6 +30,11 @@ public interface KaVisibilityChecker : KaSessionComponent {
      *
      * @see KaUseSiteVisibilityChecker
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.visibility.createUseSiteVisibilityChecker'" +
+                " from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun createUseSiteVisibilityChecker(
         useSiteFile: KaFileSymbol,
@@ -34,6 +45,16 @@ public interface KaVisibilityChecker : KaSessionComponent {
     /**
      * Checks whether the given [KaCallableSymbol] (possibly inherited from a superclass) is visible in the given [classSymbol].
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.visibility.isVisibleInClass' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isVisibleInClass(classSymbol)",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.visibility.isVisibleInClass",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolean
 
@@ -43,6 +64,16 @@ public interface KaVisibilityChecker : KaSessionComponent {
      * In ['Explicit API' mode](https://github.com/Kotlin/KEEP/blob/master/proposals/explicit-api-mode.md), explicit visibility modifiers
      * and explicit return types are required for such symbols.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.visibility.isPublicApi' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "symbol.isPublicApi",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.visibility.isPublicApi",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun isPublicApi(symbol: KaDeclarationSymbol): Boolean
 }
 
@@ -56,6 +87,16 @@ public interface KaVisibilityChecker : KaSessionComponent {
  * [KaUseSiteVisibilityChecker] is designed to be reused. Therefore, if you have multiple candidates to check from the same use-site position,
  * it will be more performant to reuse the same [KaUseSiteVisibilityChecker].
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.visibility.KaUseSiteVisibilityChecker' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaUseSiteVisibilityChecker",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.visibility.KaUseSiteVisibilityChecker",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)

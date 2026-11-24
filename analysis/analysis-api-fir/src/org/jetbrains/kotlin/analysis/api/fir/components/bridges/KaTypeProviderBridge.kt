@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
@@ -55,13 +57,13 @@ internal class KaTypeProviderBridge(
         }
 
     override fun KaType.approximateToDenotableSupertype(allowLocalDenotableTypes: Boolean): KaType? =
-        context(analysisSession) { approximateToDenotableSupertypeEndpoint(allowLocalDenotableTypes) }
+        approximateToDenotableSupertypeEndpoint(allowLocalDenotableTypes, session = analysisSession)
 
     override fun KaType.approximateToDenotableSubtype(): KaType? =
-        context(analysisSession) { approximateToDenotableSubtypeEndpoint() }
+        approximateToDenotableSubtypeEndpoint(session = analysisSession)
 
     override fun KaType.approximateToDenotableSupertype(position: KtElement): KaType? =
-        context(analysisSession) { approximateToDenotableSupertypeEndpoint(position) }
+        approximateToDenotableSupertypeEndpoint(position, session = analysisSession)
 
     override val KaType.augmentedByWarningLevelAnnotations: KaType
         get() = context(analysisSession) { augmentedByWarningLevelAnnotationsEndpoint }
@@ -85,16 +87,16 @@ internal class KaTypeProviderBridge(
         get() = context(analysisSession) { receiverTypeEndpoint }
 
     override fun KaType.withNullability(isMarkedNullable: Boolean): KaType =
-        context(analysisSession) { withNullabilityEndpoint(isMarkedNullable) }
+        withNullabilityEndpoint(isMarkedNullable, session = analysisSession)
 
     override fun KaType.hasCommonSubtypeWith(that: KaType): Boolean =
-        context(analysisSession) { hasCommonSubtypeWithEndpoint(that) }
+        hasCommonSubtypeWithEndpoint(that, session = analysisSession)
 
     override fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType> =
-        context(analysisSession) { directSupertypesEndpoint(shouldApproximate) }
+        directSupertypesEndpoint(shouldApproximate, session = analysisSession)
 
     override fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType> =
-        context(analysisSession) { allSupertypesEndpoint(shouldApproximate) }
+        allSupertypesEndpoint(shouldApproximate, session = analysisSession)
 
     override val KaType.arrayElementType: KaType?
         get() = context(analysisSession) { arrayElementTypeEndpoint }

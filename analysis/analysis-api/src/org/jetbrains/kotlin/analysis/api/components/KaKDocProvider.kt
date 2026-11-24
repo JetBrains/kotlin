@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
@@ -17,6 +19,10 @@ import org.jetbrains.kotlin.psi.KtNonPublicApi
  * This is part of a non-public API intended for use only by IDE and Dokka. Current implementation
  * is based on the original `findKDoc` logic from Kotlin IDE Plugin.
  */
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaNonPublicApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
@@ -57,6 +63,16 @@ public interface KaKDocProvider : KaSessionComponent {
      * - KDoc for an element can be resolved whenever we have sources for it. Including external libraries.
      * - This method only resolves KDoc for Kotlin elements. Java elements and Javadoc are not supported.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.kdoc.findKDoc' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.findKDoc()",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.kdoc.findKDoc",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaNonPublicApi
     @KtNonPublicApi
     public fun KtDeclaration.findKDoc(): KDocCommentDescriptor?
@@ -88,6 +104,16 @@ public interface KaKDocProvider : KaSessionComponent {
      *
      * @see [KaKDocProvider.findKDoc] for the implementation details.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.kdoc.findKDoc' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.findKDoc()",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.kdoc.findKDoc",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaNonPublicApi
     @KtNonPublicApi
     public fun KaDeclarationSymbol.findKDoc(): KDocCommentDescriptor?

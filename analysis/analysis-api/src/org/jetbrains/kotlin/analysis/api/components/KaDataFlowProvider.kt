@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
@@ -12,12 +14,20 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaDataFlowProvider : KaSessionComponent {
     /**
      * [Smart cast information][KaSmartCastInfo] for the given [KtExpression], or `null` if smart casts are not applied to it.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.dataflow.smartCastInfo' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     public val KtExpression.smartCastInfo: KaSmartCastInfo?
 
     /**
@@ -35,9 +45,17 @@ public interface KaDataFlowProvider : KaSessionComponent {
      * }
      * ```
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.dataflow.implicitReceiverSmartCasts' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     @KaNonPublicApi
     public val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
 
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.dataflow.computeExitPointSnapshot' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     @KaNonPublicApi
     public fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot
 }
@@ -47,6 +65,16 @@ public interface KaDataFlowProvider : KaSessionComponent {
  *
  * Represents smart cast information for an expression.
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.dataflow.KaSmartCastInfo' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaSmartCastInfo",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.dataflow.KaSmartCastInfo",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSmartCastInfo : org.jetbrains.kotlin.analysis.api.dataflow.KaSmartCastInfo {
@@ -74,6 +102,16 @@ public interface KaSmartCastInfo : org.jetbrains.kotlin.analysis.api.dataflow.Ka
  * Represents type information about an implicit receiver which has been smart-cast to a more specific type. An implicit smart cast is
  * applied to an implicit receiver, such as `substring()` called on an implicit `this` given an earlier smart cast `this is String`.
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.dataflow.KaImplicitReceiverSmartCast' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaImplicitReceiverSmartCast",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.dataflow.KaImplicitReceiverSmartCast",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaNonPublicApi
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -94,6 +132,16 @@ public interface KaImplicitReceiverSmartCast : KaLifetimeOwner {
  *
  * Represents the kind of implicit receiver affected by the smart cast.
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.dataflow.KaImplicitReceiverSmartCastKind' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaImplicitReceiverSmartCastKind",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.dataflow.KaImplicitReceiverSmartCastKind",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaNonPublicApi
 public enum class KaImplicitReceiverSmartCastKind {
@@ -111,6 +159,16 @@ public enum class KaImplicitReceiverSmartCastKind {
 /**
  * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot] instead.**
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaDataFlowExitPointSnapshot",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaNonPublicApi
 public class KaDataFlowExitPointSnapshot(
