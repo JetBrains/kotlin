@@ -68,6 +68,13 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
         private val Empty = ArrayList<Nothing>(0).also { it.isReadOnly = true }
     }
 
+    companion {
+        internal fun <E> fromCollectionFast(elements: Collection<E>): ArrayList<E> =
+            ArrayList<E>(elements.size).apply {
+                addAll(elements)
+            }
+    }
+
     /**
      * Creates a new empty [ArrayList].
      */
