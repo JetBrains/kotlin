@@ -39,7 +39,7 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
     protected constructor() : super()
     protected constructor(other: BuildOperationImpl<R>) {
         metricsCollector = other.metricsCollector
-        kgpMetricsCollector = other.kgpMetricsCollector
+        performKgpMetricsCollection = other.performKgpMetricsCollection
         kgpMetricsCollectorOut = other.kgpMetricsCollectorOut
         enableClassloaderCache = other.enableClassloaderCache
     }
@@ -58,9 +58,12 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
 
     private var hasMetricsCollector = false
 
-    internal var kgpMetricsCollector: Boolean = false
+    internal var performKgpMetricsCollection: Boolean = false
 
     internal var kgpMetricsCollectorOut: ByteArray? = null
+
+    @Transient
+    protected var kgpMetricsCollectorReporter: MessageReportingKgpMetricsReporter? = null
 
     internal var enableClassloaderCache: Boolean = false
 
@@ -75,11 +78,17 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
 
     override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> = buildList {
         metricsCollector?.let { add(MetricsCollectorVisitor(it)) }
+        if (performKgpMetricsCollection) {
+            add(KgpMetricsCollectionVisitor())
+        }
     }
 
     override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
         if (hasMetricsCollector) {
             metricsCollector = MessageReportingMetricsCollector(messageReporter)
+        }
+        if (performKgpMetricsCollection) {
+            kgpMetricsCollectorReporter = MessageReportingKgpMetricsReporter(messageReporter)
         }
     }
 
@@ -87,7 +96,7 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
     @UseFromImplModuleRestricted
     override fun <V> get(key: BuildOperation.Option<V>): V = when (key.id) {
         "METRICS_COLLECTOR" -> metricsCollector
-        "XX_KGP_METRICS_COLLECTOR" -> kgpMetricsCollector
+        "XX_KGP_METRICS_COLLECTOR" -> performKgpMetricsCollection
         "XX_KGP_METRICS_COLLECTOR_OUT" -> kgpMetricsCollectorOut
         "ENABLE_CLASSLOADER_CACHE" -> enableClassloaderCache
         else -> throwPropertyNotFound(key.id)
@@ -98,7 +107,7 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
         checkOptionIsAvailableForVersion(key)
         when (key.id) {
             "METRICS_COLLECTOR" -> metricsCollector = value.cast()
-            "XX_KGP_METRICS_COLLECTOR" -> kgpMetricsCollector = value.cast()
+            "XX_KGP_METRICS_COLLECTOR" -> performKgpMetricsCollection = value.cast()
             "XX_KGP_METRICS_COLLECTOR_OUT" -> kgpMetricsCollectorOut = value.cast()
             "ENABLE_CLASSLOADER_CACHE" -> enableClassloaderCache = value.cast()
             else -> throwPropertyNotFound(key.id)
@@ -166,6 +175,7 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
                 if (callResult is CompileService.CallResult.Error) {
                     callResult.cause?.let { throw it }
                 }
+                this.kgpMetricsCollectorOut = operationCopy.kgpMetricsCollectorOut
                 callResult.get()
             } finally {
                 val memoryUsageAfterBuild =
@@ -203,6 +213,25 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
         logger: KotlinLogger,
         messageCollector: MessageCollectorWithDiagnosticId
     ): CompilerServicesFacadeBase? = null
+
+
+    private inner class KgpMetricsCollectionVisitor : MessageVisitor {
+        override fun accept(message: Message): Boolean = when (message) {
+            is Message.PopulateKgpMetricsMessage -> {
+                kgpMetricsCollectorOut = message.metricsData
+                true
+            }
+            else -> false
+        }
+    }
+
+    protected class MessageReportingKgpMetricsReporter(private val messageReporter: (Message) -> Unit) {
+        fun populateMetrics(metricsData: ByteArray) {
+            messageReporter(
+                Message.PopulateKgpMetricsMessage(metricsData)
+            )
+        }
+    }
 }
 
 private class DoNothingMessageCollector : MessageCollectorWithDiagnosticId {

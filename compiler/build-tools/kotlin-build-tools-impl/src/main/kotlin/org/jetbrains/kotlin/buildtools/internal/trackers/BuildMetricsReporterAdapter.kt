@@ -96,7 +96,7 @@ private fun ValueType.toMetricsReporterType(): BuildMetricsCollector.ValueType {
 }
 
 internal fun BuildOperationImpl<*>.getMetricsReporter(): BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> =
-    metricsCollector?.let { BuildMetricsReporterAdapter(it) } ?: if (kgpMetricsCollector) {
+    metricsCollector?.let { BuildMetricsReporterAdapter(it) } ?: if (performKgpMetricsCollection) {
         BuildMetricsReporterImpl()
     } else {
         DoNothingBuildMetricsReporter

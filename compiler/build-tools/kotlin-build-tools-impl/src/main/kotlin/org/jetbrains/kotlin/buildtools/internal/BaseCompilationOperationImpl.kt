@@ -260,9 +260,9 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         val requestedCompilationResults = listOfNotNull(
             CompilationResultCategory.IC_COMPILE_ITERATION.code,
-            CompilationResultCategory.BUILD_METRICS.code.takeIf { metricsCollector != null || kgpMetricsCollector },
+            CompilationResultCategory.BUILD_METRICS.code.takeIf { metricsCollector != null || performKgpMetricsCollection },
             // Daemon would report log lines only if debug logging is enabled or metrics are requested
-            CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code.takeIf { metricsCollector != null || kgpMetricsCollector || isDebugLoggingEnabled },
+            CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code.takeIf { metricsCollector != null || performKgpMetricsCollection || isDebugLoggingEnabled },
             CompilationResultCategory.IC_EVENT.code.takeIf { icEventCollector != null },
         ).toTypedArray()
 
@@ -343,10 +343,12 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         BaseCompilerServicesWithResultsFacade(messageCollector, lookupTracker)
 
     protected fun populateMetricsCollector(metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>) {
-        if (kgpMetricsCollector && metricsReporter is BuildMetricsReporterImpl) {
+        if (performKgpMetricsCollection && metricsReporter is BuildMetricsReporterImpl) {
             kgpMetricsCollectorOut = ByteArrayOutputStream().apply {
                 ObjectOutputStream(this).writeObject(metricsReporter)
-            }.toByteArray()
+            }.toByteArray().also {
+                kgpMetricsCollectorReporter?.populateMetrics(it)
+            }
         }
     }
 
