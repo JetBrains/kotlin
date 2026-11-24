@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
+import org.jetbrains.kotlin.fir.java.enhancement.isInSecondRoundOfTypeParameterBoundsEnhancement
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.toFirJavaTypeRef
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -129,19 +130,40 @@ class FirJavaTypeParameter(
     override val isReified: Boolean
         get() = false
 
+    /**
+     * The bounds of this type parameter.
+     *
+     * For a type parameter of a [FirJavaClass], the getter enhances the bounds of all the class type parameters
+     * (see [FirJavaClass.enhanceTypeParameterBounds]) unless these bounds are already final.
+     * The enhancement resolves Java types and may load and enhance other classes, so the getter may be reentered.
+     * - The final bounds are returned, except on a thread that runs the second round of the enhancement for the class
+     *   ([isInSecondRoundOfTypeParameterBoundsEnhancement]). Other threads never get non-final bounds:
+     *   they run the missing rounds themselves.
+     * - On a thread that runs the second round, the bounds after the first round are returned unless they are already final:
+     *   raw types in them are approximated with star projections, and their nullability isn't enhanced.
+     *   This holds for any read on that thread, e.g., from the enhancement of another class during this round,
+     *   so the final bounds of that class depend on the order in which the classes are enhanced.
+     * - The initial bounds, which may be unresolved [org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef]s, are never returned:
+     *   the getter throws instead, which isn't expected to happen.
+     *
+     * For a type parameter of a Java method or constructor, the getter doesn't run the enhancement:
+     * [org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement] enhances the bounds before it builds the enhanced
+     * function, which gets copies of the type parameters with the final bounds. Until then, the getter returns the first-round
+     * bounds or even the initial ones (e.g., for `JavaOverrideChecker`).
+     */
     override val bounds: List<FirTypeRef>
         get() {
-            run {
-                val initialState = boundsEnhancementState
-                initialState.enhancedBounds?.let { return it }
+            val initialState = boundsEnhancementState
+            if (initialState is BoundsEnhancementState.Completed) {
+                return initialState.enhancedBounds
+            }
 
-                if (containingDeclarationSymbol !is FirClassSymbol) {
-                    // It's possible to get here for FirJavaMethod via JavaOverrideChecker
-                    // Stack trace: (JavaOverrideChecker).isOverriddenFunction -> hasSameValueParameterTypes ->
-                    // buildTypeParametersSubstitutorIfCompatible -> buildErasure
-                    // For JavaOverrideChecker it's possible to work with not-yet-enhanced bounds
-                    return initialState.bounds
-                }
+            if (containingDeclarationSymbol !is FirClassSymbol) {
+                // It's possible to get here for FirJavaMethod via JavaOverrideChecker
+                // Stack trace: (JavaOverrideChecker).isOverriddenFunction -> hasSameValueParameterTypes ->
+                // buildTypeParametersSubstitutorIfCompatible -> buildErasure
+                // For JavaOverrideChecker it's possible to work with not-yet-enhanced bounds
+                return initialState.enhancedBounds ?: initialState.bounds
             }
 
             val firJavaClass = containingDeclarationSymbol.fir
@@ -152,17 +174,23 @@ class FirJavaTypeParameter(
                 withFirEntry("class", firJavaClass)
             }
 
-            // Explicitly call type parameters which will trigger enhancement
-            firJavaClass.typeParameters
-
-            // Second attempt after enhancement
-            val currentState = boundsEnhancementState
-            currentState.enhancedBounds?.let { return it }
+            if (firJavaClass.isInSecondRoundOfTypeParameterBoundsEnhancement()) {
+                // The second round on this thread reads the first-round bounds
+                initialState.enhancedBounds?.let { return it }
+            } else {
+                // Another thread may be enhancing the bounds as well, so its first-round bounds are not returned
+                firJavaClass.enhanceTypeParameterBounds()
+                val currentState = boundsEnhancementState
+                if (currentState is BoundsEnhancementState.Completed) {
+                    return currentState.enhancedBounds
+                }
+            }
 
             errorWithAttachment(
-                "Attempt to access Java type parameter bounds before their enhancement! (state: ${currentState::class.simpleName})"
+                "Attempt to access Java type parameter bounds before their enhancement! (state: ${boundsEnhancementState::class.simpleName})"
             ) {
-                withFirEntry("class", firJavaClass)
+                // Rendering the class would read these bounds again
+                withEntry("class", firJavaClass.symbol.classId.asString())
                 withEntry("name", name.asString())
             }
         }

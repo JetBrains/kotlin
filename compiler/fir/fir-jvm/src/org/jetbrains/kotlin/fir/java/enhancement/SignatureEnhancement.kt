@@ -25,11 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.DeclarationGenerationContext
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -49,13 +45,11 @@ import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.deferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -77,10 +71,11 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import java.util.EnumMap
+import java.util.*
 
 class FirSignatureEnhancement(
     private val owner: FirJavaClass,
@@ -645,32 +640,41 @@ class FirSignatureEnhancement(
         lock: (() -> Unit) -> Unit,
     ) {
         if (typeParameters.isEmpty()) return
-        val fakeSource = owner.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
-        val newBoundsSuccessfullyPublished = enhanceTypeParameterBoundsFirstRound(typeParameters, fakeSource, lock)
-        if (!newBoundsSuccessfullyPublished) {
+        if (owner in ownersInSecondRoundOfBoundsEnhancement) {
+            // The second round on this thread reads the first-round bounds of the same type parameters
             return
         }
 
-        enhanceTypeParameterBoundsSecondRound(typeParameters, fakeSource, lock)
+        // A reentrant call during the first round runs both rounds itself, and this call finds them published
+        val fakeSource = owner.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+        enhanceTypeParameterBoundsFirstRound(typeParameters, fakeSource, lock)
+
+        ownersInSecondRoundOfBoundsEnhancement.withOwner(owner) {
+            enhanceTypeParameterBoundsSecondRound(typeParameters, fakeSource, lock)
+        }
     }
 
+    /**
+     * Computes the [round] outside the [lock] and publishes it under the [lock], unless another thread has published it.
+     *
+     * A thread that finds the round already published still takes the [lock],
+     * so it doesn't continue while the other thread has published only a part of the type parameters.
+     */
     private inline fun enhanceTypeParameterBounds(
         typeParameters: List<FirTypeParameterRef>,
         source: KtSourceElement?,
         round: List<FirTypeParameterRef>.(KtSourceElement?) -> List<MutableList<FirResolvedTypeRef>>?,
         crossinline updater: FirJavaTypeParameter.(List<FirResolvedTypeRef>) -> Boolean,
         lock: (() -> Unit) -> Unit,
-    ): Boolean {
-        val enhancedBounds = typeParameters.round(source) ?: return false
-
-        var succeed = true
+    ) {
+        val enhancedBounds = typeParameters.round(source)
         lock {
-            succeed = typeParameters.iterateJavaTypeParameters { typeParameter, currentIndex ->
-                typeParameter.updater(enhancedBounds[currentIndex])
+            if (enhancedBounds != null) {
+                typeParameters.iterateJavaTypeParameters { typeParameter, currentIndex ->
+                    typeParameter.updater(enhancedBounds[currentIndex])
+                }
             }
         }
-
-        return succeed
     }
 
     private inline fun List<FirTypeParameterRef>.iterateJavaTypeParameters(
@@ -771,22 +775,22 @@ class FirSignatureEnhancement(
      * we would need upper bounds of all the type parameters that might not yet be initialized at the moment.
      *
      * See the usages of [FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND]
-     *
-     * @return **true** if new bounds were successfully published
      */
     private fun enhanceTypeParameterBoundsFirstRound(
         typeParameters: List<FirTypeParameterRef>,
         source: KtSourceElement?,
         lock: (() -> Unit) -> Unit,
-    ): Boolean = enhanceTypeParameterBounds(
-        typeParameters,
-        source,
-        { source: KtSourceElement? ->
-            performRoundOfBoundsResolution(this, source, FirJavaTypeParameter::performFirstRoundOfBoundsResolution)
-        },
-        FirJavaTypeParameter::storeBoundsAfterFirstRound,
-        lock,
-    )
+    ) {
+        enhanceTypeParameterBounds(
+            typeParameters,
+            source,
+            { source: KtSourceElement? ->
+                performRoundOfBoundsResolution(this, source, FirJavaTypeParameter::performFirstRoundOfBoundsResolution)
+            },
+            FirJavaTypeParameter::storeBoundsAfterFirstRound,
+            lock,
+        )
+    }
 
     private inline fun List<FirTypeParameterRef>.replaceEnhancedBounds(
         secondRoundBounds: List<MutableList<FirResolvedTypeRef>>,
@@ -1325,3 +1329,39 @@ class FirEnhancedSymbolsStorage(private val cachesFactory: FirCachesFactory) : F
 }
 
 private val FirSession.enhancedSymbolStorage: FirEnhancedSymbolsStorage by FirSession.sessionComponentAccessor()
+
+/**
+ * A per-thread stack of owners.
+ */
+private class ThreadLocalOwnerStack {
+    private val owners: ThreadLocal<MutableList<FirTypeParameterRefsOwner>> = ThreadLocal.withInitial { SmartList() }
+
+    /**
+     * Whether the current thread has [owner] on its stack.
+     */
+    operator fun contains(owner: FirTypeParameterRefsOwner): Boolean = owners.get().any { it === owner }
+
+    /**
+     * Runs [action] with [owner] on the current thread's stack.
+     */
+    inline fun <R> withOwner(owner: FirTypeParameterRefsOwner, action: () -> R): R {
+        val currentOwners = owners.get()
+        currentOwners += owner
+        return try {
+            action()
+        } finally {
+            currentOwners.removeAt(currentOwners.lastIndex)
+        }
+    }
+}
+
+/**
+ * Owners whose type parameter bounds the current thread is enhancing in the second round.
+ */
+private val ownersInSecondRoundOfBoundsEnhancement = ThreadLocalOwnerStack()
+
+/**
+ * Whether the current thread is enhancing the bounds of this owner's type parameters in the second round.
+ */
+internal fun FirTypeParameterRefsOwner.isInSecondRoundOfTypeParameterBoundsEnhancement(): Boolean =
+    this in ownersInSecondRoundOfBoundsEnhancement
