@@ -1,6 +1,7 @@
 import KotlinRuntime
 import ListExport
 import ListExportObjC
+import KotlinStdlib
 import Testing
 import KotlinRuntimeSupport
 
@@ -288,4 +289,12 @@ func testMutableListSetSubSequence() throws {
     let list = listOf(elements: Int32(9), 6, 2, 7, 3)
     mutableList[2..<5] = list[1..<4]
     try assertEquals(actual: mutableList, expected: listOf(elements: Int32(4), 8, 6, 2, 7, 42))
+}
+
+@Test
+func testListOfFromStdlib() throws {
+    let list = ExportedKotlinPackages.kotlin.collections.listOf(elements: Int32(3), Int32(2), Int32(1))
+    try #require((list[0] as? Int32) == 3)
+    try #require((list[1] as? Int32) == 2)
+    try #require((list[2] as? Int32) == 1)
 }
