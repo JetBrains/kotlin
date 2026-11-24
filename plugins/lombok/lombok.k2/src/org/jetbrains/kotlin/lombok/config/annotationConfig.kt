@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.lombok.config
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
 import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
@@ -79,10 +80,12 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.LEVEL
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.MAKE_FINAL
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.TO_STRING_DO_NOT_USE_GETTERS_CONFIG
 import org.jetbrains.kotlin.lombok.generators.containsExplicitConstructor
+import org.jetbrains.kotlin.lombok.generators.equalWhenResolved
 import org.jetbrains.kotlin.lombok.generators.primaryConstructorParameters
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /*
@@ -265,6 +268,15 @@ object ConeLombokAnnotations {
         val staticName: String?
 
         fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable>
+
+        fun hidesExplicitConstructor(session: FirSession, classSymbol: FirClassSymbol<*>, constructor: FirConstructor): Boolean {
+            if (staticName == null) return false
+            val variables = getVariablesForParameters(classSymbol)
+            if (variables.size != constructor.valueParameters.size) return false
+            return variables.zip(constructor.valueParameters).all { [first, second] ->
+                first.returnTypeRef.equalWhenResolved(session, second.returnTypeRef)
+            }
+        }
 
         fun generatesPlainNoArgsConstructor(classSymbol: FirClassSymbol<*>): Boolean {
             return staticName == null && getVariablesForParameters(classSymbol).isEmpty()
