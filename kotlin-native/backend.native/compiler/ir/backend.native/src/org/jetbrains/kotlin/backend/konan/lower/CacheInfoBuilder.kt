@@ -53,6 +53,7 @@ private fun IrFunction.isInlineFunctionExportedFromCompilerCache(moduleDeseriali
  * Cache information built before the lowerings are run:
  * * `klibHash`
  * * `inlineFunctionBodies`
+ * * `trivialGetters`
  *
  * Consider using [PostLoweringsCacheInfoBuilder] instead: lowerings are allowed to modify IR, collecting info after lowerings is safer.
  *
@@ -80,6 +81,28 @@ internal class PreLoweringsCacheInfoBuilder(
                         val inlineFunctionSerializer = InlineFunctionSerializer(moduleDeserializer)
                         generationState.inlineFunctionBodies.add(inlineFunctionSerializer.buildInlineFunctionReference(declaration))
                         trackCallees(declaration)
+                    }
+                }
+
+                override fun visitProperty(declaration: IrProperty) {
+                    declaration.acceptChildrenVoid(this)
+
+                    // Record trivial getters of val properties so dependent compilations can rely on this fact
+                    // without re-inspecting our IR (which may be bodiless for cached dependencies).
+                    if (!declaration.isVar) {
+                        val getter = declaration.getter
+                        if (getter != null
+                                && !getter.isFakeOverride
+                                && getter.isExportedFromCompilerCache(moduleDeserializer)
+                                && getter.isTrivialGetter
+                        ) {
+                            val signature = getter.symbol.signature
+                            if (signature != null) {
+                                generationState.trivialGetters.add(
+                                        SerializedTrivialGetter(SerializedFileReference(irFile), signature)
+                                )
+                            }
+                        }
                     }
                 }
             })
@@ -158,7 +181,6 @@ internal class PreLoweringsCacheInfoBuilder(
 /**
  * Cache information built after the lowerings are run:
  * * `classFields` (class layout)
- * * `trivialGetters`
  * * `eagerInitializedFiles`
  *
  * @see PreLoweringsCacheInfoBuilder
@@ -195,24 +217,6 @@ internal class PostLoweringsCacheInfoBuilder(
                             && declaration.hasAnnotation(KonanFqNames.eagerInitialization)
                     ) {
                         hasEagerlyInitializedProperties = true
-                    }
-
-                    // Record trivial getters of val properties so dependent compilations can rely on this fact
-                    // without re-inspecting our IR (which may be bodiless for cached dependencies).
-                    if (!declaration.isVar) {
-                        val getter = declaration.getter
-                        if (getter != null
-                                && !getter.isFakeOverride
-                                && getter.isExportedFromCompilerCache(moduleDeserializer)
-                                && getter.isTrivialGetter
-                        ) {
-                            val signature = getter.symbol.signature
-                            if (signature != null) {
-                                generationState.trivialGetters.add(
-                                        SerializedTrivialGetter(SerializedFileReference(irFile), signature)
-                                )
-                            }
-                        }
                     }
                 }
             })
