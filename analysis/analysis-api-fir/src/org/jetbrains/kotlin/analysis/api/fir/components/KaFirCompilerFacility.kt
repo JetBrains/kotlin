@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.kotlin.KtPsiSourceFile
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analysis.api.compilation.KaCodeCompilationException
 import org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptions
 import org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptionsBuilder
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmEvaluatorData
 import org.jetbrains.kotlin.codegen.state.CompiledCodeProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.*
@@ -258,18 +256,11 @@ internal class KaFirCompilerFacility(
 
             val lambda = it.expr as? FirAnonymousFunctionExpression ?: return@forEach
 
-            val context = object : DiagnosticContext {
-                override val containingFile: KtSourceFile?
-                    get() = lambda.psi?.containingFile?.let(::KtPsiSourceFile)
-
-                override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic) = false
-
-                override val languageVersionSettings: LanguageVersionSettings
-                    get() = analysisSession.firSession.languageVersionSettings
-
-                override val parseTreeKind: ParseTreeKind
-                    get() = PsiParseTreeKind
-            }
+            val context = NonSuppressingDiagnosticContext(
+                containingFile = lambda.psi?.containingFile?.let(::KtPsiSourceFile),
+                languageVersionSettings = analysisSession.firSession.languageVersionSettings,
+                parseTreeKind = PsiParseTreeKind,
+            )
 
             lambda.accept(object : FirDefaultVisitorVoid() {
 

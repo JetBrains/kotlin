@@ -65,16 +65,11 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
     }
 
     override fun report(factory: KtSourcelessDiagnosticFactory, message: String, location: CompilerMessageSourceLocation?) {
-        val context = object : DiagnosticContext {
-            override val containingFile: KtSourceFile?
-                get() = null
-
-            override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
-            override val languageVersionSettings: LanguageVersionSettings
-                get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
-            override val parseTreeKind: ParseTreeKind
-                get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.parseTreeKind
-        }
+        val context = NonSuppressingDiagnosticContext(
+            containingFile = null,
+            languageVersionSettings = languageVersionSettings,
+            parseTreeKind = parseTreeKind,
+        )
         val diagnostic = factory.create(message, location, context) ?: return
         report(diagnostic, context)
     }

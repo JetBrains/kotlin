@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithoutSource
-import org.jetbrains.kotlin.diagnostics.ParseTreeKind
-import org.jetbrains.kotlin.diagnostics.PositioningStrategy
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
+import org.jetbrains.kotlin.diagnostics.NoParseTreeKind
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.*
@@ -54,7 +52,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -75,7 +72,7 @@ class IrValidatorTest {
         irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             diagnosticReporter,
             LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE),
-            NoParseTreeKind,
+            NoParseTreeKind, // The IR in this test has no source elements, so it isn't linked to a parse tree
         )
 
         val moduleDescriptor = ModuleDescriptorImpl(
@@ -3536,12 +3533,4 @@ class IrValidatorTest {
             config = IrValidatorConfig().withCheckers(IrAnnotationUsageChecker),
         )
     }
-}
-
-private object NoParseTreeKind : ParseTreeKind() {
-    private const val REASON = "The IR in this test has no source elements, so it isn't linked to a parse tree"
-
-    override val isPsi: Boolean get() = shouldNotBeCalled(REASON)
-    override val isKmp: Boolean get() = shouldNotBeCalled(REASON)
-    override val SourceElementPositioningStrategy.positioningStrategy: PositioningStrategy get() = shouldNotBeCalled(REASON)
 }

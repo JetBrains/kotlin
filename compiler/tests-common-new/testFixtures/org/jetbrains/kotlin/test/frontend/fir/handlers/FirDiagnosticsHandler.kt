@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifa
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
@@ -209,7 +210,11 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         val consumer = DebugDiagnosticConsumer(
             result,
             diagnosedRangesToDiagnosticNames,
-            SimpleDiagnosticContext(firFile.moduleData.session.syntaxComponent.parseTreeKind),
+            NonSuppressingDiagnosticContext(
+                containingFile = null,
+                languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+                parseTreeKind = firFile.moduleData.session.syntaxComponent.parseTreeKind,
+            ),
         )
         val shouldRenderDynamic = DiagnosticsDirectives.MARK_DYNAMIC_CALLS in module.directives
 
@@ -781,7 +786,12 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         }
     }
 
-    private val psiDiagnosticContext = SimpleDiagnosticContext(PsiParseTreeKind)
+    // syntax errors can't be suppressed anyway
+    private val psiDiagnosticContext = NonSuppressingDiagnosticContext(
+        containingFile = null,
+        languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        parseTreeKind = PsiParseTreeKind,
+    )
 
     protected fun collectSyntaxDiagnostics(
         part: FirOutputPartForDependsOnModule,
@@ -795,7 +805,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                         KtRealPsiSourceElement(it),
                         it.errorDescription,
                         positioningStrategy = null,
-                        psiDiagnosticContext, // syntax errors can't be suppressed anyway
+                        psiDiagnosticContext,
                     )!!
                 }
             } else {

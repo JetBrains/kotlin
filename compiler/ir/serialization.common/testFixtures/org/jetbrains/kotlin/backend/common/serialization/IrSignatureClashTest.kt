@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.ParseTreeKind
-import org.jetbrains.kotlin.diagnostics.PositioningStrategy
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
+import org.jetbrains.kotlin.diagnostics.NoParseTreeKind
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.TestIrBuiltins
@@ -34,7 +32,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -278,7 +275,7 @@ abstract class IrSignatureClashTest {
         return KtDiagnosticReporterWithImplicitIrBasedContext(
             diagnosticReporter,
             LanguageVersionSettingsImpl.DEFAULT,
-            NoParseTreeKind,
+            NoParseTreeKind, // The IR in this test has no source elements, so it isn't linked to a parse tree
         )
     }
 
@@ -293,12 +290,4 @@ abstract class IrSignatureClashTest {
         globalDeclarationTable.clashDetector.reportErrorsTo(irDiagnosticReporter)
         assert(irDiagnosticReporter.hasErrors)
     }
-}
-
-private object NoParseTreeKind : ParseTreeKind() {
-    private const val REASON = "The IR in this test has no source elements, so it isn't linked to a parse tree"
-
-    override val isPsi: Boolean get() = shouldNotBeCalled(REASON)
-    override val isKmp: Boolean get() = shouldNotBeCalled(REASON)
-    override val SourceElementPositioningStrategy.positioningStrategy: PositioningStrategy get() = shouldNotBeCalled(REASON)
 }

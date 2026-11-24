@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli
 
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
@@ -13,34 +12,25 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.reportLog as reportLogAlias
-import org.jetbrains.kotlin.diagnostics.DiagnosticContext
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
-import org.jetbrains.kotlin.diagnostics.ParseTreeKind
+import org.jetbrains.kotlin.diagnostics.NoParseTreeKind
+import org.jetbrains.kotlin.diagnostics.NonSuppressingDiagnosticContext
 import org.jetbrains.kotlin.diagnostics.report
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.config.reportLog as reportLogAlias
 
 fun CompilerConfiguration.report(
     factory: KtSourcelessDiagnosticFactory,
     message: String,
     location: CompilerMessageSourceLocation? = null,
 ) {
-    val context = object : DiagnosticContext {
-        override val languageVersionSettings: LanguageVersionSettings
-            get() = this@report.languageVersionSettings
-
-        override val parseTreeKind: ParseTreeKind
-            get() = shouldNotBeCalled("Only sourceless diagnostics are reported, so they aren't linked to a parse tree")
-
-        override val containingFile: KtSourceFile? get() = null
-
-        override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
-    }
+    val context = NonSuppressingDiagnosticContext(
+        containingFile = null,
+        languageVersionSettings = languageVersionSettings,
+        parseTreeKind = NoParseTreeKind, // CLI diagnostics aren't linked to a parse tree
+    )
 
     context(context) {
         diagnosticsCollector.report(factory, message, location)
