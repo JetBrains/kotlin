@@ -146,10 +146,10 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
     )
 
     private class UnsubstitutedTypeWithOrigin(val type: ConeKotlinType, val origin: DataClassExpansion?) {
-        // Replaces a type parameter of the origin data class with its type argument
+        // Replaces a type parameter of the origin data class with its type argument, also for definitely non-null types such as `T & Any`
         fun resolve(): UnsubstitutedTypeWithOrigin {
-            val typeParameter = (type as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol ?: return this
-            return origin?.typeArguments?.get(typeParameter)?.resolve() ?: this
+            val typeParameterType = type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeParameterType ?: return this
+            return origin?.typeArguments?.get(typeParameterType.lookupTag.typeParameterSymbol)?.resolve() ?: this
         }
     }
 

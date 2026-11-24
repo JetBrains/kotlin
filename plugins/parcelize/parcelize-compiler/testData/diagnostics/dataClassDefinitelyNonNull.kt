@@ -1,5 +1,5 @@
 // https://issuetracker.google.com/TODO
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 @file:OptIn(kotlinx.parcelize.Experimental::class)
 
@@ -10,4 +10,4 @@ import kotlinx.parcelize.Parcelize
 data class NonNullBox<T>(val x: T & Any)
 
 @Parcelize
-class P(val b: <!PARCELABLE_RECURSIVE_DATA_CLASS_NOT_SUPPORTED!>@DataClass NonNullBox<NonNullBox<Int>><!>) : Parcelable
+class P(val b: @DataClass NonNullBox<NonNullBox<Int>>) : Parcelable
