@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.analysis.api.fir.contracts.description.KaFirContract
 import org.jetbrains.kotlin.analysis.api.fir.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -159,14 +161,14 @@ private class ConeContractDescriptionElementToAnalysisApi(
     private fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference): KaContractParameterValue {
         val parameterSymbol = when (val index = valueParameterReference.parameterIndex) {
             -1 -> firFunctionSymbol.receiverParameter
-                ?: with(firFunctionSymbol.analysisSession) {
+                ?: context(firFunctionSymbol.analysisSession) {
                     val containingClass = firFunctionSymbol.containingDeclaration
                     requireWithAttachment(containingClass is KaClassSymbol, { "Unexpected containing class" }) {
                         if (containingClass != null) {
-                            withSymbolAttachment("containingDeclaration", this@with, containingClass)
+                            withSymbolAttachment("containingDeclaration", useSiteSession, containingClass)
                         }
 
-                        withSymbolAttachment("functionSymbol", this@with, firFunctionSymbol)
+                        withSymbolAttachment("functionSymbol", useSiteSession, firFunctionSymbol)
                     }
 
                     return KaFirContractOwnerParameterValue(containingClass)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,11 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.types.typeCreation.KaFirTypeCreator
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeCreatorProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
-import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaFunctionTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeCreator
@@ -32,7 +28,7 @@ internal class KaFirTypeCreatorProvider(
 
     @KaExperimentalApi
     override fun <T : KaClassType> copy(type: T, init: KaClassTypeBuilder.() -> Unit): KaClassType = withValidityAssertion {
-        with(analysisSession) {
+        context(analysisSession) {
             val sourceSymbol = type.symbol
             val sourceIsMarkedNullable = type.isMarkedNullable
             val sourceAnnotationClassIds = type.annotations.classIds.toList()
@@ -57,7 +53,7 @@ internal class KaFirTypeCreatorProvider(
 
     @KaExperimentalApi
     override fun copy(type: KaFunctionType, init: KaFunctionTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        with(analysisSession) {
+        context(analysisSession) {
             val sourceIsMarkedNullable = type.isMarkedNullable
             val sourceIsSuspend = type.isSuspend
             val sourceIsReflectType = type.isReflectType
@@ -87,7 +83,7 @@ internal class KaFirTypeCreatorProvider(
 
     @KaExperimentalApi
     override fun copy(type: KaTypeParameterType, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType = withValidityAssertion {
-        with(analysisSession) {
+        context(analysisSession) {
             val sourceSymbol = type.symbol
             val sourceIsMarkedNullable = type.isMarkedNullable
             val sourceAnnotationClassIds = type.annotations.classIds.toList()

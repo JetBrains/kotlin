@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.types
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.builtinTypes
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -20,7 +21,7 @@ abstract class AbstractBuiltInTypeTest : AbstractTypeTest() {
         get() = super.additionalDirectives + listOf(Directives)
 
     override fun getType(analysisSession: KaSession, ktFile: KtFile, module: KtTestModule, testServices: TestServices): KaType {
-        with(analysisSession) {
+        context(analysisSession) {
             val builtInTypeName = module.testModule.directives.singleValue(Directives.BUILTIN_TYPE_NAME)
             val typeMethod = builtinTypes::class.java.methods.singleOrNull {
                 it.name == "get" + builtInTypeName.capitalizeAsciiOnly()

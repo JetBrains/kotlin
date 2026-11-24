@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
+import org.jetbrains.kotlin.analysis.api.components.scopeContext
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
@@ -194,7 +195,7 @@ private class KaFirUseSiteVisibilityChecker(
             return false
         }
 
-        with(analysisSession) {
+        context(analysisSession) {
             val containingSymbol = candidateSymbol.containingSymbol as? KaClassSymbol ?: return false
             if (containingSymbol.classKind != KaClassKind.INTERFACE) return false
 

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.services.TestServices
  */
 abstract class AbstractAbbreviatedTypeTest : AbstractTypeTest() {
     override fun getType(analysisSession: KaSession, ktFile: KtFile, module: KtTestModule, testServices: TestServices): KaType {
-        val callableSymbol = with(analysisSession) {
+        val callableSymbol = context(analysisSession) {
             getSingleTestTargetSymbolOfType<KaCallableSymbol>(testDataPath, ktFile)
         }
         return callableSymbol.returnType

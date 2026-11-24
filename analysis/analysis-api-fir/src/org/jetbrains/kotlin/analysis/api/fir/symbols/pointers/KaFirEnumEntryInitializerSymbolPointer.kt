@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirEnumEntryInitializerSy
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 
 internal class KaFirEnumEntryInitializerSymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaFirEnumEntrySymbol>,
@@ -20,7 +21,7 @@ internal class KaFirEnumEntryInitializerSymbolPointer(
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaFirEnumEntryInitializerSymbol? {
         require(analysisSession is KaFirSession)
-        val owner = with(analysisSession) {
+        val owner = context(analysisSession) {
             ownerPointer.restoreSymbol()
         }
         return owner?.initializer as? KaFirEnumEntryInitializerSymbol

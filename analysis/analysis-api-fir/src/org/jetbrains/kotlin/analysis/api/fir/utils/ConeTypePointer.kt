@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -271,7 +272,7 @@ private class ConeCapturedTypePointer(
         val constructorProjection = coneProjectionPointer.restore(session, guard) ?: return null
 
         val constructorTypeParameterMarker = if (typeParameterSymbolPointer != null) {
-            val typeParameterSymbol = with(session) { typeParameterSymbolPointer.restoreSymbol() } ?: return null
+            val typeParameterSymbol = context(session) { typeParameterSymbolPointer.restoreSymbol() } ?: return null
             typeParameterSymbol.firSymbol.toLookupTag()
         } else {
             null

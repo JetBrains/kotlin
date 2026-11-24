@@ -25,9 +25,14 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.session.analysisScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.classId
+import org.jetbrains.kotlin.analysis.api.types.isNullable
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
@@ -114,7 +119,7 @@ internal class KaFirJavaInteroperabilityComponent(
         val psiType = typeElement.type
         if (!preserveAnnotations) return psiType
 
-        return with(analysisSession) {
+        return context(analysisSession) {
             annotateByKtType(
                 psiType = psiType,
                 ktType = type,
@@ -237,7 +242,7 @@ internal class KaFirJavaInteroperabilityComponent(
 
                     if (member != null) {
                         @OptIn(DirectDeclarationsAccess::class)
-                        val memberSymbol = containingClassSymbol.declarationSymbols.find { it.findPsi(analysisSession.analysisScope) == member } as? FirCallableSymbol<*>
+                        val memberSymbol = containingClassSymbol.declarationSymbols.find { it.findPsi(context(analysisSession) { analysisScope }) == member } as? FirCallableSymbol<*>
                         if (memberSymbol != null) {
                             //typeParamSymbol.fir.source == null thus zip is required, see KT-62354
                             memberSymbol.typeParameterSymbols.zip(member.typeParameters).forEach { [typeParamSymbol, typeParam] ->
@@ -266,9 +271,9 @@ internal class KaFirJavaInteroperabilityComponent(
             return jvmTypeMapper.isPrimitiveBacked(type.coneType)
         }
 
-        with(analysisSession) {
+        context(analysisSession) {
             if (!type.isNullable) {
-                if (type.isPrimitive) {
+                if (type.classId in KaStandardTypeClassIds.PRIMITIVES) {
                     return true
                 }
 
@@ -346,7 +351,7 @@ internal class KaFirJavaInteroperabilityComponent(
 
         val containingClass = psiMember.containingClass ?: return null
         val classSymbol = namedClassSymbol(containingClass) ?: return null
-        return with(analysisSession) {
+        return context(analysisSession) {
             val combinedMemberScope = classSymbol.combinedDeclaredMemberScope
             if ((psiMember as? PsiMethod)?.isConstructor == true) {
                 combinedMemberScope.constructors.firstOrNull { it.psi == psiMember }
@@ -375,7 +380,7 @@ internal class KaFirJavaInteroperabilityComponent(
     override fun containingJvmClassName(symbol: KaCallableSymbol): String? = withValidityAssertion {
         if (symbol.origin == KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR) return null
 
-        with(analysisSession) {
+        context(analysisSession) {
             val platform = symbol.containingModule.targetPlatform
             if (!platform.has<JvmPlatform>()) return null
 

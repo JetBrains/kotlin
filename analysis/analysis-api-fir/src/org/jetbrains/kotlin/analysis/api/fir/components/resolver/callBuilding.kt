@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.builtinTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -82,7 +83,7 @@ internal fun FirElement.toKaResolutionAttempt(
                     backingSignature = signature,
                     dispatchReceiver = KaFirExplicitReceiverValue(
                         expression = leftArg,
-                        backingType = analysisSession.builtinTypes.string,
+                        backingType = context(analysisSession) { builtinTypes.string },
                         isSafeNavigation = false,
                     ),
                     extensionReceiver = null,
@@ -398,8 +399,8 @@ private fun buildKaCall(
     val firTypeArgumentsMapping = mappingResult.firTypeArgumentsMapping
     val typeArgumentsMapping = mappingResult.typeArgumentsMapping
 
-    val signature = with(analysisSession) {
-        val substitutor = substitutorByMap(firTypeArgumentsMapping, firSession).toKaSubstitutor()
+    val signature = context(analysisSession) {
+        val substitutor = substitutorByMap(firTypeArgumentsMapping, analysisSession.firSession).toKaSubstitutor()
 
         // This is crucial to create a signature by Fir symbol as it can be call-site substitution
         val unsubstitutedSignature = targetSymbol.toKaSignature()

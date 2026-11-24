@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsDataFlowProvider
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.semanticallyEquals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
@@ -55,7 +56,7 @@ internal class KaFirDataFlowProvider(
 ) : KaFirSessionComponent(), KaInternalsDataFlowProvider {
     override fun smartCastInfo(expression: KtExpression): KaSmartCastInfo? =
         expression.withPsiValidityAssertion {
-            with(analysisSession) {
+            context(analysisSession) {
                 val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(expression) ?: return null
                 val originalType = firSmartCastExpression.originalExpression.resolvedType.asKaType()
                 val smartCastType = firSmartCastExpression.smartcastType.coneType.asKaType()

@@ -175,7 +175,7 @@ private fun hasParentSymbol(symbol: KaSymbol): Boolean {
 context(relationProvider: KaFirSymbolRelationProvider)
 private fun getContainingDeclarationByPsi(symbol: KaSymbol): KaDeclarationSymbol? {
     val containingDeclaration = getContainingPsi(symbol) ?: return null
-    val declarationSymbol = with(analysisSession) { containingDeclaration.symbol }
+    val declarationSymbol = context(analysisSession) { containingDeclaration.symbol }
 
     if (declarationSymbol is KaFirEnumEntrySymbol && symbol !is KaFirEnumEntryInitializerSymbol) {
         // From the FIR point of view, the real containing declaration of enum entry functions or implicit constructor

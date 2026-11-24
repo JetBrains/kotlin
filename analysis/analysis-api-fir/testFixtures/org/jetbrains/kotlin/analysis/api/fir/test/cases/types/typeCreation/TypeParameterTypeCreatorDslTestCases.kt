@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,19 +14,19 @@ class TypeParameterTypeCreatorDslTestCases(session: KaSession, caretToType: Map<
     DslTypeCreationTestCases(session, caretToType) {
     fun testRegularMakeNullable(): KaType {
         val symbol = getTypeParameterSymbolByCaret("type")
-        return session.typeCreator.typeParameterType(symbol) {
+        return typeCreator.typeParameterType(symbol) {
             isMarkedNullable = true
         }
     }
 
     fun testReified(): KaType {
         val symbol = getTypeParameterSymbolByCaret("type")
-        return session.typeCreator.typeParameterType(symbol)
+        return typeCreator.typeParameterType(symbol)
     }
 
     fun testWithUpperBounds(): KaType {
         val symbol = getTypeParameterSymbolByCaret("type")
-        return session.typeCreator.typeParameterType(symbol)
+        return typeCreator.typeParameterType(symbol)
     }
 
     fun testWithAnnotations(): KaType {
@@ -35,7 +35,7 @@ class TypeParameterTypeCreatorDslTestCases(session: KaSession, caretToType: Map<
         val annotationClassId3 = ClassId.fromString("MyAnno3")
 
         val symbol = getTypeParameterSymbolByCaret("type")
-        return session.typeCreator.typeParameterType(symbol) {
+        return typeCreator.typeParameterType(symbol) {
             annotation(annotationClassId1)
             annotation(annotationClassId2)
             annotation(annotationClassId3)
@@ -44,7 +44,7 @@ class TypeParameterTypeCreatorDslTestCases(session: KaSession, caretToType: Map<
 
     fun testWithAttributeAnnotations(): KaType {
         val symbol = getTypeParameterSymbolByCaret("type")
-        return session.typeCreator.typeParameterType(symbol) {
+        return typeCreator.typeParameterType(symbol) {
             annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
         }
     }

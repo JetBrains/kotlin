@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,25 +19,25 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     DslTypeCreationTestCases(session, caretToType) {
     fun testIntTypeMarkNullable(): KaType {
         val intTypeSymbol = getClassLikeSymbolByCaret("int")
-        return session.typeCreator.classType(intTypeSymbol) {
+        return typeCreator.classType(intTypeSymbol) {
             isMarkedNullable = true
         }
     }
 
     fun testUserType(): KaType {
         val userTypeSymbol = getClassLikeSymbolByCaret("type")
-        return session.typeCreator.classType(userTypeSymbol)
+        return typeCreator.classType(userTypeSymbol)
     }
 
     fun testLocalUserType(): KaType {
         val userTypeSymbol = getClassLikeSymbolByCaret("type")
-        return session.typeCreator.classType(userTypeSymbol)
+        return typeCreator.classType(userTypeSymbol)
     }
 
     fun testBoxedArrayWithStringTypeArgument(): KaType {
         val arrayTypeSymbol = getClassLikeSymbolByCaret("array")
         val stringType = getTypeByCaret("string")
-        return session.typeCreator.classType(arrayTypeSymbol) {
+        return typeCreator.classType(arrayTypeSymbol) {
             typeArgument(Variance.IN_VARIANCE) {
                 stringType
             }
@@ -47,7 +47,7 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     fun testMoreTypeArgumentsThanExpected(): KaType {
         val arrayTypeSymbol = getClassLikeSymbolByCaret("array")
         val stringType = getTypeByCaret("string")
-        return session.typeCreator.classType(arrayTypeSymbol) {
+        return typeCreator.classType(arrayTypeSymbol) {
             typeArgument(Variance.IN_VARIANCE) {
                 stringType
             }
@@ -60,16 +60,16 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
 
     fun testLessTypeArgumentsThanExpected(): KaType {
         val arrayTypeSymbol = getClassLikeSymbolByCaret("array")
-        return session.typeCreator.classType(arrayTypeSymbol)
+        return typeCreator.classType(arrayTypeSymbol)
     }
 
     fun testNonExistingClassId(): KaType {
-        return session.typeCreator.classType(ClassId(FqName.ROOT, Name.identifier("MyClass")))
+        return typeCreator.classType(ClassId(FqName.ROOT, Name.identifier("MyClass")))
     }
 
     fun testUserGenericTypeWithStarProjection(): KaType {
         val userTypeSymbol = getClassLikeSymbolByCaret("type")
-        return session.typeCreator.classType(userTypeSymbol) {
+        return typeCreator.classType(userTypeSymbol) {
             typeArgument(starTypeProjection())
         }
     }
@@ -79,7 +79,7 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         val annotationClassId2 = ClassId.fromString("MyAnno2")
         val annotationClassId3 = ClassId.fromString("MyAnno3")
 
-        return session.typeCreator.classType(ClassId(FqName.ROOT, Name.identifier("MyClass"))) {
+        return typeCreator.classType(ClassId(FqName.ROOT, Name.identifier("MyClass"))) {
             annotation(annotationClassId1)
             annotation(annotationClassId2)
             annotation(annotationClassId3)
@@ -92,7 +92,7 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         val annotationClassId3 = ClassId.fromString("MyAnno3")
 
         val userTypeSymbol = getClassLikeSymbolByCaret("type")
-        return session.typeCreator.classType(userTypeSymbol) {
+        return typeCreator.classType(userTypeSymbol) {
             annotation(annotationClassId1)
             annotation(annotationClassId2)
             annotation(annotationClassId3)
@@ -103,7 +103,7 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         val annotationClassId = ClassId.fromString("MyAnno")
 
         val userTypeSymbol = getClassLikeSymbolByCaret("type")
-        return session.typeCreator.classType(userTypeSymbol) {
+        return typeCreator.classType(userTypeSymbol) {
             annotation(annotationClassId)
         }
     }
@@ -112,14 +112,14 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         val annotationClassId = ClassId.fromString("MyAnno")
 
         val userTypeSymbol = getClassLikeSymbolByCaret("type")
-        return session.typeCreator.classType(userTypeSymbol) {
+        return typeCreator.classType(userTypeSymbol) {
             annotation(annotationClassId)
         }
     }
 
     fun testUserTypeWithAttributeAnnotations(): KaType {
         val userTypeSymbol = getClassLikeSymbolByCaret("type")
-        return session.typeCreator.classType(userTypeSymbol) {
+        return typeCreator.classType(userTypeSymbol) {
             annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
         }
     }
@@ -127,7 +127,7 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     fun testFunctionClassWithAttributeAnnotations(): KaType {
         val stringType = getTypeByCaret("string")
         val intType = getTypeByCaret("int")
-        return session.typeCreator.classType(StandardClassIds.FunctionN(1)) {
+        return typeCreator.classType(StandardClassIds.FunctionN(1)) {
             invariantTypeArgument(stringType)
             invariantTypeArgument(intType)
             annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
@@ -136,28 +136,28 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
 
     fun testFunctionTypeAliasWithAttributeAnnotations(): KaType {
         val alias = getClassLikeSymbolByCaret("alias")
-        return session.typeCreator.classType(alias) {
+        return typeCreator.classType(alias) {
             annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
         }
     }
 
     fun testUserTypeWithPositiveAnnotation(): KaType {
         val userTypeSymbol = getClassLikeSymbolByCaret("type")
-        return session.typeCreator.classType(userTypeSymbol) {
+        return typeCreator.classType(userTypeSymbol) {
             annotation(ClassId.fromString("org/jetbrains/kotlin/plugin/sandbox/Positive"))
         }
     }
 
     fun testUserTypeWithNegativeAnnotation(): KaType {
         val userTypeSymbol = getClassLikeSymbolByCaret("type")
-        return session.typeCreator.classType(userTypeSymbol) {
+        return typeCreator.classType(userTypeSymbol) {
             annotation(ClassId.fromString("org/jetbrains/kotlin/plugin/sandbox/Negative"))
         }
     }
 
     fun testUserTypeWithPositiveAndNegativeAnnotations(): KaType {
         val userTypeSymbol = getClassLikeSymbolByCaret("type")
-        return session.typeCreator.classType(userTypeSymbol) {
+        return typeCreator.classType(userTypeSymbol) {
             annotation(ClassId.fromString("org/jetbrains/kotlin/plugin/sandbox/Positive"))
             annotation(ClassId.fromString("org/jetbrains/kotlin/plugin/sandbox/Negative"))
         }
@@ -167,7 +167,7 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         val alias = getClassLikeSymbolByCaret("alias")
         val argument = getTypeByCaret("argument")
 
-        return session.typeCreator.classType(alias) {
+        return typeCreator.classType(alias) {
             invariantTypeArgument(argument)
         }
     }
@@ -175,24 +175,24 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     fun testGenericTypeAliasWithNoArguments(): KaType {
         val alias = getClassLikeSymbolByCaret("alias")
 
-        return session.typeCreator.classType(alias)
+        return typeCreator.classType(alias)
     }
 
     fun testTypeAlias(): KaType {
         val alias = getClassLikeSymbolByCaret("alias")
 
-        return session.typeCreator.classType(alias)
+        return typeCreator.classType(alias)
     }
 
     fun testTypeAliasWithNestedTypeAliases(): KaType {
         val alias = getClassLikeSymbolByCaret("alias")
 
-        return session.typeCreator.classType(alias)
+        return typeCreator.classType(alias)
     }
 
     fun testListWithTypeAliasArgument(): KaType {
         val alias = getTypeByCaret("alias")
-        return session.typeCreator.classType(StandardClassIds.List) {
+        return typeCreator.classType(StandardClassIds.List) {
             invariantTypeArgument(alias)
         }
     }
@@ -201,7 +201,7 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         val innerTypeSymbol = getClassLikeSymbolByCaret("type")
 
         // Type arguments are ordered from the innermost class outwards
-        return session.typeCreator.classType(innerTypeSymbol) {
+        return typeCreator.classType(innerTypeSymbol) {
             invariantTypeArgument(getTypeByCaret("long"))
             invariantTypeArgument(getTypeByCaret("double"))
             invariantTypeArgument(getTypeByCaret("boolean"))
@@ -212,6 +212,6 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     fun testMissingDependencyCandidateSymbol(): KaType {
         val errorType = getTypeByCaret("type") as KaClassErrorType
         val symbol = errorType.candidateSymbols.single()
-        return session.typeCreator.classType(symbol)
+        return typeCreator.classType(symbol)
     }
 }

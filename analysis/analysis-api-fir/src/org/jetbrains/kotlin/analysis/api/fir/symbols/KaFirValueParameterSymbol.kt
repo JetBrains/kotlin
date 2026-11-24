@@ -83,7 +83,7 @@ internal class KaFirValueParameterSymbol private constructor(
 
     override val hasDefaultValue: Boolean
         get() = withValidityAssertion {
-            with(analysisSession) {
+            context(analysisSession) {
                 if (hasDeclaredDefaultValue) {
                     return true
                 }
@@ -151,7 +151,7 @@ internal class KaFirValueParameterSymbol private constructor(
 
     private val index: Int
         get() {
-            val ownerSymbol = with(analysisSession) { containingDeclaration }
+            val ownerSymbol = context(analysisSession) { containingDeclaration }
                 ?: error("Containing function is expected for a value parameter symbol")
             requireIsInstance<KaFunctionSymbol>(ownerSymbol)
 

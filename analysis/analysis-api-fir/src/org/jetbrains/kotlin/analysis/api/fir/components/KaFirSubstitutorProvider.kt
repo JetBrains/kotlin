@@ -149,7 +149,7 @@ internal class KaFirSubstitutorProvider(
             rightTypeParameters: Set<KaTypeParameterSymbol>,
         ) -> Collection<KaTypeParameterSymbol>,
     ): KaSubstitutor? {
-        with(analysisSession) {
+        context(analysisSession) {
             if (leftTypesToRightTypes.isEmpty()) {
                 return emptySubstitutor()
             }
@@ -179,7 +179,7 @@ internal class KaFirSubstitutorProvider(
              */
             val freeTypeParameters = freeTypeParametersProvider(leftTypeParameters, rightTypeParameters)
 
-            val constraintSystem = ConeSimpleConstraintSystemImpl(firSession.inferenceComponents.createConstraintSystem(), firSession)
+            val constraintSystem = ConeSimpleConstraintSystemImpl(analysisSession.firSession.inferenceComponents.createConstraintSystem(), analysisSession.firSession)
             val typeSubstitutor = constraintSystem.registerTypeVariablesAndGetSubstitutor(freeTypeParameters)
 
             val registeredConstraints =
@@ -331,7 +331,7 @@ internal class KaFirSubstitutorProvider(
                         postponedKtPrimitives = emptyList(),
                         completionMode = ConstraintSystemCompletionMode.FULL,
                         // Can be any type. Only affects the fixation with completionMode = ConstraintSystemCompletionMode.PARTIAL
-                        topLevelType = analysisSession.builtinTypes.nullableAny.coneType,
+                        topLevelType = context(analysisSession) { builtinTypes.nullableAny.coneType },
                     ) ?: break
 
                 val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)

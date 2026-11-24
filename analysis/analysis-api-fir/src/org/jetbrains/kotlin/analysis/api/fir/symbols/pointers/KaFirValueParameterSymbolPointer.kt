@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.name.Name
 
 internal class KaFirValueParameterSymbolPointer(
@@ -23,7 +24,7 @@ internal class KaFirValueParameterSymbolPointer(
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaValueParameterSymbol? {
         require(analysisSession is KaFirSession)
-        val ownerSymbol = with(analysisSession) {
+        val ownerSymbol = context(analysisSession) {
             ownerPointer.restoreSymbol()
         }
 

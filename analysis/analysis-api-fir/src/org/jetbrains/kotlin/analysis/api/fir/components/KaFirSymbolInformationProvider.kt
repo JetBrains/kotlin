@@ -193,7 +193,7 @@ internal class KaFirSymbolInformationProvider(
             return KaFirEmptyAnnotationList(analysisSession.firSymbolBuilder.token)
         }
 
-        val containingFile = with(analysisSession) { symbol.containingFile }
+        val containingFile = context(analysisSession) { symbol.containingFile }
         if (containingFile != null) {
             return containingFile.annotations
         }

@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.analysis.api.expressions.expressionType
 import org.jetbrains.kotlin.analysis.api.expressions.returnType
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionInformationProvider
-import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
-import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall
-import org.jetbrains.kotlin.analysis.api.resolution.symbols
-import org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -41,7 +38,7 @@ internal class KaFirExpressionInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsExpressionInformationProvider {
     override fun targetSymbol(returnExpression: KtReturnExpression): KaCallableSymbol? =
-        with(analysisSession) { returnExpression.resolveSymbol() }
+        returnExpression.resolveSuccessfulSymbol(session = analysisSession)
 
     override fun computeMissingCases(whenExpression: KtWhenExpression): List<KaWhenMissingCase> =
         whenExpression.withPsiValidityAssertion {
@@ -61,7 +58,7 @@ internal class KaFirExpressionInformationProvider(
 
     override fun isUsedAsResultOfLambda(expression: KtExpression): Boolean = expression.withPsiValidityAssertion {
         val additionalInfoCollector = AdditionalInfoCollector()
-            .also { collector -> context(analysisSession) { isUsed(expression, collector) } }
+            .also { collector -> isUsed(expression, collector, session = analysisSession) }
         additionalInfoCollector.isUsedAsResultOfLambda
     }
 
@@ -334,7 +331,7 @@ internal class KaFirExpressionInformationProvider(
 
         /** See [doesDoubleColonUseLHS] */
         is KtDoubleColonExpression ->
-            parent.lhs == child && with(analysisSession) { doesDoubleColonUseLHS(child) }
+            parent.lhs == child && doesDoubleColonUseLHS(child, session = analysisSession)
 
         // Parentheses are ignored for this analysis.
         is KtParenthesizedExpression ->

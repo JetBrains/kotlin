@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,31 +15,31 @@ class ArrayTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
     DslTypeCreationTestCases(session, caretToType) {
     fun testBoolPreferPrimitive(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type) {
+        return typeCreator.arrayType(type) {
             shouldPreferPrimitiveTypes = true
         }
     }
 
     fun testBoxedArrayOutVariance(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type) {
+        return typeCreator.arrayType(type) {
             variance = Variance.OUT_VARIANCE
         }
     }
 
     fun testErrorType(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type)
+        return typeCreator.arrayType(type)
     }
 
     fun testFlexibleInt(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type)
+        return typeCreator.arrayType(type)
     }
 
     fun testIntOutVariance(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type) {
+        return typeCreator.arrayType(type) {
             variance = Variance.OUT_VARIANCE
             shouldPreferPrimitiveTypes = false
         }
@@ -47,26 +47,26 @@ class ArrayTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
 
     fun testNullableIntPreferPrimitive(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type) {
+        return typeCreator.arrayType(type) {
             shouldPreferPrimitiveTypes = true
         }
     }
 
     fun testNullableUserType(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type)
+        return typeCreator.arrayType(type)
     }
 
     fun testPrimitiveArrayPreferPrimitive(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type) {
+        return typeCreator.arrayType(type) {
             shouldPreferPrimitiveTypes = true
         }
     }
 
     fun testSimpleUserTypeMakeNullablePreferPrimitive(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type) {
+        return typeCreator.arrayType(type) {
             shouldPreferPrimitiveTypes = true
             isMarkedNullable = true
         }
@@ -74,7 +74,7 @@ class ArrayTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
 
     fun testTypeParameterPreferPrimitiveOutVariance(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type) {
+        return typeCreator.arrayType(type) {
             shouldPreferPrimitiveTypes = true
             variance = Variance.OUT_VARIANCE
         }
@@ -82,19 +82,19 @@ class ArrayTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
 
     fun testTypeParameterWithIntUpperBound(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type)
+        return typeCreator.arrayType(type)
     }
 
     fun testCharShouldNotPreferPrimitive(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type) {
+        return typeCreator.arrayType(type) {
             shouldPreferPrimitiveTypes = false
         }
     }
 
     fun testIntInVarianceShouldPreferPrimitive(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type) {
+        return typeCreator.arrayType(type) {
             shouldPreferPrimitiveTypes = true
             variance = Variance.IN_VARIANCE
         }
@@ -102,12 +102,12 @@ class ArrayTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
 
     fun testInt(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type)
+        return typeCreator.arrayType(type)
     }
 
     fun testDynamicType(): KaType {
-        val type = session.typeCreator.dynamicType()
-        return session.typeCreator.arrayType(type)
+        val type = typeCreator.dynamicType()
+        return typeCreator.arrayType(type)
     }
 
     fun testWithAnnotations(): KaType {
@@ -116,14 +116,14 @@ class ArrayTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         val annotationClassId3 = ClassId.fromString("MyAnno3")
 
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type) {
+        return typeCreator.arrayType(type) {
             annotations(listOf(annotationClassId1, annotationClassId2, annotationClassId3))
         }
     }
 
     fun testWithAttributeAnnotations(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.arrayType(type) {
+        return typeCreator.arrayType(type) {
             annotations(ATTRIBUTE_ANNOTATION_CLASS_IDS)
         }
     }

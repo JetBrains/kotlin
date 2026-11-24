@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.signatureSub
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.asSignature
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.buildSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.builtinTypes
+import org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -41,7 +41,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
         analyzeForTest(callableDeclaration) {
             val typesToCheckOn = buildList {
                 add(builtinTypes.int)
-                add(buildClassType(StandardClassIds.List) { argument(builtinTypes.long) })
+                add(typeCreator.classType(StandardClassIds.List) { invariantTypeArgument(builtinTypes.long) })
             }
 
             val symbol = callableDeclaration.symbol as KaCallableSymbol

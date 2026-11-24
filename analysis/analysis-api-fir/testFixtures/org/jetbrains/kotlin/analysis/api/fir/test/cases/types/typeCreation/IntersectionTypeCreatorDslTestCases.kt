@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
     DslTypeCreationTestCases(session, caretToType) {
     fun testSingleConjunct(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.intersectionType {
+        return typeCreator.intersectionType {
             conjunct { type }
         }
     }
@@ -23,7 +23,7 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
         val type1 = getTypeByCaret("1")
         val type2 = getTypeByCaret("2")
         val type3 = getTypeByCaret("3")
-        return session.typeCreator.intersectionType {
+        return typeCreator.intersectionType {
             conjunct { type1 }
             conjunct(type2)
             conjunct { type3 }
@@ -34,7 +34,7 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
         val type1 = getTypeByCaret("1")
         val type2 = getTypeByCaret("2")
         val type3 = getTypeByCaret("3")
-        return session.typeCreator.intersectionType {
+        return typeCreator.intersectionType {
             conjunct { type1 }
             conjuncts {
                 listOf(type2, type3)
@@ -46,7 +46,7 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
         val type1 = getTypeByCaret("1")
         val type2 = getTypeByCaret("2")
         val type3 = getTypeByCaret("3")
-        return session.typeCreator.intersectionType {
+        return typeCreator.intersectionType {
             conjunct { type1 }
             conjuncts(listOf(type2, type3))
         }
@@ -56,14 +56,14 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
         val type1 = getTypeByCaret("1")
         val type2 = getTypeByCaret("2")
         val type3 = getTypeByCaret("3")
-        return session.typeCreator.intersectionType {
+        return typeCreator.intersectionType {
             conjuncts(listOf(type1, type2, type3))
         }
     }
 
     fun testDuplicates(): KaType {
         val type = getTypeByCaret("type")
-        return session.typeCreator.intersectionType {
+        return typeCreator.intersectionType {
             conjuncts(listOf(type, type, type))
         }
     }
@@ -72,12 +72,12 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
         val type1 = getTypeByCaret("1")
         val type2 = getTypeByCaret("2")
         val type3 = getTypeByCaret("3")
-        val intersection = session.typeCreator.intersectionType {
+        val intersection = typeCreator.intersectionType {
             conjunct { type1 }
             conjunct { type2 }
         }
 
-        return session.typeCreator.intersectionType {
+        return typeCreator.intersectionType {
             conjunct(intersection)
             conjunct { type3 }
         }
@@ -91,7 +91,7 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
         val symbol1 = getClassLikeSymbolByCaret("1")
         val symbol2 = getClassLikeSymbolByCaret("2")
 
-        return session.typeCreator.intersectionType {
+        return typeCreator.intersectionType {
             conjunct {
                 classType(symbol1) {
                     annotations(listOf(annotationClassId1, annotationClassId2))
@@ -111,7 +111,7 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
         val upperBound = getTypeByCaret("upper")
         val type = getTypeByCaret("type")
 
-        return session.typeCreator.intersectionType {
+        return typeCreator.intersectionType {
             flexibleType {
                 this.lowerBound = lowerBound
                 this.upperBound = upperBound

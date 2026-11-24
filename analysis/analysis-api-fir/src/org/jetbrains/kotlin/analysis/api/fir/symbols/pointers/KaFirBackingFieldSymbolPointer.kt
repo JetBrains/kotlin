@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 
 internal class KaFirBackingFieldSymbolPointer(
     private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
@@ -20,7 +21,7 @@ internal class KaFirBackingFieldSymbolPointer(
                 || (other is KaFirBackingFieldSymbolPointer && other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer))
     }
 
-    override fun restoreIfNotCached(analysisSession: KaSession): KaBackingFieldSymbol? = with(analysisSession) {
+    override fun restoreIfNotCached(analysisSession: KaSession): KaBackingFieldSymbol? = context(analysisSession) {
         val propertySymbol = propertySymbolPointer.restoreSymbol() ?: return null
         propertySymbol.backingFieldSymbol
     }

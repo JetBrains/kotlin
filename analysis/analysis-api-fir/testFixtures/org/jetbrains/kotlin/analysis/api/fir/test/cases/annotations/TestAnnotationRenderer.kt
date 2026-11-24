@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.annotations
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.findClass
 import org.jetbrains.kotlin.analysis.test.framework.utils.indented
 import org.jetbrains.kotlin.name.ClassId
 
@@ -37,7 +38,7 @@ object TestAnnotationRenderer {
                     continue
                 }
 
-                val metaAnnotations = with(analysisSession) { findClass(classId)?.annotations }
+                val metaAnnotations = context(analysisSession) { findClass(classId)?.annotations }
                 if (metaAnnotations != null) {
                     renderAnnotationsRecursive(analysisSession, metaAnnotations, currentMetaAnnotations + classId, indent = indent + 4)
                 } else {

@@ -133,7 +133,7 @@ internal class KaFirNamedClassSymbol private constructor(
                 }
 
                 // No compiler plugin – no new companion object possibility
-                if (!analysisSession.hasDeclarationGeneratorCompilerPlugin(backingPsi)) {
+                if (!context(analysisSession) { hasDeclarationGeneratorCompilerPlugin(backingPsi) }) {
                     return null
                 }
             }

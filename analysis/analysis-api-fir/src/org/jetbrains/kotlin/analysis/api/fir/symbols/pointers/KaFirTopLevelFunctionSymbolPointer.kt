@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,12 +20,13 @@ internal class KaFirTopLevelFunctionSymbolPointer(
     private val signature: FirCallableSignature,
     originalSymbol: KaNamedFunctionSymbol?,
 ) : KaTopLevelCallableSymbolPointer<KaNamedFunctionSymbol>(callableId, originalSymbol) {
-    override fun KaFirSession.chooseCandidateAndCreateSymbol(
+    context(analysisSession: KaFirSession)
+    override fun chooseCandidateAndCreateSymbol(
         candidates: Collection<FirCallableSymbol<*>>,
         firSession: FirSession
     ): KaNamedFunctionSymbol? {
         val firFunction = candidates.findDeclarationWithSignatureBySymbols<FirNamedFunction>(signature) ?: return null
-        return firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firFunction.symbol)
+        return analysisSession.firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firFunction.symbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

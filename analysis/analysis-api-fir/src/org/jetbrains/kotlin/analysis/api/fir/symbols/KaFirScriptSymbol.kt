@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.containingFile
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -47,7 +48,7 @@ internal class KaFirScriptSymbol private constructor(
     override fun createPointer(): KaSymbolPointer<KaScriptSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaScriptSymbol>()?.let { return it }
 
-        with(analysisSession) {
+        context(analysisSession) {
             val file = containingFile ?: errorWithAttachment("Containing file is not found") {
                 withFirSymbolEntry("firScript", firSymbol)
             }

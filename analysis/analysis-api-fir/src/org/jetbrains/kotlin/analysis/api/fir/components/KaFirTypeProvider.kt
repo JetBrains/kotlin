@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.InvalidFirElementTypeException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -57,12 +58,12 @@ internal class KaFirTypeProvider(
             return null
         }
 
-        return analysisSession.buildVarargArrayType(symbol.returnType)
+        return context(analysisSession) { typeCreator.varargArrayType(symbol.returnType) }
     }
 
     override fun defaultTypeWithStarProjections(symbol: KaClassifierSymbol): KaType = withValidityAssertion {
         return if (symbol is KaClassLikeSymbol) {
-            analysisSession.typeCreator.classType(symbol)
+            context(analysisSession) { typeCreator.classType(symbol) }
         } else {
             defaultType(symbol)
         }
@@ -149,7 +150,7 @@ internal class KaFirTypeProvider(
     }
 
     override fun defaultType(symbol: KaClassifierSymbol): KaType = withValidityAssertion {
-        with(analysisSession) {
+        context(analysisSession) {
             val firSymbol = symbol.firSymbol
             val defaultConeType = when (firSymbol) {
                 is FirTypeParameterSymbol -> firSymbol.defaultType
