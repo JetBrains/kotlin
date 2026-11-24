@@ -410,8 +410,11 @@ fun FirResolvedQualifier.markNotUsedAsExpression() {
 }
 
 fun FirResolvedQualifier.isUsedAsExpressionReceiverIn(candidate: Candidate): Boolean {
-    return candidate.dispatchReceiverExpression()?.unwrapSmartcastExpression() == this && (candidate.symbol as? FirCallableSymbol)?.isStatic != true ||
-            candidate.chosenExtensionReceiverExpression()?.unwrapSmartcastExpression() == this
+    if ((candidate.symbol as? FirCallableSymbol)?.isStatic == true) return false
+
+    val unwrappedDispatchReceiver = candidate.dispatchReceiverExpression()?.unwrapSmartcastExpression()
+    val unwrappedExtensionReceiver = candidate.chosenExtensionReceiverExpression()?.unwrapSmartcastExpression()
+    return unwrappedDispatchReceiver == this || unwrappedExtensionReceiver == this
 }
 
 internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
