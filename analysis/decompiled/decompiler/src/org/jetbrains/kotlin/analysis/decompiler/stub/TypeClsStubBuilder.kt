@@ -283,11 +283,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         if (numContextParameters != 0) {
             createContextParameterStubsWithoutNames(
-                functionType,
-                typeArgumentList.subList(
-                    processedTypes,
-                    processedTypes + numContextParameters
-                ).map { it.type(c.typeTable)!! })
+                parent = functionType,
+                contextParameterTypes = typeArgumentList
+                    .subList(fromIndex = 0, toIndex = numContextParameters)
+                    .map { it.type(c.typeTable)!! },
+            )
             processedTypes += numContextParameters
         }
 
