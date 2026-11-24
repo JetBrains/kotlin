@@ -366,11 +366,14 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
     private fun IrClass.findCorrespondingDataClassProperty(primaryConstructorValueParameter: IrValueParameter): IrProperty {
         require(this.isData) { "This function is to be used for data classes only" }
 
-        return properties.singleOrNull { it.name == primaryConstructorValueParameter.name }
-            ?: throw IllegalArgumentException(
-                "Data class '${primaryConstructorValueParameter.name}' must have exactly one property " +
-                        "matching primary constructor parameter '${primaryConstructorValueParameter.name}'"
-            )
+        return properties.singleOrNull { property ->
+            !property.isFakeOverride &&
+                property.name == primaryConstructorValueParameter.name &&
+                property.getter?.nonDispatchParameters.isNullOrEmpty()
+        } ?: throw IllegalArgumentException(
+            "Data class '${this.name}' must have exactly one property " +
+                    "matching primary constructor parameter '${primaryConstructorValueParameter.name}'"
+        )
     }
 
     private fun wrapNullableSerializerIfNeeded(irType: IrType, serializer: IrParcelSerializer) =

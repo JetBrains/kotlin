@@ -1,5 +1,5 @@
 // https://issuetracker.google.com/590046666
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 @file:OptIn(kotlinx.parcelize.Experimental::class)
 
