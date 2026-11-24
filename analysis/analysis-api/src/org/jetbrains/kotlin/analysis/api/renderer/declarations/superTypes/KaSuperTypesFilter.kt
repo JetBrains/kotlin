@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.classId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -22,8 +23,8 @@ public fun interface KaSuperTypesFilter {
     @KaExperimentalApi
     public object NO_DEFAULT_TYPES : KaSuperTypesFilter {
         override fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassSymbol): Boolean {
-            with(analysisSession) {
-                if (superType.isAnyType) {
+            context(analysisSession) {
+                if (superType.classId == KaStandardTypeClassIds.ANY) {
                     return false
                 }
 
@@ -43,9 +44,9 @@ public fun interface KaSuperTypesFilter {
     @KaExperimentalApi
     public object NO_ANY_FOR_INTERFACES : KaSuperTypesFilter {
         override fun filter(analysisSession: KaSession, superType: KaType, symbol: KaClassSymbol): Boolean {
-            with(analysisSession) {
+            context(analysisSession) {
                 return when (symbol.classKind) {
-                    KaClassKind.INTERFACE -> !superType.isAnyType
+                    KaClassKind.INTERFACE -> superType.classId != KaStandardTypeClassIds.ANY
                     else -> true
                 }
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,7 +40,7 @@ public class KaTypeRenderer private constructor(
     public val keywordsRenderer: KaKeywordsRenderer,
 ) {
     public fun renderType(analysisSession: KaSession, type: KaType, printer: PrettyPrinter) {
-        with(analysisSession) {
+        context(analysisSession) {
             when (expandedTypeRenderingMode) {
                 KaExpandedTypeRenderingMode.RENDER_ABBREVIATED_TYPE -> {
                     renderAbbreviatedType(type, printer)
@@ -63,11 +63,13 @@ public class KaTypeRenderer private constructor(
         }
     }
 
-    private fun KaSession.renderAbbreviatedType(type: KaType, printer: PrettyPrinter) {
+    context(session: KaSession)
+    private fun renderAbbreviatedType(type: KaType, printer: PrettyPrinter) {
         renderTypeAsIs(type.abbreviation ?: type, printer)
     }
 
-    private fun KaSession.renderExpandedTypeComment(type: KaType, printer: PrettyPrinter) {
+    context(session: KaSession)
+    private fun renderExpandedTypeComment(type: KaType, printer: PrettyPrinter) {
         val expandedType = when {
             type.abbreviation != null -> type
             type.symbol is KaTypeAliasSymbol -> type.fullyExpandedType
@@ -79,11 +81,13 @@ public class KaTypeRenderer private constructor(
         printer.append(" */")
     }
 
-    private fun KaSession.renderExpandedType(type: KaType, printer: PrettyPrinter) {
+    context(session: KaSession)
+    private fun renderExpandedType(type: KaType, printer: PrettyPrinter) {
         renderTypeAsIs(type.fullyExpandedType, printer)
     }
 
-    private fun KaSession.renderAbbreviatedTypeComment(type: KaType, printer: PrettyPrinter) {
+    context(session: KaSession)
+    private fun renderAbbreviatedTypeComment(type: KaType, printer: PrettyPrinter) {
         val abbreviatedType = type.abbreviation
             ?: type.takeIf { it.symbol is KaTypeAliasSymbol }
             ?: return
@@ -96,18 +100,19 @@ public class KaTypeRenderer private constructor(
     /**
      * Renders [type] directly without considering its abbreviation or expansion.
      */
-    private fun KaSession.renderTypeAsIs(type: KaType, printer: PrettyPrinter) {
+    context(session: KaSession)
+    private fun renderTypeAsIs(type: KaType, printer: PrettyPrinter) {
         when (type) {
-            is KaCapturedType -> capturedTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
-            is KaFunctionType -> functionalTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
-            is KaUsualClassType -> usualClassTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
-            is KaDefinitelyNotNullType -> definitelyNotNullTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
-            is KaDynamicType -> dynamicTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
-            is KaFlexibleType -> flexibleTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
-            is KaIntersectionType -> intersectionTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
-            is KaTypeParameterType -> typeParameterTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
-            is KaClassErrorType -> unresolvedClassErrorTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
-            is KaErrorType -> errorTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+            is KaCapturedType -> capturedTypeRenderer.renderType(session, type, this@KaTypeRenderer, printer)
+            is KaFunctionType -> functionalTypeRenderer.renderType(session, type, this@KaTypeRenderer, printer)
+            is KaUsualClassType -> usualClassTypeRenderer.renderType(session, type, this@KaTypeRenderer, printer)
+            is KaDefinitelyNotNullType -> definitelyNotNullTypeRenderer.renderType(session, type, this@KaTypeRenderer, printer)
+            is KaDynamicType -> dynamicTypeRenderer.renderType(session, type, this@KaTypeRenderer, printer)
+            is KaFlexibleType -> flexibleTypeRenderer.renderType(session, type, this@KaTypeRenderer, printer)
+            is KaIntersectionType -> intersectionTypeRenderer.renderType(session, type, this@KaTypeRenderer, printer)
+            is KaTypeParameterType -> typeParameterTypeRenderer.renderType(session, type, this@KaTypeRenderer, printer)
+            is KaClassErrorType -> unresolvedClassErrorTypeRenderer.renderType(session, type, this@KaTypeRenderer, printer)
+            is KaErrorType -> errorTypeRenderer.renderType(session, type, this@KaTypeRenderer, printer)
         }
     }
 

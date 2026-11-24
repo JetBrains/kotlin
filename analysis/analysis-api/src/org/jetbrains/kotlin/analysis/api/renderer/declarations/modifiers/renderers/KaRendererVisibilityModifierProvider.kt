@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,7 +33,7 @@ public interface KaRendererVisibilityModifierProvider {
             analysisSession: KaSession,
             symbol: KaDeclarationSymbol,
         ): KtModifierKeywordToken? {
-            with(analysisSession) {
+            context(analysisSession) {
                 when (symbol) {
                     is KaNamedFunctionSymbol -> if (symbol.isOverride) return null
                     is KaPropertySymbol -> if (symbol.isOverride) return null
