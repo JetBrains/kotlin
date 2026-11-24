@@ -45,6 +45,20 @@ public actual fun <T> MutableList<T>.reverse(): Unit {
 }
 
 /**
+ * Returns a [List] containing all elements.
+ */
+public actual fun <T> Iterable<T>.toList(): List<T> {
+    if (this is Collection) {
+        return when (size) {
+            0 -> emptyList()
+            1 -> listOf(if (this is List) get(0) else iterator().next())
+            else -> this.toMutableList()
+        }
+    }
+    return this.toMutableList().optimizeReadOnlyList()
+}
+
+/**
  * Returns a new [SortedSet][java.util.SortedSet] of all elements.
  */
 public fun <T : Comparable<T>> Iterable<T>.toSortedSet(): java.util.SortedSet<T> {
