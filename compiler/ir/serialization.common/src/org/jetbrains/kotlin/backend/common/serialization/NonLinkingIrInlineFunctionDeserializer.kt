@@ -141,7 +141,7 @@ class NonLinkingIrInlineFunctionDeserializer(
             for ((index, deserializer = value) in fileDeserializers.withIndex()) {
                 val fileStream = inlinableFunctionsIr.irFile(index).codedInputStream
                 val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.getEmptyRegistry())
-                for (idSigIndex in fileProto.legacyTopLevelDeclarationSignaturesList) {
+                for (idSigIndex in fileProto.getSignatureIdsOfTopLevelDeclarations()) {
                     val idSig = deserializer.symbolDeserializer.deserializeIdSignature(idSigIndex)
                     put(idSig, DeserializationInfo(idSigIndex, deserializer))
                 }

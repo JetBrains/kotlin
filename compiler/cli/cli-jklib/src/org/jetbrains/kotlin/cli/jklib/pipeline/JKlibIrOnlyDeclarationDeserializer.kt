@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.common.serialization.IrSymbolDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.createFile
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.getSignatureIdsOfTopLevelDeclarations
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -115,7 +116,7 @@ internal class JKlibIrOnlyDeclarationDeserializer(
             buildMap {
                 for (fileIndex in 0 until ir.irFileCount) {
                     val file = FileDeserializer(ir, fileIndex)
-                    for (index in file.fileProto.legacyTopLevelDeclarationSignaturesList) {
+                    for (index in file.fileProto.getSignatureIdsOfTopLevelDeclarations()) {
                         put(file.symbolDeserializer.deserializeIdSignature(index), TopLevelDeclaration(file, index))
                     }
                 }

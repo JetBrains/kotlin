@@ -118,7 +118,7 @@ class IdSignaturesExtractorFromRegularKlib(library: KotlinLibrary) : IdSignature
         fun extractSignaturesOfOwnPublicDeclarations(): Set<IdSignature> {
             val result = hashSetOf<IdSignature>()
 
-            for (topLevelDeclarationIndex in fileProto.legacyTopLevelDeclarationSignaturesList) {
+            for (topLevelDeclarationIndex in fileProto.getSignatureIdsOfTopLevelDeclarations()) {
                 extractSignature(declarationProto = fileReader.declaration(topLevelDeclarationIndex), result)
             }
 
@@ -131,7 +131,7 @@ class IdSignaturesExtractorFromRegularKlib(library: KotlinLibrary) : IdSignature
         fun extractSignaturesOfOwnTopLevelPublicDeclarations(): Set<IdSignature> {
             val result = hashSetOf<IdSignature>()
 
-            for (topLevelDeclarationIndex in fileProto.legacyTopLevelDeclarationSignaturesList) {
+            for (topLevelDeclarationIndex in fileProto.getSignatureIdsOfTopLevelDeclarations()) {
                 val signature = signatureDeserializer.deserializeIdSignature(topLevelDeclarationIndex)
                 if (signature is CommonSignature) result += signature
             }
