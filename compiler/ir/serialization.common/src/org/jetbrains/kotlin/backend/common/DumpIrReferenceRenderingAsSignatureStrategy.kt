@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions.ReferenceRenderingStrategy
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
-import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
@@ -30,16 +29,14 @@ class DumpIrReferenceRenderingAsSignatureStrategy(irMangler: IrMangler) : Refere
         val declaration = runIf(symbol.isBound) { symbol.owner as? IrDeclaration }
 
         if (declaration != null) {
-            if (signatureComputer.mangler.run { !declaration.isExported(compatibleMode = false) })
+            val isVisible = when (declaration) {
+                is IrDeclarationWithVisibility -> !declaration.isEffectivelyPrivate()
+                is IrEnumEntry -> !(declaration.parent as IrDeclarationWithVisibility).isEffectivelyPrivate()
+                else -> false
+            }
+            if (!isVisible) {
                 return null
-
-            // An enum entry is an instance of `IrDeclaration` but not an instance of `IrDeclarationWithVisibility`.
-            // So, to make a proper check here, it's necessary to take the first outer `IrDeclarationWithVisibility`.
-            val firstDeclarationWithVisibility = (declaration as? IrDeclarationWithVisibility)
-                ?: declaration.parents.firstIsInstanceOrNull<IrDeclarationWithVisibility>()
-
-            if (firstDeclarationWithVisibility?.isEffectivelyPrivate() != false)
-                return null
+            }
         }
 
         val signature = symbol.signature ?: declaration?.let(signatureComputer::computeSignature)
