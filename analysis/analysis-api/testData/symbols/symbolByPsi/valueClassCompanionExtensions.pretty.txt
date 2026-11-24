@@ -1,11 +1,11 @@
-fun ValueClass.companionExtensionFunction()
+companion fun ValueClass.companionExtensionFunction()
 
-fun ValueClass.companionExtensionFunctionWithValueClassParameter(v: ValueClass)
+companion fun ValueClass.companionExtensionFunctionWithValueClassParameter(v: ValueClass)
 
-val ValueClass.companionExtensionProperty: kotlin.Int
+companion val ValueClass.companionExtensionProperty: kotlin.Int
   get()
 
-var ValueClass.companionExtensionVariable: kotlin.Int
+companion var ValueClass.companionExtensionVariable: kotlin.Int
   get()
   set(value: kotlin.Int)
 
