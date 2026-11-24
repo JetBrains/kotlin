@@ -24,7 +24,7 @@ public class A {
 import kotlin.test.assertEquals
 
 fun box(): String {
-    val viaStaticConstructor = A.<!UNRESOLVED_REFERENCE!>of<!>(1, "1")
+    val viaStaticConstructor = A.of(1, "1")
     assertEquals(A(1, "1"), viaStaticConstructor)
     return "OK"
 }

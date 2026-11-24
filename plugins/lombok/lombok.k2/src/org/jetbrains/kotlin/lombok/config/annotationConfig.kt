@@ -362,14 +362,17 @@ object ConeLombokAnnotations {
         fun asSetter(): Setter = Setter(accessLevel = AccessLevel.PUBLIC, annotation = annotation)
         fun asGetter(): Getter = Getter(accessLevel = AccessLevel.PUBLIC, annotation = annotation)
 
-        fun asRequiredArgsConstructor(classSymbol: FirClassSymbol<*>): RequiredArgsConstructor? =
-            runIf(!classSymbol.hasJavaOrigin || !containsExplicitConstructor(classSymbol)) {
+        fun asRequiredArgsConstructor(classSymbol: FirClassSymbol<*>): RequiredArgsConstructor? {
+            // Only for Java case with existing explicit constructor and without given static name,
+            // @Data does nothing with constructors
+            return runIf(!classSymbol.hasJavaOrigin || !containsExplicitConstructor(classSymbol) || staticConstructor != null) {
                 RequiredArgsConstructor(
                     accessLevel = AccessLevel.PUBLIC,
                     staticName = staticConstructor,
                     annotation = annotation,
                 )
             }
+        }
 
         fun toEqualsAndHashCode(): EqualsAndHashCode {
             return EqualsAndHashCode(null, null, annotation)
