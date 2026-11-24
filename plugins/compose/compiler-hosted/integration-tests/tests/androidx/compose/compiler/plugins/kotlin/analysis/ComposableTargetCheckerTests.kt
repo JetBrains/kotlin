@@ -215,8 +215,8 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
         @Composable
         @ComposableTarget("N")
         fun T() {
-            <!COMPOSE_APPLIER_CALL_MISMATCH!>G<Int><!>()
-            <!COMPOSE_APPLIER_CALL_MISMATCH!>O.M()<!>
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>G<!><Int>()
+            O.<!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
         }
 
         @Composable
