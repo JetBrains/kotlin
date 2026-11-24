@@ -13,6 +13,8 @@ void * _Nullable KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EO
 
 void * _Nullable KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * pointerToClosure, void * _Nullable _1);
 
+void * _Nullable KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(void * pointerToClosure, void * _Nullable _1, void * _2);
+
 void * _Nullable KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
 
 void * _Nullable KotlinxCoroutinesCore_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_channels_ReceiveChannel__(void * pointerToClosure, void * _1);
@@ -521,6 +523,8 @@ void * kotlinx_coroutines_Job__TypesOfArguments__Swift_Optional_anyU20ExportedKo
 
 _Bool kotlinx_coroutines_JobSupport_cancel__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_kotlin_coroutines_cancellation_CancellationException___(void * self, void * _Nullable cause);
 
+_Bool kotlinx_coroutines_JobSupport_cancel(void * self);
+
 _Bool kotlinx_coroutines_JobSupport_cancelCoroutine__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(void * self, void * _Nullable cause);
 
 _Bool kotlinx_coroutines_JobSupport_cancelInternal__TypesOfArguments__ExportedKotlinPackages_kotlin_Throwable__(void * self, void * cause);
@@ -528,6 +532,10 @@ _Bool kotlinx_coroutines_JobSupport_cancelInternal__TypesOfArguments__ExportedKo
 _Bool kotlinx_coroutines_JobSupport_childCancelled__TypesOfArguments__ExportedKotlinPackages_kotlin_Throwable__(void * self, void * cause);
 
 void * kotlinx_coroutines_JobSupport_children_get(void * self);
+
+void * _Nullable kotlinx_coroutines_JobSupport_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable initial, void * operation);
+
+void * _Nullable kotlinx_coroutines_JobSupport_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(void * self, void * key);
 
 void * kotlinx_coroutines_JobSupport_getCancellationException(void * self);
 
@@ -555,9 +563,13 @@ _Bool kotlinx_coroutines_JobSupport_join(void * self, void * continuation, void 
 
 void * kotlinx_coroutines_JobSupport_key_get(void * self);
 
+void * kotlinx_coroutines_JobSupport_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(void * self, void * key);
+
 void * kotlinx_coroutines_JobSupport_onJoin_get(void * self);
 
 void * _Nullable kotlinx_coroutines_JobSupport_parent_get(void * self);
+
+void * kotlinx_coroutines_JobSupport_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext__(void * self, void * context);
 
 _Bool kotlinx_coroutines_JobSupport_start(void * self);
 

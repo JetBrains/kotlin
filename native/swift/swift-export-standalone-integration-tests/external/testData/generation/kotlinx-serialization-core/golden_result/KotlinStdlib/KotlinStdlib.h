@@ -35,7 +35,11 @@ void * _Nullable kotlin_Throwable_cause_get__reverse_swift(void * self);
 
 NSString * _Nullable kotlin_Throwable_message_get__reverse_swift(void * self);
 
+_Bool kotlin_collections_ByteIterator_hasNext__reverse_swift(void * self);
+
 int8_t kotlin_collections_ByteIterator_nextByte__reverse_swift(void * self);
+
+_Bool kotlin_collections_CharIterator_hasNext__reverse_swift(void * self);
 
 uint16_t kotlin_collections_CharIterator_nextChar__reverse_swift(void * self);
 
@@ -48,6 +52,8 @@ _Bool kotlin_collections_Collection_isEmpty__reverse_swift(void * self);
 void * kotlin_collections_Collection_iterator__reverse_swift(void * self);
 
 int32_t kotlin_collections_Collection_size_get__reverse_swift(void * self);
+
+_Bool kotlin_collections_IntIterator_hasNext__reverse_swift(void * self);
 
 int32_t kotlin_collections_IntIterator_nextInt__reverse_swift(void * self);
 
@@ -1431,11 +1437,15 @@ uint16_t kotlin_UShort_toUShort(void * self);
 
 uint16_t kotlin_UShort_xor__TypesOfArguments__Swift_UInt16__(void * self, uint16_t other);
 
+_Bool kotlin_collections_ByteIterator_hasNext(void * self);
+
 _Bool kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 int8_t kotlin_collections_ByteIterator_next(void * self);
 
 int8_t kotlin_collections_ByteIterator_nextByte(void * self);
+
+_Bool kotlin_collections_CharIterator_hasNext(void * self);
 
 _Bool kotlin_collections_CharIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
@@ -1452,6 +1462,8 @@ _Bool kotlin_collections_Collection_isEmpty(void * self);
 void * kotlin_collections_Collection_iterator(void * self);
 
 int32_t kotlin_collections_Collection_size_get(void * self);
+
+_Bool kotlin_collections_IntIterator_hasNext(void * self);
 
 _Bool kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
