@@ -23,6 +23,6 @@ FILE: implicitCompanionAddOpenSupertype.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        lval <unused var>: R|kotlin/String| = Q|Owner|.R|/Base.value|()
+        lval <unused var>: R|kotlin/String| = Q|Owner(.<companion>)|.R|/Base.value|()
         lval <unused var>: R|kotlin/String| = Q|Owner.Companion|.R|/Base.value|()
     }

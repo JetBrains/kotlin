@@ -7,9 +7,9 @@ enum class Base {
     Known
 }
 
-@WithCompanion(Base::class)
-class <!FINAL_SUPERTYPE!>Owner<!> {
-}
+<!FINAL_SUPERTYPE!>@WithCompanion(Base::class)
+class Owner {
+}<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, companionObject, equalityExpression, functionDeclaration,
 interfaceDeclaration, nestedClass, objectDeclaration, sealed, stringLiteral, whenExpression, whenWithSubject */

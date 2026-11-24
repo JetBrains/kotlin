@@ -270,7 +270,7 @@ FILE: [ResolvedTo(IMPORTS)] needsCompanionObjectExplicit.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
-        Q|pack/Owner|.R|pack/Base.value|()
+        Q|pack/Owner(.<companion>)|.R|pack/Base.value|()
     }
 
 FILE RAW TO BODY:
@@ -295,5 +295,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] needsCompanionObjectExplicit.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
-        Q|pack/Owner|.R|pack/Base.value|()
+        Q|pack/Owner(.<companion>)|.R|pack/Base.value|()
     }

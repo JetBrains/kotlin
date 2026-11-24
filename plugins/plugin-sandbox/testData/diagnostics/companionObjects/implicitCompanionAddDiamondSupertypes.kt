@@ -12,7 +12,7 @@ interface Right {
 }
 
 @WithCompanion(Left::class, Right::class)
-class <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>Owner<!> {
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class Owner<!> {
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, companionObject, functionDeclaration, interfaceDeclaration,

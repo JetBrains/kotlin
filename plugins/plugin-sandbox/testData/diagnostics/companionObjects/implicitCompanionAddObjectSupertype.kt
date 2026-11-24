@@ -6,8 +6,8 @@ import org.jetbrains.kotlin.plugin.sandbox.WithCompanion
 object Base {
 }
 
-@WithCompanion(Base::class)
-class <!SINGLETON_IN_SUPERTYPE!>Owner<!> {
-}
+<!SINGLETON_IN_SUPERTYPE!>@WithCompanion(Base::class)
+class Owner {
+}<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, objectDeclaration */

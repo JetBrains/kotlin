@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// MUTE_LL_FIR: NO_ELSE_IN_WHEN is not reported.
 // WITH_STDLIB
 
 import org.jetbrains.kotlin.plugin.sandbox.WithCompanion

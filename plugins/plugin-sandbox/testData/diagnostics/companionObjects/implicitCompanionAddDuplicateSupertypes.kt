@@ -7,8 +7,8 @@ interface Base {
     fun value(): String = "OK"
 }
 
-@WithCompanion(Base::class, Base::class)
-class <!SUPERTYPE_APPEARS_TWICE!>Owner<!> {
-}
+<!SUPERTYPE_APPEARS_TWICE!>@WithCompanion(Base::class, Base::class)
+class Owner {
+}<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, interfaceDeclaration, stringLiteral */
