@@ -26,6 +26,7 @@ touchType(InitNode);
 touchType(TypeInfo)
 touchType(ExtendedTypeInfo)
 touchType(InterfaceTableRecord)
+touchType(InterfaceTable)
 touchType(AssociatedObjectTableRecord)
 
 touchType(ObjHeader)

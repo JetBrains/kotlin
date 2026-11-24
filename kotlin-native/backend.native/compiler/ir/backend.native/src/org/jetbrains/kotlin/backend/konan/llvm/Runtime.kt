@@ -47,6 +47,7 @@ internal class Runtime(
     val extendedTypeInfoType = getStructType("ExtendedTypeInfo")
     val writableTypeInfoType = getStructTypeOrNull("WritableTypeInfo")
     val interfaceTableRecordType = getStructType("InterfaceTableRecord")
+    val interfaceTableType = getStructType("InterfaceTable")
     val associatedObjectTableRecordType = getStructType("AssociatedObjectTableRecord")
 
     val objHeaderType = getStructType("ObjHeader")
