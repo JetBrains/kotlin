@@ -130,6 +130,27 @@ class FirJavaTypeParameter(
     override val isReified: Boolean
         get() = false
 
+    /**
+     * The bounds of this type parameter.
+     *
+     * For a type parameter of a [FirJavaClass], the getter enhances the bounds of all the class type parameters
+     * (see [FirJavaClass.enhanceTypeParameterBounds]) unless these bounds are already final.
+     * The enhancement resolves Java types and may load and enhance other classes, so the getter may be reentered.
+     * - The final bounds are returned, except on a thread that runs the second round of the enhancement for the class
+     *   ([isInSecondRoundOfTypeParameterBoundsEnhancement]). Other threads never get non-final bounds:
+     *   they run the missing rounds themselves.
+     * - On a thread that runs the second round, the bounds after the first round are returned unless they are already final:
+     *   raw types in them are approximated with star projections, and their nullability isn't enhanced.
+     *   This holds for any read on that thread, e.g., from the enhancement of another class during this round,
+     *   so the final bounds of that class depend on the order in which the classes are enhanced.
+     * - The initial bounds, which may be unresolved [org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef]s, are never returned:
+     *   the getter throws instead, which isn't expected to happen.
+     *
+     * For a type parameter of a Java method or constructor, the getter doesn't run the enhancement:
+     * [org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement] enhances the bounds before it builds the enhanced
+     * function, which gets copies of the type parameters with the final bounds. Until then, the getter returns the first-round
+     * bounds or even the initial ones (e.g., for `JavaOverrideChecker`).
+     */
     override val bounds: List<FirTypeRef>
         get() {
             val initialState = boundsEnhancementState
