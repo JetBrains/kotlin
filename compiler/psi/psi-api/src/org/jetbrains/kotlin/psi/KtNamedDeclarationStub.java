@@ -193,15 +193,16 @@ public abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> 
         return scope;
     }
 
+    /**
+     * Without a stub, computes the FqName the way stubs store it, see {@link KtPsiUtilKt#safeFqNameForLazyResolve}.
+     */
     @Nullable
     @Override
     public FqName getFqName() {
-        // TODO: stubs do not agree with PSI here in case where there's no name:
-        // stubs return a normalized name, and PSI returns null
         T stub = getGreenStub();
         if (stub != null) {
             return stub.getFqName();
         }
-        return KtNamedDeclarationUtil.getFQName(this);
+        return KtPsiUtilKt.safeFqNameForLazyResolve(this);
     }
 }
