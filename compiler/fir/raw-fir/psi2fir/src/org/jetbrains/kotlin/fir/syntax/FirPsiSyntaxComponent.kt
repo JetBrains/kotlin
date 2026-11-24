@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.ParserMode
+import org.jetbrains.kotlin.diagnostics.ParseTreeKind
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -37,8 +38,8 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 @NoMutableState
 object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
-    override val parserMode: ParserMode
-        get() = Psi
+    override val parseTreeKind: ParseTreeKind
+        get() = PsiParseTreeKind
 
     override fun KtSourceElement.unwrap(): KtPsiSourceElement {
         return this as? KtPsiSourceElement ?: unwrapError(this@unwrap)

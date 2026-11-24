@@ -14,6 +14,7 @@ plugins {
 dependencies {
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:cli"))
+    implementation(project(":compiler:frontend.common-psi"))
     implementation(intellijCore())
     implementation(kotlinStdlib())
 

@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION_WITH_DOT
@@ -545,6 +546,6 @@ object StandaloneProjectFactory {
         LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST)
 
     private fun createStubConfigurationForReporting(): CompilerConfiguration {
-        return CompilerConfiguration.create(BaseDiagnosticsCollector.DoNothing, MessageCollector.NONE)
+        return CompilerConfiguration.create(BaseDiagnosticsCollector.DoNothing, MessageCollector.NONE, parseTreeKind = PsiParseTreeKind)
     }
 }

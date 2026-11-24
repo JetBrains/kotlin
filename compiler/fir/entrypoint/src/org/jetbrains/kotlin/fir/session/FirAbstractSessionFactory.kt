@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
@@ -270,7 +271,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             registerCliCompilerOnlyResolveComponents(
                 configuration.diagnosticFactoriesStorage ?: error("diagnosticFactoriesStorage is not registered in the configuration"),
             )
-            registerSyntaxComponent(configuration.parserMode)
+            registerSyntaxComponent(configuration.parseTreeKind)
 
             registerSourceSessionComponents(context)
 

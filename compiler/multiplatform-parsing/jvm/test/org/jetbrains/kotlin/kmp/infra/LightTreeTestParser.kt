@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.LightTreeParseTreeKind
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.util.getChildren
 class LightTreeTestParser(disposable: Disposable) : AbstractTestParser<LighterASTNode>(ParseMode.NoKDoc) {
     init {
         @OptIn(CoreEnvironmentDeprecation::class)
-        KotlinCoreEnvironment.create(disposable, CompilerConfiguration.create())
+        KotlinCoreEnvironment.create(disposable, CompilerConfiguration.create(parseTreeKind = LightTreeParseTreeKind))
     }
 
     private val builderFactoryInstance: PsiBuilderFactory = PsiBuilderFactory.getInstance()

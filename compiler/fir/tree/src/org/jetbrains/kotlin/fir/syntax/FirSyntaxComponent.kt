@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.syntax
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.ParserMode
+import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
@@ -29,21 +29,21 @@ fun interface SyntaxIdPredicate {
 /**
  * Provides syntax-specific services for the source elements of a [org.jetbrains.kotlin.fir.FirSession].
  *
- * There is one implementation per [ParserMode]; it must match the kind of source elements produced by the raw FIR builder
+ * There is one implementation per [ParseTreeKind]; it must match the kind of source elements produced by the raw FIR builder
  * used for the session's sources.
- * The implementation is registered only for source sessions (in the CLI, it's selected by [org.jetbrains.kotlin.config.parserMode]);
+ * The implementation is registered only for source sessions (in the CLI, it's selected by [org.jetbrains.kotlin.cli.parseTreeKind]);
  * the Analysis API always uses the PSI-based implementation.
  */
 @NoMutableState
 abstract class FirSyntaxComponent<T> : FirSessionComponent {
-    abstract val parserMode: ParserMode
+    abstract val parseTreeKind: ParseTreeKind
 
     abstract fun KtSourceElement.unwrap(): T
 
     protected fun unwrapError(actualSourceElement: KtSourceElement): Nothing {
         errorWithAttachment(
-            "${this::class.simpleName} (parser mode $parserMode) can't process ${actualSourceElement::class.simpleName}. " +
-                    "The session's parser mode must match the raw FIR builder that produced its sources."
+            "${this::class.simpleName} can't process ${actualSourceElement::class.simpleName}. " +
+                    "The session's parse tree kind must match the raw FIR builder that produced its sources."
         ) {
             withSourceEntry("source", actualSourceElement)
             withEntry("sourceKind", actualSourceElement.kind::class.simpleName)

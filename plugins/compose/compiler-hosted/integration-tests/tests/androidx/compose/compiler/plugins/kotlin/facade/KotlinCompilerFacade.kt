@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -114,7 +115,8 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
             updateConfiguration: CompilerConfiguration.() -> Unit,
             registerExtensions: Project.(CompilerConfiguration) -> Unit,
         ): KotlinCompilerFacade {
-            val configuration = CompilerConfiguration.create().apply {
+            // `K2CompilerFacade` currently builds FIR from Kt PSI files (`buildResolveAndCheckFirFromKtFiles`), KT-91411
+            val configuration = CompilerConfiguration.create(parseTreeKind = PsiParseTreeKind).apply {
                 put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME)
                 put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
                 this.targetPlatform = JvmPlatforms.unspecifiedJvmPlatform
@@ -123,8 +125,6 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 messageCollector = TestMessageCollector
                 updateConfiguration()
                 put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
-                // `K2CompilerFacade` currently builds FIR from Kt PSI files (`buildResolveAndCheckFirFromKtFiles`), KT-91411
-                parserMode = ParserMode.Psi
             }
 
             @OptIn(CoreEnvironmentDeprecation::class)

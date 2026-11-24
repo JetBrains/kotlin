@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.AbstractAnalysisApiCodebaseTest.SourceDirectory
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -33,7 +34,7 @@ import java.io.File
 abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : TestWithDisposable() {
     protected fun doTest() {
         val environment = JvmFrontendPipelinePhase.createProjectEnvironment(
-            CompilerConfiguration.create(),
+            CompilerConfiguration.create(parseTreeKind = PsiParseTreeKind),
             disposable,
         )
         val psiManager = PsiManager.getInstance(environment.project)

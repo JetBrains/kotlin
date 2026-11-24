@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
@@ -55,7 +56,8 @@ private val JDK_PATH = File("${System.getProperty("java.home")!!}/lib/rt.jar")
 private val RUNTIME_JAR = File(System.getProperty("kotlin.runtime.path") ?: "dist/kotlinc/lib/kotlin-runtime.jar")
 
 private fun newConfiguration(): CompilerConfiguration {
-    val configuration = CompilerConfiguration.create()
+    // The benchmark currently builds FIR from PSI files (`PsiRawFirBuilder`), KT-91411
+    val configuration = CompilerConfiguration.create(parseTreeKind = PsiParseTreeKind)
     configuration.put(CommonConfigurationKeys.MODULE_NAME, "benchmark")
     configuration.addJvmClasspathRoot(JDK_PATH)
     configuration.addJvmClasspathRoot(RUNTIME_JAR)

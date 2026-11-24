@@ -17,11 +17,16 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
+import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 
 object FrontendConfigurationKeys {
     // Container of all registered diagnostic factories.
     @JvmField
     val DIAGNOSTIC_FACTORIES_STORAGE = CompilerConfigurationKey.create<KtRegisteredDiagnosticFactoriesStorage>("DIAGNOSTIC_FACTORIES_STORAGE")
+
+    // The kind of parse tree used in the compilation (PSI, LightTree or KMP). It's also used to position diagnostics.
+    @JvmField
+    val PARSE_TREE_KIND = CompilerConfigurationKey.create<ParseTreeKind>("PARSE_TREE_KIND")
 
     // Storage of registered compiler plugins.
     @JvmField
@@ -33,6 +38,10 @@ object FrontendConfigurationKeys {
 var CompilerConfiguration.diagnosticFactoriesStorage: KtRegisteredDiagnosticFactoriesStorage?
     get() = get(FrontendConfigurationKeys.DIAGNOSTIC_FACTORIES_STORAGE)
     set(value) { put(FrontendConfigurationKeys.DIAGNOSTIC_FACTORIES_STORAGE, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.parseTreeKind: ParseTreeKind
+    get() = getOrDefault(FrontendConfigurationKeys.PARSE_TREE_KIND) { error("parse tree kind is not initialized") }
+    set(value) { put(FrontendConfigurationKeys.PARSE_TREE_KIND, value) }
 
 @OptIn(ExperimentalCompilerApi::class)
 var CompilerConfiguration.extensionsStorage: ExtensionStorage?

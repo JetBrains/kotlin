@@ -10,11 +10,11 @@ import com.intellij.openapi.util.Disposer
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.config.ParserMode
-import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.useFir
+import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.test.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
@@ -115,7 +115,7 @@ class CompileTimeFibonacciTest {
     ): ResultWithDiagnostics<CompiledScript> {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
             useFir = true
-            parserMode = ParserMode.Psi // `ScriptJvmCompilerFromEnvironment` builds FIR from PSI files, KT-91411
+            parseTreeKind = PsiParseTreeKind // `ScriptJvmCompilerFromEnvironment` builds FIR from PSI files, KT-91411
             updateWithBaseCompilerArguments()
             val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration)
             add(
