@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
  */
 public final class KtNamedDeclarationUtil {
     @Nullable
-    //NOTE: use JetNamedDeclaration#getFqName instead
-    /*package private*/ static FqName getFQName(@NotNull KtNamedDeclaration namedDeclaration) {
+    private static FqName getFQName(@NotNull KtNamedDeclaration namedDeclaration) {
         Name name = namedDeclaration.getNameAsName();
         if (name == null) {
             return null;

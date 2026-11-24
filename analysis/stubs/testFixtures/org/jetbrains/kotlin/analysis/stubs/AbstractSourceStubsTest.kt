@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSour
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -61,9 +60,6 @@ abstract class AbstractSourceStubsTest : AbstractStubsTest() {
     /**
      * Checks [stubBasedFqNames] against the FqNames of the declarations of a copy of [file] that has only an AST.
      * The loaded AST of [file] itself is not enough, as its PSI keeps reading the green stub.
-     *
-     * Nameless declarations and their members are skipped: stubs have FqNames with the normalized names of nameless declarations, while
-     * the PSI has no FqName for them.
      */
     private fun assertFqNamesMatchAst(
         file: KtFile,
@@ -76,8 +72,6 @@ abstract class AbstractSourceStubsTest : AbstractStubsTest() {
         }
 
         for ([declaration, stubBasedFqName] in stubBasedFqNames) {
-            if (stubBasedFqName?.pathSegments()?.any(Name::isSpecial) == true) continue
-
             val astFqName = astFqNames.getValue(Pair(declaration.textRange.startOffset, declaration::class))
             testServices.assertions.assertEquals(astFqName, stubBasedFqName) {
                 "Stub-based and AST-based FqNames differ for '${declaration.name}'"

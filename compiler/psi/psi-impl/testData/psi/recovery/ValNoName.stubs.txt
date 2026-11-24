@@ -6,7 +6,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValNoNameKt]]
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=A, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=null]
+        VALUE_PARAMETER[fqName=A.<no name provided>, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=null]
         VALUE_PARAMETER[fqName=A.x, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=x]
           TYPE_REFERENCE
             USER_TYPE
@@ -16,7 +16,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValNoNameKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=null]
+        VALUE_PARAMETER[fqName=A.<no name provided>, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=null]
   PROPERTY[fqName=<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=null]
   FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
@@ -32,7 +32,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValNoNameKt]]
   CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=C, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=true, isMutable=true, name=null]
+        VALUE_PARAMETER[fqName=C.<no name provided>, hasDefaultValue=false, hasValOrVar=true, isMutable=true, name=null]
         VALUE_PARAMETER[fqName=C.x, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=x]
           TYPE_REFERENCE
             USER_TYPE
@@ -42,7 +42,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValNoNameKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=true, isMutable=true, name=null]
+        VALUE_PARAMETER[fqName=C.<no name provided>, hasDefaultValue=false, hasValOrVar=true, isMutable=true, name=null]
   PROPERTY[fqName=<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=true, name=null]
   FUNCTION[fqName=baz, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=baz]
     VALUE_PARAMETER_LIST
