@@ -329,7 +329,7 @@ class NativeSecondStageCompilationConfig(
             configuration.get(BinaryOptions.forceNativeThreadStateForFunctions)?.toSet()
                     ?: defaultForceNativeThreadStateForFunctions
 
-    private val defaultGenericSafeCasts = false // !optimizationsEnabled // For now disabled in -opt due to performance penalty.
+    private val defaultGenericSafeCasts = !optimizationsEnabled // For now disabled in -opt due to performance penalty.
     val genericSafeCasts: Boolean by lazy {
         configuration.get(BinaryOptions.genericSafeCasts)
                 ?: defaultGenericSafeCasts

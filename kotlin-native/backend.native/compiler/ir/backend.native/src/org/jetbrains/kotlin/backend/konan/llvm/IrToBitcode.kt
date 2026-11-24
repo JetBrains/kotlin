@@ -1510,8 +1510,9 @@ internal class CodeGeneratorVisitor(
             // This decision depends on the type of the argument: if the type is a user-defined `class`, changing its superclass
             // or superinterfaces must lead to reevaluating the optimization.
             // This check is duplicated:
-            // * in CastsLowering.kt
-            // * in CastsOptimization.kt for the case, when genericSafeCasts are enabled
+            // * in CastsLowering.kt for unsafe casts, when genericSafeCasts are disabled in a non-optimized build
+            // * (here) in IrToBitcode.kt for all other cases, when genericSafeCasts are disabled
+            // * in CastsOptimization.kt for all cases, when genericSafeCasts are enabled
             generationState.dependenciesTracker.add(it.owner)
         }
         val isSuperClassCast = srcType.isSuperClassCastTo(dstClass)

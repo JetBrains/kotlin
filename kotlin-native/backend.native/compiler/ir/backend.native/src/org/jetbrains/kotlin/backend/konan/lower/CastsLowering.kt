@@ -55,8 +55,9 @@ internal class CastsLowering(val context: NativeGenerationState) : BodyLoweringP
                 // If the `srcType`'s type is a user-defined `class`, changing its superclass or superinterfaces must lead to
                 // reevaluating the optimization.
                 // This check is duplicated:
-                // * in CastsOptimization.kt for the case, when genericSafeCasts are enabled
-                // * in IrToBitcode.kt for the case, when genericSafeCasts are disabled
+                // * (here) in CastsLowering.kt for unsafe casts, when genericSafeCasts are disabled in a non-optimized build
+                // * in IrToBitcode.kt for all other cases, when genericSafeCasts are disabled
+                // * in CastsOptimization.kt for all cases, when genericSafeCasts are enabled
                 srcType.classOrNull?.let {
                     context.dependenciesTracker.add(it.owner)
                 }
