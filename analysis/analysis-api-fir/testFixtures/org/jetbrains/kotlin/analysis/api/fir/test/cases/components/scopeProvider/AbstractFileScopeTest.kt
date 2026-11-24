@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.scopeProvide
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.fileScope
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -25,7 +24,7 @@ abstract class AbstractFileScopeTest : AbstractScopeTestBase() {
 
         analyzeForTest(mainFile) {
             val fileSymbol = mainFile.symbol
-            val renderedFileSymbol = KaDebugRenderer(renderExtra = true).render(useSiteSession, fileSymbol)
+            val renderedFileSymbol = KaDebugRenderer(renderExtra = true).render(fileSymbol)
             testServices.assertions.assertEqualsToTestOutputFile(renderedFileSymbol, extension = ".file_symbol.txt")
         }
     }

@@ -181,7 +181,7 @@ private sealed class AnnotationQuery<O : Any> {
         sealed class AnnotationQuery : CollectionQuery<KaAnnotation>() {
             context(session: KaSession)
             final override fun renderElementOutput(element: KaAnnotation): String {
-                return KaDebugRenderer().renderAnnotationApplication(session, element)
+                return KaDebugRenderer().renderAnnotationApplication(element)
             }
 
             /**

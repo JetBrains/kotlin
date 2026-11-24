@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.renderer.render
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
@@ -40,13 +39,13 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
         val [debugRendered, prettyRendered, pointer] = analyzeForTest(declaration) {
             val symbol = declaration.symbol
             val pointer = symbol.createPointer()
-            Triple(KaDebugRenderer().render(useSiteSession, symbol), symbol.render(defaultRenderer), pointer)
+            Triple(KaDebugRenderer().render(symbol), symbol.render(defaultRenderer), pointer)
         }
         configurator.doGlobalModuleStateModification(project)
 
         val [debugRenderedRestored, prettyRenderedRestored] = analyzeForTest(restoreAt) {
             val symbol = pointer.restoreSymbol()
-            symbol?.let { KaDebugRenderer().render(useSiteSession, it) } to symbol?.render(defaultRenderer)
+            symbol?.let { KaDebugRenderer().render(it) } to symbol?.render(defaultRenderer)
         }
 
         val actualDebug = prettyPrint {

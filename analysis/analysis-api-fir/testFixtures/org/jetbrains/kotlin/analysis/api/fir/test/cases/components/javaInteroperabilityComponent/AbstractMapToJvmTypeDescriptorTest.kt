@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.javaInterope
 
 import org.jetbrains.kotlin.analysis.api.javaInterop.mapToJvmTypeDescriptor
 import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -46,7 +45,7 @@ abstract class AbstractMapToJvmTypeDescriptorTest : AbstractAnalysisApiBasedTest
 
                 val actualText = buildString {
                     appendLine("Type:")
-                    appendLine(KaDebugRenderer().renderType(useSiteSession, type))
+                    appendLine(KaDebugRenderer().renderType(type))
                     appendLine()
                     appendLine("mapToJvmTypeDescriptor:")
                     appendLine(type.mapToJvmTypeDescriptor())

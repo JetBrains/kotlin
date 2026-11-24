@@ -211,7 +211,7 @@ internal class KaFirResolver(
             { "Expected symbol of type ${S::class.simpleName}, got ${callableSymbol::class.simpleName}" },
         ) {
             withEntry("symbol", callableSymbol) {
-                KaDebugRenderer(renderExtra = true).render(analysisSession, callableSymbol)
+                context(analysisSession) { KaDebugRenderer(renderExtra = true).render(callableSymbol) }
             }
 
             withPsiEntry("psi", this@resolveSimpleCallSafe)
@@ -222,7 +222,7 @@ internal class KaFirResolver(
             { "Expected call of type ${R::class.simpleName}, got ${call::class.simpleName}" }
         ) {
             withEntry("symbol", callableSymbol) {
-                KaDebugRenderer(renderExtra = true).render(analysisSession, callableSymbol)
+                context(analysisSession) { KaDebugRenderer(renderExtra = true).render(callableSymbol) }
             }
 
             withPsiEntry("psi", this@resolveSimpleCallSafe)

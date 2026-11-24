@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionTypeProvider
 
 import org.jetbrains.kotlin.analysis.api.expressions.expectedType
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -24,7 +23,7 @@ abstract class AbstractExpectedExpressionTypeTest : AbstractAnalysisApiBasedTest
         val actualExpectedTypeText = executeOnPooledThreadInReadAction {
             copyAwareAnalyzeForTest(expression) { contextExpression ->
                 val expectedType = contextExpression.expectedType ?: return@copyAwareAnalyzeForTest null
-                KaDebugRenderer().renderType(useSiteSession, expectedType)
+                KaDebugRenderer().renderType(expectedType)
             }
         }
 

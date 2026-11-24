@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.typeProvider
 
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
@@ -32,7 +31,7 @@ abstract class AbstractVarargArrayTypeTest : AbstractAnalysisApiBasedTest() {
 
             val varargArrayType = (symbol as KaValueParameterSymbol).varargArrayType
             val actual = varargArrayType?.let { type ->
-                KaDebugRenderer().renderType(useSiteSession, type)
+                KaDebugRenderer().renderType(type)
             } ?: "NOT_VARARG"
 
             testServices.assertions.assertEqualsToTestOutputFile(actual)

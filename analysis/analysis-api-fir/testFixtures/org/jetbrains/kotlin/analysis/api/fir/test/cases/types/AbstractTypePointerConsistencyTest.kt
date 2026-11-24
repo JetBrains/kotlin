@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.types
 
 import org.jetbrains.kotlin.analysis.api.expressions.expressionType
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.restore
@@ -42,14 +41,14 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
                 else -> error("Unsupported expression type: $targetExpression")
             }
 
-            beforeString = renderer.renderType(useSiteSession, type)
+            beforeString = renderer.renderType(type)
             typePointer = type.createPointer()
         }
 
         val afterString = analyzeForTest(restoreAt) {
             val restoredType = typePointer.restore()
             if (restoredType != null) {
-                renderer.renderType(useSiteSession, restoredType)
+                renderer.renderType(restoredType)
             } else {
                 "Type pointer restoration failed"
             }

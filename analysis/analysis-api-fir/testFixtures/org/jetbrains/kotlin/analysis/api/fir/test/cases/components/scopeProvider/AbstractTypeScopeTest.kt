@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclaratio
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaRendererKeywordFilter
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.scopes.*
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -100,7 +99,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
         val callables = scope.callables.toList()
         return prettyPrint {
             callables.forEach {
-                appendLine(KaDebugRenderer().render(useSiteSession, it))
+                appendLine(KaDebugRenderer().render(it))
             }
         }
     }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
@@ -37,7 +36,7 @@ abstract class AbstractAnalysisApiSpecificAnnotationOnDeclarationTest : Abstract
             val renderer = KaDebugRenderer()
             fun renderAnnotation(application: KaAnnotation): String = buildString {
                 appendLine("${KtDeclaration::class.simpleName}: ${contextDeclaration::class.simpleName} ${contextDeclaration.name}")
-                append(renderer.renderAnnotationApplication(useSiteSession, application))
+                append(renderer.renderAnnotationApplication(application))
             }
 
             testServices.assertions.assertTrue(classId in annotationList) {

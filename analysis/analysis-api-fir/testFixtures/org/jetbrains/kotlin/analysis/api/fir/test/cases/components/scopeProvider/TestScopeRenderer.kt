@@ -130,7 +130,7 @@ internal object TestScopeRenderer {
         if (printPretty) {
             prettyPrintTypeRenderer.renderType(useSiteSession, type, this)
         } else {
-            append(debugRenderer.renderType(useSiteSession, type))
+            append(debugRenderer.renderType(type))
         }
     }
 
@@ -186,7 +186,7 @@ internal object TestScopeRenderer {
                         if (printPretty) {
                             renderPrettySymbol(it)
                         } else {
-                            debugRenderer.render(useSiteSession, it)
+                            debugRenderer.render(it)
                         }
                     )
                     additionalSymbolInfo(it)?.let {

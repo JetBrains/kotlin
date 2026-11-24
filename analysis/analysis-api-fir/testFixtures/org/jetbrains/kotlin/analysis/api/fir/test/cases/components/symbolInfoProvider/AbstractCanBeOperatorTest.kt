@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.symbolInfoProvider
 
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.canBeOperator
@@ -30,7 +29,7 @@ abstract class AbstractCanBeOperatorTest : AbstractAnalysisApiBasedTest() {
 
             buildString {
                 appendLine("FUNCTION:")
-                appendLine("  ${symbolRenderer.render(useSiteSession, functionSymbol)}")
+                appendLine("  ${symbolRenderer.render(functionSymbol)}")
                 appendLine("CAN_BE_OPERATOR:")
                 appendLine("  $canBeOperator")
             }

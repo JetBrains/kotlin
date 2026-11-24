@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.types
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.render
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -23,7 +22,7 @@ abstract class AbstractTypeTest : AbstractAnalysisApiBasedTest() {
             val type = getType(mainFile, mainModule, testServices)
 
             buildString {
-                appendLine(KaDebugRenderer(renderTypeByProperties = true).renderType(useSiteSession, type))
+                appendLine(KaDebugRenderer(renderTypeByProperties = true).renderType(type))
 
                 appendLine()
                 appendLine("Rendered type:")

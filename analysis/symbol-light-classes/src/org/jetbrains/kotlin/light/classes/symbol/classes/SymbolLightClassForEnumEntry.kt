@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -43,7 +42,7 @@ internal class SymbolLightClassForEnumEntry(
             ) {
                 withEntry("KaEnumEntrySymbol", enumEntrySymbol) {
                     @OptIn(KaNonPublicApi::class)
-                    KaDebugRenderer(renderExtra = true).render(useSiteSession, enumEntrySymbol)
+                    KaDebugRenderer(renderExtra = true).render(enumEntrySymbol)
                 }
             }
         }

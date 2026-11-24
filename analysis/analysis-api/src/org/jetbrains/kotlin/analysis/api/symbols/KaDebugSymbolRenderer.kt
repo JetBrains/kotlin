@@ -7,15 +7,6 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPackage
-import java.lang.reflect.InvocationTargetException
-import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
-import kotlin.reflect.KProperty
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.allSuperclasses
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.jvm.isAccessible
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
@@ -37,6 +28,15 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.types.Variance
+import java.lang.reflect.InvocationTargetException
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.KProperty
+import kotlin.reflect.KVisibility
+import kotlin.reflect.full.allSuperclasses
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.jvm.isAccessible
 
 @KaNonPublicApi
 @OptIn(KaExperimentalApi::class, KaImplementationDetail::class, KaIdeApi::class)
@@ -47,29 +47,25 @@ public class KaDebugRenderer(
     public val renderIsPublicApi: Boolean = false,
 ) {
 
-    public fun render(analysisSession: KaSession, symbol: KaSymbol): String = prettyPrint {
-        context(analysisSession) {
-            renderSymbol(symbol, this, linkedSetOf())
-        }
+    context(session: KaSession)
+    public fun render(symbol: KaSymbol): String = prettyPrint {
+        renderSymbol(symbol, this, linkedSetOf())
     }
 
-    public fun renderAnnotationApplication(analysisSession: KaSession, application: KaAnnotation): String = prettyPrint {
-        context(analysisSession) {
-            renderAnnotationApplication(application, this, linkedSetOf())
-        }
+    context(session: KaSession)
+    public fun renderAnnotationApplication(application: KaAnnotation): String = prettyPrint {
+        renderAnnotationApplication(application, this, linkedSetOf())
     }
 
-    public fun renderType(analysisSession: KaSession, type: KaType): String = prettyPrint {
-        context(analysisSession) {
-            renderType(type, this, linkedSetOf())
-        }
+    context(session: KaSession)
+    public fun renderType(type: KaType): String = prettyPrint {
+        renderType(type, this, linkedSetOf())
     }
 
     @TestOnly
-    public fun renderForSubstitutionOverrideUnwrappingTest(analysisSession: KaSession, symbol: KaSymbol): String = prettyPrint {
-        context(analysisSession) {
-            renderForSubstitutionOverrideUnwrappingTest(symbol, this, linkedSetOf())
-        }
+    context(session: KaSession)
+    public fun renderForSubstitutionOverrideUnwrappingTest(symbol: KaSymbol): String = prettyPrint {
+        renderForSubstitutionOverrideUnwrappingTest(symbol, this, linkedSetOf())
     }
 
     context(session: KaSession)
