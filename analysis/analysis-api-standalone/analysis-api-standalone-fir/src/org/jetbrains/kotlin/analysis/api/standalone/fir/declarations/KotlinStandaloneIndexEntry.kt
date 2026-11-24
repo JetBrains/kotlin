@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getImportedSimpleNameByImportAlias
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationEntryStub
+import org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub
+import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -97,6 +100,8 @@ internal sealed class KotlinStandaloneIndexRecord {
     class TopLevelFunction(override val ordinal: Int, val callableId: CallableId) : KotlinStandaloneIndexRecord()
 
     class TopLevelProperty(override val ordinal: Int, val callableId: CallableId) : KotlinStandaloneIndexRecord()
+
+    class TopLevelDestructuringDeclarationEntry(override val ordinal: Int, val callableId: CallableId) : KotlinStandaloneIndexRecord()
 }
 
 /**
@@ -123,6 +128,10 @@ internal fun collectIndexedStubs(fileStub: StubElement<*>): List<StubElement<*>>
             }
 
             is KotlinTypeAliasStubImpl, is KotlinFunctionStubImpl, is KotlinPropertyStubImpl -> add(stub)
+
+            // entries of top-level destructuring declarations
+            is KotlinDestructuringDeclarationStub -> stub.childrenStubs.forEach(::visit)
+            is KotlinDestructuringDeclarationEntryStub -> add(stub)
 
             is KotlinPlaceHolderStubImpl if (stub.elementType == KtNodeTypes.CLASS_BODY) -> {
                 stub.childrenStubs
@@ -188,6 +197,11 @@ internal class KotlinStandaloneAstBasedIndexer : KtVisitorVoid() {
         index(property)
         super.visitProperty(property)
     }
+
+    override fun visitDestructuringDeclarationEntry(multiDeclarationEntry: KtDestructuringDeclarationEntry) {
+        index(multiDeclarationEntry)
+        super.visitDestructuringDeclarationEntry(multiDeclarationEntry)
+    }
 }
 
 private fun MutableList<KotlinStandaloneIndexRecord>.addIndexRecords(element: PsiElement, stub: StubElement<*>?, ordinal: Int) {
@@ -234,11 +248,24 @@ private fun MutableList<KotlinStandaloneIndexRecord>.addIndexRecords(element: Ps
 
         is KtProperty if (element.isTopLevel) ->
             add(KotlinStandaloneIndexRecord.TopLevelProperty(ordinal, element.topLevelCallableId))
+
+        is KtDestructuringDeclarationEntry if (element.isTopLevel(stub)) ->
+            add(KotlinStandaloneIndexRecord.TopLevelDestructuringDeclarationEntry(ordinal, element.topLevelCallableId))
     }
 }
 
 private val KtCallableDeclaration.topLevelCallableId: CallableId
     get() = CallableId(containingKtFile.packageFqName, nameAsSafeName)
+
+/**
+ * Whether the destructuring declaration of the entry is declared directly in a file, not in a class or a script.
+ */
+private fun KtDestructuringDeclarationEntry.isTopLevel(stub: StubElement<*>?): Boolean =
+    if (stub != null) {
+        stub.parentStub?.parentStub is KotlinFileStub
+    } else {
+        destructuringDeclaration.parent is KtFile
+    }
 
 /**
  * This is a simplified version of `KtTypeElement.index()` from the IDE. If we need to move more indexing code to Standalone, we should
