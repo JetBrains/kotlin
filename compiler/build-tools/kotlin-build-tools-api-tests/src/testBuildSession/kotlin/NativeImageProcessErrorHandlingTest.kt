@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.nativeImageProcessExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
@@ -27,7 +29,9 @@ class NativeImageProcessErrorHandlingTest : BaseCompilationTest() {
     @DisplayName("The native image process strategy only supports JVM compilation")
     @TestMetadata("empty")
     fun testNonJvmTargetIsRejected() {
-        val policy = kotlinToolchains.createNativeImageProcessExecutionPolicy(workingDirectory.resolve("dist"))
+        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy {
+            this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = workingDirectory.resolve("dist")
+        }
 
         metadataProject(kotlinToolchains to policy) {
             val module = module("empty")
@@ -45,7 +49,9 @@ class NativeImageProcessErrorHandlingTest : BaseCompilationTest() {
     @DisplayName("The native image process strategy does not support incremental compilation")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testIncrementalCompilationIsRejected() {
-        val policy = kotlinToolchains.createNativeImageProcessExecutionPolicy(workingDirectory.resolve("dist"))
+        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy {
+            this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = workingDirectory.resolve("dist")
+        }
 
         jvmProject(kotlinToolchains to policy) {
             val module = module("basic-multimodule-project/module-1")
@@ -63,7 +69,9 @@ class NativeImageProcessErrorHandlingTest : BaseCompilationTest() {
     @DisplayName("The native image process strategy does not support lookup tracking")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testLookupTrackerIsRejected() {
-        val policy = kotlinToolchains.createNativeImageProcessExecutionPolicy(workingDirectory.resolve("dist"))
+        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy {
+            this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = workingDirectory.resolve("dist")
+        }
 
         jvmProject(kotlinToolchains to policy) {
             val module = module("basic-multimodule-project/module-1")
@@ -97,7 +105,9 @@ class NativeImageProcessErrorHandlingTest : BaseCompilationTest() {
     @DisplayName("A missing native image distribution is reported as a compiler internal error")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testMissingDistIsReported() {
-        val policy = kotlinToolchains.createNativeImageProcessExecutionPolicy(workingDirectory.resolve("nonexistent-dist"))
+        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy {
+            this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = workingDirectory.resolve("nonexistent-dist")
+        }
 
         jvmProject(kotlinToolchains to policy) {
             val module = module("basic-multimodule-project/module-1")

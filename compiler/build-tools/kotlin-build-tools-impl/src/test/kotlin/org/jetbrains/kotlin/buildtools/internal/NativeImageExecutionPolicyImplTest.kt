@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.io.path.Path
 
 class NativeImageExecutionPolicyImplTest {
@@ -48,5 +49,36 @@ class NativeImageExecutionPolicyImplTest {
         assertEquals(42L, policy.shutdownDelayMillis)
         assertEquals(Path("run"), policy.daemonRunDirPath)
         assertEquals(Path("logs"), policy.logsPath)
+    }
+
+    @Test
+    @DisplayName("Modifying a builder created from the native image process policy does not affect the original policy")
+    fun testProcessPolicyToBuilderIndependence() {
+        val policy = NativeImageProcessExecutionPolicyImpl(Path("dist"))
+        val builder = policy.toBuilder() as NativeImageProcessExecutionPolicyImpl
+
+        builder.distPath = Path("another-dist")
+
+        assertEquals(Path("dist"), policy.distPath)
+        assertEquals(Path("another-dist"), builder.distPath)
+    }
+
+    @Test
+    @DisplayName("The native image execution policies cannot be built without the dist path")
+    fun testBuildWithoutDistPathFails() {
+        assertThrows<IllegalStateException> { NativeImageProcessExecutionPolicyImpl().build() }
+        assertThrows<IllegalStateException> { NativeImageDaemonExecutionPolicyImpl().build() }
+    }
+
+    @Test
+    @DisplayName("Building the native image execution policies with the dist path set keeps the dist path")
+    fun testBuildWithDistPath() {
+        val processPolicy = NativeImageProcessExecutionPolicyImpl(Path("dist")).build() as NativeImageProcessExecutionPolicyImpl
+        assertEquals(Path("dist"), processPolicy.distPath)
+        assertEquals(Path("dist"), processPolicy.dist.home)
+
+        val daemonPolicy = NativeImageDaemonExecutionPolicyImpl(Path("dist")).build() as NativeImageDaemonExecutionPolicyImpl
+        assertEquals(Path("dist"), daemonPolicy.distPath)
+        assertEquals(Path("dist"), daemonPolicy.dist.home)
     }
 }

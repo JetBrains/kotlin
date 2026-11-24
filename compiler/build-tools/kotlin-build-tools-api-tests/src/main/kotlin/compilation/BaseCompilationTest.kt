@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.daemonExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.nativeImageDaemonExecutionPolicy
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
@@ -52,11 +53,12 @@ abstract class BaseCompilationTest {
         "test-native-image-daemon-files",
         additionalCleanupActions,
         createPolicy = { daemonRunPath ->
-            kotlinToolchains.nativeImageDaemonExecutionPolicyBuilder(distPath).apply {
+            kotlinToolchains.nativeImageDaemonExecutionPolicy {
+                this[ExecutionPolicy.NativeImageDaemon.DIST_PATH] = distPath
                 this[ExecutionPolicy.NativeImageDaemon.DAEMON_RUN_DIR_PATH] = daemonRunPath
                 this[ExecutionPolicy.NativeImageDaemon.SHUTDOWN_DELAY_MILLIS] = 0
                 additionalDaemonConfiguration()
-            }.build()
+            }
         },
     ) { daemonPolicy, daemonRunPath ->
         body(daemonPolicy, daemonRunPath)

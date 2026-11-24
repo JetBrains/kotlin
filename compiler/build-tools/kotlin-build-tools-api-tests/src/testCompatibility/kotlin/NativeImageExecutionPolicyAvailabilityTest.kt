@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.nativeImageDaemonExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.nativeImageProcessExecutionPolicy
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
@@ -30,17 +33,24 @@ class NativeImageExecutionPolicyAvailabilityTest : BaseCompilationTest() {
 
         if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) < KotlinToolingVersion(2, 5, 20, "snapshot")) {
             val processPolicyException = assertThrows<IllegalStateException> {
-                kotlinToolchains.createNativeImageProcessExecutionPolicy(distPath)
+                kotlinToolchains.nativeImageProcessExecutionPolicyBuilder()
             }
             assertEquals("Native image execution policies are supported from compiler version 2.5.20.", processPolicyException.message)
 
             val daemonPolicyException = assertThrows<IllegalStateException> {
-                kotlinToolchains.nativeImageDaemonExecutionPolicyBuilder(distPath)
+                kotlinToolchains.nativeImageDaemonExecutionPolicyBuilder()
             }
             assertEquals("Native image execution policies are supported from compiler version 2.5.20.", daemonPolicyException.message)
         } else {
-            assertEquals(distPath, kotlinToolchains.createNativeImageProcessExecutionPolicy(distPath).distPath)
-            assertEquals(distPath, kotlinToolchains.nativeImageDaemonExecutionPolicyBuilder(distPath).build().distPath)
+            val processPolicy = kotlinToolchains.nativeImageProcessExecutionPolicy {
+                this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = distPath
+            }
+            assertEquals(distPath, processPolicy[ExecutionPolicy.NativeImageProcess.DIST_PATH])
+
+            val daemonPolicy = kotlinToolchains.nativeImageDaemonExecutionPolicy {
+                this[ExecutionPolicy.NativeImageDaemon.DIST_PATH] = distPath
+            }
+            assertEquals(distPath, daemonPolicy[ExecutionPolicy.NativeImageDaemon.DIST_PATH])
         }
     }
 }

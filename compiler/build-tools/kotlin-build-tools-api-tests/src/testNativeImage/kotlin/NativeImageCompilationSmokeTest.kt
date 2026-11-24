@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.nativeImageProcessExecutionPolicy
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.JvmProject
@@ -27,7 +29,9 @@ class NativeImageCompilationSmokeTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testProcessPolicyCompilation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val policy = kotlinToolchains.createNativeImageProcessExecutionPolicy(nativeImageDistPath)
+        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy {
+            this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = nativeImageDistPath
+        }
 
         jvmProject(kotlinToolchains to policy) {
             val module = module("basic-multimodule-project/module-1")
@@ -42,7 +46,9 @@ class NativeImageCompilationSmokeTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testProcessPolicyCompilationWithSpacesInProjectPath() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val policy = kotlinToolchains.createNativeImageProcessExecutionPolicy(nativeImageDistPath)
+        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy {
+            this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = nativeImageDistPath
+        }
 
         JvmProject(kotlinToolchains, policy, workingDirectory.resolve("project with spaces")).use { project ->
             val module = project.module("basic-multimodule-project/module-1")
@@ -57,7 +63,9 @@ class NativeImageCompilationSmokeTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testProcessPolicyCompilationError() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val policy = kotlinToolchains.createNativeImageProcessExecutionPolicy(nativeImageDistPath)
+        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy {
+            this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = nativeImageDistPath
+        }
 
         jvmProject(kotlinToolchains to policy) {
             val module = module("basic-multimodule-project/module-1")
