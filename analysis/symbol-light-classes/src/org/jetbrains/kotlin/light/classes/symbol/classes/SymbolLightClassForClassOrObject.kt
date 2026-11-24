@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor.
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.records.SymbolLightRecordHeader
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -98,7 +99,10 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
+            modifiersBox = GranularModifiersBox(
+                initialValue = GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.SEALED.takeIf { isSealed }),
+                computer = ::computeModifiers,
+            ),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(useSiteModule, symbolPointer),
                 additionalAnnotationsProvider = JvmInlineAdditionalAnnotationsProvider,

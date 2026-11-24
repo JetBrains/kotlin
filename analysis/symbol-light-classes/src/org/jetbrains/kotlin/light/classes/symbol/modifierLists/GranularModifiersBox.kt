@@ -53,7 +53,7 @@ internal class GranularModifiersBox(
                 false
             }.toPersistentHashMap()
 
-        internal val MODALITY_MODIFIERS = setOf(PsiModifier.FINAL, PsiModifier.ABSTRACT)
+        internal val MODALITY_MODIFIERS = setOf(PsiModifier.FINAL, PsiModifier.ABSTRACT, PsiModifier.SEALED, PsiModifier.NON_SEALED)
         internal val MODALITY_MODIFIERS_MAP: PersistentMap<String, Boolean> =
             MODALITY_MODIFIERS.keysToMap {
                 false
