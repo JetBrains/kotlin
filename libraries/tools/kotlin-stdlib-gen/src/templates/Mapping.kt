@@ -510,6 +510,9 @@ object Mapping : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Transformations.groupBy")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.groupBy")
+        }
         sequenceClassification(terminal)
         typeParam("K")
         returns("Map<K, List<T>>")
@@ -534,6 +537,9 @@ object Mapping : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Transformations.groupBy")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.groupByTo")
+        }
         annotation("@IgnorableReturnValue")
         sequenceClassification(terminal)
         returns("M")
@@ -566,6 +572,9 @@ object Mapping : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Transformations.groupByKeysAndValues")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.groupByKeysAndValues")
+        }
         sequenceClassification(terminal)
         typeParam("K")
         typeParam("V")
@@ -595,6 +604,9 @@ object Mapping : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Transformations.groupByKeysAndValues")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.groupByToWithValueTransform")
+        }
         annotation("@IgnorableReturnValue")
         sequenceClassification(terminal)
         returns("M")

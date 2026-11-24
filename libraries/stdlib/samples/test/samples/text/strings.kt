@@ -101,6 +101,51 @@ class Strings {
     }
 
     @Sample
+    fun groupBy() {
+        val text = "a1B2c3"
+        val byCategory = text.groupBy { if (it.isDigit()) "digits" else "letters" }
+
+        assertPrints(byCategory, "{letters=[a, B, c], digits=[1, 2, 3]}")
+    }
+
+    @Sample
+    fun groupByTo() {
+        val text = "a1B2c3"
+        val destination = mutableMapOf("letters" to mutableListOf('x'))
+        val result = text.groupByTo(destination) { if (it.isDigit()) "digits" else "letters" }
+
+        // Characters are appended to existing groups, and new groups are added as needed.
+        assertPrints(destination, "{letters=[x, a, B, c], digits=[1, 2, 3]}")
+        assertSame(destination, result)
+    }
+
+    @Sample
+    fun groupByKeysAndValues() {
+        val text = "a1B2c3"
+        val uppercaseByCategory = text.groupBy(
+            keySelector = { if (it.isDigit()) "digits" else "letters" },
+            valueTransform = { it.uppercase() }
+        )
+
+        assertPrints(uppercaseByCategory, "{letters=[A, B, C], digits=[1, 2, 3]}")
+    }
+
+    @Sample
+    fun groupByToWithValueTransform() {
+        val text = "a1B2c3"
+        val destination = mutableMapOf("letters" to mutableListOf("X"))
+        val result = text.groupByTo(
+            destination,
+            keySelector = { if (it.isDigit()) "digits" else "letters" },
+            valueTransform = { it.uppercase() }
+        )
+
+        // The destination contains the transformed strings rather than the original characters.
+        assertPrints(destination, "{letters=[X, A, B, C], digits=[1, 2, 3]}")
+        assertSame(destination, result)
+    }
+
+    @Sample
     fun elementAt() {
         val string = "kotlin"
         assertPrints(string.elementAt(0), "k")
