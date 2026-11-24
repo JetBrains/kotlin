@@ -45,7 +45,10 @@ abstract class AbstractDanglingFileCollectDiagnosticsTest : AbstractCollectDiagn
         val ktPsiFactory = KtPsiFactory.contextual(ktFile, markGenerated = true, eventSystemEnabled = false)
 
         val directives = testServices.moduleStructure.allDirectives
-        val fakeFile = ktPsiFactory.createFile("fake.kt", ktFile.text).apply {
+
+        // The text of a script is not a valid regular file, so the copy has to stay a script
+        val fakeFileName = if (ktFile.isScript()) "fake.kts" else "fake.kt"
+        val fakeFile = ktPsiFactory.createFile(fakeFileName, ktFile.text).apply {
             this.contextModule = contextModule
             if (Directives.IGNORE_SELF_MODE in directives) {
                 originalFile = ktFile
@@ -53,7 +56,7 @@ abstract class AbstractDanglingFileCollectDiagnosticsTest : AbstractCollectDiagn
         }
 
         if (Directives.COPY_OF_DANGLING_FILE in directives) {
-            val fakeFileCopy = KtPsiFactory(ktFile.project, markGenerated = true).createFile("fake.kt", ktFile.text).apply {
+            val fakeFileCopy = KtPsiFactory(ktFile.project, markGenerated = true).createFile(fakeFileName, ktFile.text).apply {
                 originalFile = fakeFile
             }
 
