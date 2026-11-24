@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Path
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.jar.Attributes
@@ -181,10 +182,10 @@ class JarArchiveCacheTest {
     @Test
     fun invalidArchiveHasNoEntries() {
         val file = File(tempDir, "broken.jar").apply { writeText("not a zip") }
-        val reported = mutableListOf<File>()
-        val cache = JarArchiveCache(unmapBuffer = {}) { invalid, _ -> reported += invalid }
+        val reported = mutableListOf<Path>()
+        val cache = JarArchiveCache(unmapBuffer = {}) { invalid, _ -> reported.add(invalid) }
         val archive = cache[file.path]
         assertTrue(archive.buildTree(NodeFactory).children.isEmpty())
-        assertEquals(listOf(file), reported)
+        assertEquals(listOf(file.toPath()), reported)
     }
 }
