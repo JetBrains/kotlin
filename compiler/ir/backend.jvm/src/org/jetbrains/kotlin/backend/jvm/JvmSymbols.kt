@@ -865,7 +865,7 @@ class JvmSymbols(
         irFactory.buildProperty {
             name = Name.identifier("java")
         }.apply {
-            parent = createClass(FqName("kotlin.jvm.JvmClassMappingKt")).owner
+            parent = createClass(FqName("kotlin.jvm.JvmClassMappingKt"), classOrigin = IrDeclarationOrigin.FILE_CLASS).owner
             addGetter().apply {
                 annotations = listOf(
                     IrAnnotationImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
