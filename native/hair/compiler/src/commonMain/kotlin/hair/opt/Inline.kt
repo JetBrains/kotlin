@@ -12,7 +12,7 @@ fun Compilation.inline(call: InvokeStatic) {
     val calleeCompilation = getCompilation(call.function)
 
     with (callerSession) {
-        modifyIR {
+        modifyControlFlow {
             val toClone = calleeCompilation.session.allNodes().filterNot { it is Return }
             val clones = callerSession.cloneNodes(toClone) {
                 when (it) {
@@ -32,15 +32,13 @@ fun Compilation.inline(call: InvokeStatic) {
 
             val exits = returns.map { it.first }.toTypedArray()
             val resultBlock = BlockEntry(*exits)
-            call.next.control = resultBlock
-            if (returns.any { it.second != null }) {
-                call.replaceValueUsesAndKill(
-                    Phi(
-                        resultBlock,
-                        *returns.map { it.first to it.second!! }.toTypedArray()
-                    )
+            val result = if (returns.any { it.second != null }) {
+                Phi(
+                    resultBlock,
+                    *returns.map { ValueAndExit(it.second!!, it.first) }.toTypedArray()
                 )
-            }
+            } else null
+            call.replaceWith(resultBlock, result)
         }
     }
 }

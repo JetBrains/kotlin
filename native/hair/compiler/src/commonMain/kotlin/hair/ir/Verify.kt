@@ -5,16 +5,7 @@
 
 package hair.ir
 
-import hair.ir.*
-import hair.ir.nodes.CheckCast
-import hair.ir.nodes.ControlFlowBuilder
-import hair.ir.nodes.IsInstanceOf
 import hair.ir.nodes.Node
-import hair.ir.nodes.NodeBuilder
-import hair.sym.RuntimeInterface
-import hair.transform.pos
-import hair.transform.withGCM
-import hair.utils.withWorklist
 
 fun Session.verify() {
     val uses = allNodes().associateWith { mutableListOf<Node>() }

@@ -2,7 +2,6 @@ package hair.ir.nodes
 
 import hair.utils.listIterator
 import kotlin.jvm.JvmInline
-import kotlin.math.max
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
@@ -87,15 +86,11 @@ fun Node.replaceArgs(newArgs: Array<Node?>): Node {
     this as NodeBase
     val oldArgs = args_
     args_ = newArgs
-    val argsCount = max(args_.size, newArgs.size)
-    for (i in 0 until argsCount) {
+    for (i in 0 until maxOf(oldArgs.size, newArgs.size)) {
         val oldValue = oldArgs.getOrNull(i)
         val newValue = newArgs.getOrNull(i)
-        // FIXME duplicates updateArg
         if (oldValue != newValue) {
-            newValue?.addUse(this)
-            oldValue?.removeUse(this)
-            argsUpdater.onArgUpdate(this, i, oldValue, newValue)
+            updateArg(i, oldValue, newValue) { }
         }
     }
 

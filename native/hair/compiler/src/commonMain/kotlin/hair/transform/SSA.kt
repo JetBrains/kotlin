@@ -7,7 +7,6 @@ import hair.ir.nodes.*
 import hair.utils.closure
 import hair.utils.indexOfSingle
 import hair.utils.isEmpty
-import hair.utils.printGraphvizNoGCM
 import kotlin.collections.set
 
 private typealias Var = Any
@@ -16,7 +15,7 @@ fun Session.buildSSA() {
     val cfg = cfg()
     val doms = Dominators.sfda(cfg)
 
-    modifyIR {
+    modifyControlFlow {
         val defs = allNodes<AssignVar>().groupBy { it.variable }
         // FIXME find some general terms to do this?
         val handlersWithPossibleRedefs = allNodes<Unwind>().map { it.handler }.filter { it.preds.size > 1 }.toSet()
@@ -45,13 +44,12 @@ fun Session.buildSSA() {
                 when (n) {
                     is AssignVar -> {
                         currentDefs[n.variable] = n.assignedValue
-                        n.removeFromControl()
+                        n.spliceOut()
                     }
 
                     is ReadVar -> {
                         val replacement = currentDefs[n.variable]!!
-                        n.replaceValueUses(replacement)
-                        n.removeFromControl()
+                        n.spliceOut(replacement)
                     }
 
                     is Throwing -> {
@@ -84,8 +82,8 @@ fun Session.buildSSA() {
 
         for (placeholder in allNodes().filterIsInstance<PhiPlaceholder>().toList()) {
             // TODO use Phi builder
-            val phi = Phi(placeholder.block, *placeholder.joinedValues.toTypedArray<Node>())
-            placeholder.replaceValueUsesAndKill(phi)
+            val phi = Phi(placeholder.block, *placeholder.joinedValues.toTypedArray())
+            placeholder.replaceValueNodeWith(phi)
         }
     }
 

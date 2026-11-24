@@ -39,6 +39,30 @@ class InlineTest : AbstractInlinerTest {
         }
     }
 
+    /** A callee whose returns carry no value: the call is still replaced and the spine stays connected. */
+    @Test
+    fun testReturnWithoutValue() = inlinerTest {
+        val callee = define(Fun("callee")) {
+            Return(null)
+        }
+
+        lateinit var call: InvokeStatic
+        lateinit var ret: Return
+        val caller = define(Fun("caller")) {
+            call = InvokeStatic(callee.function)(callArgs = arrayOf<Node>()) as InvokeStatic
+            ret = ReturnVoid() as Return
+        }
+
+        compilation.run {
+            inline(call)
+
+            caller.session.run {
+                assertTrue(allNodes<InvokeStatic>().none(), "the call must be replaced")
+                assertTrue(ret.control is BlockEntry, "the caller must continue in the block joining the returns")
+            }
+        }
+    }
+
     @Test
     fun testTwoReturns() = inlinerTest {
         val callee = define(Fun("callee")) {

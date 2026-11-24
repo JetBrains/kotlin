@@ -42,7 +42,7 @@ class DCETest : IrTest {
         lateinit var mergeBlock: BlockEntry
         buildInitialIR {
             branch(Param(0), {}, {})
-            mergeBlock = contextOf<ControlFlowBuilder>().lastControl as BlockEntry
+            mergeBlock = contextOf<ControlBuilder>().control as BlockEntry
             ReturnVoid()
         }
 

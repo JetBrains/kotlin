@@ -20,7 +20,9 @@ class GCMResult(val blocks: Map<Node, BlockEntry>) {
         // TODO do better
         var lastControl: Controlling? = null
         for (n in order) {
-            if (n is Controlling) lastControl = n
+            // Don't anchor to dead nodes
+            // FIXME this is a workaround for Lower's GCM problems
+            if (n is Controlling && n.inGraph) lastControl = n
             if (n == node) return lastControl!!
         }
         error("Should not reach here")
@@ -33,13 +35,13 @@ fun pos(n: Node): Controlling = gcm.pos(n)
 // FIXME make thread-safe
 private val activeGCM = mutableMapOf<Session, GCMResult>()
 
-fun <T> Session.withGCM(action: context(GCMResult, NodeBuilder, ArgumentUpdater) () -> T): T = withGCMImpl {
-    // FIXME why modify IR? And how come here can be dying values at this point?
+/**
+ * Runs [action] with the GCM of this session, computing it unless an enclosing [withGCM] already did.
+ *
+ * GCM is an analysis: it opens no modification scope. Edits made by [action] are not reflected in the result.
+ */
+fun <T> Session.withGCM(action: context(GCMResult) () -> T): T {
     // TODO require no dad nodes
-    modifyIR { action() }
-}
-
-fun <T> Session.withGCMImpl(action: context(GCMResult) () -> T): T {
     val existingGcmResult = activeGCM[this]
     if (existingGcmResult != null) {
         return context(existingGcmResult) { action() }
@@ -120,10 +122,10 @@ fun performGCM(session: Session): GCMResult {
                 is Phi -> if (use.block == n) {
                     listOf(use.block)
                 } else {
-                    use.inputs
-                        .filter { it.first == n }
-                        .filter { it.second !is Unreachable } // FIXME should be killed by GCM or normalizations earlier?
-                        .map { it.second.block }
+                    use.valuesAtExits
+                        .filter { it.value == n }
+                        .filter { it.exit !is Unreachable } // FIXME should be killed by GCM or normalizations earlier?
+                        .map { it.exit.block }
                 }
                 else -> listOf(late[use])
             }

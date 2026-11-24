@@ -5,14 +5,13 @@ import hair.sym.ArithmeticType
 import hair.sym.HairClass
 import hair.sym.HairType
 import hair.sym.HairType.*
-import hair.sym.Type
 import hair.utils.ensuring
 
 context(nodeBuilder: NodeBuilder)
 fun ReturnVoid(control: Controlling?) = Return(control, UnitValue())
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun ReturnVoid() = Return(UnitValue())
+fun ControlBuilder.ReturnVoid() = Return(UnitValue())
+
 
 context(nodeBuilder: NodeBuilder)
 fun Const(type: ArithmeticType, value: Number) = Const(type.toHairType(), value)
@@ -29,12 +28,9 @@ fun Const(type: HairType, value: Number) = when (type) {
 }
 
 // FIXME make Unreachable value-numbered
-context(controlBuilder: ControlFlowBuilder)
-fun Session.unreachable() = controlBuilder.at(unreachable)
+fun ControlBuilder.unreachable() = at(session.unreachable)
 
-
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun IfExits(cond: Node): Pair<BlockExit, BlockExit> {
+fun ControlBuilder.IfExits(cond: Node): Pair<BlockExit, BlockExit> {
     val ifNode = If(cond)
     if (ifNode is Unreachable) return ifNode to ifNode
     ifNode as If
@@ -44,73 +40,74 @@ fun IfExits(cond: Node): Pair<BlockExit, BlockExit> {
 }
 
 context(nodeBuilder: NodeBuilder)
-fun Phi(block: Controlling, vararg inputs: Pair<BlockExit, Node>): Node = when (block) {
+fun Phi(block: Controlling, vararg inputs: ValueAndExit): Node = when (block) {
     is BlockEntry -> {
-        val joinedValues = block.preds.map { exit -> inputs.single { it.first == exit }.second }.toTypedArray()
+        val joinedValues = block.preds.map { exit ->
+            if (exit is Unreachable) NoValue()
+            else inputs.single { it.exit == exit }.value
+        }.toTypedArray()
         Phi(block, *joinedValues)
     }
-    else -> inputs.single().second
+    else -> inputs.single().value
 }
 
-context(_: NodeBuilder, _: ControlFlowBuilder)
-fun breakControlFlowWithUnreachable() {
+fun ControlBuilder.breakControlFlowWithUnreachable() {
     // terminate existing control flow with a block end
     Halt()
     // everythig that comes after is unreachable
-    Unreachable()
+    unreachable()
 }
 
 // CFG structures
-private typealias BodyBuilder = context(NodeBuilder, ControlFlowBuilder) () -> Unit
+typealias ExprBuilder = ControlBuilder.() -> Node
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun branch(
+fun ControlBuilder.branch(
     cond: Node,
-    trueInit: BodyBuilder,
-    falseInit: BodyBuilder
+    trueInit: ControlBuilder.() -> Unit,
+    falseInit: ControlBuilder.() -> Unit
 ) {
-    val [trueExit, falseExit] = IfExits(cond)
-
-    BlockEntry(trueExit).ensuring { controlBuilder.lastControl == it }
-    trueInit()
-    val trueGoto = controlBuilder.lastControl?.let { Goto() }
-
-    BlockEntry(falseExit).ensuring { controlBuilder.lastControl == it }
-    falseInit()
-    val falseGoto = controlBuilder.lastControl?.let { Goto() }
-
-    BlockEntry(*listOfNotNull(trueGoto, falseGoto).toTypedArray())
+    val condBuilder: ExprBuilder = { cond }
+    branch(listOf(
+        condBuilder to { trueInit(); NoValue() },
+        null to { falseInit(); NoValue() }
+    ))
 }
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun branch(
-    branches: List<Pair<(context(NodeBuilder, ControlFlowBuilder) () -> Node)?, BodyBuilder>>,
-) {
-    val exits = branches.map { [cond, body] ->
+fun ControlBuilder.branch(branches: List<Pair<ExprBuilder?, ExprBuilder>>): Node {
+    require(branches.isNotEmpty())
+
+    // A non-exhaustive branching (the last branch is conditional) falls through without a value
+    // when no condition holds, otherwise the false exit of the last condition would be left dangling.
+    val fallThrough: ExprBuilder = { NoValue() }
+    val allBranches = if (branches.last().first != null) branches + listOf(null to fallThrough) else branches
+
+    val valuesAndExits = allBranches.map { [cond, body] ->
         if (cond == null) {
-            body()
-            if (controlBuilder.lastControl != null) Goto() else null
+            val value = body()
+            val exit = Goto()
+            ValueAndExit(value, exit)
         } else {
             val [trueExit, falseExit] = IfExits(cond())
 
-            BlockEntry(trueExit).ensuring { controlBuilder.lastControl == it }
-            body()
-            val trueGoto = if (controlBuilder.lastControl != null) Goto() else null
+            BlockEntry(trueExit).ensuring { control == it }
+            val value = body()
+            val trueGoto = Goto()
 
-            BlockEntry(falseExit).ensuring { controlBuilder.lastControl == it }
+            BlockEntry(falseExit).ensuring { control == it }
 
-            trueGoto
+            ValueAndExit(value, trueGoto)
         }
     }
 
-    if (exits.any { it != null }) {
-        BlockEntry(*exits.filterNotNull().toTypedArray())
-    }
+    // TODO maybe short-cut here to unreachable / NoValue()
+    val merge = BlockEntry(*valuesAndExits.map { it.exit }.toTypedArray())
+    val phi = Phi(merge, *valuesAndExits.toTypedArray())
+
+    return phi
 }
 
 // FIXME cond should be a builder
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgumentUpdaterBase)
-fun whileLoop(cond: Node, body: BodyBuilder) {
+fun ControlBuilder.whileLoop(cond: Node, body: ControlBuilder.() -> Unit) {
     val condBlock = BlockEntry(Goto(), null) as BlockEntry
     val [trueExit, falseExit] = IfExits(cond)
 
@@ -121,53 +118,47 @@ fun whileLoop(cond: Node, body: BodyBuilder) {
     BlockEntry(falseExit)
 }
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgumentUpdaterBase)
-fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<HairClass, context(NodeBuilder, ControlFlowBuilder) (Node) -> Unit>>, allCatcher: Type.Reference? = null) {
+typealias CatchBuilder = ControlBuilder.(Node) -> Node
+
+fun ControlBuilder.tryCatch(
+    tryBody: ExprBuilder,
+    catches: List<Pair<HairClass, CatchBuilder>>,
+): Node {
     val throwers = mutableListOf<Throwing>()
-    val observingBuilder = object : NodeBuilder by nodeBuilder {
-        override fun onNodeBuilt(node: Node): Node {
-            return nodeBuilder.onNodeBuilt(node).also {
-                if (it is Throwing) throwers += it
-            }
+
+    val [tryExit, tryResult] = session.observingBuiltNodes(
+        { if (it is Throwing) throwers += it },
+        {
+            val result = tryBody()
+            Goto() to result
         }
-    }
+    )
 
-    context(observingBuilder, controlBuilder) {
-        tryBody()
-    }
-    val tryExit = if (controlBuilder.lastControl != null) Goto() else null
+    if (catches.isNotEmpty() && throwers.isNotEmpty()) {
+        val unwinds = throwers.map {
+            require(it.unwind == null)
+            Unwind(it)
+        }.toTypedArray()
 
-    val catchExits = mutableListOf<BlockExit>()
-    if (catches.isNotEmpty()) {
-        throwers.forEach { require(it.unwind == null) } // FIXME is this true?
-        // TODO how do we handle nested try blocks?
-        val unwinds = throwers.map { it.unwind ?: Unwind(it) }.toTypedArray()
-        val handlerBlock = BlockEntry(*unwinds) as BlockEntry // FIXME cast?
-        val exception = Catch(Phi(handlerBlock, *unwinds))
+        val handlerBlock = BlockEntry(*unwinds) as BlockEntry
+        val exception = Catch(handlerBlock)
 
-        for ([type, catchBody] in catches) {
-            // FIXME what do we know about the catchers order? Are all the type checks always possible?
-            if (type == allCatcher) {
-                catchBody(exception)
-                controlBuilder.lastControl?.let { catchExits += Goto() }
-                break
-            }
-
-            val [trueExit, falseExit] = IfExits(IsInstanceOf(type)(exception))
-
-            BlockEntry(trueExit)
-            catchBody(exception)
-
-            controlBuilder.lastControl?.let { catchExits += Goto() }
-
-            BlockEntry(falseExit)
+        // TOOD specially handle catch(Throwable)?
+        val branches = catches.map { [catchType, catchBuilder] ->
+            val cond: ExprBuilder = { IsInstanceOf(catchType)(exception) }
+            val branchBuilder: ExprBuilder = { catchBuilder(exception) }
+            cond to branchBuilder
+        }
+        val rethrow: ExprBuilder = {
+            Throw(exception)
+            NoValue()
         }
 
-        controlBuilder.lastControl?.let { Throw(exception) }
+        val catchesResult = branch(branches + listOf(null to rethrow))
+        val catchesExit = Goto()
+        val merge = BlockEntry(tryExit, catchesExit)
+        return Phi(merge, ValueAndExit(tryResult, tryExit), ValueAndExit(catchesResult, catchesExit))
     }
 
-    val exits = listOfNotNull(tryExit) + catchExits
-    if (exits.isNotEmpty()) {
-        BlockEntry(*exits.toTypedArray())
-    }
+    return tryResult
 }

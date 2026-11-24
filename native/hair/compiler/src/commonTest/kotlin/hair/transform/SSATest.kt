@@ -2,8 +2,10 @@ package hair.transform
 
 import hair.ir.*
 import hair.ir.Add
+import hair.ir.nodes.*
 import hair.ir.nodes.AssignVar
 import hair.ir.nodes.InvokeStatic
+import hair.ir.nodes.Node
 import hair.ir.nodes.NodeBuilder
 import hair.test.Var
 import hair.ir.nodes.Phi
@@ -27,29 +29,32 @@ class SSATest : IrTest {
 
     @Test
     fun testIf() = withTestSession {
+        lateinit var v1: Node
+        lateinit var v2: Node
+        lateinit var use: Use
         buildInitialIR {
-            val v1 = Const(23)
-            val v2 = Const(42)
+            v1 = Const(23)
+            v2 = Const(42)
             val v = Var.nextNumbered()
             branch(cond(), {
                 AssignVar(v)(v1)
             }, {
                 AssignVar(v)(v2)
             })
-            val use = Use(ReadVar(v)) as Use
+            use = Use(ReadVar(v)) as Use
 
             ReturnVoid()
-
-            buildSSA()
-
-            printGraphviz()
-
-            val result = use.value
-            assertTrue(result is Phi)
-            assertContentEquals(listOf(v1, v2), result.joinedValues)
-            assertTrue(allNodes<AssignVar>().toList().isEmpty())
-            assertTrue(allNodes<ReadVar>().toList().isEmpty())
         }
+
+        buildSSA()
+
+        printGraphviz()
+
+        val result = use.value
+        assertTrue(result is Phi)
+        assertContentEquals(listOf(v1, v2), result.joinedValues)
+        assertTrue(allNodes<AssignVar>().toList().isEmpty())
+        assertTrue(allNodes<ReadVar>().toList().isEmpty())
     }
 
     @Test
@@ -78,15 +83,15 @@ class SSATest : IrTest {
             whileLoop(ReadVar(var2)) {}
 
             ReturnVoid()
-
-            buildSSA()
-
-            printGraphviz()
-
-            // TODO assert more?
-            assertTrue(allNodes<AssignVar>().toList().isEmpty())
-            assertTrue(allNodes<ReadVar>().toList().isEmpty())
         }
+
+        buildSSA()
+
+        printGraphviz()
+
+        // TODO assert more?
+        assertTrue(allNodes<AssignVar>().toList().isEmpty())
+        assertTrue(allNodes<ReadVar>().toList().isEmpty())
     }
 
     // FIXME seems to be more of a test add normalization
@@ -106,24 +111,27 @@ class SSATest : IrTest {
             })
 
             ReturnVoid()
-
-            buildSSA()
-
-            printGraphviz()
         }
+
+        buildSSA()
+
+        printGraphviz()
     }
 
     @Test
     fun testTwoThrowsSameBlock() = withTestSession {
+        lateinit var v1: Node
+        lateinit var v2: Node
+        lateinit var ret: Return
         buildInitialIR {
             val v = Var.nextNumbered()
 
-            val v1 = Const(23)
+            v1 = Const(23)
             AssignVar(v)(v1)
 
             val call = InvokeStatic(Fun("foo"))() as InvokeStatic // FIXME
 
-            val v2 = Const(42)
+            v2 = Const(42)
             AssignVar(v)(v2)
 
             val thr = Throw(Const(108)) as Throw
@@ -132,33 +140,38 @@ class SSATest : IrTest {
             val throwUnwind = Unwind(thr)
 
             BlockEntry(callUnwind, throwUnwind)
-            val ret = Return(ReadVar(v)) as Return
-
-            buildSSA()
-
-            printGraphviz()
-
-            val result = ret.result
-            assertTrue(result is Phi)
-            assertContentEquals(listOf(v1, v2), result.joinedValues)
+            ret = Return(ReadVar(v)) as Return
         }
+
+        buildSSA()
+
+        printGraphviz()
+
+        val result = ret.result
+        assertTrue(result is Phi)
+        assertContentEquals(listOf(v1, v2), result.joinedValues)
     }
 
     @Test
     fun testTryCatchComplex() = withTestSession {
+        lateinit var v1: Node
+        lateinit var v2: Node
+        lateinit var v3: Node
+        lateinit var retNormal: Return
+        lateinit var retHandler: Return
         buildInitialIR {
             val v = Var.nextNumbered()
 
-            val v1 = Const(23)
+            v1 = Const(23)
             AssignVar(v)(v1)
 
             val call = InvokeStatic(Fun("foo"))() as InvokeStatic // FIXME
 
-            val v2 = Const(42)
+            v2 = Const(42)
             AssignVar(v)(v2)
 
             lateinit var thr: Throw
-            val v3 = Const(37)
+            v3 = Const(37)
             branch(
                 cond(),
                 {
@@ -169,21 +182,21 @@ class SSATest : IrTest {
                 }
             )
 
-            val retNormal = Return(ReadVar(v)) as Return
+            retNormal = Return(ReadVar(v)) as Return
 
             val callUnwind = Unwind(call)
             val throwUnwind = Unwind(thr)
 
             BlockEntry(callUnwind, throwUnwind)
-            val retHandler = Return(ReadVar(v)) as Return
-
-            buildSSA()
-
-            printGraphviz()
-
-            assertContentEquals(listOf(v1, v2), (retHandler.result as Phi).joinedValues)
-            assertEquals(v3, retNormal.result)
+            retHandler = Return(ReadVar(v)) as Return
         }
+
+        buildSSA()
+
+        printGraphviz()
+
+        assertContentEquals(listOf(v1, v2), (retHandler.result as Phi).joinedValues)
+        assertEquals(v3, retNormal.result)
     }
 
     @Test
@@ -194,11 +207,11 @@ class SSATest : IrTest {
             val cc2 = CheckCast(Cls("Foo"))(ReadVar("element"))
             val cond = Cmp(HairType.REFERENCE, CmpOp.EQ)(cc1, cc2)
             Return(cond)
-
-            buildSSA()
-
-            printGraphviz()
         }
+
+        buildSSA()
+
+        printGraphviz()
     }
 
 }

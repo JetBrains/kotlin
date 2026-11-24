@@ -18,7 +18,7 @@ sealed class VarOp(form: Form, args: List<Node?>) : BlockBody(form, args) {
 }
 
 
-class ReadVar internal constructor(form: Form, control: Controlling?) : VarOp(form, listOf(control)) {
+class ReadVar internal constructor(form: Form, control: Controlling?) : VarOp(form, listOf(control)), ValueNode {
     class Form internal constructor(metaForm: MetaForm, val variable: Any) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
         override val args = listOf<Any>(variable)
     }
@@ -75,7 +75,7 @@ class Phi internal constructor(form: Form, block: BlockEntry?, vararg joinedValu
 }
 
 
-class PhiPlaceholder internal constructor(form: Form, block: BlockEntry?, vararg joinedValues: Node?) : NodeBase(form, listOf(block, *joinedValues)) {
+class PhiPlaceholder internal constructor(form: Form, block: BlockEntry?, vararg joinedValues: Node?) : NodeBase(form, listOf(block, *joinedValues)), ValueNode {
     class Form internal constructor(metaForm: MetaForm, val origin: Any) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(origin)
     }

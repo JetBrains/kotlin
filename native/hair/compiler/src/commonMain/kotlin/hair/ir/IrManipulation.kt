@@ -3,66 +3,87 @@ package hair.ir
 import hair.ir.nodes.*
 import hair.ir.nodes.Node
 import hair.opt.Normalization
-import hair.opt.eliminateDead
+import hair.opt.eliminateDeadNodes
 import hair.utils.isEmpty
 
-class RawNodeBuilder(override val session: Session) : NodeBuilder {
-    override fun onNodeBuilt(node: Node): Node = node
+fun interface OnNodeBuilt {
+    fun onNodeBuilt(node: Node): Node
 }
 
-object RawArgsUpdater : ArgumentUpdater {
-    override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {
-        // FIXME consider moving into the base updateArg
-        require(newValue != oldValue)
-        oldValue?.removeUse(node)
-        newValue?.addUse(node)
+class SessionImpl: Session() {
+    val nodeBuilder: NodeBuilder = WiringUpNodeBuilder(this)
+    val controlEditor: ControlEditor = WiringUpControlEditor(this)
+
+    override val argUpdater: ArgumentUpdater = ArgumentUpdaterImpl(this)
+    val normalization = Normalization(this)
+
+    /** The modification scope currently open on this session, if any, see [modificationScope]. */
+    internal var openScope: String? = null
+
+    /** Adds the node to tha graph in its canonical form with uses wired */
+    fun wireUp(node: Node): Node = node
+        .let { normalization.normalize(it) }
+        .let { gvn(it) }
+        .also { wireToGraph(it) }
+        .let { onNodeBuilt.onNodeBuilt(it) }
+
+    private var onNodeBuilt: OnNodeBuilt = OnNodeBuilt { it }
+
+    fun <T> withOnNodeBuiltHandler(onNodeBuiltProvider: (OnNodeBuilt) -> OnNodeBuilt, block: () -> T): T {
+        val previous = onNodeBuilt
+        onNodeBuilt = onNodeBuiltProvider(previous)
+        try {
+            return block()
+        } finally {
+            onNodeBuilt = previous
+        }
     }
 }
 
-open class NormalizingNodeBuilder(override val session: Session) : NodeBuilder {
-    // FIXME use proper args updater
-    val normalization = Normalization(session, this, RawArgsUpdater)
+val Session.nodeBuilder get() = (this as SessionImpl).nodeBuilder
+val Session.controlEditor get() = (this as SessionImpl).controlEditor
+val Session.normalization get() = (this as SessionImpl).normalization
 
-    override fun onNodeBuilt(node: Node): Node = normalization.normalize(node).also {
-        // node must still be not-GVNed
-        require(node !in session.allNodes())
-    }
+class WiringUpNodeBuilder internal constructor(override val session: SessionImpl) : NodeBuilder {
+    override fun onNodeBuilt(node: Node): Node = session.wireUp(node)
+
+    override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) =
+        session.argUpdater.onArgUpdate(node, index, oldValue, newValue)
 }
 
-open class NormalizingGvnNodeBuilder(session: Session) : NormalizingNodeBuilder(session) {
-    override fun onNodeBuilt(node: Node): Node = session.gvn(super.onNodeBuilt(node))
+class WiringUpControlEditor internal constructor(override val session: SessionImpl) : ControlEditor {
+    override fun onNodeBuilt(node: Node): Node = session.wireUp(node)
+
+    override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) =
+        session.argUpdater.onArgUpdate(node, index, oldValue, newValue)
 }
 
-class RegisteringNodeBuilder(session: Session) : NormalizingGvnNodeBuilder(session) {
-    override fun onNodeBuilt(node: Node): Node = super.onNodeBuilt(node).also {
-        if (!it.registered) session.register(it)
-        require(it.registered)
-    }
-}
-
-class ArgumentUpdaterImpl(val session: Session, val nodeBuilder: NodeBuilder) : ArgumentUpdater {
-    val normalization = Normalization(session, nodeBuilder, this)
+class ArgumentUpdaterImpl(val session: SessionImpl) : ArgumentUpdater {
     override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {
         require(newValue != oldValue)
         oldValue?.removeUse(node)
         if (newValue != null) {
-            val normal = normalization.normalize(node)
-            val replacement: Node = if (normal != node) {
-                normal
-            } else {
-                session.gvn(normal)
-            }
+            val replacement = node
+                .let { session.normalization.normalize(it) }
+                .let { session.gvn(it) }
 
             if (replacement != node) {
-                // FIXME introduce common tool
-                (node as? Controlling)?.nextOrNull?.let {
-                    it.control = normal as Controlling
-                }
                 // DCE replaces ValueNodes with Unreachable
                 val valueReplacement =
-                    if (node is ValueNode && (replacement is Unreachable)) context(nodeBuilder) { NoValue() }
+                    if (node is ValueNode && (replacement is Unreachable)) context(session.nodeBuilder) { NoValue() }
                     else replacement
-                node.replaceValueUsesAndKill(valueReplacement)
+
+                // FIXME not just replaceWith, because exception edge creates extra mess
+                when (node) {
+                    is Controlling -> context(session.nodeBuilder) {
+                        node.rewireAndKill(replacement as Controlling, valueReplacement)
+                    }
+                    else -> {
+                        node.replaceValueUses(valueReplacement)
+                        node.kill()
+                    }
+                }
+
             } else {
                 newValue.addUse(replacement)
             }
@@ -70,83 +91,77 @@ class ArgumentUpdaterImpl(val session: Session, val nodeBuilder: NodeBuilder) : 
     }
 }
 
-private val Session.nodeBuilder: RegisteringNodeBuilder get() = RegisteringNodeBuilder(this)
-private val Session.argUpdater: ArgumentUpdaterImpl get() = ArgumentUpdaterImpl(this, nodeBuilder)
+fun <T> Session.withOnNodeBuiltHandler(onNodeBuiltProvider: (OnNodeBuilt) -> OnNodeBuilt, block: () -> T): T =
+    (this as SessionImpl).withOnNodeBuiltHandler(onNodeBuiltProvider, block)
 
-context(nodeBuilder: NodeBuilder)
-val normalization: Normalization get() = when (nodeBuilder) {
-    is NormalizingNodeBuilder -> nodeBuilder.normalization
-    else -> error("Should not reach here")//NormalizationImpl(nodeBuilder.session, nodeBuilder, SimpleArgsUpdater)
+fun <T> Session.observingBuiltNodes(observer: (Node) -> Unit, block: () -> T): T = withOnNodeBuiltHandler(
+    { outer ->
+        { node -> outer.onNodeBuilt(node).also { observer(it) } }
+    },
+    block
+)
+
+/**
+ * Runs [action] as the modification scope [name].
+ *
+ * Scopes don't nest. The graph is free of dead code and verified when a scope begins and when it ends; within a
+ * scope, edits may leave dead code behind and break invariants temporarily.
+ */
+private inline fun <T, B : NodeBuilder> Session.modificationScope(
+    name: String,
+    builder: B,
+    runDCE: Boolean,
+    action: B.() -> T,
+): T {
+    this as SessionImpl
+    check(openScope == null) { "Can't open $name inside $openScope: modification scopes don't nest" }
+    openScope = name
+    val result = try {
+        builder.action().also {
+            if (runDCE) context(controlEditor) { eliminateDeadNodes() }
+        }
+    } finally {
+        openScope = null
+    }
+    verify()
+    return result
 }
 
 fun <T> Session.buildInitialIR(
-    builderAction: context(NodeBuilder, ControlFlowBuilder) ArgumentUpdater.() -> T
-): T {
-    return context(nodeBuilder, ControlFlowBuilder(entry)) {
-        argUpdater.builderAction().also {
-            eliminateDead()
-            verify()
-        }
-    }
+    builderAction: ControlBuilder.() -> T
+): T = modificationScope("buildInitialIR", controlEditor, runDCE = true) {
+    ControlBuilder(this, entry).builderAction()
 }
 
 fun <T> Session.modifyIR(
     runDCE: Boolean = true,
-    builderAction: context(NodeBuilder, NoControlFlowBuilder) ArgumentUpdater.() -> T
-): T {
-    return context(nodeBuilder, NoControlFlowBuilder) {
-        argUpdater.builderAction().also {
-            if (runDCE) eliminateDead()
-            verify()
-        }
-    }
+    builderAction: NodeBuilder.() -> T
+): T = modificationScope("modifyIR", nodeBuilder, runDCE) {
+    builderAction()
 }
 
 fun <T> Session.modifyControlFlow(
-    at: Controlling,
-    builderAction: context(NodeBuilder, ControlFlowBuilder) ArgumentUpdater.() -> T
-): T {
-    return context(nodeBuilder, ControlFlowBuilder(at)) {
-        argUpdater.builderAction().also {
-            eliminateDead()
-            verify()
-        }
-    }
+    runDCE: Boolean = true,
+    builderAction: ControlEditor.() -> T
+): T = modificationScope("modifyControlFlow", controlEditor, runDCE) {
+    builderAction()
 }
 
-// TODO require cfg modificator
-context(_: ArgumentUpdater)
-fun Controlled.eraseControl() {
-    // FIXME use controlIndex or something
-    args.erase(0)
+
+context(editor: ControlEditor)
+fun <N : Node> Controlling.insertAfter(build: ControlBuilder.() -> N): N {
+    // Captured before building: until it is re-pointed, this node has two control successors.
+    val successor = next
+    val controlBuilder = ControlBuilder(editor, this)
+    val result = controlBuilder.build()
+    with(editor) { successor.control = controlBuilder.control }
+    return result
 }
 
-// TODO move into control manipulator
-context(argUpdater: ArgumentUpdater)
-fun BlockBody.removeFromControl() = with(argUpdater) {
-//    for (arg in args) {
-//        arg.removeUse(this)
-//        //updateArg(arg, null) {} // FIXME find a better way
-//    }
-    val prev = control
-    controlOrNull = null
-    next.control = prev
-    //eraseControl()
-    kill()
-}
+context(_: ControlEditor)
+fun <N : Node> Controlled.insertBefore(build: ControlBuilder.() -> N): N =
+    this@insertBefore.control.insertAfter(build)
 
-context(argUpdater: ArgumentUpdater)
-fun <N: BlockBody> Session.insertAfter(point: Controlling, createNode: context(NodeBuilder, ControlFlowBuilder) () -> N): N {
-    val next = point.next
-    val node = modifyControlFlow(point) { createNode() }
-    with(argUpdater) { next.control = node }
-    return node
-}
-
-context(_: ArgumentUpdater)
-fun <N: BlockBody> Session.insertBefore(point: Controlled, createNode: context(NodeBuilder, ControlFlowBuilder) () -> N): N {
-    return insertAfter(point.control, createNode)
-}
 
 /**
  * Replaces this control-spine node with an arbitrary control-flow sub-graph.
@@ -154,8 +169,9 @@ fun <N: BlockBody> Session.insertBefore(point: Controlled, createNode: context(N
  * If the replaced node produced a value, [build] must return its replacement, to which all value uses
  * are redirected; return `null` for non-value nodes.
  */
+context(editor: ControlEditor)
 fun BlockBody.replaceWithSubGraph(
-    build: context(NodeBuilder, ControlFlowBuilder) ArgumentUpdater.() -> Node?,
+    build: ControlBuilder.() -> Node?,
 ) {
     val original = this
     if (original is Throwing) require(original.unwind == null) {
@@ -165,14 +181,14 @@ fun BlockBody.replaceWithSubGraph(
     val predecessor = original.control
     val successor = original.next
 
-    session.modifyControlFlow(predecessor) {
+    with(editor) {
         // Detach the node up front so the predecessor's only live control successor is the sub-graph.
         original.controlOrNull = null
 
-        val replacementValue = build()
+        val controlBuilder = ControlBuilder(editor, predecessor)
+        val replacementValue = controlBuilder.build()
 
-        val continuation = contextOf<ControlFlowBuilder>().lastControl
-            ?: error("The sub-graph replacing $original must fall through to its successor $successor")
+        val continuation = controlBuilder.control
         successor.control = continuation
 
         replacementValue?.let { original.replaceValueUses(it) }
@@ -180,16 +196,85 @@ fun BlockBody.replaceWithSubGraph(
     }
 }
 
-context(_: ArgumentUpdater)
-fun Node.kill() {
+context(_: ArgumentUpdaterBase)
+private fun Node.kill() {
     require(uses.isEmpty())
     args.withIndex().forEach { [index, _] -> args[index] = null }
-    deregister()
+    unwireFromGraphAndDeregister()
 }
 
-context(_: ArgumentUpdater)
-fun Node.replaceValueUsesAndKill(replacement: Node) {
-    require(this !is Controlling || nextOrNull == null) { "$this is still in the control chain; use removeFromControl()" }
-    replaceValueUses(replacement)
+/**
+ * The core of every replacement: re-points the control-spine successor at [newControl], redirects value uses to
+ * [value], then kills this node.
+ */
+context(builder: NodeBuilder)
+private fun Controlling.rewireAndKill(newControl: Controlling, newValue: Node?) {
+    val next = nextOrNull
+    if (next != null) with(builder) { next.control = newControl }
+    if (newValue != null) replaceValueUses(newValue)
+    require(uses.isEmpty()) { "$this still has uses after rewiring; pass a value replacement" }
     kill()
+}
+
+// FIXME can't require ValueNode here, because many builders erase types to Node and it's not easy to refactor
+context(_: NodeBuilder)
+fun Node.replaceValueNodeWith(value: Node) {
+    require(this !is ControlFlow) {
+        "$this is part of the control flow; use replaceWith(control, value), spliceOut or replaceThrowing"
+    }
+    replaceValueUses(value)
+    kill()
+}
+
+context(_: ControlEditor)
+fun BlockBody.replaceWith(newControl: Controlling, newValue: Node?) {
+    requireNoExceptionEdge()
+    rewireAndKill(newControl, newValue)
+}
+
+context(_: ControlEditor)
+fun BlockBody.replaceWith(node: BlockBody) = replaceWith(node, node)
+
+context(_: ControlEditor)
+fun BlockEntry.replaceWith(newControl: Controlling, newValue: Node = NoValue()) = rewireAndKill(newControl, newValue)
+
+/**
+ * Removes this node from the control, joining its predecessor straight to its successor.
+ * Value uses are redirected to [valueReplacement], which may be left out only if there are none.
+ */
+context(_: ControlEditor)
+fun BlockBody.spliceOut(valueReplacement: Node? = null) = replaceWith(control, valueReplacement)
+
+/** Replaces a throwing control flow node with another one, carrying the exception edge over. */
+context(editor: ControlEditor)
+fun BlockBodyWithException.replaceThrowing(replacement: BlockBodyWithException) {
+    unwind?.let { with(editor) { it.thrower = replacement } }
+    rewireAndKill(replacement, replacement)
+}
+
+context(_: ControlEditor)
+fun BlockExit.replaceWith(exit: BlockExit) {
+    val target = next
+    for ([index, pred] in target.preds.withIndex()) {
+        if (pred == this@replaceWith) target.preds[index] = exit
+    }
+    kill()
+}
+
+context(editor: ControlEditor)
+fun If.fold(taken: IfProjection) {
+    require(taken.owner == this)
+    val dropped = if (taken == trueExit) falseExit else trueExit
+    val control = this@fold.control
+    // Detach first, so that the Goto is the only control successor of the predecessor.
+    with(editor) { controlOrNull = null }
+    taken.replaceWith(Goto(control))
+    dropped.replaceWith(session.unreachable)
+    kill()
+}
+
+private fun BlockBody.requireNoExceptionEdge() {
+    if (this is Throwing) require(unwind == null) {
+        "$this has an exception edge; use replaceThrowing"
+    }
 }

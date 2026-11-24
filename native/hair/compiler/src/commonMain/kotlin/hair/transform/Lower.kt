@@ -8,11 +8,8 @@ package hair.transform
 import hair.ir.*
 import hair.ir.nodes.ArrayIndexCheck
 import hair.ir.nodes.CheckCast
-import hair.ir.nodes.ControlFlowBuilder
 import hair.ir.nodes.IsInstanceOf
 import hair.ir.nodes.Node
-import hair.ir.nodes.NodeBuilder
-import hair.ir.nodes.replaceValueUses
 import hair.sym.CmpOp
 import hair.sym.HairType
 import hair.sym.RuntimeInterface
@@ -29,45 +26,29 @@ fun Session.lower() {
         withWorklist(allNodes()) {
             val worklist = this
 
-            // FIXME create a proper tool, maybe teach insertAfter to add to a worklist from context or smth.
-            context(baseBuilder: NodeBuilder)
-            fun addingToWorklist(action: context(NodeBuilder) () -> Unit) {
-                val collectNewNodes = object : NodeBuilder by baseBuilder {
-                    override fun onNodeBuilt(node: Node): Node {
-                        return baseBuilder.onNodeBuilt(node).also {
-                            worklist.add(it)
-                        }
-                    }
-                }
-                context(collectNewNodes) {
-                    action()
-                }
-            }
-
-            modifyControlFlow(unreachable) {
-                addingToWorklist {
+            modifyControlFlow {
+                // New nodes, e.g. those of a lowering sub-graph, are lowered as well.
+                observingBuiltNodes({ worklist.add(it) }) {
                     val lowering = object : NodeVisitor<Unit>() {
                         override fun visitNode(node: Node) = Unit
 
                         override fun visitIsInstanceOf(node: IsInstanceOf) {
                             val control = pos(node)
-                            contextOf<ControlFlowBuilder>().at(control)
 
                             // TODO fast type checks
 
                             // FIXME it's a nonthrowing runtime call - create a separate node  for such things
-                            val replacement = InvokeStatic(RuntimeInterface.isSubtype)(
-                                TypeInfo(node.obj),
-                                ConstTypeInfo(node.targetType)
-                            )
-                            node.replaceValueUsesAndKill(replacement)
-                            control.next.control = replacement
+                            val replacement = control.insertAfter {
+                                InvokeStatic(RuntimeInterface.isSubtype)(
+                                    TypeInfo(node.obj),
+                                    ConstTypeInfo(node.targetType)
+                                )
+                            }
+                            node.replaceValueNodeWith(replacement)
                         }
 
                         override fun visitCheckCast(node: CheckCast) {
-                            // TODO strike out?
-                            node.replaceValueUses(node.obj)
-                            node.removeFromControl()
+                            node.spliceOut(node.obj)
                         }
 
                         override fun visitArrayIndexCheck(node: ArrayIndexCheck) {
@@ -89,7 +70,7 @@ fun Session.lower() {
                     }
 
                     for (node in worklist) {
-                        if (!node.registered) continue
+                        if (!node.inGraph) continue
                         node.accept(lowering)
                     }
                 }

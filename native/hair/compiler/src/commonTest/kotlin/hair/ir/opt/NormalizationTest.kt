@@ -50,8 +50,8 @@ class NormalizationTest : IrTest {
             val a = 23
             val b = 42
             assertEquals(
-                Add(INT)(Add(INT)(Param(1), Const(a)), Const(b)),
-                Add(INT)(Param(1), Const(a + b))
+                Add(INT)(Param(1), Const(a + b)),
+                Add(INT)(Add(INT)(Param(1), Const(a)), Const(b))
             )
             ReturnVoid()
         }
@@ -689,9 +689,6 @@ class NormalizationTest : IrTest {
         val ret = allNodes<Return>().single()
         assertEquals(value, (ret.result as Const).value)
     }
-
-    context(cfb: ControlFlowBuilder)
-    val lastControl get() = cfb.lastControl
 
 //    @Test
 //    fun testPhiFromUnreachable() = withTestSession {

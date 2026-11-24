@@ -9,6 +9,8 @@ import kotlin.jvm.JvmName
 abstract class SessionBase {
     val forms = mutableListOf<Form>()
 
+    abstract val argUpdater: ArgumentUpdater
+
     fun allNodes() = forms.asSequence().flatMap { it.nodes }
     @JvmName("allNodesOfType")
     inline fun <reified N : Node> allNodes(): Sequence<N> = allNodes().filterIsInstance<N>() // FIXME invalidatable?
@@ -23,25 +25,25 @@ abstract class SessionBase {
         return node.ensureUnique() as N
     }
 
-    fun register(node: Node) {
+    fun wireToGraph(node: Node) {
         require(node in allNodes())
-        if (node.registered) return
+        if (node.inGraph) return
         node as NodeBase
         node.id = -node.id
-        require(node.registered)
+        require(node.inGraph)
         for (arg in node.args) {
             arg?.addUse(node)
         }
     }
 
-    fun unregister(node: Node) {
-        require(node.registered)
+    fun unwireFromGraphAndDeregister(node: Node) {
+        require(node.inGraph)
         require(node.uses.isEmpty())
         node as NodeBase
         node.id = -node.id
-        require(!node.registered)
+        require(!node.inGraph)
 
-        // FIXME is not symmetrical with the register
+        // deregister (asymmetrical with wireToGraph)
         node.form.deregister(node)
 
         for (arg in node.args) {
@@ -52,12 +54,23 @@ abstract class SessionBase {
     }
 }
 
-fun Node.deregister() {
-    session.unregister(this)
+fun Node.unwireFromGraphAndDeregister() {
+    session.unwireFromGraphAndDeregister(this)
 }
 
-// TODO
-interface NodeBuilder {
+/**
+ * The scope of an IR modification, and the capability to build nodes and edit the IR within it.
+ * Edits that restructure the control flow additionally require a [ControlEditor].
+ */
+interface NodeBuilder : ArgumentUpdater {
     val session: Session
     fun onNodeBuilt(node: Node): Node
 }
+
+/**
+ * The scope of an IR modification that may restructure the control flow, and the capability that the operations
+ * doing so require.
+ *
+ * It decides what may be done, not where: control-flow nodes are appended at a [ControlBuilder].
+ */
+interface ControlEditor : NodeBuilder

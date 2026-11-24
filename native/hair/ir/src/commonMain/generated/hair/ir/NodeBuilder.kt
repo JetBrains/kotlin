@@ -8,8 +8,7 @@ import hair.sym.Type.*
 context(nodeBuilder: NodeBuilder)
 fun Use(control: Controlling?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(Use(nodeBuilder.session.useForm, control, value)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun Use(value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> Use(ctrl, value) }
+fun ControlBuilder.Use(value: Node?): Controlling = appendControlled { ctrl -> Use(ctrl, value) }
 
 context(nodeBuilder: NodeBuilder)
 fun NoValue(): NoValue = nodeBuilder.onNodeBuilt(NoValue(nodeBuilder.session.noValueForm)) as NoValue
@@ -20,89 +19,80 @@ fun UnitValue(): UnitValue = nodeBuilder.onNodeBuilt(UnitValue(nodeBuilder.sessi
 context(nodeBuilder: NodeBuilder)
 private fun GlobalInitForm(initRoutine: HairStaticInitializer): GlobalInit.Form = GlobalInit.Form(nodeBuilder.session.globalInitMetaForm, initRoutine).ensureFormUniq()
 
-context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
+context(nodeBuilder: NodeBuilder)
 fun GlobalInit(initRoutine: HairStaticInitializer): GlobalInit.Form = GlobalInitForm(initRoutine)
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun GlobalInit(initRoutine: HairStaticInitializer): Controlling = GlobalInitForm(initRoutine)()
+fun ControlBuilder.GlobalInit(initRoutine: HairStaticInitializer): Controlling = GlobalInitForm(initRoutine)()
 
 context(nodeBuilder: NodeBuilder)
 operator fun GlobalInit.Form.invoke(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(GlobalInit(this@invoke, control)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun GlobalInit.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
 private fun ThreadLocalInitForm(initRoutine: HairStaticInitializer): ThreadLocalInit.Form = ThreadLocalInit.Form(nodeBuilder.session.threadLocalInitMetaForm, initRoutine).ensureFormUniq()
 
-context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
+context(nodeBuilder: NodeBuilder)
 fun ThreadLocalInit(initRoutine: HairStaticInitializer): ThreadLocalInit.Form = ThreadLocalInitForm(initRoutine)
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun ThreadLocalInit(initRoutine: HairStaticInitializer): Controlling = ThreadLocalInitForm(initRoutine)()
+fun ControlBuilder.ThreadLocalInit(initRoutine: HairStaticInitializer): Controlling = ThreadLocalInitForm(initRoutine)()
 
 context(nodeBuilder: NodeBuilder)
 operator fun ThreadLocalInit.Form.invoke(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(ThreadLocalInit(this@invoke, control)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun ThreadLocalInit.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
 private fun StandaloneThreadLocalInitForm(initRoutine: HairStaticInitializer): StandaloneThreadLocalInit.Form = StandaloneThreadLocalInit.Form(nodeBuilder.session.standaloneThreadLocalInitMetaForm, initRoutine).ensureFormUniq()
 
-context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
+context(nodeBuilder: NodeBuilder)
 fun StandaloneThreadLocalInit(initRoutine: HairStaticInitializer): StandaloneThreadLocalInit.Form = StandaloneThreadLocalInitForm(initRoutine)
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun StandaloneThreadLocalInit(initRoutine: HairStaticInitializer): Controlling = StandaloneThreadLocalInitForm(initRoutine)()
+fun ControlBuilder.StandaloneThreadLocalInit(initRoutine: HairStaticInitializer): Controlling = StandaloneThreadLocalInitForm(initRoutine)()
 
 context(nodeBuilder: NodeBuilder)
 operator fun StandaloneThreadLocalInit.Form.invoke(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(StandaloneThreadLocalInit(this@invoke, control)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun StandaloneThreadLocalInit.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
 fun UnreachableNoCtrl(): Unreachable = nodeBuilder.onNodeBuilt(Unreachable(nodeBuilder.session.unreachableForm)) as Unreachable
 
-context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
+context(nodeBuilder: NodeBuilder)
 fun Unreachable(): Unreachable = UnreachableNoCtrl()
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun Unreachable(): Unreachable = controlBuilder.appendControl { UnreachableNoCtrl() }
+fun ControlBuilder.Unreachable(): Unreachable = appendControl { UnreachableNoCtrl() }
 
 context(nodeBuilder: NodeBuilder)
 fun BlockEntryNoCtrl(vararg preds: BlockExit?): Controlling = nodeBuilder.onNodeBuilt(BlockEntry(nodeBuilder.session.blockEntryForm, *preds)) as Controlling
 
-context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
+context(nodeBuilder: NodeBuilder)
 fun BlockEntry(vararg preds: BlockExit?): Controlling = BlockEntryNoCtrl(*preds)
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun BlockEntry(vararg preds: BlockExit?): Controlling = controlBuilder.appendControl { BlockEntryNoCtrl(*preds) }
+fun ControlBuilder.BlockEntry(vararg preds: BlockExit?): Controlling = appendControl { BlockEntryNoCtrl(*preds) }
 
 context(nodeBuilder: NodeBuilder)
 fun Halt(control: Controlling?): Node = nodeBuilder.onNodeBuilt(Halt(nodeBuilder.session.haltForm, control))
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun Halt(): Node = controlBuilder.appendControlled { ctrl -> Halt(ctrl) }
+fun ControlBuilder.Halt(): Node = appendControlled { ctrl -> Halt(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
 fun Return(control: Controlling?, result: Node?): Node = nodeBuilder.onNodeBuilt(Return(nodeBuilder.session.returnForm, control, result))
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun Return(result: Node?): Node = controlBuilder.appendControlled { ctrl -> Return(ctrl, result) }
+fun ControlBuilder.Return(result: Node?): Node = appendControlled { ctrl -> Return(ctrl, result) }
 
 context(nodeBuilder: NodeBuilder)
 fun Goto(control: Controlling?): BlockExit = nodeBuilder.onNodeBuilt(Goto(nodeBuilder.session.gotoForm, control)) as BlockExit
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun Goto(): BlockExit = controlBuilder.appendControlled { ctrl -> Goto(ctrl) }
+fun ControlBuilder.Goto(): BlockExit = appendControlled { ctrl -> Goto(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
 fun If(control: Controlling?, cond: Node?): Node = nodeBuilder.onNodeBuilt(If(nodeBuilder.session.ifForm, control, cond))
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun If(cond: Node?): Node = controlBuilder.appendControlled { ctrl -> If(ctrl, cond) }
+fun ControlBuilder.If(cond: Node?): Node = appendControlled { ctrl -> If(ctrl, cond) }
 
 context(nodeBuilder: NodeBuilder)
 fun TrueExit(owner: If?): BlockExit = nodeBuilder.onNodeBuilt(TrueExit(nodeBuilder.session.trueExitForm, owner)) as BlockExit
@@ -113,8 +103,7 @@ fun FalseExit(owner: If?): BlockExit = nodeBuilder.onNodeBuilt(FalseExit(nodeBui
 context(nodeBuilder: NodeBuilder)
 fun Throw(control: Controlling?, exception: Node?): Node = nodeBuilder.onNodeBuilt(Throw(nodeBuilder.session.throwForm, control, exception))
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun Throw(exception: Node?): Node = controlBuilder.appendControlled { ctrl -> Throw(ctrl, exception) }
+fun ControlBuilder.Throw(exception: Node?): Node = appendControlled { ctrl -> Throw(ctrl, exception) }
 
 context(nodeBuilder: NodeBuilder)
 fun Unwind(thrower: Throwing?): BlockExit = nodeBuilder.onNodeBuilt(Unwind(nodeBuilder.session.unwindForm, thrower)) as BlockExit
@@ -122,16 +111,15 @@ fun Unwind(thrower: Throwing?): BlockExit = nodeBuilder.onNodeBuilt(Unwind(nodeB
 context(nodeBuilder: NodeBuilder)
 private fun ReadVarForm(variable: Any): ReadVar.Form = ReadVar.Form(nodeBuilder.session.readVarMetaForm, variable).ensureFormUniq()
 
-context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
+context(nodeBuilder: NodeBuilder)
 fun ReadVar(variable: Any): ReadVar.Form = ReadVarForm(variable)
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun ReadVar(variable: Any): Controlling = ReadVarForm(variable)()
+fun ControlBuilder.ReadVar(variable: Any): Controlling = ReadVarForm(variable)()
 
 context(nodeBuilder: NodeBuilder)
 operator fun ReadVar.Form.invoke(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(ReadVar(this@invoke, control)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun ReadVar.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
@@ -140,7 +128,7 @@ fun AssignVar(variable: Any): AssignVar.Form = AssignVar.Form(nodeBuilder.sessio
 context(nodeBuilder: NodeBuilder)
 operator fun AssignVar.Form.invoke(control: Controlling?, assignedValue: Node?): Controlling = nodeBuilder.onNodeBuilt(AssignVar(this@invoke, control, assignedValue)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun AssignVar.Form.invoke(assignedValue: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, assignedValue) }
 
 context(nodeBuilder: NodeBuilder)
@@ -290,16 +278,15 @@ operator fun Reinterpret.Form.invoke(operand: Node?): Node = nodeBuilder.onNodeB
 context(nodeBuilder: NodeBuilder)
 private fun NewForm(objectType: HairClass): New.Form = New.Form(nodeBuilder.session.newMetaForm, objectType).ensureFormUniq()
 
-context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
+context(nodeBuilder: NodeBuilder)
 fun New(objectType: HairClass): New.Form = NewForm(objectType)
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun New(objectType: HairClass): Controlling = NewForm(objectType)()
+fun ControlBuilder.New(objectType: HairClass): Controlling = NewForm(objectType)()
 
 context(nodeBuilder: NodeBuilder)
 operator fun New.Form.invoke(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(New(this@invoke, control)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun New.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
@@ -308,7 +295,7 @@ fun NewArray(elementType: HairClass): NewArray.Form = NewArray.Form(nodeBuilder.
 context(nodeBuilder: NodeBuilder)
 operator fun NewArray.Form.invoke(control: Controlling?, size: Node?): Controlling = nodeBuilder.onNodeBuilt(NewArray(this@invoke, control, size)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun NewArray.Form.invoke(size: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, size) }
 
 context(nodeBuilder: NodeBuilder)
@@ -323,7 +310,7 @@ fun CheckCast(targetType: HairClass): CheckCast.Form = CheckCast.Form(nodeBuilde
 context(nodeBuilder: NodeBuilder)
 operator fun CheckCast.Form.invoke(control: Controlling?, obj: Node?): Controlling = nodeBuilder.onNodeBuilt(CheckCast(this@invoke, control, obj)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun CheckCast.Form.invoke(obj: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj) }
 
 context(nodeBuilder: NodeBuilder)
@@ -344,8 +331,7 @@ fun ArraySize(array: Node?): Node = nodeBuilder.onNodeBuilt(ArraySize(nodeBuilde
 context(nodeBuilder: NodeBuilder)
 fun ArrayIndexCheck(control: Controlling?, array: Node?, index: Node?): Controlling = nodeBuilder.onNodeBuilt(ArrayIndexCheck(nodeBuilder.session.arrayIndexCheckForm, control, array, index)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun ArrayIndexCheck(array: Node?, index: Node?): Controlling = controlBuilder.appendControlled { ctrl -> ArrayIndexCheck(ctrl, array, index) }
+fun ControlBuilder.ArrayIndexCheck(array: Node?, index: Node?): Controlling = appendControlled { ctrl -> ArrayIndexCheck(ctrl, array, index) }
 
 context(nodeBuilder: NodeBuilder)
 fun Load(type: HairType): Load.Form = Load.Form(nodeBuilder.session.loadMetaForm, type).ensureFormUniq()
@@ -353,7 +339,7 @@ fun Load(type: HairType): Load.Form = Load.Form(nodeBuilder.session.loadMetaForm
 context(nodeBuilder: NodeBuilder)
 operator fun Load.Form.invoke(control: Controlling?, location: Node?): Controlling = nodeBuilder.onNodeBuilt(Load(this@invoke, control, location)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun Load.Form.invoke(location: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, location) }
 
 context(nodeBuilder: NodeBuilder)
@@ -362,7 +348,7 @@ fun Store(type: HairType): Store.Form = Store.Form(nodeBuilder.session.storeMeta
 context(nodeBuilder: NodeBuilder)
 operator fun Store.Form.invoke(control: Controlling?, location: Node?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(Store(this@invoke, control, location, value)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun Store.Form.invoke(location: Node?, value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, location, value) }
 
 context(nodeBuilder: NodeBuilder)
@@ -371,7 +357,7 @@ fun LoadField(field: Field): LoadField.Form = LoadField.Form(nodeBuilder.session
 context(nodeBuilder: NodeBuilder)
 operator fun LoadField.Form.invoke(control: Controlling?, obj: Node?): Controlling = nodeBuilder.onNodeBuilt(LoadField(this@invoke, control, obj)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun LoadField.Form.invoke(obj: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj) }
 
 context(nodeBuilder: NodeBuilder)
@@ -380,22 +366,21 @@ fun StoreField(field: Field): StoreField.Form = StoreField.Form(nodeBuilder.sess
 context(nodeBuilder: NodeBuilder)
 operator fun StoreField.Form.invoke(control: Controlling?, obj: Node?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(StoreField(this@invoke, control, obj, value)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun StoreField.Form.invoke(obj: Node?, value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj, value) }
 
 context(nodeBuilder: NodeBuilder)
 private fun LoadGlobalForm(field: Global): LoadGlobal.Form = LoadGlobal.Form(nodeBuilder.session.loadGlobalMetaForm, field).ensureFormUniq()
 
-context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
+context(nodeBuilder: NodeBuilder)
 fun LoadGlobal(field: Global): LoadGlobal.Form = LoadGlobalForm(field)
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun LoadGlobal(field: Global): Controlling = LoadGlobalForm(field)()
+fun ControlBuilder.LoadGlobal(field: Global): Controlling = LoadGlobalForm(field)()
 
 context(nodeBuilder: NodeBuilder)
 operator fun LoadGlobal.Form.invoke(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(LoadGlobal(this@invoke, control)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun LoadGlobal.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
@@ -404,7 +389,7 @@ fun StoreGlobal(field: Global): StoreGlobal.Form = StoreGlobal.Form(nodeBuilder.
 context(nodeBuilder: NodeBuilder)
 operator fun StoreGlobal.Form.invoke(control: Controlling?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(StoreGlobal(this@invoke, control, value)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun StoreGlobal.Form.invoke(value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, value) }
 
 context(nodeBuilder: NodeBuilder)
@@ -413,7 +398,7 @@ fun LoadArrayElement(elementType: HairType): LoadArrayElement.Form = LoadArrayEl
 context(nodeBuilder: NodeBuilder)
 operator fun LoadArrayElement.Form.invoke(control: Controlling?, array: Node?, index: Node?): Controlling = nodeBuilder.onNodeBuilt(LoadArrayElement(this@invoke, control, array, index)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun LoadArrayElement.Form.invoke(array: Node?, index: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, array, index) }
 
 context(nodeBuilder: NodeBuilder)
@@ -422,7 +407,7 @@ fun StoreArrayElement(elementType: HairType): StoreArrayElement.Form = StoreArra
 context(nodeBuilder: NodeBuilder)
 operator fun StoreArrayElement.Form.invoke(control: Controlling?, array: Node?, index: Node?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(StoreArrayElement(this@invoke, control, array, index, value)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun StoreArrayElement.Form.invoke(array: Node?, index: Node?, value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, array, index, value) }
 
 context(nodeBuilder: NodeBuilder)
@@ -431,7 +416,7 @@ fun InvokeStatic(function: HairFunction): InvokeStatic.Form = InvokeStatic.Form(
 context(nodeBuilder: NodeBuilder)
 operator fun InvokeStatic.Form.invoke(control: Controlling?, vararg callArgs: Node?): Controlling = nodeBuilder.onNodeBuilt(InvokeStatic(this@invoke, control, *callArgs)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun InvokeStatic.Form.invoke(vararg callArgs: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, *callArgs) }
 
 context(nodeBuilder: NodeBuilder)
@@ -440,6 +425,6 @@ fun InvokeVirtual(function: HairFunction): InvokeVirtual.Form = InvokeVirtual.Fo
 context(nodeBuilder: NodeBuilder)
 operator fun InvokeVirtual.Form.invoke(control: Controlling?, vararg callArgs: Node?): Controlling = nodeBuilder.onNodeBuilt(InvokeVirtual(this@invoke, control, *callArgs)) as Controlling
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+context(controlBuilder: ControlBuilder)
 operator fun InvokeVirtual.Form.invoke(vararg callArgs: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, *callArgs) }
 
