@@ -1,8 +1,7 @@
-package test
-
 import kotlin.test.*
+import test.*
 
-fun asserts() {
+@Test fun runTest() {
     assertTrue(isBaseClass(Class()))
     assertFalse(isBaseInterface(Class()))
 }

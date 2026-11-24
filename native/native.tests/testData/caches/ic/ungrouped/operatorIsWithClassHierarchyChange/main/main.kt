@@ -2,5 +2,6 @@ import kotlin.test.*
 import test.*
 
 @Test fun runTest() {
-    asserts()
+    assertTrue(isBaseClass(Class()))
+    assertFalse(isBaseInterface(Class()))
 }

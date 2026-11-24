@@ -7,21 +7,35 @@ STEP 0:
 
 STEP 1:
     dependencies: lib
+    modifications:
+        U : main.1.kt -> main.kt
 
 STEP 2:
     dependencies: lib
+    modifications:
+        U : main.2.kt -> main.kt
 
 STEP 3:
     dependencies: lib
+    modifications:
+        U : main.3.kt -> main.kt
 
 STEP 4:
     dependencies: lib
+    modifications:
+        U : main.4.kt -> main.kt
 
 STEP 5:
     dependencies: lib
+    modifications:
+        U : main.5.kt -> main.kt
 
 STEP 6:
     dependencies: lib
+    modifications:
+        U : main.6.kt -> main.kt
 
 STEP 7:
     dependencies: lib
+    modifications:
+        U : main.7.kt -> main.kt
