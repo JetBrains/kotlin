@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
@@ -12,6 +14,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaTypeRelationChecker : KaSessionComponent {
@@ -21,6 +27,10 @@ public interface KaTypeRelationChecker : KaSessionComponent {
      * Semantic equality stands in contrast to the structural equality implemented by [KaType.equals]. See [KaType] for a detailed
      * discussion about structural vs. semantic type equality.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.semanticallyEquals' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaType.semanticallyEquals(
         other: KaType,
         errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
@@ -29,6 +39,10 @@ public interface KaTypeRelationChecker : KaSessionComponent {
     /**
      * Returns whether this [KaType] is a subtype of [supertype]. The relation is non-strict, i.e. any type `t` is a subtype of itself.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.isSubtypeOf' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaType.isSubtypeOf(
         supertype: KaType,
         errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
@@ -58,6 +72,10 @@ public interface KaTypeRelationChecker : KaSessionComponent {
      *   right-hand side of [isSubtypeOf]. Hence, with a [LENIENT][KaSubtypingErrorTypePolicy.LENIENT] error type policy, [isSubtypeOf]
      *   is `true` for all unresolved class IDs.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.isSubtypeOf' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaType.isSubtypeOf(
         classId: ClassId,
         errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
@@ -81,6 +99,10 @@ public interface KaTypeRelationChecker : KaSessionComponent {
      * the expanded type, as other [isSubtypeOf] implementations also take expansion into account. If the type alias doesn't expand to a
      * [KaClassType][org.jetbrains.kotlin.analysis.api.types.KaClassType], [isSubtypeOf] is trivially `false`.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.isSubtypeOf' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     public fun KaType.isSubtypeOf(
         symbol: KaClassLikeSymbol,
         errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
@@ -92,6 +114,16 @@ public interface KaTypeRelationChecker : KaSessionComponent {
  *
  * [KaSubtypingErrorTypePolicy] determines the treatment of error types in type equality and subtyping checks.
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.types.KaSubtypingErrorTypePolicy' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaSubtypingErrorTypePolicy",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.types.KaSubtypingErrorTypePolicy",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 public enum class KaSubtypingErrorTypePolicy {
     /**

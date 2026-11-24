@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.components.KaKDocProvider
@@ -19,8 +21,8 @@ internal class KaKDocProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaKDocProvider {
     override fun KtDeclaration.findKDoc(): KDocCommentDescriptor? =
-        context(analysisSession) { findKDocEndpoint() }
+        findKDocEndpoint(session = analysisSession)
 
     override fun KaDeclarationSymbol.findKDoc(): KDocCommentDescriptor? =
-        context(analysisSession) { findKDocEndpoint() }
+        findKDocEndpoint(session = analysisSession)
 }

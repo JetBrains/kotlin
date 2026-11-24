@@ -78,6 +78,7 @@ private fun checkConsistencyWithResolveCall(
  * [KtResolvableCall.collectCallCandidates]. It has to report the same candidates, and it must not fail on calls which have
  * no legacy [KaCall] counterpart, such as callable references (KT-88489).
  */
+@Suppress("DEPRECATION") // The comparison with the old resolution API goes away together with it.
 context(_: KaSession)
 private fun checkConsistencyWithObsoleteApi(
     element: KtElement,
@@ -104,6 +105,7 @@ private fun List<KaCallCandidate>.renderForComparison(): String = joinToString(s
 /**
  * Returns either [List]<[KaCallCandidate]> (new API) or [List]<[KaCallCandidateInfo]> (old API).
  */
+@Suppress("DEPRECATION") // The old resolution API has no 1:1 replacement; drop this together with it.
 context(_: KaSession)
 private fun collectCallCandidates(element: KtElement): List<*> = if (element is KtResolvableCall) {
     element.collectCallCandidates()

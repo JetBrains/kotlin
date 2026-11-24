@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.resolution.singleFunctionCallOrNull
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.functionalInterface
@@ -42,6 +41,7 @@ abstract class AbstractFunctionalInterfaceBySamConstructorTest : AbstractAnalysi
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
+    @Suppress("DEPRECATION") // The old resolution API has no 1:1 replacement; drop this together with it.
     context(_: KaSession)
     private fun getSamConstructorSymbol(mainFile: KtFile, testServices: TestServices): KaSamConstructorSymbol? {
         val callExpression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtCallExpression>(mainFile)

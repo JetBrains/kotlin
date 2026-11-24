@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
@@ -73,30 +75,30 @@ internal class KaSymbolRelationProviderBridge(
         get() = context(analysisSession) { directlyOverriddenSymbolsEndpoint }
 
     override fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean =
-        context(analysisSession) { isSubClassOfEndpoint(superClass) }
+        isSubClassOfEndpoint(superClass, session = analysisSession)
 
     override fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean =
-        context(analysisSession) { isDirectSubClassOfEndpoint(superClass) }
+        isDirectSubClassOfEndpoint(superClass, session = analysisSession)
 
     override val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
         get() = context(analysisSession) { intersectionOverriddenSymbolsEndpoint }
 
     @KaExperimentalApi
     override fun KaCallableSymbol.implementationState(implementerClassSymbol: KaClassSymbol): KaCallableImplementationState? =
-        context(analysisSession) { implementationStateEndpoint(implementerClassSymbol) }?.toLegacyImplementationState()
+        implementationStateEndpoint(implementerClassSymbol, session = analysisSession)?.toLegacyImplementationState()
 
     override val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
         get() = context(analysisSession) { fakeOverrideOriginalEndpoint }
 
     @KaExperimentalApi
     override fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> =
-        context(analysisSession) { getExpectsForActualEndpoint() }
+        getExpectsForActualEndpoint(session = analysisSession)
 
     override val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
         get() = context(analysisSession) { sealedClassInheritorsEndpoint }
 
     override fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol, targetPlatform: TargetPlatform): Boolean =
-        context(analysisSession) { hasConflictingSignatureWithEndpoint(other, targetPlatform) }
+        hasConflictingSignatureWithEndpoint(other, targetPlatform, session = analysisSession)
 }
 
 private fun KaEndpointCallableImplementationState.toLegacyImplementationState(): KaCallableImplementationState = when (this) {

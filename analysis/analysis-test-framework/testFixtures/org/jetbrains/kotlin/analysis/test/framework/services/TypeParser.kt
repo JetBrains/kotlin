@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,6 +25,8 @@ object TypeParser {
         return convertType(type.typeElement ?: incorrectType(type), scopeForTypeParameters)
     }
 
+    // The legacy type builders keep the type arguments as written, while `typeCreator` fills the missing ones with star projections.
+    @Suppress("DEPRECATION")
     context(_: KaSession)
     private fun convertType(type: KtTypeElement, scopeForTypeParameters: KtElement): KaType =
         when (type) {

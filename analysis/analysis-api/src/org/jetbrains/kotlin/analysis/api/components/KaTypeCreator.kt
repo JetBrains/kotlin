@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
@@ -17,6 +19,10 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaTypeCreator : KaSessionComponent {
@@ -37,6 +43,10 @@ public interface KaTypeCreator : KaSessionComponent {
      * }
      * ```
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     public fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit = {}): KaType
 
     /**
@@ -51,11 +61,19 @@ public interface KaTypeCreator : KaSessionComponent {
      * buildClassType(builtinTypes.string)
      * ```
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     public fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit = {}): KaType
 
     /**
      * Builds a boxed / primitive (depending on the [init] block) array type from the given [elementType].
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit = {}): KaType
 
@@ -63,21 +81,37 @@ public interface KaTypeCreator : KaSessionComponent {
      * Builds the underlying array type of [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs)
      * function parameter with the given [elementType].
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun buildVarargArrayType(elementType: KaType): KaType
 
     /**
      * Builds a [KaTypeParameterType] with the given type parameter symbol.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     public fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit = {}): KaTypeParameterType
 
     /**
      * Builds a [KaStarTypeProjection] (`*`).
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun buildStarTypeProjection(): KaStarTypeProjection
 }
 
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaTypeBuilder : KaLifetimeOwner
@@ -87,6 +121,10 @@ public interface KaTypeBuilder : KaLifetimeOwner
  *
  * @see KaTypeCreator.buildClassType
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaClassTypeBuilder : KaTypeBuilder {
@@ -117,6 +155,10 @@ public interface KaClassTypeBuilder : KaTypeBuilder {
  *
  * @see KaTypeCreator.buildTypeParameterType
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
@@ -135,6 +177,10 @@ public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
  *
  * @see KaTypeCreator.buildTypeParameterType
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -185,6 +231,10 @@ public interface KaArrayTypeBuilder : KaTypeBuilder {
  * }
  * ```
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 context(session: KaSession)
 public fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit = {}): KaType {
@@ -208,6 +258,10 @@ public fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit 
  * buildClassType(builtinTypes.string)
  * ```
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 context(session: KaSession)
 public fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit = {}): KaType {
@@ -222,6 +276,10 @@ public fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.()
 /**
  * Builds a boxed / primitive (depending on the [init] block) array type from the given [elementType].
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 context(session: KaSession)
@@ -238,6 +296,10 @@ public fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Un
  * Builds the underlying array type of [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs)
  * function parameter with the given [elementType].
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 context(session: KaSession)
@@ -252,6 +314,10 @@ public fun buildVarargArrayType(elementType: KaType): KaType {
 /**
  * Builds a [KaTypeParameterType] with the given type parameter symbol.
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 context(session: KaSession)
 public fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit = {}): KaTypeParameterType {
@@ -266,6 +332,10 @@ public fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypePar
 /**
  * Builds a [KaStarTypeProjection] (`*`).
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator' from the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 context(session: KaSession)

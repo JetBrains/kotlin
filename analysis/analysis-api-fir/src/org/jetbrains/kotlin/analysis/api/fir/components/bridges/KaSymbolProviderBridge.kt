@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
@@ -95,19 +97,19 @@ internal class KaSymbolProviderBridge(
         get() = context(analysisSession) { symbolEndpoint }
 
     override fun findPackage(fqName: FqName): KaPackageSymbol? =
-        context(analysisSession) { findPackageEndpoint(fqName) }
+        findPackageEndpoint(fqName, session = analysisSession)
 
     override fun findClass(classId: ClassId): KaClassSymbol? =
-        context(analysisSession) { findClassEndpoint(classId) }
+        findClassEndpoint(classId, session = analysisSession)
 
     override fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol? =
-        context(analysisSession) { findTypeAliasEndpoint(classId) }
+        findTypeAliasEndpoint(classId, session = analysisSession)
 
     override fun findClassLike(classId: ClassId): KaClassLikeSymbol? =
-        context(analysisSession) { findClassLikeEndpoint(classId) }
+        findClassLikeEndpoint(classId, session = analysisSession)
 
     override fun findTopLevelCallables(packageFqName: FqName, name: Name): Sequence<KaCallableSymbol> =
-        context(analysisSession) { findTopLevelCallablesEndpoint(packageFqName, name) }
+        findTopLevelCallablesEndpoint(packageFqName, name, session = analysisSession)
 
     override val rootPackageSymbol: KaPackageSymbol
         get() = context(analysisSession) { rootPackageSymbolEndpoint }

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
@@ -73,7 +75,7 @@ internal class KaScopeProviderBridge(
         get() = context(analysisSession) { packageScopeEndpoint }
 
     override fun List<KaScope>.asCompositeScope(): KaScope =
-        context(analysisSession) { asCompositeScopeEndpoint() }
+        asCompositeScopeEndpoint(session = analysisSession)
 
     override val KaType.scope: KaTypeScope?
         get() = context(analysisSession) { scopeEndpoint }

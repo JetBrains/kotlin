@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
@@ -18,8 +20,8 @@ internal class KaEvaluatorBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaEvaluator {
     override fun KtExpression.evaluate(): KaConstantValue? =
-        context(analysisSession) { evaluateEndpoint() }
+        evaluateEndpoint(session = analysisSession)
 
     override fun KtExpression.evaluateAsAnnotationValue(): KaAnnotationValue? =
-        context(analysisSession) { evaluateAsAnnotationValueEndpoint() }
+        evaluateAsAnnotationValueEndpoint(session = analysisSession)
 }

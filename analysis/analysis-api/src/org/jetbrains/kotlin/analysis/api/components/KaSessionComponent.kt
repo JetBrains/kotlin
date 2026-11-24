@@ -8,33 +8,19 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 
 /**
- * A component of a [KaSession][org.jetbrains.kotlin.analysis.api.KaSession].
+ * A legacy component of a [KaSession][org.jetbrains.kotlin.analysis.api.KaSession].
  *
- * Session components mix functions and properties into the session, which allows using them directly from an [analyze][org.jetbrains.kotlin.analysis.api.session.analyze]
- * block where a [KaSession][org.jetbrains.kotlin.analysis.api.KaSession] is available as a receiver. As such, functions from session
- * components define a large part of the Analysis API's surface, in addition to other [lifetime owners][org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner]
- * like [KaSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaSymbol].
+ * Session components mix their functions and properties into [KaSession][org.jetbrains.kotlin.analysis.api.KaSession], so they are
+ * available wherever the session is a receiver. They are superseded by the context-parameter API: top-level `context(session: KaSession)`
+ * declarations in the domain packages (`types`, `symbols`, `scopes`, …), which are available inside an [analyze][org.jetbrains.kotlin.analysis.api.session.analyze]
+ * block and in any function with a [KaSession][org.jetbrains.kotlin.analysis.api.KaSession] context parameter.
  *
- * **Important:** Any public function or property in a "session component" is directly available in a [KaSession][org.jetbrains.kotlin.analysis.api.KaSession]
- * context. There is no need to first retrieve the session component in any way.
- *
- * #### Example
- *
- * ```kotlin
- * // element: KtDeclaration
- * analyze(element) { // this: KaSession
- *     element.symbol
- * }
- * ```
- *
- * While [symbol][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider.symbol] is actually a property from the [KaSymbolProvider][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider]
- * session component, it is usable directly in the [KaSession][org.jetbrains.kotlin.analysis.api.KaSession] context because the property has
- * been mixed into the session.
- *
- * All public API components inherited from [KaSessionComponent] are expected to be direct children of [KaSessionComponent].
- * That's required for the correctness of the Analysis API context parameter bridge checker, which ensures that each API endpoint from
- * session components has a corresponding context parameter bridge in the same file.
+ * Session components and their members are deprecated and will be removed.
  */
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaSessionComponent : KaLifetimeOwner

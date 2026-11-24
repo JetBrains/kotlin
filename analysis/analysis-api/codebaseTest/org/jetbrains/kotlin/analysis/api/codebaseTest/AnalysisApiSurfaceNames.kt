@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternals
 
 internal object AnalysisApiSurfaceNames {
-    @Suppress("OPT_IN_USAGE") // Suppress instead of @OptIn because the annotation is not available in the test sources
+    @Suppress("OPT_IN_USAGE", "DEPRECATION") // Suppress instead of @OptIn because the annotation is not available in the test sources
     val KA_SESSION_COMPONENT: String = KaSessionComponent::class.simpleName!!
 
     val KA_SESSION: String = KaSession::class.simpleName!!

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import java.util.*
 
+@Suppress("DEPRECATION")
 internal class KaFirSmartCastInfo(
     private val backingOriginalType: KaType,
     private val backingSmartCastType: KaType,

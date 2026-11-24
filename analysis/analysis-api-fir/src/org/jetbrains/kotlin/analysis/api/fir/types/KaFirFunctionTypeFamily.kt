@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.name.ClassId
 
+@Suppress("DEPRECATION")
 internal class KaFirFunctionTypeFamily(
     @property:KaImplementationDetail
     val typeKind: FunctionTypeKind,

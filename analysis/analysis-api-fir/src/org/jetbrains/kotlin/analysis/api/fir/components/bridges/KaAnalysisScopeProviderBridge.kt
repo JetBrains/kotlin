@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import com.intellij.psi.PsiElement
@@ -20,5 +22,5 @@ internal class KaAnalysisScopeProviderBridge(
         get() = context(analysisSession) { analysisScopeEndpoint }
 
     override fun PsiElement.canBeAnalysed(): Boolean =
-        context(analysisSession) { canBeAnalysedEndpoint() }
+        canBeAnalysedEndpoint(session = analysisSession)
 }

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -21,8 +23,8 @@ internal class KaRendererBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaRenderer {
     override fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer): String =
-        context(analysisSession) { renderEndpoint(renderer) }
+        renderEndpoint(renderer, session = analysisSession)
 
     override fun KaType.render(renderer: KaTypeRenderer, position: Variance): String =
-        context(analysisSession) { renderEndpoint(renderer, position) }
+        renderEndpoint(renderer, position, session = analysisSession)
 }

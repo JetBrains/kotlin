@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.rendere
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
-import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
@@ -432,6 +431,7 @@ internal fun assertStableResult(
 /**
  * The function returns a non-empty list of functions with the specified [functionName] and [receiverClass].
  */
+@Suppress("DEPRECATION") // Looks up the specialized members of the deprecated `KaResolver` component; drop this together with it.
 internal fun KClass<KaResolver>.findSpecializedResolveFunctions(
     functionName: String,
     receiverClass: KClass<*>,

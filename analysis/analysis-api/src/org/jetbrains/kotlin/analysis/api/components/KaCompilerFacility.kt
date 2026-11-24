@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
@@ -17,6 +19,10 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaExperimentalApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
@@ -35,6 +41,10 @@ public interface KaCompilerFacility : KaSessionComponent {
      *
      * @see createCompilationOptions
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.compilation.compile' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     @Throws(KaCodeCompilationException::class)
     public fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult
@@ -54,6 +64,10 @@ public interface KaCompilerFacility : KaSessionComponent {
      *
      * @param init A lambda that configures the [KaCompilationOptionsBuilder].
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.compilation.createCompilationOptions' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions
 
@@ -64,6 +78,10 @@ public interface KaCompilerFacility : KaSessionComponent {
      *
      * @param init A lambda that configures the [KaCompilationOptionsBuilder] with modifications to apply.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.compilation.modify' from the context-parameter API instead.",
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun KaCompilationOptions.modify(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions
 }
@@ -78,6 +96,16 @@ public interface KaCompilerFacility : KaSessionComponent {
  *
  * @see KaCompilationOptionsBuilder
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptions' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaCompilationOptions",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptions",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -94,6 +122,16 @@ public interface KaCompilationOptions : org.jetbrains.kotlin.analysis.api.compil
  *
  * @see KaCompilationOptions
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptionsBuilder' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaCompilationOptionsBuilder",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptionsBuilder",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -203,6 +241,16 @@ public interface KaCompilationOptionsBuilder : org.jetbrains.kotlin.analysis.api
  * Keep in mind that [KaCompilationResult] is a part of the Analysis API, so it should only be used inside an
  * [analysis block][org.jetbrains.kotlin.analysis.api.session.analyze].
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.compilation.KaCompilationResult' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaCompilationResult",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.compilation.KaCompilationResult",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 public sealed class KaCompilationResult(
@@ -252,6 +300,16 @@ public sealed class KaCompilationResult(
 /**
  * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.compilation.KaCompiledFile] instead.**
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.compilation.KaCompiledFile' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaCompiledFile",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.compilation.KaCompiledFile",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -277,6 +335,16 @@ public interface KaCompiledFile : org.jetbrains.kotlin.analysis.api.compilation.
  *
  * The target platform of the compilation performed by [KaCompilerFacility].
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.compilation.KaCompilationTarget' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaCompilationTarget",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.compilation.KaCompilationTarget",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 public enum class KaCompilationTarget {
@@ -293,6 +361,16 @@ public enum class KaCompilationTarget {
  *
  * @see KaCompilationTarget.JVM
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.compilation.KaCompiledClassHandler' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaCompiledClassHandler",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.compilation.KaCompiledClassHandler",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaSpi
 @KaExperimentalApi
@@ -315,6 +393,16 @@ public fun interface KaCompiledClassHandler : org.jetbrains.kotlin.analysis.api.
  *
  * @see KaCompilerFacility
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.compilation.KaCodeCompilationException' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaCodeCompilationException",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.compilation.KaCodeCompilationException",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cause)
@@ -333,6 +421,16 @@ public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cau
  * (e.g., Android and JVM); in that case, the facility chooses the first matching one. [KaCompilerFacilityModuleActualizer] is a way to
  * override the default behavior by offering a closer match – e.g., a module with an Android target.
  */
+@Deprecated(
+    message = "Use 'org.jetbrains.kotlin.analysis.api.compilation.KaCompilerFacilityModuleActualizer' instead.",
+    replaceWith = ReplaceWith(
+        expression = "KaCompilerFacilityModuleActualizer",
+        imports = [
+            "org.jetbrains.kotlin.analysis.api.compilation.KaCompilerFacilityModuleActualizer",
+        ]
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @KaObsoleteComponentApi
 @KaExperimentalApi
 @KaSpi

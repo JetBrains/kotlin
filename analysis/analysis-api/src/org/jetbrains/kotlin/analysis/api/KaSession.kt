@@ -146,12 +146,32 @@ public interface KaSession : KaLifetimeOwner,
     /**
      * The [KaSession] of the current analysis context.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.session.useSiteSession' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "useSiteSession",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.session.useSiteSession",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public val useSiteSession: KaSession
         get() = this
 
     /**
      * Returns the restored [KaSymbol] (possibly a new symbol instance) if the pointer is still valid, or `null` otherwise.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.restoreSymbol()",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? = withValidityAssertion {
         @OptIn(KaImplementationDetail::class)
         restoreSymbol(useSiteSession)
@@ -160,6 +180,16 @@ public interface KaSession : KaLifetimeOwner,
     /**
      * Returns the restored [KaType] (possibly a new type instance) if the pointer is still valid, or `null` otherwise.
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.types.restore' from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.restore()",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.types.restore",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public fun <T : KaType> KaTypePointer<T>.restore(): T? = withValidityAssertion {
         @OptIn(KaImplementationDetail::class)
@@ -208,6 +238,7 @@ public val useSiteModule: KaModule
 @KaContextParameterApi
 context(session: KaSession)
 public val useSiteSession: KaSession
+    @Suppress("DEPRECATION")
     get() = with(session) { useSiteSession }
 
 /**
@@ -221,6 +252,7 @@ public val useSiteSession: KaSession
 @KaContextParameterApi
 context(session: KaSession)
 public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? {
+    @Suppress("DEPRECATION")
     return with(session) {
         restoreSymbol()
     }

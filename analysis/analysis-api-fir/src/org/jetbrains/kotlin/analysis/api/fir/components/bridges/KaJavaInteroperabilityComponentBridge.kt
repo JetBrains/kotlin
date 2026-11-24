@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import com.intellij.psi.PsiClass
@@ -33,10 +35,10 @@ internal class KaJavaInteroperabilityComponentBridge(
     // Migrated callables — routed through the public endpoints.
 
     override fun PsiType.asKaType(useSitePosition: PsiElement): KaType? =
-        context(analysisSession) { asKaTypeEndpoint(useSitePosition) }
+        asKaTypeEndpoint(useSitePosition, session = analysisSession)
 
     override fun KaType.mapToJvmTypeDescriptor(): String =
-        context(analysisSession) { mapToJvmTypeDescriptorEndpoint() }
+        mapToJvmTypeDescriptorEndpoint(session = analysisSession)
 
     override val KaType.isPrimitiveBacked: Boolean
         get() = context(analysisSession) { isPrimitiveBackedEndpoint }

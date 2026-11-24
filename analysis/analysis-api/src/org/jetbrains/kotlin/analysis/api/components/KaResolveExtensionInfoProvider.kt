@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.openapi.vfs.VirtualFile
@@ -12,6 +14,10 @@ import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.psi.KtElement
 
+@Deprecated(
+    message = "Session components are an implementation detail of the legacy 'KaSession' API. Use the context-parameter API instead.",
+    level = DeprecationLevel.WARNING,
+)
 @KaExperimentalApi
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
@@ -21,6 +27,17 @@ public interface KaResolveExtensionInfoProvider : KaSessionComponent {
      *
      * @see KaResolveExtension
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.resolve.extensions.resolveExtensionScopeWithTopLevelDeclarations' from the" +
+                " context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "resolveExtensionScopeWithTopLevelDeclarations",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.resolve.extensions.resolveExtensionScopeWithTopLevelDeclarations",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val resolveExtensionScopeWithTopLevelDeclarations: KaScope
 
@@ -29,6 +46,17 @@ public interface KaResolveExtensionInfoProvider : KaSessionComponent {
      *
      * @see KaResolveExtension
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.resolve.extensions.isResolveExtensionFile'" +
+                " from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isResolveExtensionFile",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.resolve.extensions.isResolveExtensionFile",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val VirtualFile.isResolveExtensionFile: Boolean
 
@@ -37,6 +65,17 @@ public interface KaResolveExtensionInfoProvider : KaSessionComponent {
      *
      * @see KaResolveExtension
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.resolve.extensions.isFromResolveExtension'" +
+                " from the context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.isFromResolveExtension",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.resolve.extensions.isFromResolveExtension",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KtElement.isFromResolveExtension: Boolean
 
@@ -50,6 +89,17 @@ public interface KaResolveExtensionInfoProvider : KaSessionComponent {
      * @see KaResolveExtension
      * @see org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionNavigationTargetsProvider
      */
+    @Deprecated(
+        message = "Use 'org.jetbrains.kotlin.analysis.api.resolve.extensions.resolveExtensionNavigationElements' from the" +
+                " context-parameter API instead.",
+        replaceWith = ReplaceWith(
+            expression = "this.resolveExtensionNavigationElements",
+            imports = [
+                "org.jetbrains.kotlin.analysis.api.resolve.extensions.resolveExtensionNavigationElements",
+            ]
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @KaExperimentalApi
     public val KtElement.resolveExtensionNavigationElements: Collection<PsiElement>
 }

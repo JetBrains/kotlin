@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 
+@Suppress("DEPRECATION")
 internal class KaFirCompilerPluginGeneratedDeclarations(
     private val backingTopLevelDeclarationsScope: KaScope,
 ) : org.jetbrains.kotlin.analysis.api.components.KaCompilerPluginGeneratedDeclarations {
