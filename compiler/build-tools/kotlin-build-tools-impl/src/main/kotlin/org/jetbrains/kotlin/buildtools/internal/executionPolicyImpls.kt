@@ -186,14 +186,53 @@ internal data class NativeImageDistribution(val home: Path) {
 
 }
 
+
+private const val NATIVE_IMAGE_DIST_PATH_ID = "DIST_PATH"
+
+internal sealed interface NativeImageBasedExecutionPolicy {
+    var distPath: Path?
+
+    val dist: NativeImageDistribution
+        get() = NativeImageDistribution(requireDistPath())
+
+    fun requireDistPath(): Path = checkNotNull(distPath) { "$NATIVE_IMAGE_DIST_PATH_ID must be set for the native image execution policy." }
+}
+
 @Serializable
-internal data class NativeImageProcessExecutionPolicyImpl(override val distPath: Path) : ExecutionPolicy.NativeImageProcess {
-    val dist = NativeImageDistribution(distPath)
+internal data class NativeImageProcessExecutionPolicyImpl(
+    override var distPath: Path? = null,
+) : ExecutionPolicy.NativeImageProcess, ExecutionPolicy.NativeImageProcess.Builder,
+    DeepCopyable<NativeImageProcessExecutionPolicyImpl>, NativeImageBasedExecutionPolicy {
+
+    @Suppress("UNCHECKED_CAST")
+    @UseFromImplModuleRestricted
+    override fun <V> get(key: ExecutionPolicy.NativeImageProcess.Option<V>): V = when (key.id) {
+        NATIVE_IMAGE_DIST_PATH_ID -> requireDistPath()
+        else -> throwPropertyNotFound(key.id)
+    } as V
+
+    @UseFromImplModuleRestricted
+    override fun <V> set(key: ExecutionPolicy.NativeImageProcess.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
+        when (key.id) {
+            NATIVE_IMAGE_DIST_PATH_ID -> distPath = value.cast()
+            else -> throwPropertyNotFound(key.id)
+        }
+    }
+
+    override fun build(): ExecutionPolicy.NativeImageProcess {
+        requireDistPath()
+        return deepCopy()
+    }
+
+    override fun toBuilder(): ExecutionPolicy.NativeImageProcess.Builder = deepCopy()
+
+    override fun deepCopy(): NativeImageProcessExecutionPolicyImpl = copy()
 }
 
 @Serializable
 internal data class NativeImageDaemonExecutionPolicyImpl(
-    override val distPath: Path,
+    override var distPath: Path? = null,
     override var shutdownDelayMillis: Long? = null,
     @EncodeDefault
     override var daemonRunDirPath: Path = Path(DaemonOptions().runFilesPath),
@@ -202,20 +241,27 @@ internal data class NativeImageDaemonExecutionPolicyImpl(
     override var logsFileSizeLimit: Long? = DEFAULT_LOG_FILE_SIZE_LIMIT,
     override var logsFileCountLimit: Int? = DEFAULT_LOG_FILE_COUNT_LIMIT,
 ) : ExecutionPolicy.NativeImageDaemon, ExecutionPolicy.NativeImageDaemon.Builder,
-    DeepCopyable<NativeImageDaemonExecutionPolicyImpl>, DaemonBasedExecutionPolicy {
-    val dist = NativeImageDistribution(distPath)
+    DeepCopyable<NativeImageDaemonExecutionPolicyImpl>, DaemonBasedExecutionPolicy, NativeImageBasedExecutionPolicy {
 
     @Suppress("UNCHECKED_CAST")
     @UseFromImplModuleRestricted
-    override fun <V> get(key: ExecutionPolicy.NativeImageDaemon.Option<V>): V = getCommonDaemonOption(key.id) as V
+    override fun <V> get(key: ExecutionPolicy.NativeImageDaemon.Option<V>): V =
+        (if (key.id == NATIVE_IMAGE_DIST_PATH_ID) requireDistPath() else getCommonDaemonOption(key.id)) as V
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: ExecutionPolicy.NativeImageDaemon.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        setCommonDaemonOption(key.id, value)
+        if (key.id == NATIVE_IMAGE_DIST_PATH_ID) {
+            distPath = value.cast()
+        } else {
+            setCommonDaemonOption(key.id, value)
+        }
     }
 
-    override fun build(): ExecutionPolicy.NativeImageDaemon = deepCopy()
+    override fun build(): ExecutionPolicy.NativeImageDaemon {
+        requireDistPath()
+        return deepCopy()
+    }
 
     override fun toBuilder(): ExecutionPolicy.NativeImageDaemon.Builder = deepCopy()
 

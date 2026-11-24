@@ -39,10 +39,10 @@ internal class KotlinWrapperPre2_5_20(
 
     override val implClassloader: ClassLoader by lazy { getImplClassloader() }
 
-    override fun createNativeImageProcessExecutionPolicy(dist: Path): ExecutionPolicy.NativeImageProcess =
+    override fun nativeImageProcessExecutionPolicyBuilder(): ExecutionPolicy.NativeImageProcess.Builder =
         error("Native image execution policies are supported from compiler version 2.5.20.")
 
-    override fun nativeImageDaemonExecutionPolicyBuilder(dist: Path): ExecutionPolicy.NativeImageDaemon.Builder =
+    override fun nativeImageDaemonExecutionPolicyBuilder(): ExecutionPolicy.NativeImageDaemon.Builder =
         error("Native image execution policies are supported from compiler version 2.5.20.")
 
     @Suppress("UNCHECKED_CAST")
