@@ -137,7 +137,7 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
      * - An issue reported for one of the files being cached is stored in the cache of that very file. Whatever
      *   fixes such an issue - an edit of the file itself or of a declaration it references - makes that file dirty.
      * - An issue reported for anything else (e.g. for an inline function of a dependency, whose body is
-     *   deserialized lazily, or for a missing declaration) is stored only if this compilation caches a single file,
+     *   deserialized lazily, or for a missing declaration) is stored only if this compilation caches a single cache unit,
      *   which is then the only code that could have triggered the issue. When several files are cached at once,
      *   there is no way to tell which of them is responsible: keeping the issue in the caches of all of them would
      *   make the issue survive in the caches of the innocent files, so it is not stored at all.
@@ -169,7 +169,7 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
                 isFromCachedModule && memberStrategy?.contains(issue.filePath) == true -> false
                 // The issue belongs to another library compiled in this very compilation.
                 issue.moduleName in otherModuleNamesBeingCached -> false
-                else -> config.isCompilingSingleFile
+                else -> config.isCompilingSingleCacheUnit
             }
         }
 
@@ -179,15 +179,16 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
         outputFiles.partialLinkageIssuesFile!!.writeBytes(PartialLinkageIssuesSerializer.serialize(issues))
     }
 
-    private val NativeSecondStageCompilationConfig.isCompilingSingleFile: Boolean
+    private val NativeSecondStageCompilationConfig.isCompilingSingleCacheUnit: Boolean
         get() = librariesToCache.values.singleOrNull()?.let { partialCacheInfo ->
             when (val strategy = partialCacheInfo.strategy) {
                 is CacheDeserializationStrategy.SingleFile -> true
                 is CacheDeserializationStrategy.MultipleFiles -> strategy.filePaths.size == 1
-                CacheDeserializationStrategy.WholeModule ->
-                    producePerFileCache && generationState.context.irLinker
+                CacheDeserializationStrategy.WholeModule if producePerFileCache ->
+                    generationState.context.irLinker
                             .findKonanModuleDeserializer(partialCacheInfo.klib)?.files?.size == 1
-                else -> false
+                CacheDeserializationStrategy.WholeModule -> true
+                CacheDeserializationStrategy.Nothing -> false
             }
         } == true
 }

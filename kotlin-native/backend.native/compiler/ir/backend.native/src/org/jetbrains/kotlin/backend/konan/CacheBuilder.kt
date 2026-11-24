@@ -655,10 +655,11 @@ class CacheBuilder(
 
     private fun KotlinLibrary.getPerFileCachedBinaryFilePaths(cacheRoot: Path, filesToCache: List<String>): List<Path> {
         // Restrict to the files rebuilt this run (empty = whole-library build) so the IC build output doesn't list untouched files as rebuilt.
+        val filesToCacheSet = filesToCache.toSet()
         return getFilesWithFqNames()
-                .filter { filesToCache.isEmpty() || it.filePath in filesToCache }
-                .map { fqnFile ->
-                    val fileId = CacheSupport.cacheFileId(fqnFile.fqName, fqnFile.filePath)
+                .filter { filesToCacheSet.isEmpty() || it.filePath in filesToCacheSet }
+                .map { (val filePath, val fqName) ->
+                    val fileId = CacheSupport.cacheFileId(fqName, filePath)
                     cacheRoot.resolve(fileId).resolve("bin").resolve("lib$fileId.a")
                 }
     }
@@ -874,18 +875,21 @@ class CacheBuilder(
         }
     }
 
-    private fun recordRebuiltCacheFiles(library: KotlinLibrary, makePerFileCache: Boolean, filesToCache: List<String>): Unit = when {
-        makePerFileCache && filesToCache.isNotEmpty() -> {
-            val rebuiltFiles = when (val rebuiltCache = rebuiltCaches.getOrPut(library) { RebuiltCache.Files() }) {
-                RebuiltCache.WholeLibrary -> return // Already covers every file of the library.
-                is RebuiltCache.Files -> rebuiltCache.fileIds
+    private fun recordRebuiltCacheFiles(library: KotlinLibrary, makePerFileCache: Boolean, filesToCache: List<String>): Unit {
+        val filesToCacheSet = filesToCache.toSet()
+        when {
+            makePerFileCache && filesToCacheSet.isNotEmpty() -> {
+                val rebuiltFiles = when (val rebuiltCache = rebuiltCaches.getOrPut(library) { RebuiltCache.Files() }) {
+                    RebuiltCache.WholeLibrary -> return // Already covers every file of the library.
+                    is RebuiltCache.Files -> rebuiltCache.fileIds
+                }
+                library.getFilesWithFqNames()
+                        .filter { it.filePath in filesToCacheSet }
+                        .forEach { rebuiltFiles += CacheSupport.cacheFileId(it.fqName, it.filePath) }
             }
-            library.getFilesWithFqNames()
-                    .filter { it.filePath in filesToCache }
-                    .forEach { rebuiltFiles += CacheSupport.cacheFileId(it.fqName, it.filePath) }
-        }
-        else -> {
-            rebuiltCaches[library] = RebuiltCache.WholeLibrary
+            else -> {
+                rebuiltCaches[library] = RebuiltCache.WholeLibrary
+            }
         }
     }
 
