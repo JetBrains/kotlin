@@ -164,6 +164,16 @@ public fun KotlinBridgeable_Double_unbox(ref: kotlin.native.internal.NativePtr):
     return kotlin.native.internal.ref.dereferenceExternalRCRef(ref) as Double
 }
 
+@ExportedBridge("KotlinBridgeable_Char_box")
+public fun KotlinBridgeable_Char_box(value: Char): kotlin.native.internal.NativePtr {
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(value as kotlin.Any)
+}
+
+@ExportedBridge("KotlinBridgeable_Char_unbox")
+public fun KotlinBridgeable_Char_unbox(ref: kotlin.native.internal.NativePtr): Char {
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(ref) as Char
+}
+
 // _KotlinBridgeable bridge functions for String
 
 @ExportedBridge("KotlinBridgeable_String_box")
@@ -237,6 +247,7 @@ public fun KotlinBridgeable_getTypeTag(ref: kotlin.native.internal.NativePtr): I
         is List<*> -> 13
         is Set<*> -> 14
         is Map<*, *> -> 15
+        is Char -> 16
         else -> 0
     }
 }

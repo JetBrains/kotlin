@@ -33,7 +33,7 @@ fun anyMapOfListValues(): Any = mapOf("xs" to listOf(1, 2))
 fun anyEmptyMap(): Any = emptyMap<String, Int>()
 
 // FILE: TagZero.kt
-// Values outside the tag list (tag 0) stay wrapped; String (tag 1) and numeric tags 2-12 unbox to native Swift types.
+// Values outside the tag list (tag 0) stay wrapped; String (tag 1), numeric tags 2-12 and Char (tag 16) unbox to native Swift types.
 
 fun anyFoo(): Any = Foo(42)
 
@@ -55,6 +55,7 @@ fun anyULong(): Any = 8uL
 fun anyFloat(): Any = 9.5f
 fun anyDouble(): Any = 10.25
 fun anyBoolean(): Any = true
+fun anyChar(): Any = 'a'
 fun uLongMax(): Any = ULong.MAX_VALUE
 
 // FILE: CollectionIdentity.kt

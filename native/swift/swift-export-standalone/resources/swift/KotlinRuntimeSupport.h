@@ -44,6 +44,9 @@ float KotlinBridgeable_Float_unbox(void * ref);
 void * KotlinBridgeable_Double_box(double value);
 double KotlinBridgeable_Double_unbox(void * ref);
 
+void * KotlinBridgeable_Char_box(uint16_t value);
+uint16_t KotlinBridgeable_Char_unbox(void * ref);
+
 // _KotlinBridgeable bridge functions for String
 void * KotlinBridgeable_String_box(NSString * value);
 NSString * KotlinBridgeable_String_unbox(void * ref);
