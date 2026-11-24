@@ -34,26 +34,33 @@ private inline fun toArrayImpl(
         alloc: (Int) -> Array<Any?>,
         trim: (Array<Any?>, Int) -> Array<Any?>
 ): Array<Any?> {
-    if (collection.isEmpty()) return empty() // Quick path on empty collection.
-    val size = collection.size
-    if (size == 0) return empty() // Quick path on zero size.
-    val iter = collection.iterator() // Allocate iterator for potentially non-empty collection.
-    if (!iter.hasNext()) return empty() // Size was > 0, but no actual elements.
-    var result = alloc(size) // Use size as a guess to allocate result array.
+    // Prefer `isEmpty()` over `size == 0`: on some (e.g., concurrent) collections `size` is slow or already outdated.
+    if (collection.isEmpty()) return empty()
+    val sizeHint = collection.size // Only a hint: the collection may have changed since `isEmpty()`.
+    val iter = collection.iterator()
+    var result = alloc(if (sizeHint > 0) sizeHint else 1) // `isEmpty()` was false, so expect at least one element.
     var i = 0
-    // Invariant: iter.hasNext is true && i < result.size.
-    while (true) {
-        result[i++] = iter.next()
-        if (i >= result.size) {
-            if (!iter.hasNext()) return result // Perfect match of array size.
-            // Array is too small, grow array (invariant: i == result.size > 0 here).
+
+    // Phase 1: trust the size hint and call only `next()`, which halves the number of interface calls per element.
+    try {
+        while (i < result.size) {
+            result[i] = iter.next()
+            i++
+        }
+    } catch (_: NoSuchElementException) {
+        return if (i == 0) empty() else trim(result, i)
+    }
+
+    // Phase 2: the result is full (i == result.size). The hint was exact or too small, so check `hasNext()` for every element.
+    while (iter.hasNext()) {
+        if (i == result.size) {
             // The result is full, so `i + 1` overflows only if the iterator yields more elements than any array can hold.
             val minCapacity = i + 1
             if (minCapacity < 0) throw OutOfMemoryError()
             // Grows at a factor of 1.5 (we expect this to be extremely rare, but still use fast code).
             result = result.copyOf(AbstractList.newCapacity(i, minCapacity))
-        } else {
-            if (!iter.hasNext()) return trim(result, i) // ended too early (allocated array too big)
         }
+        result[i++] = iter.next()
     }
+    return if (i == result.size) result else trim(result, i) // Trim if the array was grown beyond what was needed.
 }
