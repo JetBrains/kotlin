@@ -519,6 +519,7 @@ tasks {
     }
 
     testLifecycleTask("compilerFrontendTest", QualityGate.Master) {
+        dependsOn(":compiler:frontend.common-psi:test")
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
         dependsOn(":compiler:fir:raw-fir:mp-parsing2fir:test")

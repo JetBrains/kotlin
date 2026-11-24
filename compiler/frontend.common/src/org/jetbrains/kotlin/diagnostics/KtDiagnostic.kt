@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.KtMissingSourceElement
+import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 
 // ------------------------------ diagnostics ------------------------------
@@ -46,11 +49,36 @@ sealed class KtDiagnosticWithSource : KtDiagnostic() {
     abstract val positioningStrategy: SourceElementPositioningStrategy
     abstract override val severity: Severity
 
+    companion object {
+        private val improperTextRanges = listOf(PossiblyImproperTextRange(-1, -1))
+    }
+
     val textRanges: List<TextRange>
-        get() = positioningStrategy.markDiagnostic(this)
+        get() {
+            return when (element) {
+                is KtMissingSourceElement -> improperTextRanges
+                is KtOffsetsOnlySourceElement -> listOf(PossiblyImproperTextRange(element.startOffset, element.endOffset))
+                is KtSourceElement -> {
+                    with(context.parseTreeKind) {
+                        positioningStrategy.positioningStrategy.markDiagnostic(this@KtDiagnosticWithSource)
+                    }
+                }
+            }
+        }
 
     final override val isValid: Boolean
-        get() = positioningStrategy.isValid(element)
+        get() {
+            return when (val element = element) {
+                is KtMissingSourceElement -> true
+                is KtOffsetsOnlySourceElement -> true
+                is KtSourceElement -> {
+                    with(context.parseTreeKind) {
+                        @OptIn(DiagnosticLossRisk::class)
+                        positioningStrategy.positioningStrategy.isValid(element)
+                    }
+                }
+            }
+        }
 
     final override val firstRange: TextRange
         get() = DiagnosticRangeUtils.firstRange(textRanges)
