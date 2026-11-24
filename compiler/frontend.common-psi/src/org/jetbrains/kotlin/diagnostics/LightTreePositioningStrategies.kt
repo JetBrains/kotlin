@@ -51,6 +51,8 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val SYNTAX_ERROR = DEFAULT
+
     val SUPERTYPES_LIST = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,

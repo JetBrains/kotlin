@@ -12,7 +12,7 @@ object SourceElementPositioningStrategies {
     )
 
     val SYNTAX_ERROR = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.DEFAULT,
+        LightTreePositioningStrategies.SYNTAX_ERROR,
         PsiPositioningStrategies.SYNTAX_ERROR
     )
 
