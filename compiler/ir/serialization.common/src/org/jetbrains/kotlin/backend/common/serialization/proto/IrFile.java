@@ -55,21 +55,21 @@ public final class IrFile extends
           }
           case 8: {
             if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-              declarationId_ = new java.util.ArrayList<java.lang.Integer>();
+              legacyTopLevelDeclarationSignatures_ = new java.util.ArrayList<java.lang.Integer>();
               mutable_bitField0_ |= 0x00000001;
             }
-            declarationId_.add(input.readInt32());
+            legacyTopLevelDeclarationSignatures_.add(input.readInt32());
             break;
           }
           case 10: {
             int length = input.readRawVarint32();
             int limit = input.pushLimit(length);
             if (!((mutable_bitField0_ & 0x00000001) == 0x00000001) && input.getBytesUntilLimit() > 0) {
-              declarationId_ = new java.util.ArrayList<java.lang.Integer>();
+              legacyTopLevelDeclarationSignatures_ = new java.util.ArrayList<java.lang.Integer>();
               mutable_bitField0_ |= 0x00000001;
             }
             while (input.getBytesUntilLimit() > 0) {
-              declarationId_.add(input.readInt32());
+              legacyTopLevelDeclarationSignatures_.add(input.readInt32());
             }
             input.popLimit(limit);
             break;
@@ -151,7 +151,7 @@ public final class IrFile extends
           e.getMessage()).setUnfinishedMessage(this);
     } finally {
       if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-        declarationId_ = java.util.Collections.unmodifiableList(declarationId_);
+        legacyTopLevelDeclarationSignatures_ = java.util.Collections.unmodifiableList(legacyTopLevelDeclarationSignatures_);
       }
       if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
         fqName_ = java.util.Collections.unmodifiableList(fqName_);
@@ -188,28 +188,28 @@ public final class IrFile extends
   }
 
   private int bitField0_;
-  public static final int DECLARATION_ID_FIELD_NUMBER = 1;
-  private java.util.List<java.lang.Integer> declarationId_;
+  public static final int LEGACY_TOP_LEVEL_DECLARATION_SIGNATURES_FIELD_NUMBER = 1;
+  private java.util.List<java.lang.Integer> legacyTopLevelDeclarationSignatures_;
   /**
-   * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+   * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
    */
   public java.util.List<java.lang.Integer>
-      getDeclarationIdList() {
-    return declarationId_;
+      getLegacyTopLevelDeclarationSignaturesList() {
+    return legacyTopLevelDeclarationSignatures_;
   }
   /**
-   * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+   * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
    */
-  public int getDeclarationIdCount() {
-    return declarationId_.size();
+  public int getLegacyTopLevelDeclarationSignaturesCount() {
+    return legacyTopLevelDeclarationSignatures_.size();
   }
   /**
-   * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+   * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
    */
-  public int getDeclarationId(int index) {
-    return declarationId_.get(index);
+  public int getLegacyTopLevelDeclarationSignatures(int index) {
+    return legacyTopLevelDeclarationSignatures_.get(index);
   }
-  private int declarationIdMemoizedSerializedSize = -1;
+  private int legacyTopLevelDeclarationSignaturesMemoizedSerializedSize = -1;
 
   public static final int FILE_ENTRY_FIELD_NUMBER = 2;
   private org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry fileEntry_;
@@ -339,7 +339,7 @@ public final class IrFile extends
   private int explicitlyExportedToCompilerMemoizedSerializedSize = -1;
 
   private void initFields() {
-    declarationId_ = java.util.Collections.emptyList();
+    legacyTopLevelDeclarationSignatures_ = java.util.Collections.emptyList();
     fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
     fileEntryId_ = 0;
     fqName_ = java.util.Collections.emptyList();
@@ -365,12 +365,12 @@ public final class IrFile extends
   public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
     getSerializedSize();
-    if (getDeclarationIdList().size() > 0) {
+    if (getLegacyTopLevelDeclarationSignaturesList().size() > 0) {
       output.writeRawVarint32(10);
-      output.writeRawVarint32(declarationIdMemoizedSerializedSize);
+      output.writeRawVarint32(legacyTopLevelDeclarationSignaturesMemoizedSerializedSize);
     }
-    for (int i = 0; i < declarationId_.size(); i++) {
-      output.writeInt32NoTag(declarationId_.get(i));
+    for (int i = 0; i < legacyTopLevelDeclarationSignatures_.size(); i++) {
+      output.writeInt32NoTag(legacyTopLevelDeclarationSignatures_.get(i));
     }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       output.writeMessage(2, fileEntry_);
@@ -406,17 +406,17 @@ public final class IrFile extends
     size = 0;
     {
       int dataSize = 0;
-      for (int i = 0; i < declarationId_.size(); i++) {
+      for (int i = 0; i < legacyTopLevelDeclarationSignatures_.size(); i++) {
         dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32SizeNoTag(declarationId_.get(i));
+          .computeInt32SizeNoTag(legacyTopLevelDeclarationSignatures_.get(i));
       }
       size += dataSize;
-      if (!getDeclarationIdList().isEmpty()) {
+      if (!getLegacyTopLevelDeclarationSignaturesList().isEmpty()) {
         size += 1;
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
             .computeInt32SizeNoTag(dataSize);
       }
-      declarationIdMemoizedSerializedSize = dataSize;
+      legacyTopLevelDeclarationSignaturesMemoizedSerializedSize = dataSize;
     }
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -552,7 +552,7 @@ public final class IrFile extends
 
     public Builder clear() {
       super.clear();
-      declarationId_ = java.util.Collections.emptyList();
+      legacyTopLevelDeclarationSignatures_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000001);
       fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
@@ -588,10 +588,10 @@ public final class IrFile extends
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        declarationId_ = java.util.Collections.unmodifiableList(declarationId_);
+        legacyTopLevelDeclarationSignatures_ = java.util.Collections.unmodifiableList(legacyTopLevelDeclarationSignatures_);
         bitField0_ = (bitField0_ & ~0x00000001);
       }
-      result.declarationId_ = declarationId_;
+      result.legacyTopLevelDeclarationSignatures_ = legacyTopLevelDeclarationSignatures_;
       if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
         to_bitField0_ |= 0x00000001;
       }
@@ -621,13 +621,13 @@ public final class IrFile extends
 
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrFile other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrFile.getDefaultInstance()) return this;
-      if (!other.declarationId_.isEmpty()) {
-        if (declarationId_.isEmpty()) {
-          declarationId_ = other.declarationId_;
+      if (!other.legacyTopLevelDeclarationSignatures_.isEmpty()) {
+        if (legacyTopLevelDeclarationSignatures_.isEmpty()) {
+          legacyTopLevelDeclarationSignatures_ = other.legacyTopLevelDeclarationSignatures_;
           bitField0_ = (bitField0_ & ~0x00000001);
         } else {
-          ensureDeclarationIdIsMutable();
-          declarationId_.addAll(other.declarationId_);
+          ensureLegacyTopLevelDeclarationSignaturesIsMutable();
+          legacyTopLevelDeclarationSignatures_.addAll(other.legacyTopLevelDeclarationSignatures_);
         }
         
       }
@@ -701,67 +701,67 @@ public final class IrFile extends
     }
     private int bitField0_;
 
-    private java.util.List<java.lang.Integer> declarationId_ = java.util.Collections.emptyList();
-    private void ensureDeclarationIdIsMutable() {
+    private java.util.List<java.lang.Integer> legacyTopLevelDeclarationSignatures_ = java.util.Collections.emptyList();
+    private void ensureLegacyTopLevelDeclarationSignaturesIsMutable() {
       if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-        declarationId_ = new java.util.ArrayList<java.lang.Integer>(declarationId_);
+        legacyTopLevelDeclarationSignatures_ = new java.util.ArrayList<java.lang.Integer>(legacyTopLevelDeclarationSignatures_);
         bitField0_ |= 0x00000001;
        }
     }
     /**
-     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+     * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
-        getDeclarationIdList() {
-      return java.util.Collections.unmodifiableList(declarationId_);
+        getLegacyTopLevelDeclarationSignaturesList() {
+      return java.util.Collections.unmodifiableList(legacyTopLevelDeclarationSignatures_);
     }
     /**
-     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+     * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
      */
-    public int getDeclarationIdCount() {
-      return declarationId_.size();
+    public int getLegacyTopLevelDeclarationSignaturesCount() {
+      return legacyTopLevelDeclarationSignatures_.size();
     }
     /**
-     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+     * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
      */
-    public int getDeclarationId(int index) {
-      return declarationId_.get(index);
+    public int getLegacyTopLevelDeclarationSignatures(int index) {
+      return legacyTopLevelDeclarationSignatures_.get(index);
     }
     /**
-     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+     * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
      */
-    public Builder setDeclarationId(
+    public Builder setLegacyTopLevelDeclarationSignatures(
         int index, int value) {
-      ensureDeclarationIdIsMutable();
-      declarationId_.set(index, value);
+      ensureLegacyTopLevelDeclarationSignaturesIsMutable();
+      legacyTopLevelDeclarationSignatures_.set(index, value);
       
       return this;
     }
     /**
-     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+     * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
      */
-    public Builder addDeclarationId(int value) {
-      ensureDeclarationIdIsMutable();
-      declarationId_.add(value);
+    public Builder addLegacyTopLevelDeclarationSignatures(int value) {
+      ensureLegacyTopLevelDeclarationSignaturesIsMutable();
+      legacyTopLevelDeclarationSignatures_.add(value);
       
       return this;
     }
     /**
-     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+     * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
      */
-    public Builder addAllDeclarationId(
+    public Builder addAllLegacyTopLevelDeclarationSignatures(
         java.lang.Iterable<? extends java.lang.Integer> values) {
-      ensureDeclarationIdIsMutable();
+      ensureLegacyTopLevelDeclarationSignaturesIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-          values, declarationId_);
+          values, legacyTopLevelDeclarationSignatures_);
       
       return this;
     }
     /**
-     * <code>repeated int32 declaration_id = 1 [packed = true];</code>
+     * <code>repeated int32 legacy_top_level_declaration_signatures = 1 [packed = true];</code>
      */
-    public Builder clearDeclarationId() {
-      declarationId_ = java.util.Collections.emptyList();
+    public Builder clearLegacyTopLevelDeclarationSignatures() {
+      legacyTopLevelDeclarationSignatures_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000001);
       
       return this;

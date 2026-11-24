@@ -29,7 +29,7 @@ internal class KlibIrInfoLoader(private val library: KotlinLibrary) {
         val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.getEmptyRegistry())
 
         return KlibIrInfo(
-            preparedInlineFunctionCopyNumber = fileProto.declarationIdList.size,
+            preparedInlineFunctionCopyNumber = fileProto.legacyTopLevelDeclarationSignaturesList.size,
         )
     }
 }

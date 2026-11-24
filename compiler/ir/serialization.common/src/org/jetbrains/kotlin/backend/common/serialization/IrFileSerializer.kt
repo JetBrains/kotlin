@@ -1545,7 +1545,7 @@ open class IrFileSerializer(
 
             val serializedDeclaration = serializeTopLevelDeclaration(it, file)
             topLevelDeclarations.add(serializedDeclaration)
-            proto.addDeclarationId(serializedDeclaration.signatureId)
+            proto.addLegacyTopLevelDeclarationSignatures(serializedDeclaration.signatureId)
         }
 
         val includeLineStartOffsets = !settings.publicAbiOnly || fileContainsInline
@@ -1606,11 +1606,11 @@ open class IrFileSerializer(
             }
         }
 
-        // Memoize all preprocessed functions in `ProtoFile.declarationIdList`.
+        // Memoize all preprocessed functions in `ProtoFile.legacyTopLevelDeclarationSignaturesList`.
         // This way it could be possible to quickly look up for a specific preprocessed function in a KLIB.
         val fileProto = ProtoFile.newBuilder()
             .addAllFqName(stringSerializer.serializeFqName(file.packageFqName))
-            .addAllDeclarationId(topLevelDeclarations.map { /* signature index */ it.signatureId })
+            .addAllLegacyTopLevelDeclarationSignatures(topLevelDeclarations.map(SerializedDeclaration::signatureId))
 
         return SerializedIrFile(
             fileData = fileProto.build().toByteArray(),
