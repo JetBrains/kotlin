@@ -62,6 +62,12 @@ projectTests {
     ) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
         systemProperties(providers.gradlePropertiesPrefixedBy("fir.").get())
+        // IntelliJ's module dumps record no JDK, so they're compiled against `fir.bench.jdk.home`
+        // (e.g. the JBR in the IntelliJ testdata snapshot); an explicit `-Pfir.bench.jdk.home` wins.
+        val intellijJdkHome = kotlinBuildProperties.intellijModularizedTestJdkHome
+        if (intellijJdkHome != null && !project.providers.gradleProperty("fir.bench.jdk.home").isPresent) {
+            systemProperty("fir.bench.jdk.home", intellijJdkHome)
+        }
         this.workingDir = rootDir
         systemProperty("fir.bench.compose.plugin.classpath", composeCompilerPlugin.asPath)
         // Used by modularized-tests kotlin-compiler-modularized-tests-teamcity/files/mt2025/.teamcity/projects/infrastructure/ModularizedTestStep.kt

@@ -32,6 +32,9 @@ val KotlinBuildProperties.pathToKotlinModularizedTestData: String?
 val KotlinBuildProperties.pathToIntellijModularizedTestData: String?
     get() = stringProperty("kotlin.fir.modularized.testdata.intellij").orNull
 
+val KotlinBuildProperties.intellijModularizedTestJdkHome: String?
+    get() = stringProperty("kotlin.fir.modularized.jdk.home.intellij").orNull
+
 val KotlinBuildProperties.pathToYoutrackModularizedTestData: String?
     get() = stringProperty("kotlin.fir.modularized.testdata.youtrack").orNull
 
