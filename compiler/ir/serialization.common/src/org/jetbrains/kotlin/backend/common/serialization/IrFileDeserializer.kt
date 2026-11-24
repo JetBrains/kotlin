@@ -45,31 +45,42 @@ class IrFileDeserializer(
      * the signature and the kind of the declaration mapped to its ID in the KLIB (see [IrLibraryFile.declaration]).
      */
     val topLevelDeclarationIndex: Map<SignatureAndKind, Int> = buildMap {
-        for (declarationIndex in fileProto.legacyTopLevelDeclarationSignaturesList) {
-            val signature: IdSignature = symbolDeserializer.deserializeIdSignature(declarationIndex)
-
-            val kind: BinarySymbolData.SymbolKind = when (val declarationKind = libraryFile.declarationKind(declarationIndex)) {
-                ProtoDeclaration.DeclaratorCase.IR_CLASS -> BinarySymbolData.SymbolKind.CLASS_SYMBOL
-                ProtoDeclaration.DeclaratorCase.IR_FUNCTION -> BinarySymbolData.SymbolKind.FUNCTION_SYMBOL
-                ProtoDeclaration.DeclaratorCase.IR_PROPERTY -> BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
-                ProtoDeclaration.DeclaratorCase.IR_TYPE_ALIAS -> {
-                    if (declarationDeserializer.settings.deserializeTypeAliases)
-                        BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL
-                    else
-                        continue
-                }
-                ProtoDeclaration.DeclaratorCase.IR_FIELD -> {
-                    // There are some legacy KLIBs with top-level fields.
-                    BinarySymbolData.SymbolKind.FIELD_SYMBOL
-                }
-                else -> error(
-                    "Unexpected top-level declaration kind $declarationKind" +
-                            " for signature ${signature::class.java.simpleName} ${signature.render()}" +
-                            " in file ${file.fileEntry.name} of module ${file.module.name}"
-                )
+        val symbolIds: List<Long> = fileProto.topLevelDeclarationSymbolsList
+        if (symbolIds.isNotEmpty()) {
+            // Iterate through symbol data [signatureId + kind].
+            for (symbolId in symbolIds) {
+                val symbolData = BinarySymbolData.decode(symbolId)
+                val signature = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
+                this[SignatureAndKind(signature, symbolData.kind)] = symbolData.signatureId
             }
+        } else {
+            // A fallback for old KLIBs: Iterate through signatures, load symbol kinds from Proto messages.
+            for (signatureId in fileProto.legacyTopLevelDeclarationSignaturesList) {
+                val signature = symbolDeserializer.deserializeIdSignature(signatureId)
 
-            this[SignatureAndKind(signature, kind)] = declarationIndex
+                val kind: BinarySymbolData.SymbolKind = when (val declarationKind = libraryFile.declarationKind(signatureId)) {
+                    ProtoDeclaration.DeclaratorCase.IR_CLASS -> BinarySymbolData.SymbolKind.CLASS_SYMBOL
+                    ProtoDeclaration.DeclaratorCase.IR_FUNCTION -> BinarySymbolData.SymbolKind.FUNCTION_SYMBOL
+                    ProtoDeclaration.DeclaratorCase.IR_PROPERTY -> BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
+                    ProtoDeclaration.DeclaratorCase.IR_TYPE_ALIAS -> {
+                        if (declarationDeserializer.settings.deserializeTypeAliases)
+                            BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL
+                        else
+                            continue
+                    }
+                    ProtoDeclaration.DeclaratorCase.IR_FIELD -> {
+                        // There are some legacy KLIBs with top-level fields.
+                        BinarySymbolData.SymbolKind.FIELD_SYMBOL
+                    }
+                    else -> error(
+                        "Unexpected top-level declaration kind $declarationKind" +
+                                " for signature ${signature::class.java.simpleName} ${signature.render()}" +
+                                " in file ${file.fileEntry.name} of module ${file.module.name}"
+                    )
+                }
+
+                this[SignatureAndKind(signature, kind)] = signatureId
+            }
         }
     }
 
@@ -360,3 +371,12 @@ fun KlibIrComponent.fileEntry(protoFile: ProtoFile, fileIndex: Int): FileEntry =
         }
         protoFile.fileEntry
     }
+
+fun ProtoFile.getSignatureIdsOfTopLevelDeclarations(): List<Int> {
+    val symbolIds = topLevelDeclarationSymbolsList
+    return if (symbolIds.isNotEmpty()) {
+        symbolIds.map { symbolId -> BinarySymbolData.decode(symbolId).signatureId }
+    } else {
+        legacyTopLevelDeclarationSignaturesList
+    }
+}

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
+import org.jetbrains.kotlin.backend.common.serialization.getSignatureIdsOfTopLevelDeclarations
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.inlinableFunctionsIr
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -29,7 +30,7 @@ internal class KlibIrInfoLoader(private val library: KotlinLibrary) {
         val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.getEmptyRegistry())
 
         return KlibIrInfo(
-            preparedInlineFunctionCopyNumber = fileProto.legacyTopLevelDeclarationSignaturesList.size,
+            preparedInlineFunctionCopyNumber = fileProto.getSignatureIdsOfTopLevelDeclarations().size,
         )
     }
 }
