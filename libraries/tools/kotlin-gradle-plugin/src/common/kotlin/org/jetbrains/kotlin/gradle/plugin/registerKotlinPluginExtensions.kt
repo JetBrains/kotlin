@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportActionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeResolveDependenciesTaskSetupAction
+import org.jetbrains.kotlin.gradle.plugin.importmodel.KotlinImportModelBuilderSetupAction
 import org.jetbrains.kotlin.gradle.plugin.importmodel.KotlinImportModelsDumpTaskSetupAction
 import org.jetbrains.kotlin.gradle.plugin.internal.buildNeededDependentTasksWiringProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -84,6 +85,10 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, AbiValidationSetupAction)
 
         register(project, KotlinImportModelsDumpTaskSetupAction)
+
+        if (isJvm) {
+            register(project, KotlinImportModelBuilderSetupAction)
+        }
 
         if (isJvm || isMultiplatform) {
             register(project, ScriptingGradleSubpluginSetupAction)
