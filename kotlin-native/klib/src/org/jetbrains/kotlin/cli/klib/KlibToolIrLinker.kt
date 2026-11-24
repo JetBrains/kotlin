@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.checkIsInstance
 
-@OptIn(IrLinkerInternalApi::class)
 internal class KlibToolIrLinker(
         output: KlibToolOutput,
         symbolTable: SymbolTable,
@@ -202,6 +201,7 @@ internal class KlibToolIrLinker(
             }
         }
 
+        @IrLinkerInternalApi
         override fun collectAllMatchingSignatures(topLevelCallableId: TopLevelCallableIdAndKind, output: MutableCollection<IdSignature>) = error("Not supported")
     }
 
