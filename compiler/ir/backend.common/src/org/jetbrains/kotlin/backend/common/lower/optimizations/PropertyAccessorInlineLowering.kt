@@ -33,7 +33,7 @@ open class PropertyAccessorInlineLowering(
     fun IrProperty.isSafeToInlineInClosedWorld() =
         isTopLevel || (modality === Modality.FINAL || visibility == DescriptorVisibilities.PRIVATE) || (parent as IrClass).modality === Modality.FINAL
 
-    open fun IrProperty.isSafeToInline(accessContainer: IrDeclaration): Boolean =
+    open fun IrProperty.isSafeToInline(accessContainer: IrDeclaration, callee: IrSimpleFunction): Boolean =
         isSafeToInlineInClosedWorld()
 
     // TODO: implement general function inlining optimization and replace it with
@@ -45,7 +45,7 @@ open class PropertyAccessorInlineLowering(
             val property = callee.correspondingPropertySymbol?.owner ?: return false
 
             // Some de-virtualization required here
-            if (!property.isSafeToInline(container)) return false
+            if (!property.isSafeToInline(container, callee)) return false
 
             val parent = property.parent
             if (parent is IrClass) {
