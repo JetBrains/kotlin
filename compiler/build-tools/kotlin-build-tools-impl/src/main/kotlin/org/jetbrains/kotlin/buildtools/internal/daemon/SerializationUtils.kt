@@ -28,22 +28,14 @@ import org.jetbrains.kotlin.buildtools.internal.FileCompilationReasonBasic
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.Path
 
 @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 internal inline fun <T> Any?.cast(): T = this as T
 
 internal fun Any.throwPropertyNotFound(key: String): Nothing = error("Property with name $key not found in $this")
-
-internal object PathAsStringSerializer : KSerializer<Path> {
-    override val descriptor = PrimitiveSerialDescriptor("Path", STRING)
-
-    override fun serialize(encoder: Encoder, value: Path) = encoder.encodeString(value.toFile().path)
-
-    override fun deserialize(decoder: Decoder): Path = Path(decoder.decodeString())
-}
 
 internal object CompilerMessageSourceLocationSerializer : KSerializer<CompilerMessageSourceLocation> {
     override val descriptor: SerialDescriptor = CompilerMessageSourceLocationSurrogate.serializer().descriptor

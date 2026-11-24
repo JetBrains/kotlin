@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.DuplicatedUniq
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.KlibIrInlinerMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.PartialLinkageLogLevel
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.PartialLinkageMode
-import org.jetbrains.kotlin.buildtools.`internal`.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments
@@ -41,6 +40,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArgumentsKli
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArgumentsLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
+import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
