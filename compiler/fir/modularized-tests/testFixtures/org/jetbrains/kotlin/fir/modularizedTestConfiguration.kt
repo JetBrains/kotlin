@@ -29,6 +29,7 @@ data class ModularizedTestConfig(
 fun modularizedTestConfigFromSingleModelFile(modelFile: File): ModularizedTestConfig = ModularizedTestConfig(
     rootPathPrefix = modelFile.absoluteFile.parentFile.parentFile.path + "/",
     composePluginClasspath = System.getProperty("fir.bench.compose.plugin.classpath"),
+    fallbackJdkHome = System.getProperty("fir.bench.jdk.home")?.takeIf { it.isNotBlank() }?.let(::File),
 )
 
 fun modularizedTestConfigFromSystemProperties(): ModularizedTestConfig = ModularizedTestConfig(
