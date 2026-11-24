@@ -294,6 +294,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_MARKER_PROPAG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_SCOPE_VIOLATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_BRANCH_CONDITION_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_IN_UNION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED
@@ -4308,6 +4309,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NON_FINAL_RICH_ERROR_CLASS, "Error class must be final.")
         map.put(ACTUAL_TYPEALIAS_WITH_EXPECT_RICH_ERROR, "'actual typealias' cannot be used for 'expect error class/object'.")
         map.put(TYPEALIAS_TO_UNION_TYPE_AS_QUALIFIER, "Type alias expanding to a union type cannot be used as a qualifier.")
+        map.put(DYNAMIC_IN_UNION_TYPE, "'dynamic' cannot be used as component of a union type.")
 
         map.put(INAPPLICABLE_EAGER_INITIALIZATION, "'@EagerInitialization' is only applicable to a top-level property with an initializer.")
     }
