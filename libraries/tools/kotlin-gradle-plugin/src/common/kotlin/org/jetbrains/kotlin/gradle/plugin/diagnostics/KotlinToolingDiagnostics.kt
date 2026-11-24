@@ -2465,6 +2465,22 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object KotlinCompilerVersionWithKotlinDslPlugin : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(compilerVersion: String, pluginVersion: String) = build {
+            title { "Custom Kotlin compiler version with the 'kotlin-dsl' plugin" }
+                .description {
+                    "Kotlin compiler version '$compilerVersion' set via 'kotlin.compilerVersion' differs from " +
+                            "Kotlin Gradle Plugin version '$pluginVersion' in a project that applies the 'kotlin-dsl' plugin.\n" +
+                            "The 'kotlin-dsl' plugin relies on the Kotlin version embedded in Gradle. Compiling with a different " +
+                            "Kotlin compiler version is experimental and may fail depending on the Gradle and Kotlin versions."
+                }
+                .solution { "Remove 'kotlin.compilerVersion' from projects that apply the 'kotlin-dsl' plugin." }
+                .documentationLink(URI("https://kotl.in/build-tools-api-compiler-versions")) { url ->
+                    "Learn more about using a different Kotlin compiler version: $url"
+                }
+        }
+    }
+
     internal object GeneratingCompilerRefIndexWithoutBuildToolsApi : ToolingDiagnosticFactory(
         WARNING,
         DiagnosticGroup.Kgp.Misconfiguration,

@@ -211,6 +211,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, TestApiDependenciesChecker)
         register(project, ConfigurationOnDemandSupportChecker)
         register(project, NpmDependencyInGradleScopeChecker)
+        register(project, KotlinCompilerVersionWithKotlinDslChecker)
         if (isMultiplatform) {
             register(project, NativeVersionChecker)
             register(project, SupportedNativeHostChecker)
