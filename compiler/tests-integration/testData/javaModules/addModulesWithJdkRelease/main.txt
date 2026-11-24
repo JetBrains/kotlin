@@ -1,1 +1,2 @@
+warning: '-Xadd-modules' is ignored with '-Xjdk-release=8'.
 OK

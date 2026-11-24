@@ -650,7 +650,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             "main", additionalKotlinArguments = listOf("-Xjdk-release=9", addModules),
             checkKotlinOutput = { assertEquals("OK", it.trim()) },
         )
-        // Modules are not resolved with a release below 9, where the option has no effect.
+        // Unlike javac, which rejects the option with a release below 9, kotlinc only reports a warning.
         module("main", additionalKotlinArguments = listOf("-Xjdk-release=8", addModules))
     }
 
