@@ -61,6 +61,8 @@ class Box(val x: Int)
 
 fun <T> reverseList(l: List<T>) = l.reversed()
 
+fun <T: Any> reverseListNonNull(l: List<T>) = l.reversed()
+
 fun listOf(vararg elements: List<Int>): List<List<Int>> = elements.asList()
 fun reverseListListInt(l: List<List<Int>>) = l.reversed()
 
