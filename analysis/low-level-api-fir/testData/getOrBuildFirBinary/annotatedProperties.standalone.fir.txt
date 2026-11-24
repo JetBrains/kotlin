@@ -50,7 +50,7 @@ public final class Foo public constructor(withDefaultGetter: kotlin.Int, withDef
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Foo : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(RAW_FIR)] @RECEIVER:R|MyAnnotation7|() R|@R|MyAnnotation8|()  kotlin/Int|.memberFunctionWithReceiver(): R|kotlin/Unit|
 
     public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(RAW_FIR)] @RECEIVER:R|MyAnnotation7|() R|@R|MyAnnotation8|()  kotlin/Int?|.memberFunctionWithReceiverWithNullableReceiver([ResolvedTo(BODY_RESOLVE)] l: R|kotlin/Long|): R|kotlin/Unit|

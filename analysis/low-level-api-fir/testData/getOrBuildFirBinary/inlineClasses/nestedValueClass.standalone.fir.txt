@@ -15,10 +15,10 @@ public final class LibraryClass public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class LibraryClass : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] class LibraryClass : R|kotlin/Any| {
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LibraryClass] constructor(): R|pack/LibraryClass|
 
-    @R|kotlin/jvm/JvmInline|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/LibraryClass), HasNoEnumEntriesKey=true] class LibraryNestedValueClass : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=pack/LibraryClass)] class LibraryNestedValueClass : R|kotlin/Any| {
         public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 
         public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|

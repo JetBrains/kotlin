@@ -8,7 +8,7 @@ public final class A public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class A : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] action: R|@R|androidx/compose/runtime/Composable|()  () -> kotlin/Unit|): R|kotlin/Unit|
 
     public final [ResolvedTo(BODY_RESOLVE)] fun bar([ResolvedTo(BODY_RESOLVE)] action: R|Inv<() -> kotlin/Unit>|): R|@R|androidx/compose/runtime/Composable|()  () -> kotlin/Unit|

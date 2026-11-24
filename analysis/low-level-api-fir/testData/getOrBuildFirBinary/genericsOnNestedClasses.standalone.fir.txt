@@ -23,7 +23,7 @@ public open class Outer<T> public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public open [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Outer<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+public open [ResolvedTo(BODY_RESOLVE)] class Outer<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun createInner(): R|Outer.Inner<T>|
 
     public final [ResolvedTo(BODY_RESOLVE)] fun createInner2(): R|Outer.Nested2.Inner2<kotlin/Int, kotlin/Short, T>|
@@ -32,25 +32,25 @@ public open [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Outer<[R
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|Outer<T>|
 
-    public final inner [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Inner<[ResolvedTo(BODY_RESOLVE)] Outer(T)> : R|kotlin/Any| {
+    public final inner [ResolvedTo(BODY_RESOLVE)] class Inner<[ResolvedTo(BODY_RESOLVE)] Outer(T)> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner] Outer<T>.constructor(): R|Outer.Inner<T>|
 
     }
 
-    public final inner [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Nested2<[ResolvedTo(BODY_RESOLVE)] U, [ResolvedTo(BODY_RESOLVE)] Outer(T)> : R|kotlin/Any| {
+    public final inner [ResolvedTo(BODY_RESOLVE)] class Nested2<[ResolvedTo(BODY_RESOLVE)] U, [ResolvedTo(BODY_RESOLVE)] Outer(T)> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested2] Outer<T>.constructor<[ResolvedTo(BODY_RESOLVE)] U>(): R|Outer.Nested2<U, T>|
 
-        public final inner [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Inner2<[ResolvedTo(BODY_RESOLVE)] V, [ResolvedTo(BODY_RESOLVE)] Outer(U), [ResolvedTo(BODY_RESOLVE)] Outer(T)> : R|kotlin/Any| {
+        public final inner [ResolvedTo(BODY_RESOLVE)] class Inner2<[ResolvedTo(BODY_RESOLVE)] V, [ResolvedTo(BODY_RESOLVE)] Outer(U), [ResolvedTo(BODY_RESOLVE)] Outer(T)> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner2] Outer.Nested2<U, T>.constructor<[ResolvedTo(BODY_RESOLVE)] V>(): R|Outer.Nested2.Inner2<V, U, T>|
 
         }
 
     }
 
-    public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Nested3<[ResolvedTo(BODY_RESOLVE)] U> : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] class Nested3<[ResolvedTo(BODY_RESOLVE)] U> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested3] constructor<[ResolvedTo(BODY_RESOLVE)] U>(): R|Outer.Nested3<U>|
 
-        public final inner [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Inner3<[ResolvedTo(BODY_RESOLVE)] V, [ResolvedTo(BODY_RESOLVE)] Outer(U)> : R|kotlin/Any| {
+        public final inner [ResolvedTo(BODY_RESOLVE)] class Inner3<[ResolvedTo(BODY_RESOLVE)] V, [ResolvedTo(BODY_RESOLVE)] Outer(U)> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inner3] Outer.Nested3<U>.constructor<[ResolvedTo(BODY_RESOLVE)] V>(): R|Outer.Nested3.Inner3<V, U>|
 
         }

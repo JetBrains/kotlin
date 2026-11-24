@@ -32,7 +32,7 @@ public final annotation class MyMetadata public constructor(
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-@R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.RUNTIME) @R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/SinceKotlin|(version = String(1.3)) public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] annotation class MyMetadata : R|kotlin/Annotation| {
+@R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.RUNTIME) @R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/SinceKotlin|(version = String(1.3)) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyMetadata : R|kotlin/Annotation| {
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val kind: R|kotlin/Int| = Int(1)
         @R|kotlin/jvm/JvmName|(name = String(k)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyMetadata] get(): R|kotlin/Int|
 

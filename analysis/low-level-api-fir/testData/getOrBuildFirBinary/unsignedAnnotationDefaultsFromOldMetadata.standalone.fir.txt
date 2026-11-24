@@ -13,7 +13,7 @@ public final annotation class Defaults public constructor(
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] annotation class Defaults : R|kotlin/Annotation| {
+public final [ResolvedTo(BODY_RESOLVE)] annotation class Defaults : R|kotlin/Annotation| {
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false, IsDeserializedPropertyFromAnnotation=true] val ub: R|kotlin/UByte| = UByte(-1)
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Defaults] get(): R|kotlin/UByte|
 

@@ -7,10 +7,10 @@ public abstract class Foo<T : Foo.T> public constructor() {
 FIR element: FirRegularClassImpl
 
 FIR element rendered:
-public abstract [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true] class Foo<[ResolvedTo(BODY_RESOLVE)] T : R|Foo.T|> : R|kotlin/Any| {
+public abstract [ResolvedTo(BODY_RESOLVE)] class Foo<[ResolvedTo(BODY_RESOLVE)] T : R|Foo.T|> : R|kotlin/Any| {
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|Foo.T|>(): R|Foo<T>|
 
-    public abstract [ResolvedTo(BODY_RESOLVE)] [HasNoEnumEntriesKey=true, IsNewPlaceForBodyGeneration=true] interface T : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=true] interface T : R|kotlin/Any| {
     }
 
 }

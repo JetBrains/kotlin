@@ -251,7 +251,8 @@ fun deserializeClassToSymbol(
             moduleName = it
         }
 
-        if (!Flags.HAS_ENUM_ENTRIES.get(flags)) {
+        // Only enum classes can have `entries`, so other classes don't need the attribute.
+        if (classKind == ClassKind.ENUM_CLASS && !Flags.HAS_ENUM_ENTRIES.get(flags)) {
             hasNoEnumEntriesAttr = true
         }
         deserializeCompilerPluginMetadata(context, classProto, ProtoBuf.Class::getCompilerPluginDataList)
