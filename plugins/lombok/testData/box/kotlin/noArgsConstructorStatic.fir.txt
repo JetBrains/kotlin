@@ -108,6 +108,13 @@ FILE: noArgsConstructorStatic.kt
             ^callUnqualified this@R|/ConstructorExampleStaticWithMemberOfTheSameName|.R|/ConstructorExampleStaticWithMemberOfTheSameName.make|()
         }
 
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|ConstructorExampleStaticWithMemberOfTheSameName.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
     }
     public final fun box(): R|kotlin/String| {
         lval zeroObject: R|ConstructorExampleStatic| = Q|ConstructorExampleStatic(.<companion>)|.R|/ConstructorExampleStatic.Companion.make|()

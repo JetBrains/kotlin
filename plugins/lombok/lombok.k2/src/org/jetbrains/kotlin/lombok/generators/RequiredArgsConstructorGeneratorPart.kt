@@ -27,7 +27,8 @@ class RequiredArgsConstructorGeneratorPart(session: FirSession) : AbstractConstr
      * by the clash checks, which would let a duplicate of the primary constructor through.
      */
     private fun getKotlinConstructorInfo(classSymbol: FirClassSymbol<*>): RequiredArgsConstructor? {
-        if (classSymbol.primaryConstructorParameters() == null) return null
+        val primaryConstructorParameters = classSymbol.primaryConstructorParameters()
+        if (primaryConstructorParameters == null || primaryConstructorParameters.any { it.isVararg }) return null
 
         return lombokService.getRequiredArgsConstructor(classSymbol)
             ?: getDataAsRequiredArgsConstructor(classSymbol)?.takeIf { it.staticName != null }
