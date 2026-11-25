@@ -40,12 +40,6 @@ import java.util.*
 
 internal val STATEMENT_ORIGIN_NO_CAST_NEEDED = IrStatementOriginImpl("NO_CAST_NEEDED")
 
-private fun IrSimpleFunction.isTrivialValGetter(context: NativeBackendContext) =
-        if (correspondingPropertySymbol?.owner?.isVar != false)
-            false
-        else
-            context.isTrivialGetter(this)
-
 private data class LeafIndexWithValue(val index: Int, val value: Boolean) {
     val bitIndex: Int get() = index * 2 + (if (value) 0 else 1)
 }
@@ -1419,7 +1413,7 @@ internal class CastsOptimization(val context: NativeGenerationState) : BodyLower
             val callee = expression.symbol.owner
             val correspondingProperty = callee.correspondingPropertySymbol?.owner
             val backingField = correspondingProperty?.backingField
-            return if (backingField != null && callee.isTrivialValGetter(context.context)) {
+            return if (backingField != null && context.context.isRawValGetter(callee)) {
                 val receiverResult = expression.dispatchReceiver?.accept(this, data)
                 val phantomVariable = if (receiverResult == null) {
                     topLevelPropertyPhantomVariables.getOrPut(correspondingProperty) {

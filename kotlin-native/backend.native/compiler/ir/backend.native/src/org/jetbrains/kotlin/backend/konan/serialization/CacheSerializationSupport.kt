@@ -576,28 +576,28 @@ internal object ObjCAdapterSerializer {
     }
 }
 
-class SerializedTrivialGetter(
+class SerializedRawValGetter(
         file: SerializedFileReference, val getterSignature: IdSignature
 ) : FileAwareSerializedData(file)
 
-internal object TrivialGettersSerializer : IdSignatureAwareSerializer<SerializedTrivialGetter>() {
-    override fun signatureOf(item: SerializedTrivialGetter) = item.getterSignature
+internal object RawValGettersSerializer : IdSignatureAwareSerializer<SerializedRawValGetter>() {
+    override fun signatureOf(item: SerializedRawValGetter) = item.getterSignature
 
     override fun ByteArrayStream.readItem(
             stringTable: Array<String>,
             file: SerializedFileReference,
             signature: IdSignature,
-    ): SerializedTrivialGetter = SerializedTrivialGetter(file, signature)
+    ): SerializedRawValGetter = SerializedRawValGetter(file, signature)
 }
 
-internal class TrivialGettersDeserializer(
+internal class RawValGetterDeserializer(
         val cachedLibraries: CachedLibraries,
         val deserializer: KonanPartialModuleDeserializer,
 ) {
-    val trivialGetterSignatures: Set<IdSignature> by lazy {
+    val rawValGetterSignatures: Set<IdSignature> by lazy {
         val cache = cachedLibraries.getLibraryCache(deserializer.klib, allowIncomplete = true)
                 ?: error("No cache for ${deserializer.klib.path}")
-        cache.serializedTrivialGetters.mapTo(hashSetOf()) { it.getterSignature }
+        cache.serializedRawValGetters.mapTo(hashSetOf()) { it.getterSignature }
     }
 }
 

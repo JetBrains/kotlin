@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedFileReference
-import org.jetbrains.kotlin.backend.konan.serialization.SerializedTrivialGetter
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedRawValGetter
 import org.jetbrains.kotlin.backend.konan.serialization.buildSerializedClassFields
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrBasedFunctionFactory
@@ -53,7 +53,7 @@ private fun IrFunction.isInlineFunctionExportedFromCompilerCache(moduleDeseriali
  * Cache information built before the lowerings are run:
  * * `klibHash`
  * * `inlineFunctionBodies`
- * * `trivialGetters`
+ * * `rawValGetters`
  *
  * Consider using [PostLoweringsCacheInfoBuilder] instead: lowerings are allowed to modify IR, collecting info after lowerings is safer.
  *
@@ -87,21 +87,16 @@ internal class PreLoweringsCacheInfoBuilder(
                 override fun visitProperty(declaration: IrProperty) {
                     declaration.acceptChildrenVoid(this)
 
-                    // Record trivial getters of val properties so dependent compilations can rely on this fact
-                    // without re-inspecting our IR (which may be bodiless for cached dependencies).
-                    if (!declaration.isVar) {
-                        val getter = declaration.getter
-                        if (getter != null
-                                && !getter.isFakeOverride
-                                && getter.isExportedFromCompilerCache(moduleDeserializer)
-                                && getter.isTrivialGetter
-                        ) {
-                            val signature = getter.symbol.signature
-                            if (signature != null) {
-                                generationState.trivialGetters.add(
-                                        SerializedTrivialGetter(SerializedFileReference(irFile), signature)
-                                )
-                            }
+                    val getter = declaration.getter
+                    if (getter != null
+                            && !getter.isFakeOverride
+                            && getter.isExportedFromCompilerCache(moduleDeserializer)
+                            && generationState.context.isRawValGetter(getter)) {
+                        val signature = getter.symbol.signature
+                        if (signature != null) {
+                            generationState.rawValGetters.add(
+                                    SerializedRawValGetter(SerializedFileReference(irFile), signature)
+                            )
                         }
                     }
                 }
