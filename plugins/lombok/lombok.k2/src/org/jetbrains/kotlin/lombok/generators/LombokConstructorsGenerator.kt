@@ -98,7 +98,7 @@ class LombokConstructorsGenerator(session: FirSession) :
         return buildList {
             parts.forEach {
                 with(it) {
-                    addIfNonClashing(classSymbol, context)
+                    addConstructorOrFactoryIfNonClashing(classSymbol, context)
                 }
             }
         }.takeIf { it.isNotEmpty() }?.map { it.symbol }
