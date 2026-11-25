@@ -70,14 +70,22 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
         get() = baseTestDataFile.extensionWithDot
 
     /**
-     * The test data files the managed assertions of the test create, update or delete.
+     * The test data files the managed assertions of the test create, update, delete or check, see [isWriteTarget].
      */
     private val writeTargetFiles: MutableSet<Path> = mutableSetOf()
 
     /**
-     * Whether [file] is created, updated or deleted by a managed assertion of the test, so no other code may write it.
+     * Whether [file] is created, updated, deleted or checked by a managed assertion of the test, so no other code may write it, e.g., the
+     * legacy update of a failed check of the file under `kotlin.test.update.test.data`.
      */
     fun isWriteTarget(file: File): Boolean = file.toPath().normalizedAbsolute() in writeTargetFiles
+
+    /**
+     * Marks [file] as checked by a managed assertion of the test, see [isWriteTarget].
+     */
+    internal fun addCheckedFile(file: File) {
+        writeTargetFiles.add(file.toPath().normalizedAbsolute())
+    }
 
     /**
      * The variant of the test data the test writes its inline diagnostics to, e.g., `foo.ll.kt` for the `[ll]` variant chain, whether it
@@ -216,6 +224,8 @@ fun TestServices.assertFileUnchangedBy(
     if (managedTestData != null && managedTestData.updatesTestData) {
         managedTestData.updateFile(file, edit)
     } else {
+        // Only `updateTestData` applies the edit to the test data of a managed test
+        managedTestData?.addCheckedFile(file)
         assertions.assertEqualsToFile(file, edit(file.readText()), message = message)
     }
 }
