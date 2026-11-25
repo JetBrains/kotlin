@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.pipeline.web
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_WARNING
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 import java.io.IOException
@@ -173,12 +173,12 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
             }
 
             var sourceMapSourceRoots = arguments.sourceMapBaseDirs
-            if (sourceMapSourceRoots == null && StringUtil.isNotEmpty(arguments.sourceMapPrefix)) {
+            if (sourceMapSourceRoots == null && StringUtilsKt.isNotEmpty(arguments.sourceMapPrefix)) {
                 sourceMapSourceRoots = calculateSourceMapSourceRoot(configuration, arguments)
             }
 
             if (sourceMapSourceRoots != null) {
-                val sourceMapSourceRootList = StringUtil.split(sourceMapSourceRoots, File.pathSeparator)
+                val sourceMapSourceRootList = StringUtilsKt.split(sourceMapSourceRoots, File.pathSeparator)
                 configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceMapSourceRootList)
             }
 

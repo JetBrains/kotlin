@@ -1,6 +1,4 @@
 import GeneratorInputKind.RuntimeClasspath
-import org.gradle.kotlin.dsl.embedded
-import org.gradle.kotlin.dsl.testRuntimeOnly
 
 plugins {
     id("common-configuration")
@@ -39,6 +37,7 @@ val (nativeInteropRuntimeSourceSet, nativeInteropRuntimeApi) = extraSourceSet("n
 dependencies {
     api(kotlinStdlib("jdk8"))
     api(project(":core:util.runtime"))
+    implementation(project(":compiler:util"))
 
     api(intellijCore())
     api(libs.intellij.patched.kotlinx.coroutines.core.jvm)

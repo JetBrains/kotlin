@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.cli.common.messages;
 
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 
 public class XmlMessageRenderer implements MessageRenderer {
     @Override
@@ -45,7 +45,7 @@ public class XmlMessageRenderer implements MessageRenderer {
     }
 
     private static String e(String str) {
-        return StringUtil.escapeXmlEntities(str);
+        return StringUtilsKt.escapeXmlEntities(str);
     }
 
     @Override

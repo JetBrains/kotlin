@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
-import com.intellij.openapi.util.text.StringUtil.substringAfter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.utils.StringUtilsKt.substringAfter
 
 /**
  * Special implementation of [GroupingMessageCollector] that raises the severity of unexpected

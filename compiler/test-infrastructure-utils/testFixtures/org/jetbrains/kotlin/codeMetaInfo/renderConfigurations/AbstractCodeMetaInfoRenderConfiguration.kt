@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.codeMetaInfo.renderConfigurations
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
+import org.jetbrains.kotlin.utils.StringUtilsKt
 
 abstract class AbstractCodeMetaInfoRenderConfiguration(var renderParams: Boolean = true) {
     private val clickOrPressRegex = "(Click or press|Press).*(to navigate)".toRegex() // We have different hotkeys on different platforms
@@ -18,7 +18,7 @@ abstract class AbstractCodeMetaInfoRenderConfiguration(var renderParams: Boolean
 
     protected fun sanitizeLineMarkerTooltip(originalText: String?): String {
         if (originalText == null) return "null"
-        val noHtmlTags = StringUtil.removeHtmlTags(originalText)
+        val noHtmlTags = StringUtilsKt.removeHtmlTags(originalText)
             .replace(" ", "")
             .replace(clickOrPressRegex, "$1 ... $2")
             .trim()
@@ -27,9 +27,9 @@ abstract class AbstractCodeMetaInfoRenderConfiguration(var renderParams: Boolean
 
     protected fun sanitizeLineBreaks(originalText: String): String {
         var sanitizedText = originalText
-        sanitizedText = StringUtil.replace(sanitizedText, "\r\n", " ")
-        sanitizedText = StringUtil.replace(sanitizedText, "\n", " ")
-        sanitizedText = StringUtil.replace(sanitizedText, "\r", " ")
+        sanitizedText = StringUtilsKt.replace(sanitizedText, "\r\n", " ")
+        sanitizedText = StringUtilsKt.replace(sanitizedText, "\n", " ")
+        sanitizedText = StringUtilsKt.replace(sanitizedText, "\r", " ")
         return sanitizedText
     }
 

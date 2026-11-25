@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.CustomKotlinLikeDumpStrategy.Modifiers
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.StringUtilsKt
 
 /**
  * Conventions:
@@ -1488,8 +1488,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         val value = expression.value.toString()
         val safeValue = when (kind) {
             // TODO no tests for escaping quotes (',")
-            is IrConstKind.Char -> StringUtil.escapeCharCharacters(value)
-            is IrConstKind.String -> StringUtil.escapeStringCharacters(value)
+            is IrConstKind.Char -> StringUtilsKt.escapeCharCharacters(value)
+            is IrConstKind.String -> StringUtilsKt.escapeStringCharacters(value)
             else -> value
         }
 

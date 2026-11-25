@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
@@ -23,23 +22,27 @@ import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.test.*;
+import org.jetbrains.kotlin.test.CompilerTestUtil;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
+import org.jetbrains.kotlin.test.TestDataAssertions;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.util.PerformanceManager;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.KotlinNativePaths;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.function.Supplier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -433,7 +436,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     public static String removePerfOutput(String output) {
-        String[] lines = StringUtil.splitByLinesKeepSeparators(output);
+        String[] lines = StringUtilsKt.splitByLinesKeepSeparators(output);
         StringBuilder result = new StringBuilder();
         for (String line : lines) {
             if (!line.contains("PERF:")) {

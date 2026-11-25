@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.konan.test.abi
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.compileToLibrary
 import org.jetbrains.kotlin.library.abi.*
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Tag
@@ -54,8 +54,8 @@ class NativeLibraryAbiReaderWithManifestTest : AbstractNativeSimpleTest() {
             lineSequence().filter { "Show manifest properties:" !in it }.joinToString("\n")
 
         private fun removeCommonLines(abiDumpWithoutManifest: String, abiDumpWithManifest: String): String {
-            val prefixLength = StringUtil.commonPrefixLength(abiDumpWithoutManifest, abiDumpWithManifest)
-            val suffixLength = StringUtil.commonSuffixLength(abiDumpWithoutManifest, abiDumpWithManifest)
+            val prefixLength = StringUtilsKt.commonPrefixLength(abiDumpWithoutManifest, abiDumpWithManifest)
+            val suffixLength = StringUtilsKt.commonSuffixLength(abiDumpWithoutManifest, abiDumpWithManifest)
 
             val abiDumpWithoutManifestRemainder = abiDumpWithoutManifest.drop(prefixLength).dropLast(suffixLength)
             assertTrue(abiDumpWithoutManifestRemainder.isEmpty()) {

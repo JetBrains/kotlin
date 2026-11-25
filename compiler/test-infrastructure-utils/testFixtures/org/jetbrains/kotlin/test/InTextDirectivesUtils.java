@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.test;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -77,7 +77,7 @@ public final class InTextDirectivesUtils {
     }
 
     public static List<String> splitValues(@NotNull List<String> result, @NotNull String line) {
-        String unquoted = StringUtil.unquoteString(line);
+        String unquoted = StringUtilsKt.unquoteString(line);
         if (!unquoted.equals(line)) {
             result.add(unquoted);
         }
@@ -104,7 +104,7 @@ public final class InTextDirectivesUtils {
         if (strings.size() != 1) {
             throw new IllegalStateException("There is more than one string with given prefixes " +
                                             Arrays.toString(prefixes) + ":\n" +
-                                            StringUtil.join(strings, "\n") + "\n" +
+                                            StringUtilsKt.join(strings, "\n") + "\n" +
                                             "Use findListWithPrefixes() instead.");
         }
 
@@ -144,7 +144,7 @@ public final class InTextDirectivesUtils {
                             Character.isWhitespace(prefix.charAt(prefix.length() - 1))) {
 
                         List<String> resultList = result.computeIfAbsent(prefix, s -> new ArrayList<>());
-                        String notSplit = trim ? noPrefixLine.trim() : StringUtil.trimTrailing(StringsKt.drop(noPrefixLine, 1));
+                        String notSplit = trim ? noPrefixLine.trim() : StringUtilsKt.trimTrailing(StringsKt.drop(noPrefixLine, 1));
                         if (separatedValues) {
                             List<String> split = Arrays.asList(notSplit.split(", *"));
                             resultList.addAll(split);
@@ -181,7 +181,7 @@ public final class InTextDirectivesUtils {
         String[] arr = line.split(" ", 2);
         String firstWord = arr[0];
 
-        if (firstWord.length() > 1 && StringUtil.toUpperCase(firstWord).equals(firstWord)) {
+        if (firstWord.length() > 1 && StringUtilsKt.toUpperCase(firstWord).equals(firstWord)) {
             return firstWord;
         }
 
@@ -193,7 +193,7 @@ public final class InTextDirectivesUtils {
 
         for (String prefix : prefixes) {
             if (prefix.startsWith("//") || prefix.startsWith("##")) {
-                resultPrefixes.add(StringUtil.trimLeading(prefix.substring(2)));
+                resultPrefixes.add(StringUtilsKt.trimLeading(prefix.substring(2)));
             }
             else {
                 resultPrefixes.add(prefix);

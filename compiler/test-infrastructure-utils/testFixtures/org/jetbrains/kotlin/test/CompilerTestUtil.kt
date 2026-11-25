@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test
 
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.applyIf
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil.kotlinPathsForDistDirectory
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -72,7 +72,7 @@ object CompilerTestUtil {
     @JvmStatic
     fun normalizeCompilerOutput(output: String, tmpdir: String): String {
         val tmpDirAbsoluteDir = File(tmpdir).absolutePath
-        val formattedOutput = StringUtil.convertLineSeparators(output)
+        val formattedOutput = StringUtilsKt.convertLineSeparators(output)
         val allOpenPluginPath = runCatching { ForTestCompileRuntime.allOpenCompilerPluginForTests().path }.getOrNull()
         val noArgCompilerPluginPath = runCatching { ForTestCompileRuntime.noArgCompilerPluginForTests().path }.getOrNull()
         val reflectJarPath = runCatching { ForTestCompileRuntime.reflectJarForTests().path }.getOrNull()

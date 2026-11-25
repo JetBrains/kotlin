@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.jps.targets
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.containers.FileCollectionFactory
 import com.intellij.util.io.URLUtil
 import org.jetbrains.jps.ModuleChunk
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
@@ -334,7 +334,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
 
     private fun createTempFileForChunkModuleDesc(): File {
         val readableSuffix = buildString {
-            append(StringUtil.sanitizeJavaIdentifier(chunk.representativeTarget.module.name))
+            append(StringUtilsKt.sanitizeJavaIdentifier(chunk.representativeTarget.module.name))
             if (chunk.containsTests) {
                 append("-test")
             }

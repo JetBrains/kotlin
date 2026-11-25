@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.readSourceFileWithMapping
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import java.io.PrintStream
 import java.text.DecimalFormat
@@ -124,7 +124,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
             val after = vmStateSnapshot()
             val diff = after - before
             recordTime(builder::class, diff, time)
-            totalLines += StringUtil.countNewLines(file.text)
+            totalLines += StringUtilsKt.countNewLines(file.text)
             firFile
         }.also {
             listener?.after(builder::class)

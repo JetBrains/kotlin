@@ -8,7 +8,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.TimeoutUtil
 import org.jetbrains.jps.api.CanceledStatus
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
@@ -42,6 +41,7 @@ import org.jetbrains.jps.model.serialization.JpsProjectLoader
 import org.jetbrains.jps.model.serialization.PathMacroUtil
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.test.testFramework.disposeRootDisposable
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -100,8 +100,8 @@ abstract class JpsBuildTestCase {
     }
 
     private val projectName: String
-        get() = StringUtil.decapitalize(
-            StringUtil.trimStart(
+        get() = StringUtilsKt.decapitalize(
+            StringUtilsKt.trimStart(
                 testInfo.testMethod.get().name,
                 "test"
             )

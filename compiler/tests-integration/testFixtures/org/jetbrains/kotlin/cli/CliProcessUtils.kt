@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.cli
 
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.io.File
@@ -89,13 +89,13 @@ object CliProcessUtils {
          */
         val stderr =
             AbstractCliTest.getNormalizedCompilerOutput(
-                StringUtil.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() }),
+                StringUtilsKt.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() }),
                 null, testDataDirectory, tmpdir.absolutePath
             ).replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
                 .replace("The system cannot find the file specified", "No such file or directory") // win -> unix
         val stdout =
             AbstractCliTest.getNormalizedCompilerOutput(
-                StringUtil.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() }),
+                StringUtilsKt.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() }),
                 null, testDataDirectory, tmpdir.absolutePath
             )
         process.waitFor(10, TimeUnit.SECONDS)

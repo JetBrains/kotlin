@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.generators.builtins.test
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.generateBuiltIns
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCoreLibs
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
@@ -24,8 +24,8 @@ class GenerateBuiltInsTest {
                 generator(it).generate()
             }
 
-            val expected = StringUtil.convertLineSeparators(sw.toString().trim())
-            val actual = StringUtil.convertLineSeparators(FileUtil.loadFile(file).trim())
+            val expected = StringUtilsKt.convertLineSeparators(sw.toString().trim())
+            val actual = StringUtilsKt.convertLineSeparators(FileUtil.loadFile(file).trim())
 
             Assertions.assertEquals(expected, actual, "To fix this problem you need to regenerate built-ins (run generateBuiltIns.kt)")
         }

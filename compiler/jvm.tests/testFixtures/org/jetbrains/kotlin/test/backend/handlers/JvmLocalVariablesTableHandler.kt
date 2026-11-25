@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.JvmClassFileArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.jetbrains.org.objectweb.asm.*
 import java.util.*
 import java.util.regex.Pattern
@@ -27,7 +27,7 @@ class JvmLocalVariablesTableHandler(testServices: TestServices) : JvmBinaryArtif
         val classAndMethod = parseClassAndMethodSignature(lines)
         val split = classAndMethod.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         assertions.assertTrue(split.size == 2) { "Exactly one dot is expected: $classAndMethod" }
-        val classFileRegex = StringUtil.escapeToRegexp(split[0] + ".class").replace("\\*", ".+")
+        val classFileRegex = StringUtilsKt.escapeToRegexp(split[0] + ".class").replace("\\*", ".+")
         val methodName = split[1]
 
         val outputFiles = (info.classFileFactory as OutputFileCollection).asList()

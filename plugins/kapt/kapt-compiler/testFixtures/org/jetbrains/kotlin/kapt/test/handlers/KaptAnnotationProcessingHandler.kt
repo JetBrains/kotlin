@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.kapt.test.handlers
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.kapt.base.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextUtils
 import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
+import org.jetbrains.kotlin.utils.StringUtilsKt
 
 class KaptAnnotationProcessingHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
@@ -32,7 +32,7 @@ class KaptAnnotationProcessingHandler(testServices: TestServices) : BaseKaptHand
 
         val stubJavaFiles = kaptContext.options.sourcesOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }
         val actualRaw = stubJavaFiles.sortedBy { it.name }.joinToString(FILE_SEPARATOR) { it.name + ":\n\n" + it.readText() }
-        val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' }).trimTrailingWhitespacesAndAddNewlineAtEOF()
+        val actual = StringUtilsKt.convertLineSeparators(actualRaw.trim { it <= ' ' }).trimTrailingWhitespacesAndAddNewlineAtEOF()
         assertEqualsToDump(extension = ".txt", actual)
     }
 

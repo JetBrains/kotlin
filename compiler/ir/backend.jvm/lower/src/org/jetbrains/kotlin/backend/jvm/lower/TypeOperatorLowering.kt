@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
@@ -14,7 +13,9 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.StringUtilsKt
 
 /**
  * Lowers [IrTypeOperatorCall]s to (implicit) casts and instanceof checks.
@@ -229,7 +231,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
             else -> null
         }
 
-    private fun String.trimForRuntimeAssertion() = StringUtil.trimMiddle(this, 50)
+    private fun String.trimForRuntimeAssertion() = StringUtilsKt.trimMiddle(this, 50)
 
     private val throwTypeCastException: IrSimpleFunctionSymbol =
         backendContext.symbols.throwTypeCastException

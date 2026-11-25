@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.test.Assertions
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -23,7 +23,7 @@ internal class OccurrenceInfo(
     private val pattern = Pattern.compile("($needle)")
 
     fun getActualOccurrence(text: String): String {
-        val actualCount = StringUtil.findMatches(text, pattern).size
+        val actualCount = StringUtilsKt.findMatches(text, pattern).size
         return "$actualCount $needle"
     }
 

@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.cli.common.messages;
 
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -41,13 +41,13 @@ public class OutputMessageUtil {
     @NotNull
     public static String formatOutputMessage(Collection<File> sourceFiles, File outputFile) {
         return OUTPUT_FILES_PREFIX + "\n" + outputFile.getPath() + "\n" +
-               SOURCE_FILES_PREFIX + "\n" + StringUtil.join(sourceFiles, "\n");
+               SOURCE_FILES_PREFIX + "\n" + StringUtilsKt.join(sourceFiles, "\n");
     }
 
     @NotNull
     public static String formatOutputMessage(Collection<String> sourceFilePaths, String outputFilePath) {
         return OUTPUT_FILES_PREFIX + "\n" + outputFilePath + "\n" +
-               SOURCE_FILES_PREFIX + "\n" + StringUtil.join(sourceFilePaths, "\n");
+               SOURCE_FILES_PREFIX + "\n" + StringUtilsKt.join(sourceFilePaths, "\n");
     }
 
     @Nullable

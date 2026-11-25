@@ -6,7 +6,6 @@
 package com.intellij.execution.configurations;
 
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.EnvironmentUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -14,6 +13,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -115,7 +115,7 @@ public final class PathEnvironmentVariableUtil {
 
     @NotNull
     public static List<String> getPathDirs(@NotNull String pathEnvVarValue) {
-        return StringUtil.split(pathEnvVarValue, File.pathSeparator, true, true);
+        return StringUtilsKt.split(pathEnvVarValue, File.pathSeparator, true, true);
     }
 
     @NotNull
@@ -123,9 +123,9 @@ public final class PathEnvironmentVariableUtil {
         if (SystemInfo.isWindows) {
             String allExtensions = System.getenv("PATHEXT");
             if (allExtensions != null) {
-                Collection<String> extensions = StringUtil.split(allExtensions, ";", true, true);
-                extensions = ContainerUtil.filter(extensions, s -> !StringUtil.isEmpty(s) && s.startsWith("."));
-                return ContainerUtil.map(extensions, StringUtil::toLowerCase);
+                Collection<String> extensions = StringUtilsKt.split(allExtensions, ";", true, true);
+                extensions = ContainerUtil.filter(extensions, s -> !StringUtilsKt.isEmpty(s) && s.startsWith("."));
+                return ContainerUtil.map(extensions, StringUtilsKt::toLowerCase);
             }
         }
         return Collections.emptyList();
@@ -139,7 +139,7 @@ public final class PathEnvironmentVariableUtil {
     @Contract("_, !null -> !null")
     public static String findExecutableInWindowsPath(@NotNull String exePath, @Nullable String defaultPath) {
         if (SystemInfo.isWindows) {
-            if (!StringUtil.containsChar(exePath, '/') && !StringUtil.containsChar(exePath, '\\')) {
+            if (!StringUtilsKt.containsChar(exePath, '/') && !StringUtilsKt.containsChar(exePath, '\\')) {
                 List<String> executableFileExtensions = getWindowsExecutableFileExtensions();
 
                 String[] baseNames = ContainerUtil.map2Array(executableFileExtensions, String.class, s -> exePath + s);

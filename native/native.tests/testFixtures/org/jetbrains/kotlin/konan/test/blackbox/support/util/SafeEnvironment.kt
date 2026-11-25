@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
-import com.intellij.openapi.util.text.StringUtil.containsLineBreak
-import com.intellij.openapi.util.text.StringUtil.escapeLineBreak
+import org.jetbrains.kotlin.utils.StringUtilsKt.containsLineBreak
+import org.jetbrains.kotlin.utils.StringUtilsKt.escapeLineBreak
 import java.util.*
 
 internal data class NameAndSafeValue(val name: String, val safeValue: String)

@@ -4,8 +4,8 @@
  */
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.RandomAccessFile
@@ -39,7 +39,7 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
                     emptyList()
                 }
                 cachedManifest =
-                    entries.singleOrNull { StringUtil.equals(MANIFEST_PATH, it.relativePath) }
+                    entries.singleOrNull { StringUtilsKt.equals(MANIFEST_PATH, it.relativePath) }
                         ?.let(largeBuffer::contentsToByteArray)
             } finally {
                 largeBuffer.unmap()
@@ -108,7 +108,7 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
 
     fun contentsToByteArray(zipEntryDescription: ZipEntryDescription): ByteArray {
         val relativePath = zipEntryDescription.relativePath
-        if (StringUtil.equals(relativePath, MANIFEST_PATH)) return cachedManifest ?: throw FileNotFoundException("$file!/$relativePath")
+        if (StringUtilsKt.equals(relativePath, MANIFEST_PATH)) return cachedManifest ?: throw FileNotFoundException("$file!/$relativePath")
         return fileSystem.cachedOpenFileHandles[file].use {
             synchronized(it) {
                 it.get().second.contentsToByteArray(zipEntryDescription)

@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.android.tests
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.getMainClassName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import java.io.File
 import java.io.FileWriter
 
@@ -30,7 +30,7 @@ class UnitTestFileWriter(
         private const val TESTS_PER_CHUNK = 128
 
         internal fun testNameForFileName(fileName: String): String {
-            return "test" + NameUtils.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtil.capitalize(fileName)))
+            return "test" + NameUtils.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtilsKt.capitalize(fileName)))
         }
 
         internal fun generateTestName(fileName: String, generatedTestNames: MutableSet<String>): String {
@@ -58,7 +58,7 @@ class UnitTestFileWriter(
                 GeneratedTest(
                     testName = info.name,
                     className = info.fqName.asString(),
-                    filePath = StringUtil.escapeStringCharacters(info.file.path),
+                    filePath = StringUtilsKt.escapeStringCharacters(info.file.path),
                 )
             }
             p.println(

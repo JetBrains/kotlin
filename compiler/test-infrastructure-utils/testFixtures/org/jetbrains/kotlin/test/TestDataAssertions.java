@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
@@ -112,7 +111,7 @@ public class TestDataAssertions {
     }
 
     public static String applyDefaultAndCustomSanitizer(String text, @NotNull Function1<String, String> sanitizer) {
-        String textAfterDefaultSanitizer = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(text.trim()));
+        String textAfterDefaultSanitizer = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(org.jetbrains.kotlin.utils.StringUtilsKt.convertLineSeparators(text.trim()));
         return sanitizer.invoke(textAfterDefaultSanitizer);
     }
 

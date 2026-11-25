@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.kapt.test.integration
 
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt.test.handlers.AbstractKaptHandler
 import org.jetbrains.kotlin.kapt.test.handlers.checkTxtAccordingToBackend
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.kapt.test.handlers.removeMetadataAnnotationContents
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
+import org.jetbrains.kotlin.utils.StringUtilsKt
 
 class FirKaptIntegrationStubsDumpHandler(testServices: TestServices) : AbstractKaptHandler(testServices) {
     companion object {
@@ -21,7 +21,7 @@ class FirKaptIntegrationStubsDumpHandler(testServices: TestServices) : AbstractK
 
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
         val actualRaw = testServices.firKaptExtensionProvider[module].savedStubs ?: assertions.fail { "Stubs were not saved" }
-        val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
+        val actual = StringUtilsKt.convertLineSeparators(actualRaw.trim { it <= ' ' })
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
         assertions.checkTxtAccordingToBackend(module, actual, FILE_SUFFIX)

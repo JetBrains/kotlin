@@ -5,20 +5,15 @@
 
 package org.jetbrains.kotlin.kapt.stubs
 
-import com.intellij.openapi.util.text.StringUtil
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
-import org.jetbrains.kotlin.kapt.util.appendList
-import org.jetbrains.kotlin.kapt.util.appendListIfNonEmpty
-import org.jetbrains.kotlin.kapt.util.isAnnotation
-import org.jetbrains.kotlin.kapt.util.isEnum
-import org.jetbrains.kotlin.kapt.util.isInterface
+import org.jetbrains.kotlin.kapt.util.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.kapt.util.kdocText
+import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -58,14 +53,14 @@ class KaptStubDirectConverter(
 
     private fun StringBuilder.appendJavaStringLiteral(str: String) {
         append('"')
-        StringUtil.escapeStringCharacters(str.length, str, "\"", this)
+        StringUtilsKt.escapeStringCharacters(str.length, str, "\"", this)
         append('"')
     }
 
     private fun StringBuilder.appendJavaCharLiteral(ch: Char) {
         append('\'')
         val str = ch.toString()
-        StringUtil.escapeStringCharacters(str.length, str, "\'", this)
+        StringUtilsKt.escapeStringCharacters(str.length, str, "\'", this)
         append('\'')
     }
 

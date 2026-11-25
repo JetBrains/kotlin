@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
-import org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.kotlin.utils.StringUtilsKt;
 import org.jetbrains.kotlin.com.intellij.psi.PsiJavaModule;
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils;
 import org.jetbrains.kotlin.config.JvmTarget;
@@ -54,7 +54,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil.join;
+import static org.jetbrains.kotlin.utils.StringUtilsKt.join;
 import static org.jetbrains.kotlin.maven.Util.filterClassPath;
 import static org.jetbrains.kotlin.maven.Util.getMavenPluginVersion;
 
@@ -482,7 +482,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
                     filteredClasspath.add(path);
                 }
             }
-            arguments.setClasspath(StringUtil.join(filteredClasspath, File.pathSeparator));
+            arguments.setClasspath(StringUtilsKt.join(filteredClasspath, File.pathSeparator));
         }
 
         JvmSnapshotBasedIncrementalCompilationConfiguration.Builder classpathSnapshotsConfig = compileOperation.snapshotBasedIcConfigurationBuilder(
