@@ -71,6 +71,10 @@ JAVA_TOKEN = re.compile(
     re.DOTALL,
 )
 BUILD_GENERATED_TESTS = re.compile(r"generateTestsInBuildDirectory\s*=\s*true")
+# A project with another directory than the default one in `settings.gradle.kts`, possibly over two lines
+CUSTOM_PROJECT_DIRECTORY = re.compile(
+    r'project\(\s*"(?P<project>:[^"]+)"\s*\)\.projectDir\s*=\s*(?:File|file)\(\s*"\$rootDir/(?P<directory>[^"]+)"\s*\)'
+)
 
 EXIT_PASSED, EXIT_FAILED, EXIT_ERROR, EXIT_INTERRUPTED = 0, 1, 2, 130
 
@@ -100,6 +104,12 @@ def valid_run_id(value: str) -> str:
     return value
 
 
+def module_argument(value: str) -> str:
+    """[value] as given to `--module`, if it can name a module; it is resolved by [requested_project] once the root is known."""
+    project_path(value)
+    return value
+
+
 def gradle_wrapper(root: Path, windows: bool = os.name == "nt") -> Path:
     return root / ("gradlew.bat" if windows else "gradlew")
 
@@ -126,16 +136,53 @@ def windows_command_line(command: List[str]) -> str:
 
 
 def managed_modules(root: Path) -> List[str]:
-    """The project paths of the modules applying the `test-data-manager` plugin; their directories are default ones."""
+    """The project paths of the modules applying the `test-data-manager` plugin."""
     scripts = subprocess.run(
         ["git", "grep", "-l", "-F", 'id("test-data-manager")', "--", "*build.gradle.kts"],
         cwd=root, check=True, capture_output=True, text=True,
     ).stdout.split()
-    return sorted(":" + script.rsplit("/", 1)[0].replace("/", ":") for script in scripts if "/" in script)
+    return sorted(directory_project(root, script.rsplit("/", 1)[0]) for script in scripts if "/" in script)
+
+
+@functools.lru_cache(maxsize=None)
+def custom_project_directories(root: Path) -> Dict[str, str]:
+    """
+    The projects `settings.gradle.kts` gives another directory than the default one, e.g., `:kotlin-allopen-compiler-plugin` in
+    `plugins/allopen`: {project path: repository-relative directory}.
+    """
+    settings = root / "settings.gradle.kts"
+    if not settings.is_file():
+        return {}
+    return {
+        match.group("project"): match.group("directory").rstrip("/")
+        for match in CUSTOM_PROJECT_DIRECTORY.finditer(settings.read_text(encoding="utf-8"))
+    }
+
+
+def directory_project(root: Path, directory: str) -> str:
+    """The project path of the module in [directory], relative to [root]: the default one unless the settings give another."""
+    default = project_path(directory)
+    custom = {custom_directory: project for project, custom_directory in custom_project_directories(root).items()}
+    return custom.get(default[1:].replace(":", "/"), default)
+
+
+def requested_project(root: Path, module: str) -> str:
+    """
+    The project path of [module] given as `--module`: a project path (`:analysis:stubs`) as is, a directory
+    (`analysis/stubs/`, `plugins/allopen/../lombok`, an absolute one, also through a symbolic link) as the project in it, which may
+    have a custom path.
+    """
+    if not module.startswith(":"):
+        directory = Path(os.path.normpath(root / module.replace("\\", "/")))
+        if not is_inside(directory, root) and Path(module).is_absolute() and is_inside(Path(os.path.realpath(module)), root):
+            directory = Path(os.path.realpath(module))
+        if is_inside(directory, root) and directory != root:
+            return directory_project(root, directory.relative_to(root).as_posix())
+    return project_path(module)
 
 
 def module_directory(root: Path, module: str) -> Path:
-    return root / module[1:].replace(":", "/")
+    return root / custom_project_directories(root).get(module, module[1:].replace(":", "/"))
 
 
 class GeneratedTests(NamedTuple):
@@ -681,9 +728,9 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     parser.add_argument("--golden-only", action="store_true", help="goldenOnly")
     parser.add_argument("--incremental", action="store_true", help="incremental")
     parser.add_argument("--module", action="append", default=[], dest="modules",
-                        type=project_path,
-                        help="project path of a module to run (repeatable); default: the modules with managed test data, "
-                             "with --path only those whose generated tests may have test data under the paths")
+                        type=module_argument,
+                        help="project path or directory of a module to run (repeatable); default: the modules with managed "
+                             "test data, with --path only those whose generated tests may have test data under the paths")
     parser.add_argument("--run-id", type=valid_run_id,
                         help="id of the run, naming the module reports and the Gradle log (default: a new UUID)")
     parser.add_argument("--rerun", type=valid_run_id, metavar="RUN_ID",
@@ -701,7 +748,7 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     # UUIDv7 (Python 3.14+) only sorts better; any unique id names the reports of one run
     run_id = args.run_id or str(getattr(uuid, "uuid7", uuid.uuid4)())
     # The same module given twice would run once but be reported twice
-    modules = list(dict.fromkeys(args.modules)) or managed_modules(root)
+    modules = list(dict.fromkeys(requested_project(root, module) for module in args.modules)) or managed_modules(root)
     output_directory = root / "build" / "test-data-manager"
     summary_file = output_directory / f"{run_id}.summary.json"
     output_directory.mkdir(parents=True, exist_ok=True)
