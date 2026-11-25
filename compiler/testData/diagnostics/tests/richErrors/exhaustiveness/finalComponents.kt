@@ -37,7 +37,7 @@ fun supertypeCoversPrimary(x: String | Foo | Bar): Int = when (x) {
 
 fun negatedIsNotCounted(x: String | Foo): Int = <!NO_ELSE_IN_WHEN!>when<!> (x) {
     !is Foo -> 1
-    <!USELESS_IS_CHECK!>is Foo<!> -> 2
+    is Foo -> 2
 }
 
 fun redundantElse(x: String | Foo): Int = when (x) {
