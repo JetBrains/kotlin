@@ -16,9 +16,6 @@ import org.jetbrains.kotlin.ir.types.IrType
  * @property allowErrorNodes Whether serialization of [IrErrorType] and [IrErrorExpression] is permitted.
  *   Caution: This setting is not safe to use, as it can lead to crashes in the frontend or backend.
  *   The only legal case for using this setting is the `dump-ir` command of the `klib` command-line tool.
- * @property allowAlreadyBoundSymbols Don't attempt to create a new declaration (IR entity) during deserialization
- *   if it turns out that the symbol is already bound. This is needed for specific JVM-related scenarios when it's
- *   necessary to deserialize IR for already existing declarations.
  * @property deserializeFunctionBodies Whether to deserialize bodies of all functions ([DeserializeFunctionBodies.ALL]),
  *   only inline functions and their local functions ([DeserializeFunctionBodies.ONLY_INLINE]), or don't deserialize
  *   function bodies at all ([DeserializeFunctionBodies.NONE]).
@@ -36,7 +33,6 @@ import org.jetbrains.kotlin.ir.types.IrType
  */
 class IrDeserializationSettings(
     val allowErrorNodes: Boolean = false,
-    val allowAlreadyBoundSymbols: Boolean = false,
     val deserializeFunctionBodies: DeserializeFunctionBodies = DeserializeFunctionBodies.ALL,
     val nullableAnyAsAnnotationConstructorCallType: IrType? = null,
     val fixSwappedKProperty2TypeParameterOrder: Boolean = false,
