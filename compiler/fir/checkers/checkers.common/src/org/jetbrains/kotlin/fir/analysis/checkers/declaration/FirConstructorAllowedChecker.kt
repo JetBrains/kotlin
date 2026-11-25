@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.extractModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -43,7 +43,7 @@ object FirConstructorAllowedChecker : FirConstructorChecker(MppCheckerKind.Commo
             ClassKind.CLASS -> when (containingClass) {
                 is FirAnonymousObjectSymbol -> reporter.reportOn(source, FirErrors.CONSTRUCTOR_IN_OBJECT)
                 is FirRegularClassSymbol -> if (containingClass.modality == Modality.SEALED) {
-                    val modifierList = source.getModifierList() ?: return
+                    val modifierList = source.extractModifierList() ?: return
                     val hasIllegalModifier = modifierList.modifiers.any {
                         val tokenId = it.tokenId
                         tokenId in KotlinSyntaxIdSets.VISIBILITY_MODIFIER &&

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.extractModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.types.FirPlaceholderProjection
@@ -27,7 +27,7 @@ object FirProjectionsOnNonClassTypeArgumentChecker : FirQualifiedAccessExpressio
                 is FirStarProjection -> reporter.reportOn(it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT)
                 is FirTypeProjectionWithVariance -> {
                     if (it.variance != Variance.INVARIANT) {
-                        val modifierSource = it.source.getModifierList()?.modifiers?.firstOrNull()?.source
+                        val modifierSource = it.source.extractModifierList()?.modifiers?.firstOrNull()?.source
                         reporter.reportOn(modifierSource ?: it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT)
                     }
                 }

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.containsErrorTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.extractModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -70,8 +70,9 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         }
     }
 
+    context(context: CheckerContext)
     private fun containsExpectOrActualModifier(declaration: FirMemberDeclaration): Boolean {
-        return declaration.source.getModifierList()?.let { modifiers ->
+        return declaration.source.extractModifierList()?.let { modifiers ->
             KotlinSyntaxTokenIds.EXPECT_MODIFIER in modifiers || KotlinSyntaxTokenIds.ACTUAL_MODIFIER in modifiers
         } ?: false
     }
@@ -408,6 +409,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     }
 
     // Ideally, this function shouldn't exist KT-63751
+    context(context: CheckerContext)
     private fun FirElement.hasActualModifier(): Boolean {
         return when (source?.kind) {
             null -> false
