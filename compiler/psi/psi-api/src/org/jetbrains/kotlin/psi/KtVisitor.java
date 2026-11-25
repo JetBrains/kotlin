@@ -195,7 +195,14 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     /**
      * The visitor returns null since {@link KtContextReceiverList} invoke both {@link #visitContextParameterList} and {@link #visitContextReceiverList}.
      * Because of this, the visitor implementation must not implement both methods at the same time.
+     *
+     * @deprecated Use {@link #visitContextParameterList} instead. This method is obsolete because {@link KtContextReceiverList} is obsolete.
      */
+    @kotlin.Deprecated(
+            message = "Use 'visitContextParameterList' instead. This method is obsolete because 'KtContextReceiverList' is obsolete.",
+            level = DeprecationLevel.WARNING
+    )
+    @Deprecated
     public R visitContextReceiverList(@NotNull KtContextReceiverList contextReceiverList, D data) {
         return null;
     }
@@ -204,6 +211,14 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitKtElement(contextParameterList, data);
     }
 
+    /**
+     * @deprecated This method is obsolete because {@link KtContextReceiver} is obsolete.
+     */
+    @kotlin.Deprecated(
+            message = "This method is obsolete because 'KtContextReceiver' is obsolete.",
+            level = DeprecationLevel.WARNING
+    )
+    @Deprecated
     public R visitContextReceiver(@NotNull KtContextReceiver contextReceiver, D data) {
         return visitKtElement(contextReceiver, data);
     }

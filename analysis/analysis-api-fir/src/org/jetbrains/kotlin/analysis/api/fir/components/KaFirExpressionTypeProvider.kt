@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirDestructuringDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getExpressionTypeByPsiOrNull
+import org.jetbrains.kotlin.analysis.api.fir.utils.isContextParameterOfType
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.utils.exceptions.unexpectedElementError
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -257,6 +259,15 @@ internal class KaFirExpressionTypeProvider(
     }
 
     override fun returnType(declaration: KtDeclarationWithReturnType): KaType = declaration.withPsiValidityAssertion {
+        // FIR has no element for this parameter, only for its type
+        if (declaration.isContextParameterOfType) {
+            val typeReference = declaration.typeReference ?: errorWithAttachment("Context parameter without a type reference") {
+                withPsiEntry("parameter", declaration)
+            }
+
+            return with(analysisSession) { typeReference.type }
+        }
+
         // Function type parameters have no symbol
         if (declaration is KtParameter && declaration.isFunctionTypeParameter) {
             val firParameter = declaration.getOrBuildFirOfType<FirFunctionTypeParameter>(resolutionFacade)

@@ -63,7 +63,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -82,7 +82,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -93,7 +93,7 @@ KtFile: danglingContextInFunctionType.kt
           PsiErrorElement:Type expected
             <empty list>
           PsiElement(RPAR)(')')
-          PsiErrorElement:Function type expected expected
+          PsiErrorElement:Function type expected
             <empty list>
       PsiWhiteSpace('\n    ')
       PROPERTY
@@ -106,7 +106,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -118,7 +118,7 @@ KtFile: danglingContextInFunctionType.kt
             <empty list>
           PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Function type expected expected
+          PsiErrorElement:Function type expected
             PsiElement(MINUS)('-')
       PsiWhiteSpace('\n    ')
       PROPERTY
@@ -131,7 +131,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -141,7 +141,7 @@ KtFile: danglingContextInFunctionType.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
-          PsiErrorElement:Function type expected expected
+          PsiErrorElement:Function type expected
             <empty list>
       PsiWhiteSpace('\n    ')
       PROPERTY
@@ -154,7 +154,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -166,7 +166,7 @@ KtFile: danglingContextInFunctionType.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('String')
             PsiElement(QUEST)('?')
-          PsiErrorElement:Function type expected expected
+          PsiErrorElement:Function type expected
             <empty list>
       PsiWhiteSpace('\n    ')
       PROPERTY
@@ -179,7 +179,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -204,7 +204,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -254,14 +254,14 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Int')
             PsiElement(COMMA)(',')
             PsiWhiteSpace(' ')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -280,7 +280,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 MODIFIER_LIST
                   ANNOTATION_ENTRY
@@ -330,7 +330,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -356,7 +356,7 @@ KtFile: danglingContextInFunctionType.kt
                   CONTEXT_PARAMETER_LIST
                     PsiElement(context)('context')
                     PsiElement(LPAR)('(')
-                    CONTEXT_RECEIVER
+                    VALUE_PARAMETER
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION
@@ -381,7 +381,7 @@ KtFile: danglingContextInFunctionType.kt
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
         PsiElement(LPAR)('(')
-        CONTEXT_RECEIVER
+        VALUE_PARAMETER
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
@@ -413,7 +413,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -453,7 +453,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -472,7 +472,7 @@ KtFile: danglingContextInFunctionType.kt
               USER_TYPE
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Any')
-          PsiErrorElement:Function type expected expected
+          PsiErrorElement:Function type expected
             <empty list>
       PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
@@ -501,7 +501,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -529,7 +529,7 @@ KtFile: danglingContextInFunctionType.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -545,7 +545,7 @@ KtFile: danglingContextInFunctionType.kt
             PsiErrorElement:Expecting type name
               PsiElement(EQ)('=')
           PsiWhiteSpace(' ')
-          PsiErrorElement:Function type expected expected
+          PsiErrorElement:Function type expected
             PsiElement(IDENTIFIER)('TODO')
       PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
         PsiElement(LPAR)('(')

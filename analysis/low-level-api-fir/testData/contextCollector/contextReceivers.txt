@@ -13,7 +13,15 @@ Tower Data Context:
         Scope: FirExplicitSimpleImportingScope
     Element 6
         Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol R|Bar|
     Element 7
+        Context parameters:
+            FirValueParameterSymbol R|Foo|
+                Type: Foo
+            FirValueParameterSymbol R|Bar|
+                Type: Bar
+    Element 8
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] contextReceivers.kt

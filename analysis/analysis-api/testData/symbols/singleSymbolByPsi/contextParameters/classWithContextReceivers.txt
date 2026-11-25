@@ -6,13 +6,13 @@ KaNamedClassSymbol:
   companionObject: null
   contextReceivers: [
     KaContextReceiver:
-      label: String
+      label: <no name provided>
       type: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/String
     KaContextReceiver:
-      label: List
+      label: <no name provided>
       type: KaUsualClassType:
         annotations: []
         typeArguments: [

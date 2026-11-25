@@ -121,7 +121,6 @@ org.jetbrains.kotlin.KtNodeTypes:CONSTRUCTOR_CALLEE
 org.jetbrains.kotlin.KtNodeTypes:CONSTRUCTOR_DELEGATION_CALL
 org.jetbrains.kotlin.KtNodeTypes:CONSTRUCTOR_DELEGATION_REFERENCE
 org.jetbrains.kotlin.KtNodeTypes:CONTEXT_PARAMETER_LIST
-org.jetbrains.kotlin.KtNodeTypes:CONTEXT_RECEIVER
 org.jetbrains.kotlin.KtNodeTypes:CONTINUE
 org.jetbrains.kotlin.KtNodeTypes:CONTRACT_EFFECT
 org.jetbrains.kotlin.KtNodeTypes:CONTRACT_EFFECT_LIST
@@ -292,7 +291,6 @@ org.jetbrains.kotlin.psi.KtContainerNodeForControlStructureBody:constructor(ASTN
 org.jetbrains.kotlin.psi.KtContextParameterList:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtContextParameterList:constructor(KotlinPlaceHolderStub<KtContextParameterList>)
 org.jetbrains.kotlin.psi.KtContextReceiver:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtContextReceiver:constructor(KotlinContextReceiverStub)
 org.jetbrains.kotlin.psi.KtContextReceiverList:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtContextReceiverList:constructor(KotlinPlaceHolderStub<KtContextParameterList>)
 org.jetbrains.kotlin.psi.KtContinueExpression:constructor(ASTNode)
@@ -524,7 +522,6 @@ org.jetbrains.kotlin.psi.KtVisitor:visitConstructor(KtConstructor<?>, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitConstructorCalleeExpression(KtConstructorCalleeExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitConstructorDelegationCall(KtConstructorDelegationCall, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitContextParameterList(KtContextParameterList, D)
-org.jetbrains.kotlin.psi.KtVisitor:visitContextReceiver(KtContextReceiver, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitContinueExpression(KtContinueExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitDeclaration(KtDeclaration, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitDelegatedSuperTypeEntry(KtDelegatedSuperTypeEntry, D)
@@ -636,7 +633,6 @@ org.jetbrains.kotlin.psi.KtVisitorVoid:visitConstructor(KtConstructor<?>)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitConstructorCalleeExpression(KtConstructorCalleeExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitConstructorDelegationCall(KtConstructorDelegationCall)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitContextParameterList(KtContextParameterList)
-org.jetbrains.kotlin.psi.KtVisitorVoid:visitContextReceiver(KtContextReceiver)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitContinueExpression(KtContinueExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitDeclaration(KtDeclaration)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitDelegatedSuperTypeEntry(KtDelegatedSuperTypeEntry)
@@ -876,8 +872,6 @@ org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub.value
 org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isDelegatedCallToThis
 org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isExplicitDelegationCall
-org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
-org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub.label
 org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationEntryStub
 org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub
 org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub.hasInitializer

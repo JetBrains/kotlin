@@ -6,4 +6,4 @@ KtNameReferenceExpression(97,100): 'foo'
     candidateSymbols = [
       val foo: kotlin.Boolean
     ]
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'int: Int' found.>
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'string: String' found.>

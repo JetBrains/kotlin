@@ -65,6 +65,10 @@ import java.util.List;
  * fun foo() {}
  * }</pre>
  *
+ * <p>A parameter that is declared only by its type has no name, so {@link #getName()} returns {@code null}. Such parameters occur in
+ * function types, as in {@code (Int) -> Unit} and {@code context(String) () -> Unit}, and in the syntax of legacy context receivers, as
+ * in {@code context(String) fun foo() {}}.
+ *
  * @see #isLoopParameter()
  * @see #isCatchParameter()
  * @see #isLambdaParameter()
@@ -271,7 +275,8 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
      *   fun foo(lambdaArgument: (functionTypeParameter: T, ...) -> R) { ... }
      * }</pre>
      *
-     * @return {@code true} if this {@link KtParameter} is a parameter of a function type.
+     * @return {@code true} if this {@link KtParameter} is a parameter of a function type, including its context parameters, as
+     * {@code String} in {@code context(String) () -> Unit}.
      */
     public boolean isFunctionTypeParameter() {
         return checkParentOfParentType(KtFunctionType.class);

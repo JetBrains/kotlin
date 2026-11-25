@@ -19,7 +19,7 @@ KtFile: labelInFunctionTypeContext.kt
           CONTEXT_PARAMETER_LIST
             PsiElement(context)('context')
             PsiElement(LPAR)('(')
-            CONTEXT_RECEIVER
+            VALUE_PARAMETER
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION
@@ -31,7 +31,7 @@ KtFile: labelInFunctionTypeContext.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('String')
-          PsiErrorElement:Function type expected expected
+          PsiErrorElement:Function type expected
             <empty list>
       PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')

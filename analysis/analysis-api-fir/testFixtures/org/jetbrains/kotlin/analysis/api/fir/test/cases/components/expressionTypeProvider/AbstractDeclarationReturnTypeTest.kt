@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionTy
 import org.jetbrains.kotlin.analysis.api.expressions.returnType
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.dropBackingPsi
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.hasBuiltFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.isContextParameterOfType
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
@@ -38,8 +39,11 @@ abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiBasedTest(
                             append(" : ")
                             append(returnType)
 
-                            // Function type parameters have no symbol
-                            val symbol = if (declaration is KtParameter && declaration.isFunctionTypeParameter) null else declaration.symbol
+                            // Parameters of types have no symbol
+                            val isParameterOfType = declaration is KtParameter &&
+                                    (declaration.isFunctionTypeParameter || declaration.isContextParameterOfType)
+
+                            val symbol = if (isParameterOfType) null else declaration.symbol
                             if (symbol is KaCallableSymbol) {
                                 val symbolReturnType = symbol.returnType.render(position = Variance.INVARIANT)
                                 if (symbolReturnType != returnType) {

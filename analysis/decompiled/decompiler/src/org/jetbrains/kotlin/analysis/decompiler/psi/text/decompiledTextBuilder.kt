@@ -191,7 +191,7 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
                     false
                 }
 
-                TypeReferencePosition.CONTEXT_RECEIVER -> {
+                TypeReferencePosition.CONTEXT_PARAMETER_WITHOUT_NAME -> {
                     val openParenthesisIsAdded = modifierList != null && hasPrinted {
                         withPrefix("(") {
                             withSuffix(" ") {
@@ -280,16 +280,7 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
                     }
                 }
                 is KtFunctionType -> {
-                    withSuffix(" ") {
-                        appendCollection(
-                            typeElement.contextReceiversTypeReferences,
-                            prefix = "context(",
-                            postfix = ")",
-                            skipIfEmpty = true
-                        ) {
-                            printTypeReference(it, position = TypeReferencePosition.CONTEXT_RECEIVER)
-                        }
-                    }
+                    withSuffix(" ") { process(typeElement.contextParameterList) }
 
                     withSuffix(".") {
                         typeElement.receiverTypeReference?.let {
@@ -524,9 +515,18 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
                 withSuffix(" ") { process(parameter.modifierList) }
             }
 
-            append(parameter.name?.quoteIfNeeded())
-            append(": ")
-            parameter.typeReference?.accept(this)
+            val name = parameter.name
+            if (name != null) {
+                append(name.quoteIfNeeded())
+                append(": ")
+                parameter.typeReference?.accept(this)
+            } else {
+                // A context parameter without a name is printed as its type
+                parameter.typeReference?.let {
+                    printTypeReference(it, position = TypeReferencePosition.CONTEXT_PARAMETER_WITHOUT_NAME)
+                }
+            }
+
             if (parameter.hasDefaultValue()) {
                 withPrefix(" = ") { process(parameter.defaultValue) }
             }
@@ -584,18 +584,8 @@ internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIn
         }
 
         override fun visitContextParameterList(contextParameterList: KtContextParameterList) {
-            val contextElements = contextParameterList.contextParameters.ifEmpty {
-                contextParameterList.contextReceivers()
-            }
-
-            appendCollection(contextElements, prefix = "context(", postfix = ")") {
+            appendCollection(contextParameterList.contextParameters, prefix = "context(", postfix = ")") {
                 process(it)
-            }
-        }
-
-        override fun visitContextReceiver(contextReceiver: KtContextReceiver) {
-            contextReceiver.typeReference()?.let {
-                printTypeReference(it, position = TypeReferencePosition.CONTEXT_RECEIVER)
             }
         }
 
@@ -745,6 +735,6 @@ private enum class TypeReferencePosition {
     REGULAR,
     DECLARATION_RECEIVER,
     FUNCTION_TYPE_RECEIVER,
-    CONTEXT_RECEIVER,
+    CONTEXT_PARAMETER_WITHOUT_NAME,
     ;
 }

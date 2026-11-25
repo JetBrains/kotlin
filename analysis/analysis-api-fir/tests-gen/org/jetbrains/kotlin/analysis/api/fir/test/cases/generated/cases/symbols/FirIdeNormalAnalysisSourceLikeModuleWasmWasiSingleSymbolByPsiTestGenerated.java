@@ -1012,9 +1012,21 @@ public class FirIdeNormalAnalysisSourceLikeModuleWasmWasiSingleSymbolByPsiTestGe
     }
 
     @Test
+    @TestMetadata("contextParameterWithoutNameOnFunction.kt")
+    public void testContextParameterWithoutNameOnFunction() {
+      run("contextParameterWithoutNameOnFunction.kt");
+    }
+
+    @Test
     @TestMetadata("contextParametersInTypes.kt")
     public void testContextParametersInTypes() {
       run("contextParametersInTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiverOnFunction.kt")
+    public void testContextReceiverOnFunction() {
+      run("contextReceiverOnFunction.kt");
     }
 
     @Test
@@ -1045,6 +1057,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleWasmWasiSingleSymbolByPsiTestGe
     @TestMetadata("functionWithContextReceivers.kt")
     public void testFunctionWithContextReceivers() {
       run("functionWithContextReceivers.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithMixedContextList.kt")
+    public void testFunctionWithMixedContextList() {
+      run("functionWithMixedContextList.kt");
     }
 
     @Test

@@ -229,8 +229,12 @@ abstract class KtClassOrObject :
                 !another.isLocal() &&
                 getClassId() == another.getClassId()
 
-    override fun getContextReceivers(): List<KtContextReceiver> =
-        modifierList?.contextParameterList?.contextReceivers().orEmpty()
+    @Deprecated(
+        message = "Use 'KtModifierList.getContextParameterList()' instead. Context receivers are parsed as context parameters without names.",
+        level = DeprecationLevel.WARNING,
+    )
+    @Suppress("DEPRECATION")
+    override fun getContextReceivers(): List<KtContextReceiver> = emptyList()
 }
 
 

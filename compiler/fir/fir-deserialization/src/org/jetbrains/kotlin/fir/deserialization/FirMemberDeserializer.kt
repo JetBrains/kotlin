@@ -621,6 +621,12 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
     }
 
+    /**
+     * Loads a legacy context receiver as a context parameter named `_`.
+     *
+     * The metadata has context receivers and no context parameters for a class, and for a callable compiled by K1 or before Kotlin 2.2.0.
+     * K2 writes context parameters to the metadata of callables since 2.2.0 (KT-74546).
+     */
     fun loadLegacyContextReceiver(
         proto: ProtoBuf.Type,
         origin: FirDeclarationOrigin,
@@ -634,7 +640,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.symbol = FirValueParameterSymbol()
             this.returnTypeRef = typeRef
             this.containingDeclarationSymbol = containingDeclarationSymbol
-            this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
+            this.valueParameterKind = FirValueParameterKind.ContextParameter
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         }
     }

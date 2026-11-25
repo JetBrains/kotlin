@@ -193,10 +193,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         if (declarationVisibility != EffectiveVisibility.Local) {
             returnTypeRef.coneType
                 .findVisibilityExposure(declarationVisibility)?.let {
-                    it.report(
-                        if (valueParameterKind == FirValueParameterKind.LegacyContextReceiver) FirErrors.EXPOSED_RECEIVER_TYPE else FirErrors.EXPOSED_PARAMETER_TYPE,
-                        source,
-                    )
+                    it.report(FirErrors.EXPOSED_PARAMETER_TYPE, source)
                     return
                 }
         }

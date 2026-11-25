@@ -101,6 +101,7 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val contextParameterListType: KtNodeType
         get() = KtStubElementTypes.CONTEXT_PARAMETER_LIST
 
+    @Suppress("DEPRECATION") // `CONTEXT_RECEIVER`
     override val contextReceiverType: KtNodeType
         get() = KtStubElementTypes.CONTEXT_RECEIVER
 

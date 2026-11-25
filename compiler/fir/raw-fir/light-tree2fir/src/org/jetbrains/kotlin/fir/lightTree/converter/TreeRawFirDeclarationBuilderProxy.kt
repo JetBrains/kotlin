@@ -2962,7 +2962,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     private fun Node.convertContextParameterTypesTo(destination: MutableList<FirTypeRef>) {
         forEachChildren {
             when (it.toTokenId()) {
-                KotlinSyntaxNodeTypeIds.CONTEXT_RECEIVER, KotlinSyntaxNodeTypeIds.VALUE_PARAMETER -> {
+                KotlinSyntaxNodeTypeIds.VALUE_PARAMETER -> {
                     val typeReference = it.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.TYPE_REFERENCE)
 
                     destination += typeReference?.let(::convertType)
@@ -3120,40 +3120,6 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                     containingDeclarationSymbol = containingDeclarationSymbol,
                     valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER
                 ).firValueParameter
-            }
-
-            // Legacy context receivers
-            contextList.getChildNodesByTokenId(KotlinSyntaxNodeTypeIds.CONTEXT_RECEIVER).mapTo(this) { contextReceiverElement ->
-                buildValueParameter {
-                    this.source = contextReceiverElement.toFirSourceElement()
-                    this.moduleData = baseModuleData
-                    this.origin = FirDeclarationOrigin.Source
-
-                    val customLabelName =
-                        contextReceiverElement
-                            .getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.LABEL_QUALIFIER)
-                            ?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.LABEL)
-                            ?.getChildNodeByTokenId(KotlinSyntaxTokenIds.IDENTIFIER)
-                            ?.getReferencedNameAsName()
-
-                    val typeReference = contextReceiverElement.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.TYPE_REFERENCE)
-
-                    val labelNameFromTypeRef = typeReference?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.USER_TYPE)
-                        ?.getChildNodeByTokenId(KotlinSyntaxNodeTypeIds.REFERENCE_EXPRESSION)
-                        ?.getReferencedNameAsName()
-
-                    // We're abusing the value parameter name for the label/type name of legacy context receivers.
-                    // Luckily, legacy context receivers are getting removed soon.
-                    this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-
-                    this.symbol = FirValueParameterSymbol()
-                    context.withContainerSymbol(this.symbol) {
-                        this.returnTypeRef = typeReference?.let { convertType(it) }
-                            ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Type missing") }
-                    }
-                    this.containingDeclarationSymbol = containingDeclarationSymbol
-                    this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
-                }
             }
         }
     }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.lang.Deprecated
 
 class KtStubElementTypesExternalIdTest {
     @Test
@@ -19,6 +20,9 @@ class KtStubElementTypesExternalIdTest {
     fun testExternalIds() {
         val serializationMapping = serializationMapping()
         for (declaredField in KtStubElementTypes::class.java.declaredFields) {
+            // Deprecated element types are kept only for compatibility and have no stubs
+            if (declaredField.isAnnotationPresent(Deprecated::class.java)) continue
+
             // Every Kotlin element type is a plain node type, its stub support is provided by a separately registered factory
             val elementType = declaredField.get(null) as KtNodeType
             val fieldName = declaredField.name

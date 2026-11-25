@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
@@ -31,7 +30,8 @@ public val KtDeclaration.symbol: KaDeclarationSymbol
  * so this function does not work for all possible [KtParameter]s.
  *
  * If [KtParameter.isFunctionTypeParameter] is `true`, i.e. if the given [KtParameter] is used as a function type parameter,
- * it is not possible to create [KaValueParameterSymbol], hence an error will be raised.
+ * it is not possible to create [KaValueParameterSymbol], hence an error will be raised. This includes a context parameter of
+ * a function type, as `String` in `context(String) () -> Unit`, even though [KtParameter.isContextParameter] is `true` for it.
  *
  * If [KtParameter.isLoopParameter] is `true`, i.e. if the given [KtParameter] is a loop variable in `for` expression, then the symbol is
  * [KaLocalVariableSymbol].
@@ -244,21 +244,6 @@ public val KtFile.symbol: KaFileSymbol
  */
 context(session: KaSession)
 public val KtScript.symbol: KaScriptSymbol
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.symbolProvider.symbol(this)
-    }
-
-/**
- * Represents [KtContextReceiver] as a [KaContextParameterSymbol].
- *
- * This is a temporary API for simplicity during the transition from context receivers to context parameters.
- *
- * **Note**: context receivers inside [KtFunctionType] are not supported.
- */
-@KaExperimentalApi
-context(session: KaSession)
-public val KtContextReceiver.symbol: KaContextParameterSymbol
     get() {
         @OptIn(KaImplementationDetail::class)
         return internals.symbolProvider.symbol(this)

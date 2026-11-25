@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -88,10 +87,6 @@ internal class KaSymbolProviderBridge(
         get() = context(analysisSession) { symbolEndpoint }
 
     override val KtScript.symbol: KaScriptSymbol
-        get() = context(analysisSession) { symbolEndpoint }
-
-    @KaExperimentalApi
-    override val KtContextReceiver.symbol: KaContextParameterSymbol
         get() = context(analysisSession) { symbolEndpoint }
 
     override fun findPackage(fqName: FqName): KaPackageSymbol? =

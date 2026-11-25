@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -23,15 +23,17 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  * fun log(message: String) {}
  * ```
  *
- * Deprecated in favor of context parameters.
+ * This class is obsolete: context receivers are parsed as context parameters without names, so every context parameter is a [KtParameter].
  */
+@Deprecated(
+    message = "Context receivers are parsed as context parameters without names, so every context parameter is a 'KtParameter'.",
+    level = DeprecationLevel.WARNING,
+)
+@Suppress("DEPRECATION")
 @OptIn(KtImplementationDetail::class)
-class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
+class KtContextReceiver : KtElementImplStub<KotlinPlaceHolderStub<KtContextReceiver>> {
     @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
-
-    @KtImplementationDetail
-    constructor(stub: KotlinContextReceiverStub) : super(stub, KtNodeTypes.CONTEXT_RECEIVER)
 
     override fun <R : Any?, D : Any?> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitContextReceiver(this, data)
@@ -47,18 +49,12 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
     /**
      * Returns the explicit label name, or `null` if this context receiver has no label.
      */
-    fun labelName(): String? {
-        stub?.let { return it.label }
-        return targetLabel()?.getReferencedName()
-    }
+    fun labelName(): String? = targetLabel()?.getReferencedName()
 
     /**
      * Returns the explicit label name as a [Name], or `null` if this context receiver has no label.
      */
-    fun labelNameAsName(): Name? {
-        stub?.let { stub -> return stub.label?.let { Name.identifier(it) } }
-        return targetLabel()?.getReferencedNameAsName()
-    }
+    fun labelNameAsName(): Name? = targetLabel()?.getReferencedNameAsName()
 
     /**
      * Returns the type reference of this context receiver, or `null` if it is absent in incomplete code.

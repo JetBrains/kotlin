@@ -108,8 +108,6 @@ final object org.jetbrains.kotlin.syntax/KotlinSyntaxNodeTypeIds { // org.jetbra
         final fun <get-CONSTRUCTOR_DELEGATION_REFERENCE>(): kotlin/Int // org.jetbrains.kotlin.syntax/KotlinSyntaxNodeTypeIds.CONSTRUCTOR_DELEGATION_REFERENCE.<get-CONSTRUCTOR_DELEGATION_REFERENCE>|<get-CONSTRUCTOR_DELEGATION_REFERENCE>(){}[0]
     final const val CONTEXT_PARAMETER_LIST // org.jetbrains.kotlin.syntax/KotlinSyntaxNodeTypeIds.CONTEXT_PARAMETER_LIST|{}CONTEXT_PARAMETER_LIST[0]
         final fun <get-CONTEXT_PARAMETER_LIST>(): kotlin/Int // org.jetbrains.kotlin.syntax/KotlinSyntaxNodeTypeIds.CONTEXT_PARAMETER_LIST.<get-CONTEXT_PARAMETER_LIST>|<get-CONTEXT_PARAMETER_LIST>(){}[0]
-    final const val CONTEXT_RECEIVER // org.jetbrains.kotlin.syntax/KotlinSyntaxNodeTypeIds.CONTEXT_RECEIVER|{}CONTEXT_RECEIVER[0]
-        final fun <get-CONTEXT_RECEIVER>(): kotlin/Int // org.jetbrains.kotlin.syntax/KotlinSyntaxNodeTypeIds.CONTEXT_RECEIVER.<get-CONTEXT_RECEIVER>|<get-CONTEXT_RECEIVER>(){}[0]
     final const val CONTINUE // org.jetbrains.kotlin.syntax/KotlinSyntaxNodeTypeIds.CONTINUE|{}CONTINUE[0]
         final fun <get-CONTINUE>(): kotlin/Int // org.jetbrains.kotlin.syntax/KotlinSyntaxNodeTypeIds.CONTINUE.<get-CONTINUE>|<get-CONTINUE>(){}[0]
     final const val CONTRACT_EFFECT // org.jetbrains.kotlin.syntax/KotlinSyntaxNodeTypeIds.CONTRACT_EFFECT|{}CONTRACT_EFFECT[0]

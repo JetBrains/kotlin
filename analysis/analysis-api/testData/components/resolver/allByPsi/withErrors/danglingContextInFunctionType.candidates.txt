@@ -221,7 +221,7 @@ KtTypeReference(113,125): 'context(Int)'
 KtContextReceiverList(113,125): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(121,124): 'Int'
+KtParameter(121,124): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(121,124): 'Int'
@@ -242,7 +242,7 @@ KtTypeReference(140,155): 'context(Int) ()'
 KtContextReceiverList(140,152): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(148,151): 'Int'
+KtParameter(148,151): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(148,151): 'Int'
@@ -263,7 +263,7 @@ KtTypeReference(170,187): 'context(Int) () -'
 KtContextReceiverList(170,182): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(178,181): 'Int'
+KtParameter(178,181): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(178,181): 'Int'
@@ -284,7 +284,7 @@ KtTypeReference(202,218): 'context(Int) Int'
 KtContextReceiverList(202,214): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(210,213): 'Int'
+KtParameter(210,213): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(210,213): 'Int'
@@ -311,7 +311,7 @@ KtTypeReference(241,261): 'context(Int) String?'
 KtContextReceiverList(241,253): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(249,252): 'Int'
+KtParameter(249,252): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(249,252): 'Int'
@@ -341,7 +341,7 @@ KtTypeReference(276,293): 'context(Int) Int.'
 KtContextReceiverList(276,288): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(284,287): 'Int'
+KtParameter(284,287): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(284,287): 'Int'
@@ -371,7 +371,7 @@ KtTypeReference(321,343): 'context(Int) (String).'
 KtContextReceiverList(321,333): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(329,332): 'Int'
+KtParameter(329,332): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(329,332): 'Int'
@@ -425,7 +425,7 @@ KtTypeReference(399,419): 'context(Int, String)'
 KtContextReceiverList(399,419): 'context(Int, String)'
   NO_CANDIDATES
 
-KtContextReceiver(407,410): 'Int'
+KtParameter(407,410): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(407,410): 'Int'
@@ -437,7 +437,7 @@ KtUserType(407,410): 'Int'
 KtNameReferenceExpression(407,410): 'Int'
   NO_CANDIDATES
 
-KtContextReceiver(412,418): 'String'
+KtParameter(412,418): 'String'
   NO_CANDIDATES
 
 KtTypeReference(412,418): 'String'
@@ -458,7 +458,7 @@ KtTypeReference(439,468): 'context(@Anno("1" + "2") Int)'
 KtContextReceiverList(439,468): 'context(@Anno("1" + "2") Int)'
   NO_CANDIDATES
 
-KtContextReceiver(447,467): '@Anno("1" + "2") Int'
+KtParameter(447,467): '@Anno("1" + "2") Int'
   NO_CANDIDATES
 
 KtTypeReference(447,467): '@Anno("1" + "2") Int'
@@ -685,7 +685,7 @@ KtDeclarationModifierList(494,501): 'suspend'
 KtContextReceiverList(502,514): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(510,513): 'Int'
+KtParameter(510,513): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(510,513): 'Int'
@@ -721,7 +721,7 @@ KtTypeReference(542,554): 'context(Int)'
 KtContextReceiverList(542,554): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(550,553): 'Int'
+KtParameter(550,553): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(550,553): 'Int'
@@ -745,7 +745,7 @@ KtTypeReference(577,589): 'context(Int)'
 KtContextReceiverList(577,589): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(585,588): 'Int'
+KtParameter(585,588): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(585,588): 'Int'
@@ -863,7 +863,7 @@ KtTypeReference(622,642): 'context(Int) String.'
 KtContextReceiverList(622,634): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(630,633): 'Int'
+KtParameter(630,633): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(630,633): 'Int'
@@ -908,7 +908,7 @@ KtTypeReference(672,692): 'context(Int) T & Any'
 KtContextReceiverList(672,684): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(680,683): 'Int'
+KtParameter(680,683): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(680,683): 'Int'
@@ -962,7 +962,7 @@ KtTypeReference(726,738): 'context(Int)'
 KtContextReceiverList(726,738): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(734,737): 'Int'
+KtParameter(734,737): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(734,737): 'Int'
@@ -1074,7 +1074,7 @@ KtTypeReference(771,795): 'context(Int) Int. = TODO'
 KtContextReceiverList(771,783): 'context(Int)'
   NO_CANDIDATES
 
-KtContextReceiver(779,782): 'Int'
+KtParameter(779,782): 'Int'
   NO_CANDIDATES
 
 KtTypeReference(779,782): 'Int'

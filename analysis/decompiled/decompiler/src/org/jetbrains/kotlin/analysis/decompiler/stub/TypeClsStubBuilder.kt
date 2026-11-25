@@ -126,7 +126,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 it.annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.extensionFunctionType
             }
 
-            val [contextReceiverAnnotations, otherAnnotations] = notExtensionAnnotations.partition {
+            val [contextAnnotations, otherAnnotations] = notExtensionAnnotations.partition {
                 it.annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams
             }
 
@@ -142,13 +142,13 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 nullableTypeParent(parent, type)
             }
 
-            val numContextReceivers = if (contextReceiverAnnotations.isEmpty()) {
+            val numContextParameters = if (contextAnnotations.isEmpty()) {
                 0
             } else {
-                contextReceiverAnnotations.first().annotationWithArgs.args[CONTEXT_FUNCTION_TYPE_PARAMS_ARGUMENT_NAME]?.value as? Int
+                contextAnnotations.first().annotationWithArgs.args[CONTEXT_FUNCTION_TYPE_PARAMS_ARGUMENT_NAME]?.value as? Int
                     ?: error("Error: can't get type parameter count from ${StandardNames.FqNames.contextFunctionTypeParams}")
             }
-            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers, abbreviatedType)
+            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextParameters, abbreviatedType)
 
             return
         }
@@ -270,7 +270,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         type: Type,
         isExtensionFunctionType: Boolean,
         isSuspend: Boolean,
-        numContextReceivers: Int,
+        numContextParameters: Int,
         abbreviatedType: KotlinClassTypeBean?,
     ) {
         val typeArgumentList = type.argumentList
@@ -281,14 +281,14 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         var processedTypes = 0
 
-        if (numContextReceivers != 0) {
-            createContextReceiverStubs(
-                functionType,
-                typeArgumentList.subList(
-                    processedTypes,
-                    processedTypes + numContextReceivers
-                ).map { it.type(c.typeTable)!! })
-            processedTypes += numContextReceivers
+        if (numContextParameters != 0) {
+            createContextParameterStubsWithoutNames(
+                parent = functionType,
+                contextParameterTypes = typeArgumentList
+                    .subList(fromIndex = 0, toIndex = numContextParameters)
+                    .map { it.type(c.typeTable)!! },
+            )
+            processedTypes += numContextParameters
         }
 
         if (isExtensionFunctionType) {
@@ -641,16 +641,34 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 this.nullable
     }
 
-    fun createContextReceiverStubs(parent: StubElement<*>, contextReceiverTypes: List<Type>) {
-        if (contextReceiverTypes.isEmpty()) return
-        val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
+    /**
+     * Creates a context parameter list with a parameter without a name for each of the [contextParameterTypes].
+     *
+     * Used for the context parameters of function types, which never have names, and for legacy context receivers: those
+     * of classes, and those of callables in old metadata without context parameters.
+     */
+    fun createContextParameterStubsWithoutNames(parent: StubElement<*>, contextParameterTypes: List<Type>) {
+        if (contextParameterTypes.isEmpty()) return
+        val contextParameterListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
             parent = parent,
             elementType = KtNodeTypes.CONTEXT_PARAMETER_LIST,
         )
 
-        for (contextReceiverType in contextReceiverTypes) {
-            val contextReceiverStub = KotlinContextReceiverStubImpl(contextReceiverListStub, labelRef = null)
-            createTypeReferenceStub(contextReceiverStub, contextReceiverType)
+        for (contextParameterType in contextParameterTypes) {
+            val contextParameterStub = KotlinParameterStubImpl(
+                parent = contextParameterListStub,
+                fqNameRef = null,
+                name = null,
+                isMutable = false,
+                hasValOrVar = false,
+                hasDefaultValue = false,
+                functionTypeParameterName = null,
+                equalityBoundType = null,
+                kdocText = null,
+                constantInitializer = null,
+            )
+
+            createTypeReferenceStub(contextParameterStub, contextParameterType)
         }
     }
 }

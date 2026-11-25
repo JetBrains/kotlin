@@ -1,5 +1,14 @@
 element: e
 implicit values:
+  KaScopeImplicitArgumentValue:
+    scopeIndexInTower = 1
+    type = KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Context
+    symbol = KaContextParameterSymbol:
+      <no name provided>: Context
+
 scopes:
   LocalScope, index = 0
     packages: 0
@@ -7,19 +16,45 @@ scopes:
     callables: 0
     constructors: 0
 
-  LocalScope, index = 1
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 1
+      KaContextParameterSymbol:
+        anchorPsi: KtParameter
+        annotations: []
+        callableId: null
+        contextParameters: []
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isDelegated: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <no name provided>
+        origin: SOURCE
+        psi: KtParameter
+        realPsi: KtParameter
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Context
+        typeParameters: []
+        visibility: PUBLIC
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 3
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  ExplicitSimpleImportingScope, index = 2
-    packages: 0
-    classifiers: 0
-    callables: 0
-    constructors: 0
-
-  PackageMemberScope, index = 3
+  PackageMemberScope, index = 4
     packages: 6
       KaPackageSymbol:
         anchorPsi: PsiPackage(META-INF)
@@ -100,7 +135,7 @@ scopes:
         callableId: /test
         contextParameters: [
           KaContextParameterSymbol:
-            anchorPsi: KtContextReceiver
+            anchorPsi: KtParameter
             annotations: []
             callableId: null
             contextParameters: []
@@ -114,10 +149,10 @@ scopes:
             isVal: true
             location: LOCAL
             modality: FINAL
-            name: Context
+            name: <no name provided>
             origin: SOURCE
-            psi: KtContextReceiver
-            realPsi: KtContextReceiver
+            psi: KtParameter
+            realPsi: KtParameter
             receiverParameter: null
             returnType: KaUsualClassType:
               annotations: []
@@ -128,7 +163,7 @@ scopes:
         ]
         contextReceivers: [
           KaContextReceiver:
-            label: Context
+            label: <no name provided>
             type: KaUsualClassType:
               annotations: []
               typeArguments: []
@@ -165,14 +200,14 @@ scopes:
         visibility: PUBLIC
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 4
-
   DefaultSimpleImportingScope, index = 5
 
-  ExplicitStarImportingScope, index = 6
+  DefaultSimpleImportingScope, index = 6
+
+  ExplicitStarImportingScope, index = 7
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
-  DefaultStarImportingScope, index = 7
+  DefaultStarImportingScope, index = 8

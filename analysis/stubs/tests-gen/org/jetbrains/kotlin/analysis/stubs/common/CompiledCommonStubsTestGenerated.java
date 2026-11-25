@@ -2482,6 +2482,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     }
 
     @Test
+    @TestMetadata("labelInDeclarationContext.kt")
+    public void testLabelInDeclarationContext() {
+      run("labelInDeclarationContext.kt");
+    }
+
+    @Test
     @TestMetadata("labelInFunctionTypeContext.kt")
     public void testLabelInFunctionTypeContext() {
       run("labelInFunctionTypeContext.kt");

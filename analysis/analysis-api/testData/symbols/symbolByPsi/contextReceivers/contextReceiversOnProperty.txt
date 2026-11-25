@@ -37,7 +37,7 @@ KaKotlinPropertySymbol:
   callableId: /y
   contextParameters: [
     KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -51,10 +51,10 @@ KaKotlinPropertySymbol:
       isVal: true
       location: LOCAL
       modality: FINAL
-      name: Int
+      name: <no name provided>
       origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -68,7 +68,7 @@ KaKotlinPropertySymbol:
       deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
-      anchorPsi: KtContextReceiver
+      anchorPsi: KtParameter
       annotations: []
       callableId: null
       contextParameters: []
@@ -82,10 +82,10 @@ KaKotlinPropertySymbol:
       isVal: true
       location: LOCAL
       modality: FINAL
-      name: s
+      name: <no name provided>
       origin: SOURCE
-      psi: KtContextReceiver
-      realPsi: KtContextReceiver
+      psi: KtParameter
+      realPsi: KtParameter
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []
@@ -101,13 +101,13 @@ KaKotlinPropertySymbol:
   ]
   contextReceivers: [
     KaContextReceiver:
-      label: Int
+      label: <no name provided>
       type: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
     KaContextReceiver:
-      label: s
+      label: <no name provided>
       type: KaUsualClassType:
         annotations: []
         typeArguments: []

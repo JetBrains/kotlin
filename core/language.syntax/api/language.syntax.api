@@ -57,7 +57,6 @@ public final class org/jetbrains/kotlin/syntax/KotlinSyntaxNodeTypeIds {
 	public static final field CONSTRUCTOR_DELEGATION_CALL I
 	public static final field CONSTRUCTOR_DELEGATION_REFERENCE I
 	public static final field CONTEXT_PARAMETER_LIST I
-	public static final field CONTEXT_RECEIVER I
 	public static final field CONTINUE I
 	public static final field CONTRACT_EFFECT I
 	public static final field CONTRACT_EFFECT_LIST I

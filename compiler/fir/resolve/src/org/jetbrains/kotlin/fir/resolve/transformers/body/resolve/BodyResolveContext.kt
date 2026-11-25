@@ -318,11 +318,7 @@ class BodyResolveContext(
         type: ConeKotlinType?,
         f: () -> T
     ): T = withTowerDataCleanup {
-        val contextParameters = owner.contextParameters.mapNotNull { receiver ->
-            runIf(!receiver.isLegacyContextReceiver()) {
-                ImplicitContextParameterValue(receiver.symbol, receiver.returnTypeRef.coneType)
-            }
-        }
+        val contextParameters = owner.contextParameters.map { ImplicitContextParameterValue(it.symbol, it.returnTypeRef.coneType) }
 
         replaceTowerDataContext(towerDataContext.addContextGroups(contextParameters))
 
@@ -1008,7 +1004,7 @@ class BodyResolveContext(
     }
 
     fun storeValueParameterIfNeeded(valueParameter: FirValueParameter, session: FirSession) {
-        if (!valueParameter.isLegacyContextReceiver() && valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) {
+        if (valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) {
             storeVariable(valueParameter, session)
         }
     }

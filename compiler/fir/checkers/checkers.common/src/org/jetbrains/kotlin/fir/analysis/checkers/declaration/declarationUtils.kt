@@ -151,7 +151,6 @@ fun FirNamedFunctionSymbol.checkValueParameterNamesWith(
     checkValueParameterNamesWith(contextParameterSymbols, otherFunctionSymbol.contextParameterSymbols, reportAction)
 }
 
-@OptIn(SymbolInternals::class)
 private fun checkValueParameterNamesWith(
     symbols: List<FirValueParameterSymbol>,
     otherSymbols: List<FirValueParameterSymbol>,
@@ -160,7 +159,6 @@ private fun checkValueParameterNamesWith(
     val valueParameterPairs = symbols.zip(otherSymbols)
     for ([index, valueParameterPair] in valueParameterPairs.withIndex()) {
         val [currentValueParameter, otherValueParameter] = valueParameterPair
-        if (currentValueParameter.fir.isLegacyContextReceiver() || otherValueParameter.fir.isLegacyContextReceiver()) continue
         if (currentValueParameter.name != otherValueParameter.name) {
             reportAction(currentValueParameter, otherValueParameter, index)
         }
