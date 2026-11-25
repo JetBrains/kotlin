@@ -128,8 +128,11 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
      * Checks clashing with already generated constructors (regular or static functions).
      * The generated constructors don't have vararg parameters, so don't check them.
      */
-    private inline fun <reified T : FirFunction> MutableList<FirFunction>.checkClashing(valueParametersCount: Int): Boolean {
-        return any { it is T && it.symbol.checkParametersClashing(valueParametersCount) }
+    private inline fun <reified T : FirFunction> MutableList<FirFunction>.checkClashing(
+        valueParametersCount: Int,
+        extraCheck: (T) -> Boolean = { true },
+    ): Boolean {
+        return any { it is T && it.symbol.checkParametersClashing(valueParametersCount) && extraCheck(it) }
     }
 
     /**
@@ -243,7 +246,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         } else {
             // In Kotlin, static factory functions should be generated in companion objects.
             if (!classSymbol.isCompanion && !hasJavaOrigin) return
-            if (checkClashing<FirNamedFunction>(valuesParameterCount)) return
+            if (checkClashing<FirNamedFunction>(valuesParameterCount) { it.name == staticName }) return
             if (staticFactoryNameIsTaken(targetClassSymbol)) return
 
             val methodSymbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, staticName))

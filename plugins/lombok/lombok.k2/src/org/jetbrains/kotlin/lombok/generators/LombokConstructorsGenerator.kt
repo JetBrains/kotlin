@@ -87,7 +87,7 @@ class LombokConstructorsGenerator(session: FirSession) :
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner ?: return emptyList()
-        return cache.getValue(owner, context)?.filterIsInstance<FirNamedFunctionSymbol>().orEmpty()
+        return cache.getValue(owner, context)?.filter { it.callableId == callableId }?.filterIsInstance<FirNamedFunctionSymbol>().orEmpty()
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
