@@ -107,7 +107,9 @@ from green when parked.
 
 Why parked: the cost curve (~+800 lines, correctness subtleties
 surfacing per gate beat) outweighed a payoff that is deferred — the
-win only materializes at real-Compose-module scale (upstream-blocked);
+win only materializes at real-Compose-module scale (the Compose
+runtime now links in both arms — see §10 — so nothing upstream
+blocks a real-scale delta);
 demo-scale deltas are already 38–49 KB, under the 50 KB gate. Resume
 when real-scale need returns; everything learned is in the branch.
 
@@ -234,8 +236,40 @@ kotlin-test klib links and runs identically in hot and plain arms
 runtime side needed only a runner fix (library modules keep their
 real artifact name, `kotlin-<name>.wasm` — the app module alone is
 `_<name>_.wasm`). Plain third-party klibs are FINE in hot links:
-nothing blocks production apps on this front, and the Compose story
-reduces to the §8 upstream blocker alone.
+nothing blocks production apps on this front.
+
+The same class of misdiagnosis briefly became "the Compose runtime
+klibs don't deserialize on our dist" (every Maven
+`runtime-wasm-js` 1.6–1.10 failing with `Inline class has no field:
+MultiValueMap`). RETRACTED: the compose runtime's `depends` list is
+resolved by klib `unique_name`, and the CLI's flat `-libraries` has
+no transitive resolution — one missing dep (`androidx.collection:
+collection` vs the differently-named `collection-internal`, or
+browser/annotation-internal) makes the partial-linkage machinery
+stub the unresolved module's classes WITHOUT the backing property,
+and the wasm backend then dies on the stub. With the FULL closure
+(`org.jetbrains.compose.runtime:runtime-wasm-js:1.9.3` even
+REDIRECTS to androidx 1.9.4; its pins: coroutines 1.8.1, browser
+0.3, atomicfu 0.27.0, androidx.collection 1.5.0) every version
+links and runs on our dist in BOTH arms — including the originally
+"broken" 1.8.0. The deserializer was never at fault. (A KGP-style
+`-Xinclude=<classesDir>` link is the sanity check: gradle builds
+the same klibs fine.)
+
+**The Compose macrobenchmark, milestone-1 harness (runtime +
+coroutines, headless composition driven from JS; wasm-js, node
+25, 3-run medians).** Plain monolith: 4,824,239 B raw / 1,059,704 B
+gz; recomposition (`bumpRemembered`) 189 ns, invalidation
+(`__hot_invalidate`) 127 ns. Hot image (10 module instances, base =
+hot stdlib): 13,229,688 B raw / 2,968,707 B gz = 2.7×/2.8×;
+recomposition 965 ns = **5.1×**, invalidation 811 ns = **6.4×**.
+The gap dwarfs the fib bench's 1.5–1.6× because this workload is
+cross-module state traffic: every `mutableStateOf` read/write and
+every runtime call is a fdefn-cell hop across module instances, and
+state fields run the layout-checked slot-value path — the encoding
+overhead compounds per access, not per call site. The raw-size gap
+is partly "no DCE in the hot image" (each library module ships its
+whole library), not encoding overhead alone.
 
 ## Operational notes
 
