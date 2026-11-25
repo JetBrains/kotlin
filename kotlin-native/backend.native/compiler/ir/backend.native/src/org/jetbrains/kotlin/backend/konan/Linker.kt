@@ -158,9 +158,15 @@ internal class Linker(
         val [executablePath, produceKindFlags] = resolveExecutableTarget(outputFile).also {
             prepareFileSystem(it.path)
         }
+        // The framework must contain all classes and adapters of its Objective-C export caches, as it would without caches.
+        // A static library is assembled by libtool, which copies every member of the archives it is given. A dynamic link
+        // only pulls in the archive members that something references, so it force-loads the caches.
         val objcCacheArchives = config.objCCaches.values.map { it.binaryPath }.distinct()
-        val isStaticLibrary = linkerOutput == LinkerOutputKind.STATIC_LIBRARY
-        val objcCacheFlags = if (isStaticLibrary) emptyList() else objcCacheArchives.flatMap { listOf("-force_load", it) }
+        val [objcCacheStaticLibraries, objcCacheFlags] = if (linkerOutput == LinkerOutputKind.STATIC_LIBRARY) {
+            objcCacheArchives to emptyList()
+        } else {
+            emptyList<String>() to objcCacheArchives.flatMap { listOf("-force_load", it) }
+        }
 
         val driverLinkerFlags = config.configuration.getNotNull(NativeConfigurationKeys.LINKER_ARGS)
                 .asLinkerArgs(linker.useCompilerDriverAsLinker)
@@ -171,8 +177,7 @@ internal class Linker(
                     tempFiles = tempFiles,
                     objectFiles = objectFiles,
                     executable = executablePath,
-                    staticLibraries = linker.linkStaticLibraries(includedBinaries) + caches.static +
-                            if (isStaticLibrary) objcCacheArchives else emptyList(),
+                    staticLibraries = linker.linkStaticLibraries(includedBinaries) + caches.static + objcCacheStaticLibraries,
                     dynamicLibraries = caches.dynamic,
                     linkerArgs = linkerArgs,
                     optimize = optimize,
