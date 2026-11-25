@@ -18,6 +18,4 @@ object KotlinSyntaxIdSets {
         KotlinSyntaxTokenIds.INTERNAL_MODIFIER,
         KotlinSyntaxTokenIds.PROTECTED_MODIFIER,
     )
-
-    val VAL_VAR: SyntaxIdSet = SyntaxIdSet.of(KotlinSyntaxTokenIds.VAL_KEYWORD, KotlinSyntaxTokenIds.VAR_KEYWORD)
 }

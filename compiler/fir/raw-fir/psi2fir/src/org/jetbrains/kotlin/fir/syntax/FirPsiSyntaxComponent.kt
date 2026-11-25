@@ -113,7 +113,8 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
     }
 
     override fun KtSourceElement.findValOrVarKeywordSource(): KtSourceElement? {
-        return (unwrap().psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.toKtPsiSourceElement()
+        // Not `KtValVarKeywordOwner.valOrVarKeyword`: for a destructuring declaration entry, it returns the keyword of the whole declaration
+        return unwrap().psi.node?.findChildByType(KtTokens.VAL_VAR)?.psi?.toKtPsiSourceElement()
     }
 
     override fun KtSourceElement.findExplicitReceiverOfDotQualifiedSource(): KtSourceElement? {
