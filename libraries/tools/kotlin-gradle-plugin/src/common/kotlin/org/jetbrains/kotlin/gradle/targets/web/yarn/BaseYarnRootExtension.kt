@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.*
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.npm.ObsoleteNpmDependencyModel
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.userKotlinPersistentDir
 import org.jetbrains.kotlin.internal.KgpBuildConstants
 import java.io.File
 
@@ -57,10 +58,13 @@ abstract class BaseYarnRootExtension internal constructor(
         project.logger.kotlinInfo("Storing cached files in $it")
     }
 
+    private val yarnMutexFile = project.userKotlinPersistentDir.resolve("yarn/mutex")
+
     override val packageManager: Yarn by lazy {
         Yarn(
             objects = objects,
             execOps = execOps,
+            mutexFile = yarnMutexFile,
         )
     }
 
