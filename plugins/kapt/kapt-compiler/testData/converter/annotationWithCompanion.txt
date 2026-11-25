@@ -31,6 +31,17 @@ public abstract @interface Foo {
      *   @kotlin/jvm/JvmStatic
      *   public final fun create(value: kotlin/String): Foo
      *
+     *   // field: CONST:I
+     *   public final const val CONST: kotlin/Int (* = ... *)
+     *     public final get
+     *
+     *   // field: named:Ljava/lang/String;
+     *   // getter: getNamed()Ljava/lang/String;
+     *   // synthetic method for annotations: getNamed$annotations()V
+     *   @kotlin/jvm/JvmStatic
+     *   public final val named: kotlin/String
+     *     public final get
+     *
      *   // module name: main
      * }
      */
@@ -47,14 +58,21 @@ public abstract @interface Foo {
         java.lang.String value) {
             return null;
         }
-    }
+        public static final int CONST = 42;
 
-    @kotlin.jvm.JvmStatic()
-    @org.jetbrains.annotations.NotNull()
-    public static Foo create(@org.jetbrains.annotations.NotNull()
-    java.lang.String value) {
-        return null;
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getNamed() {
+            return null;
+        }
+
+        @kotlin.jvm.JvmStatic()
+        @java.lang.Deprecated()
+        public static void getNamed$annotations() {
+        }
+        @org.jetbrains.annotations.NotNull()
+        private static final java.lang.String named = "x";
     }
+    public static final int CONST = 42;
     @org.jetbrains.annotations.NotNull()
     public static final Foo.Companion Companion = null;
 }
