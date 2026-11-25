@@ -1,5 +1,4 @@
 // ISSUE: KT-67517
-// LANGUAGE: +AvoidWrongOptimizationOfTypeOperatorsOnValueClasses
 
 inline class X(val x: String)
 inline class Y(val x: Int)
