@@ -188,7 +188,7 @@ public interface JsCompilerLinkingArguments : JsCompilerArguments,
     @JvmField
     @ExperimentalCompilerArgument
     public val X_IR_PER_CLASS: JsCompilerLinkingArgument<Boolean> =
-        JsCompilerLinkingArgument("X_IR_PER_CLASS", KotlinReleaseVersion(2, 5, 0))
+        JsCompilerLinkingArgument("X_IR_PER_CLASS", KotlinReleaseVersion(2, 5, 20))
 
     /**
      * Generate one .js file per source file.
