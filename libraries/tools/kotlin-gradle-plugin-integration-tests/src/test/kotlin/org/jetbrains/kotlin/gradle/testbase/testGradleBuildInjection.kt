@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -100,10 +100,14 @@ class OnBuildCompletionSerializingInjection<Return : Any>(
 
 /**
  * Serializes build failure as [CaughtBuildFailure] (or [CaughtBuildFailure.UnexpectedMissingBuildFailure] is there was no failure) upon build completion
+ *
+ * The expected exception class is passed by [name][Class.name]: serializing a [Class] writes descriptors of its whole hierarchy, which fails to
+ * deserialize when a Gradle API class in it (for example [org.gradle.api.GradleException]) has a different `serialVersionUID` in the tested Gradle
+ * version than in the Gradle version in the repo which compiles injected build scripts.
  */
 class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
     val serializedReturnPath: File,
-    val expectedExceptionClass: Class<ExpectedException>,
+    val expectedExceptionClassName: String,
 ) : GradleBuildScriptInjection<Project> {
     class CatchBuildFailure : FlowAction<CatchBuildFailure.Parameters> {
         interface Parameters : FlowParameters {
@@ -122,6 +126,12 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
     }
 
     override fun inject(target: Project) {
+        @Suppress("UNCHECKED_CAST")
+        val expectedExceptionClass = Class.forName(
+            expectedExceptionClassName,
+            false,
+            FindMatchingBuildFailureInjection::class.java.classLoader,
+        ) as Class<ExpectedException>
         val serializeOutput: (Throwable?) -> Unit = { topLevelException ->
             val toSerialize = if (topLevelException == null) {
                 CaughtBuildFailure.UnexpectedMissingBuildFailure()
@@ -131,7 +141,7 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
                     expectedExceptionClass
                 )
                 if (matchingExceptions.isNotEmpty()) {
-                    CaughtBuildFailure.Expected(matchingExceptions)
+                    CaughtBuildFailure.Expected.of(matchingExceptions)
                 } else {
                     CaughtBuildFailure.Unexpected(topLevelException.fullMessage)
                 }
@@ -373,15 +383,43 @@ internal fun <T : Any> TestProject.providerBuildScriptReturn(
 }
 
 sealed class CaughtBuildFailure<ExpectedException : Throwable> : Serializable {
-    data class Expected<ExpectedException : Throwable>(val matchedExceptions: Set<ExpectedException>) :
-        CaughtBuildFailure<ExpectedException>()
+    class Expected<ExpectedException : Throwable>(
+        val matchedExceptionSummaries: Set<ExceptionSummary>,
+        private val serializedMatchedExceptions: ByteArray,
+    ) : CaughtBuildFailure<ExpectedException>() {
+        fun matchedExceptions(): Set<ExpectedException> = ObjectInputStream(serializedMatchedExceptions.inputStream()).use {
+            @Suppress("UNCHECKED_CAST")
+            it.readObject() as Set<ExpectedException>
+        }
+
+        companion object {
+            internal fun <ExpectedException : Throwable> of(matchedExceptions: Set<ExpectedException>): Expected<ExpectedException> {
+                val serializedMatchedExceptions = ByteArrayOutputStream()
+                ObjectOutputStream(serializedMatchedExceptions).use { it.writeObject(matchedExceptions) }
+                return Expected(
+                    matchedExceptions.mapTo(mutableSetOf()) { ExceptionSummary(it.javaClass.name, it.message) },
+                    serializedMatchedExceptions.toByteArray(),
+                )
+            }
+        }
+    }
+
+    data class ExceptionSummary(val className: String, val message: String?) : Serializable
 
     data class Unexpected<ExpectedException : Throwable>(val stackTraceDump: String) : CaughtBuildFailure<ExpectedException>()
     class UnexpectedMissingBuildFailure<ExpectedException : Throwable> : CaughtBuildFailure<ExpectedException>()
 
-    fun unwrap(): Set<ExpectedException> {
+    fun unwrap(): Set<ExpectedException> = expected().matchedExceptions()
+
+    /**
+     * Same as [unwrap], but returns only summaries of the matched exceptions. Use it when the expected exception is a Gradle API class
+     * to avoid serialization error.
+     */
+    fun unwrapSummaries(): Set<ExceptionSummary> = expected().matchedExceptionSummaries
+
+    private fun expected(): Expected<ExpectedException> {
         return when (this) {
-            is Expected<ExpectedException> -> matchedExceptions
+            is Expected<ExpectedException> -> this
             is Unexpected<ExpectedException> -> error(stackTraceDump)
             is UnexpectedMissingBuildFailure<ExpectedException> -> error(
                 """
@@ -406,9 +444,9 @@ internal inline fun <reified T : Exception> TestProject.catchBuildFailures(): Re
     return buildScriptReturnInjection(
         insertInjection = String::insertBlockToBuildScriptAfterPluginsAndImports,
         injectionProvider = { serializedReturnPath ->
-            FindMatchingBuildFailureInjection(
+            FindMatchingBuildFailureInjection<T>(
                 serializedReturnPath,
-                T::class.java,
+                T::class.java.name,
             )
         },
         returnObjectProvider = { serializedReturnPath, injectionIdentifier ->
