@@ -136,6 +136,7 @@ abstract class KotlinIrLinker(
     // In case if a symbol was asked after deserialization, we would like to make sure that it is correctly and fully linked.
     private var finished = false
 
+    // TODO(KT-90301): Drop this function. Call `KotlinIrLinker.findAndEnqueueSymbolOrNull()` instead!
     @IrLinkerInternalApi
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
         idSignature: IdSignature,
@@ -146,61 +147,25 @@ abstract class KotlinIrLinker(
             "An attempt to run a lookup in IR linker for a signature that is supposed to be limited to the single file: ${idSignature::class.java.simpleName}, ${idSignature.render()}"
         }
 
-        val topLevelSignature: IdSignature = idSignature.topLevelSignature()
+        val signatureAndKind = SignatureAndKind(idSignature, symbolKind)
+        val symbol = findAndEnqueueSymbolOrNull(signatureAndKind)
 
-        // Note: The top-level symbol might be gone in newer version of dependency KLIB. Then the KLIB that was compiled against
-        // the older version of dependency KLIB will still have a reference to non-existing symbol. And the linker will have to
-        // handle such situation appropriately. See KT-41378.
-
-        var currentModuleIfSearched: IrModuleDeserializer? = null
-        var actualModuleDeserializer: IrModuleDeserializer? = null
-        if (moduleDeserializer.preferLinkingToTheCurrentModule) {
-            // First, look for the declaration in the current module (the module with a use-site of this signature).
-            // This influences how duplicated declarations are handled. Longer explanation:
-            //
-            // At first, this was done as an optimization. Any given symbol is most likely to be found in the same Klib as it is used from.
-            // So it made sense to check it first, only then iterate over all other Klibs.
-            // Now, with an introduction of package index (KT-84837), this optimization becomes mostly unnecessary. We expect it's OK to
-            // iterate over all Klibs to define a given package, as usually there should be only one or very few.
-            // So this logic could be removed. However, we keep it to preserve the old behavior when two Klibs define the same declaration
-            // (even though that behavior is very much imperfect) until we have a definite answer to this problem (KT-82172).
-            // Hence, this logic could be theoretically removed. However, we keep it to preserve the old behavior when two Klibs define the
-            // same declaration (even though the behavior is very much imperfect) until we have a definite answer to this problem (KT-82172).
-            // It goes like this: Assuming there are two Klibs, libA and libB, both defining a class C, then:
-            // - If both libA and libB reference class C, each will try to link to "their own" version of the class. In practice,
-            //      this will usually fail, with the second deserialization call failing with an exception like "Class C is already bound".
-            // - If only libA or libB reference class C, and that reference is the first one met by the linker, the corresponding version
-            //     of class C will be linked.
-            // - Otherwise, class C will be arbitrarily linked from either libA or libB.
-            if (topLevelSignature in moduleDeserializer) {
-                actualModuleDeserializer = moduleDeserializer
-            }
-            currentModuleIfSearched = moduleDeserializer
-        }
-        if (actualModuleDeserializer == null) {
-            actualModuleDeserializer = firstModuleDeserializerOrNull(topLevelSignature.packageFqName()) {
-                it != currentModuleIfSearched && topLevelSignature in it
+        // Note: This is a workaround that we need to maintain temporarily until signature indices are implemented for
+        // Kotlin/JS and Kotlin/Wasm (KT-89836) and the topo-sorting method is switched to KLIB DAG (KT-90301).
+        if (symbol != null) {
+            if (moduleDependencyTracker !== IrModuleDependencyTracker.DISABLED) {
+                val toModuleDeserializer = firstModuleDeserializerOrNull(idSignature.packageFqName()) { idSignature in it }
+                if (toModuleDeserializer != null) {
+                    moduleDependencyTracker.trackDependency(
+                        fromModule = moduleDeserializer.moduleFragment,
+                        toModule = toModuleDeserializer.moduleFragment
+                    )
+                }
             }
         }
 
-        // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
-        // Then the `actualModuleDeserializer` will be non-null, but `actualModuleDeserializer.tryDeserializeIrSymbol()` call
-        // might return null (like KonanInteropModuleDeserializer does) or non-null unbound symbol (like JsModuleDeserializer does).
-        val symbol: IrSymbol? = actualModuleDeserializer?.tryDeserializeIrSymbol(idSignature, symbolKind)
-
-        return if (symbol != null) {
-            moduleDependencyTracker.trackDependency(
-                fromModule = moduleDeserializer.moduleFragment,
-                toModule = actualModuleDeserializer.moduleFragment
-            )
-
-            symbol
-        } else
-            referenceDeserializedSymbol(symbolTable, null, symbolKind, idSignature)
+        return symbol ?: referenceDeserializedSymbol(symbolTable, signatureAndKind)
     }
-
-    private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? =
-        firstModuleDeserializerOrNull(idSignature.packageFqName()) { idSignature in it }
 
     /**
      * Returns the first module deserializer that may define declarations in the package [packageFqName]
@@ -276,7 +241,7 @@ abstract class KotlinIrLinker(
                 // Symbol could get bound as a side effect of deserializing other symbols.
                 if (!symbol.isBound && triedToDeserializeDeclarationForSymbol.add(symbol)) {
                     val signature = symbol.signature ?: continue
-                    getSymbolAndPutIntoQueue(signature, symbol.kind())
+                    findAndEnqueueSymbolOrNull(SignatureAndKind(signature, symbol.kind()))
                 }
             }
             deserializeAllReachableTopLevels()
@@ -284,61 +249,51 @@ abstract class KotlinIrLinker(
         } while (unbound != prevUnbound)
     }
 
-    private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): Boolean {
-        if (!triedToDeserializeDeclarationForSymbol.add(symbol)) return false
-
-        val signature = symbol.signature ?: return false
-        val moduleDeserializer = resolveModuleDeserializer(signature)
-            ?: return false
-        moduleDeserializer.declareIrSymbol(symbol)
-
-        deserializeAllReachableTopLevels()
-
-        return symbol.isBound
-    }
-
     protected open fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
 
-    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? =
-        deserializeOrResolveDeclaration(symbol)
-
-    private fun deserializeOrResolveDeclaration(symbol: IrSymbol): IrDeclaration? {
-        if (!symbol.isBound) {
-            try {
-                if (!findDeserializedDeclarationForSymbol(symbol)) return null
-            } catch (e: IrSymbolTypeMismatchException) {
-                SymbolTypeMismatch(e).raiseIssue(errorCallback)
-            }
+    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
+        if (!symbol.isBound && triedToDeserializeDeclarationForSymbol.add(symbol)) {
+            val signature = symbol.signature ?: return null
+            findAndEnqueueSymbolOrNull(SignatureAndKind(signature, symbol.kind()))
+            deserializeAllReachableTopLevels()
         }
 
-        if (!symbol.isBound) return null
-
-        //assert(symbol.isBound) {
-        //    "getDeclaration: symbol $symbol is unbound, descriptor = ${symbol.descriptor}, signature = ${symbol.signature}"
-        //}
-
-        return symbol.owner as IrDeclaration
+        return if (symbol.isBound) symbol.owner as IrDeclaration else null
     }
 
     /**
-     * Retrieves the symbol associated with the given signature and kind.
+     * Looks up the symbol with the given [signature] and [kind] in the modules known to this linker
+     * and schedules the corresponding declaration for deserialization.
      *
-     * It is guaranteed that the returned symbol is not null if such a symbol belongs to the module represented by the current deserializer.
-     * The returned symbol may be unbound (and put in the deserialization queue to be deserialized later).
+     * The symbol is taken from the first module that contains [signature].
+     * Whether the declaration is already deserialized when this function returns depends on the linkage phase:
+     * - Before [finalizeIrLinkage]: the declaration is only put into the deserialization queue, so the returned symbol
+     *   may be unbound. It becomes bound when the queue is processed, see [deserializeAllReachableTopLevels]
+     *   and [drainDeserializationQueue].
+     * - After [finalizeIrLinkage]: the queue is processed immediately, so the returned symbol is bound.
      *
-     * However, it is guaranteed that the returned symbol is always bound if [getSymbolAndPutIntoQueue] is called after the
-     * main part of the deserialization process has been finished, i.e. after [finalizeIrLinkage] was called.
-     *
-     * @return The symbol for the given signature and kind if successfully found; otherwise, null.
+     * @return The symbol, or `null` if none of the modules contains a declaration with the given [signature].
      */
     fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: BinarySymbolData.SymbolKind): IrSymbol? {
-        // TODO (KT-91417): Need to make it without an excessive IrModuleDeserializer.contains() call!
-        val moduleDeserializer = resolveModuleDeserializer(signature) ?: return null
-        return moduleDeserializer.tryDeserializeIrSymbol(signature, kind).also {
-            if (finished) deserializeAllReachableTopLevels()
-        }
+        val symbol = findAndEnqueueSymbolOrNull(SignatureAndKind(signature, kind))
+        if (symbol != null && finished) deserializeAllReachableTopLevels()
+        return symbol
     }
 
+    /**
+     * Looks up the symbol with the given [SignatureAndKind.signature] and [SignatureAndKind.kind] in the modules known to this linker
+     * and schedules the corresponding declaration for deserialization.
+     *
+     * The symbol is taken from the first module that contains [SignatureAndKind].
+     *
+     * @return The symbol, or `null` if none of the modules contains a declaration with the given [SignatureAndKind].
+     */
+    @IrLinkerInternalApi
+    fun findAndEnqueueSymbolOrNull(signatureAndKind: SignatureAndKind): IrSymbol? {
+        return firstNotNullOfModuleDeserializersOrNull(signatureAndKind.packageFqName) { moduleDeserializer ->
+            moduleDeserializer.findAndEnqueueSymbolOrNull(signatureAndKind)
+        }
+    }
 
     /**
      * Drops everything interned by [irInterner] during IR deserialization to free memory.
@@ -457,6 +412,32 @@ abstract class KotlinIrLinker(
  * a [SignatureAndKind] denotes exactly one declaration.
  */
 data class SignatureAndKind(val signature: IdSignature, val kind: BinarySymbolData.SymbolKind) {
+    val packageFqName: FqName get() = signature.packageFqName()
+
+    /**
+     * Compute the signature and the kind of the top-level declaration.
+     */
+    fun topLevel(): SignatureAndKind? {
+        if (signature.isLocal) return null
+
+        val propertyOrSelf = propertyIfAccessor() ?: this
+        val topLevelSignature = propertyOrSelf.signature.topLevelSignature()
+
+        return if (topLevelSignature == propertyOrSelf.signature)
+            propertyOrSelf
+        else
+            SignatureAndKind(topLevelSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL)
+    }
+
+    /**
+     * Return the signature and the kind representing a property if the current instance of [SignatureAndKind] represents an accessor.
+     */
+    fun propertyIfAccessor(): SignatureAndKind? {
+        return if (signature is IdSignature.AccessorSignature && kind == BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) {
+            SignatureAndKind(signature.propertySignature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL)
+        } else null
+    }
+
     override fun toString() = "${signature.render()}, kind=$kind"
 }
 

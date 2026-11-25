@@ -93,6 +93,12 @@ class IrSymbolDeserializer(
 
 fun referenceDeserializedSymbol(
     symbolTable: ReferenceSymbolTable,
+    signatureAndKind: SignatureAndKind,
+    fileSymbol: IrFileSymbol? = null,
+): IrSymbol = referenceDeserializedSymbol(symbolTable, fileSymbol, signatureAndKind.kind, signatureAndKind.signature)
+
+fun referenceDeserializedSymbol(
+    symbolTable: ReferenceSymbolTable,
     fileSymbol: IrFileSymbol?,
     symbolKind: BinarySymbolData.SymbolKind,
     idSig: IdSignature

@@ -151,7 +151,7 @@ class FileDeserializationState(
     val fileReader: IrLibraryFileFromBytes,
     fileProto: ProtoFile,
     settings: IrDeserializationSettings,
-    moduleDeserializer: IrModuleDeserializer
+    private val moduleDeserializer: IrModuleDeserializer
 ) {
     private val symbolDeserializer = IrSymbolDeserializer(
         symbolTable = linker.symbolTable,
@@ -243,7 +243,23 @@ class FileDeserializationState(
             val topLevelDeclarationSignature = reachableTopLevels.pollFirst() ?: break
 
             val topLevelDeclarationSymbol = symbolDeserializer.deserializedSymbolsWithOwnersInCurrentFile[topLevelDeclarationSignature]
-            if (topLevelDeclarationSymbol == null || !topLevelDeclarationSymbol.isBound) {
+
+            // TODO(KT-91417): This is a temporary workaround. The deserialization queue needs to be reworked.
+            val shouldDeserialize = when {
+                topLevelDeclarationSymbol == null -> {
+                    // It might happen that the same top-level signature is scheduled for the deserialization in another deserializer.
+                    // If that's the case, skip it in the current one.
+                    linker.allModuleDeserializers.none { md ->
+                        md != this.moduleDeserializer && (md as? BasicIrModuleDeserializer)
+                            ?.getFileDeserializationState(topLevelDeclarationSignature)
+                            ?.symbolDeserializer
+                            ?.deserializedSymbolsWithOwnersInCurrentFile?.get(topLevelDeclarationSignature) != null
+                    }
+                }
+                else -> !topLevelDeclarationSymbol.isBound
+            }
+
+            if (shouldDeserialize) {
                 // Perform actual deserialization:
                 fileDeserializer.deserializeDeclaration(topLevelDeclarationSignature)?.let {
                     // Enqueue the deserialized declaration to the PL engine for further processing.

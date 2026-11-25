@@ -63,6 +63,9 @@ abstract class BasicIrModuleDeserializer(
     protected val moduleReversedFileIndex: Map<IdSignature, FileDeserializationState>
         field = hashMapOf()
 
+    // TODO(KT-91417): This is a temporary workaround. The deserialization queue needs to be reworked.
+    internal fun getFileDeserializationState(signature: IdSignature): FileDeserializationState? = moduleReversedFileIndex[signature]
+
     protected val ir: KlibIrComponent get() = klib.irOrFail
 
     init {
@@ -99,6 +102,17 @@ abstract class BasicIrModuleDeserializer(
         }
     }
 
+    override fun findAndEnqueueSymbolOrNull(signatureAndKind: SignatureAndKind): IrSymbol? {
+        val topLevel = signatureAndKind.topLevel() ?: return null
+
+        val fileLocalDeserializationState = moduleReversedFileIndex[topLevel.signature] ?: return null
+
+        fileLocalDeserializationState.addIdSignature(topLevel.signature)
+        moduleDeserializationState.enqueueFile(fileLocalDeserializationState)
+
+        return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(signatureAndKind.signature, signatureAndKind.kind)
+    }
+
     // TODO: fix to topLevel checker
     override fun contains(idSig: IdSignature): Boolean = idSig.topLevelSignature() in moduleReversedFileIndex
 
@@ -110,10 +124,6 @@ abstract class BasicIrModuleDeserializer(
         moduleDeserializationState.enqueueFile(fileLocalDeserializationState)
 
         return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeSymbolWithOwnerInCurrentFile(idSig, symbolKind)
-    }
-
-    override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing {
-        error("No file for ${idSig.topLevelSignature()} (@ $idSig) in module ${moduleFragment.name}")
     }
 
     private fun deserializeIrFile(

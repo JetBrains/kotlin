@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.IrLinkerInternalApi
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.backend.common.serialization.TopLevelCallableIdAndKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -47,10 +48,24 @@ internal class KonanForwardDeclarationModuleDeserializer(
     private val declaredClasses = mutableMapOf<IdSignature.CommonSignature, IrClass?>()
     private val declaredPackageFragments = mutableMapOf<FqName, IrExternalPackageFragment>()
 
+    @IrLinkerInternalApi
+    override fun findAndEnqueueSymbolOrNull(signatureAndKind: SignatureAndKind): IrSymbol? {
+        val [signature, kind] = signatureAndKind
+
+        if (kind != BinarySymbolData.SymbolKind.CLASS_SYMBOL) return null
+
+        val packageFqName = (signature as? IdSignature.CommonSignature)?.packageFqName() ?: return null
+        if (packageFqName !in NativeForwardDeclarationKind.packageFqNameToKind) return null
+
+        return declaredClasses.computeIfAbsent(signature) {
+            buildForwardDeclarationClassStub(it)
+        }?.symbol
+    }
+
     override fun contains(idSig: IdSignature): Boolean =
         idSig is IdSignature.CommonSignature && idSig.packageFqName() in NativeForwardDeclarationKind.packageFqNameToKind
 
-    override val contributedPackageNames: Set<FqName> = NativeForwardDeclarationKind.entries.map { it.packageFqName }.toSet()
+    override val contributedPackageNames: Set<FqName> = NativeForwardDeclarationKind.packageFqNameToKind.keys
 
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
         require(symbolKind == BinarySymbolData.SymbolKind.CLASS_SYMBOL) {
@@ -112,8 +127,6 @@ internal class KonanForwardDeclarationModuleDeserializer(
             IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(descriptor), packageFqName, moduleFragment)
         }
     }
-
-    override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No forward declaration found for $idSig")
 
     @IrLinkerInternalApi
     override fun collectAllMatchingSignatures(
