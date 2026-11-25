@@ -1870,7 +1870,7 @@ class Fir2IrVisitor(
 
         return IrBlockImpl(startOffset, endOffset, resultType).apply {
             val [receiverVariable, variableSymbol] =
-                conversionScope.createTemporaryVariableForSafeCallConstruction(irArgumentExpression)
+                conversionScope.createTemporaryVariable(irArgumentExpression)
 
             statements += receiverVariable
             statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
