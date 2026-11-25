@@ -67,9 +67,9 @@ abstract class AbstractUniqueDeclarationIdGoldenTest : AbstractAnalysisApiBasedT
                 }
             }
             val unhashed = dumpDeclarationIds(mainModule.psiFiles, errorsByDeclaration, hashSignature = false)
-            assertEqualsToTestOutputFile(unhashed, ".txt", variantChain = dokkaJavaSymbolsVariantChain)
+            assertEqualsToTestOutputFile(unhashed, ".txt")
             val hashed = dumpDeclarationIds(mainModule.psiFiles, errorsByDeclaration, hashSignature = true)
-            assertEqualsToTestOutputFile(hashed, ".hashed.txt", variantChain = dokkaJavaSymbolsVariantChain)
+            assertEqualsToTestOutputFile(hashed, ".hashed.txt")
         }
     }
 
