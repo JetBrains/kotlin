@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
@@ -232,6 +231,7 @@ abstract class FirWebCommonExternalChecker(
         reporter.reportOn(source, FirWebCommonErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER)
     }
 
+    context(context: CheckerContext)
     private fun FirDeclaration.isDirectlyExternal(session: FirSession): Boolean {
         // source kind is checked, otherwise this function
         // may return true for a primary constructor of an external class

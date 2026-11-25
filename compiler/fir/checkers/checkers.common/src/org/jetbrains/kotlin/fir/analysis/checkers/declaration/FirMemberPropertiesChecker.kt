@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.extractModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -110,7 +110,7 @@ internal fun checkProperty(
     if (source.kind is KtFakeSourceElementKind) return
     // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
     // So, our source of truth should be the full modifier list retrieved from the source.
-    val modifierList = propertySymbol.source.getModifierList()
+    val modifierList = propertySymbol.source.extractModifierList()
 
     checkPropertyInitializer(
         containingDeclaration,
@@ -168,7 +168,7 @@ internal fun checkProperty(
 
 context(context: CheckerContext)
 fun shouldReportOpenInInterface(symbol: FirCallableSymbol<*>, containingClassSymbol: FirClassSymbol<*>): Boolean {
-    val modifierList = symbol.source.getModifierList()
+    val modifierList = symbol.source.extractModifierList()
     val hasAbstractModifier = KotlinSyntaxTokenIds.ABSTRACT_MODIFIER in modifierList
 
     return !hasAbstractModifier &&
