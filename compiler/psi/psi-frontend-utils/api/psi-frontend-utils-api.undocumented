@@ -10,7 +10,7 @@ org.jetbrains.kotlin.resolve.TargetAllowedPredicate
 org.jetbrains.kotlin.resolve.TargetAllowedPredicate.isAllowed(KotlinTarget, LanguageVersionSettings)
 org.jetbrains.kotlin.resolve.allowedInContextParameters
 org.jetbrains.kotlin.resolve.always(KotlinTarget, KotlinTarget)
-org.jetbrains.kotlin.resolve.compatibility(KtKeywordToken, KtKeywordToken)
+org.jetbrains.kotlin.resolve.compatibility(SyntaxId, SyntaxId)
 org.jetbrains.kotlin.resolve.defaultVisibilityTargetPredicate
 org.jetbrains.kotlin.resolve.deprecatedParentTargetMap
 org.jetbrains.kotlin.resolve.deprecatedTargetPredicateMap
