@@ -116,6 +116,9 @@ its test data file is both the input and the expected output, so the variants go
 (`[]`), the LL diagnostic tests are `[ll]`, `[ll, reversed]` and `[ll, partialBody]`; the chains of all configurations are in
 [compiler/testData/diagnostics/AGENTS.md](../../compiler/testData/diagnostics/AGENTS.md#updating-test-data).
 
+The dumps of such a test (`foo.fir.txt`, `foo.dot`, …) are managed with the same chain, the variant before the dump extension
+(`foo.reversed.fir.txt` → `foo.ll.fir.txt` → `foo.fir.txt`), via `ManagedTestData.assertEqualsToDump`.
+
 ### Convergence Loop
 
 Within each group, tests may update files that other tests depend on.

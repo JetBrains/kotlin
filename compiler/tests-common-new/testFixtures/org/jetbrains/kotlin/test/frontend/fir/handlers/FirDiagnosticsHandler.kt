@@ -91,20 +91,31 @@ class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
         val directives = testServices.moduleStructure.allDirectives
         if (TestDumpDirectives.DUMP_CLASSIFIER in directives) return
 
+        // A test implementing `ManagedTest` compares its variant of the dump, see `ManagedTestData.assertEqualsToDump`
+        val managedTestData = testServices.managedTestData
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutExtension.removeSuffix(".fir")}$expectedExtension")
 
         if (directive !in directives) {
             if (DiagnosticsDirectives.RENDER_ALL_DIAGNOSTICS_FULL_TEXT !in directives) {
-                testServices.assertions.assertFileDoesntExist(expectedFile, directive)
+                if (managedTestData != null) {
+                    managedTestData.assertEqualsToDump(expectedExtension, actual = null)
+                } else {
+                    testServices.assertions.assertFileDoesntExist(expectedFile, directive)
+                }
             }
             return
         }
-        if (dumper.isEmpty() && !expectedFile.exists()) {
+        val ownFile = managedTestData?.dumpWriteTargetFile(expectedExtension) ?: expectedFile
+        if (dumper.isEmpty() && !ownFile.exists()) {
             return
         }
         val resultDump = dumper.generateResultingDump()
-        testServices.assertions.assertEqualsToFile(expectedFile, resultDump)
+        if (managedTestData != null) {
+            managedTestData.assertEqualsToDump(expectedExtension, resultDump)
+        } else {
+            testServices.assertions.assertEqualsToFile(expectedFile, resultDump)
+        }
     }
 
     fun storeFullDiagnosticRender(module: TestModule, diagnostics: List<KtDiagnostic>, file: TestFile, testServices: TestServices) {

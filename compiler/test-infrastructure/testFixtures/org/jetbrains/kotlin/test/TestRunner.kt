@@ -288,6 +288,12 @@ class NonGroupingTestRunner(
             }
         }
 
+        // The dumps of a managed test are compared after all modules, from the same analysis as its meta-infos
+        services.managedTestData?.let { managedTestData ->
+            managedTestData.someModulesWereNotAnalyzed = someModulesWereNotAnalyzed
+            managedTestData.testCrashed = testCrashed()
+        }
+
         for ([handler, stepPhase] in allRanHandlers) {
             val wrapperFactory: (Throwable) -> WrappedException = { WrappedException.FromHandler(it, failedModule = null, handler, stepPhase) }
             failuresInterceptor.withAssertionCatching(wrapperFactory) {
@@ -299,13 +305,7 @@ class NonGroupingTestRunner(
         }
 
         if (testConfiguration.metaInfoHandlerEnabled) {
-            // A module which wasn't analyzed reports no meta-infos, even if the test expects the failure which stopped the pipeline.
-            // A failure of the test infrastructure (e.g., a misplaced handlers step) may skip the handlers which report them as well.
-            // Other failures the test expects (e.g., in a phase after the one it runs till) don't count.
-            val metaInfosMayBeIncomplete = someModulesWereNotAnalyzed || failuresInterceptor.allFailedExceptions.any { failure ->
-                failure.isTestInfrastructureFailure ||
-                        failure.isCrash && testConfiguration.failureSuppressors.none { it.isExpectedFailure(failure) }
-            }
+            val metaInfosMayBeIncomplete = someModulesWereNotAnalyzed || testCrashed()
             failuresInterceptor.withAssertionCatching(WrappedException::FromMetaInfoHandler) {
                 services.globalMetadataInfoHandler.compareAllMetaDataInfos(metaInfosMayBeIncomplete)
             }
@@ -317,6 +317,18 @@ class NonGroupingTestRunner(
             }
         }
     }
+
+    /**
+     * Whether a failure so far may leave the output of the test (meta-infos, dumps) incomplete: a failure of the test infrastructure (e.g., a
+     * misplaced handlers step) may skip the handlers which report it, a crash may skip the rest of the analysis. Failures the test expects
+     * (e.g., in a phase after the one it runs till) don't count. A module which wasn't analyzed ([someModulesWereNotAnalyzed]) reports
+     * nothing either, even if the test expects the failure which stopped the pipeline.
+     */
+    private fun testCrashed(): Boolean =
+        failuresInterceptor.allFailedExceptions.any { failure ->
+            failure.isTestInfrastructureFailure ||
+                    failure.isCrash && testConfiguration.failureSuppressors.none { it.isExpectedFailure(failure) }
+        }
 
     /*
      * Returns false if next modules should be not processed

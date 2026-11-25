@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.AnalysisHandlerBase
 import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.managedTestData
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
@@ -108,6 +110,9 @@ fun Assertions.assertEqualsToDump(
  * If the default dump file exists and matches [actualDump], this function ensures the classified dump file does not exist.
  * When [actualDump] does not match the default dump file, it is compared against the classified dump file.
  * If [actualDump] is `null`, this function ensures that the classified dump file does not exist.
+ *
+ * A test implementing `ManagedTest` compares its dump via [ManagedTestData.assertEqualsToDump][org.jetbrains.kotlin.test.services.ManagedTestData.assertEqualsToDump]
+ * instead: its variants follow the variant chain of the test rather than the classifier.
  */
 context(base: AnalysisHandlerBase<*>)
 fun assertEqualsToDump(
@@ -115,5 +120,32 @@ fun assertEqualsToDump(
     actualDump: String?,
     sanitizer: (String) -> String = { it },
 ) {
-    base.testServices.assertions.assertEqualsToDump(base.testServices.moduleStructure, extension, actualDump, sanitizer)
+    base.testServices.assertEqualsToDump(extension, actualDump, sanitizer)
+}
+
+/**
+ * Asserts that [actualDump] matches the dump of the test with the [extension], see [assertEqualsToDump].
+ * [dependsOnAnalysis] tells whether the dump of a test implementing `ManagedTest` comes from its analysis, see
+ * [ManagedTestData.assertEqualsToDump][org.jetbrains.kotlin.test.services.ManagedTestData.assertEqualsToDump].
+ */
+fun TestServices.assertEqualsToDump(
+    extension: String,
+    actualDump: String?,
+    sanitizer: (String) -> String = { it },
+    dependsOnAnalysis: Boolean = true,
+) {
+    val managedTestData = managedTestData
+    if (managedTestData != null) {
+        managedTestData.assertEqualsToDump(extension, actualDump, sanitizer, dependsOnAnalysis)
+    } else {
+        assertions.assertEqualsToDump(moduleStructure, extension, actualDump, sanitizer)
+    }
+}
+
+/**
+ * The dump of the test itself with the [extension], which [assertEqualsToDump] writes: the [classified][getClassifiedDumpFile] dump, or the
+ * variant of the dump of a test implementing `ManagedTest`.
+ */
+fun TestServices.getOwnDumpFile(extension: String): File {
+    return managedTestData?.dumpWriteTargetFile(extension) ?: moduleStructure.getClassifiedDumpFile(extension)
 }

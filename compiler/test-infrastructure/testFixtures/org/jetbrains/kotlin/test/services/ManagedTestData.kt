@@ -17,7 +17,8 @@ import java.io.File
 import java.nio.file.Path
 
 /**
- * Lets `checkTestData` and `updateTestData` manage the test data with inline diagnostics of a test implementing [ManagedTest].
+ * Lets `checkTestData` and `updateTestData` manage the test data with inline diagnostics of a test implementing [ManagedTest], and its
+ * dumps (see [assertEqualsToDump]).
  *
  * A variant of the test data is the base test data file with the variant before its extension, e.g., `foo.ll.kt` for the `ll`
  * variant of `foo.kt`. Such a file is both the input of the test and its expected output: [ManagedTestDataConfigurator] makes the
@@ -105,6 +106,59 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
      */
     val fallbackFile: File?
         get() = ManagedTestAssertions.findFallbackFile(baseTestDataFile.toPath(), variantChain, extension)?.toFile()
+
+    /**
+     * Whether the frontend didn't analyze some modules, e.g., the compiler stopped before the analysis. Set by the test runner before the
+     * handlers compare their dumps, see [assertEqualsToDump].
+     */
+    var someModulesWereNotAnalyzed: Boolean = false
+        internal set
+
+    /**
+     * Whether the test crashed in a way it doesn't expect, or the test infrastructure failed. Set by the test runner before the handlers
+     * compare their dumps, see [assertEqualsToDump].
+     */
+    var testCrashed: Boolean = false
+        internal set
+
+    /**
+     * The variant of the dump with the [dumpExtension] that [assertEqualsToDump] creates, updates or deletes, whether it exists or not, e.g.,
+     * `foo.ll.fir.txt` for `.fir.txt` and the `[ll]` variant chain.
+     */
+    fun dumpWriteTargetFile(dumpExtension: String): File = ManagedTestAssertions.getWriteTargetFile(
+        testDataPath = baseTestDataFile.toPath(),
+        variantChain = variantChain,
+        extension = dumpExtension,
+    ).toFile()
+
+    /**
+     * Compares [actual] with the dump of the test with the [dumpExtension], e.g., `.fir.txt`: the variants of the dump follow the variant
+     * chain of the test data, so the `[ll, reversed]` test compares with the first existing file of `foo.reversed.fir.txt`, `foo.ll.fir.txt`
+     * and `foo.fir.txt`, and writes only `foo.reversed.fir.txt`. The dump extension replaces the last extension of the test data, as for
+     * other outputs of managed tests, e.g., `1.1.fir.txt` for `1.1.kt` and `foo.kt.fir.txt` for `foo.kt.can-freeze-ide`, so that `1.1.kt`
+     * and `1.2.kt` don't share a dump. Without [actual], the test has nothing to dump, so its variant of the dump must not exist.
+     *
+     * The dump is compared in [TestDataManagerMode.CHECK] mode, like incomplete inline diagnostics, if the test crashed ([testCrashed]),
+     * or if it [dependsOnAnalysis] and [someModulesWereNotAnalyzed]. The output of the compiler doesn't depend on the analysis: it is
+     * complete if the compiler stops before the analysis.
+     */
+    fun assertEqualsToDump(
+        dumpExtension: String,
+        actual: String?,
+        sanitizer: (String) -> String = { it },
+        dependsOnAnalysis: Boolean = true,
+    ) {
+        writeTargetFiles.add(dumpWriteTargetFile(dumpExtension).toPath().normalizedAbsolute())
+        val mayBeIncomplete = testCrashed || dependsOnAnalysis && someModulesWereNotAnalyzed
+        ManagedTestAssertions.assertEqualsToTestDataFile(
+            testDataPath = baseTestDataFile.toPath(),
+            actual = actual,
+            variantChain = variantChain,
+            extension = dumpExtension,
+            mode = if (mayBeIncomplete) TestDataManagerMode.CHECK else mode,
+            sanitizer = sanitizer,
+        )
+    }
 
     /**
      * Whether [assertEqualsToTestDataFile] compared complete inline diagnostics and passed: `false` if they were incomplete or if the

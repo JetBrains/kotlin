@@ -91,17 +91,28 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
         }
     }
 
-    val expectedFile = File(FileUtil.getNameWithoutExtension(moduleStructure.originalTestDataFiles.first().absolutePath) + ".diag.txt")
+    val extension = ".diag.txt"
+    val expectedFile = File(FileUtil.getNameWithoutExtension(moduleStructure.originalTestDataFiles.first().absolutePath) + extension)
+    // A test implementing `ManagedTest` compares its variant of the dump, see `ManagedTestData.assertEqualsToDump`
+    val managedTestData = testServices.managedTestData
     if (needToVerifyDiagnostics) {
-        testServices.assertions.assertEqualsToFile(
-            expectedFile,
-            dumper.generateResultingDump()
-        )
+        if (managedTestData != null) {
+            managedTestData.assertEqualsToDump(extension, dumper.generateResultingDump())
+        } else {
+            testServices.assertions.assertEqualsToFile(
+                expectedFile,
+                dumper.generateResultingDump()
+            )
+        }
     } else {
         val renderAtLeastFrontendDiagnostics = moduleStructure.modules.any { RENDER_DIAGNOSTICS_FULL_TEXT in it.directives }
 
         if (!renderAtLeastFrontendDiagnostics) {
-            testServices.assertions.assertFileDoesntExist(expectedFile, RENDER_ALL_DIAGNOSTICS_FULL_TEXT)
+            if (managedTestData != null) {
+                managedTestData.assertEqualsToDump(extension, actual = null)
+            } else {
+                testServices.assertions.assertFileDoesntExist(expectedFile, RENDER_ALL_DIAGNOSTICS_FULL_TEXT)
+            }
         }
     }
 }

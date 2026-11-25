@@ -395,8 +395,8 @@ For example, to update all IR text test data by the output of the JVM backend, y
 ```
 
 It leaves alone the files written by the managed assertions of a test implementing `ManagedTest`, such as the `.kt` file with the inline
-diagnostics of a diagnostic test: the [test data manager](../../analysis/AGENTS.md#working-with-test-data) updates them. Other files of such
-a test (e.g., `.fir.txt`) are still updated by the handler.
+diagnostics of a diagnostic test and its dumps (e.g., `.fir.txt`): the [test data manager](../../analysis/AGENTS.md#working-with-test-data)
+updates them. Other files of such a test are still updated by the handler.
 
 # Code style
 
