@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.ModuleVisibilityProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.canBeReferencedFromOtherFiles
+import org.jetbrains.kotlin.ir.util.isClassSignature
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -475,16 +476,45 @@ data class TopLevelCallableIdAndKind(val callableId: CallableId, val kind: Binar
     val packageFqName: FqName get() = callableId.packageName
 
     constructor(signature: IdSignature.CommonSignature, kind: BinarySymbolData.SymbolKind) : this(
-        callableId = CallableId(signature.packageFqName(), Name.identifier(signature.declarationFqName)),
+        callableId = signature.checkSignature().toCallableId(),
         kind = kind,
     )
 
+    constructor(symbol: IrSymbol) : this(
+        callableId = symbol.getCallableSignatureOrFail().toCallableId(),
+        kind = symbol.kind(),
+    )
+
     init {
-        require(kind == BinarySymbolData.SymbolKind.FUNCTION_SYMBOL || kind == BinarySymbolData.SymbolKind.PROPERTY_SYMBOL)
+        require(callableId.className == null && callableId.classId == null) {
+            "Can not create ${TopLevelCallableIdAndKind::class.java.simpleName} for a class member: $kind, $callableId"
+        }
+
+        require(kind == BinarySymbolData.SymbolKind.FUNCTION_SYMBOL || kind == BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) {
+            "Can not create ${TopLevelCallableIdAndKind::class.java.simpleName} for unsupported symbol kind: $kind, $callableId"
+        }
     }
 
-
     override fun toString() = "$callableId, kind=$kind"
+
+    companion object {
+        private fun IrSymbol.getCallableSignatureOrFail(): IdSignature.CommonSignature {
+            when (val signature = signature) {
+                is IdSignature.CommonSignature -> return signature.checkSignature()
+                null -> error("Can not create ${TopLevelCallableIdAndKind::class.java.simpleName}, no signature in symbol $this")
+                else -> error("Can not create ${TopLevelCallableIdAndKind::class.java.simpleName} for symbol $this, unexpected signature type: ${signature::class.java.simpleName}, $signature")
+            }
+        }
+
+        private fun IdSignature.CommonSignature.checkSignature(): IdSignature.CommonSignature {
+            check(!isClassSignature()) { "Can not create ${TopLevelCallableIdAndKind::class.java.simpleName} for class signature $this" }
+            check(nameSegments.size == 1) { "Can not create ${TopLevelCallableIdAndKind::class.java.simpleName} for a non-top-level declaration signature $this" }
+            return this
+        }
+
+        private fun IdSignature.CommonSignature.toCallableId(): CallableId =
+            CallableId(packageFqName(), Name.identifier(declarationFqName))
+    }
 }
 
 /**
