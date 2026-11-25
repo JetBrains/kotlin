@@ -3,7 +3,6 @@
 import org.gradle.internal.jvm.Jvm
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import java.util.regex.Pattern.quote
 
 description = "Kotlin Compiler"
@@ -250,11 +249,6 @@ val librariesKotlinTestFiles = files(
                 isTransitive = false
                 @OptIn(ExperimentalKotlinGradlePluginApi::class)
                 attributes.attribute(KlibPackaging.ATTRIBUTE, objects.named(KlibPackaging.PACKED))
-                if (suffix == "js" && classifier == null) {
-                    // Second attribute is needed to disambiguate regular variant from `kotlinNpmRuntimeDependenciesJs`.
-                    // See KT-89427 for details
-                    attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
-                }
             }
         }
     }
