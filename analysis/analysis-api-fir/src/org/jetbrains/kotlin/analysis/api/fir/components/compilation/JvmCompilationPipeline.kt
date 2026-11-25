@@ -104,14 +104,14 @@ internal fun runJvmIrCodeGen(
         FirJvmBackendExtension(fir2IrResult.components, null),
         fir2IrResult.pluginContext,
     )
-    codegenFactory.generateModule(generationState, backendInput)
+    val backendOutput = codegenFactory.generateModule(generationState, backendInput)
 
     fun isMatchingRelativeClassPath(path: String): Boolean {
         val className = path.takeIf { it.endsWith(".class", ignoreCase = true) }?.dropLast(".class".length) ?: return false
         return className in matchingClassNames || matchingClassNames.any { className.startsWith("$it$") }
     }
 
-    val compiledFiles = generationState.factory.asList()
+    val compiledFiles = backendOutput.classFileFactory.asList()
         .filter { isMatchingRelativeClassPath(it.relativePath) }
         .map(::KaFirCompiledFileForOutputFile)
 
@@ -119,7 +119,7 @@ internal fun runJvmIrCodeGen(
         if (codeFragmentMappings != null) {
             addAll(codeFragmentMappings.capturedValues)
         }
-        for ([_, _, descriptor] in generationState.newFragmentCaptureParameters) {
+        for ([_, _, descriptor] in backendOutput.newFragmentCaptureParameters) {
             if (descriptor is IrBasedDeclarationDescriptor<*>) {
                 addIfNotNull(computeAdditionalCodeFragmentMapping(descriptor))
             }

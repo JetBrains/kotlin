@@ -238,12 +238,12 @@ private fun compileImpl(
     }
     val frontendOutput = AllModulesFrontendOutput(outputs)
 
-    val [irInput, generationState] = generateCodeIfNoErrors(
+    val [irInput, backendOutput] = generateCodeIfNoErrors(
         compilerConfiguration, targetId, frontendOutput, compilerEnvironment, messageCollector, renderDiagnosticName
     ).valueOr { return it }
 
     return makeCompiledScript(
-        generationState,
+        backendOutput,
         snippet,
         { source ->
             sourcesToFir[source]?.declarations?.firstIsInstanceOrNull<FirReplSnippet>()?.snippetClass?.symbol?.classId?.asSingleFqName()

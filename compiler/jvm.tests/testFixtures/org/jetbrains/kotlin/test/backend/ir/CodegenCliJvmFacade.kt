@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCodegenPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmWriteOutputsPhase
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.services.TestServices
 
 class CodegenCliJvmFacade(testServices: TestServices) : AbstractJvmIrBackendFacade(testServices) {
-    override fun produceGenerationState(inputArtifact: IrBackendInput): GenerationState {
+    override fun invokeBackend(inputArtifact: IrBackendInput): JvmIrCodegenFactory.BackendOutput {
         checkTestInfrastructure(inputArtifact is LoweredJvmCliBasedOutputArtifact) {
             "BackendCliJvmFacade expects LoweredJvmCliBasedOutputArtifact as input, but ${inputArtifact::class} was found"
         }

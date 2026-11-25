@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.reportOutput
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -24,9 +23,8 @@ object JvmWriteOutputsPhase : PipelinePhase<JvmBackendPipelineArtifact, JvmBinar
     name = "JvmWriteOutputsPhase",
 ) {
     override fun executePhase(input: JvmBackendPipelineArtifact): JvmBinaryPipelineArtifact {
-        val (configuration, environment, mainClassFqName, outputs) = input
+        val (configuration, mainClassFqName, outputs) = input
         writeOutputsIfNeeded(
-            environment.project,
             configuration,
             hasPendingErrors = configuration.diagnosticsCollector.hasErrors,
             outputs,
@@ -36,19 +34,18 @@ object JvmWriteOutputsPhase : PipelinePhase<JvmBackendPipelineArtifact, JvmBinar
     }
 
     fun writeOutputsIfNeeded(
-        project: Project,
         configuration: CompilerConfiguration,
         hasPendingErrors: Boolean,
-        outputs: Collection<GenerationState>,
-        mainClassFqName: FqName?
+        outputs: Collection<JvmIrCodegenFactory.BackendOutput>,
+        mainClassFqName: FqName?,
     ): Boolean {
         if (hasPendingErrors || configuration.hasMessageCollectorErrors()) {
             return false
         }
 
-        for (state in outputs) {
+        for ((val classFileFactory, val moduleConfiguration = configuration) in outputs) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            writeOutput(state.configuration, state.factory, mainClassFqName)
+            writeOutput(moduleConfiguration, classFileFactory, mainClassFqName)
         }
 
         return true
@@ -57,7 +54,7 @@ object JvmWriteOutputsPhase : PipelinePhase<JvmBackendPipelineArtifact, JvmBinar
     private fun writeOutput(
         configuration: CompilerConfiguration,
         outputFiles: OutputFileCollection,
-        mainClassFqName: FqName?
+        mainClassFqName: FqName?,
     ) {
         val reportOutputFiles = configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
         val jarPath = configuration.get(JVMConfigurationKeys.OUTPUT_JAR)

@@ -87,7 +87,7 @@ internal fun generateCodeIfNoErrors(
     environment: ModuleCompilerEnvironment,
     messageCollector: ScriptDiagnosticsMessageCollector,
     renderDiagnosticName: Boolean,
-): ResultWithDiagnostics<Pair<ModuleCompilerIrBackendInput, GenerationState>> {
+): ResultWithDiagnostics<Pair<ModuleCompilerIrBackendInput, JvmIrCodegenFactory.BackendOutput>> {
     val diagnosticsReporter = environment.diagnosticsReporter
 
     fun reportDiagnostics() = diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
@@ -102,18 +102,18 @@ internal fun generateCodeIfNoErrors(
     val irInput = convertAnalyzedFirToIr(configuration, targetId, frontendOutput, environment)
     if (diagnosticsReporter.hasErrors) return reportedFailure()
 
-    val generationState = generateCodeFromIr(irInput, environment)
+    val backendOutput = generateCodeFromIr(irInput, environment)
     if (diagnosticsReporter.hasErrors) return reportedFailure()
 
     reportDiagnostics()
-    return (irInput to generationState).asSuccess()
+    return (irInput to backendOutput).asSuccess()
 }
 
 @LegacyK2CliPipeline
 internal fun generateCodeFromIr(
     input: ModuleCompilerIrBackendInput,
     environment: ModuleCompilerEnvironment
-): GenerationState {
+): JvmIrCodegenFactory.BackendOutput {
     val generationState = GenerationState(
         VirtualFileFinder.getInstance(environment.projectEnvironment.project),
         input.configuration,
@@ -145,22 +145,21 @@ internal fun generateCodeFromIr(
         codegenFactory.invokeLowerings(generationState, backendInput)
     }
 
-    codegenFactory.invokeCodegen(codegenInput)
+    val output = codegenFactory.invokeCodegen(codegenInput)
 
     // It's allowed to call `tryMeasurePhaseTime` multiple times on the same phase (`Backend`)
     performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
         if (input.configuration.outputDirectory != null) {
             writeOutputsIfNeeded(
-                environment.projectEnvironment.project,
                 input.configuration,
                 environment.diagnosticsReporter.hasErrors,
-                listOf(generationState),
+                listOf(output),
                 mainClassFqName = null,
             )
         }
     }
 
-    return generationState
+    return output
 }
 
 

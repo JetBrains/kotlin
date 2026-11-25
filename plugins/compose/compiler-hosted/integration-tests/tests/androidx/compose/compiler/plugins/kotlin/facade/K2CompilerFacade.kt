@@ -198,7 +198,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     override fun compile(
         platformFiles: List<SourceFile>,
         commonFiles: List<SourceFile>,
-    ): GenerationState {
+    ): JvmIrCodegenFactory.BackendOutput {
         val frontendResult = frontend(platformFiles, commonFiles)
         val components = frontendResult.components
 
@@ -223,7 +223,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             ),
             frontendResult.pluginContext,
         )
-        JvmIrCodegenFactory(configuration).generateModule(generationState, backendInput)
-        return generationState
+        return JvmIrCodegenFactory(configuration).generateModule(generationState, backendInput)
     }
 }

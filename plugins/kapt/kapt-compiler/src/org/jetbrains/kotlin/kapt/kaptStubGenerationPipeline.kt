@@ -10,12 +10,7 @@ import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.*
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.perfManager
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.kapt.base.KaptFlag
 import org.jetbrains.kotlin.kapt.base.KaptOptions
@@ -54,12 +49,13 @@ internal fun compileForStubGeneration(
     val backendInput = fir2IrOutput.withNewDiagnosticCollector(DiagnosticsCollectorImpl())
     backendInput.configuration.put(JvmLoweringsPipelinePhase.customClassBuilderFactory, builderFactory)
 
-    val generationState = JvmCodegenPipelinePhase.executePhase(JvmLoweringsPipelinePhase.executePhase(backendInput)).outputs.singleOrNull() ?: return null
+    val backendOutput =
+        JvmCodegenPipelinePhase.executePhase(JvmLoweringsPipelinePhase.executePhase(backendInput)).outputs.singleOrNull() ?: return null
 
     return KaptContextForStubGeneration(
         options, withJdk, logger, builderFactory.compiledClasses, builderFactory.origins,
         backendInput.configuration,
-        generationState.factory,
+        backendOutput.classFileFactory,
         frontendOutput.frontendOutput.outputs.flatMap { it.fir },
         fir2IrOutput.result.irBuiltIns,
     )

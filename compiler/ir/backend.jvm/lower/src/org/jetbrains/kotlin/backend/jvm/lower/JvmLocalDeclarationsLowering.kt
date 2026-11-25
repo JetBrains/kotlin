@@ -48,7 +48,7 @@ internal class JvmLocalDeclarationsLowering(override val context: JvmBackendCont
                 type = symbol.owner.type
                 name = symbol.owner.name
             }
-            context.state.newFragmentCaptureParameters.add(
+            context.newFragmentCaptureParameters.add(
                 Triple(
                     symbol.owner.name.asString(),
                     symbol.owner.type.toIrBasedKotlinType(),

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.BackendOutput
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
@@ -17,7 +18,9 @@ class SourceFileInfo(
     val info: JvmFileClassInfo
 )
 
-class JvmClassFileArtifact(val classFileFactory: ClassFileFactory, val fileInfos: Collection<SourceFileInfo>) : BinaryArtifacts.Jvm()
+class JvmClassFileArtifact(val output: BackendOutput, val fileInfos: Collection<SourceFileInfo>) : BinaryArtifacts.Jvm() {
+    val classFileFactory: ClassFileFactory get() = output.classFileFactory
+}
 
 class JsIrArtifact(override val outputFile: File, val compilerResult: CompilerResult, val icCache: Map<String, ByteArray>? = null) : BinaryArtifacts.Js()
 

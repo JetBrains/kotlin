@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.incrementalCompilationComponents
 import org.jetbrains.kotlin.config.moduleName
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.types.KotlinType
 
 class GenerationState(
     val virtualFileFinder: VirtualFileFinder,
@@ -83,8 +81,6 @@ class GenerationState(
     lateinit var reportDuplicateClassNameError: (IrClass, String, IrClass) -> Unit
 
     lateinit var isDeclarationGeneratedForCompilerPlugin: (IrDeclaration) -> Boolean
-
-    val newFragmentCaptureParameters: MutableList<Triple<String, KotlinType, DeclarationDescriptor>> = mutableListOf()
 
     @AllowedOnlyInTestsAPI
     fun replaceConfigurationAndDiagnosticReporter(newConfiguration: CompilerConfiguration, newDiagnosticReporter: DiagnosticReporter) {

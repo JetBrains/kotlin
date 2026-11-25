@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmLoweringsPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -291,14 +291,14 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
         val disposable = Disposer.newDisposable("Disposable for ${CodegenTestsOnAndroidGenerator::class.qualifiedName}.compile")
         try {
-            val state = runCompilationPipeline(configuration, disposable, test, messageCollector)
+            val output = runCompilationPipeline(configuration, disposable, test, messageCollector)
 
             synchronized(flavorOutputLocks.computeIfAbsent(test.flavorName) { Any() }) {
                 if (!outputDir.exists()) {
                     outputDir.mkdirs()
                 }
                 assertTrue(outputDir.exists(), "Cannot create directory for compiled files")
-                state.factory.writeAllTo(outputDir)
+                output.classFileFactory.writeAllTo(outputDir)
             }
 
             compiledTestNames += test.info.name
@@ -322,7 +322,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         disposable: Disposable,
         test: AndroidPlannedTest,
         messageCollector: MessageCollectorImpl,
-    ): GenerationState {
+    ): JvmIrCodegenFactory.BackendOutput {
         val input = ConfigurationPipelineArtifact(configuration, disposable)
             .withNewDiagnosticCollector(DiagnosticsCollectorImpl())
         val pipelineConfiguration = input.configuration
