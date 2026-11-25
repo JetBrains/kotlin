@@ -54,8 +54,8 @@ class KlibImpactTest {
 
     private fun snapshot(vararg classInfos: KlibClassInfo): KlibFileSnapshot =
         KlibFileSnapshot(
-            contentHash = 0,
             packageName = FqName("com.example"),
+            contentHash = 0,
             classInfos = classInfos.toList(),
             packageMemberNames = emptySet(),
             classMemberLevelSnapshot = null,

@@ -48,8 +48,8 @@ class KlibSnapshotSerializerTest {
         }
 
         private fun snapshot(granularity: ClassSnapshotGranularity) = KlibFileSnapshot(
-            contentHash = 42L,
             packageName = FqName("com.example"),
+            contentHash = 42L,
             classInfos = listOf(
                 KlibClassInfo(
                     ClassId.fromString("com/example/SomeClass"),

@@ -26,8 +26,8 @@ class KlibEntrySnapshot(
  * [classInfos] and [packageMemberNames] include only accessible classes and non-private package members.
  */
 class KlibFileSnapshot(
-    val contentHash: Long,
     val packageName: FqName,
+    val contentHash: Long,
 
     val classInfos: List<KlibClassInfo>,
     val packageMemberNames: Set<String>,

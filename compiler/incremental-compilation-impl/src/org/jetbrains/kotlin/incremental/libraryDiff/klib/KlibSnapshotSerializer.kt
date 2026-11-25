@@ -47,8 +47,8 @@ internal object KlibSnapshotExternalizer : DataExternalizer<KlibFileSnapshot> {
         // To reduce memory usage, apply object interning to the package name as it is commonly shared
         val packageName = FqNameExternalizerWithInterning.read(input)
         return KlibFileSnapshot(
-            contentHash = contentHash,
             packageName = packageName,
+            contentHash = contentHash,
             classInfos = ListExternalizer(KlibClassInfoExternalizer).read(input),
             packageMemberNames = SetExternalizer(StringExternalizer).read(input),
             classMemberLevelSnapshot = NullableValueExternalizer(KlibFileInfoExternalizer).read(input),

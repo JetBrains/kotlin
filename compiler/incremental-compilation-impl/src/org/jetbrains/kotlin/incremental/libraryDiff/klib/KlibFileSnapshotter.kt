@@ -39,8 +39,8 @@ internal object KlibFileSnapshotter {
                 val klibFileInfo = KlibFileInfo(packageFqName, bytes)
 
                 snapshots += KlibFileSnapshot(
-                    contentHash = KlibFileInfoExternalizer.toByteArray(klibFileInfo).hashToLong(),
                     packageName = packageFqName,
+                    contentHash = KlibFileInfoExternalizer.toByteArray(klibFileInfo).hashToLong(),
                     classInfos = getClassInfos(fragment, nameResolver),
                     packageMemberNames = packageMembers.toSet(),
                     classMemberLevelSnapshot = klibFileInfo.takeIf { settings.granularity == CLASS_MEMBER_LEVEL },
