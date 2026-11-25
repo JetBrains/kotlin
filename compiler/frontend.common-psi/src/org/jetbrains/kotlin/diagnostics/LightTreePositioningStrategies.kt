@@ -1624,9 +1624,6 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.objectKeyword(node: Li
 fun FlyweightCapableTreeStructure<LighterASTNode>.visibilityModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, VISIBILITY_MODIFIERS) }
 
-fun FlyweightCapableTreeStructure<LighterASTNode>.modalityModifier(declaration: LighterASTNode): LighterASTNode? =
-    modifierList(declaration)?.let { findChildByType(it, MODALITY_MODIFIERS) }
-
 fun FlyweightCapableTreeStructure<LighterASTNode>.overrideModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, OVERRIDE_KEYWORD) }
 
