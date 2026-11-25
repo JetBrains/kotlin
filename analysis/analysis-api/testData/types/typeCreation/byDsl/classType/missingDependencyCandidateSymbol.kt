@@ -18,6 +18,8 @@ package main
 
 import expansion.propertyWithWrongTypeArguments
 
+annotation class Anno
+
 fun test() {
     p<caret_type>ropertyWithWrongTypeArguments.toString()
 }

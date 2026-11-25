@@ -1,0 +1,79 @@
+KaType
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: Top.Outer.Middle.Inner
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Top
+      symbol: KaNamedClassSymbol(Top)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: Outer
+      symbol: KaNamedClassSymbol(Top.Outer)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+    KaResolvedClassTypeQualifier:
+      name: Middle
+      symbol: KaNamedClassSymbol(Top.Outer.Middle)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: Inner
+      symbol: KaNamedClassSymbol(Top.Outer.Middle.Inner)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(Top.Outer.Middle.Inner)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type:
+Top.Outer<kotlin.Int>.Middle.Inner<kotlin.String>?
