@@ -37,7 +37,7 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
         if (declaration.isVar) {
             val constModifier = declaration.getModifier(KtTokens.CONST_KEYWORD)
             constModifier?.let {
-                reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.token, "vars")
+                reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.tokenName, "vars")
             }
         }
 

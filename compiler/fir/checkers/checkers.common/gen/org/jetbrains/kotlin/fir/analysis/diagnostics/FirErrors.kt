@@ -88,7 +88,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeReceiverInfo
 import org.jetbrains.kotlin.lexer.KtKeywordToken
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement.Version
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -382,16 +381,16 @@ object FirErrors : KtDiagnosticsContainer() {
     val EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING: KtDiagnosticFactory4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility> = KtDiagnosticFactory4("EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
 
     // Modifiers
-    val REPEATED_MODIFIER: KtDiagnosticFactory1<KtModifierKeywordToken> = KtDiagnosticFactory1("REPEATED_MODIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val WRONG_MODIFIER_TARGET: KtDiagnosticFactory2<KtModifierKeywordToken, String> = KtDiagnosticFactory2("WRONG_MODIFIER_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val WRONG_MODIFIER_CONTAINING_DECLARATION: KtDiagnosticFactory2<KtModifierKeywordToken, String> = KtDiagnosticFactory2("WRONG_MODIFIER_CONTAINING_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val DEPRECATED_MODIFIER: KtDiagnosticFactory2<KtModifierKeywordToken, KtModifierKeywordToken> = KtDiagnosticFactory2("DEPRECATED_MODIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val DEPRECATED_MODIFIER_FOR_TARGET: KtDiagnosticFactory2<KtModifierKeywordToken, String> = KtDiagnosticFactory2("DEPRECATED_MODIFIER_FOR_TARGET", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val DEPRECATED_MODIFIER_CONTAINING_DECLARATION: KtDiagnosticFactory2<KtModifierKeywordToken, String> = KtDiagnosticFactory2("DEPRECATED_MODIFIER_CONTAINING_DECLARATION", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val INCOMPATIBLE_MODIFIERS: KtDiagnosticFactory2<KtModifierKeywordToken, KtModifierKeywordToken> = KtDiagnosticFactory2("INCOMPATIBLE_MODIFIERS", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val DEPRECATED_MODIFIER_PAIR: KtDiagnosticFactory2<KtModifierKeywordToken, KtModifierKeywordToken> = KtDiagnosticFactory2("DEPRECATED_MODIFIER_PAIR", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val REDUNDANT_MODIFIER: KtDiagnosticFactory2<KtModifierKeywordToken, KtModifierKeywordToken> = KtDiagnosticFactory2("REDUNDANT_MODIFIER", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val REDUNDANT_MODIFIER_FOR_TARGET: KtDiagnosticFactory2<KtModifierKeywordToken, String> = KtDiagnosticFactory2("REDUNDANT_MODIFIER_FOR_TARGET", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val REPEATED_MODIFIER: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("REPEATED_MODIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val WRONG_MODIFIER_TARGET: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("WRONG_MODIFIER_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val WRONG_MODIFIER_CONTAINING_DECLARATION: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("WRONG_MODIFIER_CONTAINING_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val DEPRECATED_MODIFIER: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("DEPRECATED_MODIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val DEPRECATED_MODIFIER_FOR_TARGET: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("DEPRECATED_MODIFIER_FOR_TARGET", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val DEPRECATED_MODIFIER_CONTAINING_DECLARATION: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("DEPRECATED_MODIFIER_CONTAINING_DECLARATION", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val INCOMPATIBLE_MODIFIERS: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("INCOMPATIBLE_MODIFIERS", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val DEPRECATED_MODIFIER_PAIR: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("DEPRECATED_MODIFIER_PAIR", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val REDUNDANT_MODIFIER: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("REDUNDANT_MODIFIER", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val REDUNDANT_MODIFIER_FOR_TARGET: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("REDUNDANT_MODIFIER_FOR_TARGET", WARNING, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
     val INFIX_MODIFIER_REQUIRED: KtDiagnosticFactory1<FirNamedFunctionSymbol> = KtDiagnosticFactory1("INFIX_MODIFIER_REQUIRED", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
     val OPERATOR_MODIFIER_REQUIRED: KtDiagnosticFactory1<FirNamedFunctionSymbol> = KtDiagnosticFactory1("OPERATOR_MODIFIER_REQUIRED", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
     val INAPPLICABLE_INFIX_MODIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("INAPPLICABLE_INFIX_MODIFIER", ERROR, SourceElementPositioningStrategies.INFIX_MODIFIER, getRendererFactory())

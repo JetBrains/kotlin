@@ -62,6 +62,8 @@ sealed class FirModifierList {
 private val MODIFIER_KEYWORD_SET = TokenSet.orSet(KtTokens.SOFT_KEYWORDS, TokenSet.create(KtTokens.IN_KEYWORD, KtTokens.FUN_KEYWORD))
 
 sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywordToken) {
+    val tokenName: String
+        get() = token.toString()
 
     class FirPsiModifier(
         node: ASTNode,

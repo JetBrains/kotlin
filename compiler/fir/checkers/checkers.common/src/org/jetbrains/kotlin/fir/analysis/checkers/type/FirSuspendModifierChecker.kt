@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUnresolvedTypeRef
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.syntax.SyntaxIdSet
 
@@ -54,14 +53,14 @@ object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
             reporter.reportOn(
                 suspendModifierSources.first(),
                 FirErrors.WRONG_MODIFIER_TARGET,
-                KtTokens.SUSPEND_KEYWORD,
+                "suspend",
                 "non-functional type"
             )
         } else if (suspendModifierSources.size > 1) {
             reporter.reportOn(
                 suspendModifierSources.first(),
                 FirErrors.REPEATED_MODIFIER,
-                KtTokens.SUSPEND_KEYWORD
+                "suspend"
             )
         }
     }
