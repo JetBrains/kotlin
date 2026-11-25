@@ -25,6 +25,7 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.notExists
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
     override val yarn: Boolean = false
@@ -377,6 +378,20 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             assertTasksExecuted(":$storeTaskName")
 
             assertOutputContains(mismatchReportMessage)
+
+            val diffLines = output.lineSequence()
+                .dropWhile { it != "Difference between stored and actual lock files:" }
+                .drop(1)
+                .toList()
+            assertTrue(diffLines.size >= 3, "Expected lock file diff in the output:\n$output")
+            assertEquals("--- ", diffLines[0].take(4))
+            assertEquals(lockFileName, diffLines[0].substringAfterLast('/').substringAfterLast('\\'))
+            assertEquals("+++ ", diffLines[1].take(4))
+            assertEquals(lockFileName, diffLines[1].substringAfterLast('/').substringAfterLast('\\'))
+            assertTrue(
+                diffLines.any { it.startsWith("-") && !it.startsWith("--- ") && "decamelize" in it },
+                "Expected removed 'decamelize' lines in the lock file diff:\n${diffLines.joinToString("\n")}"
+            )
         }
 
         build(upgradeTaskName) {

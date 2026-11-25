@@ -11,6 +11,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.utils.contentEqualsIgnoringLineEndings
+import org.jetbrains.kotlin.gradle.utils.unifiedDiff
 
 @DisableCachingByDefault
 abstract class LockStoreTask : LockCopyTask() {
@@ -40,6 +41,13 @@ abstract class LockStoreTask : LockCopyTask() {
             lockFileMismatchReport.get() != LockFileMismatchReport.NONE && !contentEqualsIgnoringLineEndings(value.asFile, outputFile)
         }
 
+        // must be computed before the copy, because the stored file can be replaced
+        val mismatchDiff = if (shouldReportMismatch && outputFile.exists()) {
+            unifiedDiff(expected = outputFile, actual = value.asFile)
+        } else {
+            null
+        }
+
         // outputFile is updated only with auto replace or not existed, but we need to delete all other files initially
         fs.delete {
             it.delete(additionalInputFiles)
@@ -51,13 +59,20 @@ abstract class LockStoreTask : LockCopyTask() {
 
         if (shouldReportMismatch) {
             logger.info("[$path] Detected mismatch for inputFile:${inputFile.get().asFile}, outputFile:${outputFile}, lockFileMismatchReport:${lockFileMismatchReport.get()}")
+            val message = if (mismatchDiff.isNullOrEmpty()) {
+                mismatchMessage.get()
+            } else {
+                mismatchMessage.get() + "\n\n" + LOCK_FILE_DIFF_HEADER + "\n" + mismatchDiff
+            }
             when (lockFileMismatchReport.get()) {
                 LockFileMismatchReport.NONE -> {}
                 LockFileMismatchReport.WARNING -> {
-                    logger.warn(mismatchMessage.get())
+                    logger.warn(message)
                 }
-                LockFileMismatchReport.FAIL -> throw GradleException(mismatchMessage.get())
+                LockFileMismatchReport.FAIL -> throw GradleException(message)
             }
         }
     }
 }
+
+private const val LOCK_FILE_DIFF_HEADER = "Difference between stored and actual lock files:"
