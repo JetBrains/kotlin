@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirVariableSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.isJavaFieldOrFakeOverrideOfJavaField
 import org.jetbrains.kotlin.analysis.api.fir.utils.toVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
@@ -29,10 +30,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.impl.FirFieldImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.fir.psi
@@ -55,7 +54,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
@@ -423,15 +421,6 @@ internal class KaSymbolByFirBuilder(
 
             return backingFieldSymbol
         }
-
-        private fun FirField.isJavaFieldOrFakeOverrideOfJavaField(): Boolean = when (this) {
-            is FirJavaField -> true
-            is FirFieldImpl -> {
-                // KT-75894: not just type substitution, but intersection is possible too.
-                (this as FirField).originalIfFakeOverride()?.isJavaFieldOrFakeOverrideOfJavaField() == true
-            }
-            else -> throwUnexpectedElementError(this)
-        }
     }
 
     inner class CallableSymbolBuilder {
@@ -627,12 +616,6 @@ internal class KaSymbolByFirBuilder(
         private fun throwUnexpectedElementError(element: FirBasedSymbol<*>): Nothing {
             errorWithAttachment("Unexpected ${element::class.simpleName}") {
                 withFirSymbolEntry("firSymbol", element)
-            }
-        }
-
-        private fun throwUnexpectedElementError(element: FirElement): Nothing {
-            errorWithAttachment("Unexpected ${element::class.simpleName}") {
-                withFirEntry("firElement", element)
             }
         }
 

@@ -18,12 +18,15 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
+import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
@@ -116,5 +119,13 @@ internal fun FirEqualityOperatorCall.processEqualsFunctions(
         if (parameterSymbol != null && parameterSymbol.resolvedReturnType.isNullableAny) {
             processor(functionSymbol)
         }
+    }
+}
+
+internal fun FirField.isJavaFieldOrFakeOverrideOfJavaField(): Boolean = when (this) {
+    is FirJavaField -> true
+    else -> {
+        // KT-75894: not just type substitution, but intersection is possible too.
+        originalIfFakeOverride()?.isJavaFieldOrFakeOverrideOfJavaField() == true
     }
 }
