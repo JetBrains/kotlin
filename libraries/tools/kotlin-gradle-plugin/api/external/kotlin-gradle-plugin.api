@@ -1016,6 +1016,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/Framework : org/jetbra
 	public synthetic fun getAttributes ()Lorg/gradle/api/attributes/AttributeContainer;
 	public fun getAttributes ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/HierarchyAttributeContainer;
 	public final fun getExportKdoc ()Lorg/gradle/api/provider/Property;
+	public final fun getMergeable ()Lorg/gradle/api/provider/Property;
 	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
 	public final fun isStatic ()Z
 	public final fun setStatic (Z)V

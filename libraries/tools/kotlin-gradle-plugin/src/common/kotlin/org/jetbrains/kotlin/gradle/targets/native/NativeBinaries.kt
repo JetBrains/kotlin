@@ -326,6 +326,19 @@ class Framework(
     var isStatic = false
 
     /**
+     * Specifies if the framework is linked as a mergeable library (false by default).
+     *
+     * A mergeable framework is a dynamic framework that an Xcode app can merge into its own binary
+     * by setting the `MERGED_BINARY_TYPE` build setting. Without that setting it is loaded as a regular dynamic framework.
+     *
+     * Requires Xcode 15 or newer. Has no effect on a static framework, see [isStatic].
+     *
+     * @since 2.5.20
+     */
+    @ExperimentalKotlinGradlePluginApi
+    val mergeable: Property<Boolean> = project.objects.property(false)
+
+    /**
      * Export KDocs to frameworks header file.
      */
     @ExperimentalKotlinGradlePluginApi

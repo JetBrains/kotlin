@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.deleteRecursively
+import kotlin.io.path.pathString
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
@@ -159,6 +160,26 @@ class XCFrameworkIT : KGPBaseTest() {
                     ":shared:assembleSha-redReleaseXCFramework",
                 )
                 assertOutputDoesNotContain("differs from inner frameworks name")
+            }
+        }
+    }
+
+    @TestMetadata("appleXCFramework")
+    @DisplayName("XCFramework of mergeable frameworks is marked as mergeable")
+    @GradleTest
+    fun shouldAssembleMergeableXCFramework(gradleVersion: GradleVersion) {
+        project("appleXCFramework", gradleVersion) {
+            subProject("shared")
+                .buildGradleKts
+                .replaceText("baseName = \"shared\"", "baseName = \"shared\"; mergeable.set(true)")
+
+            build(":shared:assembleSharedDebugXCFramework") {
+                val infoPlist = projectPath.resolve("shared/build/XCFrameworks/debug/shared.xcframework/Info.plist").pathString
+                // iOS and watchOS, each with a device and a simulator slice; two of them are fat frameworks
+                assertEquals(
+                    List(4) { "true" },
+                    List(4) { runTool("plutil", "-extract", "AvailableLibraries.$it.MergeableMetadata", "raw", infoPlist).first() },
+                )
             }
         }
     }
