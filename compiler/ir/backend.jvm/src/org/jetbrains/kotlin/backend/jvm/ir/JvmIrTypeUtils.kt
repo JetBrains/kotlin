@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
 
 /**
  * Get the default null/0 value for the type.
@@ -65,6 +66,17 @@ fun IrType.isInlineClassType(): Boolean {
 
 fun IrType.isBoxedInlineClassType(): Boolean =
     isInlineClassType() && isNullable() && unboxInlineClass().let { it.isPrimitiveType() || it.isNullable() }
+
+/**
+ * `true` if a JVM slot of this inline class type holds the underlying value, as the type mapper stores it.
+ * Unlike [isBoxedInlineClassType], it gives `true` for a nullable inline class over a non-null reference type:
+ * such a slot holds a nullable underlying value.
+ */
+fun IrType.holdsUnderlyingInlineClassValue(context: JvmBackendContext): Boolean {
+    if (!isInlineClassType()) return false
+    val expandedType = context.typeSystem.computeExpandedTypeForInlineClass(this) as IrType? ?: return false
+    return expandedType.erasedUpperBound != erasedUpperBound
+}
 
 val IrType.upperBound: IrSimpleType
     get() = erasedUpperBound.symbol.starProjectedType

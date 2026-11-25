@@ -7,10 +7,10 @@ fun UInt.foo(x: Int, y: UInt) {
 
 // METHOD : InlineClassesExtensionKt.foo-2L4_mC8(IIIIIII)V
 // VARIABLE : NAME=$context-Int TYPE=I
-// VARIABLE : NAME=$context-UInt TYPE=I
-// VARIABLE : NAME=$this$foo_u2d2L4_mC8 TYPE=I
+// VARIABLE : NAME=$v$c$kotlin$_UInt$$$context-UInt TYPE=I
+// VARIABLE : NAME=$v$c$kotlin$_UInt$$$this$foo TYPE=I
+// VARIABLE : NAME=$v$c$kotlin$_UInt$$c2 TYPE=I
+// VARIABLE : NAME=$v$c$kotlin$_UInt$$y TYPE=I
 // VARIABLE : NAME=arg0 TYPE=I
 // VARIABLE : NAME=c1 TYPE=I
-// VARIABLE : NAME=c2 TYPE=I
 // VARIABLE : NAME=x TYPE=I
-// VARIABLE : NAME=y TYPE=I

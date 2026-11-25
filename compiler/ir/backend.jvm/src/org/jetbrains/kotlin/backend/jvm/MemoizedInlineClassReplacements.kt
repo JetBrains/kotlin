@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -34,6 +36,15 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by irAttribute(copyByDefault = false)
+
+/**
+ * `true` if the name of the parameter must be used as is, without any further adjustments in the codegen
+ * (in particular, without replacing it with the `$this$callableName` extension receiver name).
+ *
+ * It is set for parameters that have the encoded name of their inline class, see [withValueClassParameterName].
+ */
+var IrValueParameter.hasFixedName: Boolean by irFlag(copyByDefault = true)
+    internal set
 
 private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(copyByDefault = false)
 
@@ -266,6 +277,7 @@ class MemoizedInlineClassReplacements(
                         Name.identifier(function.extensionReceiverName())
                     } else parameter.name
                 ).also {
+                    encodeInlineClassIntoName(it)
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
                     // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
@@ -283,8 +295,9 @@ class MemoizedInlineClassReplacements(
                         // FAKE_OVERRIDEs have broken dispatch receivers
                         function.parentAsClass.thisReceiver!!.copyTo(
                             this,
-                            name = Name.identifier("arg0"),
-                            type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
+                            name = Name.identifier(AsmUtil.THIS),
+                            type = function.parentAsClass.defaultType,
+                            origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )
                     }
@@ -310,9 +323,20 @@ class MemoizedInlineClassReplacements(
                             it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                         }
                     }
-                }
+                }.also { encodeInlineClassIntoName(it) }
             }
         }
+
+    /**
+     * Gives [parameter] of a replacement function the encoded name of its inline class, see [ValueClassParameterNames],
+     * if the JVM slot of [parameter] holds the underlying value.
+     * A boxed slot keeps the plain name, because it holds an instance of the inline class.
+     */
+    private fun encodeInlineClassIntoName(parameter: IrValueParameter) {
+        if (!parameter.type.holdsUnderlyingInlineClassValue(context)) return
+        parameter.name = parameter.name.withValueClassParameterName(parameter.type.erasedUpperBound)
+        parameter.hasFixedName = true
+    }
 
     private fun buildReplacement(
         function: IrFunction,

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.kapt.util.isAbstract
 import org.jetbrains.kotlin.kapt.util.isEnum
 import org.jetbrains.kotlin.kapt.util.isJvmOverloadsGenerated
 import org.jetbrains.kotlin.kapt.util.isStatic
+import org.jetbrains.kotlin.load.java.ValueClassParameterNames
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AnnotationNode
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -71,7 +72,7 @@ internal fun MethodNode.getParametersInfo(
         }
 
         // @JvmOverloads constructors and ordinary methods don't have "this" local variable
-        name = name ?: localVariables.getOrNull(index + localVariableIndexOffset)?.name
+        name = name ?: localVariables.getOrNull(index + localVariableIndexOffset)?.name?.withoutValueClassEncoding()
                 ?: irValueParameters.getOrNull(index)?.name?.identifierOrNullIfSpecial
         if (name == null || name.startsWith("<") && name.endsWith(">")) {
             name = "p${index - startParameterIndex}"
@@ -84,3 +85,7 @@ internal fun MethodNode.getParametersInfo(
     }
     return parameterInfos
 }
+
+// A parameter holding the underlying value of an inline class is named `$v$c$...$$<name>` in the bytecode.
+// The stubs should show the name the user wrote, so it is decoded back here.
+private fun String.withoutValueClassEncoding(): String = ValueClassParameterNames.originalParameterName(this)
