@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.npm.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
-import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -42,26 +41,6 @@ open class KotlinJsIrCompilation @Inject internal constructor(
     // This property is a `var` because @Inject can't inject `null` values and fails with "Null value provided in parameters".
     var wasmTarget: WasmTarget? = null
         internal set
-
-    /**
-     * Name of the resolvable configuration with WIT declarations of the runtime dependencies of this compilation.
-     *
-     * Resolved WIT directories are passed to [org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask].
-     * It is created only for Wasm WASI compilations,
-     * see [org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitPreparationSetupAction].
-     */
-    internal val witConfigurationName
-        get() = compilation.disambiguateName("wit")
-
-    /**
-     * Name of the consumable configuration that exposes the `wit` directory of the project
-     * to the projects that depend on it.
-     *
-     * It is created only for main Wasm WASI compilations,
-     * see [org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitPreparationSetupAction].
-     */
-    internal val witOutputConfigurationName
-        get() = compilation.disambiguateName("witOutput")
 }
 
 /**
