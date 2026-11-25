@@ -114,7 +114,7 @@ private fun buildSyntheticInitTriggerInitializer(
         startOffset = UNDEFINED_OFFSET,
         endOffset = UNDEFINED_OFFSET,
         origin = JvmLoweredDeclarationOrigin.INTERFACE_PRIVATE_FIELDS_CLASS,
-        symbol = IrAnonymousInitializerSymbolImpl(interfaceClass.symbol),
+        symbol = IrAnonymousInitializerSymbolImpl(),
         isStatic = true,
     ).apply {
         parent = interfaceClass

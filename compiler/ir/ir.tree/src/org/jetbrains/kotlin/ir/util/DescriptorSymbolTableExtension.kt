@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.utils.threadLocal
 
 @ObsoleteDescriptorBasedAPI
@@ -75,7 +73,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createScriptSymbol(declaration: ScriptDescriptor, signature: IdSignature?): IrScriptSymbol {
-        return IrScriptSymbolImpl(declaration)
+        return IrScriptSymbolImpl()
     }
 
     // ------------------------------------ class ------------------------------------
@@ -89,163 +87,81 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
     }
 
     override fun createPublicClassSymbol(declaration: ClassDescriptor, signature: IdSignature): IrClassSymbol {
-        return IrClassSymbolImpl(declaration, signature)
+        return IrClassSymbolImpl(signature)
     }
 
     override fun createPrivateClassSymbol(descriptor: ClassDescriptor): IrClassSymbol {
-        return IrClassSymbolImpl(descriptor)
+        return IrClassSymbolImpl()
     }
 
     // ------------------------------------ constructor ------------------------------------
 
     override fun createPublicConstructorSymbol(declaration: ClassConstructorDescriptor, signature: IdSignature): IrConstructorSymbol {
-        return IrConstructorSymbolImpl(declaration, signature)
+        return IrConstructorSymbolImpl(signature)
     }
 
     override fun createPrivateConstructorSymbol(declaration: ClassConstructorDescriptor): IrConstructorSymbol {
-        return IrConstructorSymbolImpl(declaration)
+        return IrConstructorSymbolImpl()
     }
 
     // ------------------------------------ enum entry ------------------------------------
 
     override fun createPublicEnumEntrySymbol(declaration: ClassDescriptor, signature: IdSignature): IrEnumEntrySymbol {
-        return IrEnumEntrySymbolImpl(declaration, signature)
+        return IrEnumEntrySymbolImpl(signature)
     }
 
     override fun createPrivateEnumEntrySymbol(declaration: ClassDescriptor): IrEnumEntrySymbol {
-        return IrEnumEntrySymbolImpl(declaration)
-    }
-
-    override fun defaultEnumEntryFactory(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        enumEntry: ClassDescriptor,
-        symbol: IrEnumEntrySymbol,
-    ): IrEnumEntry {
-        return irFactory.createEnumEntry(startOffset, endOffset, origin, nameProvider.nameForDeclaration(enumEntry), symbol)
+        return IrEnumEntrySymbolImpl()
     }
 
     // ------------------------------------ field ------------------------------------
 
     override fun createPublicFieldSymbol(declaration: PropertyDescriptor, signature: IdSignature): IrFieldSymbol {
-        return IrFieldSymbolImpl(declaration, signature)
+        return IrFieldSymbolImpl(signature)
     }
 
     override fun createPrivateFieldSymbol(declaration: PropertyDescriptor): IrFieldSymbol {
-        return IrFieldSymbolImpl(declaration)
-    }
-
-    override fun defaultFieldFactory(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: PropertyDescriptor,
-        type: IrType,
-        visibility: DescriptorVisibility?,
-        symbol: IrFieldSymbol,
-    ): IrField {
-        return irFactory.createField(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            name = nameProvider.nameForDeclaration(declaration),
-            visibility = visibility ?: symbol.descriptor.visibility,
-            symbol = symbol,
-            type = type,
-            isFinal = !symbol.descriptor.isVar,
-            isStatic = symbol.descriptor.dispatchReceiverParameter == null,
-            isExternal = symbol.descriptor.isEffectivelyExternal(),
-        ).apply {
-            metadata = DescriptorMetadataSource.Property(symbol.descriptor)
-        }
+        return IrFieldSymbolImpl()
     }
 
     // ------------------------------------ property ------------------------------------
 
     override fun createPublicPropertySymbol(declaration: PropertyDescriptor, signature: IdSignature): IrPropertySymbol {
-        return IrPropertySymbolImpl(declaration, signature)
+        return IrPropertySymbolImpl(signature)
     }
 
     override fun createPrivatePropertySymbol(declaration: PropertyDescriptor): IrPropertySymbol {
-        return IrPropertySymbolImpl(declaration)
-    }
-
-    override fun defaultPropertyFactory(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: PropertyDescriptor,
-        isDelegated: Boolean,
-        symbol: IrPropertySymbol,
-    ): IrProperty {
-        return irFactory.createProperty(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            name = nameProvider.nameForDeclaration(declaration),
-            visibility = declaration.visibility,
-            modality = declaration.modality,
-            symbol = symbol,
-            isVar = declaration.isVar,
-            isConst = declaration.isConst,
-            isLateinit = declaration.isLateInit,
-            isDelegated = isDelegated,
-            isExternal = declaration.isEffectivelyExternal(),
-            isExpect = declaration.isExpect,
-            isFakeOverride = declaration.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
-        ).apply {
-            metadata = DescriptorMetadataSource.Property(symbol.descriptor)
-        }
+        return IrPropertySymbolImpl()
     }
 
     // ------------------------------------ typealias ------------------------------------
 
     override fun createPublicTypeAliasSymbol(declaration: TypeAliasDescriptor, signature: IdSignature): IrTypeAliasSymbol {
-        return IrTypeAliasSymbolImpl(declaration, signature)
+        return IrTypeAliasSymbolImpl(signature)
     }
 
     override fun createPrivateTypeAliasSymbol(declaration: TypeAliasDescriptor): IrTypeAliasSymbol {
-        return IrTypeAliasSymbolImpl(declaration)
+        return IrTypeAliasSymbolImpl()
     }
 
     // ------------------------------------ function ------------------------------------
 
     override fun createPublicFunctionSymbol(declaration: FunctionDescriptor, signature: IdSignature): IrSimpleFunctionSymbol {
-        return IrSimpleFunctionSymbolImpl(declaration, signature)
+        return IrSimpleFunctionSymbolImpl(signature)
     }
 
     override fun createPrivateFunctionSymbol(declaration: FunctionDescriptor): IrSimpleFunctionSymbol {
-        return IrSimpleFunctionSymbolImpl(declaration)
+        return IrSimpleFunctionSymbolImpl()
     }
 
     // ------------------------------------ type parameter ------------------------------------
 
     override fun createPublicTypeParameterSymbol(declaration: TypeParameterDescriptor, signature: IdSignature): IrTypeParameterSymbol {
-        return IrTypeParameterSymbolImpl(declaration, signature)
+        return IrTypeParameterSymbolImpl(signature)
     }
 
     override fun createPrivateTypeParameterSymbol(declaration: TypeParameterDescriptor): IrTypeParameterSymbol {
-        return IrTypeParameterSymbolImpl(declaration)
-    }
-
-    override fun defaultTypeParameterFactory(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: TypeParameterDescriptor,
-        symbol: IrTypeParameterSymbol,
-    ): IrTypeParameter {
-        return irFactory.createTypeParameter(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            name = nameProvider.nameForDeclaration(declaration),
-            symbol = symbol,
-            variance = symbol.descriptor.variance,
-            index = symbol.descriptor.index,
-            isReified = symbol.descriptor.isReified
-        )
+        return IrTypeParameterSymbolImpl()
     }
 
     // ------------------------------------ value parameter ------------------------------------

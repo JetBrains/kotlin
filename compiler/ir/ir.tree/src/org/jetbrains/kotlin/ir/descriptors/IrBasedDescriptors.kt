@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.declaringSourceSetModule
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -1147,7 +1149,14 @@ private fun getContainingDeclaration(declaration: IrDeclaration): DeclarationDes
         parent.correspondingPropertySymbol?.owner?.let { return it.toIrBasedDescriptor() }
     }
     val parentDescriptor = (parent as IrSymbolOwner).let {
-        if (it is IrDeclaration) it.toIrBasedDescriptor() else it.symbol.descriptor
+        when (it) {
+            is IrDeclaration -> it.toIrBasedDescriptor()
+            is IrPackageFragment -> {
+                val module = (it as? IrFile)?.declaringSourceSetModule ?: it.module
+                EmptyPackageFragmentDescriptor(module.descriptor, it.packageFqName)
+            }
+            else -> error("Unexpected declaration parent: $it")
+        }
     }
     return if (parent is IrClass && parent.isFileClass) {
         // JVM IR adds facade classes for IR of functions/properties loaded both from sources and dependencies. However, these shouldn't
@@ -1181,9 +1190,9 @@ private fun makeKotlinType(
 ): SimpleType =
     when (classifier) {
         is IrTypeParameterSymbol ->
-            classifier.toIrBasedDescriptorIfPossible().defaultType.makeNullableAsSpecified(hasQuestionMark)
+            classifier.owner.toIrBasedDescriptor().defaultType.makeNullableAsSpecified(hasQuestionMark)
         is IrClassSymbol -> {
-            val classDescriptor = classifier.toIrBasedDescriptorIfPossible()
+            val classDescriptor = classifier.owner.toIrBasedDescriptor()
             val kotlinTypeArguments = arguments.memoryOptimizedMapIndexed { index, it ->
                 when (it) {
                     is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toIrBasedKotlinType(builtins))
@@ -1220,15 +1229,6 @@ private fun makeKotlinType(
             ).makeNullableAsSpecified(hasQuestionMark)
         }
     }
-
-/* When IR-based descriptors are used from Psi2Ir, symbols may be unbound, thus we may need to resort to real descriptors. */
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-private fun IrClassSymbol.toIrBasedDescriptorIfPossible(): ClassDescriptor =
-    if (isBound) owner.toIrBasedDescriptor() else descriptor
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-private fun IrTypeParameterSymbol.toIrBasedDescriptorIfPossible(): TypeParameterDescriptor =
-    if (isBound) owner.toIrBasedDescriptor() else descriptor
 
 private fun IrElement.toConstantValue(): ConstantValue<*> {
     return when (this) {

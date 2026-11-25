@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrLock
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -14,7 +13,7 @@ import org.jetbrains.kotlin.util.PrivateForInline
 
 abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
         where SymbolOwner : IrSymbolOwner,
-              Symbol : IrBindableSymbol<*, SymbolOwner> {
+              Symbol : IrBindableSymbol<SymbolOwner> {
     /**
      * With the partial linkage turned on it's hard to predict whether a newly created [IrSymbol] that is added to the [SymbolTable]
      * via one of referenceXXX() calls will or won't be bound to some declaration. The latter may happen in certain cases,
@@ -92,7 +91,7 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
     }
 
     class Flat<Key, SymbolOwner, Symbol>(lock: IrLock, val symbolFilter: (Key, Symbol) -> Boolean = { _, _ -> true }) :
-        SymbolTableSlice<Key, SymbolOwner, Symbol>(lock) where SymbolOwner : IrSymbolOwner, Symbol : IrBindableSymbol<*, SymbolOwner> {
+        SymbolTableSlice<Key, SymbolOwner, Symbol>(lock) where SymbolOwner : IrSymbolOwner, Symbol : IrBindableSymbol<SymbolOwner> {
         private val signatureToSymbol = hashMapOf<Key, Symbol>()
 
         override fun get(key: Key): Symbol? {
@@ -117,7 +116,7 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
     }
 
     class Scoped<Key, SymbolOwner, Symbol>(lock: IrLock) : SymbolTableSlice<Key, SymbolOwner, Symbol>(lock)
-            where SymbolOwner : IrSymbolOwner, Symbol : IrBindableSymbol<*, SymbolOwner> {
+            where SymbolOwner : IrSymbolOwner, Symbol : IrBindableSymbol<SymbolOwner> {
 
         @OptIn(PrivateForInline::class)
         override fun set(key: Key, symbol: Symbol) {

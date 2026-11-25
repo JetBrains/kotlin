@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
@@ -34,10 +34,10 @@ import kotlin.apply
 
 class JvmIrSpecialAnnotationSymbolProvider(builtInsModule: IrModuleFragment) : IrSpecialAnnotationsProvider() {
     private val kotlinJvmInternalPackage: IrExternalPackageFragmentImpl =
-        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), JvmAnnotationNames.KOTLIN_JVM_INTERNAL, builtInsModule)
+        IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), JvmAnnotationNames.KOTLIN_JVM_INTERNAL, builtInsModule)
 
     private val kotlinInternalIrPackage: IrExternalPackageFragmentImpl =
-        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), IrBuiltIns.KOTLIN_INTERNAL_IR_FQN, builtInsModule)
+        IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), IrBuiltIns.KOTLIN_INTERNAL_IR_FQN, builtInsModule)
 
     private val enhancedNullabilityAnnotationInfo: AnnotationInfo = EnhancedNullability.getAnnotationInfo(kotlinJvmInternalPackage)
     private val flexibleNullabilityAnnotationInfo: AnnotationInfo = FlexibleNullability.getAnnotationInfo(kotlinInternalIrPackage)

@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.KlibSignatureIndexComponentWriterImpl
-import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.packageFragmentDescriptor
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.preparedInlineFunctionCopies
@@ -56,7 +54,6 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
 
     fun serializedIrModule(module: IrModuleFragment): SerializedIrModule {
         val serializedFiles = module.files.asSequence()
-            .filter { it.packageFragmentDescriptor !is FunctionInterfacePackageFragment }
             .filter(this::backendSpecificFileFilter)
             .map(this::serializeIrFile)
             .toList()

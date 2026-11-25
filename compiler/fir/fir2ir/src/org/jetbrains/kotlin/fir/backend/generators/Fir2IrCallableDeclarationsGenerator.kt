@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -58,9 +57,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     internal fun createExternalPackageFragment(
         fqName: FqName,
         module: IrModuleFragment,
-        createPackageFragmentDescriptor: (FqName, ModuleDescriptor) -> PackageFragmentDescriptor = ::FirPackageFragmentDescriptor,
     ): IrExternalPackageFragment {
-        val symbol = IrExternalPackageFragmentSymbolImpl(createPackageFragmentDescriptor(fqName, module.descriptor))
+        val symbol = IrExternalPackageFragmentSymbolImpl()
         return IrExternalPackageFragmentImpl(symbol, fqName, module)
     }
 

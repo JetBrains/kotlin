@@ -1638,7 +1638,7 @@ fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffse
         ?: throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
 
 
-fun <S : IrBindableSymbol<*, O>, O : IrSymbolOwner> S.getOwnerIfBound(): O? = if (isBound) owner else null
+fun <S : IrBindableSymbol<O>, O : IrSymbolOwner> S.getOwnerIfBound(): O? = if (isBound) owner else null
 
 val IrSimpleFunction.isTrivialGetter: Boolean
     get() {

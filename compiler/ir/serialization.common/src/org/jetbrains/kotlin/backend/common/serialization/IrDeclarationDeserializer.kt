@@ -915,7 +915,7 @@ class IrDeclarationDeserializer(
         throw IrSymbolTypeMismatchException(S::class.java, this)
     }
 
-    private inline fun <Declaration : IrDeclaration, Symbol : IrBindableSymbol<*, Declaration>> createIfUnbound(
+    private inline fun <Declaration : IrDeclaration, Symbol : IrBindableSymbol<Declaration>> createIfUnbound(
         symbol: Symbol,
         create: () -> Declaration,
     ): Declaration = if (settings.allowAlreadyBoundSymbols && symbol.isBound) {

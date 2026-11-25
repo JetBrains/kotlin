@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -76,7 +76,7 @@ class JsIrBackendContext(
 
     override val bodilessBuiltInsPackageFragment: IrPackageFragment by lazy {
         IrExternalPackageFragmentImpl(
-            DescriptorlessExternalPackageFragmentSymbol(),
+            IrExternalPackageFragmentSymbolImpl(),
             FqName("kotlin"),
             module = irBuiltIns.moduleFragment,
         )

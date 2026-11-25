@@ -76,7 +76,7 @@ class SpecialFakeOverrideSymbolsResolver() : SymbolRemapper.Empty() {
     }
 
     private inline fun <reified S : IrSymbol> S.remap(): S {
-        if (this !is IrFakeOverrideSymbolBase<*, *, *>) {
+        if (this !is IrFakeOverrideSymbolBase<*, *>) {
             return this
         }
         processClass(containingClassSymbol.owner)

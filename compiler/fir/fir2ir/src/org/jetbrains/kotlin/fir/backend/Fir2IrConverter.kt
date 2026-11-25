@@ -137,7 +137,7 @@ class Fir2IrConverter(
         }
         val irFile = IrFileImpl(
             fileEntry,
-            moduleFragment.descriptor.getPackage(file.packageFqName).fragments.first(),
+            file.packageFqName,
             moduleFragment
         )
         if (file.origin is FirDeclarationOrigin.Synthetic.PluginFile) {

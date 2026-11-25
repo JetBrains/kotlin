@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.makeEntryPoint
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
-import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 internal data class SpecialBackendChecksInput(
         val irModule: IrModuleFragment,
@@ -78,9 +77,5 @@ internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<NativeBacken
 }
 
 private fun IrModuleFragment.addFile(fileEntry: IrFileEntry, packageFqName: FqName): IrFile {
-    val packageFragmentDescriptor = object : PackageFragmentDescriptorImpl(this.descriptor, packageFqName) {
-        override fun getMemberScope(): MemberScope = MemberScope.Empty
-    }
-
-    return IrFileImpl(fileEntry, packageFragmentDescriptor, this).also(this::addFile)
+    return IrFileImpl(fileEntry, packageFqName, this).also(this::addFile)
 }

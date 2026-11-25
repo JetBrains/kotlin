@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
@@ -83,7 +83,7 @@ private fun visibilityError(element: IrElement, visibility: Visibility, context:
 private fun IrDeclarationWithVisibility.isVisibleAsInternal(file: IrFile): Boolean {
     val referencedDeclarationPackageFragment = getPackageFragment()
     val module = file.module
-    if (referencedDeclarationPackageFragment.symbol is DescriptorlessExternalPackageFragmentSymbol) {
+    if (referencedDeclarationPackageFragment.symbol is IrExternalPackageFragmentSymbolImpl) {
         // When compiling JS stdlib, intrinsic declarations are moved to a special module that doesn't have a descriptor.
         // This happens after deserialization but before executing any lowerings, including IR validating lowering
         // See MoveBodilessDeclarationsToSeparatePlaceLowering

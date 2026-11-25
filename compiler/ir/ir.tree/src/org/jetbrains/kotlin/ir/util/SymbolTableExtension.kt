@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.utils.threadLocal
 
 abstract class ReferenceSymbolTableExtension<Class, TypeAlias, Script, Function, Constructor, Property, ValueParameter, TypeParameter> {
@@ -28,9 +25,6 @@ abstract class ReferenceSymbolTableExtension<Class, TypeAlias, Script, Function,
     abstract fun referenceScopedTypeParameter(declaration: TypeParameter): IrTypeParameterSymbol
     abstract fun referenceTypeAlias(declaration: TypeAlias): IrTypeAliasSymbol
 }
-
-typealias SymbolFactory<Declaration, Symbol> = (Declaration, IdSignature?) -> Symbol
-typealias OwnerFactory<Symbol, SymbolOwner> = (Symbol) -> SymbolOwner
 
 @OptIn(SymbolTableInternals::class)
 abstract class SymbolTableExtension<
@@ -90,20 +84,6 @@ abstract class SymbolTableExtension<
 
     // ------------------------------------ script ------------------------------------
 
-    fun declareScript(
-        startOffset: Int,
-        endOffset: Int,
-        declaration: Script,
-    ): IrScript {
-        return declare(
-            declaration,
-            scriptSlice,
-            SymbolTable::declareScript,
-            symbolFactory = { createScriptSymbol(declaration, it) },
-            ownerFactory = { defaultScriptFactory(startOffset, endOffset, declaration, it) }
-        )
-    }
-
     override fun referenceScript(declaration: Script): IrScriptSymbol {
         return scriptSlice.referenced(declaration) { createScriptSymbol(declaration, signature = null) }
     }
@@ -115,26 +95,6 @@ abstract class SymbolTableExtension<
     }
 
     // ------------------------------------ class ------------------------------------
-
-    fun declareClass(declaration: Class, classFactory: (IrClassSymbol) -> IrClass): IrClass {
-        return declare(
-            declaration,
-            classSlice,
-            SymbolTable::declareClass,
-            { createClassSymbol(declaration, it) },
-            classFactory
-        )
-    }
-
-    fun declareClassIfNotExists(declaration: Class, classFactory: (IrClassSymbol) -> IrClass): IrClass {
-        return declareIfNotExist(
-            declaration,
-            classSlice,
-            SymbolTable::declareClassIfNotExists,
-            { createClassSymbol(declaration, it) },
-            classFactory
-        )
-    }
 
     override fun referenceClass(declaration: Class): IrClassSymbol {
         return reference(
@@ -161,29 +121,6 @@ abstract class SymbolTableExtension<
 
     // ------------------------------------ constructor ------------------------------------
 
-    fun declareConstructor(declaration: Constructor, constructorFactory: (IrConstructorSymbol) -> IrConstructor): IrConstructor {
-        return declare(
-            declaration,
-            constructorSlice,
-            SymbolTable::declareConstructor,
-            { createConstructorSymbol(declaration, it) },
-            constructorFactory
-        )
-    }
-
-    fun declareConstructorIfNotExists(
-        declaration: Constructor,
-        constructorFactory: (IrConstructorSymbol) -> IrConstructor,
-    ): IrConstructor {
-        return declareIfNotExist(
-            declaration,
-            constructorSlice,
-            SymbolTable::declareConstructorIfNotExists,
-            { createConstructorSymbol(declaration, it) },
-            constructorFactory
-        )
-    }
-
     override fun referenceConstructor(declaration: Constructor): IrConstructorSymbol {
         return reference(
             declaration,
@@ -209,34 +146,6 @@ abstract class SymbolTableExtension<
 
     // ------------------------------------ enum entry ------------------------------------
 
-    fun declareEnumEntry(declaration: Class, enumEntryFactory: (IrEnumEntrySymbol) -> IrEnumEntry): IrEnumEntry {
-        return declare(
-            declaration,
-            enumEntrySlice,
-            SymbolTable::declareEnumEntry,
-            { createEnumEntrySymbol(declaration, it) },
-            enumEntryFactory,
-            ::calculateEnumEntrySignature
-        )
-    }
-
-    fun declareEnumEntry(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, declaration: Class): IrEnumEntry {
-        return declareEnumEntry(
-            declaration
-        ) { enumEntrySymbol -> defaultEnumEntryFactory(startOffset, endOffset, origin, declaration, enumEntrySymbol) }
-    }
-
-    fun declareEnumEntryIfNotExists(declaration: Class, enumEntryFactory: (IrEnumEntrySymbol) -> IrEnumEntry): IrEnumEntry {
-        return declareIfNotExist(
-            declaration,
-            enumEntrySlice,
-            SymbolTable::declareEnumEntryIfNotExists,
-            { createEnumEntrySymbol(declaration, it) },
-            enumEntryFactory,
-            ::calculateEnumEntrySignature
-        )
-    }
-
     override fun referenceEnumEntry(declaration: Class): IrEnumEntrySymbol {
         return reference(
             declaration,
@@ -261,58 +170,7 @@ abstract class SymbolTableExtension<
         return IrEnumEntrySymbolImpl()
     }
 
-    protected abstract fun defaultEnumEntryFactory(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        enumEntry: Class,
-        symbol: IrEnumEntrySymbol,
-    ): IrEnumEntry
-
     // ------------------------------------ field ------------------------------------
-
-    fun declareField(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: Property,
-        type: IrType,
-        visibility: DescriptorVisibility? = null,
-        fieldFactory: (IrFieldSymbol) -> IrField = {
-            defaultFieldFactory(
-                startOffset,
-                endOffset,
-                origin,
-                declaration,
-                type,
-                visibility,
-                it
-            )
-        },
-    ): IrField {
-        return declare(
-            declaration,
-            fieldSlice,
-            SymbolTable::declareField,
-            { createFieldSymbol(declaration, it) },
-            fieldFactory,
-            ::calculateFieldSignature
-        )
-    }
-
-    fun declareField(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: Property,
-        type: IrType,
-        irInitializer: IrExpressionBody?,
-    ): IrField {
-        return declareField(startOffset, endOffset, origin, declaration, type).apply {
-            initializer = irInitializer
-        }
-    }
-
     override fun referenceField(declaration: Property): IrFieldSymbol {
         return reference(
             declaration,
@@ -337,50 +195,7 @@ abstract class SymbolTableExtension<
         return IrFieldSymbolImpl()
     }
 
-
-    protected abstract fun defaultFieldFactory(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: Property,
-        type: IrType,
-        visibility: DescriptorVisibility?,
-        symbol: IrFieldSymbol,
-    ): IrField
-
     // ------------------------------------ property ------------------------------------
-
-    fun declareProperty(declaration: Property, propertyFactory: (IrPropertySymbol) -> IrProperty): IrProperty {
-        return declare(
-            declaration,
-            propertySlice,
-            SymbolTable::declareProperty,
-            { createPropertySymbol(declaration, it) },
-            propertyFactory
-        )
-    }
-
-    fun declareProperty(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: Property,
-        isDelegated: Boolean
-    ): IrProperty {
-        return declareProperty(declaration) { propertySymbol ->
-            defaultPropertyFactory(startOffset, endOffset, origin, declaration, isDelegated, propertySymbol)
-        }
-    }
-
-    fun declarePropertyIfNotExists(declaration: Property, propertyFactory: (IrPropertySymbol) -> IrProperty): IrProperty {
-        return declareIfNotExist(
-            declaration,
-            propertySlice,
-            SymbolTable::declarePropertyIfNotExists,
-            { createPropertySymbol(declaration, it) },
-            propertyFactory
-        )
-    }
 
     override fun referenceProperty(declaration: Property): IrPropertySymbol {
         return reference(
@@ -405,36 +220,7 @@ abstract class SymbolTableExtension<
         return IrPropertySymbolImpl()
     }
 
-    protected abstract fun defaultPropertyFactory(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: Property,
-        isDelegated: Boolean,
-        symbol: IrPropertySymbol,
-    ): IrProperty
-
     // ------------------------------------ typealias ------------------------------------
-
-    fun declareTypeAlias(declaration: TypeAlias, typeAliasFactory: (IrTypeAliasSymbol) -> IrTypeAlias): IrTypeAlias {
-        return declare(
-            declaration,
-            typeAliasSlice,
-            SymbolTable::declareTypeAlias,
-            { createTypeAliasSymbol(declaration, it) },
-            typeAliasFactory
-        )
-    }
-
-    fun declareTypeAliasIfNotExists(declaration: TypeAlias, typeAliasFactory: (IrTypeAliasSymbol) -> IrTypeAlias): IrTypeAlias {
-        return declareIfNotExist(
-            declaration,
-            typeAliasSlice,
-            SymbolTable::declareTypeAliasIfNotExists,
-            { createTypeAliasSymbol(declaration, it) },
-            typeAliasFactory
-        )
-    }
 
     override fun referenceTypeAlias(declaration: TypeAlias): IrTypeAliasSymbol {
         return reference(
@@ -460,30 +246,6 @@ abstract class SymbolTableExtension<
     }
 
     // ------------------------------------ function ------------------------------------
-
-    fun declareSimpleFunction(declaration: Function, functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction): IrSimpleFunction {
-        return declare(
-            declaration,
-            functionSlice,
-            SymbolTable::declareSimpleFunction,
-            { createFunctionSymbol(declaration, it) },
-            functionFactory
-        )
-    }
-
-    fun declareSimpleFunctionIfNotExists(
-        declaration: Function,
-        functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction,
-    ): IrSimpleFunction {
-        return declareIfNotExist(
-            declaration,
-            functionSlice,
-            SymbolTable::declareSimpleFunctionIfNotExists,
-            { createFunctionSymbol(declaration, it) },
-            functionFactory
-        )
-    }
-
     override fun referenceSimpleFunction(declaration: Function): IrSimpleFunctionSymbol {
         return reference(
             declaration,
@@ -522,46 +284,6 @@ abstract class SymbolTableExtension<
 
     // ------------------------------------ type parameter ------------------------------------
 
-    fun declareGlobalTypeParameter(
-        declaration: TypeParameter,
-        typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter,
-    ): IrTypeParameter {
-        return declare(
-            declaration,
-            globalTypeParameterSlice,
-            SymbolTable::declareGlobalTypeParameter,
-            { createTypeParameterSymbol(declaration, it) },
-            typeParameterFactory
-        )
-    }
-
-    fun declareGlobalTypeParameter(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: TypeParameter,
-    ): IrTypeParameter {
-        return declareGlobalTypeParameter(declaration) {
-            defaultTypeParameterFactory(startOffset, endOffset, origin, declaration, it)
-        }
-    }
-
-    fun declareScopedTypeParameter(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: TypeParameter,
-        typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = {
-            defaultTypeParameterFactory(startOffset, endOffset, origin, declaration, it)
-        },
-    ): IrTypeParameter {
-        return scopedTypeParameterSlice.declare(
-            declaration,
-            { createTypeParameterSymbol(declaration, calculateSignature(declaration)) },
-            typeParameterFactory
-        )
-    }
-
     override fun referenceTypeParameter(declaration: TypeParameter): IrTypeParameterSymbol {
         scopedTypeParameterSlice.get(declaration)?.let { return it }
         return reference(
@@ -590,14 +312,6 @@ abstract class SymbolTableExtension<
         return IrTypeParameterSymbolImpl()
     }
 
-    protected abstract fun defaultTypeParameterFactory(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        declaration: TypeParameter,
-        symbol: IrTypeParameterSymbol,
-    ): IrTypeParameter
-
     // ------------------------------------ value parameter ------------------------------------
 
     override fun referenceValueParameter(declaration: ValueParameter): IrValueParameterSymbol {
@@ -624,27 +338,6 @@ abstract class SymbolTableExtension<
 
     // ------------------------------------ utilities ------------------------------------
 
-    /**
-     * This function is quite messy and doesn't have good contract of what exactly is traversed.
-     * Basic idea is it traverse symbols which can be reasonable referered from other module
-     *
-     * Be careful when using it, and avoid it, except really need.
-     */
-    @DelicateSymbolTableApi
-    fun forEachDeclarationSymbol(block: (IrSymbol) -> Unit) {
-        table.forEachDeclarationSymbol(block)
-
-        scriptSlice.forEachSymbol { block(it) }
-        classSlice.forEachSymbol { block(it) }
-        constructorSlice.forEachSymbol { block(it) }
-        enumEntrySlice.forEachSymbol { block(it) }
-        fieldSlice.forEachSymbol { block(it) }
-        functionSlice.forEachSymbol { block(it) }
-        propertySlice.forEachSymbol { block(it) }
-        typeAliasSlice.forEachSymbol { block(it) }
-        globalTypeParameterSlice.forEachSymbol { block(it) }
-    }
-
     @OptIn(DelicateSymbolTableApi::class)
     val allUnboundSymbols: Set<IrSymbol>
         get() = buildSet {
@@ -664,60 +357,7 @@ abstract class SymbolTableExtension<
             addUnbound(globalTypeParameterSlice)
         }
 
-    private inline fun <D : Declaration, Symbol : IrBindableSymbol<*, SymbolOwner>, SymbolOwner : IrSymbolOwner> declare(
-        declaration: D,
-        slice: SymbolTableSlice<D, SymbolOwner, Symbol>,
-        declareBySignature: SymbolTable.(IdSignature, () -> Symbol, OwnerFactory<Symbol, SymbolOwner>) -> SymbolOwner,
-        crossinline symbolFactory: (IdSignature?) -> Symbol,
-        noinline ownerFactory: OwnerFactory<Symbol, SymbolOwner>,
-        specificCalculateSignature: (D) -> IdSignature? = { calculateSignature(it) }
-    ): SymbolOwner {
-        return declare(
-            declaration,
-            slice,
-            declareBySignature,
-            SymbolTableSlice<D, SymbolOwner, Symbol>::declare,
-            symbolFactory,
-            ownerFactory,
-            specificCalculateSignature
-        )
-    }
-
-    private inline fun <D : Declaration, Symbol : IrBindableSymbol<*, SymbolOwner>, SymbolOwner : IrSymbolOwner> declareIfNotExist(
-        declaration: D,
-        slice: SymbolTableSlice<D, SymbolOwner, Symbol>,
-        declareBySignature: SymbolTable.(IdSignature, () -> Symbol, OwnerFactory<Symbol, SymbolOwner>) -> SymbolOwner,
-        crossinline symbolFactory: (IdSignature?) -> Symbol,
-        noinline ownerFactory: OwnerFactory<Symbol, SymbolOwner>,
-        specificCalculateSignature: (D) -> IdSignature? = { calculateSignature(it) }
-    ): SymbolOwner {
-        return declare(
-            declaration,
-            slice,
-            declareBySignature,
-            SymbolTableSlice<D, SymbolOwner, Symbol>::declareIfNotExists,
-            symbolFactory,
-            ownerFactory,
-            specificCalculateSignature
-        )
-    }
-
-    private inline fun <D : Declaration, Symbol : IrBindableSymbol<*, SymbolOwner>, SymbolOwner : IrSymbolOwner> declare(
-        declaration: D,
-        slice: SymbolTableSlice<D, SymbolOwner, Symbol>,
-        declareBySignature: SymbolTable.(IdSignature, () -> Symbol, OwnerFactory<Symbol, SymbolOwner>) -> SymbolOwner,
-        declareByDeclaration: SymbolTableSlice<D, SymbolOwner, Symbol>.(D, () -> Symbol, OwnerFactory<Symbol, SymbolOwner>) -> SymbolOwner,
-        crossinline symbolFactory: (IdSignature?) -> Symbol,
-        noinline ownerFactory: OwnerFactory<Symbol, SymbolOwner>,
-        specificCalculateSignature: (D) -> IdSignature?
-    ): SymbolOwner {
-        return when (val signature = specificCalculateSignature(declaration)) {
-            null -> slice.declareByDeclaration(declaration, { symbolFactory(signature) }, ownerFactory)
-            else -> table.declareBySignature(signature, { symbolFactory(signature) }, ownerFactory)
-        }
-    }
-
-    private inline fun <D : Declaration, Symbol : IrBindableSymbol<*, SymbolOwner>, SymbolOwner : IrSymbolOwner> reference(
+    private inline fun <D : Declaration, Symbol : IrBindableSymbol<SymbolOwner>, SymbolOwner : IrSymbolOwner> reference(
         declaration: D,
         slice: SymbolTableSlice<D, SymbolOwner, Symbol>,
         referenceBySignature: SymbolTable.(IdSignature, () -> Symbol, () -> Symbol) -> Symbol,

@@ -99,7 +99,6 @@ abstract class IrSignatureWithUnboundIrTest {
         )
 
         val unboundSymbol = IrClassSymbolImpl(
-            descriptor = null,
             signature = classSignature,
         )
 

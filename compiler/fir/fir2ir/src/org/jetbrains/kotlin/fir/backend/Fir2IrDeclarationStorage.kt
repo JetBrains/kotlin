@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
@@ -176,7 +175,7 @@ class Fir2IrDeclarationStorage(
 
     private inline fun <S : IrSymbol> Collection<S>.forEachSkipFakeOverrides(block: (S) -> Unit) {
         for (symbol in this) {
-            if (symbol is IrFakeOverrideSymbolBase<*, *, *>) continue
+            if (symbol is IrFakeOverrideSymbolBase<*, *>) continue
             block(symbol)
         }
     }
@@ -267,7 +266,7 @@ class Fir2IrDeclarationStorage(
                 val irModule = getDependenciesIrModule(moduleData)
                 if (isBuiltIn) {
                     fragments.builtinFragmentsForDependencies.getOrPut(moduleData) {
-                        callablesGenerator.createExternalPackageFragment(fqName, irModule, ::FirBuiltInsPackageFragment)
+                        callablesGenerator.createExternalPackageFragment(fqName, irModule)
                     }
                 } else {
                     fragments.fragmentsForDependencies.getOrPut(moduleData) {
@@ -1498,7 +1497,7 @@ annotation class LeakedDeclarationCaches
  *   to easily track all places left when we need to extract owner from symbol
  */
 @UnsafeDuringIrConstructionAPI
-internal fun <D : IrDeclaration> IrBindableSymbol<*, D>.ownerIfBound(): D? {
+internal fun <D : IrDeclaration> IrBindableSymbol<D>.ownerIfBound(): D? {
     return runIf(isBound) { owner }
 }
 

@@ -248,7 +248,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         }
         // When the receiver is inlined, it can have side effects in form of class initialization, so it should be evaluated here.
         val receiverBlock = boundValueOrNull.takeIf { backingField == null }?.let {
-            val symbol = IrAnonymousInitializerSymbolImpl(parentAsClass.symbol)
+            val symbol = IrAnonymousInitializerSymbolImpl()
             context.irFactory.createAnonymousInitializer(
                 it.startOffset,
                 it.endOffset,

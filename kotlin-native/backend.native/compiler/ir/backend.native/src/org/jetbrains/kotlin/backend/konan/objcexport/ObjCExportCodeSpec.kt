@@ -67,7 +67,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
         val irClassSymbol = symbolTable.descriptorExtension.referenceClass(descriptor)
 
         if (descriptor.isInterface) {
-            ObjCProtocolForKotlinInterface(binaryName, irClassSymbol, methods)
+            ObjCProtocolForKotlinInterface(binaryName, irClassSymbol, descriptor, methods)
         } else {
             descriptor.constructors.filter { mapper.shouldBeExposed(it) }.mapTo(methods) {
                 val irConstructorSymbol = symbolTable.descriptorExtension.referenceConstructor(it)
@@ -126,7 +126,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
             val superClassNotAny = descriptor.getSuperClassNotAny()
                     ?.let { getType(it) as ObjCClassForKotlinClass }
 
-            ObjCClassForKotlinClass(binaryName, irClassSymbol, methods, superClassNotAny)
+            ObjCClassForKotlinClass(binaryName, irClassSymbol, descriptor, methods, superClassNotAny)
         }
     }
 
@@ -200,7 +200,7 @@ internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String, sig
         val categoriesByClass = categories.groupBy { it.classBinaryName }
         for (type in types) {
             val overrides = buildMap {
-                for (method in type.irClassSymbol.descriptor.contributedMethods) {
+                for (method in type.classDescriptor.contributedMethods) {
                     val signature = signaturer.composeSignature(method) ?: continue
                     for (base in mapper.getBaseMethods(method.original)) {
                         val baseSignature = signaturer.composeSignature(base) ?: continue
@@ -298,15 +298,17 @@ internal sealed class ObjCTypeSpec(val binaryName: String)
 internal sealed class ObjCTypeForKotlinType(
         binaryName: String,
         val irClassSymbol: IrClassSymbol,
+        val classDescriptor: ClassDescriptor,
         val methods: List<ObjCMethodSpec>
 ) : ObjCTypeSpec(binaryName)
 
 internal class ObjCClassForKotlinClass(
         binaryName: String,
         irClassSymbol: IrClassSymbol,
+        classDescriptor: ClassDescriptor,
         methods: List<ObjCMethodSpec>,
         val superClassNotAny: ObjCClassForKotlinClass?
-) : ObjCTypeForKotlinType(binaryName, irClassSymbol, methods) {
+) : ObjCTypeForKotlinType(binaryName, irClassSymbol, classDescriptor, methods) {
     override fun toString(): String =
             "ObjC spec of class `$binaryName` for `$irClassSymbol`"
 }
@@ -314,8 +316,9 @@ internal class ObjCClassForKotlinClass(
 internal class ObjCProtocolForKotlinInterface(
         binaryName: String,
         irClassSymbol: IrClassSymbol,
+        classDescriptor: ClassDescriptor,
         methods: List<ObjCMethodSpec>
-) : ObjCTypeForKotlinType(binaryName, irClassSymbol, methods) {
+) : ObjCTypeForKotlinType(binaryName, irClassSymbol, classDescriptor, methods) {
 
     override fun toString(): String =
             "ObjC spec of protocol `$binaryName` for `$irClassSymbol`"

@@ -68,3 +68,8 @@ var IrFile.fileForTopLevelPluginDeclarations: Boolean by irFlag(copyByDefault = 
  * Defines how visibility between modules should behave. It may be different e.g. between the compiler's frontend and backend.
  */
 var IrModuleFragment.moduleVisibilityProvider: ModuleVisibilityProvider? by irAttribute(copyByDefault = true)
+
+/**
+ * The module of this source file before actualization. Only available at the first stage of compilation.
+ */
+var IrFile.declaringSourceSetModule: IrModuleFragment? by irAttribute(copyByDefault = true)

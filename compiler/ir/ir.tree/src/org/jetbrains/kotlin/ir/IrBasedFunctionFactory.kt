@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 
 private var IrFile.isSyntheticForFunctionInterfaceFile: Boolean? by irAttribute(copyByDefault = true)
@@ -77,11 +75,7 @@ class IrBasedFunctionFactory(
         // Standard behavior for Native backend
         fun createNewFile(): IrFile {
             val fileEntry = NaiveSourceBasedFileEntryImpl(FUNCTION_TYPE_INTERFACE_FILE)
-            // TODO remove descriptor hack after #KT-81659
-            val descriptor = object : PackageFragmentDescriptorImpl(stdlibModule.descriptor, packageFqName) {
-                override fun getMemberScope(): MemberScope = error("Should not be called")
-            }
-            return IrFileImpl(fileEntry, IrFileSymbolImpl(descriptor), packageFqName, stdlibModule)
+            return IrFileImpl(fileEntry, IrFileSymbolImpl(), packageFqName, stdlibModule)
                 .also { stdlibModule.addFile(it) }
         }
 
@@ -187,7 +181,7 @@ class IrBasedFunctionFactory(
             val signature = signatureComputer(declarationWithoutSignature)
             val declarationWithSignature = symbolTable.declareGlobalTypeParameter(
                 signature,
-                { IrTypeParameterSymbolImpl(descriptor = null, signature) }
+                { IrTypeParameterSymbolImpl(signature) }
             ) { parameter(it) }
             declarationWithSignature.superTypes += anyNType
             declarationWithSignature.parent = this
