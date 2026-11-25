@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
+import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.isFakeDeclaration
@@ -394,6 +396,9 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
     val contextModule = targetModule.contextModule
     val contextResolutionFacade = contextModule.getResolutionFacade(contextModule.project)
 
+    // All path elements are in the same file, so it suffices to check for a nested dangling file once.
+    var hasCheckedNestedDanglingFile = false
+
     return buildList {
         for (targetPathDeclaration in targetPath) {
             val targetPathPsi = targetPathDeclaration.psi ?: return null
@@ -402,6 +407,15 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
             }
 
             val originalPathPsi = targetPathPsi.unwrapCopy(targetPsiFile) ?: return null
+
+            // A path which contains only the file is a nested dangling file as well, but we don't check it: `getOrBuildFirFile` doesn't
+            // consult the resolution strategy of the context module, so such a path currently gets the intermediate dangling file's
+            // `FirFile` without failing. Checking it would turn such copies into new errors.
+            if (!hasCheckedNestedDanglingFile && originalPathPsi !is KtFile) {
+                checkCopyIsNotNestedDanglingFile(targetModule, originalPathPsi.containingKtFile)
+                hasCheckedNestedDanglingFile = true
+            }
+
             val originalPathDeclaration = when (originalPathPsi) {
                 is KtClassOrObject -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirRegularClassSymbol>(contextResolutionFacade)
                 is KtScript -> originalPathPsi.resolveToFirSymbolOfTypeSafe<FirScriptSymbol>(contextResolutionFacade)
@@ -411,5 +425,35 @@ private fun patchDesignationPathForCopy(target: FirElementWithResolveState, targ
 
             add(originalPathDeclaration.fir)
         }
+    }
+}
+
+/**
+ * Checks that the dangling file copy in [copyModule] is not a *nested dangling file*, which is a dangling file whose [originalFile] is
+ * itself a dangling file. Nested dangling files are only supported for code fragments (see KT-86321).
+ *
+ * For other dangling files, `KotlinProjectStructureProviderBase.computeContextModule` skips over dangling context modules. So the copy's
+ * context module is not the module of the intermediate dangling file, but its base context module. The base context module cannot resolve
+ * declarations from the intermediate dangling file, but designation patching needs to resolve the original declarations in it.
+ */
+private fun checkCopyIsNotNestedDanglingFile(copyModule: KaDanglingFileModule, originalFile: KtFile) {
+    // The context module is a dangling file module for copies of code fragments, or when a dangling file module was explicitly set as the
+    // copy's context module. In both cases, the context module's resolution facade supports dangling file modules, so it can resolve
+    // declarations from the intermediate dangling file.
+    val contextModule = copyModule.contextModule
+    if (contextModule is KaDanglingFileModule) return
+
+    // The original file is not a dangling file (for example, a source or script file), so the copy is not nested. This is the common case.
+    val originalModule = KotlinProjectStructureProvider.getModule(originalFile.project, originalFile, useSiteModule = contextModule)
+    if (originalModule !is KaDanglingFileModule) return
+
+    errorWithAttachment(
+        "Cannot analyze a copy of a dangling file in `IGNORE_SELF` mode: the copy's original file is itself" +
+                " a dangling file, but nested dangling files are only supported for code fragments (see KT-86321). The copy's context" +
+                " module is the base context module, which cannot resolve declarations from the intermediate dangling file."
+    ) {
+        withKaModuleEntry("copyModule", copyModule)
+        withKaModuleEntry("contextModule", contextModule)
+        withKaModuleEntry("originalModule", originalModule)
     }
 }

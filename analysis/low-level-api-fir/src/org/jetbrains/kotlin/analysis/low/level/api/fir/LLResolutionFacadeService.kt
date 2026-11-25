@@ -107,6 +107,8 @@ private class LLDanglingFileResolutionStrategyProvider(private val delegate: LLM
     LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         return when (module) {
+            // This covers the use-site dangling file module itself and the dangling file modules in the contexts of nested code
+            // fragments. Other nested dangling files are not supported (see KT-86321).
             is KaDanglingFileModule -> LLModuleResolutionStrategy.LAZY
             else -> delegate.getKind(module)
         }

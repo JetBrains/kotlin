@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.projectStructure
 
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.scopeContext
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.reflect.full.isSubclassOf
 import kotlin.time.Duration.Companion.seconds
 
@@ -270,5 +273,37 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
         assertions.assertEquals(method, call.resolveSuccessfulSymbol()?.realPsi)
         assertions.assertEquals(builtinTypes.string, method.symbol.returnType)
         assertions.assertEquals(builtinTypes.string, usage.symbol.returnType)
+    }
+
+    /**
+     * A copy of a dangling file is a nested dangling file. Apart from code fragments, nested dangling files are not supported (see
+     * KT-86321): the copy's context module is the base context module, which cannot resolve declarations from the intermediate dangling
+     * file. The analysis of such a copy in the [IGNORE_SELF][KaDanglingFileResolutionMode.IGNORE_SELF] mode should fail with a descriptive
+     * error instead of a generic one about a missing resolution strategy (see KT-92006 and KT-91890).
+     *
+     * The class in the test data is essential: designation patching only resolves classes and scripts in the designation path with the
+     * context module.
+     */
+    @Test
+    fun nestedDanglingFileCopyIgnoreSelf(mainFile: KtFile, testServices: TestServices) {
+        val assertions = testServices.assertions
+
+        val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = false)
+        val danglingFile = ktPsiFactory.createFile("dangling.kt", mainFile.text)
+        val fileCopy = danglingFile.copy() as KtFile
+        fileCopy.originalFile = danglingFile
+        val position = PsiTreeUtil.findChildOfType(fileCopy, KtConstantExpression::class.java)!!
+
+        val exception = assertThrows<Throwable> {
+            analyzeCopy(fileCopy, KaDanglingFileResolutionMode.IGNORE_SELF) {
+                fileCopy.scopeContext(position)
+            }
+        }
+
+        // The error may be wrapped by lazy resolution, so we have to check the whole cause chain.
+        val isDescriptiveError = generateSequence(exception) { it.cause }.any { it.message?.contains("nested dangling files") == true }
+        assertions.assertTrue(isDescriptiveError) {
+            "Expected a descriptive error about nested dangling files, but got:\n${exception.stackTraceToString()}"
+        }
     }
 }
