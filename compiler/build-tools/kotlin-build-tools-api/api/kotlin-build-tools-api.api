@@ -802,7 +802,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Js
 	public static final field X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;
 	public static final field X_EXPORT_KDOC Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;
 	public static final field X_SUSPEND_LAMBDA_EXPORTING Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;
-	public static final field X_TYPED_ARRAYS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;)Ljava/lang/Object;
 }
 
@@ -1053,12 +1052,10 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Na
 	public static final field NATIVE_LIBRARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
 	public static final field NOSTDLIB Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
 	public static final field NO_DEFAULT_LIBS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
-	public static final field NO_ENDORSED_LIBS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
 	public static final field OUTPUT Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
 	public static final field TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
 	public static final field X_EXPORT_KDOC Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
 	public static final field X_PRINT_IR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
-	public static final field X_PURGE_USER_LIBS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;)Ljava/lang/Object;
 }
 
@@ -1080,7 +1077,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerA
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsKlibArguments, org/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$Companion;
 	public static final field INCLUDE_BINARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
-	public static final field LIBRARY_VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
 	public static final field MANIFEST Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
 	public static final field NOPACK Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;
 	public static final field X_HEADER_KLIB_PATH Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerKlibArguments$NativeCompilerKlibArgument;

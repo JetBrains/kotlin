@@ -718,18 +718,7 @@ internal class NativeArgumentsImpl() : CommonKlibBasedArgumentsImpl(), NativeCom
   public fun toCompilerArguments(): K2NativeCompilerArguments {
     val arguments = K2NativeCompilerArguments()
     super.toCompilerArguments(arguments)
-    val unknownArgs = optionsMap.keys.filter {
-      when (it) {
-        "X_BUNDLE_ID" -> throw IllegalStateException("""Compiler parameter not recognized: X_BUNDLE_ID. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""")
-        "X_DESTROY_RUNTIME_MODE" -> throw IllegalStateException("""Compiler parameter not recognized: X_DESTROY_RUNTIME_MODE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""")
-        "X_G0" -> throw IllegalStateException("""Compiler parameter not recognized: X_G0. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.20""")
-        "X_PURGE_USER_LIBS" -> throw IllegalStateException("""Compiler parameter not recognized: X_PURGE_USER_LIBS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""")
-        "X_WORKER_EXCEPTION_HANDLING" -> throw IllegalStateException("""Compiler parameter not recognized: X_WORKER_EXCEPTION_HANDLING. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""")
-        "LIBRARY_VERSION" -> throw IllegalStateException("""Compiler parameter not recognized: LIBRARY_VERSION. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.20""")
-        "NO_ENDORSED_LIBS" -> throw IllegalStateException("""Compiler parameter not recognized: NO_ENDORSED_LIBS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.20""")
-        else -> true
-      }
-    }
+    val unknownArgs = optionsMap.keys
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }

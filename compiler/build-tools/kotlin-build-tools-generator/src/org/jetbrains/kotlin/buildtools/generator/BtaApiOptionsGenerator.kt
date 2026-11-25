@@ -134,6 +134,10 @@ internal class BtaApiOptionsGenerator(
                 }
             }
 
+            if (argument.wasRemovedBeforeIntroductionOf(level)) {
+                return@forEach
+            }
+
             val wasDeprecatedInVersion =
                 argument.deprecatedSinceVersion?.takeIf { it <= kotlinVersion }
 

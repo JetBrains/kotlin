@@ -9,7 +9,6 @@ import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
-import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KonanTarget
 
 /**
@@ -128,18 +127,6 @@ public interface NativeCompilerKlibArguments : NativeCompilerArguments,
     @JvmField
     public val INCLUDE_BINARY: NativeCompilerKlibArgument<List<Path>> =
         NativeCompilerKlibArgument("INCLUDE_BINARY", KotlinReleaseVersion(1, 5, 20))
-
-    /**
-     * The library version.
-     *
-     * Deprecated in Kotlin version 2.0.20.
-     *
-     * Removed in Kotlin version 2.4.20.
-     */
-    @JvmField
-    @RemovedCompilerArgument
-    public val LIBRARY_VERSION: NativeCompilerKlibArgument<String?> =
-        NativeCompilerKlibArgument("LIBRARY_VERSION", KotlinReleaseVersion(1, 5, 20))
 
     /**
      * Provide a manifest addend file.

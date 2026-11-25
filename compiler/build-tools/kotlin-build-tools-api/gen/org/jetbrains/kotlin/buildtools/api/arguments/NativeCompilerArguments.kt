@@ -9,7 +9,6 @@ import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
-import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KonanTarget
 
 /**
@@ -83,19 +82,6 @@ public interface NativeCompilerArguments : CommonKlibBasedArguments {
         NativeCompilerArgument("X_PRINT_IR", KotlinReleaseVersion(1, 5, 20))
 
     /**
-     * Don't link unused libraries even if explicitly specified.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     *
-     * Removed in Kotlin version 2.5.0.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    @RemovedCompilerArgument
-    public val X_PURGE_USER_LIBS: NativeCompilerArgument<Boolean> =
-        NativeCompilerArgument("X_PURGE_USER_LIBS", KotlinReleaseVersion(1, 5, 20))
-
-    /**
      * Paths to friend modules.
      */
     @JvmField
@@ -129,18 +115,6 @@ public interface NativeCompilerArguments : CommonKlibBasedArguments {
     @JvmField
     public val NO_DEFAULT_LIBS: NativeCompilerArgument<Boolean> =
         NativeCompilerArgument("NO_DEFAULT_LIBS", KotlinReleaseVersion(1, 5, 20))
-
-    /**
-     * Don't link endorsed libraries from the dist automatically.
-     *
-     * Deprecated in Kotlin version 1.9.20.
-     *
-     * Removed in Kotlin version 2.4.20.
-     */
-    @JvmField
-    @RemovedCompilerArgument
-    public val NO_ENDORSED_LIBS: NativeCompilerArgument<Boolean> =
-        NativeCompilerArgument("NO_ENDORSED_LIBS", KotlinReleaseVersion(1, 5, 20))
 
     /**
      * Don't link with the stdlib.

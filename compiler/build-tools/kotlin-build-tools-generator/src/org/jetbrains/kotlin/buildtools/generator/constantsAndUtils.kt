@@ -52,7 +52,6 @@ internal val ANNOTATION_SERIAL_NAME= ClassName("kotlinx.serialization", "SerialN
 internal const val KDOC_SINCE = "@since"
 internal const val KDOC_SINCE_2_3_0 = "$KDOC_SINCE 2.3.0"
 internal const val KDOC_SINCE_2_4_20 = "$KDOC_SINCE 2.4.20"
-internal const val KDOC_SINCE_2_5_20 = "$KDOC_SINCE 2.5.20"
 
 internal val KDOC_BASE_OPTIONS_CLASS = """
     An option for configuring [%T].
@@ -92,24 +91,52 @@ internal val experimentalLevelNames = realExperimentalLevelNames + syntheticArgu
     .filter { it.experimental || (it.level.name in realExperimentalLevelNames) }
     .map { it.name }
 
-private val realLevelsSince = mapOf(
-    CompilerArgumentsLevelNames.commonToolArguments to KDOC_SINCE_2_3_0,
-    CompilerArgumentsLevelNames.commonCompilerArguments to KDOC_SINCE_2_3_0,
-    CompilerArgumentsLevelNames.jvmCompilerArguments to KDOC_SINCE_2_3_0,
-    CompilerArgumentsLevelNames.jsArguments to KDOC_SINCE_2_4_20,
-    CompilerArgumentsLevelNames.wasmArguments to KDOC_SINCE_2_4_20,
-    CompilerArgumentsLevelNames.commonJsAndWasmArguments to KDOC_SINCE_2_4_20,
-    CompilerArgumentsLevelNames.commonKlibBasedArguments to KDOC_SINCE_2_4_20,
-    CompilerArgumentsLevelNames.metadataArguments to KDOC_SINCE_2_4_20,
-    CompilerArgumentsLevelNames.nativeArguments to KDOC_SINCE_2_5_20,
+private val realLevelsIntroducedIn = mapOf(
+    CompilerArgumentsLevelNames.commonToolArguments to KotlinReleaseVersion.v2_3_0,
+    CompilerArgumentsLevelNames.commonCompilerArguments to KotlinReleaseVersion.v2_3_0,
+    CompilerArgumentsLevelNames.jvmCompilerArguments to KotlinReleaseVersion.v2_3_0,
+    CompilerArgumentsLevelNames.jsArguments to KotlinReleaseVersion.v2_4_20,
+    CompilerArgumentsLevelNames.wasmArguments to KotlinReleaseVersion.v2_4_20,
+    CompilerArgumentsLevelNames.commonJsAndWasmArguments to KotlinReleaseVersion.v2_4_20,
+    CompilerArgumentsLevelNames.commonKlibBasedArguments to KotlinReleaseVersion.v2_4_20,
+    CompilerArgumentsLevelNames.metadataArguments to KotlinReleaseVersion.v2_4_20,
+    CompilerArgumentsLevelNames.nativeArguments to KotlinReleaseVersion.v2_5_20,
 )
 
 /**
+ * The versions the argument levels (both the real and the synthetic ones) became available in.
+ *
  * Synthetic argument interfaces become available together with the compiler arguments level they are based on,
  * unless [SyntheticArgumentInterface.since] says otherwise.
  */
-internal val levelsSince = realLevelsSince + syntheticArgumentInterfaces.associate {
-    it.name to (it.since ?: realLevelsSince[it.level.name] ?: error("Level ${it.level.name} is missing in levelSince map"))
+internal val levelsIntroducedIn = realLevelsIntroducedIn + syntheticArgumentInterfaces.associate {
+    it.name to (it.since ?: realLevelsIntroducedIn[it.level.name] ?: error("Level ${it.level.name} is missing in levelSince map"))
+}
+
+/**
+ * The `@since` KDoc lines of the argument levels.
+ */
+internal val levelsSince = levelsIntroducedIn.mapValues { "$KDOC_SINCE ${it.value.releaseName}" }
+
+/**
+ * The version the compiler arguments API first appeared in.
+ *
+ * The levels introduced in this version are also available for older compilers through `kotlin-build-tools-compat`.
+ */
+private val firstArgumentsApiVersion = KotlinReleaseVersion.v2_3_0
+
+/**
+ * An argument removed from the compiler not later than the [level] became available could never be used through that level,
+ * so there's no reason to generate it.
+ *
+ * This doesn't apply to the levels introduced in [firstArgumentsApiVersion]: they can be used with the compilers older
+ * than the level itself, and those compilers still have such arguments.
+ */
+internal fun BtaCompilerArgument<*>.wasRemovedBeforeIntroductionOf(level: KotlinCompilerArgumentsLevel): Boolean {
+    val removedVersion = removedSinceVersion ?: return false
+    val levelIntroducedIn = levelsIntroducedIn[level.name] ?: error("Level ${level.name} is missing in levelSince map")
+    if (levelIntroducedIn == firstArgumentsApiVersion) return false
+    return removedVersion <= levelIntroducedIn
 }
 
 internal fun BtaCompilerArgument<*>.getOptionId(): String = name.uppercase().replace("-", "_").let {

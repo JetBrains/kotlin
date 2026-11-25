@@ -1071,7 +1071,7 @@ private fun toCompilerConverterFunBuilder(
     }
     val removedArguments = level.transformApiArguments().filter { argument ->
         val name = argument.getOptionId()
-        argument.removedSinceVersion != null && (!skipXX || !name.startsWith("XX_"))
+        argument.removedSinceVersion != null && !argument.wasRemovedBeforeIntroductionOf(level) && (!skipXX || !name.startsWith("XX_"))
     }.distinctBy { it.getOptionId() }
 
     if (removedArguments.isNotEmpty()) {

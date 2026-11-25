@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 
 internal class SyntheticArgumentInterface(
     val name: String,
@@ -16,10 +17,10 @@ internal class SyntheticArgumentInterface(
     val concreteClassName: String? = null,
     val restrictedToCompilerPhase: KotlinCompilerPhase? = null,
     /**
-     * The `@since` KDoc line of the interface, for the case when it's introduced later than the [level] it's based on.
+     * The version the interface became available in, for the case when it's introduced later than the [level] it's based on.
      * By default, the interface is considered available since the same version as the [level].
      */
-    val since: String? = null,
+    val since: KotlinReleaseVersion? = null,
     /**
      * Whether the interface is experimental, for the case when its stability differs from the [level] it's based on.
      * By default, the interface is experimental if the [level] is experimental.
