@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extra
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -18,15 +16,20 @@ import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.fir.syntax.withSyntax
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.SyntaxIdSet
 
 object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
+    private val DESTRUCTURING_DECLARATION_ENTRY_TYPES = SyntaxIdSet.of(KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION_ENTRY)
+
     context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun analyze(data: VariableInitializationInfoData) {
         val isForInitialization = data.graph.kind == ControlFlowGraph.Kind.Class || data.graph.kind == ControlFlowGraph.Kind.File
@@ -36,9 +39,8 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
             val source = symbol.source ?: continue
             val canBeVal = if (source.syntaxId == KotlinSyntaxNodeTypeIds.DESTRUCTURING_DECLARATION) {
                 // var (a, b) -> { val _tmp; var a; var b }
-                val count = source.lighterASTNode.getChildren(source.treeStructure).count {
-                    it.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY
-                }
+                var count = 0
+                withSyntax { source.forEachChildOfType(DESTRUCTURING_DECLARATION_ENTRY_TYPES, depth = 1) { count++ } }
                 // Weird way of writing `all { ... }` that will always call `next()` N times.
                 (0 until count).fold(true) { acc, _ -> iterator.hasNext() && collector.canBeVal(iterator.next()) && acc }
             } else {
