@@ -973,8 +973,8 @@ object FirErrors : KtDiagnosticsContainer() {
     val CONTRACT_NOT_ALLOWED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("CONTRACT_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, getRendererFactory())
 
     // Conventions
-    val NO_GET_METHOD: KtDiagnosticFactory0 = KtDiagnosticFactory0("NO_GET_METHOD", ERROR, SourceElementPositioningStrategies.ARRAY_ACCESS, getRendererFactory())
-    val NO_SET_METHOD: KtDiagnosticFactory0 = KtDiagnosticFactory0("NO_SET_METHOD", ERROR, SourceElementPositioningStrategies.ARRAY_ACCESS, getRendererFactory())
+    val NO_GET_METHOD: KtDiagnosticFactory2<FirExpression?, ConeKotlinType> = KtDiagnosticFactory2("NO_GET_METHOD", ERROR, SourceElementPositioningStrategies.ARRAY_ACCESS, getRendererFactory())
+    val NO_SET_METHOD: KtDiagnosticFactory2<FirExpression?, ConeKotlinType> = KtDiagnosticFactory2("NO_SET_METHOD", ERROR, SourceElementPositioningStrategies.ARRAY_ACCESS, getRendererFactory())
     val ITERATOR_MISSING: KtDiagnosticFactory0 = KtDiagnosticFactory0("ITERATOR_MISSING", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
     val HAS_NEXT_MISSING: KtDiagnosticFactory0 = KtDiagnosticFactory0("HAS_NEXT_MISSING", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
     val NEXT_MISSING: KtDiagnosticFactory0 = KtDiagnosticFactory0("NEXT_MISSING", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())

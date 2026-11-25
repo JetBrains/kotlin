@@ -10,17 +10,17 @@
 
 /otherOperators.kt:31:21: error: Unresolved reference 'compareTo' on receiver of type 'StringProperty?'.
 
-/otherOperators.kt:34:15: error: No 'set' operator method providing array access.
+/otherOperators.kt:34:15: error: No 'set' operator method found for receiver 'task.input' of type 'StringProperty'.
 
-/otherOperators.kt:35:20: error: No 'set' operator method providing array access.
+/otherOperators.kt:35:20: error: No 'set' operator method found for receiver of type 'StringProperty'.
 
-/otherOperators.kt:38:15: error: No 'set' operator method providing array access.
+/otherOperators.kt:38:15: error: No 'set' operator method found for receiver 'task.input' of type 'StringProperty'.
 
-/otherOperators.kt:39:20: error: No 'set' operator method providing array access.
+/otherOperators.kt:39:20: error: No 'set' operator method found for receiver of type 'StringProperty'.
 
-/otherOperators.kt:42:15: error: No 'set' operator method providing array access.
+/otherOperators.kt:42:15: error: No 'set' operator method found for receiver 'task.input' of type 'StringProperty'.
 
-/otherOperators.kt:43:20: error: No 'set' operator method providing array access.
+/otherOperators.kt:43:20: error: No 'set' operator method found for receiver of type 'StringProperty'.
 
 /otherOperators.kt:46:5: error: 'operator' modifier is required on 'fun get(): String' defined in 'StringProperty'.
 
@@ -34,7 +34,7 @@
 
 /otherOperators.kt:47:24: error: Unresolved reference '+='.
 
-/otherOperators.kt:51:9: error: No 'set' operator method providing array access.
+/otherOperators.kt:51:9: error: No 'set' operator method found for receiver 'task' of type 'Task'.
 
 /otherOperators.kt:54:10: error: Variable expected.
 

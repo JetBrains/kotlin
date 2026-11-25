@@ -83,10 +83,13 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.
         val diagnostic = calleeReference.diagnostic as? ConeUnresolvedNameError ?: return
 
         if (expression.calleeReference.source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference) {
-            when (diagnostic.name) {
-                OperatorNameConventions.GET -> reporter.reportOn(calleeReference.source, FirErrors.NO_GET_METHOD)
-                OperatorNameConventions.SET -> reporter.reportOn(calleeReference.source, FirErrors.NO_SET_METHOD)
+            val factory = when (diagnostic.name) {
+                OperatorNameConventions.GET -> FirErrors.NO_GET_METHOD
+                OperatorNameConventions.SET -> FirErrors.NO_SET_METHOD
+                else -> return
             }
+            val receiver = expression.explicitReceiver ?: error("No explicit receiver for array access call")
+            reporter.reportOn(calleeReference.source, factory, receiver, receiver.resolvedType)
         }
     }
 

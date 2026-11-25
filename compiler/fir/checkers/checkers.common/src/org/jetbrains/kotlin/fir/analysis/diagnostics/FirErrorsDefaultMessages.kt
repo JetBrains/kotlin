@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.REND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_ENUM_ENTRY_QUOTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_OPTIONAL_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_FQ_NAME_WITH_PREFIX
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_OPTIONAL_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.REQUIRE_KOTLIN_VERSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.STAR_PROJECTED_CLASS
@@ -3725,8 +3726,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CONTRACT_NOT_ALLOWED, "{0}", TO_STRING)
 
         // Conventions
-        map.put(NO_GET_METHOD, "No 'get' operator method providing array access.")
-        map.put(NO_SET_METHOD, "No 'set' operator method providing array access.")
+        map.put(NO_GET_METHOD, "No ''get'' operator method found for receiver{0} of type ''{1}''.", RENDER_OPTIONAL_EXPRESSION, RENDER_TYPE)
+        map.put(NO_SET_METHOD, "No ''set'' operator method found for receiver{0} of type ''{1}''.", RENDER_OPTIONAL_EXPRESSION, RENDER_TYPE)
         map.put(ITERATOR_MISSING, "For-loop range must have an 'iterator()' method.")
         map.put(HAS_NEXT_MISSING, "'hasNext()' cannot be called on 'iterator()'.")
         map.put(NEXT_MISSING, "Method 'next()' cannot be called on 'iterator()'.")

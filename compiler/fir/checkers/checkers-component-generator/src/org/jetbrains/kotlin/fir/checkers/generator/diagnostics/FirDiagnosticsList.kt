@@ -2146,8 +2146,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val CONVENTIONS by object : DiagnosticGroup("Conventions") {
-        val NO_GET_METHOD by error<KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
-        val NO_SET_METHOD by error<KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
+        val NO_GET_METHOD by error<KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS) {
+            parameter<FirExpression?>("receiver")
+            parameter<ConeKotlinType>("receiverType")
+        }
+        val NO_SET_METHOD by error<KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS) {
+            parameter<FirExpression?>("receiver")
+            parameter<ConeKotlinType>("receiverType")
+        }
         val ITERATOR_MISSING by error<KtExpression>()
         val HAS_NEXT_MISSING by error<KtExpression>()
         val NEXT_MISSING by error<KtExpression>()

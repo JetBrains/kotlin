@@ -377,8 +377,8 @@ object FirDiagnosticRenderers {
         renderOptionalSource(s)?.let { " for expression $it" } ?: ""
     }
 
-    val RENDER_OPTIONAL_EXPRESSION = Renderer { e: FirExpression ->
-        e.source?.takeIf { it.kind == KtRealSourceElementKind }
+    val RENDER_OPTIONAL_EXPRESSION = Renderer { e: FirExpression? ->
+        e?.source?.takeIf { it.kind == KtRealSourceElementKind }
             ?.let(::renderOptionalSource)
             ?.let { " $it" }
             ?: ""
