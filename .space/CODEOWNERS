@@ -401,7 +401,6 @@
 /libraries/tools/kotlin-maven-dataframe/ "Kotlin Build Tools"
 /libraries/tools/kotlin-osgi-bundle/ "Kotlin Build Tools"
 /libraries/tools/kotlin-noarg/ "Kotlin Build Tools"
-/libraries/tools/kotlin-prepush-hook/ "Kotlin Build Infrastructure"
 /libraries/tools/kotlin-privacy-manifests-plugin/ "Kotlin Build Tools"
 /libraries/tools/kotlin-power-assert/ "Kotlin Build Tools"
 /libraries/tools/kotlin-sam-with-receiver/ "Kotlin Build Tools"
