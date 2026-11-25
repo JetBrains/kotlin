@@ -352,12 +352,11 @@ fun FirClassLikeSymbol<*>.getSuperTypes(
     }
 }
 
-fun ConeKotlinType.isBoundedByRichError(session: FirSession, forBounds: Boolean = false): Boolean {
+fun ConeKotlinType.isBoundedByRichError(session: FirSession): Boolean {
     if (this is ConeUnionType) return this.primaryType.isNothing
+    if (isMarkedNullable) return false
     val symbol = unwrapToSimpleTypeUsingLowerBound().toSymbol(session) ?: return false
-    // We return false for a type parameter bounded by `RichError?` so that the component is considered the primary type.
-    // When we substitute the type, it will either stay as `Nothing?` primary component or be moved to the error components.
-    return !(forBounds && isMarkedNullable) && symbol.isBoundedByRichError(session)
+    return symbol.isBoundedByRichError(session)
 }
 
 private fun FirClassifierSymbol<*>.isBoundedByRichError(session: FirSession): Boolean {
@@ -383,7 +382,7 @@ private fun FirClassifierSymbol<*>.isBoundedByRichError(session: FirSession): Bo
                 ?.withArguments { ConeStarProjection }
                 ?.fullyExpandedType(session)
                 ?: return@isBoundedByRichError true
-            coneType.isBoundedByRichError(session, forBounds = true)
+            coneType.isBoundedByRichError(session)
         }
         is FirAnonymousObjectSymbol -> false
     }

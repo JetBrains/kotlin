@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.resolve.isBoundedByRichError
 
 object ConeTypeUnifier {
     fun unify(
@@ -48,6 +50,13 @@ object ConeTypeUnifier {
 
         if (primaryType is ConeUnionType) {
             return unify(primaryType.primaryType, primaryType.richErrorTypes + richErrorTypes, attributes, typeContext)
+        }
+
+        if (primaryType.isMarkedNullable) {
+            val nonNullablePrimary = primaryType.withNullability(false, typeContext)
+            if (nonNullablePrimary.isBoundedByRichError(typeContext.session)) {
+                return unify(StandardTypes.NullableNothing, [nonNullablePrimary] + richErrorTypes, attributes, typeContext)
+            }
         }
 
         return unifyWithoutFlatteningPrimary(primaryType, attributes, richErrorTypes)

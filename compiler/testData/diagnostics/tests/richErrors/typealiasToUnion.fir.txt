@@ -22,7 +22,7 @@ FILE: typealiasToUnion.kt
     public final typealias NR = R|union(primary=kotlin/Int?, errors=E1)|
     public final typealias NE1 = R|union(primary=kotlin/Nothing?, errors=E1)|
     public final typealias NE1x = R|E1?|
-    public final typealias Illegal1 = <ERROR TYPE REF: Nullable error component>
+    public final typealias Illegal1 = R|union(primary=kotlin/Nothing?, errors={NE1x=} E1 | E2)|
     public final fun errs(): R|{Errs=} union(errors=E1 | E2)| {
         ^errs R|/E1.E1|()
     }
@@ -56,7 +56,7 @@ FILE: typealiasToUnion.kt
     public final fun ne1OrN2(): R|union(primary=kotlin/Nothing?, errors=E1 | E2)| {
         ^ne1OrN2 R|/E1.E1|()
     }
-    public final fun ne1xOrN2(): <ERROR TYPE REF: Nullable error component> {
+    public final fun ne1xOrN2(): R|union(primary=kotlin/Nothing?, errors={NE1x=} E1 | E2)| {
         ^ne1xOrN2 R|/E1.E1|()
     }
     public final fun assignability(a: R|{R=} union(primary=kotlin/Int, errors=E1)|, b: R|union(primary=kotlin/Int, errors=E1)|, c: R|union(primary=kotlin/Int, errors=E1 | E2)|, d: R|union(primary=kotlin/Int, errors=E1 | E2)|): R|kotlin/Unit| {

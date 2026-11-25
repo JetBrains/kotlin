@@ -116,11 +116,11 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         val fullyExpandedPrimaryType = fullyExpand(substitutedPrimaryType)
         return if (fullyExpandedPrimaryType.isBoundedByRichError(typeContext.session)) {
             val adjustedRichErrorTypes = buildList {
-                add(substitutedPrimaryType.withNullability(false, typeContext))
+                add(fullyExpandedPrimaryType.withNullability(false, typeContext))
                 addAll(substitutedRichErrorTypes)
             }
 
-            val nothingPossiblyNullable = if (substitutedPrimaryType.hasFlexibleMarkedNullability) {
+            val nothingPossiblyNullable = if (fullyExpandedPrimaryType.hasFlexibleMarkedNullability) {
                 StandardTypes.Nothing.toTrivialFlexibleType(typeContext)
             } else {
                 // We can't use `canBeNull` because we might encounter unresolved type parameter bounds
@@ -133,7 +133,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
 
             ConeTypeUnifier.unify(nothingPossiblyNullable, adjustedRichErrorTypes, attributes, typeContext)
         } else {
-            ConeTypeUnifier.unify(substitutedPrimaryType, substitutedRichErrorTypes, attributes, typeContext)
+            ConeTypeUnifier.unify(fullyExpandedPrimaryType, substitutedRichErrorTypes, attributes, typeContext)
         }
     }
 

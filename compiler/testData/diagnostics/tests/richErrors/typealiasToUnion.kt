@@ -9,7 +9,7 @@ typealias R = Int | E1
 typealias NR = Int? | E1
 typealias NE1 = Nothing? | E1
 typealias NE1x = E1?
-typealias Illegal1 = <!NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE!>NE1x | E2<!>
+typealias Illegal1 = NE1x | E2
 
 fun errs(): Errs = E1()
 fun r(): R = 1
@@ -23,7 +23,7 @@ fun dedup(): E1 | Errs = E2()
 fun nothingOrErrs(): Nothing | Errs = E1()
 
 fun ne1OrN2(): NE1 | E2 = E1()
-fun ne1xOrN2(): <!NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE!>NE1x | E2<!> = E1()
+fun ne1xOrN2(): NE1x | E2 = E1()
 
 fun assignability(a: R, b: Int | E1, c: R | E2, d: Int | E1 | E2) {
     val a1: Int | E1 = a

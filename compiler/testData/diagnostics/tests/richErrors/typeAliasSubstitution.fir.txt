@@ -50,6 +50,12 @@ FILE: typeAliasSubstitution.kt
     public final fun test7_(): R|{TA<E2?>=} Box<union(primary=kotlin/Nothing?, errors=E2 | E)>| {
         ^test7_ R|/Box.Box|<R|kotlin/Nothing|>(Null(null))
     }
+    public final fun test7_2(): R|{TA<{NE2=} E2?>=} Box<union(primary=kotlin/Nothing?, errors={NE2=} E2 | E)>| {
+        ^test7_2 R|/Box.Box|<R|kotlin/Nothing|>(Null(null))
+    }
+    public final fun test7_3(): R|{TA<{NE2=} E2?>=} Box<union(primary=kotlin/Nothing?, errors={NE2=} E2 | E)>| {
+        ^test7_3 R|/Box.Box|<R|E2|>(R|/E2.E2|())
+    }
     public final fun test8(): R|{TA<union(primary=kotlin/String, errors=E2)>=} Box<union(primary=kotlin/String, errors=E2 | E)>| {
         ^test8 R|/Box.Box|<R|E|>(R|/E.E|())
     }
