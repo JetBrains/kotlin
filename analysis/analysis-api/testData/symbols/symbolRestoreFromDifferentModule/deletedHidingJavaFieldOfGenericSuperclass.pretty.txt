@@ -2,4 +2,4 @@ Inital from Sources of main:
 var value: kotlin.String!
 
 Restored in Sources of restoreInContextOf:
-<NOT RESTORED>
+var value: kotlin.String!
