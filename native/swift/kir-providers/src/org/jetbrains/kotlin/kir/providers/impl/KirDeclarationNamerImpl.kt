@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.kir.providers.impl
 
 import org.jetbrains.kotlin.kir.providers.KirDeclarationNamer
+import org.jetbrains.kotlin.sir.SirClass
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirFunction
 
 public class KirDeclarationNamerImpl : KirDeclarationNamer {
     override fun SirDeclaration.kirDeclarationName(): String = when (this) {
+        is SirClass -> name
         is SirFunction -> name
         else -> error("Tried to calculate a KIR name for an unsupported declaration: $this")
     }

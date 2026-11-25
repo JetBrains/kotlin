@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kir.providers.support
 
 import org.jetbrains.kir.lightclasses.KirDeclarationFromSirDeclarationProvider
+import org.jetbrains.kotlin.kir.KirClass
 import org.jetbrains.kotlin.kir.KirFunction
 import org.jetbrains.kotlin.kir.KirModule
 import org.jetbrains.kotlin.kir.providers.KirChildrenProvider
@@ -52,3 +53,6 @@ fun <T> SirModule.translate(block: TestKirSession.(KirModule) -> T): T {
 
 fun KirModule.functionsNamed(name: String): List<KirFunction> =
     declarations.filterIsInstance<KirFunction>().filter { it.name == name }
+
+fun KirModule.classesNamed(name: String): List<KirClass> =
+    declarations.filterIsInstance<KirClass>().filter { it.name == name }

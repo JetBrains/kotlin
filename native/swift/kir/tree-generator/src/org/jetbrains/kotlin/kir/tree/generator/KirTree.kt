@@ -51,6 +51,40 @@ object KirTree : AbstractKirTreeBuilder() {
         }
     }
 
+    val classMemberDeclaration by sealedElement {
+        customParentInVisitor = declaration
+        parent(declaration)
+
+        +field("isOverride", boolean)
+        +field("isInstance", boolean)
+        +field("modality", modalityKind)
+    }
+
+    val scopeDefiningElement by sealedElement {
+        kDoc = "This interface describes elements (module or declaration) that have a name, define a scope and can appear as part of a Swift FQ name"
+
+        +field("name", string)
+    }
+
+    val scopeDefiningDeclaration by sealedElement {
+        kDoc = "This interface describes declarations that have a name, define a scope and can appear as part of a Swift FQ name"
+
+        customParentInVisitor = declaration
+        parent(declaration)
+        parent(scopeDefiningElement)
+
+        visitorParameterName = "declaration"
+    }
+
+    val `class` by element {
+        customParentInVisitor = scopeDefiningDeclaration
+        parent(scopeDefiningDeclaration)
+        parent(declarationContainer)
+        parent(bridged)
+
+        +field("modality", modalityKind)
+    }
+
     val bridged by sealedElement {
         customParentInVisitor = rootElement
 
@@ -65,9 +99,17 @@ object KirTree : AbstractKirTreeBuilder() {
     }
 
     val function by element {
-        parent(rootElement)
+        customParentInVisitor = callable
         parent(callable)
+        parent(classMemberDeclaration)
 
         +field("name", string)
+    }
+
+    val constructor by element {
+        customParentInVisitor = callable
+        parent(callable)
+
+        +field("delegationCallArguments", functionBodyType)
     }
 }

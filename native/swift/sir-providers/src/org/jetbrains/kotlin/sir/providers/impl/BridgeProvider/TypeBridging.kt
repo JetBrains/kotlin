@@ -1166,7 +1166,7 @@ internal sealed interface Bridge {
 
             context(sir: SirSession)
             fun helperBridges(typeNamer: SirTypeNamer): List<SirBridge> {
-                return bridgeProxy?.createReverseInvocationBridges(::invokeBoxedClosure).orEmpty()
+                return bridgeProxy?.createReverseInvocationBridges { _, paramExprs -> invokeBoxedClosure(paramExprs) }.orEmpty()
             }
         }
 

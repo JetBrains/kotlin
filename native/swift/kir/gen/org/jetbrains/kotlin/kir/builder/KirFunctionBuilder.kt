@@ -21,6 +21,9 @@ class KirFunctionBuilder {
     var documentation: String? = null
     val bridges: MutableList<KirBridge> = []
     var body: KirFunctionBody? = null
+    var isOverride: Boolean = false
+    var isInstance: Boolean = true
+    var modality: KirModality = KirModality.UNSPECIFIED
     lateinit var name: String
 
     fun build(): KirFunction {
@@ -30,6 +33,9 @@ class KirFunctionBuilder {
             documentation,
             bridges,
             body,
+            isOverride,
+            isInstance,
+            modality,
             name,
         )
     }
@@ -55,6 +61,9 @@ inline fun buildFunctionCopy(original: KirFunction, init: KirFunctionBuilder.() 
     copyBuilder.documentation = original.documentation
     copyBuilder.bridges.addAll(original.bridges)
     copyBuilder.body = original.body
+    copyBuilder.isOverride = original.isOverride
+    copyBuilder.isInstance = original.isInstance
+    copyBuilder.modality = original.modality
     copyBuilder.name = original.name
     return copyBuilder.apply(init).build()
 }

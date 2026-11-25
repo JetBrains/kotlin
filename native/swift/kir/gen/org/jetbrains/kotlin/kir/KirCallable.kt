@@ -11,11 +11,11 @@ package org.jetbrains.kotlin.kir
 /**
  * Generated from: [org.jetbrains.kotlin.kir.tree.generator.KirTree.callable]
  */
-sealed class KirCallable : KirDeclaration(), KirBridged {
-    abstract override val origin: KirOrigin
-    abstract override val visibility: KirVisibility
-    abstract override val documentation: String?
-    abstract override var parent: KirDeclarationParent
-    abstract override val bridges: List<KirBridge>
-    abstract var body: KirFunctionBody?
+sealed interface KirCallable : KirDeclaration, KirBridged {
+    override val origin: KirOrigin
+    override val visibility: KirVisibility
+    override val documentation: String?
+    override var parent: KirDeclarationParent
+    override val bridges: List<KirBridge>
+    var body: KirFunctionBody?
 }
