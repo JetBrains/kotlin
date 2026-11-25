@@ -7,13 +7,19 @@ compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:1:16: 
 compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:3:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 3 | expect inline class Foo1(val x: Int)
   | ^^^^^^
-compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:3:8: warning: standalone 'inline' modifier for classes is deprecated. Use 'inline value' instead. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-89772
+compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:3:8: warning: standalone 'inline' modifier for classes is deprecated. Use 'inline value' instead.
+note: This will become an error in language version 2.6.
+see: https://youtrack.jetbrains.com/issue/KT-89772
+In source code:
 3 | expect inline class Foo1(val x: Int)
   |        ^^^^^^
 compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:4:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. Consider using the '-Xexpect-actual-classes' flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 4 | expect inline class Foo2(val y: String)
   | ^^^^^^
-compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:4:8: warning: standalone 'inline' modifier for classes is deprecated. Use 'inline value' instead. This will become an error in language version 2.6. See: https://youtrack.jetbrains.com/issue/KT-89772
+compiler/tests-integration/testData/multiplatform/inlineClasses/common.kt:4:8: warning: standalone 'inline' modifier for classes is deprecated. Use 'inline value' instead.
+note: This will become an error in language version 2.6.
+see: https://youtrack.jetbrains.com/issue/KT-89772
+In source code:
 4 | expect inline class Foo2(val y: String)
   |        ^^^^^^
 
