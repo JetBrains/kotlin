@@ -59,5 +59,8 @@ internal val FinalizeCachePhase = createSimpleNamedCompilerPhase<NativeBackendPh
         name = "FinalizeCache",
 ) { context, outputFiles ->
     //  TODO: Explicit parameter
-    CacheStorage.renameOutput(outputFiles, overwrite = context.config.producePerFileCache || context.config.produce.isObjCCache)
+    // An Objective-C export cache also depends on the exported dependencies and the export options, which its directory name
+    // doesn't capture, so a rebuilt one replaces an existing cache instead of being dropped.
+    val replacesExistingCache = context.config.producePerFileCache || context.config.produce.isObjCCache
+    CacheStorage.renameOutput(outputFiles, overwrite = replacesExistingCache)
 }

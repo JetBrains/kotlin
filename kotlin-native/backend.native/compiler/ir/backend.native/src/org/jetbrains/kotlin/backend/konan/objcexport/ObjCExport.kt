@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodegenSpecification
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -238,7 +239,7 @@ internal class ObjCExport(
                 local = false
         )
 
-        val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
+        val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper, ObjCExportCodegenSpecification.create(config))
 
         exportedInterface?.generateWorkaroundForSwiftSR10177(generationState)
 
@@ -253,6 +254,7 @@ internal class ObjCExport(
                     categoryAdapters = objCCodeGenerator.objCCacheCategoryAdapters,
                     exportedLibraries = config.cachedLibraries.exportedDependencies(library, config.exportedLibrariesForObjCCache),
                     namingConfiguration = objCExportNamingConfiguration(config.configuration),
+                    selectors = objCCodeGenerator.definedSelectors(),
             )
             generationState.outputFiles.objcCacheMetadataFile?.let { file ->
                 file.parent.createDirectories()

@@ -106,10 +106,13 @@ abstract class ObjCCacheTestBase : AbstractNativeSimpleTest() {
         listOf("-produce", kind, "-Xadd-cache=${klib.absolutePath}", "-Xcache-directory=${cacheDir.absolutePath}")
 
     protected fun runCompiler(args: List<String>, expectedExitCode: ExitCode = ExitCode.OK): String {
-        val distCacheDir = testRunSettings.get<KotlinNativeHome>().dir.resolve("klib/cache/${targets.testTarget.name}-gSTATIC-system")
-            .takeIf { it.resolve("stdlib-cache").exists() || it.resolve("stdlib-per-file-cache").exists() }
-        val compilerArgs = args + listOf("-target", targets.testTarget.name) +
-                listOfNotNull(distCacheDir?.let { "-Xcache-directory=${it.absolutePath}" }) + provisionedXcodeCompilerArgs
+        val stdlibCacheDir = testRunSettings.get<KotlinNativeHome>().dir.resolve("klib/cache/${targets.testTarget.name}-gSTATIC-system")
+        val hasStdlibCache = listOf("stdlib-cache", "stdlib-per-file-cache").any { stdlibCacheDir.resolve(it).exists() }
+        Assumptions.assumeTrue(hasStdlibCache) {
+            "Caches of libraries require a cache of their dependencies, but there is no stdlib cache in $stdlibCacheDir"
+        }
+        val compilerArgs = args + listOf("-target", targets.testTarget.name, "-Xcache-directory=${stdlibCacheDir.absolutePath}") +
+                provisionedXcodeCompilerArgs
         val result = callCompiler(compilerArgs.toTypedArray(), testRunSettings.get<KotlinNativeClassLoader>().classLoader)
         assertEquals(expectedExitCode, result.exitCode) { "kotlinc-native ${compilerArgs.joinToString(" ")}\n${result.toolOutput}" }
         return result.toolOutput
@@ -164,7 +167,6 @@ abstract class ObjCCacheTestBase : AbstractNativeSimpleTest() {
                     "-Xbinary=bundleId=foo.bar",
                     "-module-name", "Kt",
                     "-Xcache-directory=${libraries.cacheDir.absolutePath}".takeIf { withCaches },
-                    "-Xdisable-ir-checkers=IrVisibilityChecker",
                 ) + included.map { "-Xinclude=${libraries.klib(it).absolutePath}" } + binaryOptions + extraArgs
             ),
             sourceModules = testCase.modules,
@@ -281,16 +283,27 @@ class ObjCCacheTest : ObjCCacheTestBase() {
         assertEquals(
             setOf(
                 "format", "classAdapters", "protocolAdapters", "categoryAdapters", "exportedLibraries",
-                "namingConfiguration",
+                "namingConfiguration", "selectors",
             ),
             metadata.stringPropertyNames(),
         )
         assertEquals("1", metadata.getProperty("format"))
         assertEquals(listOf("KtLayoutWorker"), metadata.records("classAdapters"))
         assertEquals(listOf("KtLayoutProtocol"), metadata.records("protocolAdapters"))
+        assertTrue(metadata.records("selectors").any { it.startsWith("doWork ") }) { "Expected the selector of doWork to be recorded" }
         val archiveSymbols = definedSymbols(objCCacheArchive(libraries.cacheDir, "layoutLib"))
         for (adapter in metadata.adapterSymbols("layoutLib")) {
             assertEquals(1, archiveSymbols.count { it.endsWith(adapter) }) { "Expected $adapter to be defined once in the archive" }
+        }
+    }
+
+    @Test
+    fun testRebuildReplacesCache() {
+        val libraries = compileLibraries(Library("libA", alphaSource), Library("libB", betaSource, listOf("libA")))
+        assertEquals(listOf("libA"), objCCacheMetadata(libraries.cacheDir, "libB").records("exportedLibraries"))
+        produceObjCCache(libraries.klib("libB"), libraries.cacheDir, listOf("-l", libraries.klib("libA").absolutePath))
+        assertEquals(emptyList<String>(), objCCacheMetadata(libraries.cacheDir, "libB").records("exportedLibraries")) {
+            "Expected the rebuilt cache, which exports no dependency, to replace the old one"
         }
     }
 
@@ -363,17 +376,52 @@ class ObjCCacheTest : ObjCCacheTestBase() {
 
     private fun transitiveDependencyNotExportedImpl(staticFramework: Boolean) {
         val libraries = compileLibraries(
-            Library("libA", alphaSource, isExported = false, hasObjCCache = true),
+            Library("libA", "$alphaSource\nclass Unreferenced\nfun unreferenced() = 1", isExported = false, hasObjCCache = true),
             Library("libB", betaSource, listOf("libA")),
         )
         val framework = linkFramework(libraries, staticFramework)
         framework.assertObjCCachesLinked("libB")
         framework.assertObjCCachesLinked("libA", linked = false)
+        assertFalse(framework.header.contains("unreferenced", ignoreCase = true)) {
+            "Expected no unreferenced declaration of libA in the header"
+        }
+        assertFalse(framework.symbols.any { "LibAUnreferenced" in it }) { "Expected no class for unreferenced declarations of libA" }
         framework.runSwift(
             """
             let beta = Beta(alpha: LibAAlpha(name: "AlphaCached"), count: 42)
             try assertEquals(actual: beta.alpha.name, expected: "AlphaCached")
             try assertEquals(actual: beta.count, expected: 42)
+            """
+        )
+    }
+
+    @Test
+    fun testFrameworkDefinesSelectorsOfCaches() {
+        val libraries = compileLibraries(
+            Library(
+                "libA",
+                """
+                package liba
+                open class Alpha(val name: String) {
+                    open fun greet(who: String): String = "Hello " + who
+                }
+                interface Listener {
+                    fun onEvent(code: Int)
+                }
+                fun fire(listener: Listener) = listener.onEvent(1)
+                """,
+            )
+        )
+        val framework = linkFramework(libraries, staticFramework = false)
+        framework.assertObjCCachesLinked("libA")
+        framework.runSwift(
+            """
+            try assertEquals(actual: Alpha(name: "A").greet(who: "B"), expected: "Hello B")
+            var count: UInt32 = 0
+            let methods = class_copyMethodList(NSClassFromString("KtKotlinSelectorsHolder"), &count)
+            let selectors = Set((0..<Int(count)).map { NSStringFromSelector(method_getName(methods![$0])) })
+            try assertTrue(selectors.contains("greetWho:"))
+            try assertTrue(selectors.contains("onEventCode:"))
             """
         )
     }

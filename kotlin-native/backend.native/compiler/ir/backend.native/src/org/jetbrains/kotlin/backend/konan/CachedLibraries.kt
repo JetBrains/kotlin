@@ -453,6 +453,7 @@ class ObjCCacheMetadata(
     val categoryAdapters: List<ObjCCacheAdapterEntry>,
     val exportedLibraries: List<String>,
     val namingConfiguration: String,
+    val selectors: Map<String, String>,
 ) {
     fun serialize(writer: java.io.Writer) {
         writer.appendLine("format=$FORMAT_VERSION")
@@ -461,6 +462,7 @@ class ObjCCacheMetadata(
         writer.appendLine("categoryAdapters=${categoryAdapters.serializeEntries()}")
         writer.appendLine("exportedLibraries=${exportedLibraries.sorted().joinToString(";")}")
         writer.appendLine("namingConfiguration=$namingConfiguration")
+        writer.appendLine("selectors=${selectors.toSortedMap().entries.joinToString(";") { "${it.key} ${it.value}" }}")
     }
 
     companion object {
@@ -479,6 +481,7 @@ class ObjCCacheMetadata(
                 categoryAdapters = parseList("categoryAdapters").map { ObjCCacheAdapterEntry.categoryAdapter(it, library) },
                 exportedLibraries = parseList("exportedLibraries"),
                 namingConfiguration = property("namingConfiguration"),
+                selectors = parseList("selectors").associate { it.substringBefore(' ') to it.substringAfter(' ') },
             )
         }
     }
