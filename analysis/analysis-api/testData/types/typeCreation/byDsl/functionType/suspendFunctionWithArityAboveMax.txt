@@ -2,7 +2,7 @@ KaType
 KaErrorType:
   abbreviation: null
   annotations: []
-  errorMessage: Function type arity 254 exceeds the maximum arity 253 of kotlin.coroutines.SuspendFunctionN
+  errorMessage: Functional type ref has too large arity: 254, max supported arity: 253
   presentableText: null
   isMarkedNullable: false
   isNullable: false
