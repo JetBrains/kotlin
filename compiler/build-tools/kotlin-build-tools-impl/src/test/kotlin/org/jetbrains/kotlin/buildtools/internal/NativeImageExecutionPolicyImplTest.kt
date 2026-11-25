@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import kotlin.io.path.Path
 
 class NativeImageExecutionPolicyImplTest {
@@ -52,26 +51,17 @@ class NativeImageExecutionPolicyImplTest {
     }
 
     @Test
-    @DisplayName("Modifying a builder created from the native image process policy does not affect the original policy")
-    fun testProcessPolicyToBuilderIndependence() {
+    @DisplayName("A builder created from the native image process policy copies the original policy")
+    fun testProcessPolicyToBuilder() {
         val policy = NativeImageProcessExecutionPolicyImpl(Path("dist"))
         val builder = policy.toBuilder() as NativeImageProcessExecutionPolicyImpl
 
-        builder.distPath = Path("another-dist")
-
-        assertEquals(Path("dist"), policy.distPath)
-        assertEquals(Path("another-dist"), builder.distPath)
+        assertEquals(policy, builder)
+        assertEquals(Path("dist"), builder.build().distPath)
     }
 
     @Test
-    @DisplayName("The native image execution policies cannot be built without the dist path")
-    fun testBuildWithoutDistPathFails() {
-        assertThrows<IllegalStateException> { NativeImageProcessExecutionPolicyImpl().build() }
-        assertThrows<IllegalStateException> { NativeImageDaemonExecutionPolicyImpl().build() }
-    }
-
-    @Test
-    @DisplayName("Building the native image execution policies with the dist path set keeps the dist path")
+    @DisplayName("Building the native image execution policies keeps the required dist path")
     fun testBuildWithDistPath() {
         val processPolicy = NativeImageProcessExecutionPolicyImpl(Path("dist")).build() as NativeImageProcessExecutionPolicyImpl
         assertEquals(Path("dist"), processPolicy.distPath)

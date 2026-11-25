@@ -53,8 +53,7 @@ abstract class BaseCompilationTest {
         "test-native-image-daemon-files",
         additionalCleanupActions,
         createPolicy = { daemonRunPath ->
-            kotlinToolchains.nativeImageDaemonExecutionPolicy {
-                this[ExecutionPolicy.NativeImageDaemon.DIST_PATH] = distPath
+            kotlinToolchains.nativeImageDaemonExecutionPolicy(distPath) {
                 this[ExecutionPolicy.NativeImageDaemon.DAEMON_RUN_DIR_PATH] = daemonRunPath
                 this[ExecutionPolicy.NativeImageDaemon.SHUTDOWN_DELAY_MILLIS] = 0
                 additionalDaemonConfiguration()

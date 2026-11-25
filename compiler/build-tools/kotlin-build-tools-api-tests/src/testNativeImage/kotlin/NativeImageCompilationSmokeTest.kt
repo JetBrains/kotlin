@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.nativeImageProcessExecutionPolicy
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
@@ -29,9 +28,7 @@ class NativeImageCompilationSmokeTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testProcessPolicyCompilation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy {
-            this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = nativeImageDistPath
-        }
+        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy(nativeImageDistPath)
 
         jvmProject(kotlinToolchains to policy) {
             val module = module("basic-multimodule-project/module-1")
@@ -46,9 +43,7 @@ class NativeImageCompilationSmokeTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testProcessPolicyCompilationWithSpacesInProjectPath() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy {
-            this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = nativeImageDistPath
-        }
+        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy(nativeImageDistPath)
 
         JvmProject(kotlinToolchains, policy, workingDirectory.resolve("project with spaces")).use { project ->
             val module = project.module("basic-multimodule-project/module-1")
@@ -63,9 +58,7 @@ class NativeImageCompilationSmokeTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testProcessPolicyCompilationError() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy {
-            this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = nativeImageDistPath
-        }
+        val policy = kotlinToolchains.nativeImageProcessExecutionPolicy(nativeImageDistPath)
 
         jvmProject(kotlinToolchains to policy) {
             val module = module("basic-multimodule-project/module-1")

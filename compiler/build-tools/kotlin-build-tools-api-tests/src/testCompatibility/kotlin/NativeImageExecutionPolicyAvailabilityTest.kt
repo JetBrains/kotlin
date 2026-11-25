@@ -33,24 +33,20 @@ class NativeImageExecutionPolicyAvailabilityTest : BaseCompilationTest() {
 
         if (KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) < KotlinToolingVersion(2, 5, 20, "snapshot")) {
             val processPolicyException = assertThrows<IllegalStateException> {
-                kotlinToolchains.nativeImageProcessExecutionPolicyBuilder()
+                kotlinToolchains.nativeImageProcessExecutionPolicyBuilder(distPath)
             }
             assertEquals("Native image execution policies are supported from compiler version 2.5.20.", processPolicyException.message)
 
             val daemonPolicyException = assertThrows<IllegalStateException> {
-                kotlinToolchains.nativeImageDaemonExecutionPolicyBuilder()
+                kotlinToolchains.nativeImageDaemonExecutionPolicyBuilder(distPath)
             }
             assertEquals("Native image execution policies are supported from compiler version 2.5.20.", daemonPolicyException.message)
         } else {
-            val processPolicy = kotlinToolchains.nativeImageProcessExecutionPolicy {
-                this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = distPath
-            }
-            assertEquals(distPath, processPolicy[ExecutionPolicy.NativeImageProcess.DIST_PATH])
+            val processPolicy = kotlinToolchains.nativeImageProcessExecutionPolicy(distPath)
+            assertEquals(distPath, processPolicy.distPath)
 
-            val daemonPolicy = kotlinToolchains.nativeImageDaemonExecutionPolicy {
-                this[ExecutionPolicy.NativeImageDaemon.DIST_PATH] = distPath
-            }
-            assertEquals(distPath, daemonPolicy[ExecutionPolicy.NativeImageDaemon.DIST_PATH])
+            val daemonPolicy = kotlinToolchains.nativeImageDaemonExecutionPolicy(distPath)
+            assertEquals(distPath, daemonPolicy.distPath)
         }
     }
 }
