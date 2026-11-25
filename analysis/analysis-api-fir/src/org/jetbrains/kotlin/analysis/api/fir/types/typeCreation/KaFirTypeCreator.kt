@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.computeTypeAttributes
+import org.jetbrains.kotlin.fir.diagnostics.ConeFunctionWithTooLargeArity
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
@@ -325,9 +326,7 @@ internal class KaFirTypeCreator(
                 ?: baseFunctionKind
 
         if (numberOfParameters > refinedFunctionKind.maxArity) {
-            val diagnostic = ConeSimpleDiagnostic(
-                "Function type arity $numberOfParameters exceeds the maximum arity ${refinedFunctionKind.maxArity} of $refinedFunctionKind",
-            )
+            val diagnostic = ConeFunctionWithTooLargeArity(numberOfParameters, refinedFunctionKind)
             return ConeErrorType(
                 diagnostic = diagnostic,
                 nullable = builder.isMarkedNullable,

@@ -2,7 +2,7 @@ KaType
 KaErrorType:
   abbreviation: null
   annotations: []
-  errorMessage: Function type arity 255 exceeds the maximum arity 254 of kotlin.FunctionN
+  errorMessage: Functional type ref has too large arity: 255, max supported arity: 254
   presentableText: null
   isMarkedNullable: false
   isNullable: false
