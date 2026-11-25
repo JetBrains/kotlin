@@ -12,11 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
-import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeSimpleNameForContextSensitiveResolution
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
@@ -26,14 +23,15 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCan
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ExpectedTypeAsStaticReceiverStrategy
+import org.jetbrains.kotlin.fir.resolve.inference.ReceiverSuitability
 import org.jetbrains.kotlin.fir.resolve.inference.StateForAtomWithExpectedTypeAsStaticReceiver
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.asCone
@@ -41,6 +39,8 @@ import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.model.safeSubstitute
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 object ContextSensitiveResolutionReceiverStrategy : ExpectedTypeAsStaticReceiverStrategy<ConeSimpleNameForContextSensitiveResolution> {
     context(resolutionContext: ResolutionContext)
@@ -49,12 +49,38 @@ object ContextSensitiveResolutionReceiverStrategy : ExpectedTypeAsStaticReceiver
     }
 
     context(resolutionContext: ResolutionContext)
-    override fun isSuitableReceiver(atom: ConeSimpleNameForContextSensitiveResolution, classSymbol: FirRegularClassSymbol): Boolean {
+    override fun getReceiverSuitability(
+        atom: ConeSimpleNameForContextSensitiveResolution,
+        classSymbol: FirRegularClassSymbol,
+    ): ReceiverSuitability {
         // TODO: potentially might have performance cost (KT-89496)
-        return resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForSimpleName(
+        val result = resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForSimpleNameInClass(
             atom.expression, atom.name, classSymbol
-        ) != null
+        )
+        return when (result) {
+            is Resolved -> SUITABLE
+            NotFound -> NOT_SUITABLE
+            Blocked -> BLOCKING
+        }
     }
+}
+
+/**
+ * The result of the context-sensitive resolution of a simple name against a single contextual class.
+ */
+private sealed class ContextSensitiveResolutionResult {
+    class Resolved(val expression: FirExpression) : ContextSensitiveResolutionResult()
+
+    /**
+     * Neither the class nor its sealed parents provide a declaration for the name, so other contextual classes may be tried.
+     */
+    object NotFound : ContextSensitiveResolutionResult()
+
+    /**
+     * The regular resolution of the name against the class has met some candidate, but it has either failed
+     * or resolved to a declaration that is not eligible for CSR, thus the whole context-sensitive resolution should fail.
+     */
+    object Blocked : ContextSensitiveResolutionResult()
 }
 
 /**
@@ -112,12 +138,12 @@ fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
     expectedType: ConeKotlinType,
 ): FirExpression? {
     val representativeClass = expectedType.getClassRepresentativeForResolutionByExpectedType(session) ?: return null
-    return runContextSensitiveResolutionForSimpleName(originalExpression, name, representativeClass)
+    return runContextSensitiveResolutionForSimpleName(originalExpression, name, listOf(representativeClass))
 }
 
 /**
  * @return not-nullable value when resolution against at least one of the classes was successful,
- * and all the successful results refer to the same declaration.
+ * all the successful results refer to the same declaration, and none of the classes blocks the resolution.
  */
 private fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
     originalExpression: FirExpression,
@@ -126,7 +152,12 @@ private fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
 ): FirExpression? {
     var result: FirExpression? = null
     for (representativeClass in representativeClasses) {
-        val newExpression = runContextSensitiveResolutionForSimpleName(originalExpression, name, representativeClass) ?: continue
+        val newExpression =
+            when (val classResult = runContextSensitiveResolutionForSimpleNameInClass(originalExpression, name, representativeClass)) {
+                is Resolved -> classResult.expression
+                NotFound -> continue
+                Blocked -> return null
+            }
         if (result == null) {
             result = newExpression
         } else if (result.obtainSymbol() != newExpression.obtainSymbol()) {
@@ -145,13 +176,12 @@ private fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
  * @param originalExpression the result of the regular resolution of the simple name: either a property access or a qualifier.
  *   Its source, annotations and type arguments are used for a new synthetic property access expression.
  * @param name the simple name as it's written in the source
- * @return not-nullable value when resolution was successful
  */
-fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
+private fun BodyResolveComponents.runContextSensitiveResolutionForSimpleNameInClass(
     originalExpression: FirExpression,
     name: Name,
     representativeClass: FirRegularClassSymbol,
-): FirExpression? {
+): ContextSensitiveResolutionResult {
     for (classToLookAt in representativeClass.getParentChainForContextSensitiveResolution(session, onlySealed = false)) {
         val additionalQualifier = classToLookAt.toImplicitResolvedQualifierReceiver(
             this,
@@ -188,70 +218,99 @@ fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
             isNestedIntoOuterCallResolution = true,
         )
 
-
-        val shouldTakeNewExpression = when (newExpression) {
+        when (newExpression) {
             is FirPropertyAccessExpression -> {
                 val newCalleeReference = newExpression.calleeReference
-                // TODO: Consider using references with candidates, too (KT-89593)
-                val shouldTake = newCalleeReference is FirResolvedNamedReference && newCalleeReference !is FirResolvedErrorReference
-                if (shouldTake) {
-                    if (newExpression.extensionReceiver === additionalQualifier) {
-                        // By KEEP, we have to filter here properties with extension receiver
-                        if (!isValidContextSensitiveResolutionToExtension(
-                                newCalleeReference, newExpression.dispatchReceiver, classToLookAt
-                            )
-                        ) {
-                            return null
-                        }
+                when {
+                    // No candidate at this class at all, the parent chain may still provide one
+                    newCalleeReference.diagnosticOrNull?.meansNoAvailableCandidate() == true -> continue
+                    // Any failure of the regular resolution (ambiguity, inapplicability),
+                    // a non-trivial candidate needed further completion,
+                    // or a candidate with non-trivial receiver configuration mean that CSR is blocked.
+                    !newExpression.isEligibleForContextSensitiveResolution(
+                        newCalleeReference, additionalQualifier, classToLookAt
+                    ) ->
+                        return ContextSensitiveResolutionResult.Blocked
+                    else -> {
+                        newCalleeReference.replaceResolvedSymbolOrigin(FirResolvedSymbolOrigin.ContextSensitive)
+                        return ContextSensitiveResolutionResult.Resolved(newExpression)
                     }
-                    newCalleeReference.replaceResolvedSymbolOrigin(FirResolvedSymbolOrigin.ContextSensitive)
                 }
-                shouldTake
             }
 
             // resolved qualifiers are always successful when returned
             is FirResolvedQualifier -> {
                 newExpression.replaceResolvedSymbolOrigin(FirResolvedSymbolOrigin.ContextSensitive)
-                true
+                return ContextSensitiveResolutionResult.Resolved(newExpression)
             }
 
-            // Non-trivial FIR element
-            else -> false
+            // Non-trivial FIR element, usually that should not happen for x.y qualified expression,
+            // but I'm not ready yet to add an assertion here.
+            else -> return ContextSensitiveResolutionResult.Blocked
         }
-
-        if (shouldTakeNewExpression) return newExpression
     }
 
-    return null
+    return ContextSensitiveResolutionResult.NotFound
 }
 
-fun BodyResolveComponents.isValidContextSensitiveResolutionToExtension(
-    calleeReference: FirResolvedNamedReference,
-    calleeDispatchReceiver: FirExpression?,
+/**
+ * @receiver resolved expression with set synthetic receiver (MyExpectedClass.simpleName)
+ * @return true when we should accept the resolved expression as a successful CSR candidate.
+ * @return false when the resolved expression is not eligible for CSR _and_ we should prevent context-sensitive resolution at all.
+ */
+@OptIn(ExperimentalContracts::class)
+context(components: BodyResolveComponents)
+private fun FirPropertyAccessExpression.isEligibleForContextSensitiveResolution(
+    resolvedCalleeReference: FirNamedReference,
+    additionalQualifier: FirResolvedQualifier,
     contextRepresentativeClass: FirRegularClassSymbol,
 ): Boolean {
-    val newResolvedSymbol = calleeReference.symbol as? FirPropertySymbol
+    contract {
+        returns(true) implies (resolvedCalleeReference is FirResolvedNamedReference)
+    }
+
+    // The regular resolution has chosen a candidate but has failed on it, e.g. an inapplicable one.
+    // At the same time, at this point we checked that at least some visible candidate has been found,
+    // thus we shouldn't continue looking forward.
+    if (resolvedCalleeReference !is FirResolvedNamedReference || resolvedCalleeReference is FirResolvedErrorReference) return false
+
+    val symbol = resolvedCalleeReference.resolvedSymbol as? FirCallableSymbol<*> ?: return false
+    // Properties with context parameters are not eligible for CSR
+    if (symbol.hasContextParameters) return false
+    // By KEEP, we have to filter out some properties with extension receiver
+    extensionReceiver?.let {
+        if (!hasEligibleExtensionReceiver(it, symbol, additionalQualifier, contextRepresentativeClass)) return false
+    }
+
+    // members of the companion object and of the static scope are always eligible
+    return true
+}
+
+context(components: BodyResolveComponents)
+private fun FirPropertyAccessExpression.hasEligibleExtensionReceiver(
+    extensionReceiver: FirExpression,
+    symbol: FirCallableSymbol<*>,
+    additionalQualifier: FirResolvedQualifier,
+    contextRepresentativeClass: FirRegularClassSymbol,
+): Boolean {
+    // The qualifier is the only possible extension receiver here: a member extension of the companion object
+    // with an implicit extension receiver is not even found with an explicit qualifier as the dispatch receiver
+    if (extensionReceiver !== additionalQualifier) return false
     // We shouldn't have declaration-site dispatch receiver matched with use-site resolved qualifier
     // (imported from object seems the only case here)
-    if (newResolvedSymbol?.dispatchReceiverType != null && calleeDispatchReceiver is FirResolvedQualifier) {
+    if (symbol.dispatchReceiverType != null && dispatchReceiver is FirResolvedQualifier) {
         return false
     }
     // Only properties extending the static and companion object scopes of the contextual types are included
     val receiverOfNewResolvedSymbol =
-        (newResolvedSymbol?.receiverParameterSymbol?.resolvedType?.toSymbol() as? FirRegularClassSymbol)?.let {
+        (symbol.receiverParameterSymbol?.resolvedType?.toSymbol() as? FirRegularClassSymbol)?.let {
             if (it.isCompanion) it.getContainingClassSymbol() as? FirRegularClassSymbol else it
         }
     return receiverOfNewResolvedSymbol === contextRepresentativeClass
 }
 
 fun FirPropertyAccessExpression.shouldBeResolvedInContextSensitiveMode(): Boolean {
-    val diagnostic = when (val calleeReference = calleeReference) {
-        is FirErrorNamedReference -> calleeReference.diagnostic
-        is FirErrorReferenceWithCandidate -> calleeReference.diagnostic
-        is FirResolvedErrorReference -> calleeReference.diagnostic
-        else -> return false
-    }
-
+    val diagnostic = calleeReference.diagnosticOrNull ?: return false
     // Only simple name expressions are supported
     if (explicitReceiver != null) return false
 
@@ -298,6 +357,14 @@ private fun ConeDiagnostic.meansNoAvailableCandidate(): Boolean =
         }
         is ConeInapplicableWrongReceiver -> true
         else -> false
+    }
+
+private val FirReference.diagnosticOrNull: ConeDiagnostic?
+    get() = when (this) {
+        is FirErrorNamedReference -> diagnostic
+        is FirErrorReferenceWithCandidate -> diagnostic
+        is FirResolvedErrorReference -> diagnostic
+        else -> null
     }
 
 /**

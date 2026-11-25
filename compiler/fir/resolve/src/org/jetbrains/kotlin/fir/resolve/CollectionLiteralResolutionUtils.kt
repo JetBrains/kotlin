@@ -22,8 +22,9 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.createErrorReferenceWithExistingCandidate
-import org.jetbrains.kotlin.fir.resolve.inference.StateForAtomWithExpectedTypeAsStaticReceiver
 import org.jetbrains.kotlin.fir.resolve.inference.ExpectedTypeAsStaticReceiverStrategy
+import org.jetbrains.kotlin.fir.resolve.inference.ReceiverSuitability
+import org.jetbrains.kotlin.fir.resolve.inference.StateForAtomWithExpectedTypeAsStaticReceiver
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -65,8 +66,8 @@ object CollectionLiteralReceiverStrategy : ExpectedTypeAsStaticReceiverStrategy<
     }
 
     context(resolutionContext: ResolutionContext)
-    override fun isSuitableReceiver(atom: ConeCollectionLiteralAtom, classSymbol: FirRegularClassSymbol): Boolean {
-        return classSymbol.declaresOperatorOf()
+    override fun getReceiverSuitability(atom: ConeCollectionLiteralAtom, classSymbol: FirRegularClassSymbol): ReceiverSuitability {
+        return if (classSymbol.declaresOperatorOf()) SUITABLE else NOT_SUITABLE
     }
 }
 

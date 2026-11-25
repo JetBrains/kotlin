@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.asCone
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDependencyInformationProvider
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
@@ -26,9 +25,22 @@ interface ExpectedTypeAsStaticReceiverStrategy<in A : ConeAtomWithExpectedTypeAs
     /**
      * Whether [classSymbol] is a meaningful receiver for [atom].
      * For collection literals, that means the class declares an applicable `operator fun of`.
+     * For context-sensitive resolution, the class may also block the resolution of [atom] against any other class,
+     * see [ReceiverSuitability.BLOCKING].
      */
     context(resolutionContext: ResolutionContext)
-    fun isSuitableReceiver(atom: A, classSymbol: FirRegularClassSymbol): Boolean
+    fun getReceiverSuitability(atom: A, classSymbol: FirRegularClassSymbol): ReceiverSuitability
+}
+
+enum class ReceiverSuitability {
+    SUITABLE,
+    NOT_SUITABLE,
+
+    /**
+     * The class is not a suitable receiver, and the atom must not be resolved against any other bound of its expected type either,
+     * so its state is [StateForAtomWithExpectedTypeAsStaticReceiver.FallbackOnly] regardless of the other bounds.
+     */
+    BLOCKING,
 }
 
 sealed class StateForAtomWithExpectedTypeAsStaticReceiver<out A : ConeAtomWithExpectedTypeAsStaticReceiver>(
@@ -44,7 +56,7 @@ sealed class StateForAtomWithExpectedTypeAsStaticReceiver<out A : ConeAtomWithEx
     }
 
     /**
-     * No suitable bounds found.
+     * No suitable bounds found, or some bound blocks the resolution, see [ReceiverSuitability.BLOCKING].
      */
     class FallbackOnly<out A : ConeAtomWithExpectedTypeAsStaticReceiver>(atom: A) : StateForAtomWithExpectedTypeAsStaticReceiver<A>(atom) {
         override val readiness: Readiness = Readiness.FALLBACK_ONLY
@@ -59,7 +71,7 @@ sealed class StateForAtomWithExpectedTypeAsStaticReceiver<out A : ConeAtomWithEx
 
     /**
      * Very special case compared with other ones. Here, [bound] is not guaranteed to be non-null.
-     * Moreover, it is not guaranteed to be a suitable receiver (see [ExpectedTypeAsStaticReceiverStrategy.isSuitableReceiver]).
+     * Moreover, it is not guaranteed to be a suitable receiver (see [ExpectedTypeAsStaticReceiverStrategy.getReceiverSuitability]).
      * Atoms that are [NonTvExpected] get to be analyzed much earlier in the completion loop,
      * since we can never obtain more precise expected type for them.
      * TODO: Probably worth adding [NonTvExpected] vs `NonTvExpectedForFallback` on this level.
@@ -101,11 +113,14 @@ class StateProducerForAtomWithExpectedTypeAsStaticReceiver<A : ConeAtomWithExpec
 
         val bounds: MutableSet<FirRegularClassSymbol> = mutableSetOf()
 
-        // recursive implementation
+        /**
+         * recursive implementation
+         * @return false when some bound blocks the resolution, see [ReceiverSuitability.BLOCKING]
+         */
         fun processConstraintsOfShallowlyDependentVariable(
             dependentVariable: TypeConstructorMarker,
             visited: MutableSet<TypeConstructorMarker> = SmartSet.create()
-        ) {
+        ): Boolean {
             visited.add(dependentVariable)
 
             val constraints = c.notFixedTypeVariables[dependentVariable]?.constraints ?: emptyList()
@@ -113,16 +128,15 @@ class StateProducerForAtomWithExpectedTypeAsStaticReceiver<A : ConeAtomWithExpec
             val lowerSetOfConstraints: MutableSet<FirRegularClassSymbol> = SmartSet.create()
             val upperSetOfConstraints: MutableSet<FirRegularClassSymbol> = SmartSet.create()
             for (constraint in constraints) {
-                // EQUALITY constraints are considered UPPER and LOWER simultaneously here
-                if (constraint.kind != ConstraintKind.LOWER) {
-                    strategy.getClassRepresentative(constraint.type.asCone())?.let {
-                        if (strategy.isSuitableReceiver(atom, it)) upperSetOfConstraints += it
+                val classSymbol = strategy.getClassRepresentative(constraint.type.asCone()) ?: continue
+                when (strategy.getReceiverSuitability(atom, classSymbol)) {
+                    SUITABLE -> {
+                        // EQUALITY constraints are considered UPPER and LOWER simultaneously here
+                        if (constraint.kind != LOWER) upperSetOfConstraints += classSymbol
+                        if (constraint.kind != UPPER) lowerSetOfConstraints += classSymbol
                     }
-                }
-                if (constraint.kind != ConstraintKind.UPPER) {
-                    strategy.getClassRepresentative(constraint.type.asCone())?.let {
-                        if (strategy.isSuitableReceiver(atom, it)) lowerSetOfConstraints += it
-                    }
+                    NOT_SUITABLE -> {}
+                    BLOCKING -> return false
                 }
             }
 
@@ -137,11 +151,15 @@ class StateProducerForAtomWithExpectedTypeAsStaticReceiver<A : ConeAtomWithExpec
 
             for (otherDependentVariable in otherDependentVariables) {
                 if (otherDependentVariable in visited) continue
-                processConstraintsOfShallowlyDependentVariable(otherDependentVariable, visited)
+                if (!processConstraintsOfShallowlyDependentVariable(otherDependentVariable, visited)) return false
             }
+
+            return true
         }
 
-        processConstraintsOfShallowlyDependentVariable(expectedVariable)
+        if (!processConstraintsOfShallowlyDependentVariable(expectedVariable)) {
+            return StateForAtomWithExpectedTypeAsStaticReceiver.FallbackOnly(atom)
+        }
 
         return when (bounds.size) {
             0 -> StateForAtomWithExpectedTypeAsStaticReceiver.FallbackOnly(atom)
