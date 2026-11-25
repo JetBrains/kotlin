@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
+import org.jetbrains.kotlin.konan.target.isObjCCache
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.isNativeStdlib
@@ -177,7 +178,11 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
         moduleDescriptors: List<ModuleDescriptor>,
         linker: KonanIrLinker,
 ) {
-    val exportedDependencies: Set<KotlinLibrary> = (config.loadedKlibs.exported + config.loadedKlibs.included + config.librariesToCache.keys).toSet()
+    val exportedDependencies: Set<KotlinLibrary> = if (config.produce.isObjCCache) {
+        config.librariesToCache.keys
+    } else {
+        (config.loadedKlibs.exported + config.loadedKlibs.included + config.librariesToCache.keys).toSet()
+    }
 
     val libraryToModuleDescriptor: Map<KotlinLibrary, ModuleDescriptor> = moduleDescriptors
             .filterNot {
@@ -192,7 +197,8 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
         val dependencyModuleDescriptor: ModuleDescriptor = libraryToModuleDescriptor[library]
                 ?: error("Could not resolve module descriptor for $library")
 
-        val isFullyCachedLibrary = config.cachedLibraries.isLibraryCached(library) && library !in config.librariesToCache
+        val isFullyCachedLibrary = config.cachedLibraries.isLibraryCached(library) &&
+                (library !in config.librariesToCache || config.produce.isObjCCache)
 
         val deserializationStrategy = when {
             isFullyCachedLibrary && library.isHeader -> DeserializationStrategy.WITH_INLINE_BODIES
