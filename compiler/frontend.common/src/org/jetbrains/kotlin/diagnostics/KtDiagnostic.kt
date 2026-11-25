@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -115,6 +115,6 @@ data class KtDiagnosticWithParameters5<A, B, C, D, E>(
     val e: E,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory5<A, B, C, D, E>,
-    override val positioningStrategy: AbstractSourceElementPositioningStrategy,
-    override val context: DiagnosticBaseContext,
+    override val positioningStrategy: SourceElementPositioningStrategy,
+    override val context: DiagnosticContext,
 ) : KtDiagnosticWithSource()

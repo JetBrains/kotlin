@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -334,7 +334,7 @@ class KtDiagnosticFactory4<A, B, C, D>(
 class KtDiagnosticFactory5<A, B, C, D, E>(
     name: String,
     severity: Severity,
-    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, rendererFactory) {
     @InternalDiagnosticFactoryMethod
@@ -345,8 +345,8 @@ class KtDiagnosticFactory5<A, B, C, D, E>(
         c: C,
         d: D,
         e: E,
-        positioningStrategy: AbstractSourceElementPositioningStrategy?,
-        context: DiagnosticBaseContext,
+        positioningStrategy: SourceElementPositioningStrategy?,
+        context: DiagnosticContext,
     ): KtDiagnosticWithParameters5<A, B, C, D, E>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
         return KtDiagnosticWithParameters5(
@@ -372,8 +372,8 @@ class KtDiagnosticFactory5<A, B, C, D, E>(
         c: C,
         d: D,
         e: E,
-        positioningStrategy: AbstractSourceElementPositioningStrategy?,
-        context: DiagnosticBaseContext,
+        positioningStrategy: SourceElementPositioningStrategy?,
+        context: DiagnosticContext,
     ): KtDiagnostic? {
         return on(
             element ?: return createFallbackDiagnostic(
@@ -476,7 +476,7 @@ class KtDiagnosticFactoryForDeprecation4<A, B, C, D>(
 class KtDiagnosticFactoryForDeprecation5<A, B, C, D, E>(
     name: String,
     featureForError: LanguageFeature,
-    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    defaultPositioningStrategy: SourceElementPositioningStrategy,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory5<A, B, C, D, E>>(
     name,
