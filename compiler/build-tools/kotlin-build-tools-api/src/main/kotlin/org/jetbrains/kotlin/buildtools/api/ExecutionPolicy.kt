@@ -165,6 +165,11 @@ public sealed interface ExecutionPolicy {
      * @since 2.5.20
      */
     public interface NativeImageProcess : ExecutionPolicy {
+        /**
+         * The path to the directory that contains the exploded native image distribution with the native image compiler
+         * executable in `bin/`.
+         */
+        public val distPath: Path
 
         /**
          * A builder for configuring and instantiating the [NativeImageProcess] execution policy.
@@ -191,7 +196,6 @@ public sealed interface ExecutionPolicy {
             /**
              * Creates an immutable instance of [NativeImageProcess] based on the configuration of this builder.
              *
-             * @throws IllegalStateException if [DIST_PATH] was not set
              * @since 2.5.20
              */
             public fun build(): NativeImageProcess
@@ -231,19 +235,6 @@ public sealed interface ExecutionPolicy {
          * @throws IllegalStateException if the option was not set and has no default value
          */
         public operator fun <V> get(key: Option<V>): V
-
-        public companion object {
-            /**
-             * The path to the directory that contains the exploded native image distribution with the native image compiler
-             * executable in `bin/`.
-             *
-             * This option has no default value and must be set before calling [Builder.build].
-             *
-             * @since 2.5.20
-             */
-            @JvmField
-            public val DIST_PATH: Option<Path> = Option("DIST_PATH", KotlinReleaseVersion(2, 5, 20))
-        }
     }
 
     /**
@@ -252,6 +243,11 @@ public sealed interface ExecutionPolicy {
      * @since 2.5.20
      */
     public interface NativeImageDaemon : ExecutionPolicy {
+        /**
+         * The path to the directory that contains the exploded native image distribution with the native image daemon
+         * executable in `bin/`.
+         */
+        public val distPath: Path
 
         /**
          * A builder for configuring and instantiating the [NativeImageDaemon] execution policy.
@@ -278,7 +274,6 @@ public sealed interface ExecutionPolicy {
             /**
              * Creates an immutable instance of [NativeImageDaemon] based on the configuration of this builder.
              *
-             * @throws IllegalStateException if [DIST_PATH] was not set
              * @since 2.5.20
              */
             public fun build(): NativeImageDaemon
@@ -320,17 +315,6 @@ public sealed interface ExecutionPolicy {
         public operator fun <V> get(key: Option<V>): V
 
         public companion object {
-            /**
-             * The path to the directory that contains the exploded native image distribution with the native image daemon
-             * executable in `bin/`.
-             *
-             * This option has no default value and must be set before calling [Builder.build].
-             *
-             * @since 2.5.20
-             */
-            @JvmField
-            public val DIST_PATH: Option<Path> = Option("DIST_PATH", KotlinReleaseVersion(2, 5, 20))
-
             /**
              * The time in milliseconds that the daemon process continues to live after all clients have disconnected.
              */

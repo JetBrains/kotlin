@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformT
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import java.nio.file.Path
 import java.util.concurrent.*
 
 private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
@@ -61,11 +62,11 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
     )
     fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl()
 
-    override fun nativeImageProcessExecutionPolicyBuilder(): ExecutionPolicy.NativeImageProcess.Builder =
-        NativeImageProcessExecutionPolicyImpl()
+    override fun nativeImageProcessExecutionPolicyBuilder(distPath: Path): ExecutionPolicy.NativeImageProcess.Builder =
+        NativeImageProcessExecutionPolicyImpl(distPath)
 
-    override fun nativeImageDaemonExecutionPolicyBuilder(): ExecutionPolicy.NativeImageDaemon.Builder =
-        NativeImageDaemonExecutionPolicyImpl()
+    override fun nativeImageDaemonExecutionPolicyBuilder(distPath: Path): ExecutionPolicy.NativeImageDaemon.Builder =
+        NativeImageDaemonExecutionPolicyImpl(distPath)
 
     override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder = DaemonExecutionPolicyImpl()
 

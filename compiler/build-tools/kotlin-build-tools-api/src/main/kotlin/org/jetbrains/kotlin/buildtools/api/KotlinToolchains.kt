@@ -95,23 +95,21 @@ public interface KotlinToolchains {
      * Creates a builder for [ExecutionPolicy.NativeImageProcess] which allows executing operations in a newly created
      * external native image process.
      *
-     * The [ExecutionPolicy.NativeImageProcess.DIST_PATH] option must be set before building the policy.
-     *
+     * @param distPath the path to the directory that contains the exploded native image distribution
      * @see BuildSession.executeOperation
      * @since 2.5.20
      */
-    public fun nativeImageProcessExecutionPolicyBuilder(): ExecutionPolicy.NativeImageProcess.Builder
+    public fun nativeImageProcessExecutionPolicyBuilder(distPath: Path): ExecutionPolicy.NativeImageProcess.Builder
 
     /**
      * Creates a builder for [ExecutionPolicy.NativeImageDaemon] which allows executing operations using a long-running
      * native image daemon.
      *
-     * The [ExecutionPolicy.NativeImageDaemon.DIST_PATH] option must be set before building the policy.
-     *
+     * @param distPath the path to the directory that contains the exploded native image distribution
      * @see BuildSession.executeOperation
      * @since 2.5.20
      */
-    public fun nativeImageDaemonExecutionPolicyBuilder(): ExecutionPolicy.NativeImageDaemon.Builder
+    public fun nativeImageDaemonExecutionPolicyBuilder(distPath: Path): ExecutionPolicy.NativeImageDaemon.Builder
 
     /**
      * Returns the version of the Kotlin compiler used to run compilation.
@@ -277,6 +275,7 @@ public inline fun KotlinToolchains.daemonExecutionPolicy(builderAction: Executio
 /**
  * Convenience function for creating an [ExecutionPolicy.NativeImageProcess] with options configured by [builderAction].
  *
+ * @param distPath the path to the directory that contains the exploded native image distribution
  * @return an immutable `ExecutionPolicy.NativeImageProcess`.
  * @see KotlinToolchains.nativeImageProcessExecutionPolicyBuilder
  * @since 2.5.20
@@ -284,17 +283,19 @@ public inline fun KotlinToolchains.daemonExecutionPolicy(builderAction: Executio
 @OptIn(ExperimentalContracts::class)
 @ExperimentalBuildToolsApi
 public inline fun KotlinToolchains.nativeImageProcessExecutionPolicy(
-    builderAction: ExecutionPolicy.NativeImageProcess.Builder.() -> Unit,
+    distPath: Path,
+    builderAction: ExecutionPolicy.NativeImageProcess.Builder.() -> Unit = {},
 ): ExecutionPolicy.NativeImageProcess {
     contract {
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
     }
-    return nativeImageProcessExecutionPolicyBuilder().apply(builderAction).build()
+    return nativeImageProcessExecutionPolicyBuilder(distPath).apply(builderAction).build()
 }
 
 /**
  * Convenience function for creating an [ExecutionPolicy.NativeImageDaemon] with options configured by [builderAction].
  *
+ * @param distPath the path to the directory that contains the exploded native image distribution
  * @return an immutable `ExecutionPolicy.NativeImageDaemon`.
  * @see KotlinToolchains.nativeImageDaemonExecutionPolicyBuilder
  * @since 2.5.20
@@ -302,10 +303,11 @@ public inline fun KotlinToolchains.nativeImageProcessExecutionPolicy(
 @OptIn(ExperimentalContracts::class)
 @ExperimentalBuildToolsApi
 public inline fun KotlinToolchains.nativeImageDaemonExecutionPolicy(
-    builderAction: ExecutionPolicy.NativeImageDaemon.Builder.() -> Unit,
+    distPath: Path,
+    builderAction: ExecutionPolicy.NativeImageDaemon.Builder.() -> Unit = {},
 ): ExecutionPolicy.NativeImageDaemon {
     contract {
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
     }
-    return nativeImageDaemonExecutionPolicyBuilder().apply(builderAction).build()
+    return nativeImageDaemonExecutionPolicyBuilder(distPath).apply(builderAction).build()
 }

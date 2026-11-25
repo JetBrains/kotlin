@@ -175,12 +175,12 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPol
 public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon : org/jetbrains/kotlin/buildtools/api/ExecutionPolicy {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon$Companion;
 	public static final field DAEMON_RUN_DIR_PATH Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon$Option;
-	public static final field DIST_PATH Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon$Option;
 	public static final field LOGS_FILE_COUNT_LIMIT Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon$Option;
 	public static final field LOGS_FILE_SIZE_LIMIT Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon$Option;
 	public static final field LOGS_PATH Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon$Option;
 	public static final field SHUTDOWN_DELAY_MILLIS Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon$Option;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon$Option;)Ljava/lang/Object;
+	public abstract fun getDistPath ()Ljava/nio/file/Path;
 	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon$Builder;
 }
 
@@ -199,9 +199,8 @@ public final class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeIma
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess : org/jetbrains/kotlin/buildtools/api/ExecutionPolicy {
-	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess$Companion;
-	public static final field DIST_PATH Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess$Option;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess$Option;)Ljava/lang/Object;
+	public abstract fun getDistPath ()Ljava/nio/file/Path;
 	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess$Builder;
 }
 
@@ -210,9 +209,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPol
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess$Option;)Ljava/lang/Object;
 	public fun invoke (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess$Option;Ljava/lang/Object;)V
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess$Option;Ljava/lang/Object;)V
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess$Companion {
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
@@ -287,8 +283,8 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolch
 	public static fun getVersion ()Ljava/lang/String;
 	public static fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;
 	public static fun loadImplementation (Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;
-	public abstract fun nativeImageDaemonExecutionPolicyBuilder ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon$Builder;
-	public abstract fun nativeImageProcessExecutionPolicyBuilder ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess$Builder;
+	public abstract fun nativeImageDaemonExecutionPolicyBuilder (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon$Builder;
+	public abstract fun nativeImageProcessExecutionPolicyBuilder (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess$Builder;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchains$BuildSession : java/lang/AutoCloseable {
@@ -312,8 +308,10 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolch
 public final class org/jetbrains/kotlin/buildtools/api/KotlinToolchainsKt {
 	public static final fun daemonExecutionPolicy (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
 	public static synthetic fun daemonExecutionPolicy$default (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
-	public static final fun nativeImageDaemonExecutionPolicy (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon;
-	public static final fun nativeImageProcessExecutionPolicy (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess;
+	public static final fun nativeImageDaemonExecutionPolicy (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon;
+	public static synthetic fun nativeImageDaemonExecutionPolicy$default (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageDaemon;
+	public static final fun nativeImageProcessExecutionPolicy (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess;
+	public static synthetic fun nativeImageProcessExecutionPolicy$default (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$NativeImageProcess;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/OperationCancelledException : java/lang/RuntimeException {
