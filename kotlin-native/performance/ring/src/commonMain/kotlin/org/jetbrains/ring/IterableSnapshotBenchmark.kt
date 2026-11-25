@@ -13,10 +13,20 @@ import org.jetbrains.kotlin.benchmarks.collections.BaseSingletonListSnapshotBenc
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(BenchmarkTimeUnit.NANOSECONDS)
 @Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
-open class IterableSnapshotBenchmark : BaseIterableSnapshotBenchmark()
+open class IterableSnapshotBenchmark : BaseIterableSnapshotBenchmark() {
+    @Benchmark
+    fun toTypedArray(blackhole: Blackhole) {
+        blackhole.consume(collection.toTypedArray())
+    }
+}
 
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(BenchmarkTimeUnit.NANOSECONDS)
 @Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
-open class SingletonListSnapshotBenchmark : BaseSingletonListSnapshotBenchmark()
+open class SingletonListSnapshotBenchmark : BaseSingletonListSnapshotBenchmark() {
+    @Benchmark
+    fun toTypedArray(blackhole: Blackhole) {
+        blackhole.consume(collection.toTypedArray())
+    }
+}
