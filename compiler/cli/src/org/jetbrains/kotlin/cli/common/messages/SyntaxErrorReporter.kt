@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.diagnostics.InternalDiagnosticFactoryMethod
 import org.jetbrains.kotlin.diagnostics.NonSuppressingDiagnosticContext
-import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 
 object SyntaxErrorReporter {
     class SyntaxErrorReport(val isHasErrors: Boolean, val isAllErrorsAtEof: Boolean)

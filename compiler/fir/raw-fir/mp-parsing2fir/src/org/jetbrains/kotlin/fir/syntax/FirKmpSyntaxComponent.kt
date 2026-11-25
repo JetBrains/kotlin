@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.fir.syntax
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.syntax.KmpParseTreeKind
+import org.jetbrains.kotlin.syntax.ParseTreeKind
 import org.jetbrains.kotlin.syntax.SyntaxId
 
 /**

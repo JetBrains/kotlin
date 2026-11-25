@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.KtMissingSourceElement
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.syntax.ParseTreeKind
 
 /**
  * A parse-tree agnostic positioning strategy of a diagnostic.

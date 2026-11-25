@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
 import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
-import org.jetbrains.kotlin.diagnostics.ParseTreeKind
+import org.jetbrains.kotlin.syntax.ParseTreeKind
 
 @Suppress("unused")
 object FrontendConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli", "FrontendConfigurationKeys") {

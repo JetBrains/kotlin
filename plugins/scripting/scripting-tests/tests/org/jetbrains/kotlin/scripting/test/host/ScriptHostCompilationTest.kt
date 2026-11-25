@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.useFir
-import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.test.CapturedHostProperties
 import org.jetbrains.kotlin.scripting.test.TestDisposable
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerFr
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMessageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createIsolatedCompilerState
+import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind

@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.extension

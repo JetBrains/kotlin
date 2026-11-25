@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 import org.openjdk.jmh.annotations.Level
 import org.openjdk.jmh.annotations.Scope
 import org.openjdk.jmh.annotations.Setup

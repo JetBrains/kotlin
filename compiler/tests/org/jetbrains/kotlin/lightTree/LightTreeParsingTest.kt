@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.diagnostics.LightTreeParseTreeKind
 import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.readSourceFileWithMapping
+import org.jetbrains.kotlin.syntax.LightTreeParseTreeKind
 import org.jetbrains.kotlin.test.testFramework.runWithDisposable
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

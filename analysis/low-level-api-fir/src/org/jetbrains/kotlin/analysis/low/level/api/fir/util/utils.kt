@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockPro
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
+import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Lock
 

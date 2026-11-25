@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 import java.io.File
 import java.util.*
 

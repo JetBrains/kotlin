@@ -3,9 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.syntax
+package org.jetbrains.kotlin.syntax
 
-import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.diagnostics.PositioningStrategy
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
 

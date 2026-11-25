@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithoutSource
-import org.jetbrains.kotlin.diagnostics.NoParseTreeKind
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.*
@@ -51,6 +50,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.syntax.NoParseTreeKind
 import org.jetbrains.kotlin.types.Variance
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.LightTreeParseTreeKind
 import org.jetbrains.kotlin.diagnostics.NonSuppressingDiagnosticContext
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.parsing.KotlinLightParser
+import org.jetbrains.kotlin.syntax.LightTreeParseTreeKind
 
 fun DiagnosticReporter.toKotlinParsingErrorListener(
     sourceFile: KtSourceFile,

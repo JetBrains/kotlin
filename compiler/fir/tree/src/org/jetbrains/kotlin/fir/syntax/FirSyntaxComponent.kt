@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.fir.syntax
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.utils.exceptions.withSourceEntry
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.syntax.ParseTreeKind
 import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.popLast

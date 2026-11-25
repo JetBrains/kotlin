@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.konan.isNative
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
