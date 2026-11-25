@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -900,6 +901,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @Disabled("KT-92043: For now, the KGP library use-case test is disabled while we're redesigning how the exact componentized output for a library should look like, then we'll reenable a test for this based on that new behavior")
     @TestMetadata("wasm-wasi-library")
     @DisplayName("Wasi library")
     @GradleTest

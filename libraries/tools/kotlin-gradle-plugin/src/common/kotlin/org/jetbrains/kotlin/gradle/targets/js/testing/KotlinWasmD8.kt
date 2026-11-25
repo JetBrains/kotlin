@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuti
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
+import org.jetbrains.kotlin.gradle.targets.js.writeWasmJsUnitTestRunner
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 
@@ -42,7 +42,7 @@ internal class KotlinWasmD8(
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
         val compiledFile = task.inputFileProperty.get().asFile
-        val testRunnerFile = writeWasmUnitTestRunner(launchOpts.workingDir.get().asFile, compiledFile)
+        val testRunnerFile = writeWasmJsUnitTestRunner(launchOpts.workingDir.get().asFile, compiledFile)
 
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
