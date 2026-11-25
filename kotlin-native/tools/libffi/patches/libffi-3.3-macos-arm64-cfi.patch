@@ -1,0 +1,32 @@
+--- a/src/aarch64/sysv.S
++++ b/src/aarch64/sysv.S
+@@ -76,8 +76,8 @@
+    x5 closure
+ */
+ 
+-	cfi_startproc
+ CNAME(ffi_call_SYSV):
++	cfi_startproc
+ 	/* Sign the lr with x1 since that is where it will be stored */
+ 	SIGN_LR_WITH_REG(x1)
+ 
+@@ -268,8 +268,8 @@
+ #endif
+ 
+ 	.align	4
+-	cfi_startproc
+ CNAME(ffi_closure_SYSV):
++	cfi_startproc
+ 	SIGN_LR
+ 	stp     x29, x30, [sp, #-ffi_closure_SYSV_FS]!
+ 	cfi_adjust_cfa_offset (ffi_closure_SYSV_FS)
+@@ -430,8 +430,8 @@
+ #endif
+ 
+ 	.align	4
+-	cfi_startproc
+ CNAME(ffi_go_closure_SYSV):
++	cfi_startproc
+ 	stp     x29, x30, [sp, #-ffi_closure_SYSV_FS]!
+ 	cfi_adjust_cfa_offset (ffi_closure_SYSV_FS)
+ 	cfi_rel_offset (x29, 0)
