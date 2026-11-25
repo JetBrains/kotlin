@@ -7407,6 +7407,9 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface NoGetMethod : KaFirDiagnostic<KtArrayAccessExpression> {
         override val diagnosticClass: KClass<NoGetMethod>
             get() = NoGetMethod::class
+
+        public val receiver: KtExpression?
+        public val receiverType: KaType
     }
 
     @KaUnstableDiagnosticApi
@@ -7414,6 +7417,9 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface NoSetMethod : KaFirDiagnostic<KtArrayAccessExpression> {
         override val diagnosticClass: KClass<NoSetMethod>
             get() = NoSetMethod::class
+
+        public val receiver: KtExpression?
+        public val receiverType: KaType
     }
 
     @KaUnstableDiagnosticApi

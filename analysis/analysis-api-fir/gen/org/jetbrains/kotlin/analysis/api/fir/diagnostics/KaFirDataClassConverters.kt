@@ -1110,6 +1110,8 @@ private fun KaDiagnosticConverterBuilder.addConversions17() {
 private fun KaDiagnosticConverterBuilder.addConversions18() {
     add(FirErrors.NO_GET_METHOD) { firDiagnostic ->
         NoGetMethodImpl(
+            firDiagnostic.a?.source?.psi as? KtExpression,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4699,6 +4701,8 @@ private fun KaDiagnosticConverterBuilder.addConversions94() {
     }
     add(FirErrors.NO_SET_METHOD) { firDiagnostic ->
         NoSetMethodImpl(
+            firDiagnostic.a?.source?.psi as? KtExpression,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

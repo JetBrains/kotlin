@@ -5233,11 +5233,15 @@ internal class ContractNotAllowedImpl(
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ContractNotAllowed
 
 internal class NoGetMethodImpl(
+    override val receiver: KtExpression?,
+    override val receiverType: KaType,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtArrayAccessExpression>(firDiagnostic, token), KaFirDiagnostic.NoGetMethod
 
 internal class NoSetMethodImpl(
+    override val receiver: KtExpression?,
+    override val receiverType: KaType,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtArrayAccessExpression>(firDiagnostic, token), KaFirDiagnostic.NoSetMethod
