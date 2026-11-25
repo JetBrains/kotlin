@@ -16,7 +16,8 @@ These libraries are built as a part of the [root](../) Gradle project.
 
 This area of the project is the root for Maven build.
 
-You can work with the maven modules of this maven project in IDEA from the [root IDEA project](../ReadMe.md#working-in-idea). After importing you'll be able to explore maven projects and run goals directly from IDEA with the instruments on the right sidebar.
+You can work with the Maven modules of this Maven project in IDEA from the [root IDEA project](../ReadMe.md#working-in-idea). After importing you'll be able to explore Maven projects and run goals directly from IDEA with the instruments on the right sidebar.
+Check out the [Working in IDEA](#working-in-idea) section for tips on how to properly configure IDEA for working with Maven modules.
 
 ### Building
 
@@ -40,32 +41,48 @@ If your maven build is failing with Out-Of-Memory errors, set JVM options for ma
 
     MAVEN_OPTS="-Xmx2G"
 
+### Working in IDEA
+
+You should be able to work with both Gradle and Maven modules in the same IDEA project. Follow these steps to properly set up the Maven integration:
+
+1. Run `./gradlew install publish` to get things bootstrapped.
+2. Open IDEA settings, Go to Build, Execution, Deployment | Build Tools | Maven.
+3. Select "Use settings from .mvn/maven.config".
+4. Check the "Override" checkbox next to "User settings file" and provide the path to `maven-settings.xml` from libraries/ directory.
+5. Switch to Maven | Runner tab and Select Delegate IDE build/run actions to Maven.
+6. Check "Skip Tests" for quick builds.
+7. And make sure JDK 17 is selected as a JDK for Maven.
+8. Switch to "Running Tests" tab and make sure options to pass (argLine, systemPropertyVariables, etc..) from maven-surefire-plugin are set.
+
+* Q: Do I need to provide configure any JDKs in Environment variables?
+* A: No, you don't have to. There is the CompositeJDKProvider that will try automatically to find JDKs in the system. 
+If for some reason it fails, set the variables in the Environment variables section of the Build, Execution, Deployment | Build Tools | Maven | Runner menu.
+Set the following variables:
+
+```
+Name: JDK_1_8, Value: path-to-jdk-1_8
+Name: JDK_17_0, Value: path-to-jdk-17
+```
+
+If you're having issues with unresolved symbols in code, run this command and then "Reload All Maven Projects" in the Maven tool window (see KT-85580 for a detailed explanation):
+
+```shell
+find ~/.m2/repository/org/jetbrains/kotlin \
+  -type f \
+  -path "*/2.5.20-dev-XXXX/*" \
+  \( -name "_remote.repositories" -o -name "*.lastUpdated" \) \
+  -delete
+```
+
+Replace XXXX with the build number from kotlin.bootstrap.version in libraries/pom.xml, and replace "2.5.20" with the current version prefix.
+
 ### Working with Maven Integration Tests
 
-Make sure you opened this `libraries` dir as root project in IDEA. This way it will be interpreted as a Maven project.
-Configure IDEA to delegate build to Maven. Follow:
-
-0. Run `../gradlew install publish` to get things bootsrrapped. (note that gradlew script located in the parent directory)
-1. Open IDEA settings, Go to Build, Execution, Deployment | Build Tools | Maven.
-2. Select "Use settings from .mvn/maven.config".
-2. Switch to Maven | Runner tab and Select Delegate IDE build/run actions to Maven.
-3. Check "Skip Tests" for quick builds.
-4. And make sure JDK 17 is selected as a JDK for Maven.
-5. Switch to "Running Tests" tab and make sure options to pass (argLine, systemPropertyVariables, etc..) from maven-surefire-plugin are set.
-6. Now project can be re-imported in IDEA.
-
-Q: Do I need to provide configure any JDKs in Environment variables?
-A: No, you don't have to. There is the CompositeJDKProvider that will try automatically to find JDKs in the system.
-
-Known problem: if you see that IDEA can't resolve kotlin-dev version during sync.
-You can temporarily fix it by overriding maven-settings.xml in IDEA project settings.
-Set it to `maven-settings.xml` from libraries/ directory.
-
-You can navigate to `libraries/kotlin-maven-plugin-test` and work with maven integration tests.
+You can navigate to `libraries/kotlin-maven-plugin-test` and work with Maven integration tests.
 It is possible to trigger them in IDEA. It will run maven install goal and create dedicated 
 run configuration for selected JUnit tests.
 
-To run all tests, you can use CLI command:
+To run all tests from the CLI, you can use the command:
 
 ```
 export JDK_1_8=path-to-jdk-1_8
