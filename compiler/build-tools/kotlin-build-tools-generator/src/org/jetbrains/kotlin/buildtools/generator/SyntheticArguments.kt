@@ -15,6 +15,11 @@ internal class SyntheticArgumentInterface(
     val parentInterfaces: List<SyntheticArgumentInterface>,
     val concreteClassName: String? = null,
     val restrictedToCompilerPhase: KotlinCompilerPhase? = null,
+    /**
+     * The `@since` KDoc line of the interface, for the case when it's introduced later than the [level] it's based on.
+     * By default, the interface is considered available since the same version as the [level].
+     */
+    val since: String? = null,
 )
 
 private fun SyntheticArgumentInterface.toLevel(): KotlinCompilerArgumentsLevel =

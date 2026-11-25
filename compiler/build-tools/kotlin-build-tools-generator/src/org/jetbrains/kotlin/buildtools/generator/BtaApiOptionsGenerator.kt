@@ -64,7 +64,8 @@ internal class BtaApiOptionsGenerator(
                         }
                         if (!level.isLeaf()) {
                             addKdoc("\n\n")
-                            addKdoc(KDOC_SINCE_2_4_20)
+                            // builders of non-leaf levels were introduced in 2.4.20, levels added later have them from the start
+                            addKdoc(if (level.hadBuildersIntroducedLater) KDOC_SINCE_2_4_20 else levelsSince.getValue(level.name))
                         }
                         returns(ClassName(targetPackage, className))
                     }

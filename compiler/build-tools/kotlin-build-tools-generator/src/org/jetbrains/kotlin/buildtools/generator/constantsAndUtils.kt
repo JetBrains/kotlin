@@ -88,7 +88,7 @@ internal val experimentalLevelNames = listOf(
     CompilerArgumentsLevelNames.nativeArguments,
 )
 
-internal val levelsSince = mapOf(
+private val realLevelsSince = mapOf(
     CompilerArgumentsLevelNames.commonToolArguments to KDOC_SINCE_2_3_0,
     CompilerArgumentsLevelNames.commonCompilerArguments to KDOC_SINCE_2_3_0,
     CompilerArgumentsLevelNames.jvmCompilerArguments to KDOC_SINCE_2_3_0,
@@ -98,7 +98,15 @@ internal val levelsSince = mapOf(
     CompilerArgumentsLevelNames.commonKlibBasedArguments to KDOC_SINCE_2_4_20,
     CompilerArgumentsLevelNames.metadataArguments to KDOC_SINCE_2_4_20,
     CompilerArgumentsLevelNames.nativeArguments to KDOC_SINCE_2_5_20,
-) + syntheticArgumentInterfaces.associate { it.name to KDOC_SINCE_2_4_20 }
+)
+
+/**
+ * Synthetic argument interfaces become available together with the compiler arguments level they are based on,
+ * unless [SyntheticArgumentInterface.since] says otherwise.
+ */
+internal val levelsSince = realLevelsSince + syntheticArgumentInterfaces.associate {
+    it.name to (it.since ?: realLevelsSince[it.level.name] ?: error("Level ${it.level.name} is missing in levelSince map"))
+}
 
 internal fun BtaCompilerArgument<*>.getOptionId(): String = name.uppercase().replace("-", "_").let {
     when {

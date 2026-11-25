@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KonanTarget
 
 /**
- * @since 2.4.20
+ * @since 2.5.20
  */
 public interface NativeCompilerArguments : CommonKlibBasedArguments {
   /**
@@ -55,7 +55,7 @@ public interface NativeCompilerArguments : CommonKlibBasedArguments {
     /**
      * Constructs a new immutable [NativeCompilerArguments] instance with the options set in this builder.
      *
-     * @since 2.4.20
+     * @since 2.5.20
      */
     override fun build(): NativeCompilerArguments
   }

@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments.enums
 import kotlin.String
 
 /**
- * @since 2.4.20
+ * @since 2.5.20
  */
 public enum class KonanTarget(
   public val stringValue: String,

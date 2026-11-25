@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KonanTarget
 
 /**
- * @since 2.4.20
+ * @since 2.5.20
  */
 public interface NativeCompilerKlibArguments : NativeCompilerArguments,
     CommonKlibBasedArgumentsKlibArguments {
