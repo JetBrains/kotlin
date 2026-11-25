@@ -1,4 +1,6 @@
-// TARGET_BACKEND: WASM
+// LANGUAGE: +FullValueClasses
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
 // WITH_STDLIB
 @file:Suppress("UNCHECKED_CAST")
 

@@ -1,4 +1,4 @@
-// TARGET_BACKEND: WASM
+// FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
 // WITH_STDLIB
 @file:Suppress("UNCHECKED_CAST")
 

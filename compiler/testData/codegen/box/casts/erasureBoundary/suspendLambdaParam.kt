@@ -1,4 +1,5 @@
-// TARGET_BACKEND: WASM
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
 // WITH_STDLIB
 // Heap pollution must be detected where a value produced at an erased generic type is narrowed back
 // to a substituted type (an erasure boundary): with a ClassCastException, not a Wasm trap.
