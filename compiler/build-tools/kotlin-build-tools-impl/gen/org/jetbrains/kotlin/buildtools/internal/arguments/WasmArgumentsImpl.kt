@@ -103,6 +103,9 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
   @SerialName("X_WASM_GENERATE_WAT")
   internal var wasmGenerateWat: Boolean = defaultArguments.wasmGenerateWat
 
+  @SerialName("X_WASM_HOT_RELOAD")
+  internal var wasmHotReload: Boolean = defaultArguments.wasmHotReload
+
   @SerialName("X_WASM_INCLUDED_MODULE_ONLY")
   internal var wasmIncludedModuleOnly: Boolean = defaultArguments.wasmIncludedModuleOnly
 
@@ -164,6 +167,7 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
     "X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE" -> wasmGenerateClosedWorldMultimodule
     "X_WASM_GENERATE_DWARF" -> generateDwarf
     "X_WASM_GENERATE_WAT" -> wasmGenerateWat
+    "X_WASM_HOT_RELOAD" -> wasmHotReload
     "X_WASM_INCLUDED_MODULE_ONLY" -> wasmIncludedModuleOnly
     "X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX" -> wasmInternalLocalVariablePrefix
     "X_WASM_KCLASS_FQN" -> wasmKClassFqn
@@ -200,6 +204,7 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
       "X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE" -> wasmGenerateClosedWorldMultimodule = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_GENERATE_DWARF" -> generateDwarf = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_GENERATE_WAT" -> wasmGenerateWat = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_HOT_RELOAD" -> wasmHotReload = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_INCLUDED_MODULE_ONLY" -> wasmIncludedModuleOnly = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX" -> wasmInternalLocalVariablePrefix = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_KCLASS_FQN" -> wasmKClassFqn = WasmArgumentValueAdapter.toImpl(value)
@@ -232,6 +237,7 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
     "X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE" -> wasmGenerateClosedWorldMultimodule
     "X_WASM_GENERATE_DWARF" -> generateDwarf
     "X_WASM_GENERATE_WAT" -> wasmGenerateWat
+    "X_WASM_HOT_RELOAD" -> wasmHotReload
     "X_WASM_INCLUDED_MODULE_ONLY" -> wasmIncludedModuleOnly
     "X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX" -> wasmInternalLocalVariablePrefix
     "X_WASM_KCLASS_FQN" -> wasmKClassFqn
@@ -268,6 +274,7 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
       "X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE" -> wasmGenerateClosedWorldMultimodule = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_GENERATE_DWARF" -> generateDwarf = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_GENERATE_WAT" -> wasmGenerateWat = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_HOT_RELOAD" -> wasmHotReload = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_INCLUDED_MODULE_ONLY" -> wasmIncludedModuleOnly = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX" -> wasmInternalLocalVariablePrefix = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_KCLASS_FQN" -> wasmKClassFqn = WasmArgumentValueAdapter.toImpl(value)
@@ -300,6 +307,7 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
     "X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE" -> wasmGenerateClosedWorldMultimodule
     "X_WASM_GENERATE_DWARF" -> generateDwarf
     "X_WASM_GENERATE_WAT" -> wasmGenerateWat
+    "X_WASM_HOT_RELOAD" -> wasmHotReload
     "X_WASM_INCLUDED_MODULE_ONLY" -> wasmIncludedModuleOnly
     "X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX" -> wasmInternalLocalVariablePrefix
     "X_WASM_KCLASS_FQN" -> wasmKClassFqn
@@ -336,6 +344,7 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
       "X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE" -> wasmGenerateClosedWorldMultimodule = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_GENERATE_DWARF" -> generateDwarf = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_GENERATE_WAT" -> wasmGenerateWat = WasmArgumentValueAdapter.toImpl(value)
+      "X_WASM_HOT_RELOAD" -> wasmHotReload = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_INCLUDED_MODULE_ONLY" -> wasmIncludedModuleOnly = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX" -> wasmInternalLocalVariablePrefix = WasmArgumentValueAdapter.toImpl(value)
       "X_WASM_KCLASS_FQN" -> wasmKClassFqn = WasmArgumentValueAdapter.toImpl(value)
@@ -377,6 +386,7 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
     arguments.wasmGenerateClosedWorldMultimodule = wasmGenerateClosedWorldMultimodule
     arguments.generateDwarf = generateDwarf
     arguments.wasmGenerateWat = wasmGenerateWat
+    arguments.wasmHotReload = wasmHotReload
     arguments.wasmIncludedModuleOnly = wasmIncludedModuleOnly
     arguments.wasmInternalLocalVariablePrefix = wasmInternalLocalVariablePrefix
     arguments.wasmKClassFqn = wasmKClassFqn
@@ -408,6 +418,7 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
     wasmGenerateClosedWorldMultimodule = arguments.wasmGenerateClosedWorldMultimodule
     generateDwarf = arguments.generateDwarf
     wasmGenerateWat = arguments.wasmGenerateWat
+    wasmHotReload = arguments.wasmHotReload
     wasmIncludedModuleOnly = arguments.wasmIncludedModuleOnly
     wasmInternalLocalVariablePrefix = arguments.wasmInternalLocalVariablePrefix
     wasmKClassFqn = arguments.wasmKClassFqn
@@ -437,6 +448,7 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
     arguments.wasmGenerateClosedWorldMultimodule = wasmGenerateClosedWorldMultimodule
     arguments.generateDwarf = generateDwarf
     arguments.wasmGenerateWat = wasmGenerateWat
+    arguments.wasmHotReload = wasmHotReload
     arguments.wasmIncludedModuleOnly = wasmIncludedModuleOnly
     arguments.wasmInternalLocalVariablePrefix = wasmInternalLocalVariablePrefix
     arguments.wasmKClassFqn = wasmKClassFqn
@@ -488,6 +500,6 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
 
   public companion object {
     private val knownOptionIds: List<String> =
-        listOf("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE","X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE","X_WASM","X_WASM_IC_GENERATE_UNCHANGED_MODULES","X_WASM_DEBUG_FRIENDLY","X_WASM_DEBUG_INFO","X_WASM_DEBUGGER_CUSTOM_FORMATTERS","X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION","X_WASM_ENABLE_ARRAY_RANGE_CHECKS","X_WASM_ENABLE_ASSERTS","X_WASM_ENABLE_TAIL_CALLS","X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE","X_WASM_GENERATE_DWARF","X_WASM_GENERATE_WAT","X_WASM_INCLUDED_MODULE_ONLY","X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX","X_WASM_KCLASS_FQN","X_WASM_NO_JSTAG","X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES","X_WASM_TARGET","X_WASM_USE_NEW_EXCEPTION_PROPOSAL","X_WASM_USE_STACK_SWITCHING_PROPOSAL","X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS",)
+        listOf("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE","X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE","X_WASM","X_WASM_IC_GENERATE_UNCHANGED_MODULES","X_WASM_DEBUG_FRIENDLY","X_WASM_DEBUG_INFO","X_WASM_DEBUGGER_CUSTOM_FORMATTERS","X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION","X_WASM_ENABLE_ARRAY_RANGE_CHECKS","X_WASM_ENABLE_ASSERTS","X_WASM_ENABLE_TAIL_CALLS","X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE","X_WASM_GENERATE_DWARF","X_WASM_GENERATE_WAT","X_WASM_HOT_RELOAD","X_WASM_INCLUDED_MODULE_ONLY","X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX","X_WASM_KCLASS_FQN","X_WASM_NO_JSTAG","X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES","X_WASM_TARGET","X_WASM_USE_NEW_EXCEPTION_PROPOSAL","X_WASM_USE_STACK_SWITCHING_PROPOSAL","X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS",)
   }
 }
