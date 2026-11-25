@@ -1,0 +1,1 @@
+/noSetMethod.kt:7:8: error: No 'set' operator method providing array access.
