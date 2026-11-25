@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.utils.pollFirst
 import org.jetbrains.kotlin.utils.putToMultiMap
@@ -92,8 +90,7 @@ class IrFileDeserializer(
                 if (signature !is IdSignature.CommonSignature) continue
 
                 if (kind == BinarySymbolData.SymbolKind.FUNCTION_SYMBOL || kind == BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) {
-                    val callableId = CallableId(signature.packageFqName(), Name.identifier(signature.declarationFqName))
-                    putToMultiMap(TopLevelCallableIdAndKind(callableId, kind), signature)
+                    putToMultiMap(TopLevelCallableIdAndKind(signature, kind), signature)
                 }
             }
         }
