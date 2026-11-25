@@ -35,6 +35,6 @@ package kotlinx.parcelize
  * As a practical example, [kotlin.Pair] is a data class.
  */
 @Target(AnnotationTarget.TYPE)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 @Experimental
 annotation class DataClass
