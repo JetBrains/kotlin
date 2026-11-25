@@ -42,7 +42,7 @@ public actual fun <T> Iterable<T>.toList(): List<T> {
         if (!iterator.hasNext()) return emptyList()
         val first = iterator.next()
         if (!iterator.hasNext()) return listOf(first)
-        return this.toMutableList()
+        return this.toMutableList(first, iterator)
     }
     return this.toMutableList().optimizeReadOnlyList()
 }
