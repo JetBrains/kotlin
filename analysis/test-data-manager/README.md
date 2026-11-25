@@ -114,7 +114,7 @@ implementing `ManagedTest` gets [ManagedTestData](../../compiler/test-infrastruc
 its test data file is both the input and the expected output, so the variants go before the extension of the test data (`foo.ll.kt`,
 `foo.ll.test.kts`), and the test reads the expected file of its chain. The compiler's phased light tree diagnostic test is the golden one
 (`[]`), the LL diagnostic tests are `[ll]`, `[ll, reversed]` and `[ll, partialBody]`; the chains of all configurations are in
-[compiler/testData/diagnostics/AGENTS.md](../../compiler/testData/diagnostics/AGENTS.md#updating-test-data).
+[compiler/testData/diagnostics/AGENTS.md](../../compiler/testData/diagnostics/AGENTS.md#variant-files).
 
 The dumps of such a test (`foo.fir.txt`, `foo.dot`, …) are managed with the same chain, the variant before the dump extension
 (`foo.reversed.fir.txt` → `foo.ll.fir.txt` → `foo.fir.txt`), via `ManagedTestData.assertEqualsToDump`.

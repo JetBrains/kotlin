@@ -6,21 +6,24 @@
 
 Comment lines at the top of the file control test behavior:
 
-| Directive                                                 | Description                                                                                                                                                      |
-|-----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `// RUN_PIPELINE_TILL: FRONTEND`, `CODEGEN` or `FIR2IR`   | How far the compiler pipeline runs (FRONTEND = FIR resolution only, CODEGEN = through codegen, FIR2IR = rarely once IR has been created, but failing at backend) |
-| `// ISSUE: KT-XXXXX`                                      | References a YouTrack issue                                                                                                                                      |
-| `// WITH_STDLIB`                                          | Include stdlib in test classpath                                                                                                                                 |
-| `// LANGUAGE: +FeatureName` / `// LANGUAGE: -FeatureName` | Enable/disable language features                                                                                                                                 |
-| `// DIAGNOSTICS: -DIAGNOSTIC_NAME`                        | Suppress specific diagnostics                                                                                                                                    |
-| `// RENDER_DIAGNOSTICS_FULL_TEXT`                         | Produces `.diag.txt` with human-readable error messages                                                                                                          |
-| `// RENDER_DIAGNOSTIC_ARGUMENTS`                          | Renders arguments inside markers, e.g. `<!TYPE_MISMATCH("A; B")!>`                                                                                               |
-| `// DUMP_CFG` / `// DUMP_CFG: FLOW`                       | Generates `.dot` file with control flow graph                                                                                                                    |
-| `// DUMP_INFERENCE_LOGS: option1, option2`                | Possible options: FIXATION, MARKDOWN, MERMAID                                                                                                                    |
-| `// CHECK_TYPE`                                           | Enables `checkType { _<Type>() }` pattern for type assertions                                                                                                    |
-| `// FILE: Name.kt` / `// FILE: Name.java`                 | Multi-file test (splits single `.kt` file into virtual files)                                                                                                    |
-| `// LANGUAGE_FEATURE_TOGGLED: FeatureName`                | The feature is enabled; `FirLightTreeDiagnosticsWithLanguageFeatureDisabledTestGenerated` runs the test with it disabled (see `.disabled.kt` below) |
-| `// LL_FIR_DIVERGENCE`                                    | Opens and closes the comment at the top of an `.ll.kt` (`.ll.wasmJs.kt`, …) explaining why LL FIR reports other diagnostics than the compiler                     |
+| Directive                                                 | Description                                                                                                                  |
+|-----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| `// RUN_PIPELINE_TILL: <phase>`                           | The phase the test is expected to reach: `FRONTEND`, `FIR2IR`, `LOWERINGS` or `CODEGEN`, see [Phases](#phases)               |
+| `// ISSUE: KT-XXXXX`                                      | References a YouTrack issue                                                                                                  |
+| `// WITH_STDLIB`                                          | Include stdlib in test classpath                                                                                             |
+| `// LANGUAGE: +FeatureName` / `// LANGUAGE: -FeatureName` | Enable/disable language features                                                                                             |
+| `// DIAGNOSTICS: -DIAGNOSTIC_NAME`                        | Suppress specific diagnostics                                                                                                |
+| `// RENDER_DIAGNOSTICS_FULL_TEXT`                         | Produces `.diag.txt` with human-readable error messages, see [Dumps](#dumps)                                                 |
+| `// RENDER_DIAGNOSTIC_ARGUMENTS`                          | Renders arguments inside markers, e.g. `<!TYPE_MISMATCH("A; B")!>`                                                           |
+| `// FIR_DUMP`                                             | Produces `.fir.txt`, the resolved FIR tree; most tests don't need it                                                         |
+| `// DUMP_CFG` / `// DUMP_CFG: FLOW`                       | Produces `.dot` with the control flow graph                                                                                  |
+| `// DUMP_INFERENCE_LOGS: option1, option2`                | Possible options: FIXATION, MARKDOWN, MERMAID                                                                                |
+| `// CHECK_TYPE`                                           | Enables `checkType { _<Type>() }` pattern for type assertions                                                                |
+| `// FILE: Name.kt` / `// FILE: Name.java`                 | Multi-file test (splits single `.kt` file into virtual files)                                                                |
+| `// LANGUAGE_FEATURE_TOGGLED: FeatureName`                | Enables the feature, and the test also runs with it disabled, see [Variant runners](#variant-runners)                        |
+| `// LL_FIR_DIVERGENCE`                                    | Opens and closes the comment at the top of an `.ll.kt` (`.ll.wasmJs.kt`, …) explaining why LL FIR reports other diagnostics  |
+
+stdlib is not available by default: functions like `println` produce `UNRESOLVED_REFERENCE` without `// WITH_STDLIB`.
 
 ### Inline Diagnostic Markers
 
@@ -37,85 +40,115 @@ Diagnostic assertions are placed inline around the code that should produce them
 
 ### Footer
 
-- `/* GENERATED_FIR_TAGS: tag1, tag2, ... */` — auto-generated tags listing FIR constructs present in the file; do not hand-edit
+- `/* GENERATED_FIR_TAGS: tag1, tag2, ... */` — tags listing the FIR constructs of the file, written by `update`; don't write or edit them
 
-## Associated Files (auto-generated, not hand-edited)
+## Which Tests Read a Test Data File
 
-| Extension        | Content                                                             | Generated when                                    |
-|------------------|---------------------------------------------------------------------|---------------------------------------------------|
-| `.fir.txt`       | FIR tree dump (resolved FIR with `R\|...\|` references)             | Only when `FIR_DUMP` directive is present         |
-| `.diag.txt`      | Diagnostics in text format (`/file.kt:(offset): severity: message`) | `RENDER_DIAGNOSTICS_FULL_TEXT` directive present  |
-| `.dot`           | Control flow graph in Graphviz format                               | `DUMP_CFG` directive present                      |
-| `.fixation.txt`  | Type variable fixation process                                      | `DUMP_INFERENCE_LOGS: FIXATION` directive present |
-| `.inference.md`  | General type inference logs                                         | `DUMP_INFERENCE_LOGS: MARKDOWN` directive present |
-| `.inference.mmd` | General type inference logs via Mermaid format                      | `DUMP_INFERENCE_LOGS: MERMAID` directive present  |
-| `.latestLV.kt`   | Test expectations for latest language version when they differ from stable | Created by `update` when they differ     |
-| `.disabled.kt`   | Test expectations with the toggled language feature disabled        | Created by `update` when they differ              |
+Find this out first: it decides how the test data is updated.
 
-The `.kt` file has variants for other test configurations (`.ll.kt`, `.reversed.kt`, …), see [Variant files](#variant-files).
+**Managed tests** are updated and checked only with the [wrapper script](../../../analysis/AGENTS.md#working-with-test-data) of the
+[test data manager](../../../analysis/test-data-manager/README.md): `update` writes their test data, `check` only compares it. `--path`
+picks the modules, so one run covers the compiler and the LL tests of a file:
 
-Diagnostic messages rendered into `.diag.txt` must follow the [Diagnostic Message Style Guide](../../../docs/diagnostic_message_style_guide.md).
+- `:compiler:jvm.tests` over `tests/`, `testsWithAnyBackend/` and `testsWithStdLib/`: `PhasedJvmDiagnosticLightTreeTestGenerated`, the
+  golden test of the `.kt` files, and the [variant runners](#variant-runners).
+- `:compiler:jvm.tests` over `foreignAnnotationsTests/`: `FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated` (golden),
+  `FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated` and
+  `FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated`.
+- The spec tests over `compiler/tests-spec/testData/diagnostics`: `FirLightTreeDiagnosticTestSpecGenerated` (golden), `LLSpecTestGenerated`,
+  `LLReversedSpecTestGenerated`.
+- The LL tests (`:analysis:low-level-api-fir:low-level-api-fir-compiler-tests`): `LLDiagnosticsTestGenerated`,
+  `LLReversedDiagnosticsTestGenerated`, `LLPartialDiagnosticsTestGenerated` over the directories of the golden test, minus a few subtrees
+  (`headerMode/`, most of `jvm/duplicateJvmSignature/`, `jvm/exposedPrivate/`, `testsWithStdLib/native/`: see the LL generator,
+  `TestGenerator.kt` of that module), and their JS and Wasm suites over `testsWithJsStdLib/`, `wasmTests/` and `wasmWasiTests/`
+  (`LLJsDiagnosticsFe10TestGenerated`, …); both Wasm suites also cover `tests/defaultArguments/`.
+- The diagnostic tests of the compiler plugins and their LL counterparts, except the JS and Native ones below.
 
-## Latest Language Version Differences
+**Unmanaged tests** compare with the file they read, and only a Gradle run of the suite with `-Pkotlin.test.update.test.data=true` writes
+it. The flag applies to the suites of that run only. It leaves the files of the managed tests in the run alone, but an unmanaged suite
+writes the file it read even where a managed test reads it too, e.g., a `.kt` file of `testsWithAnyBackend/`.
 
-When a language feature has `sinceVersion` set to a future Kotlin version (e.g., `KOTLIN_2_5`), it is disabled at the stable language version but enabled at the latest language version. This causes different compiler behavior depending on which LV the test runs with.
+- The JS, Wasm and Native compiler diagnostic tests (`:js:js.tests`, `:wasm:wasm.tests`,
+  `:native:native.tests:klib-ir-inliner:withPlatformLibs`) over `testsWithJsStdLib/`, `wasmTests/`, `wasmWasiTests/`, `nativeTests/`, and
+  over `testsWithAnyBackend/` and `tests/defaultArguments/`, whose `.kt` files the golden test writes too.
+- The metadata diagnostic tests (`:compiler:tests-common-new`, `AbstractMetadataDiagnosticTest`) over `metadataDiagnosticTests/`.
+- The JS diagnostic tests of the plugins: js-plain-objects (`:plugins:js-plain-objects:compiler-plugin`) over its `testData/diagnostics/`,
+  and kotlinx-serialization (`:kotlinx-serialization-compiler-plugin`) over its `testData/diagnosticsJs/`.
+- The Native diagnostic tests of atomicfu (`:kotlin-atomicfu-compiler:nativeTest`) over its `testData/backendDiagnostic/`.
+- The scripting tests with custom script definitions and the REPL diagnostic tests (`:plugins:scripting:scripting-tests`):
+  `AbstractScriptWithCustomDefDiagnosticsTestBase`, `AbstractReplWithTestExtensionsDiagnosticsTest`, `AbstractReplViaApiDiagnosticsTest`.
+- The native LL tests (`:analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests:llFirNativeTests`) over `nativeTests/`.
 
-The latest-LV test runners in `:compiler:jvm.tests` (`FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated`, and
-`FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionTestGenerated` for `multiplatform/`) are managed tests with the
-`latestLV` variant: the `.kt` file keeps the expectations for the stable (default) language version, and `update` creates `.latestLV.kt`
-with the expectations for the latest one when they differ, and deletes it when they don't.
+**The order of the runs**: the suite that writes the `.kt` file runs first.
 
-## Creating a New Test
+- Where a managed golden test writes it (`tests/`, `testsWithAnyBackend/`, `testsWithStdLib/`, the spec tests, most plugins): run
+  `update`, then run the unmanaged suites that read the file, without the flag.
+- Where an unmanaged suite writes it: run that Gradle suite with the flag, review the result, and rerun it without the flag. Then, if
+  managed LL tests read the file (`testsWithJsStdLib/`, `wasmTests/`, `wasmWasiTests/`, `metadataDiagnosticTests/`, js-plain-objects,
+  scripting's `scriptsWithCustomDefinitions/`), run `update`; elsewhere (e.g., `nativeTests/`, serialization's `diagnosticsJs/`, atomicfu's
+  `backendDiagnostic/`) there is nothing managed to run.
 
-1. **Create the `.kt` test file** with appropriate directives and test code.
-2. **Regenerating diagnostic test runners is not required**: They are regenerated on demand when running tests.
-3. **Update the test data** of the compiler and LL tests (see [Updating Test Data](#updating-test-data)):
+## Workflows
+
+### Creating a New Test
+
+1. **Create the `.kt` test file** with the directives and the code. Leave out the diagnostic markers, `GENERATED_FIR_TAGS` and
+   `RUN_PIPELINE_TILL`, but write the `DEBUG_INFO_CALL` and `DEBUG_INFO_EXPRESSION_TYPE` markers you want to assert: they are reported
+   only where a marker already is, and `update` fills in their arguments.
+2. **Generate the runners if the suite commits them**: the suites with `tests-gen` directories (the native LL tests, kotlinx-serialization,
+   Compose, atomicfu, scripting, plugin interactions) need `./gradlew generateTests` (or the module's generator), and the regenerated files
+   are committed. `:compiler:jvm.tests` and `:analysis:low-level-api-fir:low-level-api-fir-compiler-tests` generate their runners during
+   the run.
+3. **Run `update`** on the new file, in [the order of the runs](#which-tests-read-a-test-data-file) (if only unmanaged suites read it, run
+   them instead and skip to step 6):
    ```bash
    python3 analysis/test-data-manager/test-data-manager.py update --path compiler/testData/diagnostics/tests/resolve/problems/myTest.kt
    ```
-   It writes the diagnostic markers, the `GENERATED_FIR_TAGS` footer and the `RUN_PIPELINE_TILL` directive (a missing one, or a promoted
-   one) into the `.kt` file, and creates the variants whose output differs from it.
-4. **Review the result** with `git diff`: a passed `update` needs no `check`. A created `.ll.kt` fails the run (a `TEST ERROR`) until its
-   `LL_FIR_DIVERGENCE` directive is added; then `update --rerun <runId>`.
-5. **Run the unmanaged tests** whose test data the test is in, see [Unmanaged tests](#unmanaged-tests).
+   It writes the diagnostic markers into the `.kt` file, and creates the variants and dumps whose output differs. The phased compiler
+   tests also write the `GENERATED_FIR_TAGS` footer and `RUN_PIPELINE_TILL`, see [Phases](#phases).
+4. **Review everything it wrote**: `git diff` for the changed files, and `git status --short` plus the `CREATED` lines of the output for the
+   new ones, the test itself included. A passed `update` needs no `check`.
+5. **Review a created `.ll.kt` (or `.ll.wasmJs.kt`, …)**: the run fails with a `TEST ERROR` until it has an `LL_FIR_DIVERGENCE` comment.
+   Compare it with the file it falls back to (`.kt`, or `.ll.kt` for `.ll.wasmJs.kt`, see [Variant files](#variant-files)). A difference
+   is an LL bug by default: fix it, or explain in the comment why LL may diverge there; a comment the variant inherited from `.ll.kt` has
+   to explain this variant's difference too. After fixing a failed run, run `update --rerun <runId>`; after editing a variant of a passed
+   run, run `update --path` on the test.
+6. **Run the unmanaged suites** that read the file, see [Which Tests Read a Test Data File](#which-tests-read-a-test-data-file).
 
-### Important notes
+### Changing a Test or the Compiler
 
-- **`RUN_PIPELINE_TILL` must match actual test needs.** If the test has no expected diagnostics/errors, the framework requires `CODEGEN`. Using `FRONTEND` when `CODEGEN` is possible causes a "Phase FRONTEND could be promoted to CODEGEN" failure in a plain test run; `update` promotes the directive.
-- **`GENERATED_FIR_TAGS` are written by `update`** (step 3) when absent. Do not add them manually. A plain test run only fails on missing tags.
-- **`.fir.txt` is NOT generated by default.** It requires a `// FIR_DUMP` directive. Most tests (especially simple regression tests) do not need it.
-- **stdlib is not available by default.** Functions like `println` will produce `UNRESOLVED_REFERENCE` without the `// WITH_STDLIB` directive.
-- **`-Pkotlin.test.update.test.data=true`** updates the files of the [unmanaged tests](#unmanaged-tests), but not the files `updateTestData` manages (the `.kt` file of the managed tests, its variants and their dumps).
+1. **Edit the `.kt` file, and its existing variants the same way.** A variant (`foo.ll.kt`, `foo.latestLV.kt`, …, see
+   [Variant files](#variant-files)) repeats the code of the test data, and the tests check that it differs only in the diagnostics and
+   `RUN_PIPELINE_TILL`. Keep what belongs to the variant: its `LL_FIR_DIVERGENCE` comment and its own `RUN_PIPELINE_TILL`. Don't edit
+   the diagnostic markers or dumps: `update` writes them. Move or delete the variants and dumps together with their test; delete those
+   of a configuration the test no longer runs in, e.g., `.disabled.kt` after removing `LANGUAGE_FEATURE_TOGGLED`.
+2. **Run `update`** on the changed tests, or on the directories a compiler change affects, in
+   [the order of the runs](#which-tests-read-a-test-data-file).
+3. **Review the result** as for a new test: an intended change of the compiler shows up in the markers and dumps, anything else is a bug.
+4. **Run the unmanaged suites** that read the changed files.
 
-## Updating Test Data
+### Fixing a Failed `check`
 
-### Managed tests
+1. **Run `check --path`** on the test data files or directories (the `.kt` files, not their dumps). The output lists the first problems;
+   the module reports linked from the summary have all of them, with `actualFile` and `comparedFile` for a `MISMATCH`.
+2. **Decide for each problem whether the new output is intended.** Fix the code or the test for the others first.
+3. **Update a test only when all its problems are intended**: `update --path` and `update --rerun <runId>` take whole tests, and write
+   every output of the test and its variants, intended or not. `update --rerun <runId>` reruns all the failed tests of a run. Review what
+   the update wrote, as for a new test.
+4. **A `TEST ERROR` isn't a mismatch**: read its message and stack trace in the module report. A crash, a missing `LL_FIR_DIVERGENCE`
+   comment, or a variant whose code differs from the test data it falls back to: fix the cause. An `.ll.kt` that differs from the test
+   data only in its comment: run `update` on the test, which deletes the variant.
+5. **A mismatch that `update` doesn't fix** comes from a muted test (`MUTE_LL_FIR`, `IGNORE_REVERSED_RESOLVE`, a `.fail` file, …) or from
+   an analysis that crashed or stopped early: their output is only compared. Keep a mute while the failure it tracks remains, and remove it
+   once that is fixed. For an analysis that stopped early, fix the first failing module.
 
-These tests are managed by the [test data manager](../../../analysis/test-data-manager/README.md):
+The exit codes and the other kinds of problems are in [analysis/AGENTS.md](../../../analysis/AGENTS.md#working-with-test-data).
 
-- `PhasedJvmDiagnosticLightTreeTestGenerated` (`:compiler:jvm.tests`) over `tests/`, `testsWithAnyBackend/` and `testsWithStdLib/`: the
-  golden test of their `.kt` files; `PhasedJvmDiagnosticLightTreeWithContextSensitiveEnabledTestGenerated` over
-  `tests/contextSensitiveResolutionUsingExpectedType/ideHint/`; the latest-LV runners (see
-  [Latest Language Version Differences](#latest-language-version-differences)); `FirLightTreeDiagnosticsWithLanguageFeatureDisabledTestGenerated`
-  over the tests with `LANGUAGE_FEATURE_TOGGLED`, which runs them with the feature disabled;
-  `FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated` over the tests with type aliases, which runs them without type alias
-  expansion.
-- The LL diagnostic tests (`:analysis:low-level-api-fir:low-level-api-fir-compiler-tests`): `LLDiagnosticsTestGenerated`,
-  `LLReversedDiagnosticsTestGenerated`, `LLPartialDiagnosticsTestGenerated`, and their JS and Wasm suites over `testsWithJsStdLib/`,
-  `wasmTests/` and `wasmWasiTests/` (`LLJsDiagnosticsFe10TestGenerated`, `LLWasmJsDiagnosticsFe10TestGenerated`, …).
-- The spec diagnostic tests over `compiler/tests-spec/testData/diagnostics`: `FirLightTreeDiagnosticTestSpecGenerated` (golden),
-  `LLSpecTestGenerated`, `LLReversedSpecTestGenerated`.
-- The foreign annotations tests over `foreignAnnotationsTests/`: `FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated` (golden),
-  `FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated` and
-  `FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated`.
-- The diagnostic tests of the compiler plugins with their LL counterparts.
+## Reference
 
-They are updated and checked only with the [wrapper script](../../../analysis/AGENTS.md#working-with-test-data): `update` updates their test
-data, `check` checks it without writing anything. `--path` picks the modules, so one run covers the compiler and the LL tests of a file.
+### Variant Files
 
-### Variant files
-
-The `.kt` file is the golden test data; a test whose output differs from it uses a variant file with the variant before the extension:
+The `.kt` file is the golden test data. A test whose output differs from it has a variant file, with the variant before the extension:
 
 | Test                                   | Reads and writes                                                            |
 |----------------------------------------|-----------------------------------------------------------------------------|
@@ -132,43 +165,68 @@ The `.kt` file is the golden test data; a test whose output differs from it uses
 | LL, Wasm                               | `.ll.wasmJs.kt` → `.ll.kt` → `.kt`                                          |
 | LL, Wasm, reversed resolution order    | `.reversed.wasmJs.kt` → `.ll.wasmJs.kt` → `.reversed.kt` → `.ll.kt` → `.kt` |
 
-The Wasm WASI tests use `wasmWasi` instead of `wasmJs`, and the LL JS tests use the plain LL chains. A script gets the variant before its
-whole extension: `foo.ll.kts`, `foo.ll.test.kts`, `foo.ll.repl.kts`. A test reads the first existing file and writes only the first one
-(its own variant); `updateTestData` creates it when the output differs from the file it falls back to, and deletes it when they are
-identical, or when an `.ll.kt` differs only in the `LL_FIR_DIVERGENCE` directive or in `METADATA` tags. A new `.ll.kt` or `.ll.wasmJs.kt`
-fails until its `LL_FIR_DIVERGENCE` directive is added by hand: the divergence of LL from the compiler needs an explanation. Muted tests
-(`MUTE_LL_FIR`, `IGNORE_REVERSED_RESOLVE`, a `.fail` file, …) and tests whose analysis crashed are only checked.
+- A test reads the first existing file and writes only the first one, its own variant. `update` creates the variant when the output
+  differs from the file it falls back to, and deletes it when they are identical (an `.ll.kt` also when it differs only in its
+  `LL_FIR_DIVERGENCE` comment or in `METADATA` tags). Don't create variants by hand; delete them by hand only with their test, or when
+  the test no longer runs in their configuration.
+- The Wasm WASI tests use `wasmWasi` instead of `wasmJs`, and the LL JS tests use the plain LL chains. A script gets the variant before its
+  whole extension: `foo.ll.kts`, `foo.ll.test.kts`.
+- Muted tests (`MUTE_LL_FIR`, `IGNORE_REVERSED_RESOLVE`, a `.fail` file, …) and tests whose analysis crashed are only compared.
+- The compiler tests run before the LL tests, which fall back to their `.kt` files. Don't pass `--incremental`: it doesn't see the changes
+  of another module's run; narrow the run with `--path` instead.
 
-The `GENERATED_FIR_TAGS` edits of the compiler test go into the `.kt` file and all its existing variants except `.disabled.kt`. Its
-`RUN_PIPELINE_TILL` edits also skip `.contextSensitive.kt` and `.noAliasExpansion.kt`: a test with such a variant may stop at another
-phase, e.g., with the feature disabled, so `update` writes its `RUN_PIPELINE_TILL` into its own variant, creating or deleting the variant
-as for the diagnostics.
+### Variant Runners
 
-The compiler tests run first, as the LL tests fall back to their `.kt` files. Don't pass `--incremental`: it doesn't see the changes made by
-another module's run; narrow the run with `--path` instead.
+The variant runners of `:compiler:jvm.tests` run the tests in another configuration. The latest LV, disabled and no-alias runners cover
+`tests/` (except its `jvm/` and `multiplatform/` subtrees) and `testsWithStdLib/`; a test outside these directories isn't run by them:
+
+- `FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated`: every test, with the latest language version. A feature whose
+  `sinceVersion` is a future version is enabled there, so the expectations can differ: `.latestLV.kt`.
+  `FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionTestGenerated` does the same for `tests/multiplatform/`.
+- `FirLightTreeDiagnosticsWithLanguageFeatureDisabledTestGenerated`: the tests with `LANGUAGE_FEATURE_TOGGLED: F`, with `F` disabled; every
+  other run enables `F`. The expectations with `F` disabled: `.disabled.kt`.
+- `FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated`: the tests with a type alias, without type alias expansion, a sanity check of
+  the diagnostics: `.noAliasExpansion.kt`.
+- `PhasedJvmDiagnosticLightTreeWithContextSensitiveEnabledTestGenerated`: `tests/contextSensitiveResolutionUsingExpectedType/ideHint/` with
+  context-sensitive resolution: `.contextSensitive.kt`.
+
+Whether a test runs in these configurations is decided by the `.kt` file, not by its variant.
+
+### Phases
+
+In the phased compiler tests (`:compiler:jvm.tests` over `tests/`, `testsWithAnyBackend/`, `testsWithStdLib/`, and most plugin
+diagnostic tests), `RUN_PIPELINE_TILL` declares the last phase the test is expected to reach: `FRONTEND` (FIR resolution with errors),
+`FIR2IR`, `LOWERINGS` or `CODEGEN`. A test that passes the whole pipeline runs till its runner's last phase, normally `CODEGEN`.
+
+- `update` adds a missing directive and promotes one the test can pass: a plain run fails with "Phase FRONTEND could be promoted to
+  CODEGEN". `DISABLE_NEXT_PHASE_SUGGESTION` turns the promotion off.
+- `update` doesn't demote: if an intended error makes the test fail at an earlier phase, set the directive to that phase by hand.
+- The golden test's edits of `RUN_PIPELINE_TILL` go into the `.kt` file and its variants, except those whose runners check their own
+  phase: `.disabled.kt`, `.contextSensitive.kt` and `.noAliasExpansion.kt`. Such a runner may stop at another phase, so `update` writes
+  its `RUN_PIPELINE_TILL` into its own variant. `GENERATED_FIR_TAGS` go into all variants except `.disabled.kt`.
 
 ### Dumps
 
-The dumps of a managed test (`.fir.txt`, `.dot`, `.overrides.txt`, inference logs, `.cli.out`, …) follow the same chains as its `.kt` file,
-with the variant before the dump extension: the reversed LL test reads `foo.reversed.fir.txt` → `foo.ll.fir.txt` → `foo.fir.txt` and writes
-only `foo.reversed.fir.txt`. `update` writes them like the `.kt` file, and not after a crash. An LL test dumps the FIR without `FIR_DUMP` only
-if its own dump exists, e.g., `foo.ll.fir.txt`. The LL tests don't compare `.diag.txt`, and the test without type alias expansion, a
-sanity check of the diagnostics, compares neither `.fir.txt` nor `.diag.txt`.
+| Extension        | Content                                                         | Requested by                     |
+|------------------|-----------------------------------------------------------------|----------------------------------|
+| `.fir.txt`       | FIR tree dump (resolved FIR with `R\|...\|` references)         | `FIR_DUMP`                       |
+| `.diag.txt`      | Diagnostics as text (`/file.kt:line:column: severity: message`) | `RENDER_DIAGNOSTICS_FULL_TEXT`   |
+| `.dot`           | Control flow graph in Graphviz format                           | `DUMP_CFG`                       |
+| `.fixation.txt`  | Type variable fixation process                                  | `DUMP_INFERENCE_LOGS: FIXATION`  |
+| `.inference.md`  | General type inference logs                                     | `DUMP_INFERENCE_LOGS: MARKDOWN`  |
+| `.inference.mmd` | General type inference logs via Mermaid format                  | `DUMP_INFERENCE_LOGS: MERMAID`   |
 
-### Unmanaged tests
+- The dumps of a managed test follow the chain of its `.kt` file, with the variant before the dump extension: the reversed LL test reads
+  `foo.reversed.fir.txt` → `foo.ll.fir.txt` → `foo.fir.txt` and writes only `foo.reversed.fir.txt`. `update` writes them like the `.kt`
+  file, but not after a crash.
+- A test's own existing `.fir.txt` (e.g., `foo.ll.fir.txt` for the LL test) keeps its FIR dump on without `FIR_DUMP`; a dump it falls
+  back to doesn't, so keep `FIR_DUMP` while the variants should compare with `foo.fir.txt`. Some runners turn a dump on by default
+  (e.g., `FIR_DUMP` for `firMembers/` of kotlinx-serialization). To stop a dump, remove what turns it on (or disable the handler, e.g.,
+  with `DISABLE_FIR_DUMP_HANDLER`) and delete the file. `update` deletes a dump the test no longer produces only while the handler runs.
+- Not every run produces every dump: the latest LV and no-alias runs produce no `.fir.txt`, and the LL, latest LV, disabled and no-alias
+  runs no `.diag.txt` from `RENDER_DIAGNOSTICS_FULL_TEXT`.
 
-Other diagnostic tests read the same test data but are not managed: they compare with the file they read, and a Gradle run with
-`-Pkotlin.test.update.test.data=true` writes that file.
-
-- The JS, Wasm and Native compiler diagnostic tests (`js/js.tests`, `wasm/wasm.tests`, `native/native.tests`). They also cover
-  `testsWithAnyBackend/`, and the Wasm ones `tests/defaultArguments/`: run them after `update` changes a `.kt` file there.
-- The metadata diagnostic tests (`AbstractMetadataDiagnosticTest` in `:compiler:tests-common-new`) over `metadataDiagnosticTests/`, and
-  the JS diagnostic tests of the js-plain-objects plugin (`AbstractFirJsPlainObjectsPluginDiagnosticTest`).
-- The native LL tests (`LLNativeDiagnosticsTestGenerated`, `LLReversedNativeDiagnosticsTestGenerated`).
-
-The `.kt` files of `testsWithJsStdLib/`, `wasmTests/`, `wasmWasiTests/`, `metadataDiagnosticTests/` and
-`plugins/js-plain-objects/compiler-plugin/testData/diagnostics/` are written only by these compiler tests: update them first, then run
-`update` for the LL variants, which are created against the `.kt` they fall back to.
+Diagnostic messages rendered into `.diag.txt` must follow the [Diagnostic Message Style Guide](../../../docs/diagnostic_message_style_guide.md).
 
 ## Directory Structure at `testData/diagnostics/tests`
 

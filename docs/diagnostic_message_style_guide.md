@@ -50,7 +50,7 @@ When generating a new diagnostic message or proofreading an existing one:
    If it has no parameters, single quotes are written as is.
 4. When suggesting a fix, prefer instructive phrasing ("To do 'goal', use 'solution'.")
    over corrective phrasing ("If you are attempting to do 'goal', use 'solution'.").
-5. Changing a message affects `.fir.diag.txt` test data (tests with the `RENDER_DIAGNOSTICS_FULL_TEXT` directive).
-   Regenerate it with `-Pkotlin.test.update.test.data=true`, see [compiler/testData/diagnostics/AGENTS.md](../compiler/testData/diagnostics/AGENTS.md).
+5. Changing a message affects `.diag.txt` test data (tests with the `RENDER_DIAGNOSTICS_FULL_TEXT` directive).
+   Regenerate it as the [diagnostic tests guide](../compiler/testData/diagnostics/AGENTS.md#changing-a-test-or-the-compiler) says.
 6. Do not reword unrelated existing messages unless asked: it might cause test data churn across the repository.
    When proofreading, report violations of this guide instead.

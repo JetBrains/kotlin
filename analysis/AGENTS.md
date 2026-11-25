@@ -43,7 +43,7 @@ Golden files of the `*Generated` tests implementing `ManagedTest`, in the module
 (`.knm.*`, `.js.*`, `.ll.kt`, …) included, are checked and updated with one command. Don't use `:test`,
 `-Pkotlin.test.update.test.data=true` or the Gradle tasks directly for them: a plain test run doesn't order the variant
 chains and never writes a variant file. Diagnostic test data has its own variant scheme:
-[compiler/testData/diagnostics/AGENTS.md](../compiler/testData/diagnostics/AGENTS.md#updating-test-data).
+[compiler/testData/diagnostics/AGENTS.md](../compiler/testData/diagnostics/AGENTS.md#variant-files).
 
 ```bash
 python3 analysis/test-data-manager/test-data-manager.py update --path <dir-or-file>[,<dir-or-file>...]
