@@ -556,11 +556,11 @@ static inline id KMap_get(KRef map, id aKey) {
 
 // Referenced from the generated code:
 
-extern "C" id Kotlin_Interop_CreateRetainedNSArrayFromKList(KRef obj) {
+extern "C" RUNTIME_EXPORT RUNTIME_WEAK id Kotlin_Interop_CreateRetainedNSArrayFromKList(KRef obj) {
   return [KListAsNSArray createRetainedWithKList:obj];
 }
 
-extern "C" id Kotlin_Interop_CreateRetainedNSMutableArrayFromKList(KRef obj) {
+extern "C" RUNTIME_EXPORT RUNTIME_WEAK id Kotlin_Interop_CreateRetainedNSMutableArrayFromKList(KRef obj) {
   return [KMutableListAsNSMutableArray createRetainedWithKList:obj];
 }
 
