@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -152,7 +152,7 @@ fun <A, B, C, D, E> DiagnosticReporter.reportOn(
     d: D,
     e: E,
     context: DiagnosticContext,
-    positioningStrategy: AbstractSourceElementPositioningStrategy? = null
+    positioningStrategy: SourceElementPositioningStrategy? = null
 ) {
     report(factory.onOrFallback(source, a, b, c, d, e, positioningStrategy, context), context)
 }
@@ -166,7 +166,7 @@ fun <A, B, C, D, E> DiagnosticReporter.reportOn(
     c: C,
     d: D,
     e: E,
-    positioningStrategy: AbstractSourceElementPositioningStrategy? = null
+    positioningStrategy: SourceElementPositioningStrategy? = null
 ) {
     report(factory.onOrFallback(source, a, b, c, d, e, positioningStrategy, context), context)
 }
@@ -302,7 +302,7 @@ fun <A, B, C, D, E> DiagnosticReporter.reportOn(
     d: D,
     e: E,
     context: DiagnosticContext,
-    positioningStrategy: AbstractSourceElementPositioningStrategy? = null
+    positioningStrategy: SourceElementPositioningStrategy? = null
 ) {
     with(context) { reportOn(source, factory.chooseFactory(), a, b, c, d, e, positioningStrategy) }
 }
@@ -316,7 +316,7 @@ fun <A, B, C, D, E> DiagnosticReporter.reportOn(
     c: C,
     d: D,
     e: E,
-    positioningStrategy: AbstractSourceElementPositioningStrategy? = null
+    positioningStrategy: SourceElementPositioningStrategy? = null
 ) {
     reportOn(source, factory.chooseFactory(), a, b, c, d, e, positioningStrategy)
 }

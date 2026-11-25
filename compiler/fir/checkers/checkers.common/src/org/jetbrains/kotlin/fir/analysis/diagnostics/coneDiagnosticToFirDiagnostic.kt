@@ -1281,7 +1281,7 @@ internal fun <A, B, C, D, E> KtDiagnosticFactory5<A, B, C, D, E>.createOn(
     d: D,
     e: E,
     session: FirSession,
-    positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
+    positioningStrategy: SourceElementPositioningStrategy? = null,
 ): KtDiagnostic? {
     return onOrFallback(element, a, b, c, d, e, positioningStrategy, session.toDiagnosticContext())
 }
