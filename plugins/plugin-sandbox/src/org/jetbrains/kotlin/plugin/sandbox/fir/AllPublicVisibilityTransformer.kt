@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.plugin.sandbox.fir
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.extra.explicitVisibility
+import org.jetbrains.kotlin.fir.analysis.checkers.visibility
 import org.jetbrains.kotlin.fir.copyWithNewDefaults
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
-import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.syntax.syntaxComponent
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
@@ -46,7 +46,8 @@ class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformer
         val owners = session.predicateBasedProvider.getOwnersOfDeclaration(declaration) ?: emptyList()
         val visibility = findVisibility(declaration, owners) ?: return status
 
-        return when (declaration.source?.explicitVisibility) {
+        val explicitVisibility = declaration.source?.let { with(session.syntaxComponent) { it.extractModifierList() } }?.visibility
+        return when (explicitVisibility) {
             null -> status.copyWithNewDefaults(visibility = visibility, defaultVisibility = visibility)
             else -> status.copyWithNewDefaults(defaultVisibility = visibility)
         }
