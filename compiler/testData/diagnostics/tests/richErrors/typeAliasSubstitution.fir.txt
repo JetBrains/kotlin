@@ -1,0 +1,80 @@
+FILE: typeAliasSubstitution.kt
+    public final error class E : R|kotlin/RichError| {
+        public constructor(): R|E| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error class E2 : R|kotlin/RichError| {
+        public constructor(): R|E2| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final error class E3 : R|kotlin/RichError| {
+        public constructor(): R|E3| {
+            super<R|kotlin/RichError|>()
+        }
+
+    }
+    public final class Box<out T> : R|kotlin/Any| {
+        public constructor<out T>(t: R|T|): R|Box<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final typealias TA2<T> = R|union(primary={TA<{TA<T>=} Box<union(primary=T, errors=E)>>=} Box<union(primary={TA<T>=} Box<union(primary=T, errors=E)>, errors=E)>, errors=E3)|
+    public final typealias TA<T> = R|Box<union(primary=T, errors=E)>|
+    public final typealias NE2 = R|E2?|
+    public final fun test1(): R|{TA<kotlin/Int>=} Box<union(primary=kotlin/Int, errors=E)>| {
+        ^test1 R|/Box.Box|<R|kotlin/Int|>(Int(1))
+    }
+    public final fun test2(): R|{TA<kotlin/Int>=} Box<union(primary=kotlin/Int, errors=E)>| {
+        ^test2 R|/Box.Box|<R|E|>(R|/E.E|())
+    }
+    public final fun test3(): R|{TA<out kotlin/Number>=} Box<union(primary=ERROR CLASS: Illegal projection in typealias expansion, errors=E)>| {
+        ^test3 R|/Box.Box|<R|E|>(R|/E.E|())
+    }
+    public final fun test4(): R|{TA<in kotlin/String>=} Box<union(primary=ERROR CLASS: Illegal projection in typealias expansion, errors=E)>| {
+        ^test4 R|/Box.Box|<R|E|>(R|/E.E|())
+    }
+    public final fun test5(): R|{TA<*>=} Box<union(primary=ERROR CLASS: Illegal projection in typealias expansion, errors=E)>| {
+        ^test5 R|/Box.Box|<R|E|>(R|/E.E|())
+    }
+    public final fun test6(): R|{TA<E2>=} Box<union(errors=E2 | E)>| {
+        ^test6 R|/Box.Box|<R|E|>(R|/E.E|())
+    }
+    public final fun test7(): R|{TA<E2?>=} Box<union(primary=kotlin/Nothing?, errors=E2 | E)>| {
+        ^test7 R|/Box.Box|<R|E|>(R|/E.E|())
+    }
+    public final fun test7_(): R|{TA<E2?>=} Box<union(primary=kotlin/Nothing?, errors=E2 | E)>| {
+        ^test7_ R|/Box.Box|<R|kotlin/Nothing|>(Null(null))
+    }
+    public final fun test8(): R|{TA<union(primary=kotlin/String, errors=E2)>=} Box<union(primary=kotlin/String, errors=E2 | E)>| {
+        ^test8 R|/Box.Box|<R|E|>(R|/E.E|())
+    }
+    public final fun test9(): R|{TA<union(primary=kotlin/Nothing?, errors=E2)>=} Box<union(primary=kotlin/Nothing?, errors=E2 | E)>| {
+        ^test9 R|/Box.Box|<R|E|>(R|/E.E|())
+    }
+    public final fun test10(): R|{TA<union(errors=E2 | E3)>=} Box<union(errors=E2 | E3 | E)>| {
+        ^test10 R|/Box.Box|<R|E|>(R|/E.E|())
+    }
+    public final fun <X : R|kotlin/RichError|, Y> test11(x: R|X|): R|{TA<union(primary=Y, errors=X)>=} Box<union(primary=Y, errors=X | E)>| {
+        ^test11 R|/Box.Box|<R|X|>(R|<local>/x|)
+    }
+    public final fun <X : R|kotlin/RichError|, Y> test12(x: R|X|): R|{TA<ERROR CLASS: Non-error component must appear first>=} Box<union(primary=ERROR CLASS: Non-error component must appear first, errors=E)>| {
+        ^test12 R|/Box.Box|<R|X|>(R|<local>/x|)
+    }
+    public final fun callableReference(): R|kotlin/Unit| {
+        lval <unused var>: <ERROR TYPE REF: Unresolved reference: size> = Q|TA|<R|kotlin/Int|>::<Unresolved reference: size>#
+        lval <unused var>: <ERROR TYPE REF: Unresolved reference: size> = Q|TA|<out R|kotlin/Number|>::<Unresolved reference: size>#
+        lval <unused var>: <ERROR TYPE REF: Unresolved reference: size> = Q|TA|<in R|kotlin/String|>::<Unresolved reference: size>#
+        lval <unused var>: <ERROR TYPE REF: Unresolved reference: size> = Q|TA|<*>::<Unresolved reference: size>#
+    }
+    public final typealias TAError<T> = R|Box<ERROR CLASS: Non-error component must appear first>|
+    public final typealias TABoth<X, Y> = R|Box<ERROR CLASS: Non-error component must appear first>|
+    public final fun <T1 : R|{TA<kotlin/String>=} Box<union(primary=kotlin/String, errors=E)>|, T2 : R|{TA<T2>=} Box<union(errors=T2 | E)>|, T3 : R|{NE2=} E2?|> bounded(a: R|union(primary=T1, errors=E2)|, b: R|union(primary=T2, errors=E2)|, c: <ERROR TYPE REF: Non-error component must appear first>, d: <ERROR TYPE REF: Non-error component must appear first>): R|kotlin/Unit| {
+    }
+    public final fun <A, B : R|kotlin/CharSequence?|, C : R|kotlin/RichError?|> nullableBounds(a: R|{TA<A>=} Box<union(primary=A, errors=E)>|, b: R|{TA<B>=} Box<union(primary=B, errors=E)>|, c: R|{TA<C>=} Box<union(primary=C, errors=E)>|, c2: R|Box<union(primary=C, errors=E)>|): R|kotlin/Unit| {
+        lval x: R|Box<union(primary=C, errors=E)>| = R|/Box.Box|<R|C?|>(Null(null))
+    }

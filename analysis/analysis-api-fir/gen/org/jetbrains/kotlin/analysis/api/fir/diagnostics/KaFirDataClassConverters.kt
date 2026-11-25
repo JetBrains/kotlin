@@ -6651,6 +6651,12 @@ private fun KaDiagnosticConverterBuilder.addConversions131() {
             token,
         )
     }
+    add(FirErrors.ILLEGAL_PROJECTION_IN_TYPEALIAS_EXPANSION) { firDiagnostic ->
+        IllegalProjectionInTypealiasExpansionImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.BUILDER_INFERENCE_STUB_RECEIVER) { firDiagnostic ->
         BuilderInferenceStubReceiverImpl(
             firDiagnostic.a,

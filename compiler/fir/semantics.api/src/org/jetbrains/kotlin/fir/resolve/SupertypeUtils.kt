@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isRichError
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
@@ -351,10 +352,12 @@ fun FirClassLikeSymbol<*>.getSuperTypes(
     }
 }
 
-fun ConeKotlinType.isBoundedByRichError(session: FirSession): Boolean {
+fun ConeKotlinType.isBoundedByRichError(session: FirSession, forBounds: Boolean = false): Boolean {
     if (this is ConeUnionType) return this.primaryType.isNothing
     val symbol = unwrapToSimpleTypeUsingLowerBound().toSymbol(session) ?: return false
-    return symbol.isBoundedByRichError(session)
+    // We return false for a type parameter bounded by `RichError?` so that the component is considered the primary type.
+    // When we substitute the type, it will either stay as `Nothing?` primary component or be moved to the error components.
+    return !(forBounds && isMarkedNullable) && symbol.isBoundedByRichError(session)
 }
 
 private fun FirClassifierSymbol<*>.isBoundedByRichError(session: FirSession): Boolean {
@@ -366,14 +369,21 @@ private fun FirClassifierSymbol<*>.isBoundedByRichError(session: FirSession): Bo
         is FirTypeAliasSymbol -> true
         // It's safe to access fir because own type parameters and containing class type parameter bounds are guaranteed to be resolved
         // before resolving the rest of callable signatures.
-        is FirTypeParameterSymbol -> fir.bounds.any {
+        is FirTypeParameterSymbol -> fir.bounds.any { bound ->
             // We can only encounter unresolved bounds during the first round of type parameter bound resolution,
             // and even in the second round in red code like `T : T | RichError`.
             // When the bound is unresolved,
             // we return true so that we don't produce error types (Non-rich error component must appear first).
             // Otherwise, the topological sort could be incorrect as we'd miss dependencies in error types.
-            val coneType = it.coneTypeOrNull?.fullyExpandedType(session) ?: return@isBoundedByRichError true
-            coneType.isBoundedByRichError(session)
+            val coneType = bound.coneTypeOrNull
+                // We need to expand typealiases to check for errorness, but using `fullyExpandedType` as is can lead to stack overlow
+                // in recursive type parameters (T : TA<T>) because we call `isBoundedByRichError` in
+                // `AbstractConeSubstitutor.substituteUnionType`.
+                // Because type arguments can't influence error-ness, we replace all type arguments with star projections.
+                ?.withArguments { ConeStarProjection }
+                ?.fullyExpandedType(session)
+                ?: return@isBoundedByRichError true
+            coneType.isBoundedByRichError(session, forBounds = true)
         }
         is FirAnonymousObjectSymbol -> false
     }

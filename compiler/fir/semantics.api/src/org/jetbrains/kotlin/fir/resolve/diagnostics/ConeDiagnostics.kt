@@ -524,3 +524,8 @@ object ConeUnionTypeInSupertype : ConeDiagnostic {
     override val reason: String
         get() = "Union type as class supertype"
 }
+
+object ConeIllegalProjectionInExpansion : ConeDiagnostic {
+    override val reason: String
+        get() = "Illegal projection in typealias expansion"
+}

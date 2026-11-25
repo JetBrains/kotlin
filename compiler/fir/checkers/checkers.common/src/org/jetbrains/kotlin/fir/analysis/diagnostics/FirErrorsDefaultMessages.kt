@@ -438,6 +438,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_DECLARATI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_ESCAPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_INLINE_PARAMETER_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_PROJECTION_IN_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_PROJECTION_USAGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SELECTOR
@@ -2287,6 +2288,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION,
             "Conflicting projection in type alias expansion in intermediate type ''{0}''.",
             RENDER_TYPE,
+        )
+        map.put(
+            ILLEGAL_PROJECTION_IN_TYPEALIAS_EXPANSION,
+            "Projection in type alias arguments leads to malformed type expansion.",
         )
         map.put(
             CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING,
