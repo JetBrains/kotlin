@@ -20,6 +20,11 @@ internal class SyntheticArgumentInterface(
      * By default, the interface is considered available since the same version as the [level].
      */
     val since: String? = null,
+    /**
+     * Whether the interface is experimental, for the case when its stability differs from the [level] it's based on.
+     * By default, the interface is experimental if the [level] is experimental.
+     */
+    val experimental: Boolean = false,
 )
 
 private fun SyntheticArgumentInterface.toLevel(): KotlinCompilerArgumentsLevel =

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.KonanTarget
 /**
  * @since 2.5.20
  */
+@ExperimentalCompilerArgument
 public interface NativeCompilerArguments : CommonKlibBasedArguments {
   /**
    * Get the value for option specified by [key] if it was previously [set] or if it has a default value.

@@ -80,13 +80,17 @@ internal val KDOC_OPTIONS_CONTAINS = """
     @return true if the option has a value set, false otherwise
 """.trimIndent()
 
-internal val experimentalLevelNames = listOf(
-    CompilerArgumentsLevelNames.commonKlibBasedArguments,
-    CompilerArgumentsLevelNames.jsArguments,
-    CompilerArgumentsLevelNames.commonJsAndWasmArguments,
-    CompilerArgumentsLevelNames.wasmArguments,
+private val realExperimentalLevelNames = setOf(
     CompilerArgumentsLevelNames.nativeArguments,
 )
+
+/**
+ * Synthetic argument interfaces are experimental if the compiler arguments level they are based on is experimental,
+ * unless [SyntheticArgumentInterface.experimental] says otherwise.
+ */
+internal val experimentalLevelNames = realExperimentalLevelNames + syntheticArgumentInterfaces
+    .filter { it.experimental || (it.level.name in realExperimentalLevelNames) }
+    .map { it.name }
 
 private val realLevelsSince = mapOf(
     CompilerArgumentsLevelNames.commonToolArguments to KDOC_SINCE_2_3_0,
