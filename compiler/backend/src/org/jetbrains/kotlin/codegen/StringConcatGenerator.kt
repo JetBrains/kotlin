@@ -19,6 +19,7 @@ class StringConcatGenerator(
     private val mode: JvmStringConcat,
     private val mv: InstructionAdapter,
     private val typeMapper: KotlinTypeMapperBase,
+    private val frameMap: IrFrameMap,
 ) {
     enum class ItemType {
         PARAMETER,
@@ -74,9 +75,17 @@ class StringConcatGenerator(
             )
         } else {
             justFlushed = false
+            if (paramSlots + type.size > MAX_INDY_CONCAT_PARAMETER_SLOTS) {
+                // The value is already on the stack. Save it while concatenating the preceding arguments.
+                val temp = frameMap.enterTemp(type)
+                mv.store(temp, type)
+                genToString()
+                mv.load(temp, type)
+                frameMap.leaveTemp(type)
+            }
             items.add(Item.parameter(type))
             paramSlots += type.size
-            if (paramSlots >= 199) {
+            if (paramSlots == MAX_INDY_CONCAT_PARAMETER_SLOTS) {
                 // Concatenate current arguments into string
                 // because of `StringConcatFactory` limitation add use it as new argument for further processing:
                 // "The number of parameter slots in {@code concatType} is less than or equal to 200"
@@ -194,6 +203,8 @@ class StringConcatGenerator(
     }
 
     companion object {
+        private const val MAX_INDY_CONCAT_PARAMETER_SLOTS = 200
+
         private val STRING_BUILDER_OBJECT_APPEND_ARG_TYPES: Set<Type> = Sets.newHashSet(
             AsmTypes.getType(String::class.java),
             AsmTypes.getType(StringBuffer::class.java),
