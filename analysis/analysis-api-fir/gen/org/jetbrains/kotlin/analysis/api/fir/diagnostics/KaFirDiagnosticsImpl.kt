@@ -2880,6 +2880,11 @@ internal class ConflictingProjectionInTypealiasExpansionImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ConflictingProjectionInTypealiasExpansion
 
+internal class IllegalProjectionInTypealiasExpansionImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IllegalProjectionInTypealiasExpansion
+
 internal class ConflictingProjectionInCallableReferenceWarningImpl(
     override val type: KaType,
     firDiagnostic: KtDiagnosticWithSource,

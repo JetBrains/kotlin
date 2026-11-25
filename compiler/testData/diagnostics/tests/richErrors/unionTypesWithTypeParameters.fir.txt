@@ -44,3 +44,5 @@ FILE: unionTypesWithTypeParameters.kt
     }
     public final fun <T : <ERROR TYPE REF: Type parameter T has cyclic bounds>, R : R|union(errors=T | kotlin/RichError)|> loop1(): R|kotlin/Unit| {
     }
+    public final fun <T : R|kotlin/RichError?|, R : R|T|> boundedByNullableRichError(a: R|union(primary=T, errors=Foo)|, b: <ERROR TYPE REF: Non-error component must appear first>, c: R|union(primary=R, errors=Foo)|, d: <ERROR TYPE REF: Non-error component must appear first>): R|kotlin/Unit| {
+    }

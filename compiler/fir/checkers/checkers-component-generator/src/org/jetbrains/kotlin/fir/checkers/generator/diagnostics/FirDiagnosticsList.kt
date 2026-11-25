@@ -1122,6 +1122,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION by error<KtElement>(PositioningStrategy.VARIANCE_MODIFIER) {
             parameter<ConeKotlinType>("type")
         }
+        val ILLEGAL_PROJECTION_IN_TYPEALIAS_EXPANSION by error<KtElement>()
         val CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING by warning<KtTypeProjection>(PositioningStrategy.VARIANCE_MODIFIER) {
             parameter<ConeKotlinType>("type")
         }

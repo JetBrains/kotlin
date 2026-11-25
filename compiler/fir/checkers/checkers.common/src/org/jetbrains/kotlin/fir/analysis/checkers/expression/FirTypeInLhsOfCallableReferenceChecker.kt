@@ -10,13 +10,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.FE10LikeConeSubstitutor
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.ProjectionRelationCheckerImpl
-import org.jetbrains.kotlin.fir.analysis.checkers.checkUpperBoundViolated
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
-import org.jetbrains.kotlin.fir.analysis.checkers.toTypeArgumentsWithSourceInfo
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirProjectionRelationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -34,11 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockLf
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.constructType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.*
 
 object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
 
@@ -217,5 +209,7 @@ object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecke
                 )
             )
         }
+
+        FirProjectionRelationChecker.checkForIllegalProjection(lhsType, lhs.source)
     }
 }

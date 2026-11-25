@@ -47,4 +47,11 @@ fun <<!CYCLIC_GENERIC_UPPER_BOUND!>T : T | Foo<!>> loop1() {}
 fun <<!CYCLIC_GENERIC_UPPER_BOUND!>T : Any | T<!>> loop2() {}
 fun <<!CYCLIC_GENERIC_UPPER_BOUND!>T : R | Foo<!>, <!CYCLIC_GENERIC_UPPER_BOUND!>R : T | RichError<!>> loop1() {}
 
+fun <T : RichError?, R : T> boundedByNullableRichError(
+    a: T | Foo,
+    b: <!NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE!>Foo | T<!>,
+    c: R | Foo,
+    d: <!NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE!>Foo | R<!>,
+) {}
+
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeConstraint, typeParameter */

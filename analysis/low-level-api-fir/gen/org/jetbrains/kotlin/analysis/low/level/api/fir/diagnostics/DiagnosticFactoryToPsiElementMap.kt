@@ -514,6 +514,7 @@ internal val diagnosticFactoryToPsiElementMap: Map<KtDiagnosticFactoryN, Class<o
     FirErrors.TYPE_PARAMETERS_IN_ENUM to PsiElement::class.java,
     FirErrors.CONFLICTING_PROJECTION to KtTypeProjection::class.java,
     FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION to KtElement::class.java,
+    FirErrors.ILLEGAL_PROJECTION_IN_TYPEALIAS_EXPANSION to KtElement::class.java,
     FirErrors.CONFLICTING_PROJECTION_IN_CALLABLE_REFERENCE_WARNING to KtTypeProjection::class.java,
     FirErrors.REDUNDANT_PROJECTION to KtTypeProjection::class.java,
     FirErrors.VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED to KtTypeParameter::class.java,
