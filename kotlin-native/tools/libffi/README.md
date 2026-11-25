@@ -9,7 +9,7 @@ the distribution name and the platform-specific pre-build hooks to run.
 ### Requirements
 * [Python 3](https://www.python.org/)
 * a C toolchain for the target (gcc/clang, mingw-w64 for cross-compiling to Windows)
-* `make`, `tar`, `patch`, `curl`, `makeinfo` (from `texinfo`, needed to build docs)
+* `make`, `tar`, `patch`, `curl`
 * `autoconf`, `automake` and `libtool`, when the manifest requires regenerating the
   `configure` script (e.g. when sources are fetched as a git tag archive, or when a
   hook edits `configure.ac`)

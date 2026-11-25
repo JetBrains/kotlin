@@ -86,6 +86,16 @@ def regenerate_configure(source_dir: Path):
         run(["autoreconf", "-f", "-i"], cwd=source_dir)
 
 
+def disable_docs(source_dir: Path) -> bool:
+    makefile_am = source_dir / "Makefile.am"
+    lines = makefile_am.read_text().splitlines(keepends=True)
+    kept = [line for line in lines if not line.startswith("info_TEXINFOS")]
+    if len(kept) == len(lines):
+        return False
+    makefile_am.write_text("".join(kept))
+    return True
+
+
 def build_and_install(target, source_dir: Path, distribution_dir: Path):
     configure_arguments = [
         "./configure",
@@ -146,6 +156,7 @@ def build_distribution(target, args):
     try:
         source = fetch_sources(target, work_dir)
         source_dir = work_dir / source["directory"]
+        disable_docs(source_dir)
         for hook in target["hooks"]:
             run_hook(hook, source_dir)
         # Sources fetched as a git tag archive have no pre-generated `configure`
