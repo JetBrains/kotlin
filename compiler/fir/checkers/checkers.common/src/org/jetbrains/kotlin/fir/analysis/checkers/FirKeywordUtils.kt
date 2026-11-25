@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -20,6 +22,20 @@ import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.syntax.SyntaxId
 
 operator fun FirModifierList?.contains(tokenId: SyntaxId): Boolean = this?.contains(tokenId) == true
+
+/**
+ * The visibility declared by the first visibility modifier in this list, or `null` if there is none.
+ */
+val FirModifierList.visibility: Visibility?
+    get() = modifiers.firstNotNullOfOrNull {
+        when (it.tokenId) {
+            KotlinSyntaxTokenIds.PUBLIC_MODIFIER -> Visibilities.Public
+            KotlinSyntaxTokenIds.PRIVATE_MODIFIER -> Visibilities.Private
+            KotlinSyntaxTokenIds.PROTECTED_MODIFIER -> Visibilities.Protected
+            KotlinSyntaxTokenIds.INTERNAL_MODIFIER -> Visibilities.Internal
+            else -> null
+        }
+    }
 
 context(sessionHolder: SessionHolder)
 val FirModifier.tokenName: String

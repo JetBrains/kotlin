@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.syntax.FirModifier
-import org.jetbrains.kotlin.fir.syntax.FirModifierList
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.resolve.Compatibility
 import org.jetbrains.kotlin.resolve.compatibility
-
 
 context(reporter: DiagnosticReporter, context: CheckerContext)
 internal fun checkCompatibilityType(
@@ -92,20 +90,6 @@ internal fun checkCompatibilityType(
     }
 }
 
-context(reporter: DiagnosticReporter, context: CheckerContext)
-private fun checkModifiersCompatibility(
-    owner: FirElement,
-    modifierList: FirModifierList,
-    reportedNodes: MutableSet<FirModifier>,
-) {
-    val modifiers = modifierList.modifiers
-    for ([secondIndex, secondModifier] in modifiers.withIndex()) {
-        for (firstIndex in 0..<secondIndex) {
-            checkCompatibilityType(modifiers[firstIndex], secondModifier, reportedNodes, owner)
-        }
-    }
-}
-
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkModifiersCompatibility(typeArgument: FirTypeProjection) {
     val source = typeArgument.source?.takeIf { it.kind is KtRealSourceElementKind } ?: return
@@ -115,5 +99,10 @@ fun checkModifiersCompatibility(typeArgument: FirTypeProjection) {
     // therefore, a track of nodes with already reported errors should be kept
     val reportedNodes = hashSetOf<FirModifier>()
 
-    checkModifiersCompatibility(typeArgument, modifierList, reportedNodes)
+    val modifiers = modifierList.modifiers
+    for ([secondIndex, secondModifier] in modifiers.withIndex()) {
+        for (firstIndex in 0..<secondIndex) {
+            checkCompatibilityType(modifiers[firstIndex], secondModifier, reportedNodes, typeArgument)
+        }
+    }
 }

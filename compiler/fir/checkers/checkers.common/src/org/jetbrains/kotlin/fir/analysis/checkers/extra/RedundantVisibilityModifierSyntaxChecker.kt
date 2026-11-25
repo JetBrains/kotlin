@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.diagnostics.visibilityModifier
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
@@ -159,6 +158,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         reporter.reportOn(element.source, FirErrors.REDUNDANT_VISIBILITY_MODIFIER)
     }
 
+    context(context: CheckerContext)
     private fun FirProperty.canMakeSetterMoreAccessible(setterImplicitVisibility: Visibility?): Boolean {
         if (!isOverride) {
             return false
@@ -175,6 +175,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         return setterImplicitVisibility != visibility
     }
 
+    context(context: CheckerContext)
     private val FirProperty.hasSetterWithImplicitVisibility: Boolean
         get() {
             val theSetter = setter ?: return false
@@ -311,8 +312,6 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
     }
 }
 
+context(sessionHolder: SessionHolder)
 val KtSourceElement.explicitVisibility: Visibility?
-    get() {
-        val visibilityModifier = treeStructure.visibilityModifier(lighterASTNode)
-        return (visibilityModifier?.tokenType as? KtModifierKeywordToken)?.toVisibilityOrNull()
-    }
+    get() = extractModifierList()?.visibility
