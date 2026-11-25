@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
+import org.jetbrains.kotlin.syntax.SyntaxId
+import org.jetbrains.kotlin.syntax.elementType
 import org.jetbrains.kotlin.syntax.syntaxId
 import org.jetbrains.kotlin.toKtLightSourceElement
 import org.jetbrains.kotlin.util.getChildren
@@ -40,6 +42,12 @@ object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() 
     override fun KtSourceElement.unwrap(): KtLightSourceElement {
         return this as? KtLightSourceElement ?: unwrapError(this@unwrap)
     }
+
+    override val SyntaxId.name: String
+        get() {
+            @OptIn(KtImplementationDetail::class)
+            return elementType().toString()
+        }
 
     override fun KtSourceElement.forEachChildMatching(
         depth: Int,
