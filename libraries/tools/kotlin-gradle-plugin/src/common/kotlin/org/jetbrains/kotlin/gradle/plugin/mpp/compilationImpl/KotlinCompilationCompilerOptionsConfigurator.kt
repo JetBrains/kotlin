@@ -31,7 +31,11 @@ internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinC
                     compilation.useTargetNativeCompilerOptionsAsConvention(compilationCompilerOptions)
                 }
             }
-            else -> compilation.useTargetCommonCompilerOptionsAsConvention(compilationCompilerOptions)
+            else -> {
+                compilation.useTargetCommonCompilerOptionsAsConvention(compilationCompilerOptions)
+                // Shared source sets are compiled with the same compiler as the JVM and JS ones
+                compilation.useCompilerVersionLevelAsDefault(compilation.target.targetCompilerOptions, compilationCompilerOptions)
+            }
         }
     }
 
@@ -57,13 +61,23 @@ internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinC
             )
         )
 
+        useCompilerVersionLevelAsDefault(targetCompilerOptions, jvmCompilerOptions)
+    }
+
+    /**
+     * Native compilations are left out: they always use the compiler of the plugin's version.
+     */
+    private fun DecoratedKotlinCompilation<*>.useCompilerVersionLevelAsDefault(
+        targetCompilerOptions: KotlinCommonCompilerOptions,
+        compilerOptions: KotlinCommonCompilerOptions,
+    ) {
         val compilerLanguageLevel = project.compilerVersionLanguageLevel()
-        jvmCompilerOptions.languageVersion.convention(
+        compilerOptions.languageVersion.convention(
             targetCompilerOptions.languageVersion.orElse(compilerLanguageLevel)
         )
-        jvmCompilerOptions.apiVersion.convention(
+        compilerOptions.apiVersion.convention(
             targetCompilerOptions.apiVersion.orElse(
-                compilerLanguageLevel.zip(jvmCompilerOptions.languageVersion, ::defaultApiLevel)
+                compilerLanguageLevel.zip(compilerOptions.languageVersion, ::defaultApiLevel)
             )
         )
     }
@@ -103,6 +117,8 @@ internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinC
                 )
             )
         )
+
+        useCompilerVersionLevelAsDefault(targetCompilerOptions, jsCompilerOptions)
     }
 
     private fun DecoratedKotlinCompilation<*>.useTargetNativeCompilerOptionsAsConvention(

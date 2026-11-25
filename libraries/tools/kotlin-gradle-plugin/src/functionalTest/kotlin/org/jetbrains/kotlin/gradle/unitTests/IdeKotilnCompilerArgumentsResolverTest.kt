@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeCompilerArgumentsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.main
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import kotlin.test.Test
@@ -105,6 +106,32 @@ class IdeCompilerArgumentsResolverTest {
     @Test
     fun `test - language and api version stay unset without compilerVersion`() {
         assertEquals(mapOf("languageVersion" to null, "apiVersion" to null), jvmMainLevels { })
+    }
+
+    @Test
+    fun `test - multiplatform compilations follow compilerVersion except native ones`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                jvm()
+                js()
+                linuxX64()
+                compilerVersion.set("2.4.0")
+            }
+        }.evaluate()
+
+        val languageVersions = project.multiplatformExtension.targets.associate { target ->
+            target.name to target.compilations.main.compileTaskProvider.get().compilerOptions.languageVersion.orNull
+        }
+        assertEquals(
+            mapOf(
+                "metadata" to KotlinVersion.KOTLIN_2_4,
+                "jvm" to KotlinVersion.KOTLIN_2_4,
+                "js" to KotlinVersion.KOTLIN_2_4,
+                // Native targets are always compiled with the compiler of the plugin's version
+                "linuxX64" to null,
+            ),
+            languageVersions,
+        )
     }
 
     private fun jvmMainLevels(configure: KotlinJvmProjectExtension.() -> Unit): Map<String, String?> {
