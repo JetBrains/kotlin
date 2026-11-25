@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.codegen.state.AllowedOnlyInTestsAPI
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
 class JvmBackendContext(
@@ -98,6 +100,8 @@ class JvmBackendContext(
     val inlineMethodGenerationLock = Any()
 
     val optionalAnnotations = mutableListOf<MetadataSource.Class>()
+
+    val newFragmentCaptureParameters: MutableList<Triple<String, KotlinType, DeclarationDescriptor>> = mutableListOf()
 
     @Deprecated("It is non-JVM API", level = DeprecationLevel.ERROR)
     override val inlineClassesUtils: InlineClassesUtils

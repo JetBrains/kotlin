@@ -24,8 +24,7 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         checkArtifact(info)
-        val ktDiagnosticReporter = info.classFileFactory.generationState.diagnosticReporter as BaseDiagnosticsCollector
-        reportKtDiagnostics(module, ktDiagnosticReporter)
+        reportKtDiagnostics(module, info.output.diagnosticReporter as BaseDiagnosticsCollector)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {

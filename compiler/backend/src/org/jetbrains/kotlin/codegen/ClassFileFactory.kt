@@ -27,7 +27,7 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 
 class ClassFileFactory(
-    val generationState: GenerationState,
+    private val generationState: GenerationState,
     private val builderFactory: ClassBuilderFactory,
     private val finalizers: List<ClassFileFactoryFinalizerExtension>
 ) : OutputFileCollection {

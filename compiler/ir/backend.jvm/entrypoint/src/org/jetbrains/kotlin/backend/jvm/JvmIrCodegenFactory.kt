@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.ir.getIoFile
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
+import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.addCompiledPartsAndSort
 import org.jetbrains.kotlin.codegen.loadCompiledModule
 import org.jetbrains.kotlin.codegen.state.AllowedOnlyInTestsAPI
@@ -25,14 +26,11 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.declarations.copyAttributes
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -42,6 +40,7 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.UnitStats
@@ -88,6 +87,13 @@ class JvmIrCodegenFactory(
         }
     }
 
+    data class BackendOutput(
+        val classFileFactory: ClassFileFactory,
+        val configuration: CompilerConfiguration,
+        val diagnosticReporter: DiagnosticReporter,
+        val newFragmentCaptureParameters: List<Triple<String, KotlinType, DeclarationDescriptor>>,
+    )
+
     private val CompilerConfiguration.filteredExtensions: List<IrGenerationExtension>
         get() = this.getCompilerExtensions(IrGenerationExtension)
 
@@ -106,9 +112,9 @@ class JvmIrCodegenFactory(
         return wholeBackendInput.copy(moduleCopy)
     }
 
-    fun generateModule(state: GenerationState, input: BackendInput) {
+    fun generateModule(state: GenerationState, input: BackendInput): BackendOutput {
         val result = invokeLowerings(state, input)
-        invokeCodegen(result)
+        return invokeCodegen(result)
     }
 
     fun invokeLowerings(state: GenerationState, input: BackendInput): CodegenInput {
@@ -141,12 +147,15 @@ class JvmIrCodegenFactory(
         return CodegenInput(state, context, irModuleFragment, allBuiltins, generationExtensions)
     }
 
-    fun invokeCodegen(input: CodegenInput) {
+    fun invokeCodegen(input: CodegenInput): BackendOutput {
         val (state, context, module, allBuiltins, intrinsicExtensions) = input
 
-        fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
+        fun hasErrors(): Boolean = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
 
-        if (hasErrors()) return
+        fun createOutput(): BackendOutput =
+            BackendOutput(state.factory, state.configuration, state.diagnosticReporter, context.newFragmentCaptureParameters)
+
+        if (hasErrors()) return createOutput()
 
         val nThreads = context.configuration.get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS) ?: 1
         val executor = if (nThreads > 1 && module.files.size > 1) Executors.newFixedThreadPool(nThreads) else null
@@ -192,7 +201,7 @@ class JvmIrCodegenFactory(
 
         context.enumEntriesIntrinsicMappingsCache.generateMappingsClasses()
 
-        if (hasErrors()) return
+        if (hasErrors()) return createOutput()
 
         generateModuleMetadata(input.context)
         if (state.config.languageVersionSettings.getFlag(JvmAnalysisFlags.outputBuiltinsMetadata)) {
@@ -201,6 +210,8 @@ class JvmIrCodegenFactory(
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         state.factory.done()
+
+        return createOutput()
     }
 
     private fun generateFile(

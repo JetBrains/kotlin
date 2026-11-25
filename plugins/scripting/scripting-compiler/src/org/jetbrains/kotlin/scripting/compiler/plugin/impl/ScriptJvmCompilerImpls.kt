@@ -298,12 +298,12 @@ private fun doCompileWithK2(
 
     val analysisResults = AllModulesFrontendOutput(listOf(SingleModuleFrontendOutput(session, scopeSession, fir)))
 
-    val [irInput, generationState] = generateCodeIfNoErrors(
+    val [irInput, backendOutput] = generateCodeIfNoErrors(
         configuration, targetId, analysisResults, compilerEnvironment, messageCollector, renderDiagnosticName
     ).valueOr { return it }
 
     return makeCompiledScript(
-        generationState,
+        backendOutput,
         script,
         { it.getKtFile(definition, context.environment.project).declarations.firstIsInstanceOrNull<KtScript>()?.fqName },
         sourceDependencies,

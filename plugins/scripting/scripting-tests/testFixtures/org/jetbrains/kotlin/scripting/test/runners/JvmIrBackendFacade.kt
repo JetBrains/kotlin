@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.scripting.test.runners
 
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.test.backend.ir.AbstractJvmIrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendInput
@@ -14,13 +14,11 @@ import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.services.TestServices
 
 class JvmIrBackendFacade(testServices: TestServices) : AbstractJvmIrBackendFacade(testServices) {
-    override fun produceGenerationState(inputArtifact: IrBackendInput): GenerationState {
+    override fun invokeBackend(inputArtifact: IrBackendInput): JvmIrCodegenFactory.BackendOutput {
         checkTestInfrastructure(inputArtifact is JvmIrBackendInput) {
             "JvmIrBackendFacade expects IrBackendInput.JvmIrBackendInput as input"
         }
-        val state = inputArtifact.state
-        inputArtifact.codegenFactory.generateModule(state, inputArtifact.backendInput)
-        return state
+        return inputArtifact.codegenFactory.generateModule(inputArtifact.state, inputArtifact.backendInput)
     }
 
     override val IrBackendInput.sourceFiles: Collection<KtSourceFile>

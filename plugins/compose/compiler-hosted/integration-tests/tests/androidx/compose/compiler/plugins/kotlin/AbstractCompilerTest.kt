@@ -162,7 +162,7 @@ abstract class AbstractCompilerTest {
         }
         return GeneratedClassLoader(
             createCompilerFacade(additionalPaths, forcedFirSetting, additionalConfigurationParameters, registerExtensions)
-                .compile(platformSourceFiles, commonSourceFiles).factory,
+                .compile(platformSourceFiles, commonSourceFiles).classFileFactory,
             classLoader
         )
     }

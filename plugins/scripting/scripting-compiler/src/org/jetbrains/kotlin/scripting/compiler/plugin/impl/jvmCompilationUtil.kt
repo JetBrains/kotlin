@@ -10,14 +10,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
-import org.jetbrains.kotlin.KtInMemoryTextSourceFile
-import org.jetbrains.kotlin.KtIoFileSourceFile
-import org.jetbrains.kotlin.KtPsiSourceFile
-import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.KtVirtualFileSourceFile
+import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -37,9 +33,9 @@ import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 
-internal fun makeCompiledModule(generationState: GenerationState) =
+internal fun makeCompiledModule(backendOutput: JvmIrCodegenFactory.BackendOutput) =
     KJvmCompiledModuleInMemoryImpl(
-        generationState.factory.asList()
+        backendOutput.classFileFactory.asList()
             .associateTo(sortedMapOf<String, ByteArray>()) { it.relativePath to it.asByteArray() }
     )
 
@@ -127,7 +123,7 @@ fun getScriptKtFile(
 }
 
 internal fun makeCompiledScript(
-    generationState: GenerationState,
+    backendOutput: JvmIrCodegenFactory.BackendOutput,
     script: SourceCode,
     getScriptClassFqName: (SourceCode) -> FqName?,
     sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
@@ -171,7 +167,7 @@ internal fun makeCompiledScript(
         return otherScripts
     }
 
-    val module = makeCompiledModule(generationState)
+    val module = makeCompiledModule(backendOutput)
 
     val scriptClassFqName = getScriptClassFqName(script) ?: error("Unable to get target class for script: ${script.locationId}")
 

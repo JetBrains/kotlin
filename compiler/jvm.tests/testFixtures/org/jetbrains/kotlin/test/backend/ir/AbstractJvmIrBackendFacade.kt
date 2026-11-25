@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.test.backend.ir
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.BackendException
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.getFileClassInfoFromIrFile
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.testInfraError
 abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBackendFacade<BinaryArtifacts.Jvm>(testServices, ArtifactKinds.Jvm) {
     private val javaCompilerFacade = JavaCompilerFacade(testServices)
 
-    protected abstract fun produceGenerationState(inputArtifact: IrBackendInput): GenerationState?
+    protected abstract fun invokeBackend(inputArtifact: IrBackendInput): JvmIrCodegenFactory.BackendOutput?
     protected abstract val IrBackendInput.sourceFiles: Collection<KtSourceFile>
 
     override val directiveContainers: List<DirectivesContainer>
@@ -38,8 +38,8 @@ abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBacken
         module: TestModule,
         inputArtifact: IrBackendInput
     ): BinaryArtifacts.Jvm? {
-        val state = try {
-            produceGenerationState(inputArtifact)
+        val backendOutput = try {
+            invokeBackend(inputArtifact)
         } catch (e: BackendException) {
             if (JvmCodegenDirectives.IGNORE_ERRORS in module.directives) {
                 return null
@@ -52,7 +52,7 @@ abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBacken
         // Kotlin code
         if (DISABLE_JAVA_FACADE !in module.directives) {
             val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-            javaCompilerFacade.compileJavaFiles(module, configuration, state.factory)
+            javaCompilerFacade.compileJavaFiles(module, configuration, backendOutput.classFileFactory)
         }
 
         fun sourceFileInfos(irFile: IrFile, allowNestedMultifileFacades: Boolean): List<SourceFileInfo> =
@@ -80,7 +80,7 @@ abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBacken
             }
 
         return JvmClassFileArtifact(
-            state.factory,
+            backendOutput,
             inputArtifact.irModuleFragment.files.flatMap {
                 sourceFileInfos(it, allowNestedMultifileFacades = true)
             }

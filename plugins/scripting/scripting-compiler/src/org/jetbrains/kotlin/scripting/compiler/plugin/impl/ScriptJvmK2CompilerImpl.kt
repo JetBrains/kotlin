@@ -210,12 +210,12 @@ class ScriptJvmK2CompilerImpl(
         }
         val frontendOutput = AllModulesFrontendOutput(outputs)
 
-        val [irInput, generationState] = generateCodeIfNoErrors(
+        val [irInput, backendOutput] = generateCodeIfNoErrors(
             compilerConfiguration, targetId, frontendOutput, compilerEnvironment, reportingCtx.messageCollector, renderDiagnosticName
         ).valueOr { return it }
 
         return makeCompiledScript(
-            generationState,
+            backendOutput,
             script,
             {
                 sourcesToFir[it]?.declarations?.firstIsInstanceOrNull<FirScript>()
