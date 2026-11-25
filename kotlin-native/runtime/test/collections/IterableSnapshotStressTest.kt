@@ -26,6 +26,10 @@ class IterableSnapshotStressTest {
 
     @Test
     fun copyOnWriteArrayListToArrayList() = runStress { ArrayList(it) }
+
+    // `asList()` is a view, so the validation checks the array returned by `toTypedArray()` itself.
+    @Test
+    fun copyOnWriteArrayListToTypedArray() = runStress { it.toTypedArray().asList() }
 }
 
 /**
