@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering.Companion.DECLARATION_ORIGIN_COROUTINE_IMPL
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDelegatedPropertiesLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionWith
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
 import org.jetbrains.kotlin.ir.backend.js.originalCallableReferenceClass
-import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -65,6 +65,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     private val getContinuation = context.symbols.getContinuation
     private val orPromiseFunctionSymbol = context.symbols.orPromiseFunctionSymbol
     private val constructCallableReferenceSymbol = context.symbols.constructCallableReferenceSymbol
+    private val compileSuspendAsJsGenerator = context.configuration.compileSuspendAsJsGenerator
 
     /**
      * A factory that creates [IrFunctionExpression] for lambdas being constructed.
@@ -274,6 +275,16 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                     else
                         expression.acceptChildrenVoid(this)
                 }
+
+                override fun visitGetField(expression: IrGetField) {
+                    // If there is a suspension point inside a loop, a variable declared in that loop is transformed
+                    // into the coroutine class field, we must check it as well.
+                    if (!compileSuspendAsJsGenerator && expression.symbol.owner.origin == DECLARATION_ORIGIN_COROUTINE_IMPL) {
+                        result = true
+                    } else {
+                        expression.acceptChildrenVoid(this)
+                    }
+                }
             })
             return result
         }
@@ -372,7 +383,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         lambdaDeclaration: IrSimpleFunction,
         lambdaType: IrType,
     ): IrSimpleFunction {
-        if (!context.compileSuspendAsJsGenerator || !lambdaDeclaration.isSuspend) return lambdaDeclaration
+        if (!compileSuspendAsJsGenerator || !lambdaDeclaration.isSuspend) return lambdaDeclaration
 
         val innerLambda = context.irFactory.buildFun {
             startOffset = lambdaDeclaration.startOffset
@@ -584,7 +595,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         // Due to suspend lambda is a class itself in non-generator mode
         // it's not easy to inline it correctly and moreover I see no reason to do so
-        if (lambdaInfo.isSuspendLambda && !context.configuration.compileSuspendAsJsGenerator) {
+        if (lambdaInfo.isSuspendLambda && !compileSuspendAsJsGenerator) {
             val lambdaType = lambdaInfo.lambdaClass.defaultType
             val instanceVal = JsIrBuilder.buildVar(lambdaType, factoryFunction, "i").apply {
                 val newCtorCall = IrConstructorCallImpl(
@@ -705,7 +716,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         lambdaDeclaration.parent = parent
 
-        if (context.configuration.compileSuspendAsJsGenerator && invokeFun.isSuspend) {
+        if (compileSuspendAsJsGenerator && invokeFun.isSuspend) {
             lambdaDeclaration.shouldBeCompiledAsGenerator = true
         }
 
