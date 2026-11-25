@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -106,8 +106,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         actualTargets: List<KotlinTarget>,
         parent: FirBasedSymbol<*>?,
     ): Boolean {
-        val modifierToken = modifier.token
-        val modifierId = modifierToken.tokenId
+        val modifierId = modifier.tokenId
 
         fun checkModifier(factory: KtDiagnosticFactory2<String, String>): Boolean {
             val checkResult = when (factory) {
@@ -141,7 +140,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return false
         }
 
-        if (parent is FirRegularClassSymbol && modifierToken == KtTokens.EXPECT_KEYWORD) {
+        if (parent is FirRegularClassSymbol && modifierId == KotlinSyntaxTokenIds.EXPECT_MODIFIER) {
             reporter.reportOn(modifierSource, FirErrors.WRONG_MODIFIER_TARGET, modifier.tokenName, "nested class")
             return false
         }
@@ -161,11 +160,11 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         owner: FirDeclaration,
         parent: FirBasedSymbol<*>?,
     ): Boolean {
-        val modifierToken = modifier.token
+        val modifierId = modifier.tokenId
 
         // possibleParentTargetPredicateMap contains FILE for companion keyword,
         // but it's only allowed for companion extensions, not companion objects.
-        if (modifierToken == KtTokens.COMPANION_KEYWORD &&
+        if (modifierId == KotlinSyntaxTokenIds.COMPANION_MODIFIER &&
             owner is FirRegularClass &&
             KotlinTarget.FILE in actualParents
         ) {
@@ -180,7 +179,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
         // possibleParentTargetPredicateMap contains INTERFACE for protected and internal keyword,
         // but it's only allowed for companion block members
-        if (modifierToken == KtTokens.INTERNAL_KEYWORD &&
+        if (modifierId == KotlinSyntaxTokenIds.INTERNAL_MODIFIER &&
             !(owner is FirCallableDeclaration && owner.isCompanionBlockMember) &&
             KotlinTarget.INTERFACE in actualParents
         ) {
@@ -193,7 +192,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return true
         }
 
-        val deprecatedParents = deprecatedParentTargetMap[modifierToken.tokenId]
+        val deprecatedParents = deprecatedParentTargetMap[modifierId]
         if (deprecatedParents != null && actualParents.any { it in deprecatedParents }) {
             reporter.reportOn(
                 modifierSource,
@@ -204,7 +203,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return true
         }
 
-        if (modifierToken == KtTokens.PROTECTED_KEYWORD && isFinalExpectClass(parent)) {
+        if (modifierId == KotlinSyntaxTokenIds.PROTECTED_MODIFIER && isFinalExpectClass(parent)) {
             reporter.reportOn(
                 modifierSource,
                 FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION,
@@ -212,10 +211,10 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                 "final expect class"
             )
         }
-        val possibleParentPredicate = possibleParentTargetPredicateMap[modifierToken.tokenId] ?: return true
+        val possibleParentPredicate = possibleParentTargetPredicateMap[modifierId] ?: return true
         if (actualParents.any { possibleParentPredicate.isAllowed(it, context.session.languageVersionSettings) }) return true
 
-        if (modifierToken == KtTokens.INNER_KEYWORD && parent is FirScriptSymbol) {
+        if (modifierId == KotlinSyntaxTokenIds.INNER_MODIFIER && parent is FirScriptSymbol) {
             reporter.reportOn(modifierSource, FirErrors.INNER_ON_TOP_LEVEL_SCRIPT_CLASS)
         } else {
             reporter.reportOn(

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.ParserMode
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.syntax.SyntaxId
 
 /**
  * Must not depend on the IntelliJ platform.
@@ -21,6 +22,11 @@ object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
     override fun KtSourceElement.unwrap(): Any {
         notYetImplemented()
     }
+
+    override val SyntaxId.name: String
+        get() {
+            notYetImplemented()
+        }
 
     override fun KtSourceElement.forEachChildMatching(
         depth: Int,

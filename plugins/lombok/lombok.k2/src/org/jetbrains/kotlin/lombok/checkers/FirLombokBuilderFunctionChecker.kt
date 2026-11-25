@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.generators.kotlin.promotedPropertiesByName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object FirLombokBuilderFunctionChecker : FirFunctionChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -63,13 +64,15 @@ object FirLombokBuilderFunctionChecker : FirFunctionChecker(MppCheckerKind.Platf
             UNINSTANTIABLE_CLASS_MODIFIERS.firstOrNull { containingClassSymbol.hasModifier(it) }?.let { modifier ->
                 val annotationName = functionBuilder.annotation.toAnnotationClassId(context.session)?.shortClassName
                 if (annotationName != null) {
-                    reporter.reportOn(
-                        functionBuilder.annotation.source,
-                        LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS,
-                        annotationName,
-                        modifier.value,
-                        context,
-                    )
+                    withSyntax {
+                        reporter.reportOn(
+                            functionBuilder.annotation.source,
+                            LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS,
+                            annotationName,
+                            modifier.name,
+                            context,
+                        )
+                    }
                 }
                 return
             }
@@ -81,7 +84,11 @@ object FirLombokBuilderFunctionChecker : FirFunctionChecker(MppCheckerKind.Platf
         }
     }
 
-    private val UNINSTANTIABLE_CLASS_MODIFIERS = setOf(KtTokens.INNER_KEYWORD, KtTokens.ABSTRACT_KEYWORD, KtTokens.SEALED_KEYWORD)
+    private val UNINSTANTIABLE_CLASS_MODIFIERS = setOf(
+        KotlinSyntaxTokenIds.INNER_MODIFIER,
+        KotlinSyntaxTokenIds.ABSTRACT_MODIFIER,
+        KotlinSyntaxTokenIds.SEALED_MODIFIER
+    )
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkBuilderFunctionHasExplicitTypeRef(function: FirNamedFunctionSymbol, builder: ConeLombokAnnotations.Builder) {

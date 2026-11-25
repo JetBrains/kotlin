@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentLhsIfUnwrappable
 import org.jetbrains.kotlin.psi.psiUtil.getExplicitReceiverOfDotQualified
 import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
+import org.jetbrains.kotlin.syntax.SyntaxId
+import org.jetbrains.kotlin.syntax.elementType
 import org.jetbrains.kotlin.syntax.syntaxId
 import org.jetbrains.kotlin.toKtPsiSourceElement
 
@@ -34,6 +36,12 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
     override fun KtSourceElement.unwrap(): KtPsiSourceElement {
         return this as? KtPsiSourceElement ?: unwrapError(this@unwrap)
     }
+
+    override val SyntaxId.name: String
+        get() {
+            @OptIn(KtImplementationDetail::class)
+            return elementType().toString()
+        }
 
     override fun KtSourceElement.forEachChildMatching(
         depth: Int,

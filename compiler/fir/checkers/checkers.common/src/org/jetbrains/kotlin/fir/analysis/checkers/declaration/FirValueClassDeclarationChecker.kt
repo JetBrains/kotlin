@@ -34,17 +34,16 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.scopes.platformClassMapper
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
-import org.jetbrains.kotlin.lexer.KtTokens.INLINE_KEYWORD
-import org.jetbrains.kotlin.lexer.KtTokens.VALUE_KEYWORD
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegularClassChecker(mppKind) {
@@ -319,8 +318,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             } else if (primaryConstructorParametersByName.size != 1) {
                 val jvmInlineAnnotation = StandardClassIds.Annotations.JvmInline
                 val hasJvmInlineAnnotation = declaration.hasAnnotation(jvmInlineAnnotation, context.session)
-                val valueModifier = declaration.getModifier(VALUE_KEYWORD)
-                val hasInlineModifier = declaration.hasModifier(INLINE_KEYWORD)
+                val valueModifier = declaration.getModifier(KotlinSyntaxTokenIds.VALUE_MODIFIER)
+                val hasInlineModifier = declaration.hasModifier(KotlinSyntaxTokenIds.INLINE_MODIFIER)
                 if (
                     primaryConstructorParametersByName.size > 1 && !hasJvmInlineAnnotation && valueModifier != null && !hasInlineModifier
                 ) {

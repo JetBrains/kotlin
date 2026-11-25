@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.unwrapToSimpleTypeUsingLowerBound
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirCompanionExtensionChecker : FirCallableDeclarationChecker(MppCheckerKind.Platform) {
@@ -37,7 +37,7 @@ object FirCompanionExtensionChecker : FirCallableDeclarationChecker(MppCheckerKi
 
         if (LanguageFeature.CompanionExtensions.isDisabled()) {
             reporter.reportOn(
-                declaration.getModifier(KtTokens.COMPANION_KEYWORD)?.source,
+                declaration.getModifier(KotlinSyntaxTokenIds.COMPANION_MODIFIER)?.source,
                 FirErrors.UNSUPPORTED_FEATURE,
                 LanguageFeature.CompanionExtensions to context.languageVersionSettings
             )

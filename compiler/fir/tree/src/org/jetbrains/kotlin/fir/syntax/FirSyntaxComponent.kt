@@ -51,6 +51,14 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
     }
 
     /**
+     * The name of the node type or token with this [SyntaxId], e.g., `private` or `class`.
+     * It's used, for instance, to render modifiers in diagnostics.
+     *
+     * TODO: KT-91973
+     */
+    abstract val SyntaxId.name: String
+
+    /**
      * Iterates recursively over the descendants of the element in pre-order, up to the given [depth] or indefinitely if [depth] is -1.
      * The element itself is not visited. With [reverse], the children of each node are visited from last to first.
      *

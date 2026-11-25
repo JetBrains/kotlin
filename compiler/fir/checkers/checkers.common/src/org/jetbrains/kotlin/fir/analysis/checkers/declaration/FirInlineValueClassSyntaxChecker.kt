@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 /**
  * All kinds of checks related to inline value classes declaration syntax: old `inline class` syntax, usage of `value class` without
@@ -32,8 +32,8 @@ object FirInlineValueClassSyntaxChecker : FirRegularClassChecker(Common) {
     override fun check(declaration: FirRegularClass) {
         val source = declaration.source?.takeIf { it.kind is KtRealSourceElementKind } ?: return
 
-        val hasInlineModifier = declaration.hasModifier(KtTokens.INLINE_KEYWORD)
-        val hasValueModifier = declaration.hasModifier(KtTokens.VALUE_KEYWORD)
+        val hasInlineModifier = declaration.hasModifier(KotlinSyntaxTokenIds.INLINE_MODIFIER)
+        val hasValueModifier = declaration.hasModifier(KotlinSyntaxTokenIds.VALUE_MODIFIER)
         val annotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.JvmInline, context.session)
 
         @OptIn(LegacyJvmInlineHandling::class)

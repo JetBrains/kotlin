@@ -28,45 +28,56 @@ import java.lang.Deprecated
 @KtImplementationDetail
 fun IElementType.syntaxId(): SyntaxId =
     when {
-        this is KtToken -> tokenId
-        index >= 0 && index < indexToId.size -> indexToId[index.toInt()]
+        index >= 0 && index < indexToSyntaxId.size -> indexToSyntaxId[index.toInt()]
         else -> BasicSyntaxElementTypeIds.NO_ID
     }
 
-private val indexToId: IntArray = run {
-    val indexToIdMap = mutableMapOf<Short, SyntaxId>()
+/**
+ * @receiver An ID from `core:language.syntax`.
+ * @return The PSI element type with the given ID, or `null` if there is no such element type (e.g., for [BasicSyntaxElementTypeIds.NO_ID]).
+ * Useful for getting the name of an element (e.g., a modifier keyword for diagnostic messages) by its ID.
+ */
+@KtImplementationDetail
+fun SyntaxId.elementType(): IElementType? = syntaxIdToElementType.getOrNull(this)
 
-    var maxIndex: Short = 0
+/**
+ * All PSI element types that have syntax IDs, paired with those IDs.
+ * TODO: Avoid enumerating the `declaredFields` because any particular order isn't guaranteed and it might depend on JVM, KT-91298
+ */
+private val elementTypesWithSyntaxIds: List<Pair<IElementType, SyntaxId>> = buildList {
+    for (field in KtTokens::class.java.declaredFields) {
+        if (field.isAnnotationPresent(Deprecated::class.java)) continue
+        val ktToken = field.get(null) as? KtToken ?: continue
+        require(ktToken.tokenId > BasicSyntaxElementTypeIds.NO_ID) { "${field.name} has no syntax ID" }
+        add(ktToken to ktToken.tokenId)
+    }
+
     var id = KotlinSyntaxNodeTypeIds.FILE
-    KtNodeTypes::class.java.declaredFields.forEach {
-        if (it.isAnnotationPresent(Deprecated::class.java)) return@forEach
-        val index = (it.get(null) as IElementType).index
-        indexToIdMap[index] = id++
-        if (index > maxIndex) {
-            maxIndex = index
-        }
-    }
-    KtTokens.DOC_COMMENT.index.let {
-        indexToIdMap[it] = KotlinSyntaxTokenIds.DOC_COMMENT
-        if (it > maxIndex) {
-            maxIndex = it
-        }
-    }
-    listOf(
-        TokenType.WHITE_SPACE to BasicSyntaxElementTypeIds.WHITE_SPACE,
-        TokenType.BAD_CHARACTER to BasicSyntaxElementTypeIds.BAD_CHARACTER,
-        TokenType.ERROR_ELEMENT to BasicSyntaxElementTypeIds.ERROR_ELEMENT,
-    ).forEach { [elementType, basicId] ->
-        val index = elementType.index
-        indexToIdMap[index] = basicId
-        if (index > maxIndex) {
-            maxIndex = index
-        }
+    for (field in KtNodeTypes::class.java.declaredFields) {
+        if (field.isAnnotationPresent(Deprecated::class.java)) continue
+        add((field.get(null) as IElementType) to id++)
     }
 
-    IntArray(maxIndex.toInt() + 1).apply {
-        indexToIdMap.forEach { [index, id] ->
-            this[index.toInt()] = id
+    add(KtTokens.DOC_COMMENT to KotlinSyntaxTokenIds.DOC_COMMENT)
+    add(TokenType.WHITE_SPACE to BasicSyntaxElementTypeIds.WHITE_SPACE)
+    add(TokenType.BAD_CHARACTER to BasicSyntaxElementTypeIds.BAD_CHARACTER)
+    add(TokenType.ERROR_ELEMENT to BasicSyntaxElementTypeIds.ERROR_ELEMENT)
+}
+
+private val indexToSyntaxId: IntArray = run {
+    val maxIndex = elementTypesWithSyntaxIds.maxOf { it.first.index.toInt() }
+    IntArray(maxIndex + 1).apply {
+        for ([elementType, id] in elementTypesWithSyntaxIds) {
+            this[elementType.index.toInt()] = id
+        }
+    }
+}
+
+private val syntaxIdToElementType: Array<IElementType?> = run {
+    val maxId = elementTypesWithSyntaxIds.maxOf { it.second }
+    arrayOfNulls<IElementType>(maxId + 1).apply {
+        for ([elementType, id] in elementTypesWithSyntaxIds) {
+            this[id] = elementType
         }
     }
 }
