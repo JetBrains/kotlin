@@ -248,7 +248,7 @@ public final class ParametersList implements Cloneable {
             int position,
             @NotNull Condition<? super String> existingCondition) {
         int index = indexOfParameter(existingCondition);
-        boolean setNewValue = StringUtilsKt.isNotEmpty(replacement);
+        boolean setNewValue = !replacement.isEmpty();
         if (index > -1 && setNewValue) {
             myParameters.set(index, replacement);
         }

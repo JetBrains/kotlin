@@ -305,7 +305,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 return if (className == topLevelClass.name) topLevelClass else null
             }
 
-            val segments = StringUtilsKt.split(className, ".").iterator()
+            val segments = className.split(".").iterator()
             if (!segments.hasNext() || segments.next() != topLevelClass.name) {
                 return null
             }

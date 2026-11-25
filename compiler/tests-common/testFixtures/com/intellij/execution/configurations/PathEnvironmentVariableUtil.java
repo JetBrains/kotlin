@@ -115,7 +115,7 @@ public final class PathEnvironmentVariableUtil {
 
     @NotNull
     public static List<String> getPathDirs(@NotNull String pathEnvVarValue) {
-        return StringUtilsKt.split(pathEnvVarValue, File.pathSeparator, true, true);
+        return StringUtilsKt.split(pathEnvVarValue, File.pathSeparator);
     }
 
     @NotNull
@@ -123,34 +123,12 @@ public final class PathEnvironmentVariableUtil {
         if (SystemInfo.isWindows) {
             String allExtensions = System.getenv("PATHEXT");
             if (allExtensions != null) {
-                Collection<String> extensions = StringUtilsKt.split(allExtensions, ";", true, true);
-                extensions = ContainerUtil.filter(extensions, s -> !StringUtilsKt.isEmpty(s) && s.startsWith("."));
-                return ContainerUtil.map(extensions, StringUtilsKt::toLowerCase);
+                Collection<String> extensions = StringUtilsKt.split(allExtensions, ";");
+                extensions = ContainerUtil.filter(extensions, s -> s.startsWith("."));
+                return ContainerUtil.map(extensions, String::toLowerCase);
             }
         }
         return Collections.emptyList();
-    }
-
-    @NotNull
-    public static String findExecutableInWindowsPath(@NotNull String exePath) {
-        return findExecutableInWindowsPath(exePath, exePath);
-    }
-
-    @Contract("_, !null -> !null")
-    public static String findExecutableInWindowsPath(@NotNull String exePath, @Nullable String defaultPath) {
-        if (SystemInfo.isWindows) {
-            if (!StringUtilsKt.containsChar(exePath, '/') && !StringUtilsKt.containsChar(exePath, '\\')) {
-                List<String> executableFileExtensions = getWindowsExecutableFileExtensions();
-
-                String[] baseNames = ContainerUtil.map2Array(executableFileExtensions, String.class, s -> exePath + s);
-                List<File> exeFiles = findExeFilesInPath(true, null, getPathVariableValue(), baseNames);
-                File foundFile = ContainerUtil.getFirstItem(exeFiles);
-                if (foundFile != null) {
-                    return foundFile.getAbsolutePath();
-                }
-            }
-        }
-        return defaultPath;
     }
 
     /**

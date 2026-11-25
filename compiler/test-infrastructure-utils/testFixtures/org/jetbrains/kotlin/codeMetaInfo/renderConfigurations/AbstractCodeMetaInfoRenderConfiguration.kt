@@ -9,29 +9,11 @@ import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import org.jetbrains.kotlin.utils.StringUtilsKt
 
 abstract class AbstractCodeMetaInfoRenderConfiguration(var renderParams: Boolean = true) {
-    private val clickOrPressRegex = "(Click or press|Press).*(to navigate)".toRegex() // We have different hotkeys on different platforms
     open fun asString(codeMetaInfo: CodeMetaInfo): String = codeMetaInfo.tag + getAttributesString(codeMetaInfo)
 
     open fun getAdditionalParams(codeMetaInfo: CodeMetaInfo) = ""
 
     open fun postProcessAttributes(codeMetaInfo: CodeMetaInfo) {}
-
-    protected fun sanitizeLineMarkerTooltip(originalText: String?): String {
-        if (originalText == null) return "null"
-        val noHtmlTags = StringUtilsKt.removeHtmlTags(originalText)
-            .replace(" ", "")
-            .replace(clickOrPressRegex, "$1 ... $2")
-            .trim()
-        return sanitizeLineBreaks(noHtmlTags)
-    }
-
-    protected fun sanitizeLineBreaks(originalText: String): String {
-        var sanitizedText = originalText
-        sanitizedText = StringUtilsKt.replace(sanitizedText, "\r\n", " ")
-        sanitizedText = StringUtilsKt.replace(sanitizedText, "\n", " ")
-        sanitizedText = StringUtilsKt.replace(sanitizedText, "\r", " ")
-        return sanitizedText
-    }
 
     protected fun getAttributesString(codeMetaInfo: CodeMetaInfo): String {
         if (codeMetaInfo.attributes.isEmpty()) return ""

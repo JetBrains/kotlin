@@ -173,12 +173,12 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
             }
 
             var sourceMapSourceRoots = arguments.sourceMapBaseDirs
-            if (sourceMapSourceRoots == null && StringUtilsKt.isNotEmpty(arguments.sourceMapPrefix)) {
+            if (sourceMapSourceRoots == null && !arguments.sourceMapPrefix.isNullOrEmpty()) {
                 sourceMapSourceRoots = calculateSourceMapSourceRoot(configuration, arguments)
             }
 
             if (sourceMapSourceRoots != null) {
-                val sourceMapSourceRootList = StringUtilsKt.split(sourceMapSourceRoots, File.pathSeparator)
+                val sourceMapSourceRootList = sourceMapSourceRoots.split(File.pathSeparator)
                 configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceMapSourceRootList)
             }
 

@@ -294,6 +294,6 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
 
         private val isRunningInCi: Boolean
             get() = java.lang.Boolean.getBoolean("kotlin.test.android.teamcity")
-                    || !StringUtilsKt.isEmpty(System.getenv("TEAMCITY_VERSION"))
+                    || !System.getenv("TEAMCITY_VERSION").isNullOrEmpty()
     }
 }

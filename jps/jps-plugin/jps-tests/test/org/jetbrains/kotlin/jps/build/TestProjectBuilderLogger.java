@@ -74,20 +74,6 @@ public final class TestProjectBuilderLogger extends ProjectBuilderLoggerBase {
     myLogLines.add(message);
   }
 
-  public String getFullLog(final File... baseDirs) {
-    return StringUtilsKt.join(myLogLines, s -> {
-      for (File dir : baseDirs) {
-        if (dir != null) {
-          String path = FileUtil.toSystemIndependentName(dir.getAbsolutePath()) + "/";
-          if (s.startsWith(path)) {
-            return s.substring(path.length());
-          }
-        }
-      }
-      return s;
-    }, "\n");
-  }
-
   @Override
   public boolean isEnabled() {
     return true;

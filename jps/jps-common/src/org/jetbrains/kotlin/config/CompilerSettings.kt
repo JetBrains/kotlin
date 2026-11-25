@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.cli.common.arguments.Freezable
 import org.jetbrains.kotlin.utils.StringUtilsKt
+import java.util.*
 
 open class CompilerSettings : Freezable() {
     open var additionalArguments: String = DEFAULT_ADDITIONAL_ARGUMENTS
@@ -57,6 +58,42 @@ open class CompilerSettings : Freezable() {
 val CompilerSettings.additionalArgumentsAsList: List<String>
     get() = splitArgumentString(additionalArguments)
 
-fun splitArgumentString(arguments: String) = StringUtilsKt.splitHonorQuotes(arguments, ' ').map {
+fun splitArgumentString(arguments: String) = splitHonorQuotes(arguments, ' ').map {
     if (it.startsWith('"')) StringUtilsKt.unescapeChar(StringUtilsKt.unquoteString(it), '"') else it
+}
+
+//endregion
+//region Splitting and joining
+private fun splitHonorQuotes(s: String, separator: Char): List<String> {
+    val result = mutableListOf<String>()
+    val builder = StringBuilder(s.length)
+    var quote = 0.toChar()
+    var isEscaped = false
+    for (i in s.indices) {
+        val c = s.get(i)
+        val isSeparator = c == separator
+        val isQuote = c == '"' || c == '\''
+        val isQuoted = quote.code != 0
+        val isEscape = c == '\\'
+
+        if (!isQuoted && isSeparator) {
+            if (builder.isNotEmpty()) {
+                result.add(builder.toString())
+                builder.setLength(0)
+            }
+            continue
+        }
+
+        if (!isEscaped && isQuote && (quote.code == 0 || quote == c)) {
+            quote = if (isQuoted) 0.toChar() else c
+        }
+
+        isEscaped = isEscape && !isEscaped
+
+        builder.append(c)
+    }
+    if (builder.isNotEmpty()) {
+        result.add(builder.toString())
+    }
+    return result
 }

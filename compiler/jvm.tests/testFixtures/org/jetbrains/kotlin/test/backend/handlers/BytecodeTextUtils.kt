@@ -20,10 +20,10 @@ internal class OccurrenceInfo(
     private val needle: String,
     val inlineScopesNumbersEnabled: Boolean
 ) {
-    private val pattern = Pattern.compile("($needle)")
+    private val pattern = Regex("($needle)")
 
     fun getActualOccurrence(text: String): String {
-        val actualCount = StringUtilsKt.findMatches(text, pattern).size
+        val actualCount = pattern.findAll(text).count()
         return "$actualCount $needle"
     }
 

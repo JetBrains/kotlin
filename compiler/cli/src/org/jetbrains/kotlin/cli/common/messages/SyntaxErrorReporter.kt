@@ -67,7 +67,7 @@ object SyntaxErrorReporter {
                 hasErrors = true
                 createAndReportSyntaxError(
                     element,
-                    if (StringUtilsKt.isEmpty(description)) "Syntax error" else description
+                    if (description.isEmpty()) "Syntax error" else description
                 )
             }
         }

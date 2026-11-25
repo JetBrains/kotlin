@@ -144,7 +144,7 @@ public final class InTextDirectivesUtils {
                             Character.isWhitespace(prefix.charAt(prefix.length() - 1))) {
 
                         List<String> resultList = result.computeIfAbsent(prefix, s -> new ArrayList<>());
-                        String notSplit = trim ? noPrefixLine.trim() : StringUtilsKt.trimTrailing(StringsKt.drop(noPrefixLine, 1));
+                        String notSplit = trim ? noPrefixLine.trim() : trimTrailing(StringsKt.drop(noPrefixLine, 1));
                         if (separatedValues) {
                             List<String> split = Arrays.asList(notSplit.split(", *"));
                             resultList.addAll(split);
@@ -180,8 +180,7 @@ public final class InTextDirectivesUtils {
     private static String probableDirective(@NotNull String line) {
         String[] arr = line.split(" ", 2);
         String firstWord = arr[0];
-
-        if (firstWord.length() > 1 && StringUtilsKt.toUpperCase(firstWord).equals(firstWord)) {
+        if (firstWord.length() > 1 && firstWord.toUpperCase().equals(firstWord)) {
             return firstWord;
         }
 
@@ -193,7 +192,7 @@ public final class InTextDirectivesUtils {
 
         for (String prefix : prefixes) {
             if (prefix.startsWith("//") || prefix.startsWith("##")) {
-                resultPrefixes.add(StringUtilsKt.trimLeading(prefix.substring(2)));
+                resultPrefixes.add(trimLeading(prefix.substring(2)));
             }
             else {
                 resultPrefixes.add(prefix);
@@ -345,5 +344,17 @@ public final class InTextDirectivesUtils {
     // Whether the target test is supposed to pass successfully on targetBackend
     public static boolean isPassingTarget(@NotNull TargetBackend targetBackend, @NotNull File file) {
         return isCompatibleTarget(targetBackend, file) && !isIgnoredTarget(targetBackend, file);
+    }
+
+    private static @NotNull String trimLeading(@NotNull String string) {
+        int index = 0;
+        while (index < string.length() && Character.isWhitespace(string.charAt(index))) index++;
+        return string.subSequence(index, string.length()).toString();
+    }
+
+    private static @NotNull String trimTrailing(@NotNull String string) {
+        int index = string.length() - 1;
+        while (index >= 0 && Character.isWhitespace(string.charAt(index))) index--;
+        return string.subSequence(0, index + 1).toString();
     }
 }

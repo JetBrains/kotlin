@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.testFramework;
 
 import com.intellij.openapi.util.io.FileUtil;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.types.AbstractTypeChecker;
@@ -63,8 +64,8 @@ public final class KtUsefulTestCase {
     @NotNull
     public static String getTestName(@Nullable String name, boolean lowercaseFirstLetter) {
         if (name == null) return "";
-        name = StringUtilsKt.trimStart(name, "test");
-        return StringUtilsKt.isEmpty(name) ? "" : lowercaseFirstLetter(name, lowercaseFirstLetter);
+        name = StringsKt.removePrefix(name, "test");
+        return name.isEmpty() ? "" : lowercaseFirstLetter(name, lowercaseFirstLetter);
     }
 
     @NotNull

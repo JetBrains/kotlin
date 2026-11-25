@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -436,7 +437,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     public static String removePerfOutput(String output) {
-        String[] lines = StringUtilsKt.splitByLinesKeepSeparators(output);
+        String[] lines = splitByLinesKeepSeparators(output);
         StringBuilder result = new StringBuilder();
         for (String line : lines) {
             if (!line.contains("PERF:")) {
@@ -445,4 +446,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         }
         return result.toString();
     }
+
+    private static String[] splitByLinesKeepSeparators(@NotNull String string) {
+        return EOL_SPLIT_KEEP_SEPARATORS.split(string);
+    }
+
+    private static final Pattern EOL_SPLIT_KEEP_SEPARATORS = Pattern.compile("(?<=(\r\n|\n))|(?<=\r)(?=[^\n])");
 }

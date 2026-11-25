@@ -39,7 +39,7 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
                     emptyList()
                 }
                 cachedManifest =
-                    entries.singleOrNull { StringUtilsKt.equals(MANIFEST_PATH, it.relativePath) }
+                    entries.singleOrNull { equalStrings(MANIFEST_PATH, it.relativePath) }
                         ?.let(largeBuffer::contentsToByteArray)
             } finally {
                 largeBuffer.unmap()
@@ -108,7 +108,7 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
 
     fun contentsToByteArray(zipEntryDescription: ZipEntryDescription): ByteArray {
         val relativePath = zipEntryDescription.relativePath
-        if (StringUtilsKt.equals(relativePath, MANIFEST_PATH)) return cachedManifest ?: throw FileNotFoundException("$file!/$relativePath")
+        if (equalStrings(relativePath, MANIFEST_PATH)) return cachedManifest ?: throw FileNotFoundException("$file!/$relativePath")
         return fileSystem.cachedOpenFileHandles[file].use {
             synchronized(it) {
                 it.get().second.contentsToByteArray(zipEntryDescription)
@@ -118,3 +118,13 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
 }
 
 private const val MANIFEST_PATH = "META-INF/MANIFEST.MF"
+
+private fun equalStrings(s1: CharSequence, s2: CharSequence): Boolean {
+    if (s1.length != s2.length) return false
+    for (i in s1.indices) {
+        if (s1[i] != s2[i]) return false
+    }
+    return true
+}
+
+

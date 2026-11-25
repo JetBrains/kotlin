@@ -124,7 +124,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
             val after = vmStateSnapshot()
             val diff = after - before
             recordTime(builder::class, diff, time)
-            totalLines += StringUtilsKt.countNewLines(file.text)
+            totalLines += file.text.count { it == '\n' }
             firFile
         }.also {
             listener?.after(builder::class)

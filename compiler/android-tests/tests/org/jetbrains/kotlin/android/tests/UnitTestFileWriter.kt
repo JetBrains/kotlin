@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.getMainClassName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.StringUtilsKt
 import java.io.File
@@ -30,7 +31,7 @@ class UnitTestFileWriter(
         private const val TESTS_PER_CHUNK = 128
 
         internal fun testNameForFileName(fileName: String): String {
-            return "test" + NameUtils.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(StringUtilsKt.capitalize(fileName)))
+            return "test" + NameUtils.sanitizeAsJavaIdentifier(FileUtil.getNameWithoutExtension(fileName.capitalizeFirstWord()))
         }
 
         internal fun generateTestName(fileName: String, generatedTestNames: MutableSet<String>): String {

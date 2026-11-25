@@ -33,7 +33,7 @@ public final class MockVirtualFileSystem extends DeprecatedVirtualFileSystem {
     @Override
     public MyVirtualFile findFileByPath(@NotNull String path) {
         String normalized = path.replace(File.separatorChar, '/').replace('/', ':');
-        if (StringUtilsKt.startsWithChar(normalized, ':')) normalized = normalized.substring(1);
+        if (normalized.charAt(0) == ':') normalized = normalized.substring(1);
         MyVirtualFile file = myRoot;
         for (String component : StringUtilsKt.split(normalized, ":")) {
             file = file.getOrCreate(component);

@@ -41,6 +41,8 @@ import org.jetbrains.jps.model.serialization.JpsProjectLoader
 import org.jetbrains.jps.model.serialization.PathMacroUtil
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.test.testFramework.disposeRootDisposable
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmartForCompiler
 import org.jetbrains.kotlin.utils.StringUtilsKt
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -49,6 +51,8 @@ import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.io.IOException
 import java.nio.file.Paths
+import java.util.Locale
+import java.util.Locale.getDefault
 
 @Suppress("UnstableApiUsage")
 abstract class JpsBuildTestCase {
@@ -100,12 +104,9 @@ abstract class JpsBuildTestCase {
     }
 
     private val projectName: String
-        get() = StringUtilsKt.decapitalize(
-            StringUtilsKt.trimStart(
-                testInfo.testMethod.get().name,
-                "test"
-            )
-        )
+        get() {
+            return testInfo.testMethod.get().name.removePrefix("test").replaceFirstChar { it.lowercase(getDefault()) }
+        }
 
     @Suppress("DEPRECATION")
     protected fun createProjectDescriptor(buildLoggingManager: BuildLoggingManager?): ProjectDescriptor {
