@@ -1,0 +1,4 @@
+Expected: the incremental build succeeds, like a clean build.
+
+Actual: `@DataClass` is lost from `DataAlias` when `Aliases.kt` is not recompiled, since it has `SOURCE` retention,
+so `DataWrapper.data` is reported with `PARCELABLE_TYPE_NOT_SUPPORTED`.
