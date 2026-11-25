@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.nativeImageDaemonExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.nativeImageProcessExecutionPolicy
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.Scenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jsScenario
@@ -53,13 +55,13 @@ class BtaV2StrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
                     add(
                         named(
                             "[v2][${kotlinToolchains.getCompilerVersion()}][native-image-process]",
-                            kotlinToolchains to kotlinToolchains.createNativeImageProcessExecutionPolicy()
+                            kotlinToolchains to kotlinToolchains.nativeImageProcessExecutionPolicy(nativeImageDistPath)
                         )
                     )
                     add(
                         named(
                             "[v2][${kotlinToolchains.getCompilerVersion()}][native-image-daemon]",
-                            kotlinToolchains to kotlinToolchains.createNativeImageDaemonExecutionPolicy()
+                            kotlinToolchains to kotlinToolchains.nativeImageDaemonExecutionPolicy(nativeImageDistPath)
                         )
                     )
                 }
@@ -129,7 +131,7 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
                         named(
                             "${namedArgument.name}[native-image-process]"
                         ) {
-                            namedArgument.payload().let { it to it.createNativeImageProcessExecutionPolicy() }
+                            namedArgument.payload().let { it to it.nativeImageProcessExecutionPolicy(nativeImageDistPath) }
                         }
                     } else null,
 
@@ -139,7 +141,7 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
                         named(
                             "${namedArgument.name}[native-image-daemon]"
                         ) {
-                            namedArgument.payload().let { it to it.createNativeImageDaemonExecutionPolicy() }
+                            namedArgument.payload().let { it to it.nativeImageDaemonExecutionPolicy(nativeImageDistPath) }
                         }
                     } else null,
                 )
@@ -347,13 +349,3 @@ fun KotlinToolchains.supportsNative() =
  */
 fun KotlinToolchains.supportsNativeImageExecutionPolicies() =
     KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 5, 20) && isNativeImageDistAvailable
-
-private fun KotlinToolchains.createNativeImageDaemonExecutionPolicy(): ExecutionPolicy.NativeImageDaemon =
-    nativeImageDaemonExecutionPolicy {
-        this[ExecutionPolicy.NativeImageDaemon.DIST_PATH] = nativeImageDistPath
-    }
-
-private fun KotlinToolchains.createNativeImageProcessExecutionPolicy(): ExecutionPolicy.NativeImageProcess =
-    nativeImageProcessExecutionPolicy {
-        this[ExecutionPolicy.NativeImageProcess.DIST_PATH] = nativeImageDistPath
-    }
