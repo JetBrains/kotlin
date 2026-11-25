@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtensio
 import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
+import org.jetbrains.kotlin.codegen.optimization.boxing.InlineClassUnboxer
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.incrementalCompilationComponents
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.org.objectweb.asm.Type
 
 class GenerationState(
     val virtualFileFinder: VirtualFileFinder,
@@ -78,7 +78,7 @@ class GenerationState(
         configuration.getCompilerExtensions(ClassFileFactoryFinalizerExtension),
     )
 
-    lateinit var mapInlineClass: (IrClass) -> Type
+    lateinit var inlineClassUnboxer: InlineClassUnboxer
 
     lateinit var reportDuplicateClassNameError: (IrClass, String, IrClass) -> Unit
 

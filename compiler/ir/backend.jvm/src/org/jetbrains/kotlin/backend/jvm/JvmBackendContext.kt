@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.codegen.state.AllowedOnlyInTestsAPI
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -108,8 +109,12 @@ class JvmBackendContext(
         get() = error("Not supported in JVM")
 
     init {
-        state.mapInlineClass = { irClass ->
-            defaultTypeMapper.mapType(irClass.defaultType)
+        state.inlineClassUnboxer = { boxedType ->
+            val irClass = state.jvmBackendClassResolver.resolveToClasses(boxedType).singleOrNull()?.takeIf {
+                @OptIn(ValueClassBackendAgnosticApi::class)
+                it.isInlineClass(treatCompatibleFullValueClassesAsInline = false)
+            }
+            irClass?.defaultType?.let(defaultTypeMapper::mapType)
         }
 
         state.reportDuplicateClassNameError = { class1, internalName, class2 ->

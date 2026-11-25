@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.codegen.optimization.common.remapLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -35,13 +34,12 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
-class RedundantBoxingMethodTransformer(private val generationState: GenerationState) : MethodTransformer() {
-
+class RedundantBoxingMethodTransformer(private val inlineClassUnboxer: InlineClassUnboxer) : MethodTransformer() {
     override fun transform(internalClassName: String, node: MethodNode) {
-        if (node.instructions.none { it.isBoxing(generationState) || it.isMethodInsnWith(Opcodes.INVOKEINTERFACE) { name == "next" } })
+        if (node.instructions.none { it.isBoxing(inlineClassUnboxer) || it.isMethodInsnWith(Opcodes.INVOKEINTERFACE) { name == "next" } })
             return
 
-        val interpreter = RedundantBoxingInterpreter(node, generationState)
+        val interpreter = RedundantBoxingInterpreter(node, inlineClassUnboxer)
         val analyzer = FastMethodAnalyzer<BasicValue>(
             internalClassName, node, interpreter, pruneExceptionEdges = false
         ) { nLocals, nStack -> BoxingFrame(nLocals, nStack) }

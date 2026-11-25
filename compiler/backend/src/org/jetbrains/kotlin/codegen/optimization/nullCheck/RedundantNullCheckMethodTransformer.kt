@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.linkWithLabel
+import org.jetbrains.kotlin.codegen.optimization.boxing.InlineClassUnboxer
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.debugText
 import org.jetbrains.kotlin.codegen.optimization.common.isInsn
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.codegen.pseudoInsns.asNotNull
 import org.jetbrains.kotlin.codegen.pseudoInsns.isPseudo
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Label
@@ -37,14 +37,14 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 
-class RedundantNullCheckMethodTransformer(private val generationState: GenerationState) : MethodTransformer() {
+class RedundantNullCheckMethodTransformer(private val inlineClassUnboxer: InlineClassUnboxer) : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
         do {
-            val changes = TransformerPass(internalClassName, methodNode, generationState).run()
+            val changes = TransformerPass(internalClassName, methodNode, inlineClassUnboxer).run()
         } while (changes)
     }
 
-    private class TransformerPass(val internalClassName: String, val methodNode: MethodNode, val generationState: GenerationState) {
+    private class TransformerPass(val internalClassName: String, val methodNode: MethodNode, val inlineClassUnboxer: InlineClassUnboxer) {
         private var changes = false
 
         fun run(): Boolean {
@@ -62,7 +62,7 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
         }
 
         private fun analyzeNullabilities(): Map<AbstractInsnNode, StrictBasicValue> {
-            val frames = analyze(internalClassName, methodNode, NullabilityInterpreter(generationState))
+            val frames = analyze(internalClassName, methodNode, NullabilityInterpreter(inlineClassUnboxer))
             val insns = methodNode.instructions.toArray()
             val nullabilityMap = LinkedHashMap<AbstractInsnNode, StrictBasicValue>()
             for (i in insns.indices) {

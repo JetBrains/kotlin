@@ -51,10 +51,10 @@ class OptimizationMethodVisitor(
 
     val optimizationTransformer = CompositeMethodTransformer(
         CapturedVarsOptimizationMethodTransformer(),
-        RedundantNullCheckMethodTransformer(generationState),
+        RedundantNullCheckMethodTransformer(generationState.inlineClassUnboxer),
         RedundantCheckCastEliminationMethodTransformer(),
         ConstantConditionEliminationMethodTransformer(),
-        RedundantBoxingMethodTransformer(generationState),
+        RedundantBoxingMethodTransformer(generationState.inlineClassUnboxer),
         TemporaryVariablesEliminationTransformer(),
         StackPeepholeOptimizationsTransformer(),
         PopBackwardPropagationTransformer(),

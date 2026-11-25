@@ -20,9 +20,6 @@ import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.isBoxedPrimitiveType
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
-import org.jetbrains.kotlin.ir.declarations.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -42,9 +39,9 @@ class CleanBoxedValue(
     boxedType: Type,
     boxingInsn: AbstractInsnNode,
     progressionIterator: ProgressionIteratorBasicValue?,
-    val generationState: GenerationState
+    inlineClassUnboxer: InlineClassUnboxer,
 ) : BoxedBasicValue(boxedType) {
-    override val descriptor = BoxedValueDescriptor(boxedType, boxingInsn, progressionIterator, generationState)
+    override val descriptor = BoxedValueDescriptor(boxedType, boxingInsn, progressionIterator, inlineClassUnboxer)
 
     private var tainted: TaintedBoxedValue? = null
     override fun taint(): BoxedBasicValue = tainted ?: TaintedBoxedValue(this).also { tainted = it }
@@ -62,7 +59,7 @@ class BoxedValueDescriptor(
     boxedType: Type,
     val boxingInsn: AbstractInsnNode,
     val progressionIterator: ProgressionIteratorBasicValue?,
-    val generationState: GenerationState
+    inlineClassUnboxer: InlineClassUnboxer,
 ) {
     private val associatedInsns = LinkedHashSet<AbstractInsnNode>()
     private val unboxingWithCastInsns = LinkedHashSet<Pair<AbstractInsnNode, Type>>()
@@ -70,7 +67,7 @@ class BoxedValueDescriptor(
     private val mergedWith = HashSet<BoxedValueDescriptor>()
 
     var isSafeToRemove = true; private set
-    val unboxedType: Type = getUnboxedType(boxedType, generationState)
+    val unboxedType: Type = getUnboxedType(boxedType, inlineClassUnboxer)
 
     val isValueClassValue = !isBoxedPrimitiveType(boxedType)
 
@@ -127,22 +124,13 @@ internal fun makePop(unboxType: Type) =
         else -> error("Illegal type size: ${unboxType.size}")
     }
 
-
-fun getUnboxedType(boxedType: Type, state: GenerationState): Type {
+internal fun getUnboxedType(boxedType: Type, inlineClassUnboxer: InlineClassUnboxer): Type {
     val primitiveType = AsmUtil.unboxPrimitiveTypeOrNull(boxedType)
     if (primitiveType != null) return primitiveType
 
     if (boxedType == AsmTypes.K_CLASS_TYPE) return AsmTypes.JAVA_CLASS_TYPE
 
-    unboxedTypeOfInlineClass(boxedType, state)?.let { return it }
+    inlineClassUnboxer.unboxInlineClass(boxedType)?.let { return it }
 
     throw IllegalArgumentException("Expected primitive type wrapper or KClass or inline class wrapper, got: $boxedType")
-}
-
-@OptIn(ValueClassBackendAgnosticApi::class)
-fun unboxedTypeOfInlineClass(boxedType: Type, state: GenerationState): Type? {
-    val irClass = state.jvmBackendClassResolver.resolveToClasses(boxedType).singleOrNull()?.takeIf {
-        it.isInlineClass(treatCompatibleFullValueClassesAsInline = false)
-    } ?: return null
-    return state.mapInlineClass(irClass)
 }
