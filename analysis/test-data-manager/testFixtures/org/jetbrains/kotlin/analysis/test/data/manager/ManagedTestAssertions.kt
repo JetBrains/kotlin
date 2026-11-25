@@ -49,8 +49,9 @@ object ManagedTestAssertions {
     /**
      * Whether the current environment allows file modifications (create, update, delete).
      *
-     * UPDATE always modifies. CHECK is read-only on TeamCity and when requested explicitly (`checkTestData`);
-     * only plain local test runs, where the mode is not set, keep creating and deleting files in CHECK.
+     * UPDATE always modifies. CHECK is read-only on TeamCity, when requested explicitly (`checkTestData`) and in an assertion of
+     * `updateTestData` (e.g., of a muted test); only plain local test runs, where the mode is not set, keep creating and deleting files in
+     * CHECK.
      *
      * This is an environment-level gate. Individual handlers may impose additional conditions
      * (e.g., [handleMissingFile] also requires [isGoldenTest] in CHECK mode).
@@ -58,7 +59,7 @@ object ManagedTestAssertions {
     context(context: TestDataContext)
     private val isModificationAllowed: Boolean
         get() = context.mode == TestDataManagerMode.UPDATE ||
-                !(TestDataManagerMode.isUnderTeamCity || TestDataManagerMode.isExplicitCheck)
+                !(TestDataManagerMode.isUnderTeamCity || TestDataManagerMode.isExplicitCheck || TestDataManagerMode.isExplicitUpdate)
 
 
     /** Whether this is a golden (base) test with no variant chain. */
@@ -94,15 +95,15 @@ object ManagedTestAssertions {
      *
      * ## Behavior Matrix
      *
-     * | Scenario                  | UPDATE | CHECK (local test run) | CHECK (`checkTestData`, TeamCity) |
-     * |---------------------------|--------|------------------------|-----------------------------------|
-     * | actual=null, file missing | Pass   | Pass                   | Pass                              |
-     * | actual=null, file exists  | Delete | Delete + throw         | Throw                             |
-     * | File missing (golden)     | Create | Create + throw         | Throw                             |
-     * | File missing (secondary)  | Create | Throw                  | Throw                             |
-     * | Content matches           | Pass   | Pass                   | Pass                              |
-     * | Write-target redundant    | Delete | Delete + throw         | Throw                             |
-     * | Content mismatch          | Update | Throw                  | Throw                             |
+     * | Scenario                  | UPDATE | CHECK (local test run) | CHECK (`checkTestData`, `updateTestData`, TeamCity) |
+     * |---------------------------|--------|------------------------|-----------------------------------------------------|
+     * | actual=null, file missing | Pass   | Pass                   | Pass                                                |
+     * | actual=null, file exists  | Delete | Delete + throw         | Throw                                               |
+     * | File missing (golden)     | Create | Create + throw         | Throw                                               |
+     * | File missing (secondary)  | Create | Throw                  | Throw                                               |
+     * | Content matches           | Pass   | Pass                   | Pass                                                |
+     * | Write-target redundant    | Delete | Delete + throw         | Throw                                               |
+     * | Content mismatch          | Update | Throw                  | Throw                                               |
      *
      * "Local test run" is a test started without the mode set (plain `test` task, IDE gutter): CHECK is its fallback.
      *

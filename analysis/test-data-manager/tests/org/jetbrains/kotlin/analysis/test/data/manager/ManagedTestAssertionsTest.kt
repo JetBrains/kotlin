@@ -26,12 +26,14 @@ class ManagedTestAssertionsTest {
     fun setUp() {
         TestDataManagerMode.isUnderTeamCityOverride = false
         TestDataManagerMode.isExplicitCheckOverride = false
+        TestDataManagerMode.isExplicitUpdateOverride = false
     }
 
     @AfterEach
     fun tearDown() {
         TestDataManagerMode.isUnderTeamCityOverride = null
         TestDataManagerMode.isExplicitCheckOverride = null
+        TestDataManagerMode.isExplicitUpdateOverride = null
         ManagedTestAssertions.recordFileActions = false
         ManagedTestAssertions.drainFileActions()
     }
@@ -430,6 +432,68 @@ class ManagedTestAssertionsTest {
         }
 
         assertFileState("test.txt: expected")
+    }
+
+    @Test
+    fun `CHECK mode (updateTestData) - golden missing throws without creating`() {
+        TestDataManagerMode.isExplicitUpdateOverride = true
+        setupFiles()
+
+        val ex = assertThrows<AssertionFailedError> {
+            runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.CHECK)
+        }
+
+        assertFileState("")
+        assertFalse(ex.message!!.contains("created"))
+    }
+
+    @Test
+    fun `CHECK mode (updateTestData) - redundant throws without deleting`() {
+        TestDataManagerMode.isExplicitUpdateOverride = true
+        setupFiles(
+            "test.txt" to "same",
+            "test.js.txt" to "same"
+        )
+
+        assertThrows<AssertionFailedError> {
+            runAssertion(variantChain = listOf("js"), actual = "same", mode = TestDataManagerMode.CHECK)
+        }
+
+        assertFileState("test.txt: same\ntest.js.txt: same")
+    }
+
+    @Test
+    fun `CHECK mode (updateTestData) - unexpected file throws without deleting`() {
+        TestDataManagerMode.isExplicitUpdateOverride = true
+        setupFiles("test.txt" to "unexpected")
+
+        assertThrows<AssertionFailedError> {
+            runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.CHECK)
+        }
+
+        assertFileState("test.txt: unexpected")
+    }
+
+    @Test
+    fun `CHECK mode (updateTestData) - mismatch throws without updating`() {
+        TestDataManagerMode.isExplicitUpdateOverride = true
+        setupFiles("test.txt" to "expected")
+
+        assertThrows<AssertionFailedError> {
+            runAssertion(variantChain = emptyList(), actual = "actual", mode = TestDataManagerMode.CHECK)
+        }
+
+        assertFileState("test.txt: expected")
+    }
+
+    @Test
+    fun `UPDATE mode (updateTestData) - golden missing creates file`() {
+        TestDataManagerMode.isExplicitUpdateOverride = true
+        setupFiles()
+
+        runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.UPDATE)
+
+        assertFileState("test.txt: content")
     }
 
     // ========== Shared behavior tests ==========
