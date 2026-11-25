@@ -399,8 +399,10 @@ class DeclarationGenerator(
         // compiler instantiates them as runtime carriers for `::property` references.
         val isPropertyImplementationClass = klass.symbol in backendContext.wasmSymbols.propertyReferenceImplClasses
 
-        // For callable reference and merged suspend lambda classes, do not use the FQN to ensure
-        // deterministic names across files during link-time deduplication.
+        // Lambda, callable reference, and merged suspend lambda classes get no qualified names
+        // since compiler-generated classes should not be exposed by reflection (see the anonymous
+        // class flag below). Emitting only the plain deduplication key also keeps their names
+        // deterministic across files, which link-time deduplication relies on.
         val fqnShouldBeEmitted = (backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass) &&
                                       !isSyntheticFunctionImplementationClass)
         val originalFqName = klass.originalFqName
