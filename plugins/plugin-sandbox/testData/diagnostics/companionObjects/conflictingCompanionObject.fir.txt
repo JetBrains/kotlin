@@ -1,0 +1,23 @@
+FILE: conflictingCompanionObject.kt
+    public abstract interface Base : R|kotlin/Any| {
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/WithCompanion|(supertypes = vararg(<getClass>(Q|Base|)) [evaluated = vararg(<getClass>(Q|Base|))]) public final class Owner : R|kotlin/Any| {
+        public constructor(): R|Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object Companion : R|kotlin/Any| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any|, R|Base| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

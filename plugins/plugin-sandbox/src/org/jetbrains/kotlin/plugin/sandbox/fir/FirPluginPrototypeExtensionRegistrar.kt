@@ -27,6 +27,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::SomeAdditionalSupertypeGenerator
         +::AdditionalSuperclassGenerator
         +::SupertypeWithArgumentGenerator
+        +::WithCompanionSupertypeGenerator
         +::PluginAdditionalCheckers
         +::FirNumberSignAttributeExtension
         +::AlgebraReceiverInjector
@@ -44,6 +45,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::MemberFunctionWithAnnotatedParametersGenerator
         +::SamInterfaceFunctionGenerator
         +::CompanionGenerator
+        +::WithCompanionDeclarationGenerator
         +::MembersOfSerializerGenerator
         +::DataFrameLikeTypeMembersGenerator
 

@@ -1,0 +1,25 @@
+FILE: explicitCompanionAddInterfaceSupertype.kt
+    public abstract interface Base : R|kotlin/Any| {
+        public open fun value(): R|kotlin/String| {
+            ^value String(OK)
+        }
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/WithCompanion|(supertypes = vararg(<getClass>(Q|Base|)) [evaluated = vararg(<getClass>(Q|Base|))]) public final class Owner : R|kotlin/Any| {
+        public constructor(): R|Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any|, R|Base| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(OK), Q|Owner(.<companion>)|.R|/Base.value|())
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(OK), Q|Owner.Companion|.R|/Base.value|())
+        ^box String(OK)
+    }

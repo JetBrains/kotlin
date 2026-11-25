@@ -5276,6 +5276,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface CompilerPluginRedeclaration : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass: KClass<CompilerPluginRedeclaration>
+            get() = CompilerPluginRedeclaration::class
+
+        public val conflictingDeclarations: List<KaSymbol>
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface PackageConflictsWithClassifier : KaFirDiagnostic<KtPackageDirective> {
         override val diagnosticClass: KClass<PackageConflictsWithClassifier>
             get() = PackageConflictsWithClassifier::class

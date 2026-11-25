@@ -1,0 +1,24 @@
+FILE: explicitCompanionAddMultipleClassSupertypes.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun value(): R|kotlin/String| {
+            ^value String(OK)
+        }
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/WithCompanion|(supertypes = vararg(<getClass>(Q|Base|), <getClass>(Q|Base|)) [evaluated = vararg(<getClass>(Q|Base|), <getClass>(Q|Base|))]) public final class Owner : R|kotlin/Any| {
+        public constructor(): R|Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any|, R|Base|, R|Base| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

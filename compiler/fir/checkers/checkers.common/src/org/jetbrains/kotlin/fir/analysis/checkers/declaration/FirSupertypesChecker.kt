@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.impl.isCompilerGeneratedCompanion
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -36,29 +37,34 @@ import org.jetbrains.kotlin.name.StandardClassIds
 object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
-        if (declaration.source?.kind is KtFakeSourceElementKind) return
+        if (declaration.source?.kind is KtFakeSourceElementKind && !declaration.symbol.isCompilerGeneratedCompanion()) return
         val superClassSymbols = hashSetOf<FirRegularClassSymbol>()
         val isInterface = declaration.classKind == ClassKind.INTERFACE
         var classAppeared = false
         for (superTypeRef in declaration.superTypeRefs) {
             // skip implicit super types like Enum or Any
-            if (superTypeRef.source == null || superTypeRef.source?.kind == KtFakeSourceElementKind.EnumSuperTypeRef) continue
+            if (
+                superTypeRef.source == null ||
+                superTypeRef.source?.kind == KtFakeSourceElementKind.EnumSuperTypeRef ||
+                superTypeRef.source?.kind == KtFakeSourceElementKind.RecordSuperTypeRef
+            ) continue
 
+            val source = superTypeRef.source ?: declaration.source
             val expandedSupertype = superTypeRef.coneType.fullyExpandedType()
             val originalSupertype = expandedSupertype.abbreviatedTypeOrSelf
             val supertypeIsDynamic = originalSupertype is ConeDynamicType
             when {
                 originalSupertype.isMarkedNullable -> {
-                    reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE)
+                    reporter.reportOn(source, FirErrors.NULLABLE_SUPERTYPE)
                 }
                 expandedSupertype.isMarkedNullable -> {
-                    reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS)
+                    reporter.reportOn(source, FirErrors.NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS)
                 }
             }
             if (originalSupertype.fullyExpandedType().let { it.isExtensionFunctionType || it.hasContextParameters } &&
                 LanguageFeature.FunctionalTypeWithExtensionAsSupertype.isDisabled()
             ) {
-                reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE)
+                reporter.reportOn(source, FirErrors.SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE)
             }
 
             checkAnnotationOnSuperclass(superTypeRef)
@@ -68,12 +74,12 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
 
             if (symbol is FirRegularClassSymbol) {
                 if (!superClassSymbols.add(symbol)) {
-                    reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_APPEARS_TWICE)
+                    reporter.reportOn(source ?: symbol.source, FirErrors.SUPERTYPE_APPEARS_TWICE)
                 }
                 if (symbol.classKind != ClassKind.INTERFACE) {
                     if (classAppeared) {
                         if (supertypeIsNotTypealiasToAny) {
-                            reporter.reportOn(superTypeRef.source, FirErrors.MANY_CLASSES_IN_SUPERTYPE_LIST)
+                            reporter.reportOn(source ?: symbol.source, FirErrors.MANY_CLASSES_IN_SUPERTYPE_LIST)
                         }
                     } else {
                         if (supertypeIsNotTypealiasToAny) {
@@ -82,16 +88,16 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                     }
                     // DYNAMIC_SUPERTYPE will be reported separately
                     if (isInterface && !supertypeIsDynamic && supertypeIsNotTypealiasToAny) {
-                        reporter.reportOn(superTypeRef.source, FirErrors.INTERFACE_WITH_SUPERCLASS)
+                        reporter.reportOn(source ?: symbol.source, FirErrors.INTERFACE_WITH_SUPERCLASS)
                     }
                 }
                 val isObject = symbol.classKind == ClassKind.OBJECT
                 // DYNAMIC_SUPERTYPE will be reported separately
                 if (!isObject && symbol.modality == Modality.FINAL && !supertypeIsDynamic) {
-                    reporter.reportOn(superTypeRef.source, FirErrors.FINAL_SUPERTYPE)
+                    reporter.reportOn(source, FirErrors.FINAL_SUPERTYPE)
                 }
                 if (isObject) {
-                    reporter.reportOn(superTypeRef.source, FirErrors.SINGLETON_IN_SUPERTYPE)
+                    reporter.reportOn(source, FirErrors.SINGLETON_IN_SUPERTYPE)
                 }
             }
 

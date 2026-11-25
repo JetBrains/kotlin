@@ -196,6 +196,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPARE_TO_TYPE_MISMATCH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPILER_PLUGIN_REDECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPILER_REQUIRED_ANNOTATION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPILER_REQUIRED_ANNOTATION_ARGUMENT_MUST_BE_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_AMBIGUITY
@@ -3054,6 +3055,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CONFLICTING_OVERLOADS, "Conflicting overloads:{0}", SYMBOLS_ON_NEXT_LINES)
         map.put(REDECLARATION, "Conflicting declarations:{0}", SYMBOLS_ON_NEXT_LINES)
         map.put(CLASSIFIER_REDECLARATION, "Redeclaration:{0}", SYMBOLS_ON_NEXT_LINES)
+        map.put(
+            COMPILER_PLUGIN_REDECLARATION,
+            "A compiler plugin needs to generate a companion object, but a classifier with the same name already exists:{0}",
+            SYMBOLS_ON_NEXT_LINES,
+        )
         map.put(PACKAGE_CONFLICTS_WITH_CLASSIFIER, "Package conflicts with classifier {0}", CLASS_ID)
         map.put(EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, "{0}: ''expect'' and corresponding ''actual'' are declared in the same module.", DECLARATION_NAME)
 

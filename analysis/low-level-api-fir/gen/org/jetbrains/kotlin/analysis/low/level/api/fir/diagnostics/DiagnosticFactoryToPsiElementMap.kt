@@ -647,6 +647,7 @@ internal val diagnosticFactoryToPsiElementMap: Map<KtDiagnosticFactoryN, Class<o
     FirErrors.CONFLICTING_OVERLOADS to PsiElement::class.java,
     FirErrors.REDECLARATION to KtNamedDeclaration::class.java,
     FirErrors.CLASSIFIER_REDECLARATION to KtNamedDeclaration::class.java,
+    FirErrors.COMPILER_PLUGIN_REDECLARATION to KtNamedDeclaration::class.java,
     FirErrors.PACKAGE_CONFLICTS_WITH_CLASSIFIER to KtPackageDirective::class.java,
     FirErrors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE to KtNamedDeclaration::class.java,
     FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE to PsiElement::class.java,

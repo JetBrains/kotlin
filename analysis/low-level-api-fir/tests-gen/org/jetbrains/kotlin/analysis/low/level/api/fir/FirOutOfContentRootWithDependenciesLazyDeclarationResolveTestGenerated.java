@@ -3272,6 +3272,18 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     }
 
     @Test
+    @TestMetadata("needsCompanionObjectExplicit.kt")
+    public void testNeedsCompanionObjectExplicit() {
+      run("needsCompanionObjectExplicit.kt");
+    }
+
+    @Test
+    @TestMetadata("needsCompanionObjectImplicit.kt")
+    public void testNeedsCompanionObjectImplicit() {
+      run("needsCompanionObjectImplicit.kt");
+    }
+
+    @Test
     @TestMetadata("preresolvedAliasedAnnotation.kt")
     public void testPreresolvedAliasedAnnotation() {
       run("preresolvedAliasedAnnotation.kt");

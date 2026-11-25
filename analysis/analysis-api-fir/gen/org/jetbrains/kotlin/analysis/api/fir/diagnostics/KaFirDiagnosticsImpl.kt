@@ -3733,6 +3733,12 @@ internal class ClassifierRedeclarationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.ClassifierRedeclaration
 
+internal class CompilerPluginRedeclarationImpl(
+    override val conflictingDeclarations: List<KaSymbol>,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.CompilerPluginRedeclaration
+
 internal class PackageConflictsWithClassifierImpl(
     override val conflictingClassId: ClassId,
     firDiagnostic: KtDiagnosticWithSource,
