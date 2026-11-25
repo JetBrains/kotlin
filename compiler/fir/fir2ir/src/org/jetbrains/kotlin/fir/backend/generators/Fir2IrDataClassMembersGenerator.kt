@@ -275,6 +275,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             return when {
                 this.isNothingOrNullableNothing -> StandardTypes.Any
                 this is ConeDynamicType -> StandardTypes.Any
+                this is ConeUnionType -> StandardTypes.Any
                 else -> this
             }
         }
