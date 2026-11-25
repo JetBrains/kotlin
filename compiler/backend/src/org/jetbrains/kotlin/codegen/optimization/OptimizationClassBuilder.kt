@@ -17,7 +17,6 @@ package org.jetbrains.kotlin.codegen.optimization
 
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
-import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -37,7 +36,6 @@ class OptimizationClassBuilder(private val delegate: ClassBuilder, private val g
     ): MethodVisitor {
         return OptimizationMethodVisitor(
             super.newMethod(origin, access, name, desc, signature, exceptions),
-            name.endsWith(FOR_INLINE_SUFFIX),
             generationState, access, name, desc, signature, exceptions
         )
     }
