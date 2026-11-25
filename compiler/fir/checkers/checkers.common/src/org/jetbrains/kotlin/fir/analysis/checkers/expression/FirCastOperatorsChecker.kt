@@ -38,6 +38,11 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
         val rUserType = expression.conversionTypeRef.coneType.finalApproximationOrSelf()
 
+        // TODO(KT-91989) implement proper checks for union types
+        if (l.originalType is ConeUnionType || r is ConeUnionType) {
+            return
+        }
+
         when (val it = context.session.firPlatformSpecificCastChecker.runApplicabilityCheck(expression, l.originalType, r, this)) {
             Applicability.APPLICABLE -> {}
             // CAST_ERASED may not be the case if we factor in the smartcast data.
