@@ -335,6 +335,7 @@ context(syntax: FirSyntaxComponent<*>)
 val FirValueParameter.hasValOrVar: Boolean
     get() {
         val source = this.source ?: return false
+        // TODO: use `with(syntax) { source.findValOrVarKeywordSource() }` that traverses only direct children (depth = 1), KT-91790
         return source.getChild(KotlinSyntaxIdSets.VAL_VAR) != null
     }
 
