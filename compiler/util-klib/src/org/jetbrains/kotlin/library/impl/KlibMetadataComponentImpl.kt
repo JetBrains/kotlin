@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADA
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME
 import kotlin.io.path.Path
+import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.pathString
@@ -24,7 +25,10 @@ internal class KlibMetadataComponentImpl(
     private val layoutReader: KlibLayoutReader<KlibMetadataComponentLayout>,
 ) : KlibMetadataComponent {
 
-    override val moduleHeaderData get() = layoutReader.readInPlace { it.moduleHeaderFile.readBytes() }
+    override val moduleHeaderData: ByteArray?
+        get() = layoutReader.readInPlace {
+            it.moduleHeaderFile.takeIf { file -> file.exists() }?.readBytes()
+        }
 
     override fun getPackageFragmentNames(packageFqName: String) = layoutReader.readInPlace { layout ->
         val fileList: List<String> = layout.getPackageFragmentsDir(packageFqName).listDirectoryEntries().mapNotNull { file ->
