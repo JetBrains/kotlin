@@ -13,13 +13,11 @@ package kotlin.collections
  * @sample samples.collections.Collections.Collections.collectionToTypedArray
  */
 public actual inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
-    val result = arrayOfNulls<T>(size)
-    var index = 0
-    for (element in this) result[index++] = element
     @Suppress("UNCHECKED_CAST")
-    return result as Array<T>
+    return collectionToArray(this) as Array<T>
 }
 
+@PublishedApi
 internal actual fun collectionToArray(collection: Collection<*>): Array<Any?> =
         collectionToArrayImpl(
                 collection,

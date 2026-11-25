@@ -13193,6 +13193,9 @@ final fun <#A: kotlinx.cinterop/ObjCObject> kotlinx.cinterop/getObjCClass(): kot
 final fun <#A: kotlinx.cinterop/ObjCObjectBase> (#A).kotlinx.cinterop/initBy(#A): #A // kotlinx.cinterop/initBy|initBy@0:0(0:0){0§<kotlinx.cinterop.ObjCObjectBase>}[0]
 
 // Targets: [native]
+final fun kotlin.collections/collectionToArray(kotlin.collections/Collection<*>): kotlin/Array<kotlin/Any?> // kotlin.collections/collectionToArray|collectionToArray(kotlin.collections.Collection<*>){}[0]
+
+// Targets: [native]
 final fun kotlin.io/print(kotlin/String) // kotlin.io/print|print(kotlin.String){}[0]
 
 // Targets: [native]
