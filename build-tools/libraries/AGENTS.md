@@ -7,6 +7,8 @@ Build Tools API (BTA). [README.md](README.md) has the layout and the module list
 The convention plugin every library applies lives in `repo/gradle-build-conventions/kotlin-build-tools-library/`;
 its README says what it sets up.
 
+A library may add rules of its own in `<tool>/AGENTS.md`. Read it before changing that library.
+
 ## Where code belongs
 
 Put code here when it is build-tool logic that does not need Gradle or any other build tool:
