@@ -103,21 +103,7 @@ class TestLifecycleTaskTest {
             val actualQualityGate = when (lifecycleTask.path) {
                 in expandedQualityGateMasterTasks -> QualityGate.Master
                 in expandedQualityGateNightlyTasks -> QualityGate.Nightly
-                else -> run {
-                    // If all direct dependencies are covered by the master quality gate,
-                    // then it is considered to be covered as well by 'master'
-                    if (lifecycleTask.dependencies.all { dependency ->
-                            dependency in expandedQualityGateMasterTasks
-                        }) return@run QualityGate.Master
-
-                    // If all direct dependencies are covered by the nightly quality gate,
-                    // then it is considered to be covered as well by 'nightly'
-                    if (lifecycleTask.dependencies.all { dependency ->
-                            dependency in expandedQualityGateNightlyTasks
-                        }) return@run QualityGate.Nightly
-
-                    QualityGate.None
-                }
+                else -> QualityGate.None
             }
 
             if (expectedQualityGate != actualQualityGate && expectedQualityGate != QualityGate.Undefined) {

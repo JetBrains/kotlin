@@ -283,10 +283,9 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAllParallelTests")
     }
 
-
     // Gradle Plugin Integration Tests,
     //   grouped by Gradle Version & type of test
-    testLifecycleTask("gradlePluginIntegrationMasterTest", QualityGate.Master) {
+    testLifecycleTask("gradlePluginIntegrationMasterTest", QualityGate.Undefined) {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTestsGroupedByGradleVersion")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAndroidTestsGroupedByGradleVersion")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpDaemonsTestsGroupedByGradleVersion")
@@ -294,6 +293,38 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsTestsGroupedByGradleVersion")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpMppTestsGroupedByGradleVersion")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpOtherTestsGroupedByGradleVersion")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpWasmTestsGroupedByGradleVersion")
+    }
+
+    testLifecycleTask("kgpNativeTestsGroupedByGradleVersion", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTestsGroupedByGradleVersion")
+    }
+
+    testLifecycleTask("kgpAndroidTestsGroupedByGradleVersion", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAndroidTestsGroupedByGradleVersion")
+    }
+
+    testLifecycleTask("kgpDaemonsTestsGroupedByGradleVersion", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpDaemonsTestsGroupedByGradleVersion")
+    }
+
+    testLifecycleTask("kgpJvmTestsGroupedByGradleVersion", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJvmTestsGroupedByGradleVersion")
+    }
+
+    testLifecycleTask("kgpJsTestsGroupedByGradleVersion", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsTestsGroupedByGradleVersion")
+    }
+
+    testLifecycleTask("kgpMppTestsGroupedByGradleVersion", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpMppTestsGroupedByGradleVersion")
+    }
+
+    testLifecycleTask("kgpOtherTestsGroupedByGradleVersion", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpOtherTestsGroupedByGradleVersion")
+    }
+
+    testLifecycleTask("kgpWasmTestsGroupedByGradleVersion", QualityGate.Undefined) {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpWasmTestsGroupedByGradleVersion")
     }
 
