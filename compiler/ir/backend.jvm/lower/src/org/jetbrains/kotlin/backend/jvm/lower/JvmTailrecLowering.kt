@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.TailrecCheckerLowering
+import org.jetbrains.kotlin.backend.common.TailrecPreSerializationLowering
 import org.jetbrains.kotlin.backend.common.lower.TailrecLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
@@ -22,7 +22,8 @@ internal class JvmTailrecLowering(context: JvmBackendContext) : TailrecLowering(
         type.defaultValue(startOffset, endOffset, context as JvmBackendContext)
 }
 
-internal class JvmTailrecCheckerLowering(context: JvmBackendContext) : TailrecCheckerLowering<JvmBackendContext>(context) {
+internal class JvmTailrecPreSerializationLowering(context: JvmBackendContext) :
+    TailrecPreSerializationLowering<JvmBackendContext>(context) {
     override fun followRichFunctionReference(reference: IrRichFunctionReference): Boolean =
         // this condition mimics one in JvmTailrecLowering.followRichFunctionReference()
         reference.origin == IrStatementOrigin.INLINE_LAMBDA

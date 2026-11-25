@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
  * Holds recursive calls collected within a `tailrec` function:
  * - [ir]: recursive calls in tail position that can be optimized into a loop by `TailrecLowering`.
  * - [fromManyFunctions]: whether tail calls target multiple functions.
- * - [nonTailCalls]: recursive calls that are not in tail position, reported by [TailrecCheckerLowering].
- * - [callsInTry]: recursive calls located inside try blocks, reported by [TailrecCheckerLowering].
+ * - [nonTailCalls]: recursive calls that are not in tail position, reported by [TailrecPreSerializationLowering].
+ * - [callsInTry]: recursive calls located inside try blocks, reported by [TailrecPreSerializationLowering].
  */
 data class TailCalls(
     val ir: Set<IrCall>,
@@ -46,15 +46,15 @@ data class TailCalls(
 )
 
 /**
- * Collects recursive calls in a `tailrec` function for both diagnostic reporting ([TailrecCheckerLowering])
- * and loop optimization ([TailrecLowering]).
+ * Collects recursive calls in a `tailrec` function for both diagnostic reporting ([TailrecPreSerializationLowering])
+ * and loop optimization (`TailrecLowering`).
  *
  * The checks correspond to the frontend rules evaluated by `FirTailrecFunctionChecker`.
  *
  * Calls returned in [TailCalls.ir] are in tail position and can be safely transformed by tailrec lowering.
  * When [collectNonTailCallsInNestedFunctions] is enabled, recursive calls in nested functions, local classes,
  * default parameter values, and try blocks are also collected into [TailCalls.nonTailCalls] and [TailCalls.callsInTry]
- * to be diagnosed by [TailrecCheckerLowering].
+ * to be diagnosed by [TailrecPreSerializationLowering].
  */
 fun collectTailRecursionCalls(
     irFunction: IrFunction,

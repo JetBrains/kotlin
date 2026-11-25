@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.NameUtils.sanitizeAsJavaIdentifier
     JvmTailrecLowering::class,
 )
 internal class JvmInventNamesForLocalFunctions(
-    val context: JvmBackendContext
+    val context: JvmBackendContext,
 ) : InventNamesForLocalFunctions() {
     override val suggestUniqueNames get() = true
     override val compatibilityModeForInlinedLocalDelegatedPropertyAccessors get() = true

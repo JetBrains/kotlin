@@ -54,7 +54,7 @@ private fun createCaptureRichFunctionReferenceLocals(context: LoweringContext): 
 }
 
 @Suppress("unused")
-private fun createInventNamesForLocalFunctionsPhase(context: LoweringContext): KlibInventNamesForLocalFunctions{
+private fun createInventNamesForLocalFunctionsPhase(context: LoweringContext): KlibInventNamesForLocalFunctions {
     return KlibInventNamesForLocalFunctions()
 }
 
@@ -79,7 +79,7 @@ fun wasmLoweringsOfTheFirstPhase(
             this += ::createUpgradeCallableReferences
         }
         this += loweringsOfTheFirstPhase(languageVersionSettings)
-        this += ::WasmTailrecCheckerLowering
+        this += ::WasmTailrecPreSerializationLowering
     }
     return createModulePhases(*phases.toTypedArray())
 }

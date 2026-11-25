@@ -1,3 +1,5 @@
+// DUMP_IR_AFTER_INLINE
+
 tailrec fun foo(x: Int) {
     return if (x > 0) {
         (foo(x - 1))

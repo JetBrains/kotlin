@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.TailrecCheckerLowering
+import org.jetbrains.kotlin.backend.common.TailrecPreSerializationLowering
 import org.jetbrains.kotlin.backend.common.lower.TailrecLowering
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
@@ -17,7 +17,8 @@ internal class WasmTailrecLowering(context: WasmBackendContext) : TailrecLowerin
         reference.origin == IrStatementOrigin.LAMBDA
 }
 
-internal class WasmTailrecCheckerLowering<Context : LoweringContext>(context: Context) : TailrecCheckerLowering<Context>(context) {
+internal class WasmTailrecPreSerializationLowering<Context : LoweringContext>(context: Context) :
+    TailrecPreSerializationLowering<Context>(context) {
     override fun followRichFunctionReference(reference: IrRichFunctionReference): Boolean =
         // this condition mimics one in WasmTailrecLowering.followRichFunctionReference()
         reference.origin == IrStatementOrigin.LAMBDA
