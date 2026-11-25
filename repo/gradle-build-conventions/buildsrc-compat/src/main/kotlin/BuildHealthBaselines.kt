@@ -134,7 +134,6 @@ object BuildHealthBaselines {
         ":native:native.tests:stress",
         ":native:objcexport-header-generator-k1",
         ":native:swift:swift-export-embeddable",
-        ":native:swift:swift-export-ide",
         ":native:swift:swift-export-standalone-integration-tests",
         ":native:swift:swift-export-standalone-integration-tests:coroutines",
         ":native:swift:swift-export-standalone-integration-tests:external",
