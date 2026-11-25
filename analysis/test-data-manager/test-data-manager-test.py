@@ -193,6 +193,55 @@ class WrapperTest(unittest.TestCase):
                 tdm.main(["check", "--module", invalid], root=self.root)
             self.assertEqual(2, exit.exception.code, invalid)
 
+    def test_modules_with_custom_project_directories(self) -> None:
+        self.write("settings.gradle.kts", textwrap.dedent('''\
+            project(":custom-plugin").projectDir = File("$rootDir/plugins/custom")
+            project(":other-plugin").projectDir =
+                file("$rootDir/plugins/other")
+        '''))
+        self.write("plugins/custom/build.gradle.kts", 'plugins { id("test-data-manager") }\n')
+        self.write("plugins/custom/testData/file.kt", "")
+        self.generated_tests("plugins/custom", "plugins/custom/testData")
+        git(self.root, "add", "-A")
+
+        self.assertEqual({":custom-plugin": "plugins/custom", ":other-plugin": "plugins/other"},
+                         tdm.custom_project_directories(self.root))
+        self.assertEqual([":custom-plugin", *ALL_MODULES], tdm.managed_modules(self.root))
+        self.assertEqual(self.root / "plugins" / "custom", tdm.module_directory(self.root, ":custom-plugin"))
+
+        stub = {module: {} for module in ALL_MODULES + [":custom-plugin"]}
+        exit_code, summary = self.run_wrapper(stub, "update", "--path", "plugins/custom/testData")
+        self.assertEqual((0, "PASSED"), (exit_code, summary["status"]))
+        self.assertIn(":custom-plugin:updateTestData", self.gradle_args())
+
+        # A directory given as `--module` is the project in it
+        exit_code, summary = self.run_wrapper(stub, "check", "--module", "plugins/custom")
+        self.assertEqual((0, [":custom-plugin"]), (exit_code, [module["project"] for module in summary["modules"]]))
+        self.assertEqual(["-q", "--continue", ":custom-plugin:checkTestData"], self.gradle_args()[:3])
+
+        # Any spelling of the directory, and the project path itself, are the same module
+        exit_code, summary = self.run_wrapper(
+            stub, "check", "--module", "plugins/other/../custom/", "--module", str(self.root / "plugins" / "custom"),
+            "--module", ":custom-plugin",
+        )
+        self.assertEqual((0, [":custom-plugin"]), (exit_code, [module["project"] for module in summary["modules"]]))
+
+    def test_custom_project_directories_in_another_form_fail(self) -> None:
+        self.write("settings.gradle.kts", textwrap.dedent('''\
+            project(":custom-plugin").projectDir = File("$rootDir/plugins/custom")
+            project(":other-plugin").projectDir = rootDir.resolve("plugins/other")
+            project(":block-plugin").apply { projectDir = File("$rootDir/plugins/block") }
+            if (rootProject.projectDir == rootDir) {}
+        '''))
+        with self.assertRaises(ValueError) as error:
+            tdm.custom_project_directories(self.root)
+        self.assertIn("the project directory on line 2, 3 of", str(error.exception))
+
+    def test_custom_project_directories_of_the_repository(self) -> None:
+        repository = SCRIPT.parents[2]
+        self.assertEqual("plugins/allopen", tdm.custom_project_directories(repository)[":kotlin-allopen-compiler-plugin"])
+        self.assertEqual(":kotlin-allopen-compiler-plugin", tdm.directory_project(repository, "plugins/allopen"))
+
     def test_run_id_names_the_reports_and_the_log(self) -> None:
         exit_code, summary = self.run_wrapper({":mod-b": {}}, "check", "--module", ":mod-b", "--run-id", "my-run.1")
         self.assertEqual((0, "my-run.1"), (exit_code, summary["runId"]))
@@ -625,6 +674,8 @@ class WrapperTest(unittest.TestCase):
             for module in ["--module", ":mod-a"], []:
                 self.run_wrapper({":mod-a": {}}, "check", "--path", f"{link}/mod-a/testData/", *module)
                 self.assertIn(f"-P{tdm.OPTION_PREFIX}.testDataPath=mod-a/testData/", self.gradle_args())
+            # So is a module directory
+            self.assertEqual(":mod-a:nested", tdm.requested_project(self.root, str(link / "mod-a" / "nested")))
             outside = Path(directory) / "file.kt"
             outside.write_text("")
             self.assertEqual(([], [f"testDataPath '{outside}' is outside the repository root {self.root}"]),
