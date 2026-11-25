@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test
 
+import org.jetbrains.kotlin.test.utils.extensionWithDot
+import java.io.File
 import java.util.regex.Pattern
 import kotlin.io.path.createTempDirectory
 import kotlin.test.Test
@@ -106,6 +108,16 @@ class TestDataVariantsTest {
         assertNotVariant("foo.ll.kt", "foo.kt", pattern = Pattern.compile("^.+\\.kt$"))
         assertNotVariant("foo.ll.kt", "foo.kt", pattern = Pattern.compile("^(bar)?.+\\.kt$"))
         assertNotVariant("foo.ll.kt", "foo.kt", pattern = Pattern.compile("^(.+)\\.kts$"))
+    }
+
+    @Test
+    fun testExtensionWithDot() {
+        // The variants of test data go before its extension, so they match the generator's rule above
+        assertEquals(".kt", File("foo.kt").extensionWithDot)
+        assertEquals(".kts", File("foo.kts").extensionWithDot)
+        assertEquals(".test.kts", File("foo.test.kts").extensionWithDot)
+        assertEquals(".kt.can-freeze-ide", File("foo.kt.can-freeze-ide").extensionWithDot)
+        assertEquals(".test.kts.can-freeze-ide", File("foo.test.kts.can-freeze-ide").extensionWithDot)
     }
 
     @Test

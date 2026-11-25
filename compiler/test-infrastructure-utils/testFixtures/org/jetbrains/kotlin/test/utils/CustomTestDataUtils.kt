@@ -153,8 +153,18 @@ private fun File.getOriginalTestDataFileNameFromPrefix(prefix: String): String {
 }
 
 /**
- * The extension of this test data with the dot, e.g., `.kt`, or `.test.kts` for a script with a compound extension (see
- * [COMPOUND_SCRIPT_KINDS]). The variants of the test data go before it.
+ * The marker after the extension of test data which can freeze the IDE, e.g., `foo.kt.can-freeze-ide` (see `TestGeneratorUtil.canFreezeIDE`).
+ */
+private const val CAN_FREEZE_IDE_MARKER = ".can-freeze-ide"
+
+/**
+ * The extension of this test data with the dot, e.g., `.kt`, `.test.kts` for a script with a compound extension (see
+ * [COMPOUND_SCRIPT_KINDS]), or `.kt.can-freeze-ide` with the [CAN_FREEZE_IDE_MARKER]. The variants of the test data go before it.
  */
 val File.extensionWithDot: String
-    get() = COMPOUND_EXTENSIONS.firstOrNull { name.endsWith(it) } ?: ".$extension"
+    get() {
+        val nameWithoutMarker = name.removeSuffix(CAN_FREEZE_IDE_MARKER)
+        val extension = COMPOUND_EXTENSIONS.firstOrNull { nameWithoutMarker.endsWith(it) }
+            ?: ".${nameWithoutMarker.substringAfterLast('.', "")}"
+        return extension + name.removePrefix(nameWithoutMarker)
+    }
