@@ -116,15 +116,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
     }
 
     /**
-     * Checks clashing with generated or explicit constructors according to Lombok logic;
-     * Vararg value parameter from an explicit constructor never causes a conflict.
-     * Value parameters from generated functions can never be vararg.
-     */
-    private fun FirFunctionSymbol<*>.checkParametersClashing(valueParametersCount: Int): Boolean {
-        return valueParameterSymbols.none { it.isVararg } && valueParameterSymbols.size == valueParametersCount
-    }
-
-    /**
      * Checks clashing with already generated constructors (regular or static functions).
      * The generated constructors don't have vararg parameters, so don't check them.
      */
@@ -132,7 +123,12 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         valueParametersCount: Int,
         extraCheck: (T) -> Boolean = { true },
     ): Boolean {
-        return any { it is T && it.symbol.checkParametersClashing(valueParametersCount) && extraCheck(it) }
+        return any { function ->
+            function is T
+                    && function.symbol.valueParameterSymbols.none { it.isVararg }
+                    && function.symbol.valueParameterSymbols.size == valueParametersCount
+                    && extraCheck(function)
+        }
     }
 
     /**
@@ -208,7 +204,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
 
             var hasConflict = false
             context.declaredScope?.processDeclaredConstructors { constructor ->
-                hasConflict = hasConflict || constructor.checkParametersClashing(valuesParameterCount)
+                hasConflict = hasConflict || constructorInfo.matchesGivenFunction(session, classSymbol, constructor)
             }
             if (hasConflict) return
 

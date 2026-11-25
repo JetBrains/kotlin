@@ -271,9 +271,20 @@ object ConeLombokAnnotations {
 
         fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable>
 
-        @OptIn(SymbolInternals::class)
         fun matchesGivenFunction(session: FirSession, classSymbol: FirClassSymbol<*>, functionSymbol: FirFunctionSymbol<*>): Boolean {
-            if (staticName == null || functionSymbol is FirNamedFunctionSymbol && functionSymbol.name.asString() != staticName) return false
+            if (functionSymbol is FirNamedFunctionSymbol && functionSymbol.name.asString() != staticName) return false
+            return matchesFunctionParameters(session, classSymbol, functionSymbol)
+        }
+
+        fun hidesExplicitConstructor(session: FirSession, classSymbol: FirClassSymbol<*>, constructor: FirConstructor): Boolean {
+            if (staticName == null) return false
+            return matchesFunctionParameters(session, classSymbol, constructor.symbol)
+        }
+
+        @OptIn(SymbolInternals::class)
+        private fun matchesFunctionParameters(
+            session: FirSession, classSymbol: FirClassSymbol<*>, functionSymbol: FirFunctionSymbol<*>
+        ): Boolean {
             val variables = getVariablesForParameters(classSymbol)
             if (variables.size != functionSymbol.valueParameterSymbols.size) return false
             return variables.zip(functionSymbol.valueParameterSymbols).all { [first, second] ->
@@ -281,10 +292,6 @@ object ConeLombokAnnotations {
                     session, if (second.hasJavaOrigin) second.fir.returnTypeRef else second.resolvedReturnTypeRef
                 )
             }
-        }
-
-        fun hidesExplicitConstructor(session: FirSession, classSymbol: FirClassSymbol<*>, constructor: FirConstructor): Boolean {
-            return matchesGivenFunction(session, classSymbol, constructor.symbol)
         }
 
         fun generatesPlainNoArgsConstructor(classSymbol: FirClassSymbol<*>): Boolean {
