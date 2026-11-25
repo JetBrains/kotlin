@@ -47,9 +47,9 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
 
     val cacheFileName = Path((outputName).fullOutputName()).absolute().name
 
-    private fun Path.cacheBinaryPart() = this.resolve(CachedLibraries.PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
+    private fun Path.cacheBinaryPart() = this.resolve(CachedLibraries.CACHE_BINARY_LEVEL_DIR_NAME)
 
-    private fun Path.cacheIrPart() = this.resolve(CachedLibraries.PER_FILE_CACHE_IR_LEVEL_DIR_NAME)
+    private fun Path.cacheIrPart() = this.resolve(CachedLibraries.CACHE_IR_LEVEL_DIR_NAME)
 
     val dynamicCacheInstallName = Path(outputName).cacheBinaryPart().resolve(cacheFileName).absolutePathString()
 

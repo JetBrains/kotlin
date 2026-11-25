@@ -92,7 +92,7 @@ class CachedLibraries(
          */
         fun getPartialLinkageIssues(fileId: String?): List<SerializedPartialLinkageIssue> {
             val directory = Path(rootDirectory).let { if (fileId != null) it.resolve(fileId) else it }
-            val file = directory.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(PARTIAL_LINKAGE_ISSUES_FILE_NAME)
+            val file = directory.resolve(CACHE_IR_LEVEL_DIR_NAME).resolve(PARTIAL_LINKAGE_ISSUES_FILE_NAME)
             if (!file.exists()) return emptyList()
             return mutableListOf<SerializedPartialLinkageIssue>().also {
                 PartialLinkageIssuesSerializer.deserializeTo(file.readBytes(), it)
@@ -123,31 +123,31 @@ class CachedLibraries(
 
             override fun computeSerializedInlineFunctionBodies() = mutableListOf<SerializedInlineFunctionReference>().also {
                 val directory = Path(path).absolute().parent.parent
-                val data = directory.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(INLINE_FUNCTION_BODIES_FILE_NAME).readBytes()
+                val data = directory.resolve(CACHE_IR_LEVEL_DIR_NAME).resolve(INLINE_FUNCTION_BODIES_FILE_NAME).readBytes()
                 InlineFunctionBodyReferenceSerializer.deserializeTo(data, it)
             }
 
             override fun computeSerializedClassFields() = mutableListOf<SerializedClassFields>().also {
                 val directory = Path(path).absolute().parent.parent
-                val data = directory.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(CLASS_FIELDS_FILE_NAME).readBytes()
+                val data = directory.resolve(CACHE_IR_LEVEL_DIR_NAME).resolve(CLASS_FIELDS_FILE_NAME).readBytes()
                 ClassFieldsSerializer.deserializeTo(data, it)
             }
 
             override fun computeSerializedEagerInitializedFiles() = mutableListOf<SerializedEagerInitializedFile>().also {
                 val directory = Path(path).absolute().parent.parent
-                val data = directory.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(EAGER_INITIALIZED_PROPERTIES_FILE_NAME).readBytes()
+                val data = directory.resolve(CACHE_IR_LEVEL_DIR_NAME).resolve(EAGER_INITIALIZED_PROPERTIES_FILE_NAME).readBytes()
                 EagerInitializedPropertySerializer.deserializeTo(data, it)
             }
 
             override fun computeSerializedTrivialGetters() = mutableListOf<SerializedTrivialGetter>().also {
                 val directory = Path(path).absolute().parent.parent
-                val data = directory.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(TRIVIAL_GETTERS_FILE_NAME).readBytes()
+                val data = directory.resolve(CACHE_IR_LEVEL_DIR_NAME).resolve(TRIVIAL_GETTERS_FILE_NAME).readBytes()
                 TrivialGettersSerializer.deserializeTo(data, it)
             }
 
             override fun computeSerializedObjCAdapters() = mutableListOf<SerializedObjCAdapter>().also {
                 val directory = Path(path).absolute().parent.parent
-                val file = directory.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(OBJC_ADAPTERS_FILE_NAME)
+                val file = directory.resolve(CACHE_IR_LEVEL_DIR_NAME).resolve(OBJC_ADAPTERS_FILE_NAME)
                 ObjCAdapterSerializer.deserializeTo(file.readBytes(), it)
             }
         }
@@ -161,7 +161,7 @@ class CachedLibraries(
 
             private val perFileBitcodeDependencies by lazy {
                 existingFileDirs.associate {
-                    val data = it.resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).resolve(BITCODE_DEPENDENCIES_FILE_NAME).readLines()
+                    val data = it.resolve(CACHE_BINARY_LEVEL_DIR_NAME).resolve(BITCODE_DEPENDENCIES_FILE_NAME).readLines()
                     it.name to DependenciesSerializer.deserialize(it.absolutePathString(), data)
                 }
             }
@@ -170,7 +170,7 @@ class CachedLibraries(
                     perFileBitcodeDependencies[file] ?: error("File $file is not found in cache $path")
 
             fun getFileBinaryPath(file: String) =
-                    Path(path).resolve(file).resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).resolve(getArtifactName(target, file, kind.toCompilerOutputKind())).let {
+                    Path(path).resolve(file).resolve(CACHE_BINARY_LEVEL_DIR_NAME).resolve(getArtifactName(target, file, kind.toCompilerOutputKind())).let {
                         require(it.exists()) { "File $file is not found in cache $path" }
                         it.absolutePathString()
                     }
@@ -180,40 +180,40 @@ class CachedLibraries(
             override fun computeBitcodeDependencies() = perFileBitcodeDependencies.values.flatten()
 
             override fun computeBinariesPaths() = existingFileDirs.map {
-                it.resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).resolve(getArtifactName(target, it.name, kind.toCompilerOutputKind())).absolutePathString()
+                it.resolve(CACHE_BINARY_LEVEL_DIR_NAME).resolve(getArtifactName(target, it.name, kind.toCompilerOutputKind())).absolutePathString()
             }
 
             override fun computeSerializedInlineFunctionBodies() = mutableListOf<SerializedInlineFunctionReference>().also {
                 existingFileDirs.forEach { fileDir ->
-                    val data = fileDir.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(INLINE_FUNCTION_BODIES_FILE_NAME).readBytes()
+                    val data = fileDir.resolve(CACHE_IR_LEVEL_DIR_NAME).resolve(INLINE_FUNCTION_BODIES_FILE_NAME).readBytes()
                     InlineFunctionBodyReferenceSerializer.deserializeTo(data, it)
                 }
             }
 
             override fun computeSerializedClassFields() = mutableListOf<SerializedClassFields>().also {
                 existingFileDirs.forEach { fileDir ->
-                    val data = fileDir.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(CLASS_FIELDS_FILE_NAME).readBytes()
+                    val data = fileDir.resolve(CACHE_IR_LEVEL_DIR_NAME).resolve(CLASS_FIELDS_FILE_NAME).readBytes()
                     ClassFieldsSerializer.deserializeTo(data, it)
                 }
             }
 
             override fun computeSerializedEagerInitializedFiles() = mutableListOf<SerializedEagerInitializedFile>().also {
                 existingFileDirs.forEach { fileDir ->
-                    val data = fileDir.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(EAGER_INITIALIZED_PROPERTIES_FILE_NAME).readBytes()
+                    val data = fileDir.resolve(CACHE_IR_LEVEL_DIR_NAME).resolve(EAGER_INITIALIZED_PROPERTIES_FILE_NAME).readBytes()
                     EagerInitializedPropertySerializer.deserializeTo(data, it)
                 }
             }
 
             override fun computeSerializedTrivialGetters() = mutableListOf<SerializedTrivialGetter>().also {
                 existingFileDirs.forEach { fileDir ->
-                    val data = fileDir.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(TRIVIAL_GETTERS_FILE_NAME).readBytes()
+                    val data = fileDir.resolve(CACHE_IR_LEVEL_DIR_NAME).resolve(TRIVIAL_GETTERS_FILE_NAME).readBytes()
                     TrivialGettersSerializer.deserializeTo(data, it)
                 }
             }
 
             override fun computeSerializedObjCAdapters() = mutableListOf<SerializedObjCAdapter>().also {
                 existingFileDirs.forEach { fileDir ->
-                    val file = fileDir.resolve(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).resolve(OBJC_ADAPTERS_FILE_NAME)
+                    val file = fileDir.resolve(CACHE_IR_LEVEL_DIR_NAME).resolve(OBJC_ADAPTERS_FILE_NAME)
                     ObjCAdapterSerializer.deserializeTo(file.readBytes(), it)
                 }
             }
@@ -224,7 +224,7 @@ class CachedLibraries(
         // See Linker.renameOutput why is it ok to have an empty cache directory.
         val cacheDirContents = listDirectoryEntriesIfDirectoryExists().map { it.absolutePathString() }.toSet()
         if (cacheDirContents.isEmpty()) return null
-        val cacheBinaryPartDir = resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
+        val cacheBinaryPartDir = resolve(CACHE_BINARY_LEVEL_DIR_NAME)
         val cacheBinaryPartDirContents = cacheBinaryPartDir.listDirectoryEntriesIfDirectoryExists().map { it.absolutePathString() }.toSet()
         val baseName = getCachedLibraryName(library)
         val dynamicFile = cacheBinaryPartDir.resolve(getArtifactName(target, baseName, CompilerOutputKind.DYNAMIC_CACHE))
@@ -325,7 +325,7 @@ class CachedLibraries(
     private fun findObjCCache(library: KotlinLibrary, moduleName: String, directoriesByName: Map<String, List<Path>>): Path? {
         val candidateName = getObjCCachedLibraryName(library, moduleName)
         for (dir in directoriesByName[candidateName].orEmpty()) {
-            val archive = dir.resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
+            val archive = dir.resolve(CACHE_BINARY_LEVEL_DIR_NAME)
                     .resolve(getArtifactName(target, candidateName, CompilerOutputKind.OBJC_CACHE))
             if (archive.exists()) return archive.absolute()
             ignoreObjCCache(dir.absolute(), "is incomplete or unreadable (no archive)")
@@ -420,8 +420,8 @@ class CachedLibraries(
             return baseCacheDirectory.resolve(library.uniqueName).resolve(fingerprintHash.toString())
         }
 
-        const val PER_FILE_CACHE_IR_LEVEL_DIR_NAME = "ir"
-        const val PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME = "bin"
+        const val CACHE_IR_LEVEL_DIR_NAME = "ir"
+        const val CACHE_BINARY_LEVEL_DIR_NAME = "bin"
 
         const val METADATA_FILE_NAME = "metadata.properties"
         const val OBJC_CACHE_METADATA_FILE_NAME = "objc_cache_metadata.properties"
