@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
-import java.io.File
 
 abstract class JsMultiArtifactCache<T : JsMultiArtifactCache.CacheInfo> {
     abstract fun loadProgramHeadersFromCache(): List<T>

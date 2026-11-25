@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
+import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
+import org.jetbrains.kotlin.backend.common.serialization.signatureAndKindOrNull
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.perfManager
@@ -18,7 +20,6 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragmen
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
@@ -312,8 +313,8 @@ class CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
             return exportedSymbols
         }
 
-        fun collectStubbedSignatures(): Set<IdSignature> {
-            val stubbedSignatures = hashSetOf<IdSignature>()
+        fun collectStubbedSignatures(): Set<SignatureAndKind> {
+            val stubbedSignatures = hashSetOf<SignatureAndKind>()
             for (cache in incrementalCaches.values) {
                 val fileStubbedSignatures = cache.collectFilesWithStubbedSignatures()
                 for (signatures in fileStubbedSignatures.values) {
@@ -327,8 +328,8 @@ class CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
             symbolProviders: List<FileSignatureProvider>,
             libFile: KotlinLibraryFile,
             dirtySrcFiles: Set<KotlinSourceFile>
-        ): Map<IdSignature, IdSignatureSource> {
-            val idSignatureToFile = hashMapOf<IdSignature, IdSignatureSource>()
+        ): Map<SignatureAndKind, IdSignatureSource> {
+            val idSignatureToFile = hashMapOf<SignatureAndKind, IdSignatureSource>()
             val incrementalCache = getLibIncrementalCache(libFile)
             for (fileSymbolProvider in symbolProviders) {
                 val maybeImportedSignatures = fileSymbolProvider.getReachableSignatures().toHashSet()
@@ -356,7 +357,7 @@ class CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
         }
 
         private fun DirtyFileMetadata.setAllDependencies(
-            idSignatureToFile: Map<IdSignature, IdSignatureSource>,
+            idSignatureToFile: Map<SignatureAndKind, IdSignatureSource>,
             updatedMetadata: KotlinSourceFileMap<DirtyFileMetadata>,
             libFile: KotlinLibraryFile,
             srcFile: KotlinSourceFile
@@ -378,7 +379,7 @@ class CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
             loadedIr: LoadedJsIr,
             dirtySrcFiles: KotlinSourceFileMap<KotlinSourceFileExports>,
         ): KotlinSourceFileMap<DirtyFileMetadata> {
-            val idSignatureToFile = hashMapOf<IdSignature, IdSignatureSource>()
+            val idSignatureToFile = hashMapOf<SignatureAndKind, IdSignatureSource>()
             val updatedMetadata = KotlinSourceFileMutableMap<DirtyFileMetadata>()
 
             for (lib in loadedIr.orderedFragments.keys) {
@@ -653,7 +654,7 @@ class CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
                 }
             }
 
-            val stubbedSignatures = loadedIr.collectSymbolsReplacedWithStubs().mapNotNullTo(hashSetOf()) { it.signature }
+            val stubbedSignatures = loadedIr.collectSymbolsReplacedWithStubs().mapNotNullTo(hashSetOf()) { it.signatureAndKindOrNull }
             return loadedIr.orderedFragments.keys.associateWith { libFile ->
                 val incrementalCache = getLibIncrementalCache(libFile)
                 val providers = loadedIr.getSignatureProvidersForLib(libFile)
@@ -878,7 +879,7 @@ fun rebuildCacheForDirtyFiles(
 ): Pair<IrModuleFragment, List<Pair<IrFile, JsIrProgramFragments>>> {
     val irInterner = IrInterningService()
     val emptyMetadata = object : KotlinSourceFileExports() {
-        override val inverseDependencies = KotlinSourceFileMap<Set<IdSignature>>(emptyMap())
+        override val inverseDependencies = KotlinSourceFileMap<Set<SignatureAndKind>>(emptyMap())
     }
 
     val libFile = KotlinLibraryFile(library)

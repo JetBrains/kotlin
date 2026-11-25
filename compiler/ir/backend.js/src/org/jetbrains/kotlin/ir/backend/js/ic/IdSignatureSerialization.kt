@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -18,11 +20,11 @@ internal class IdSignatureSerialization(private val library: KotlinLibraryHeader
     }
 
     interface IdSignatureICSerializer {
-        fun serializeIdSignature(out: CodedOutputStream, signature: IdSignature)
+        fun serializeIdSignature(out: CodedOutputStream, signature: SignatureAndKind)
     }
 
     interface IdSignatureICDeserializer {
-        fun deserializeIdSignature(input: CodedInputStream): IdSignature
+        fun deserializeIdSignature(input: CodedInputStream): SignatureAndKind
         fun skipIdSignature(input: CodedInputStream)
     }
 
@@ -33,7 +35,24 @@ internal class IdSignatureSerialization(private val library: KotlinLibraryHeader
 
         internal val signatureToIndexMapping = hashMapOf<IdSignature, Int>()
 
-        override fun serializeIdSignature(out: CodedOutputStream, signature: IdSignature) {
+        override fun serializeIdSignature(out: CodedOutputStream, signature: SignatureAndKind) {
+            serializeSignatureWithoutKind(out, signature.signature)
+            out.writeInt32NoTag(signature.kind.ordinal)
+        }
+
+        override fun deserializeIdSignature(input: CodedInputStream): SignatureAndKind {
+            val signature = deserializeSignatureWithoutKind(input)
+            val kindId = input.readInt32()
+            val kind = BinarySymbolData.SymbolKind.entries.getOrNull(kindId) ?: icError("can not read symbol kind $kindId")
+            return SignatureAndKind(signature, kind)
+        }
+
+        override fun skipIdSignature(input: CodedInputStream) {
+            skipSignatureWithoutKind(input)
+            input.readInt32()
+        }
+
+        private fun serializeSignatureWithoutKind(out: CodedOutputStream, signature: IdSignature) {
             val index = signatureToIndexMapping[signature]
             if (index != null) {
                 out.writeInt32NoTag(IdSignatureProtoType.DECLARED_SIGNATURE.id)
@@ -52,13 +71,13 @@ internal class IdSignatureSerialization(private val library: KotlinLibraryHeader
                 }
                 is IdSignature.CompositeSignature -> {
                     out.writeInt32NoTag(IdSignatureProtoType.COMPOSITE_SIGNATURE.id)
-                    serializeIdSignature(out, signature.container)
-                    serializeIdSignature(out, signature.inner)
+                    serializeSignatureWithoutKind(out, signature.container)
+                    serializeSignatureWithoutKind(out, signature.inner)
                 }
                 is IdSignature.AccessorSignature -> {
                     out.writeInt32NoTag(IdSignatureProtoType.ACCESSOR_SIGNATURE.id)
-                    serializeIdSignature(out, signature.propertySignature)
-                    serializeIdSignature(out, signature.accessorSignature)
+                    serializeSignatureWithoutKind(out, signature.propertySignature)
+                    serializeSignatureWithoutKind(out, signature.accessorSignature)
                 }
                 else -> {
                     icError("can not write $signature signature")
@@ -66,7 +85,7 @@ internal class IdSignatureSerialization(private val library: KotlinLibraryHeader
             }
         }
 
-        override fun deserializeIdSignature(input: CodedInputStream): IdSignature {
+        private fun deserializeSignatureWithoutKind(input: CodedInputStream): IdSignature {
             when (val signatureType = input.readInt32()) {
                 IdSignatureProtoType.DECLARED_SIGNATURE.id -> {
                     val index = input.readInt32()
@@ -89,13 +108,13 @@ internal class IdSignatureSerialization(private val library: KotlinLibraryHeader
                     )
                 }
                 IdSignatureProtoType.COMPOSITE_SIGNATURE.id -> {
-                    val containerSignature = deserializeIdSignature(input)
-                    val innerSignature = deserializeIdSignature(input)
+                    val containerSignature = deserializeSignatureWithoutKind(input)
+                    val innerSignature = deserializeSignatureWithoutKind(input)
                     return IdSignature.CompositeSignature(containerSignature, innerSignature)
                 }
                 IdSignatureProtoType.ACCESSOR_SIGNATURE.id -> {
-                    val propertySignature = deserializeIdSignature(input)
-                    val accessorSignature = deserializeIdSignature(input)
+                    val propertySignature = deserializeSignatureWithoutKind(input)
+                    val accessorSignature = deserializeSignatureWithoutKind(input)
                     if (propertySignature !is IdSignature.CommonSignature || accessorSignature !is IdSignature.CommonSignature) {
                         icError("can not read accessor signature")
                     }
@@ -107,7 +126,7 @@ internal class IdSignatureSerialization(private val library: KotlinLibraryHeader
             }
         }
 
-        override fun skipIdSignature(input: CodedInputStream) {
+        private fun skipSignatureWithoutKind(input: CodedInputStream) {
             when (val signatureType = input.readInt32()) {
                 IdSignatureProtoType.DECLARED_SIGNATURE.id -> {
                     input.readInt32()
@@ -120,12 +139,12 @@ internal class IdSignatureSerialization(private val library: KotlinLibraryHeader
                     input.ifTrue(input::readString)
                 }
                 IdSignatureProtoType.COMPOSITE_SIGNATURE.id -> {
-                    skipIdSignature(input)
-                    skipIdSignature(input)
+                    skipSignatureWithoutKind(input)
+                    skipSignatureWithoutKind(input)
                 }
                 IdSignatureProtoType.ACCESSOR_SIGNATURE.id -> {
-                    skipIdSignature(input)
-                    skipIdSignature(input)
+                    skipSignatureWithoutKind(input)
+                    skipSignatureWithoutKind(input)
                 }
                 else -> {
                     icError("can not skip signature type $signatureType")

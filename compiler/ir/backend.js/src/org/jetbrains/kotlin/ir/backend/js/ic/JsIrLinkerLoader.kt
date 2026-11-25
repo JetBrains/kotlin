@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrLinkerInternalApi
-import org.jetbrains.kotlin.backend.common.serialization.and
+import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
@@ -121,7 +120,7 @@ internal class JsIrLinkerLoader(
     private val orderedLibraries: List<KotlinLibrary>,
     private val mainModuleFriends: Collection<KotlinLibrary>,
     private val icContext: PlatformDependentICContext<*, *, *, *>,
-    private val stubbedSignatures: Set<IdSignature>,
+    private val stubbedSignatures: Set<SignatureAndKind>,
     private val loadBodiesOnlyForMainModule: Boolean,
     private val mainLibrary: KotlinLibrary,
 ) {
@@ -212,25 +211,22 @@ internal class JsIrLinkerLoader(
                 val moduleDeserializer = linker.moduleDeserializer(loadingIrModule)
                 for (loadingSrcFileSignatures in loadingSrcFiles.values) {
                     for (loadingSignature in loadingSrcFileSignatures.getExportedSignatures()) {
-                        if (checkIsFunctionInterface(loadingSignature)) {
+                        if (checkIsFunctionInterface(loadingSignature.signature)) {
                             // The signature may refer to function type interface properties (e.g. name) or methods.
                             // It is impossible to detect (without hacks) here which binary symbol is required.
                             // However, when loading a property or a method the entire function type interface is loaded.
                             // And vice versa, a loading of function type interface loads properties and methods as well.
                             // Therefore, load the top level signature only - it must be the signature of function type interface.
-                            val topLevelSignature = loadingSignature.topLevelSignature()
                             @OptIn(IrLinkerInternalApi::class)
-                            moduleDeserializer.findAndEnqueueSymbolOrNull(topLevelSignature and CLASS_SYMBOL)
-                        } else if (loadingSignature in moduleDeserializer) {
-                            moduleDeserializer.addModuleReachableTopLevel(loadingSignature.topLevelSignature())
+                            moduleDeserializer.findAndEnqueueSymbolOrNull(loadingSignature)
+                        } else if (loadingSignature.signature in moduleDeserializer) {
+                            moduleDeserializer.addModuleReachableTopLevel(loadingSignature.signature.topLevelSignature())
                         }
                     }
                 }
 
                 for (stubbedSignature in stubbedSignatures) {
-                    if (stubbedSignature in moduleDeserializer) {
-                        moduleDeserializer.addModuleReachableTopLevel(stubbedSignature.topLevelSignature())
-                    }
+                    moduleDeserializer.addModuleReachableTopLevel(stubbedSignature.signature.topLevelSignature())
                 }
             }
         }

@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.common.serialization.SignatureAndKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrFail
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class IdSignatureHashCalculator(private val icHasher: ICHasher) {
-    private val idSignatureSources = hashMapOf<IdSignature, IdSignatureSource>()
-    private val idSignatureHashes = hashMapOf<IdSignature, ICHash>()
+    private val idSignatureSources = hashMapOf<SignatureAndKind, IdSignatureSource>()
+    private val idSignatureHashes = hashMapOf<SignatureAndKind, ICHash>()
 
     private val annotationContainerHashes = hashMapOf<IrSymbolOwner, ICHash>()
     private val constantHashes = hashMapOf<IrProperty, ICHash>()
@@ -133,11 +133,11 @@ internal class IdSignatureHashCalculator(private val icHasher: ICHasher) {
         return transitiveHash
     }
 
-    fun addAllSignatureSymbols(idSignatureToFile: Map<IdSignature, IdSignatureSource>) {
+    fun addAllSignatureSymbols(idSignatureToFile: Map<SignatureAndKind, IdSignatureSource>) {
         idSignatureSources += idSignatureToFile
     }
 
-    operator fun get(signature: IdSignature): ICHash? {
+    operator fun get(signature: SignatureAndKind): ICHash? {
         val hash = idSignatureHashes[signature]
         if (hash != null) {
             return hash
@@ -153,7 +153,7 @@ internal class IdSignatureHashCalculator(private val icHasher: ICHasher) {
         return signatureHash
     }
 
-    operator fun contains(signature: IdSignature): Boolean {
+    operator fun contains(signature: SignatureAndKind): Boolean {
         return signature in idSignatureSources
     }
 }
