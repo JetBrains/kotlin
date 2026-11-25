@@ -79,7 +79,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.5.0-jre</version>
+            <version>33.8.0-jre</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
