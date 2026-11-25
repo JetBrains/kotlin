@@ -1,6 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: JVM
 // RUN_PIPELINE_TILL: CODEGEN
-// LATEST_LV_DIFFERENCE
 // IGNORE_DEXING
 
 <!CONFLICTING_KLIB_SIGNATURES_ERROR!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun testIdenticalPresenceOfTailrecModifier() {}<!>

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// LATEST_LV_DIFFERENCE
 
 class C {
     <!CONFLICTING_JVM_DECLARATIONS!>fun foo()<!> {}

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.runners
 
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.test.services.PlatformModuleProvider
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.fir.FirWithoutAliasExpansionTestSuppressor
 import org.jetbrains.kotlin.test.services.fir.OnlyTestsWithTypeAliasesMetaConfigurator
+import org.jetbrains.kotlin.test.utils.LATEST_LV_VARIANT
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -33,7 +36,14 @@ abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKo
     }
 }
 
-abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest : AbstractFirDiagnosticTestBase(FirParser.LightTree) {
+/**
+ * A variant of the compiler diagnostic test data with the latest language version: `.latestLV.kt` if it differs from the test data.
+ */
+abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest :
+    AbstractFirDiagnosticTestBase(FirParser.LightTree), ManagedTest {
+    override val variantChain: TestVariantChain
+        get() = listOf(LATEST_LV_VARIANT)
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurationForTestWithLatestLanguageVersion()
@@ -61,7 +71,14 @@ open class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : AbstractFi
     }
 }
 
-open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest : AbstractKotlinCompilerJvmTest() {
+/**
+ * A variant of the multiplatform compiler diagnostic test data with the latest language version, see
+ * [AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest].
+ */
+open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest : AbstractKotlinCompilerJvmTest(), ManagedTest {
+    override val variantChain: TestVariantChain
+        get() = listOf(LATEST_LV_VARIANT)
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
             +CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS

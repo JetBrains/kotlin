@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: CODEGEN
-// LATEST_LV_DIFFERENCE
 // IGNORE_DEXING
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility

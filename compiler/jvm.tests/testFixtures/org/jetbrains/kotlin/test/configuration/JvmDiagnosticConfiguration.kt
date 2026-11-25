@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.LanguageFeatureDisabledMetaConfigurator
-import org.jetbrains.kotlin.test.services.fir.LatestLanguageVersionMetaConfigurator
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
@@ -290,11 +289,6 @@ fun TestConfigurationBuilder.configurationForTestWithLatestLanguageVersion() {
             runIf(feature.enabledInLatestLVTests) { "+${feature.name}" }
         }
     }
-    useMetaTestConfigurators(::LatestLanguageVersionMetaConfigurator)
-    useAfterAnalysisCheckers(
-        ::FirTestDataConsistencyHandler,
-        ::LatestLVIdenticalChecker,
-    )
 }
 
 /**

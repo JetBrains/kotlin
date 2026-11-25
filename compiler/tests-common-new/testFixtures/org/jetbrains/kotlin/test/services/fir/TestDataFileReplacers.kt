@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.fir
 
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_FEATURE_TOGGLED
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.isCustomTestData
 import org.jetbrains.kotlin.test.utils.isLLFirSpecializedTestData
-import org.jetbrains.kotlin.test.utils.latestLVTestDataFile
 import org.jetbrains.kotlin.test.utils.lfDisabledTestDataFile
 import java.io.File
 
@@ -38,17 +36,6 @@ abstract class TestDataFileReplacer(testServices: TestServices) : MetaTestConfig
     protected abstract fun shouldReplaceFile(originalFile: File): Boolean
 
     protected abstract val File.newFile: File
-}
-
-class LatestLanguageVersionMetaConfigurator(testServices: TestServices) : TestDataFileReplacer(testServices) {
-    override fun shouldReplaceFile(originalFile: File): Boolean {
-        return originalFile.useLines { lines ->
-            lines.any { it == "// ${FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE.name}" }
-        }
-    }
-
-    override val File.newFile: File
-        get() = this.latestLVTestDataFile
 }
 
 class LanguageFeatureDisabledMetaConfigurator(testServices: TestServices) : TestDataFileReplacer(testServices) {

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-80492
-// LATEST_LV_DIFFERENCE
 // ^^^ AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest does not invoke Fir2IR and IR Lowerings
 //     so cannot emit IR diagnostics
 

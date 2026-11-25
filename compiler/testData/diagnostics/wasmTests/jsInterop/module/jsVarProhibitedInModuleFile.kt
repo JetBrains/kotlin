@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
-// LATEST_LV_DIFFERENCE
 // ISSUE: KT-88343
 
 // FILE: moduleFile.kt

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // IDE_MODE
-// LATEST_LV_DIFFERENCE
 
 // FILE: test.kt
 package test

@@ -3,7 +3,6 @@
 // LL_FIR_DIVERGENCE
 // TARGET_BACKEND: JVM
 // RUN_PIPELINE_TILL: CODEGEN
-// LATEST_LV_DIFFERENCE
 // IGNORE_DEXING
 
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun testIdenticalPresenceOfTailrecModifier() {}

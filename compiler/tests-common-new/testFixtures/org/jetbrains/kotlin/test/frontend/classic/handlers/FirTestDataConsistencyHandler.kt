@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.frontend.classic.handlers
 
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_FEATURE_TOGGLED
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.RUN_PIPELINE_TILL
 import org.jetbrains.kotlin.test.directives.model.Directive
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.managedTestData
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.utils.isLatestLVTestData
@@ -29,10 +29,12 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
 
     override fun check(thereWereFailures: Boolean) {
         val moduleStructure = testServices.moduleStructure
-        val testData = moduleStructure.originalTestDataFiles.first()
-        if (testData.extension == "kts") return
+        // A managed test checks the variant it writes, which `updateTestData` might have created from the actual output of this run, or
+        // deleted as redundant.
+        val testData = testServices.managedTestData?.writeTargetFile ?: moduleStructure.originalTestDataFiles.first()
+        if (testData.extension == "kts" || !testData.exists()) return
         val directives = moduleStructure.allDirectives
-        if (LATEST_LV_DIFFERENCE in directives && testData.isLatestLVTestData) {
+        if (testData.isLatestLVTestData) {
             checkFirAndLatestLVTestData(testData)
         }
         if (LANGUAGE_FEATURE_TOGGLED in directives && testData.isLfDisabledTestData) {

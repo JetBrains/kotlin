@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: CODEGEN
-// LATEST_LV_DIFFERENCE
 // IGNORE_DEXING
 // LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility
 data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val x: Int) {

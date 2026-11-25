@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // ^this test requires deserialization of modules, and latestLV tests treat them as source dependencies
 // ISSUE: KT-87507
 // RUN_PIPELINE_TILL: FRONTEND

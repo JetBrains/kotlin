@@ -60,13 +60,6 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val LATEST_LV_DIFFERENCE by directive(
-        description = """
-            Diagnostics differs between latest stable and latest language version
-            Separate file for latest LV should be checked
-        """.trimIndent()
-    )
-
     val USE_LATEST_LANGUAGE_VERSION by directive(
         description = """
             Indicates that test is run with latest language version.

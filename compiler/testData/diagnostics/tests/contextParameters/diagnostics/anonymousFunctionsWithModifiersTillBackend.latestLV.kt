@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ContextParameters
-// LATEST_LV_DIFFERENCE
 // ^^^ AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest does not invoke Fir2IR and IR Lowerings
 //     so cannot emit IR diagnostics
 val t2 = context(a: String) tailrec fun() {}

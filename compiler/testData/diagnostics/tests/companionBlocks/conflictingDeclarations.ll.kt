@@ -3,7 +3,6 @@
 // LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// LATEST_LV_DIFFERENCE
 
 class C {
     fun foo() {}

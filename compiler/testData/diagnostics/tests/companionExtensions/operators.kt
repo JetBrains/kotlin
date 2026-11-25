@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CompanionBlocks +CompanionExtensions +CollectionLiterals
 // WITH_STDLIB

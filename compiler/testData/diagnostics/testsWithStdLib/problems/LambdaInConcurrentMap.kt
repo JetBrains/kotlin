@@ -2,7 +2,6 @@
 // ISSUE: KT-8761
 // FULL_JDK
 // FIR_DUMP
-// LATEST_LV_DIFFERENCE
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap

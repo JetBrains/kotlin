@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
-// LATEST_LV_DIFFERENCE
 
 annotation class Anno(val x: String)
 
