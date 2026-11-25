@@ -42,7 +42,6 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
@@ -776,26 +775,21 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
 
     @Test
     fun `Missing header file doesn't break the compilation`() {
-        try {
-            newSourceModules {
-                addRegularModule(name = "lib") {
-                    sourceFileAddend(""" fun foo() = "42" """)
-                }
-                addRegularModule("main") {
-                    dependsOn("lib")
-                    sourceFileAddend(""" fun main() = println(lib.foo()) """)
-                }
-            }.compileToKlibsViaCli { _, successKlib ->
-                val generatedKlibPath = successKlib.resultingArtifact.klibFile
-                generatedKlibPath.resolve("default/linkdata/module").delete()
-
-                val generatedKlib = KlibLoader { libraryPaths(generatedKlibPath) }.load().librariesStdlibFirst.single()
-                assumeTrue(generatedKlib.metadata.moduleHeaderData == null)
+        newSourceModules {
+            addRegularModule(name = "lib") {
+                sourceFileAddend(""" fun foo() = "42" """)
             }
-        } catch (e: NoSuchFileException) {
-            return
+            addRegularModule("main") {
+                dependsOn("lib")
+                sourceFileAddend(""" fun main() = println(lib.foo()) """)
+            }
+        }.compileToKlibsViaCli { _, successKlib ->
+            val generatedKlibPath = successKlib.resultingArtifact.klibFile
+            generatedKlibPath.resolve("default/linkdata/module").delete()
+
+            val generatedKlib = KlibLoader { libraryPaths(generatedKlibPath) }.load().librariesStdlibFirst.single()
+            assumeTrue(generatedKlib.metadata.moduleHeaderData == null)
         }
-        assert(false) { "Expected an exception" }
     }
 
     @Test
