@@ -181,4 +181,19 @@ class CompilerPluginsIT : KotlinMavenTestBase() {
             }
         }
     }
+
+    @MavenTest
+    @DisplayName("KT-91998: JPA presets for both no-arg and all-open work when the shaded kotlin-maven-noarg jar is the only -Xplugin entry")
+    fun testNoArgJpaStandaloneShadedJar(mavenVersion: TestVersions.Maven) {
+        testProject("test-noarg-jpa-standalone-shaded-jar", mavenVersion) {
+            build(
+                "package",
+                expectedToFail = false
+            ) {
+                assertPluginApplied("jpa")
+                assertPluginApplied("all-open")
+                assertTestsPassed(2)
+            }
+        }
+    }
 }
