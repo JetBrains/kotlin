@@ -20,7 +20,12 @@ import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
+import org.jetbrains.kotlin.buildtools.api.UnsupportedToolchainException
+import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
@@ -157,6 +162,9 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             }
         } catch (e: CompilerArgumentsParseException) {
             throw e
+        } catch (e: UnsupportedToolchainException) {
+            // The fallback would use the same compiler, so it cannot provide the toolchain either
+            throw e
         } catch (t: Throwable) {
             fallback(t, null)
         }
@@ -237,6 +245,20 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         } catch (e: CompilerArgumentsParseException) {
             reportArgumentsRejected(buildSession, e.message)
             throw FailedCompilationException(e.message.orEmpty(), e)
+        } catch (e: UnsupportedToolchainException) {
+            // The diagnostic is fatal, so reporting it fails the task
+            parameters.toolingDiagnosticsCollector.orNull?.report(
+                parameters,
+                KotlinToolingDiagnostics.KotlinCompilerPlatformUnsupported(
+                    taskPath,
+                    e.toolchainType.platformName,
+                    e.compilerVersion,
+                    workArguments.kotlinPluginVersion,
+                    e,
+                ),
+            )
+            // Tasks created via KotlinJvmFactory and the Wasm binary transform have no collector
+            throw e
         } catch (e: FailedCompilationException) {
             // Restore outputs only for CompilationErrorException or OOMErrorException (see GradleKotlinCompilerWorkAction.execute)
             backup?.tryRestoringOnRecoverableException(e) { restoreAction ->
@@ -391,3 +413,12 @@ internal object SharedApiClassesClassLoaderProvider : ParentClassLoaderProvider 
 
     override fun equals(other: Any?) = other is SharedApiClassesClassLoaderProvider
 }
+
+private val Class<out KotlinToolchains.Toolchain>.platformName: String
+    get() = when (this) {
+        JvmPlatformToolchain::class.java -> "Kotlin/JVM"
+        JsPlatformToolchain::class.java -> "Kotlin/JS"
+        WasmPlatformToolchain::class.java -> "Kotlin/Wasm"
+        KotlinMetadataPlatformToolchain::class.java -> "Kotlin metadata"
+        else -> simpleName
+    }
