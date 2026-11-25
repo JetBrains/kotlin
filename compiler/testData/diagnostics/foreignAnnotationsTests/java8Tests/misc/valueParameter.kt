@@ -1,8 +1,6 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
-// MUTE_FOR_PSI_CLASS_FILES_READING
 // SOURCE_RETENTION_ANNOTATIONS
 // ^@ParameterName on function type parameters gets lost turning 'x' into 'p0'.
-// ^ KT-68389
 
 // FILE: ValueParameter.java
 

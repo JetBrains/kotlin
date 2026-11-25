@@ -1,6 +1,5 @@
 // JSPECIFY_STATE: strict
 // LANGUAGE: +TypeEnhancementImprovementsInStrictMode
-// MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: Foo.java
 import org.jspecify.nullness.*;

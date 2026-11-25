@@ -105,6 +105,9 @@ These tests are managed by the [test data manager](../../../analysis/test-data-m
   `wasmTests/` and `wasmWasiTests/` (`LLJsDiagnosticsFe10TestGenerated`, `LLWasmJsDiagnosticsFe10TestGenerated`, …).
 - The spec diagnostic tests over `compiler/tests-spec/testData/diagnostics`: `FirLightTreeDiagnosticTestSpecGenerated` (golden),
   `LLSpecTestGenerated`, `LLReversedSpecTestGenerated`.
+- The foreign annotations tests over `foreignAnnotationsTests/`: `FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated` (golden),
+  `FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated` and
+  `FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated`.
 - The diagnostic tests of the compiler plugins with their LL counterparts.
 
 They are updated and checked only with the [wrapper script](../../../analysis/AGENTS.md#working-with-test-data): `update` updates their test
@@ -121,6 +124,8 @@ The `.kt` file is the golden test data; a test whose output differs from it uses
 | Compiler, latest language version      | `.latestLV.kt` → `.kt`                                                      |
 | Compiler, toggled language feature off | `.disabled.kt` → `.kt`                                                      |
 | Compiler, no type alias expansion      | `.noAliasExpansion.kt` → `.kt`                                              |
+| Foreign annotations, compiled Java     | `.compiledJava.kt` → `.kt`                                                  |
+| Foreign annotations, compiled as PSI   | `.psiClassReading.kt` → `.compiledJava.kt` → `.kt`                          |
 | LL                                     | `.ll.kt` → `.kt`                                                            |
 | LL, reversed resolution order          | `.reversed.kt` → `.ll.kt` → `.kt`                                           |
 | LL, partial body analysis              | `.partialBody.kt` → `.ll.kt` → `.kt`                                        |

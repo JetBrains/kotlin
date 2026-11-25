@@ -1,8 +1,6 @@
 // NULLABILITY_ANNOTATIONS: @io.reactivex.rxjava3.annotations:strict, @org.eclipse.jdt.annotation:warn
 // LANGUAGE: +SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced
 // SOURCE_RETENTION_ANNOTATIONS
-// MUTE_FOR_PSI_CLASS_FILES_READING
-// ^because annotations don't allow type parameter use.
 // ISSUE: KT-63209
 
 // FILE: A1.java

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.runners
 
+import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.codegen.forTestCompile.JavaForeignAnnotationType
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.FirParser
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_THIRD_PARTY_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.DeprecatedTestFacade
+import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
@@ -35,16 +38,36 @@ import org.jetbrains.kotlin.test.services.jvm.PsiClassFilesReadingForCompiledJav
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-enum class ForeignAnnotationsTestKind(val compiledJava: Boolean, val psiClassLoading: Boolean) {
-    SOURCE(false, false),
-    COMPILED_JAVA(true, false),
-    COMPILED_JAVA_WITH_PSI_CLASS_LOADING(true, true)
+/**
+ * The variant of the foreign annotations test data for Java compiled to class files, e.g., `foo.compiledJava.kt`.
+ */
+private const val COMPILED_JAVA_VARIANT = "compiledJava"
+
+/**
+ * The variant of the foreign annotations test data for compiled Java read as PSI, e.g., `foo.psiClassReading.kt`.
+ */
+private const val PSI_CLASS_READING_VARIANT = "psiClassReading"
+
+/**
+ * [variantChain] is the variant chain of the test data for the kind: the tests against Java sources are the golden ones.
+ */
+enum class ForeignAnnotationsTestKind(val compiledJava: Boolean, val psiClassLoading: Boolean, val variantChain: TestVariantChain) {
+    SOURCE(compiledJava = false, psiClassLoading = false, variantChain = emptyList()),
+    COMPILED_JAVA(compiledJava = true, psiClassLoading = false, variantChain = listOf(COMPILED_JAVA_VARIANT)),
+    COMPILED_JAVA_WITH_PSI_CLASS_LOADING(
+        compiledJava = true,
+        psiClassLoading = true,
+        variantChain = listOf(COMPILED_JAVA_VARIANT, PSI_CLASS_READING_VARIANT),
+    ),
 }
 
 abstract class AbstractForeignAnnotationsTestBase(
     private val kind: ForeignAnnotationsTestKind,
     private val parser: FirParser,
-) : AbstractKotlinCompilerTest() {
+) : AbstractKotlinCompilerTest(), ManagedTest {
+    override val variantChain: TestVariantChain
+        get() = kind.variantChain
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
@@ -102,6 +125,7 @@ abstract class AbstractForeignAnnotationsTestBase(
         }
 
         useFailureSuppressors(::FirFailingTestSuppressor)
+        useAfterAnalysisCheckers(::FirTestDataConsistencyHandler)
 
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
 

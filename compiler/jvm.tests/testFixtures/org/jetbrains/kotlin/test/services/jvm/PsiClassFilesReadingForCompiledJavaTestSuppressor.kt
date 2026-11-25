@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.test.services.jvm
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.MUTE_FOR_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.baseTestDataFile
 import org.jetbrains.kotlin.test.utils.isDirectiveDefined
 
 class PsiClassFilesReadingForCompiledJavaTestSuppressor(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override fun shouldSkipTest(): Boolean {
-        val testFile = testServices.moduleStructure.originalTestDataFiles.first()
-        return testFile.isDirectiveDefined("// ${MUTE_FOR_PSI_CLASS_FILES_READING.name}")
+        // The test data rather than the variant the test reads, so that a variant diverging from it is still checked
+        return testServices.baseTestDataFile.isDirectiveDefined("// ${MUTE_FOR_PSI_CLASS_FILES_READING.name}")
     }
 }
