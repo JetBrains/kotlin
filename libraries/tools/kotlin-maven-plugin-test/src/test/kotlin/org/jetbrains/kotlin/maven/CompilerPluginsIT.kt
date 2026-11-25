@@ -167,4 +167,18 @@ class CompilerPluginsIT : KotlinMavenTestBase() {
             }
         }
     }
+
+    @MavenTest
+    @DisplayName("KT-91998: no-arg plugin works when the shaded kotlin-maven-noarg jar is the only -Xplugin entry")
+    fun testNoArgStandaloneShadedJar(mavenVersion: TestVersions.Maven) {
+        testProject("test-noarg-standalone-shaded-jar", mavenVersion) {
+            build(
+                "package",
+                expectedToFail = false
+            ) {
+                assertPluginApplied("no-arg")
+                assertTestsPassed(1)
+            }
+        }
+    }
 }
