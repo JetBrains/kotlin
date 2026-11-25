@@ -193,7 +193,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             assertContains(
                 catchBuildFailures<InvalidUserCodeException>().buildAndReturn(
                     "tasks", "-P${produceCCSerializationError}",
-                ).unwrap().single().message!!,
+                ).unwrapSummaries().single().message!!,
                 "Querying the mapped value of",
             )
 
@@ -229,11 +229,11 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                 project.tasks.register("noBuildFailure") {}
             }
             assertEquals(
-                CaughtBuildFailure.Expected(setOf(a1, a2)),
+                setOf(a1, a2),
                 catchBuildFailures<A>().buildAndReturn(
                     "throwA",
                     deriveBuildOptions = { defaultBuildOptions.copy(continueAfterFailure = true) }
-                )
+                ).unwrap()
             )
             assert(
                 assertIsInstance<CaughtBuildFailure.Unexpected<A>>(
@@ -253,8 +253,8 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                 throw A()
             }
             assertEquals(
-                CaughtBuildFailure.Expected(setOf(A())),
-                catchBuildFailures<A>().buildAndReturn("tasks")
+                setOf(A()),
+                catchBuildFailures<A>().buildAndReturn("tasks").unwrap()
             )
         }
 
@@ -603,19 +603,16 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         version: GradleVersion,
     ) {
         // Bare template build script should not see KGP
-        // UnknownPluginException serialVersionUID has changed in Gradle 9.7 causing 'local class incompatible' error on older
-        // Gradle versions
-        if (version >= GradleVersion.version(TestVersions.Gradle.G_9_7)) {
-            project(bareTemplate, version) {
-                buildScriptInjection {
-                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
-                }
-                assertIsInstance<UnknownPluginException>(
-                    catchBuildFailures<UnknownPluginException>().buildAndReturn(
-                        "help",
-                    ).unwrap().single()
-                )
+        project(bareTemplate, version) {
+            buildScriptInjection {
+                project.plugins.apply("org.jetbrains.kotlin.multiplatform")
             }
+            assertEquals(
+                setOf(UnknownPluginException::class.java.name),
+                catchBuildFailures<UnknownPluginException>().buildAndReturn(
+                    "help",
+                ).unwrapSummaries().mapTo(mutableSetOf()) { it.className }
+            )
         }
 
         // But if we inject KGP everything should work
