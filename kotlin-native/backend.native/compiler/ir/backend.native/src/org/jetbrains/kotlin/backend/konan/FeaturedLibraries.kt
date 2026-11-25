@@ -30,11 +30,16 @@ internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageC
  * that list: two libraries that no dependency edge relates still swap if the CLI passes them in the other
  * order.
  */
-internal fun ModuleDescriptor.getExportedDependenciesInCanonicalRTO(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> {
-    return getExportedDependencies(config).sortedBy { module ->
-        config.klibDag.libraryReverseTopoRank.getValue((module.klibModuleOrigin as DeserializedKlibModuleOrigin).library)
-    }
-}
+internal fun ModuleDescriptor.getExportedDependenciesInCanonicalRTO(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
+        getExportedDependencies(config).sortedInCanonicalRTO(config)
+
+/**
+ * Sorts library modules in the canonical reverse topological order of [getExportedDependenciesInCanonicalRTO].
+ */
+internal fun Collection<ModuleDescriptor>.sortedInCanonicalRTO(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
+        sortedBy { module ->
+            config.klibDag.libraryReverseTopoRank.getValue((module.klibModuleOrigin as DeserializedKlibModuleOrigin).library)
+        }
 
 internal fun ModuleDescriptor.getIncludedLibraryDescriptors(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
         getDescriptorsFromLibraries(config.loadedKlibs.included.toSet())

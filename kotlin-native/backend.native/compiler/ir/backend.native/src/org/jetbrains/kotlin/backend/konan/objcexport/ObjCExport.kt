@@ -66,8 +66,8 @@ internal fun produceObjCExportInterface(
     } else {
         null
     }
-    val moduleDescriptors = (listOfNotNull(moduleDescriptor, libraryToCacheModule) +
-            moduleDescriptor.getExportedDependenciesInCanonicalRTO(config)).distinct()
+    val moduleDescriptors = listOf(moduleDescriptor) +
+            (listOfNotNull(libraryToCacheModule) + moduleDescriptor.getExportedDependencies(config)).toSet().sortedInCanonicalRTO(config)
     val entryPoints = config.objcEntryPoints
     val expandEntryPoints = config.configuration.getBoolean(BinaryOptions.objcExportExpandEntryPoints)
     val effectiveEntryPoints = if (entryPoints != ObjCEntryPoints.ALL && expandEntryPoints) {
