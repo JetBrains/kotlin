@@ -477,7 +477,6 @@ fun Project.checkCompatibilityCoverage(
 
 tasks.register("resolveDependencies") {
     description = "Resolves dependencies (for dependency verification or populating caches) in detached configurations."
-    notCompatibleWithConfigurationCache("Uses project during task execution")
     doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
     doLast {
         platforms.flatMap { platform -> platform.configurationsCache.values }.forEach { it.resolve() }
