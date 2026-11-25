@@ -101,6 +101,14 @@ val List<Int>.extReverseListIntProp
 
 fun mutableListOf(vararg elements: Int): MutableList<Int> = elements.toMutableList()
 
+interface CustomList<T> : List<T>
+
+private class CustomListImpl<T>(impl: List<T>) : CustomList<T>, List<T> by impl
+
+fun customListOf(vararg elements: Int): CustomList<Int> = CustomListImpl(elements.asList())
+
+fun reverseCustomListInt(l: CustomList<Int>): CustomList<Int> = CustomListImpl(l.reversed())
+
 // FILE: objcInterop.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
