@@ -45,6 +45,17 @@ public class NoArgsAndRequiredArgsDifferent {
     private String name;
 }
 
+// FILE: NoArgsAndRequiredArgsNonClashing.java
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
+// No field is required, so both annotations ask for the same `of()` factory
+@NoArgsConstructor(staticName = "of")
+@RequiredArgsConstructor(staticName = "create")
+public class NoArgsAndRequiredArgsNonClashing {
+    private final String name;
+}
+
 // FILE: test.kt
 import lombok.NoArgsConstructor
 import lombok.RequiredArgsConstructor
@@ -61,6 +72,10 @@ fun main() {
     AllArgsAndRequiredArgsDifferent.create("name")
     NoArgsAndRequiredArgsDifferent.of()
     NoArgsAndRequiredArgsDifferent.create()
+    NoArgsAndRequiredArgsNonClashing.of()
+    NoArgsAndRequiredArgsNonClashing.<!NO_VALUE_FOR_PARAMETER!>create<!>()
+    NoArgsAndRequiredArgsNonClashing.of(<!TOO_MANY_ARGUMENTS!>"name"<!>)
+    NoArgsAndRequiredArgsNonClashing.create("name")
     KotlinNoArgsAndRequiredArgs.of()
 }
 
