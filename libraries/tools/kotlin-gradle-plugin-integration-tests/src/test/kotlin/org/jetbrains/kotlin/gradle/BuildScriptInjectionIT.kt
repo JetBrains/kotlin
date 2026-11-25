@@ -29,12 +29,12 @@ import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
 import org.jetbrains.kotlin.gradle.util.computeTransformedLibraryVersionChecksum
-import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildInfrastructure
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.test.*
 
-@MustRunOnChangesInGradle
+@MustRunOnChangesInBuildInfrastructure // injected build scripts are compiled using current repo Gradle version
 @MppGradlePluginTests
 class BuildScriptInjectionIT : KGPBaseTest() {
 
