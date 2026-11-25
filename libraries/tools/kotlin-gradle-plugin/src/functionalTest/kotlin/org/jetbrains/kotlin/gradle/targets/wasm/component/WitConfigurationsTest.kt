@@ -9,13 +9,16 @@ package org.jetbrains.kotlin.gradle.targets.wasm.component
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
+import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WIT_SECONDARY_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.targets.wasm.component.internal.witDirectories
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -23,7 +26,11 @@ import org.jetbrains.kotlin.gradle.util.enableDefaultJsDomApiDependency
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.junit.jupiter.api.Test
+import java.io.File
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class WitConfigurationsTest {
 
@@ -48,7 +55,7 @@ class WitConfigurationsTest {
     @Test
     fun `WIT declarations are not selected for the runtime usage even with the klib packaging attribute`() {
         val (lib, app) = buildLibAndApp()
-        lib.configurations.getByName("wasmWasiRuntimeElements").outgoing.variants.getByName("wit").attributes.attribute(
+        lib.configurations.getByName("wasmWasiRuntimeElements").outgoing.variants.getByName(WIT_SECONDARY_VARIANT_NAME).attributes.attribute(
             KlibPackaging.ATTRIBUTE,
             lib.objects.named(KlibPackaging::class.java, KlibPackaging.PACKED),
         )
@@ -69,13 +76,50 @@ class WitConfigurationsTest {
         )
     }
 
+    /**
+     * The `wit` directory of a project dependency is exposed even if it doesn't exist,
+     * [WasmComponentizeTask] skips such directories.
+     */
     @Test
-    fun `WIT directories of a WASI project dependency are its wit directory`() {
+    fun `WIT directories of a WASI project dependency are its wit directory even if it does not exist`() {
         val (lib, app) = buildLibAndApp()
+        val libWitDirectory = lib.layout.projectDirectory.dir(WIT_DIRECTORY_NAME).asFile
+        assertFalse(libWitDirectory.exists())
 
         assertEquals(
-            setOf(lib.layout.projectDirectory.dir(WIT_DIRECTORY_NAME).asFile),
+            setOf(libWitDirectory),
             app.wasmWasiMainCompilation().witDirectories(app).files,
+        )
+    }
+
+    /**
+     * A klib file dependency has no usage, so it must still be accepted by [org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitExtractionTransform].
+     */
+    @Test
+    fun `WIT directories of a klib file dependency are extracted from the klib`() {
+        val app = buildProjectWithMPP(preApplyCode = { disableDefaultDependencies() })
+        val klib = app.layout.buildDirectory.file("lib.klib").get().asFile
+        klib.writeZip(
+            "default/manifest" to "unique_name=lib",
+            "$WIT_DIRECTORY_NAME/lib.wit" to "package my:lib;",
+        )
+        app.kotlin {
+            wasmWasi { wasmtime() }
+            sourceSets.getByName("wasmWasiMain").dependencies {
+                implementation(app.files(klib))
+            }
+        }
+        app.evaluate()
+
+        val witDirectories = app.wasmWasiMainCompilation().witDirectories(app).files
+
+        assertEquals(
+            listOf("lib.klib-$WIT_DIRECTORY_NAME"),
+            witDirectories.map { it.name },
+        )
+        assertEquals(
+            mapOf("lib.wit" to "package my:lib;"),
+            witDirectories.single().walk().filter { it.isFile }.associate { it.name to it.readText() },
         )
     }
 
@@ -136,9 +180,9 @@ class WitConfigurationsTest {
         val stdlibImplResolvable = configurations.resolvable("wasmWasiStdlibImplResolvable") { configuration ->
             configuration.extendsFrom(stdlibImpl.get())
             configuration.attributes { attributes ->
-                attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_RUNTIME))
-                attributes.attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "wasm")
-                attributes.attribute(Attribute.of("org.jetbrains.kotlin.wasm.target", String::class.java), "wasi")
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(KotlinUsages.KOTLIN_RUNTIME))
+                attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
+                attributes.attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, KotlinWasmTargetAttribute.wasi)
             }
         }
         dependencies.add(stdlibImpl.name, dependencies.project(mapOf("path" to ":lib")))
@@ -152,5 +196,16 @@ class WitConfigurationsTest {
     private fun Project.disableDefaultDependencies() {
         enableDefaultStdlibDependency(false)
         enableDefaultJsDomApiDependency(false)
+    }
+
+    private fun File.writeZip(vararg entries: Pair<String, String>) {
+        parentFile.mkdirs()
+        ZipOutputStream(outputStream()).use { zip ->
+            for ((path, content) in entries) {
+                zip.putNextEntry(ZipEntry(path))
+                zip.write(content.toByteArray())
+                zip.closeEntry()
+            }
+        }
     }
 }
