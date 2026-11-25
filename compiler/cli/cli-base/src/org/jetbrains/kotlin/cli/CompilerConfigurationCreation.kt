@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
-import org.jetbrains.kotlin.diagnostics.LightTreeParseTreeKind
-import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
+import org.jetbrains.kotlin.syntax.LightTreeParseTreeKind
+import org.jetbrains.kotlin.syntax.ParseTreeKind
 
 val DEFAULT_PARSE_TREE_KIND: ParseTreeKind = LightTreeParseTreeKind
 

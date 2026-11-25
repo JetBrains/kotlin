@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 
 class PsiTestParser(disposable: Disposable) : AbstractTestParser<PsiElement>(ParseMode.Full) {
     @OptIn(CoreEnvironmentDeprecation::class)

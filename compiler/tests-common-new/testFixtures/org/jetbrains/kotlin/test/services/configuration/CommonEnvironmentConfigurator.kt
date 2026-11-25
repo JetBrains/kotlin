@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
-import org.jetbrains.kotlin.diagnostics.LightTreeParseTreeKind
-import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.fir.session.FirAbstractSessionFactory
-import org.jetbrains.kotlin.fir.syntax.KmpParseTreeKind
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isMultiplatformWeb
+import org.jetbrains.kotlin.syntax.KmpParseTreeKind
+import org.jetbrains.kotlin.syntax.LightTreeParseTreeKind
+import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION

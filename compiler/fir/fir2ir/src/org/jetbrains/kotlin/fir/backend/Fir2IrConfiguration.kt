@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.cli.parseTreeKind
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.diagnostics.ParseTreeKind
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.syntax.ParseTreeKind
 
 /**
  * @param allowNonCachedDeclarations

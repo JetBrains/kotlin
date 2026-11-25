@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.syntax.NoParseTreeKind
+import org.jetbrains.kotlin.syntax.ParseTreeKind
 
 /**
  * The diagnostic context is required for creating and reporting `KtDiagnostic` instances, and it is used for the following purposes:

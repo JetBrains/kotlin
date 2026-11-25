@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.util.isAnnotationWithEqualFqName
 import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.syntax.ParseTreeKind
 import java.io.File
 import java.util.*
 

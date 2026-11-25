@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
-import org.jetbrains.kotlin.diagnostics.NoParseTreeKind
 import org.jetbrains.kotlin.diagnostics.NonSuppressingDiagnosticContext
 import org.jetbrains.kotlin.diagnostics.report
 import org.jetbrains.kotlin.config.reportLog as reportLogAlias
+import org.jetbrains.kotlin.syntax.NoParseTreeKind
 
 fun CompilerConfiguration.report(
     factory: KtSourcelessDiagnosticFactory,

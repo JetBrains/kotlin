@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
-import org.jetbrains.kotlin.diagnostics.ParseTreeKind
+import org.jetbrains.kotlin.syntax.ParseTreeKind
 
 object FrontendConfigurationKeys {
     // Container of all registered diagnostic factories.

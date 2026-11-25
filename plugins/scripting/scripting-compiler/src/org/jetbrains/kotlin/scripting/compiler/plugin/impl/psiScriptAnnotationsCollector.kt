@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
-import org.jetbrains.kotlin.diagnostics.PsiParseTreeKind
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -53,6 +52,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingCompilerExtens
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.SingleScriptCompilationConfigurationProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.withCompilationConfigurationProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
+import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.ResultWithDiagnostics
