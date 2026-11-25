@@ -23,8 +23,8 @@ data class GenericBoundedByDataClass<T : Generic<String>>(val x: T)
 class C(
     val disabled: <!PARCELABLE_TYPE_NOT_SUPPORTED!>Accepted<!>,
     val a: @DataClass Accepted,
-    val b: <!PARCELABLE_TYPE_NOT_SUPPORTED!>@DataClass PrivateField<!>,
-    val c: <!PARCELABLE_TYPE_NOT_SUPPORTED!>@DataClass PrivateConstructor<!>,
+    val b: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass PrivateField<!>,
+    val c: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass PrivateConstructor<!>,
     val d: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass UnsupportedField<!>,
     val e: @DataClass Generic<String>,
     val f: @DataClass GenericOut<String>,

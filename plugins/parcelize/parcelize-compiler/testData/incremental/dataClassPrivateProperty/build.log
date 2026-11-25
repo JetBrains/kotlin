@@ -7,4 +7,4 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Type is not directly supported by 'Parcelize'. Annotate the parameter type with '@RawValue' if you want it to be serialized using 'writeValue()'.
+Type is not directly supported by 'Parcelize' because it contains an instance of Data. Add the '@TypeParceler<Data, ...>' annotation to provide the missing serialization logic.
