@@ -13,6 +13,6 @@ data class Secret(private val x: Int)
 
 @Parcelize
 class P(
-    val secret: <!PARCELABLE_TYPE_NOT_SUPPORTED!>@DataClass Secret<!>,
+    val secret: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass Secret<!>,
     val rawSecret: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@RawValue @DataClass Secret<!>,
 ) : Parcelable
