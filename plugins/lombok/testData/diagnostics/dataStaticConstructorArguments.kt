@@ -11,7 +11,7 @@ public class A {
 
 // FILE: test.kt
 fun main() {
-    val a = A(<!TOO_MANY_ARGUMENTS!>1<!>, <!TOO_MANY_ARGUMENTS!>"1"<!>)
+    val a = <!INVISIBLE_REFERENCE!>A<!>(1, "1")
     val b = <!INVISIBLE_REFERENCE!>A<!>()
 
     val c = A.of(1, "1")

@@ -132,9 +132,28 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         return any { it is T && it.symbol.checkParametersClashing(valueParametersCount) }
     }
 
-    fun MutableList<FirFunction>.addConstructorOrFactoryIfNonClashing(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext) {
+    /**
+     * Depending on parameters, adds either a constructor or a static factory function to a given list.
+     *
+     * [classSymbol] is a symbol of the class to which the constructor or static factory function is added.
+     * Don't be confused with `targetClassSymbol` inside the function: it's a symbol of the class which owns the annotation.
+     * Either `targetClassSymbol === classSymbol`, or `targetClassSymbol.companionObjectSymbol === classSymbol`.
+     *
+     * If [privateConstructorMode] is false, then everything depends on a static name from a constructor annotation.
+     * Without it, a constructor is generated. With it, a static factory function is generated.
+     *
+     * If [privateConstructorMode] is true, it means "generate a private constructor despite a given static name".
+     * If a static name isn't given, or if we are in a Kotlin companion class, we don't generate anything.
+     */
+    fun MutableList<FirFunction>.addConstructorOrFactoryIfNonClashing(
+        classSymbol: FirClassSymbol<*>,
+        context: MemberGenerationContext,
+        privateConstructorMode: Boolean,
+    ) {
+        if (privateConstructorMode && classSymbol.isCompanion) return
         val [constructorInfo: T, targetClassSymbol: FirClassSymbol<*>] = extractConstructorInfoAndTargetClassSymbol(classSymbol) ?: return
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) }
+        if (privateConstructorMode && staticName == null) return
 
         var outerClassSymbolForInnerClass: FirClassSymbol<*>? = null
         when {
@@ -168,7 +187,9 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             }
         }
 
-        val visibility = constructorInfo.accessLevel.toVisibility(classSymbol) ?: return
+        val visibility =
+            if (privateConstructorMode) Visibilities.Private
+            else constructorInfo.accessLevel.toVisibility(classSymbol) ?: return
         val variablesForParameters = getVariablesForParameters(targetClassSymbol)
         val valuesParameterCount = variablesForParameters.size
         val hasJavaOrigin = classSymbol.hasJavaOrigin
@@ -176,11 +197,10 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         var javaTypeSubstitutor: JavaTypeSubstitutor = JavaTypeSubstitutor.Empty
         var kotlinTypeSubstitutor: ConeSubstitutor = ConeSubstitutor.Empty
         val constructorOrFactorySymbol: FirFunctionSymbol<*>
-        var constructorOrFactoryVisibility: Visibility = visibility
 
-        val builder = if (staticName == null || (!hasJavaOrigin && !classSymbol.isCompanion)) {
-            // Generate a regular constructor in Kotlin classes even if `staticName` is specified
-            // Because in the latter case, we create a companion object with a function that calls the regular constructor
+        val builder = if (staticName == null || privateConstructorMode) {
+            // Companion objects cannot generate constructors, they should be in owner classes
+            if (classSymbol.isCompanion) return
             if (checkClashing<FirConstructor>(valuesParameterCount)) return
 
             var hasConflict = false
@@ -211,13 +231,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 return
             }
 
-            // With `staticName`, the access level is the static factory's, and the constructor behind it is private,
-            // as Lombok makes it for a Java class (KT-89212).
-            // NB: in this branch we always generate a constructor, not a factory.
-            if (staticName != null) {
-                constructorOrFactoryVisibility = Visibilities.Private
-            }
-
             // The parameters of a Kotlin class come from its primary constructor (see `RequiredArgsConstructorGeneratorPart`),
             // which the clash checks above have just found, so only a no-args constructor can get this far.
             require(hasJavaOrigin || variablesForParameters.isEmpty()) {
@@ -228,6 +241,8 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             constructorOrFactorySymbol = builder.symbol
             builder
         } else {
+            // In Kotlin, static factory functions should be generated in companion objects.
+            if (!classSymbol.isCompanion && !hasJavaOrigin) return
             if (checkClashing<FirNamedFunction>(valuesParameterCount)) return
             if (staticFactoryNameIsTaken(targetClassSymbol)) return
 
@@ -263,7 +278,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             builder.applyStatusAndValueParametersToFactoryOrConstructorAndBuildIt(
                 targetClassSymbol,
                 constructorOrFactorySymbol,
-                constructorOrFactoryVisibility,
+                visibility,
                 // Don't specify the property for Kotlin static constructors because Kotlin doesn't support companion blocks yet.
                 // As a workaround, generate a function inside a companion object and mark it with `@JvmStatic`
                 // (in the way as Logger generator works).
@@ -393,7 +408,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
     private fun FirFunctionBuilder.applyStatusAndValueParametersToFactoryOrConstructorAndBuildIt(
         targetClassSymbol: FirClassSymbol<*>,
         constructorOrFactorySymbol: FirFunctionSymbol<*>,
-        constructorOrFactoryVisibility: Visibility,
+        visibility: Visibility,
         isStatic: Boolean,
         variablesForParameters: List<FirVariable>,
         javaTypeSubstitutor: JavaTypeSubstitutor,
@@ -404,9 +419,9 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         source = targetClassSymbol.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
         moduleData = targetClassSymbol.moduleData
         status = FirResolvedDeclarationStatusImpl(
-            constructorOrFactoryVisibility,
+            visibility,
             Modality.FINAL,
-            constructorOrFactoryVisibility.toEffectiveVisibility(targetClassSymbol)
+            visibility.toEffectiveVisibility(targetClassSymbol)
         ).apply {
             this.isStatic = isStatic
         }
