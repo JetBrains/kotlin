@@ -18,6 +18,8 @@ import kotlin.internal.DoNotInlineOnFirstStage
 @DoNotInlineOnFirstStage
 public actual inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
 
+internal actual fun collectionToArray(collection: Collection<*>): Array<Any?> = collectionToArrayCommonImpl(collection)
+
 @Suppress("UNCHECKED_CAST")
 @PublishedApi
 internal fun <T> copyToArray(collection: Collection<T>): Array<T> =

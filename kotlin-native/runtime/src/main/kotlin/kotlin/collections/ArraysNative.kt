@@ -19,3 +19,41 @@ public actual inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
     @Suppress("UNCHECKED_CAST")
     return result as Array<T>
 }
+
+internal actual fun collectionToArray(collection: Collection<*>): Array<Any?> =
+        toArrayImpl(
+                collection,
+                empty = { emptyArray() },
+                alloc = { size -> arrayOfNulls(size) },
+                trim = { result, size -> result.copyOf(size) },
+        )
+
+private inline fun toArrayImpl(
+        collection: Collection<*>,
+        empty: () -> Array<Any?>,
+        alloc: (Int) -> Array<Any?>,
+        trim: (Array<Any?>, Int) -> Array<Any?>
+): Array<Any?> {
+    if (collection.isEmpty()) return empty() // Quick path on empty collection.
+    val size = collection.size
+    if (size == 0) return empty() // Quick path on zero size.
+    val iter = collection.iterator() // Allocate iterator for potentially non-empty collection.
+    if (!iter.hasNext()) return empty() // Size was > 0, but no actual elements.
+    var result = alloc(size) // Use size as a guess to allocate result array.
+    var i = 0
+    // Invariant: iter.hasNext is true && i < result.size.
+    while (true) {
+        result[i++] = iter.next()
+        if (i >= result.size) {
+            if (!iter.hasNext()) return result // Perfect match of array size.
+            // Array is too small, grow array (invariant: i == result.size > 0 here).
+            // The result is full, so `i + 1` overflows only if the iterator yields more elements than any array can hold.
+            val minCapacity = i + 1
+            if (minCapacity < 0) throw OutOfMemoryError()
+            // Grows at a factor of 1.5 (we expect this to be extremely rare, but still use fast code).
+            result = result.copyOf(AbstractList.newCapacity(i, minCapacity))
+        } else {
+            if (!iter.hasNext()) return trim(result, i) // ended too early (allocated array too big)
+        }
+    }
+}
