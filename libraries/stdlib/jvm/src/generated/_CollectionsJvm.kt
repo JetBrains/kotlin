@@ -49,11 +49,16 @@ public actual fun <T> MutableList<T>.reverse(): Unit {
  */
 public actual fun <T> Iterable<T>.toList(): List<T> {
     if (this is Collection) {
-        return when (size) {
-            0 -> emptyList()
-            1 -> listOf(if (this is List) get(0) else iterator().next())
-            else -> this.toMutableList()
+        if (isEmpty()) return emptyList()
+        // Avoid iterator allocation for ArrayList
+        if (this is ArrayList) {
+            return if (this.size == 1) listOf(this[0]) else this.toMutableList()
         }
+        val iterator = iterator()
+        if (!iterator.hasNext()) return emptyList()
+        val first = iterator.next()
+        if (!iterator.hasNext()) return listOf(first)
+        return this.toMutableList()
     }
     return this.toMutableList().optimizeReadOnlyList()
 }
