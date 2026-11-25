@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.ValueClassParameterNames
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -336,6 +337,22 @@ class MemoizedInlineClassReplacements(
         if (!parameter.type.holdsUnderlyingInlineClassValue(context)) return
         parameter.name = parameter.name.withValueClassParameterName(parameter.type.erasedUpperBound)
         parameter.hasFixedName = true
+    }
+
+    /**
+     * Gives the local [variable] the encoded name of its inline class, see [ValueClassParameterNames],
+     * if the JVM slot of [variable] holds the underlying value.
+     *
+     * The new name also reaches the captured fields of lambdas and local classes, the spilled variables of coroutines,
+     * and the copies of the variable in inlined code.
+     */
+    fun encodeInlineClassIntoName(variable: IrVariable) {
+        val name = variable.name
+        if (name.isSpecial || ValueClassParameterNames.decodeValueClassParameterNameOrNull(name.asString()) != null) return
+        val type = variable.type
+        if (type.holdsUnderlyingInlineClassValue(context)) {
+            variable.name = name.withValueClassParameterName(type.erasedUpperBound)
+        }
     }
 
     private fun buildReplacement(

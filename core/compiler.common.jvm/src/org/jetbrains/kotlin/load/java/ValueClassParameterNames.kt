@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.load.java
 
 /**
- * Names of JVM parameters that hold the underlying value of an inline class (KT-73995):
+ * Names of JVM parameters and local variables that hold the underlying value of an inline class (KT-73995):
  * `$v$c$<encoded fq name of the inline class>$$<source name>`. Such a slot never holds a boxed instance of the inline class.
  * The encoded fq name has only Java identifier characters, because IntelliJ class file stubs drop other parameter names.
  *

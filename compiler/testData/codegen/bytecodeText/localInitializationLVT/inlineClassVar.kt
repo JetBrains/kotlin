@@ -7,4 +7,4 @@ fun test(): UInt {
 }
 
 // 2 ISTORE 0
-// 1 LOCALVARIABLE c I
+// 1 LOCALVARIABLE \$v\$c\$kotlin\$_UInt\$\$c I
