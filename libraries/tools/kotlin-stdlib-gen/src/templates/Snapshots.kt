@@ -50,7 +50,7 @@ object Snapshots : TemplateGroupBase() {
         return dst
         """
 
-    private fun iterableToListJvmNativeBody() =
+    private fun iterableToListJvmNativeBody(isNative: Boolean) =
         """
         if (this is Collection) {
             if (isEmpty()) return emptyList()
@@ -62,7 +62,7 @@ object Snapshots : TemplateGroupBase() {
             if (!iterator.hasNext()) return emptyList()
             val first = iterator.next()
             if (!iterator.hasNext()) return listOf(first)
-            return this.toMutableList()
+            return ${if (isNative) "this.toMutableList(first, iterator)" else "this.toMutableList()"}
         }
         return this.toMutableList().optimizeReadOnlyList()
         """
@@ -235,11 +235,11 @@ object Snapshots : TemplateGroupBase() {
 
         specialFor(Iterables) {
             on(Platform.JVM) {
-                body { iterableToListJvmNativeBody() }
+                body { iterableToListJvmNativeBody(isNative = false) }
             }
             on(Platform.Native) {
                 on(Backend.IR) {
-                    body { iterableToListJvmNativeBody() }
+                    body { iterableToListJvmNativeBody(isNative = true) }
                 }
                 on(Backend.Wasm) {
                     body { iterableToListJsWasmBody() }

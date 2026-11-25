@@ -73,6 +73,12 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
             ArrayList<E>(elements.size).apply {
                 addAll(elements)
             }
+
+        internal fun <E> fromArray(elements: Array<E>): ArrayList<E> =
+            ArrayList<E>(initialCapacity = 0).apply {
+                backing = elements
+                length = elements.size
+            }
     }
 
     /**

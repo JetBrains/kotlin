@@ -21,14 +21,21 @@ public actual inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
 }
 
 internal actual fun collectionToArray(collection: Collection<*>): Array<Any?> =
-        toArrayImpl(
+        collectionToArrayImpl(
                 collection,
                 empty = { emptyArray() },
                 alloc = { size -> arrayOfNulls(size) },
                 trim = { result, size -> result.copyOf(size) },
         )
 
-private inline fun toArrayImpl(
+internal fun iteratorToArray(first: Any?, iterator: Iterator<Any?>, sizeHint: Int): Array<Any?> =
+        iteratorToArrayImpl(
+                first, iterator, sizeHint,
+                alloc = { size -> arrayOfNulls(size) },
+                trim = { result, size -> result.copyOf(size) },
+        )
+
+private inline fun collectionToArrayImpl(
         collection: Collection<*>,
         empty: () -> Array<Any?>,
         alloc: (Int) -> Array<Any?>,
@@ -38,8 +45,39 @@ private inline fun toArrayImpl(
     if (collection.isEmpty()) return empty()
     val sizeHint = collection.size // Only a hint: the collection may have changed since `isEmpty()`.
     val iter = collection.iterator()
-    var result = alloc(if (sizeHint > 0) sizeHint else 1) // `isEmpty()` was false, so expect at least one element.
-    var i = 0
+    val array = alloc(if (sizeHint > 0) sizeHint else 1) // `isEmpty()` was false, so expect at least one element.
+
+    try {
+        array[0] = iter.next()
+    } catch (_: NoSuchElementException) {
+        return empty()
+    }
+
+    return fillRestOfAray(array, iter, trim)
+}
+
+private inline fun iteratorToArrayImpl(
+        first: Any?,
+        iter: Iterator<Any?>,
+        sizeHint: Int,
+        alloc: (Int) -> Array<Any?>,
+        trim: (Array<Any?>, Int) -> Array<Any?>
+): Array<Any?> {
+    val array = alloc(if (sizeHint > 0) sizeHint else 1) // We've got `first`, so there is at least one element.
+    array[0] = first
+
+    return fillRestOfAray(array, iter, trim)
+}
+
+private inline fun fillRestOfAray(
+        array: Array<Any?>,
+        iter: Iterator<Any?>,
+        trim: (Array<Any?>, Int) -> Array<Any?>,
+): Array<Any?> {
+    require(array.isNotEmpty())
+    var result = array
+
+    var i = 1
 
     // Phase 1: trust the size hint and call only `next()`, which halves the number of interface calls per element.
     try {
@@ -48,7 +86,7 @@ private inline fun toArrayImpl(
             i++
         }
     } catch (_: NoSuchElementException) {
-        return if (i == 0) empty() else trim(result, i)
+        return trim(result, i)
     }
 
     // Phase 2: the result is full (i == result.size). The hint was exact or too small, so check `hasNext()` for every element.
