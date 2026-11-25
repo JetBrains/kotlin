@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
@@ -21,9 +22,9 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
+import org.jetbrains.kotlin.fir.extensions.PluginTypeResolver
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.plugin.tryGeneratingNoArgDelegatingConstructorCall
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -131,7 +132,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         return any { it is T && it.symbol.checkParametersClashing(valueParametersCount) }
     }
 
-    fun MutableList<FirFunction>.addIfNonClashing(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext) {
+    fun MutableList<FirFunction>.addConstructorOrFactoryIfNonClashing(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext) {
         val [constructorInfo: T, targetClassSymbol: FirClassSymbol<*>] = extractConstructorInfoAndTargetClassSymbol(classSymbol) ?: return
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) }
 
@@ -193,6 +194,23 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             // generated. `staticName != null` implies a Kotlin class here, Java keeping its factory in the class.
             if (staticName != null && staticFactoryNameIsTaken(classSymbol)) return
 
+            // Only an existence check: a superclass without a no-args constructor leaves the generated one
+            // nothing to delegate to, so generation is skipped entirely, and that early return is what
+            // keeps `ConstructorBodyBuilder` from failing on a missing superclass constructor.
+            //
+            // The call itself is deliberately not attached - the body is built in the IR backend
+            // (`ConstructorBodyBuilder`), the way the noarg plugin builds its constructor bodies. A
+            // delegated call attached in FIR makes fir2ir inline the class's property initializers and
+            // `init` blocks into this constructor, and an initializer referencing a primary constructor
+            // parameter crashed the JVM backend with "No mapping for symbol" (KT-88659). A body built after
+            // fir2ir carries no `IrInstanceInitializerCall`, so the initializers don't run in this
+            // constructor at all, as in the noarg plugin. Lombok's Java output differs - `javac` inlines
+            // field initializers into every constructor - but a Java field initializer cannot reference
+            // constructor parameters, so this shape has no Java ground truth to follow.
+            if (!hasJavaOrigin && targetClassSymbol.tryGeneratingNoArgDelegatingConstructorCall(session) == null) {
+                return
+            }
+
             // With `staticName`, the access level is the static factory's, and the constructor behind it is private,
             // as Lombok makes it for a Java class (KT-89212).
             // NB: in this branch we always generate a constructor, not a factory.
@@ -206,54 +224,9 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 "Only a no-args constructor is generated for a Kotlin class, that is why `fields` are expected to be empty."
             }
 
-            val builder = if (hasJavaOrigin) {
-                FirJavaConstructorBuilder().apply {
-                    containingClassSymbol = targetClassSymbol
-                    isPrimary = false
-                    origin = FirDeclarationOrigin.Java.Plugin(ConstructorGeneratorKey)
-                }
-            } else {
-                FirConstructorBuilder().apply {
-                    isLocal = false
-                    origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
-                    resolvePhase = FirResolvePhase.BODY_RESOLVE
-
-                    // Only an existence check: a superclass without a no-args constructor leaves the generated one
-                    // nothing to delegate to, so generation is skipped entirely, and that early return is what
-                    // keeps `ConstructorBodyBuilder` from failing on a missing superclass constructor.
-                    //
-                    // The call itself is deliberately not attached - the body is built in the IR backend
-                    // (`ConstructorBodyBuilder`), the way the noarg plugin builds its constructor bodies. A
-                    // delegated call attached in FIR makes fir2ir inline the class's property initializers and
-                    // `init` blocks into this constructor, and an initializer referencing a primary constructor
-                    // parameter crashed the JVM backend with "No mapping for symbol" (KT-88659). A body built after
-                    // fir2ir carries no `IrInstanceInitializerCall`, so the initializers don't run in this
-                    // constructor at all, as in the noarg plugin. Lombok's Java output differs - `javac` inlines
-                    // field initializers into every constructor - but a Java field initializer cannot reference
-                    // constructor parameters, so this shape has no Java ground truth to follow.
-                    if (targetClassSymbol.tryGeneratingNoArgDelegatingConstructorCall(session) == null) {
-                        return
-                    }
-                }
-            }
-
-            builder.apply {
-                dispatchReceiverType = outerClassSymbolForInnerClass?.defaultType()
-                symbol = FirConstructorSymbol(targetClassSymbol.classId.callableIdForConstructor())
-                constructorOrFactorySymbol = symbol
-                // Only the class's own type parameters: a Java inner class's list carries the outer class's as well,
-                // and those are not the constructed class's to re-declare - the platform's
-                // `constructorTypeParametersFromConstructedClass` drops them the same way. Re-declaring them left
-                // the receiver's and the constructed type's parameters unrelated, and a generic outer class was
-                // rejected with `CANNOT_INFER_PARAMETER_TYPE`.
-                @OptIn(SymbolInternals::class)
-                targetClassSymbol.fir.typeParameters.filterIsInstance<FirTypeParameter>().mapTo(typeParameters) {
-                    buildConstructedClassTypeParameterRef { this.symbol = it.symbol }
-                }
-                returnTypeRef = buildResolvedTypeRef {
-                    coneType = targetClassSymbol.defaultType()
-                }
-            }
+            val builder = buildJavaOrKotlinConstructor(targetClassSymbol, outerClassSymbolForInnerClass, hasJavaOrigin)
+            constructorOrFactorySymbol = builder.symbol
+            builder
         } else {
             if (checkClashing<FirNamedFunction>(valuesParameterCount)) return
             if (staticFactoryNameIsTaken(targetClassSymbol)) return
@@ -264,134 +237,216 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             @OptIn(SymbolInternals::class)
             val classTypeParameterSymbols = targetClassSymbol.fir.typeParameters.map { it.symbol }
             if (hasJavaOrigin) {
-                FirJavaMethodBuilder().apply {
-                    containingClassSymbol = targetClassSymbol
-                    name = staticName
-                    symbol = methodSymbol
-                    origin = FirDeclarationOrigin.Java.Plugin(ConstructorGeneratorKey)
+                val builderAndSubstitutor = buildJavaFactoryMethod(targetClassSymbol, methodSymbol, classTypeParameterSymbols, staticName)
+                javaTypeSubstitutor = builderAndSubstitutor.second
+                builderAndSubstitutor.first
+            } else {
+                // Only an existence check: the factory exists to call either the no-args constructor, declared
+                // explicitly or generated by the branch above, or, with parameters, the primary constructor they
+                // are taken from - that one always exists. Without a no-args one there is nothing to generate.
+                // The call itself is built in the IR backend (`ConstructorBodyBuilder`), the way the
+                // no-args constructor's own body is.
+                if (variablesForParameters.isEmpty() &&
+                    targetClassSymbol.constructors(session).singleOrNull { it.valueParameterSymbols.isEmpty() } == null
+                ) {
+                    return
+                }
+                val builderAndSubstitutor = buildKotlinFactoryMethod(
+                    context.typeResolver, targetClassSymbol, classSymbol, methodSymbol, classTypeParameterSymbols, staticName
+                )
+                kotlinTypeSubstitutor = builderAndSubstitutor.second
+                builderAndSubstitutor.first
+            }
+        }
 
-                    classTypeParameterSymbols.copyTypeParametersTo(typeParameters, methodSymbol)
+        add(
+            builder.applyStatusAndValueParametersToFactoryOrConstructorAndBuildIt(
+                targetClassSymbol,
+                constructorOrFactorySymbol,
+                constructorOrFactoryVisibility,
+                // Don't specify the property for Kotlin static constructors because Kotlin doesn't support companion blocks yet.
+                // As a workaround, generate a function inside a companion object and mark it with `@JvmStatic`
+                // (in the way as Logger generator works).
+                isStatic = staticName != null && hasJavaOrigin,
+                variablesForParameters,
+                javaTypeSubstitutor,
+                kotlinTypeSubstitutor,
+            )
+        )
+    }
 
-                    @OptIn(SymbolInternals::class)
-                    val javaClass = targetClassSymbol.fir as FirJavaClass
-                    val javaTypeParametersFromClass = javaClass.classJavaTypeParameterStack
-                        .filter { it.value in classTypeParameterSymbols }
-                        .map { it.key }
+    private fun buildJavaOrKotlinConstructor(
+        targetClassSymbol: FirClassSymbol<*>,
+        outerClassSymbolForInnerClass: FirClassSymbol<*>?,
+        hasJavaOrigin: Boolean,
+    ): FirConstructorBuilder {
+        val builder = if (hasJavaOrigin) {
+            FirJavaConstructorBuilder().apply {
+                containingClassSymbol = targetClassSymbol
+                isPrimary = false
+            }
+        } else {
+            FirConstructorBuilder().apply {
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
+            }
+        }
 
-                    val functionTypeParameterToJavaTypeParameter = typeParameters.zip(javaTypeParametersFromClass)
-                        .associate { [parameter, javaParameter] -> parameter.symbol to JavaTypeParameterStub(javaParameter) }
+        return builder.apply {
+            isLocal = false
+            dispatchReceiverType = outerClassSymbolForInnerClass?.defaultType()
+            symbol = FirConstructorSymbol(targetClassSymbol.classId.callableIdForConstructor())
+            origin =
+                if (hasJavaOrigin) FirDeclarationOrigin.Java.Plugin(ConstructorGeneratorKey)
+                else FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
+            // Only the class's own type parameters: a Java inner class's list carries the outer class's as well,
+            // and those are not the constructed class's to re-declare - the platform's
+            // `constructorTypeParametersFromConstructedClass` drops them the same way. Re-declaring them left
+            // the receiver's and the constructed type's parameters unrelated, and a generic outer class was
+            // rejected with `CANNOT_INFER_PARAMETER_TYPE`.
+            @OptIn(SymbolInternals::class)
+            targetClassSymbol.fir.typeParameters.filterIsInstance<FirTypeParameter>().mapTo(typeParameters) {
+                buildConstructedClassTypeParameterRef { this.symbol = it.symbol }
+            }
+            returnTypeRef = buildResolvedTypeRef {
+                coneType = targetClassSymbol.defaultType()
+            }
+        }
+    }
 
-                    for ([parameter, javaParameter] in functionTypeParameterToJavaTypeParameter) {
-                        javaClass.classJavaTypeParameterStack.addParameter(javaParameter, parameter)
-                    }
+    private fun buildJavaFactoryMethod(
+        targetClassSymbol: FirClassSymbol<*>,
+        methodSymbol: FirNamedFunctionSymbol,
+        classTypeParameterSymbols: List<FirTypeParameterSymbol>,
+        staticName: Name,
+    ): Pair<FirJavaMethodBuilder, JavaTypeSubstitutor> {
+        lateinit var javaTypeSubstitutor: JavaTypeSubstitutor
+        return FirJavaMethodBuilder().apply {
+            containingClassSymbol = targetClassSymbol
+            name = staticName
+            symbol = methodSymbol
+            origin = FirDeclarationOrigin.Java.Plugin(ConstructorGeneratorKey)
 
-                    val javaTypeSubstitution: Map<JavaClassifier, JavaType> = javaTypeParametersFromClass
-                        .zip(functionTypeParameterToJavaTypeParameter.values)
-                        .associate { [originalParameter, newParameter] ->
-                            originalParameter to JavaTypeParameterTypeStub(newParameter)
+            classTypeParameterSymbols.copyTypeParametersTo(typeParameters, methodSymbol)
+
+            @OptIn(SymbolInternals::class)
+            val javaClass = targetClassSymbol.fir as FirJavaClass
+            val javaTypeParametersFromClass = javaClass.classJavaTypeParameterStack
+                .filter { it.value in classTypeParameterSymbols }
+                .map { it.key }
+
+            val functionTypeParameterToJavaTypeParameter = typeParameters.zip(javaTypeParametersFromClass)
+                .associate { [parameter, javaParameter] -> parameter.symbol to JavaTypeParameterStub(javaParameter) }
+
+            for ([parameter, javaParameter] in functionTypeParameterToJavaTypeParameter) {
+                javaClass.classJavaTypeParameterStack.addParameter(javaParameter, parameter)
+            }
+
+            val javaTypeSubstitution: Map<JavaClassifier, JavaType> = javaTypeParametersFromClass
+                .zip(functionTypeParameterToJavaTypeParameter.values)
+                .associate { [originalParameter, newParameter] ->
+                    originalParameter to JavaTypeParameterTypeStub(newParameter)
+                }
+            javaTypeSubstitutor = JavaTypeSubstitutorByMap(javaTypeSubstitution)
+
+            returnTypeRef = buildResolvedTypeRef {
+                coneType = targetClassSymbol.classId.defaultType(functionTypeParameterToJavaTypeParameter.keys.toList())
+            }
+        } to javaTypeSubstitutor
+    }
+
+    private fun buildKotlinFactoryMethod(
+        typeResolver: PluginTypeResolver?,
+        targetClassSymbol: FirClassSymbol<*>,
+        classSymbol: FirClassSymbol<*>,
+        methodSymbol: FirNamedFunctionSymbol,
+        classTypeParameterSymbols: List<FirTypeParameterSymbol>,
+        staticName: Name,
+    ): Pair<FirNamedFunctionBuilder, ConeSubstitutor> {
+        lateinit var kotlinTypeSubstitutor: ConeSubstitutor
+        return FirNamedFunctionBuilder().apply {
+            name = staticName
+            symbol = methodSymbol
+            isLocal = false
+            origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+
+            classTypeParameterSymbols.copyTypeParametersTo(typeParameters, methodSymbol)
+            remapTypeParameterBounds(typeParameters, targetClassSymbol.typeParameterSymbols, typeResolver, session)
+
+            val functionTypeParameterSymbols = typeParameters.map { it.symbol }
+            kotlinTypeSubstitutor = substitutorByMap(
+                classTypeParameterSymbols.zip(functionTypeParameterSymbols.map { it.toConeType() }).toMap(),
+                session
+            )
+            val constructedType = targetClassSymbol.classId.defaultType(functionTypeParameterSymbols)
+
+            returnTypeRef = buildResolvedTypeRef {
+                coneType = constructedType
+            }
+            dispatchReceiverType = classSymbol.defaultType()
+
+            annotations.add(methodSymbol.buildJvmStaticAnnotationCallOrError(session))
+        } to kotlinTypeSubstitutor
+
+    }
+
+    private fun FirFunctionBuilder.applyStatusAndValueParametersToFactoryOrConstructorAndBuildIt(
+        targetClassSymbol: FirClassSymbol<*>,
+        constructorOrFactorySymbol: FirFunctionSymbol<*>,
+        constructorOrFactoryVisibility: Visibility,
+        isStatic: Boolean,
+        variablesForParameters: List<FirVariable>,
+        javaTypeSubstitutor: JavaTypeSubstitutor,
+        kotlinTypeSubstitutor: ConeSubstitutor,
+    ): FirFunction = apply {
+        // The plugin-generated source is needed to prevent reporting of `PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED`
+        // in the same way as the no-arg plugin works. Also, see KT-80651
+        source = targetClassSymbol.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
+        moduleData = targetClassSymbol.moduleData
+        status = FirResolvedDeclarationStatusImpl(
+            constructorOrFactoryVisibility,
+            Modality.FINAL,
+            constructorOrFactoryVisibility.toEffectiveVisibility(targetClassSymbol)
+        ).apply {
+            this.isStatic = isStatic
+        }
+
+        variablesForParameters.mapTo(valueParameters) { field ->
+            if (origin is FirDeclarationOrigin.Java) {
+                buildJavaValueParameter {
+                    moduleData = field.moduleData
+                    returnTypeRef = when (val typeRef = field.returnTypeRef) {
+                        is FirJavaTypeRef -> buildJavaTypeRef {
+                            type = javaTypeSubstitutor.substituteOrSelf(typeRef.type)
+                            annotationBuilder = { emptyList() }
+                            source = targetClassSymbol.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
                         }
-
-                    javaTypeSubstitutor = JavaTypeSubstitutorByMap(javaTypeSubstitution)
-                    returnTypeRef = buildResolvedTypeRef {
-                        coneType = targetClassSymbol.classId.defaultType(functionTypeParameterToJavaTypeParameter.keys.toList())
+                        else -> typeRef
                     }
+                    containingDeclarationSymbol = constructorOrFactorySymbol
+                    name = field.name
+                    isVararg = false
+                    javaOrigin = FirDeclarationOrigin.Java.Plugin(ConstructorGeneratorKey)
                 }
             } else {
-                FirNamedFunctionBuilder().apply {
-                    name = staticName
-                    symbol = methodSymbol
-                    isLocal = false
-                    origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
-                    resolvePhase = FirResolvePhase.BODY_RESOLVE
-
-                    classTypeParameterSymbols.copyTypeParametersTo(typeParameters, methodSymbol)
-                    remapTypeParameterBounds(typeParameters, targetClassSymbol.typeParameterSymbols, context.typeResolver, session)
-
-                    val functionTypeParameterSymbols = typeParameters.map { it.symbol }
-                    kotlinTypeSubstitutor = substitutorByMap(
-                        classTypeParameterSymbols.zip(functionTypeParameterSymbols.map { it.toConeType() }).toMap(),
-                        session
-                    )
-                    val constructedType = targetClassSymbol.classId.defaultType(functionTypeParameterSymbols)
-
+                buildValueParameter {
+                    moduleData = field.moduleData
+                    // The factory has its own copies of the class type parameters, see `copyTypeParametersTo`.
                     returnTypeRef = buildResolvedTypeRef {
-                        coneType = constructedType
+                        coneType = kotlinTypeSubstitutor.substituteOrSelf(field.symbol.resolvedReturnType)
                     }
-                    dispatchReceiverType = classSymbol.defaultType()
-
-                    annotations.add(methodSymbol.buildJvmStaticAnnotationCallOrError(session))
-
-                    // Only an existence check: the factory exists to call either the no-args constructor, declared
-                    // explicitly or generated by the branch above, or, with parameters, the primary constructor they
-                    // are taken from - that one always exists. Without a no-args one there is nothing to generate.
-                    // The call itself is built in the IR backend (`ConstructorBodyBuilder`), the way the
-                    // no-args constructor's own body is.
-                    if (variablesForParameters.isEmpty() &&
-                        targetClassSymbol.constructors(session).singleOrNull { it.valueParameterSymbols.isEmpty() } == null
-                    ) {
-                        return
-                    }
+                    containingDeclarationSymbol = constructorOrFactorySymbol
+                    name = field.name
+                    isVararg = false
+                    origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
+                    symbol = FirValueParameterSymbol()
                 }
             }
         }
-
-        builder.apply {
-            // The plugin-generated source is needed to prevent reporting of `PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED`
-            // in the same way as the no-arg plugin works. Also, see KT-80651
-            source = targetClassSymbol.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
-            moduleData = targetClassSymbol.moduleData
-            status = FirResolvedDeclarationStatusImpl(
-                constructorOrFactoryVisibility,
-                Modality.FINAL,
-                constructorOrFactoryVisibility.toEffectiveVisibility(targetClassSymbol)
-            ).apply {
-                if (staticName != null && hasJavaOrigin) {
-                    // Don't specify the property for Kotlin static constructors because Kotlin doesn't support companion blocks yet.
-                    // As a workaround, generate a function inside a companion object and mark it with `@JvmStatic`
-                    // (in the way as Logger generator works).
-                    isStatic = true
-                }
-            }
-
-            variablesForParameters.mapTo(valueParameters) { field ->
-                if (origin is FirDeclarationOrigin.Java) {
-                    buildJavaValueParameter {
-                        moduleData = field.moduleData
-                        returnTypeRef = when (val typeRef = field.returnTypeRef) {
-                            is FirJavaTypeRef -> buildJavaTypeRef {
-                                type = javaTypeSubstitutor.substituteOrSelf(typeRef.type)
-                                annotationBuilder = { emptyList() }
-                                source = targetClassSymbol.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
-                            }
-                            else -> typeRef
-                        }
-                        containingDeclarationSymbol = constructorOrFactorySymbol
-                        name = field.name
-                        isVararg = false
-                        javaOrigin = FirDeclarationOrigin.Java.Plugin(ConstructorGeneratorKey)
-                    }
-                } else {
-                    buildValueParameter {
-                        moduleData = field.moduleData
-                        // The factory has its own copies of the class type parameters, see `copyTypeParametersTo`.
-                        returnTypeRef = buildResolvedTypeRef {
-                            coneType = kotlinTypeSubstitutor.substituteOrSelf(field.symbol.resolvedReturnType)
-                        }
-                        containingDeclarationSymbol = constructorOrFactorySymbol
-                        name = field.name
-                        isVararg = false
-                        origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
-                        symbol = FirValueParameterSymbol()
-                    }
-                }
-            }
+    }.build().apply {
+        if (isStatic || this is FirConstructor) {
+            containingClassForStaticMemberAttr = targetClassSymbol.toLookupTag()
         }
-
-        add(builder.build().apply {
-            if (isStatic || this is FirConstructor) {
-                containingClassForStaticMemberAttr = targetClassSymbol.toLookupTag()
-            }
-        })
     }
 
     internal fun extractConstructorInfoAndTargetClassSymbol(classSymbol: FirClassSymbol<*>): Pair<T, FirClassSymbol<*>>? {
