@@ -188,6 +188,9 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
         }
         it.runAndMeasurePhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
         it.runAndMeasurePhase(ModuleBitcodeOptimizationPhase, module)
+        // -Xllvm-lto-passes replaces the whole LTO pipeline, including the internalization meant for final binaries, which
+        // would strip the adapters that an Objective-C export cache exports. A cache links no other bitcode into its module,
+        // so the LTO pipeline has nothing to add there.
         if (!context.config.produce.isObjCCache) {
             it.runAndMeasurePhase(LTOBitcodeOptimizationPhase, module)
         }
