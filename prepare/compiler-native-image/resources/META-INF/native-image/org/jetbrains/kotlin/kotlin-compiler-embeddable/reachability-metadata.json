@@ -178,24 +178,6 @@
       ]
     },
     {
-      "type": "example.ExampleAnnotationProcessor",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "example.KotlinFilerGeneratingProcessor",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
       "type": "gnu.trove.TObjectHashingStrategy"
     },
     {
@@ -1892,20 +1874,6 @@
       "serializable": true
     },
     {
-      "type": "org.jetbrains.kotlin.buildtools.tests.compilation.GreetScriptCustomExtensionTemplate"
-    },
-    {
-      "type": "org.jetbrains.kotlin.buildtools.tests.compilation.GreetScriptDefinition",
-      "fields": [
-        {
-          "name": "INSTANCE"
-        }
-      ]
-    },
-    {
-      "type": "org.jetbrains.kotlin.buildtools.tests.compilation.GreetScriptTemplate"
-    },
-    {
       "type": "org.jetbrains.kotlin.cli.CliDiagnosticReportingKt",
       "methods": [
         {
@@ -3301,27 +3269,6 @@
       "type": "org.jetbrains.kotlin.js.backend.ast.JsExpression[]"
     },
     {
-      "type": "org.jetbrains.kotlin.kapt.KaptCommandLineProcessor",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "org.jetbrains.kotlin.kapt.KaptCompilerPluginRegistrar",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "org.jetbrains.kotlin.kapt.base.javac.KaptJavaCompiler"
-    },
-    {
       "type": "org.jetbrains.kotlin.load.java.ErasedOverridabilityCondition"
     },
     {
@@ -3434,15 +3381,6 @@
     },
     {
       "type": "org.jetbrains.kotlin.noarg.NoArgComponentRegistrar",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "org.jetbrains.kotlin.plugin.sandbox.fir.FirPluginPrototypeComponentRegistrar",
       "methods": [
         {
           "name": "<init>",
