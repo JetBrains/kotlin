@@ -322,7 +322,7 @@ internal class KaSymbolByFirBuilder(
 
         fun buildParameterSymbol(firSymbol: FirValueParameterSymbol): KaParameterSymbol = when (firSymbol.fir.valueParameterKind) {
             FirValueParameterKind.Regular -> buildValueParameterSymbol(firSymbol)
-            FirValueParameterKind.ContextParameter, FirValueParameterKind.LegacyContextReceiver -> buildContextParameterSymbol(firSymbol)
+            FirValueParameterKind.ContextParameter -> buildContextParameterSymbol(firSymbol)
         }
 
         fun buildValueParameterSymbol(firSymbol: FirValueParameterSymbol): KaValueParameterSymbol {

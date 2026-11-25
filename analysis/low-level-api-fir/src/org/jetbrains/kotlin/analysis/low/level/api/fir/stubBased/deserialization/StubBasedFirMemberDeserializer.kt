@@ -674,7 +674,7 @@ internal class StubBasedFirMemberDeserializer(
     }
 
     /**
-     * Loads a legacy context receiver from a context parameter without a name.
+     * Loads a context parameter without a name, which is a legacy context receiver, as a context parameter named `_`.
      */
     private fun loadLegacyContextReceiver(parameter: KtParameter, containingDeclarationSymbol: FirBasedSymbol<*>): FirValueParameter {
         return buildValueParameter {
@@ -688,7 +688,7 @@ internal class StubBasedFirMemberDeserializer(
                 withFirSymbolEntry("functionSymbol", containingDeclarationSymbol)
             }
             this.containingDeclarationSymbol = containingDeclarationSymbol
-            this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
+            this.valueParameterKind = FirValueParameterKind.ContextParameter
             this.resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         }
     }
