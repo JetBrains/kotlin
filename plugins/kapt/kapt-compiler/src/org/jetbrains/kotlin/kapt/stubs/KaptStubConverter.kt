@@ -1007,6 +1007,7 @@ abstract class ParameterizedKaptStubConverter<
         irClass: IrClass,
         recordInfo: RecordInfo?,
     ): MethodDecl? {
+        if (containingClass.isAnnotation() && isStatic(method.access)) return null
         if (isIgnored(method.invisibleAnnotations)) return null
         val declaration = kaptContext.origins[method]?.declaration as? IrFunction ?: return null
 
