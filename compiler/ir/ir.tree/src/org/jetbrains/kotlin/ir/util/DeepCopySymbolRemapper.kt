@@ -170,7 +170,7 @@ open class DeepCopySymbolRemapper(
     override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol = classes.getDeclared(symbol)
 
     override fun getDeclaredAnonymousInitializer(symbol: IrAnonymousInitializerSymbol): IrAnonymousInitializerSymbol =
-        IrAnonymousInitializerSymbolImpl(symbol.owner.descriptor)
+        IrAnonymousInitializerSymbolImpl(symbol.descriptor)
 
     override fun getDeclaredScript(symbol: IrScriptSymbol): IrScriptSymbol = scripts.getDeclared(symbol)
     override fun getDeclaredReplSnippet(symbol: IrReplSnippetSymbol): IrReplSnippetSymbol = replSnippets.getDeclared(symbol)

@@ -8,8 +8,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -21,9 +19,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.valueParameter]
  */
 abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ParameterDescriptor
-
     abstract var kind: IrParameterKind
 
     abstract var isAssignable: Boolean

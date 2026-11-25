@@ -52,10 +52,6 @@ class Fir2IrLazyField(
 
     override var annotations: List<IrAnnotation> by createLazyAnnotations()
 
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor
-        get() = symbol.descriptor
-
     override var isExternal: Boolean
         get() = fir.isExternal
         set(_) = mutationNotSupported()

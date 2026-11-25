@@ -59,10 +59,6 @@ class Fir2IrLazyPropertyForPureField(
         get() = this.field.origin
         set(_) = mutationNotSupported()
 
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor
-        get() = symbol.descriptor
-
     override var isVar: Boolean
         get() = !this.field.isFinal
         set(_) = mutationNotSupported()

@@ -10,10 +10,8 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
@@ -37,10 +35,6 @@ class IrTypeParameterImpl @IrImplementationDetail constructor(
     override var attributeOwnerId: IrElement = this
 
     override var annotations: List<IrAnnotation> = emptyList()
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: TypeParameterDescriptor
-        get() = symbol.descriptor
 
     override var superTypes: List<IrType> = emptyList()
 

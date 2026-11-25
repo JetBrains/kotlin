@@ -133,7 +133,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(symbolOwner)
         parent(mutableAnnotationContainer)
 
-        +descriptor("DeclarationDescriptor")
         +field("origin", type(Packages.declarations, "IrDeclarationOrigin")) {
             deepCopyExcludeFromApply = true
         }
@@ -224,7 +223,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationWithName)
         parent(symbolOwner)
 
-        +descriptor("ValueDescriptor")
         +declaredSymbol(valueSymbol)
         +field("type", irTypeType)
     }
@@ -234,7 +232,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationBase)
         parent(valueDeclaration)
 
-        +descriptor("ParameterDescriptor")
         +field("kind", type(Packages.declarations, "IrParameterKind"))
         +field("isAssignable", boolean)
         +declaredSymbol(valueParameterSymbol)
@@ -291,7 +288,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationContainer)
         parent(metadataSourceOwner)
 
-        +descriptor("ClassDescriptor")
         +declaredSymbol(classSymbol)
         +field("kind", type<ClassKind>())
         +field("modality", type<Modality>())
@@ -341,7 +337,6 @@ object IrTree : AbstractTreeBuilder() {
         Represents a single `init {}` block in a Kotlin class.
         """.trimIndent()
 
-        +descriptor("ClassDescriptor") // TODO special descriptor for anonymous initializer blocks
         +declaredSymbol(anonymousInitializerSymbol)
         +field("isStatic", boolean)
         +field("body", blockBody)
@@ -371,7 +366,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationBase)
         parent(declarationWithName)
 
-        +descriptor("TypeParameterDescriptor")
         +declaredSymbol(typeParameterSymbol)
         +field("variance", type<Variance>())
         +field("index", int)
@@ -381,7 +375,6 @@ object IrTree : AbstractTreeBuilder() {
     val returnTarget: Element by element(Declaration) {
         parent(symbolOwner)
 
-        +descriptor("FunctionDescriptor")
         +declaredSymbol(returnTargetSymbol)
     }
     val function: Element by sealedElement(Declaration) {
@@ -397,7 +390,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(memberWithContainerSource)
         parent(metadataSourceOwner)
 
-        +descriptor("FunctionDescriptor")
         +declaredSymbol(functionSymbol)
         // NB: there's an inline constructor for Array and each primitive array class.
         +field("isInline", boolean)
@@ -408,7 +400,6 @@ object IrTree : AbstractTreeBuilder() {
     val constructor: Element by element(Declaration) {
         parent(function)
 
-        +descriptor("ClassConstructorDescriptor")
         +declaredSymbol(constructorSymbol)
         +field("isPrimary", boolean)
     }
@@ -416,7 +407,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationBase)
         parent(declarationWithName)
 
-        +descriptor("ClassDescriptor")
         +declaredSymbol(enumEntrySymbol)
         +field("initializerExpression", expressionBody, nullable = true)
         +field("correspondingClass", `class`, nullable = true)
@@ -437,7 +427,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationParent)
         parent(metadataSourceOwner)
 
-        +descriptor("PropertyDescriptor")
         +declaredSymbol(fieldSymbol)
         +field("type", irTypeType)
         +field("isFinal", boolean)
@@ -451,7 +440,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(symbolOwner)
         parent(metadataSourceOwner)
 
-        +descriptor("VariableDescriptorWithAccessors")
         +declaredSymbol(localDelegatedPropertySymbol)
         +field("type", irTypeType)
         +field("isVar", boolean)
@@ -502,7 +490,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(metadataSourceOwner)
         parent(memberWithContainerSource)
 
-        +descriptor("PropertyDescriptor")
         +declaredSymbol(propertySymbol)
         +listField("overriddenSymbols", propertySymbol, mutability = Var)
         +field("isVar", boolean)
@@ -525,7 +512,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(metadataSourceOwner)
 
         +declaredSymbol(scriptSymbol)
-        +descriptor("ScriptDescriptor")
         // NOTE: is the result of the FE conversion, because there script interpreted as a class and has receiver
         // TODO: consider removing from here and handle appropriately in the lowering
         +field("thisReceiver", valueParameter, nullable = true) // K1
@@ -591,7 +577,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(function)
         parent(overridableDeclaration.withArgs("S" to simpleFunctionSymbol))
 
-        +descriptor("FunctionDescriptor")
         +declaredSymbol(simpleFunctionSymbol)
         +listField("overriddenSymbols", simpleFunctionSymbol, mutability = Var)
         +field("isTailrec", boolean)
@@ -608,7 +593,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(typeParametersContainer)
         parent(metadataSourceOwner)
 
-        +descriptor("TypeAliasDescriptor")
         +declaredSymbol(typeAliasSymbol)
         +field("isActual", boolean)
         +field("expandedType", irTypeType)
@@ -617,7 +601,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationBase)
         parent(valueDeclaration)
 
-        +descriptor("VariableDescriptor")
         +declaredSymbol(variableSymbol)
         +field("isVar", boolean)
         +field("isConst", boolean)

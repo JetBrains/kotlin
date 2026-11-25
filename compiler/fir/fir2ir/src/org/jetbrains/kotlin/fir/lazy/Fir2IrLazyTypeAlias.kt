@@ -43,10 +43,6 @@ class Fir2IrLazyTypeAlias(
     override var annotations: List<IrAnnotation> by createLazyAnnotations()
     override lateinit var typeParameters: List<IrTypeParameter>
 
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: TypeAliasDescriptor
-        get() = symbol.descriptor
-
     override var name: Name
         get() = fir.name
         set(_) = mutationNotSupported()

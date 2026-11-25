@@ -11,10 +11,8 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
@@ -39,10 +37,6 @@ class IrTypeAliasImpl @IrImplementationDetail constructor(
     override var typeParameters: List<IrTypeParameter> = emptyList()
 
     override var metadata: MetadataSource? = null
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: TypeAliasDescriptor
-        get() = symbol.descriptor
 
     init {
         symbol.bind(this)

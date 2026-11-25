@@ -183,7 +183,7 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
             output.logWarning("using a non-default signature version in \"dump-ir\" is not supported yet")
         }
 
-        val linker = KlibToolIrLinker(output, SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl))
+        val linker = KlibToolIrLinker(output, SymbolTable(signaturer = null, IrFactoryImpl))
         val irFragment = linker.createAndRegisterModuleDeserializer(createFakeModuleDescriptor(args.library), args.library, DeserializationStrategy.ALL).moduleFragment
 
         if (args.library.isCInteropLibrary()) {
@@ -235,8 +235,7 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: ParsedArgu
             output.logWarning("using a non-default signature version in \"dump-ir-inlinable-functions\" is not supported yet")
         }
 
-        val idSignaturer = KonanIdSignaturer(KonanManglerDesc)
-        val symbolTable = SymbolTable(idSignaturer, IrFactoryImpl)
+        val symbolTable = SymbolTable(signaturer = null, IrFactoryImpl)
 
         val moduleDeserializer = NonLinkingIrInlineFunctionDeserializer.ModuleDeserializer(
                 inlinableFunctionsIr = inlinableFunctionsIr,

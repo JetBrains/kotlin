@@ -10,10 +10,8 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
@@ -35,10 +33,6 @@ class IrLocalDelegatedPropertyImpl @IrImplementationDetail constructor(
     override var annotations: List<IrAnnotation> = emptyList()
 
     override var metadata: MetadataSource? = null
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: VariableDescriptorWithAccessors
-        get() = symbol.descriptor
 
     override var delegate: IrVariable? = null
 

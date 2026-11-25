@@ -11,10 +11,8 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -44,10 +42,6 @@ class IrFieldImpl @IrImplementationDetail constructor(
     override var annotations: List<IrAnnotation> = emptyList()
 
     override var metadata: MetadataSource? = null
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor
-        get() = symbol.descriptor
 
     override var initializer: IrExpressionBody? = null
 

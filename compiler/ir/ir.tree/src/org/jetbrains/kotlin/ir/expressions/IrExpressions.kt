@@ -85,13 +85,6 @@ fun IrMemberAccessExpression<*>.copyTypeArgumentsFrom(other: IrMemberAccessExpre
     }
 }
 
-val CallableDescriptor.typeParametersCount: Int
-    get() =
-        when (this) {
-            is PropertyAccessorDescriptor -> correspondingProperty.typeParameters.size
-            else -> typeParameters.size
-        }
-
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
 fun IrMemberAccessExpression<*>.putArgument(
     @Suppress("unused") callee: IrFunction, // To be removed

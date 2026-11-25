@@ -48,10 +48,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default("statements", "ArrayList(2)")
         }
 
-        allImplOf(declaration) {
-            default("descriptor", "symbol.descriptor", withGetter = true)
-        }
-
         impl(anonymousInitializer) {
             isLateinit("body")
         }
@@ -231,10 +227,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(block)
 
-        impl(returnableBlock) {
-            default("descriptor", "symbol.descriptor", withGetter = true)
-        }
-
         impl(errorExpression)
 
         impl(vararg) {
@@ -403,11 +395,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
         default("symbol") {
             value = "_symbol ?: error(\"\$this has not acquired a symbol yet\")"
-            withGetter = true
-        }
-        additionalImports(ArbitraryImportable("org.jetbrains.kotlin.ir.descriptors", "toIrBasedDescriptor"))
-        default("descriptor") {
-            value = "_symbol?.descriptor ?: this.toIrBasedDescriptor()"
             withGetter = true
         }
         defaultNull("containerSource", withGetter = true)
