@@ -384,7 +384,7 @@ internal class BtaImplOptionsGenerator(
             @Suppress("UNCHECKED_CAST")
             enumConstants as List<WithStringRepresentation>
             enumsToGenerate[type] =
-                generateEnumTypeBuilder(enumConstants, level, type.toBtaImplEnumClassName(targetPackage))
+                generateEnumTypeBuilder(enumConstants, level, type.toBtaImplEnumClassName(targetPackage), kotlinVersion)
             return type.toBtaImplEnumClassName(targetPackage)
         }
 

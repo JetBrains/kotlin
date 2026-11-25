@@ -11,8 +11,6 @@ import kotlin.String
 public enum class NativeMemoryModel(
   public val stringValue: String,
 ) {
-  RELAXED("relaxed"),
-  STRICT("strict"),
   EXPERIMENTAL("experimental"),
   ;
 }

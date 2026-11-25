@@ -9,6 +9,7 @@ import com.squareup.kotlinpoet.ClassName
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
+import org.jetbrains.kotlin.arguments.dsl.base.WithKotlinReleaseVersionsMetadata
 import org.jetbrains.kotlin.arguments.dsl.types.AbiStabilityMode
 import org.jetbrains.kotlin.arguments.dsl.types.AnnotationDefaultTargetMode
 import org.jetbrains.kotlin.arguments.dsl.types.AssertionsMode
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.JdkRelease
 import org.jetbrains.kotlin.arguments.dsl.types.JspecifyAnnotationsMode
 import org.jetbrains.kotlin.arguments.dsl.types.JvmDefaultMode
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
+import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersion as KotlinVersionArgumentType
 import org.jetbrains.kotlin.arguments.dsl.types.LambdasMode
 import org.jetbrains.kotlin.arguments.dsl.types.NameBasedDestructuringMode
 import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
@@ -126,17 +128,52 @@ internal val levelsSince = levelsIntroducedIn.mapValues { "$KDOC_SINCE ${it.valu
 private val firstArgumentsApiVersion = KotlinReleaseVersion.v2_3_0
 
 /**
- * An argument removed from the compiler not later than the [level] became available could never be used through that level,
- * so there's no reason to generate it.
+ * An argument or an argument value removed from the compiler not later than the [level] became available could never be used
+ * through that level, so there's no reason to generate it.
  *
  * This doesn't apply to the levels introduced in [firstArgumentsApiVersion]: they can be used with the compilers older
- * than the level itself, and those compilers still have such arguments.
+ * than the level itself, and those compilers still have such arguments and values.
  */
-internal fun BtaCompilerArgument<*>.wasRemovedBeforeIntroductionOf(level: KotlinCompilerArgumentsLevel): Boolean {
-    val removedVersion = removedSinceVersion ?: return false
+private fun KotlinReleaseVersion.isNotLaterThanIntroductionOf(level: KotlinCompilerArgumentsLevel): Boolean {
     val levelIntroducedIn = levelsIntroducedIn[level.name] ?: error("Level ${level.name} is missing in levelSince map")
     if (levelIntroducedIn == firstArgumentsApiVersion) return false
-    return removedVersion <= levelIntroducedIn
+    return this <= levelIntroducedIn
+}
+
+/**
+ * Whether the argument was removed from the compiler before it could be used through the [level].
+ */
+internal fun BtaCompilerArgument<*>.wasRemovedBeforeIntroductionOf(level: KotlinCompilerArgumentsLevel): Boolean =
+    removedSinceVersion?.isNotLaterThanIntroductionOf(level) ?: false
+
+/**
+ * The enum entries that had been published before the removed entries started to be filtered out.
+ * They are kept for compatibility, even though they were removed from the compiler long ago.
+ *
+ * Don't add new entries here.
+ */
+private val legacyRemovedEnumEntries: Set<Enum<*>> = setOf(
+    JvmTarget.jvm1_6,
+    KotlinVersionArgumentType.v1_0,
+    KotlinVersionArgumentType.v1_1,
+    KotlinVersionArgumentType.v1_2,
+    KotlinVersionArgumentType.v1_3,
+    KotlinVersionArgumentType.v1_4,
+    KotlinVersionArgumentType.v1_5,
+    KotlinVersionArgumentType.v1_6,
+    KotlinVersionArgumentType.v1_7,
+)
+
+/**
+ * Whether the enum entry shouldn't be generated, because it's not available in any of the compilers
+ * the enum generated for the [level] can be used with. That is the case when the entry was either
+ * - removed before it could be used through the [level], or
+ * - removed in or before the oldest compiler version supported by [kotlinVersion].
+ */
+internal fun Enum<*>.isRemovedFor(level: KotlinCompilerArgumentsLevel, kotlinVersion: KotlinReleaseVersion): Boolean {
+    if (this in legacyRemovedEnumEntries) return false
+    val removedVersion = (this as? WithKotlinReleaseVersionsMetadata)?.releaseVersionsMetadata?.removedVersion ?: return false
+    return removedVersion <= getOldestSupportedVersion(kotlinVersion) || removedVersion.isNotLaterThanIntroductionOf(level)
 }
 
 internal fun BtaCompilerArgument<*>.getOptionId(): String = name.uppercase().replace("-", "_").let {

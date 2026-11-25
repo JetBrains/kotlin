@@ -111,7 +111,7 @@ internal class BtaApiOptionsGenerator(
                 val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
                 @Suppress("UNCHECKED_CAST")
                 enumConstants as List<WithStringRepresentation>
-                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants, level, type.toBtaEnumClassName())
+                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants, level, type.toBtaEnumClassName(), kotlinVersion)
                 if (type !in enumsExperimental && experimental) {
                     enumsExperimental[type] = true
                 } else if (type in enumsExperimental && !experimental) {
@@ -404,7 +404,8 @@ private fun TypeSpec.Builder.addToArgumentStringsFun() {
 fun <T> generateEnumTypeBuilder(
     sourceEnum: Collection<T>,
     level: KotlinCompilerArgumentsLevel,
-    className: ClassName
+    className: ClassName,
+    kotlinVersion: KotlinReleaseVersion,
 ): TypeSpec.Builder where T : Enum<*>, T : WithStringRepresentation {
     return TypeSpec.enumBuilder(className).apply {
         property<String>("stringValue") {
@@ -417,7 +418,7 @@ fun <T> generateEnumTypeBuilder(
         }
         primaryConstructor(FunSpec.constructorBuilder().addParameter("stringValue", String::class).build())
         val nameAccessor = WithStringRepresentation::stringRepresentation
-        sourceEnum.forEach {
+        sourceEnum.filterNot { it.isRemovedFor(level, kotlinVersion) }.forEach {
             addEnumConstant(
                 it.name.uppercase(),
                 TypeSpec.anonymousClassBuilder().addSuperclassConstructorParameter("%S", nameAccessor.get(it)).build()

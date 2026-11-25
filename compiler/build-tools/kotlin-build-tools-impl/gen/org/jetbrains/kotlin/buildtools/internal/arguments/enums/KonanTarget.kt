@@ -32,11 +32,5 @@ public enum class KonanTarget(
   MACOS_ARM64("macos_arm64"),
   LINUX_ARM64("linux_arm64"),
   LINUX_ARM32_HFP("linux_arm32_hfp"),
-  IOS_ARM32("ios_arm32"),
-  WATCHOS_X86("watchos_x86"),
-  LINUX_MIPS32("linux_mips32"),
-  LINUX_MIPSEL32("linux_mipsel32"),
-  MINGW_X86("mingw_x86"),
-  WASM32("wasm32"),
   ;
 }

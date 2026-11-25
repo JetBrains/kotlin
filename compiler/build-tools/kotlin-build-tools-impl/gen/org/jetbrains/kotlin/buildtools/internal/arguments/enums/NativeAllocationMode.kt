@@ -12,7 +12,6 @@ public enum class NativeAllocationMode(
   public val stringValue: String,
 ) {
   STD("std"),
-  MIMALLOC("mimalloc"),
   CUSTOM("custom"),
   ;
 }
