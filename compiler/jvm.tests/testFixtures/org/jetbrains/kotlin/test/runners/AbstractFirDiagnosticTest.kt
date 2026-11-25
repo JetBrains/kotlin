@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.services.PlatformModuleProvider
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.fir.FirWithoutAliasExpansionTestSuppressor
 import org.jetbrains.kotlin.test.services.fir.OnlyTestsWithTypeAliasesMetaConfigurator
+import org.jetbrains.kotlin.test.utils.LF_DISABLED_VARIANT
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -49,7 +50,15 @@ abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest :
     }
 }
 
-abstract class AbstractFirLightTreeDiagnosticsWithLanguageFeatureDisabledTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree) {
+/**
+ * A variant of the compiler diagnostic test data with the language feature of `LANGUAGE_FEATURE_TOGGLED` disabled: `.disabled.kt` if it
+ * differs from the test data, which is analyzed with the feature enabled.
+ */
+abstract class AbstractFirLightTreeDiagnosticsWithLanguageFeatureDisabledTest :
+    AbstractFirPhasedDiagnosticTest(FirParser.LightTree), ManagedTest {
+    override val variantChain: TestVariantChain
+        get() = listOf(LF_DISABLED_VARIANT)
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurationForTestWithLanguageFeatureDisabled()

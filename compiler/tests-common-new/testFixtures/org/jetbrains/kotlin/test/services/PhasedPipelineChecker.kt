@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import org.jetbrains.kotlin.test.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import java.io.File
 
 class PhasedPipelineChecker(
     testServices: TestServices,
@@ -159,10 +160,17 @@ class PhasedPipelineChecker(
         newContent: (String) -> String
     ): List<WrappedException> {
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
+        // `updateTestData` might have created the `.disabled` variant of a managed test after the test read the test data
+        val disabledVariant = testServices.managedTestData
+            ?.takeIf { LF_DISABLED_VARIANT in it.variantChain }
+            ?.writeTargetFile
         val filesList = when {
             // `.disabled` test data may declare a phase different from the original test data, see `LANGUAGE_FEATURE_TOGGLED`
             testDataFile.extension == "nkt" || testDataFile.isLfDisabledTestData -> listOf(testDataFile)
-            else -> testServices.baseTestDataFile.withTestDataVariants
+            disabledVariant == null -> testServices.baseTestDataFile.withTestDataVariants
+            disabledVariant.exists() -> listOf(disabledVariant)
+            // Its phase belongs to its variant, which doesn't exist: the test data it falls back to is only compared
+            else -> return listOfNotNull(compareWithoutUpdating(testDataFile, message, newContent))
         }
         return filesList.filter { it.exists() }.mapNotNull { file ->
             try {
@@ -171,6 +179,19 @@ class PhasedPipelineChecker(
             } catch (e: AssertionError) {
                 WrappedException.FromAfterAnalysisChecker(e)
             }
+        }
+    }
+
+    private fun compareWithoutUpdating(file: File, message: String, newContent: (String) -> String): WrappedException? {
+        return try {
+            testServices.assertions.assertEqualsToFile(
+                expectedFile = file,
+                actual = newContent(file.readText()),
+                message = { message },
+            )
+            null
+        } catch (e: AssertionError) {
+            WrappedException.FromAfterAnalysisChecker(e)
         }
     }
 

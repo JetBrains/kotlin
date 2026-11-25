@@ -1,6 +1,5 @@
 // LANGUAGE: +FullValueClasses +NameBasedDestructuring
 // LANGUAGE_FEATURE_TOGGLED: EnableNameBasedDestructuringShortForm
-// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // FILE: J.java

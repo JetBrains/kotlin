@@ -4,7 +4,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProhibitIllegalNotNullSmartCastsInEqualities
 // LANGUAGE_FEATURE_TOGGLED: ProhibitNotNullSmartCastsBasedOnFlexibleComponentsInEqualities
-// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 // JSPECIFY_STATE: strict
 
 // FILE: q/JavaType.java

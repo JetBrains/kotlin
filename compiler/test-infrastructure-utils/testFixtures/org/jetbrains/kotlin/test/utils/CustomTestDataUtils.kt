@@ -21,8 +21,6 @@ const val WASM_WASI_VARIANT = "wasmWasi"
 private const val LATEST_LV_PREFIX = ".$LATEST_LV_VARIANT"
 private const val LF_DISABLED_PREFIX = ".$LF_DISABLED_VARIANT"
 private const val LL_FIR_PREFIX = ".$LL_FIR_VARIANT"
-private const val REVERSED_PREFIX = ".$REVERSED_VARIANT"
-private const val PARTIAL_BODY_PREFIX = ".$PARTIAL_BODY_VARIANT"
 
 /**
  * The script kinds whose test data has a compound extension: `foo.repl.kts` for the REPL and `foo.test.kts` for the custom test script
@@ -91,25 +89,13 @@ val File.isLLFirTestData: Boolean
 val File.isLLFirDivergenceTestData: Boolean
     get() = LL_FIR_DIVERGENCE_VARIANTS.any { isCustomTestDataWithPrefix(".$it") }
 
-val File.isLLFirSpecializedTestData: Boolean
-    get() = isCustomTestDataWithPrefix(REVERSED_PREFIX) || isCustomTestDataWithPrefix(PARTIAL_BODY_PREFIX)
-
 val File.isCustomTestData: Boolean
     get() = isLLFirTestData || isLatestLVTestData || isLfDisabledTestData
 
 private fun File.isCustomTestDataWithPrefix(prefix: String): Boolean = name.endsWith("$prefix$extensionWithDot")
 
-val File.latestLVTestDataFile: File
-    get() = getCustomTestDataFileWithPrefix(LATEST_LV_PREFIX)
-
 val File.lfDisabledTestDataFile: File
     get() = getCustomTestDataFileWithPrefix(LF_DISABLED_PREFIX)
-
-val File.reversedTestDataFile: File
-    get() = getCustomTestDataFileWithPrefix(REVERSED_PREFIX)
-
-val File.partialBodyTestDataFile: File
-    get() = getCustomTestDataFileWithPrefix(PARTIAL_BODY_PREFIX)
 
 /**
  * An LL FIR test data file (`.ll.kt`) allows tailoring the expected output of a test to the LL FIR case. In very rare cases, LL FIR may
