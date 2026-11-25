@@ -23,12 +23,12 @@ class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfig
         require(this is K2JSCompilerArguments)
         if (irPerFile && (moduleKind != MODULE_ES && !targetVersion.supportsPerFileGranularity)) {
             reporter.reportError(
-                "Per-file compilation can't be used with any `moduleKind` except `es` (ECMAScript Modules)"
+                "Per-file compilation can only be used with `-module-kind es` (ECMAScript Modules)."
             )
         }
         if (irPerClass && moduleKind != MODULE_ES) {
             reporter.reportError(
-                "Per-class compilation can't be used with any `moduleKind` except `es` (ECMAScript Modules)"
+                "Per-class compilation can only be used with `-module-kind es` (ECMAScript Modules)."
             )
         }
         val enabledGranularityFlags = listOfNotNull(
