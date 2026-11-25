@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.documentation.analyzer
 
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 import org.jetbrains.kotlin.documentation.*
 import org.jetbrains.kotlin.documentation.analyzer.internal.visitElementIds
@@ -15,7 +14,6 @@ import kotlin.text.ifEmpty
 
 /** Shared golden-file assertions for the golden test suites. */
 abstract class AbstractKdmGoldenTest {
-
     protected fun assertMatchesGoldenFile(bundle: KdBundle, testDataFile: File) {
         val actual = json
             .encodeToString(KdBundle.serializer(), bundle) + "\n"
