@@ -217,6 +217,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, SwiftExportDslDeprecationChecker)
             register(project, CinteropCrossCompilationChecker)
             register(project, NativeBinaryConfigurationChecker)
+            register(project, KotlinCompilerVersionTargetsChecker)
         }
     }
 }
