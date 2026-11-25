@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 
 object RedundantVisibilityModifierSyntaxChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -177,13 +178,10 @@ object RedundantVisibilityModifierSyntaxChecker : FirBasicDeclarationChecker(Mpp
     private val FirProperty.hasSetterWithImplicitVisibility: Boolean
         get() {
             val theSetter = setter ?: return false
-
-            if (source?.lighterASTNode == theSetter.source?.lighterASTNode) {
-                return true
-            }
-
-            val theSource = theSetter.source ?: return true
-            return theSource.explicitVisibility == null
+            val setterSource = theSetter.source ?: return true
+            // The setter isn't declared explicitly (its source is the property itself, a constructor parameter, etc.)
+            if (setterSource.syntaxId != KotlinSyntaxNodeTypeIds.PROPERTY_ACCESSOR) return true
+            return setterSource.explicitVisibility == null
         }
 
     context(context: CheckerContext)

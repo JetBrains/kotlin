@@ -79,7 +79,7 @@ object FirExplicitApiDeclarationChecker : FirBasicDeclarationChecker(MppCheckerK
         source: KtSourceElement,
     ) {
         val visibilityModifier = withSyntax {
-            source.getChild(KotlinSyntaxNodeTypeIds.MODIFIER_LIST, depth = 1)?.getChild(KotlinSyntaxIdSets.VISIBILITY_MODIFIER)
+            source.getChild(KotlinSyntaxNodeTypeIds.MODIFIER_LIST, depth = 1)?.getChild(KotlinSyntaxIdSets.VISIBILITY_MODIFIERS)
         }
         if (visibilityModifier != null) return
 

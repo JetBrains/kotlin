@@ -46,7 +46,7 @@ object FirConstructorAllowedChecker : FirConstructorChecker(MppCheckerKind.Commo
                     val modifierList = source.extractModifierList() ?: return
                     val hasIllegalModifier = modifierList.modifiers.any {
                         val tokenId = it.tokenId
-                        tokenId in KotlinSyntaxIdSets.VISIBILITY_MODIFIER &&
+                        tokenId in KotlinSyntaxIdSets.VISIBILITY_MODIFIERS &&
                                 tokenId != KotlinSyntaxTokenIds.PROTECTED_MODIFIER &&
                                 tokenId != KotlinSyntaxTokenIds.PRIVATE_MODIFIER
                     }

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.modalityModifier
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.shouldReportOpenIn
 import org.jetbrains.kotlin.fir.analysis.checkers.extractModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.redundantModalities
 import org.jetbrains.kotlin.fir.analysis.checkers.resolvedStatus
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -26,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.syntax.KotlinSyntaxIdSets.MODALITY_MODIFIERS
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object RedundantModalityModifierSyntaxChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
@@ -43,25 +42,24 @@ object RedundantModalityModifierSyntaxChecker : FirBasicDeclarationChecker(MppCh
         val resolvedStatus = declaration.symbol.resolvedStatus!!
         val defaultModality = resolvedStatus.defaultModality
         val containingClass = context.containingDeclarations.last() as? FirClassSymbol
-        val isReportedByRedundantOpenInInterface = declaration.declaresOpenModality && containingClass?.classKind == ClassKind.INTERFACE &&
-                declaration is FirCallableDeclaration && shouldReportOpenInInterface(declaration.symbol, containingClass)
+
+        val modifiers = source.extractModifierList()?.modifiers
+
+        val isReportedByRedundantOpenInInterface =
+            // `open` in interfaces is already reported by REDUNDANT_OPEN_IN_INTERFACE
+            modifiers?.any { it.tokenId == KotlinSyntaxTokenIds.OPEN_MODIFIER } == true &&
+                    containingClass?.classKind == ClassKind.INTERFACE &&
+                    declaration is FirCallableDeclaration && shouldReportOpenInInterface(declaration.symbol, containingClass)
         if (
             modality == defaultModality && containingClass?.classKind == ClassKind.INTERFACE ||
             isReportedByRedundantOpenInInterface
         ) return
 
-        if (source.treeStructure.modalityModifier(source.lighterASTNode) == null) return
+        if (modifiers?.none { it.tokenId in MODALITY_MODIFIERS } != false) return
 
         val redundantModalities = declaration.redundantModalities(defaultModality)
         if (redundantModalities.contains(modality)) {
             reporter.reportOn(source, REDUNDANT_MODALITY_MODIFIER)
         }
     }
-
-    /**
-     * [KotlinSyntaxTokenIds.OPEN_MODIFIER] in interfaces is already reported by [FirErrors.REDUNDANT_OPEN_IN_INTERFACE].
-     */
-    context(context: CheckerContext)
-    private val FirDeclaration.declaresOpenModality: Boolean
-        get() = source?.extractModifierList()?.modifiers?.any { it.tokenId == KotlinSyntaxTokenIds.OPEN_MODIFIER } == true
 }
