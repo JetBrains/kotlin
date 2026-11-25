@@ -111,6 +111,10 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
 
     abstract fun KtSourceElement.findDefaultValueSource(): KtSourceElement?
 
+    /**
+     * Finds the `val` or `var` keyword among the direct children of the element
+     * (e.g., of a parameter, a property, a destructuring declaration or its entry).
+     */
     abstract fun KtSourceElement.findValOrVarKeywordSource(): KtSourceElement?
 
     abstract fun KtSourceElement.findExplicitReceiverOfDotQualifiedSource(): KtSourceElement?
