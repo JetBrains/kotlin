@@ -5,30 +5,31 @@
 
 package org.jetbrains.kotlin.swiftimport.standalone
 
-import org.jetbrains.kotlin.sir.SirModule
+import org.jetbrains.kotlin.kir.KirModule
 import org.jetbrains.kotlin.swiftimport.standalone.config.SwiftImportConfig
 import org.jetbrains.kotlin.swiftimport.standalone.reader.SwiftExtractModuleReader
 import org.jetbrains.kotlin.swiftimport.standalone.reader.SwiftModuleReader
+import org.jetbrains.kotlin.swiftimport.standalone.translation.toKirModule
 
 /**
- * Translates a single Swift module to SIR.
+ * Translates a single Swift module to KIR.
  * Only top-level functions are supported.
  *
  * @param module The Swift module to import.
  * @param config The configuration object specifying the behavior of Swift import.
- * @return TODO: A [Result] containing the translated [KirModule] upon success, or an exception in case of a failure.
+ * @return A [Result] containing the translated [KirModule] upon success, or an exception in case of a failure.
  */
 public fun runSwiftImport(
     module: SwiftInputModule,
     config: SwiftImportConfig = SwiftImportConfig(),
-): Result<Any> /*TODO: replace Any with the KirModule when it will be merged*/ =
+): Result<KirModule> =
     runSwiftImport(module, config, SwiftExtractModuleReader)
 
 internal fun runSwiftImport(
     module: SwiftInputModule,
     config: SwiftImportConfig,
     reader: SwiftModuleReader,
-): Result<Any> = runCatching {
-    reader.read(module, config)
-    TODO("Implement translation from SIR to KIR")
+): Result<KirModule> = runCatching {
+    val sirModule = reader.read(module, config)
+    sirModule.toKirModule()
 }
