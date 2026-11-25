@@ -128,7 +128,7 @@ internal const val OBJC_CACHE_BINARY_OPTIONS = "-Xbinary=objcExportErrorOnNameCo
 internal fun objCExportNamingConfiguration(configuration: CompilerConfiguration): String = listOf(
         "generics=${configuration.objcGenerics}",
         "explicitMethodFamily=${configuration.getBoolean(BinaryOptions.objcExportExplicitMethodFamily)}",
-        "blockExplicitParameterNames=${configuration.get(BinaryOptions.objcExportBlockExplicitParameterNames, false)}",
+        "blockExplicitParameterNames=${configuration.getBoolean(BinaryOptions.objcExportBlockExplicitParameterNames)}",
         "unitSuspendFunctionExport=" +
                 configuration.get(BinaryOptions.unitSuspendFunctionObjCExport, UnitSuspendFunctionObjCExport.DEFAULT),
         "exportKDoc=${configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExportKDocDocumentationToKlib)}",
