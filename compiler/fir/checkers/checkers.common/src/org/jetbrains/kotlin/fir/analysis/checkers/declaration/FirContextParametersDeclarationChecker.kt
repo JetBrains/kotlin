@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.syntax.withSyntax
-import org.jetbrains.kotlin.resolve.allowedInContextParameters
+import org.jetbrains.kotlin.resolve.KotlinModifierHelpers.allowedInContextParameters
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {

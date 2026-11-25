@@ -18,9 +18,12 @@ import java.util.BitSet
  *
  * [BasicSyntaxElementTypeIds.NO_ID] denotes the absence of an ID rather than a specific element type, so it can't be added
  * to the set, and [contains] always returns `false` for it.
+ *
+ * Iteration is not intended for hot paths: the set is boxed when used as an [Iterable],
+ * and each ID is boxed by the [Iterator]. Use [contains] for fast checks.
  */
 @JvmInline
-value class SyntaxIdSet private constructor(private val bits: BitSet) {
+value class SyntaxIdSet private constructor(private val bits: BitSet) : Iterable<SyntaxId> {
     operator fun contains(id: SyntaxId): Boolean =
         id > BasicSyntaxElementTypeIds.NO_ID && bits.get(id)
 
@@ -32,6 +35,8 @@ value class SyntaxIdSet private constructor(private val bits: BitSet) {
         copy.set(id)
         return SyntaxIdSet(copy)
     }
+
+    override fun iterator(): Iterator<SyntaxId> = bits.stream().iterator()
 
     companion object {
         fun of(vararg ids: SyntaxId): SyntaxIdSet {

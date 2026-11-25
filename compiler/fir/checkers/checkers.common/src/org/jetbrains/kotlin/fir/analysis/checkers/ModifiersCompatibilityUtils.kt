@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.syntax.FirModifier
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.resolve.Compatibility
-import org.jetbrains.kotlin.resolve.compatibility
+import org.jetbrains.kotlin.resolve.KotlinModifierHelpers.compatibility
 
 context(reporter: DiagnosticReporter, context: CheckerContext)
 internal fun checkCompatibilityType(

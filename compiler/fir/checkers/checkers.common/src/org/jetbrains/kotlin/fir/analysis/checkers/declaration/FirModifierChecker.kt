@@ -32,7 +32,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.syntax.FirModifier
 import org.jetbrains.kotlin.fir.syntax.FirModifierList
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.KotlinModifierHelpers.deprecatedParentTargetMap
+import org.jetbrains.kotlin.resolve.KotlinModifierHelpers.deprecatedTargetPredicateMap
+import org.jetbrains.kotlin.resolve.KotlinModifierHelpers.possibleParentTargetPredicateMap
+import org.jetbrains.kotlin.resolve.KotlinModifierHelpers.possibleTargetPredicateMap
+import org.jetbrains.kotlin.resolve.KotlinModifierHelpers.redundantTargetMap
 import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
