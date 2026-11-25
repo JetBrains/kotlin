@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.wasm.component.internal
 
+import org.gradle.api.attributes.Usage
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
@@ -20,7 +23,10 @@ internal val WitTransformRegisteringSetupAction = KotlinTargetSideEffect { targe
         WitExtractionTransform::class.java,
         fromArtifactType = KLIB_TYPE,
         toArtifactType = KOTLIN_WASM_WIT_ARTIFACT_TYPE,
-    )
+    ) { spec ->
+        spec.from.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_RUNTIME))
+        spec.to.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_WIT_RUNTIME_DEPENDENCIES))
+    }
 }
 
 /**

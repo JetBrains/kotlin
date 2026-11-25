@@ -79,14 +79,11 @@ object KotlinUsages {
     /**
      * WIT declarations of a Wasm WASI project, offered to the projects that depend on it.
      *
-     * NOTE: This usage is compatible with [KOTLIN_RUNTIME], so that dependencies without their own WIT declarations variant,
-     * such as published libraries, resolve to their klib, from which
-     * [org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitExtractionTransform] extracts the WIT declarations.
+     * It is the usage of the secondary variant of the runtime elements with the `wit` directory of a project,
+     * and of the WIT declarations extracted from klibs by
+     * [org.jetbrains.kotlin.gradle.targets.wasm.component.internal.WitExtractionTransform].
      *
-     * It is also compatible with [JAVA_RUNTIME], like the Wasm runtime classpath.
-     *
-     * Producers of the plain [KOTLIN_RUNTIME] usage, on the other hand, never see variants with this usage,
-     * so the WIT declarations can't be selected instead of the klib.
+     * It isn't compatible with any other usage, so consumers of the runtime usage never select the WIT declarations instead of the klib.
      */
     internal const val KOTLIN_WIT_RUNTIME_DEPENDENCIES = "kotlin-wit-runtime-dependencies"
 
@@ -183,12 +180,11 @@ object KotlinUsages {
         }
     }
 
-    /** Usages that [KOTLIN_NPM_RUNTIME_DEPENDENCIES] and [KOTLIN_WIT_RUNTIME_DEPENDENCIES] consumers fall back to, in order of preference. */
-    private val runtimeDependenciesFallbacks = listOf(KOTLIN_RUNTIME, JAVA_RUNTIME)
+    private val npmRuntimeDependenciesFallbacks = listOf(KOTLIN_RUNTIME, JAVA_RUNTIME)
 
     private class KotlinNpmRuntimeDependenciesCompatibility : AttributeCompatibilityRule<Usage> {
         override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
-            if (consumerValue?.name == KOTLIN_NPM_RUNTIME_DEPENDENCIES && producerValue?.name in runtimeDependenciesFallbacks) {
+            if (consumerValue?.name == KOTLIN_NPM_RUNTIME_DEPENDENCIES && producerValue?.name in npmRuntimeDependenciesFallbacks) {
                 compatible()
             }
         }
@@ -198,26 +194,7 @@ object KotlinUsages {
         override fun execute(details: MultipleCandidatesDetails<Usage>) = details.run {
             if (consumerValue?.name == KOTLIN_NPM_RUNTIME_DEPENDENCIES) {
                 val candidateNames = getCandidateNames()
-                (listOf(KOTLIN_NPM_RUNTIME_DEPENDENCIES) + runtimeDependenciesFallbacks)
-                    .firstOrNull { it in candidateNames }
-                    ?.let { chooseCandidateByName(it) }
-            }
-        }
-    }
-
-    private class KotlinWitRuntimeDependenciesCompatibility : AttributeCompatibilityRule<Usage> {
-        override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
-            if (consumerValue?.name == KOTLIN_WIT_RUNTIME_DEPENDENCIES && producerValue?.name in runtimeDependenciesFallbacks) {
-                compatible()
-            }
-        }
-    }
-
-    private class KotlinWitRuntimeDependenciesDisambiguation : AttributeDisambiguationRule<Usage> {
-        override fun execute(details: MultipleCandidatesDetails<Usage>) = details.run {
-            if (consumerValue?.name == KOTLIN_WIT_RUNTIME_DEPENDENCIES) {
-                val candidateNames = getCandidateNames()
-                (listOf(KOTLIN_WIT_RUNTIME_DEPENDENCIES) + runtimeDependenciesFallbacks)
+                (listOf(KOTLIN_NPM_RUNTIME_DEPENDENCIES) + npmRuntimeDependenciesFallbacks)
                     .firstOrNull { it in candidateNames }
                     ?.let { chooseCandidateByName(it) }
             }
@@ -295,9 +272,6 @@ object KotlinUsages {
 
             strategy.compatibilityRules.add(KotlinNpmRuntimeDependenciesCompatibility::class.java)
             strategy.disambiguationRules.add(KotlinNpmRuntimeDependenciesDisambiguation::class.java)
-
-            strategy.compatibilityRules.add(KotlinWitRuntimeDependenciesCompatibility::class.java)
-            strategy.disambiguationRules.add(KotlinWitRuntimeDependenciesDisambiguation::class.java)
         }
     }
 }

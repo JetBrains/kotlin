@@ -48,7 +48,7 @@ class WitConfigurationsTest {
     @Test
     fun `WIT declarations are not selected for the runtime usage even with the klib packaging attribute`() {
         val (lib, app) = buildLibAndApp()
-        lib.configurations.getByName("wasmWasiWitOutput").attributes.attribute(
+        lib.configurations.getByName("wasmWasiRuntimeElements").outgoing.variants.getByName("wit").attributes.attribute(
             KlibPackaging.ATTRIBUTE,
             lib.objects.named(KlibPackaging::class.java, KlibPackaging.PACKED),
         )
