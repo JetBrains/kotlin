@@ -63,6 +63,9 @@ abstract class BasicIrModuleDeserializer(
     protected val moduleReversedFileIndex: Map<IdSignature, FileDeserializationState>
         field = hashMapOf()
 
+    // TODO(KT-91417): This is a temporary workaround. The deserialization queue needs to be reworked.
+    internal fun getFileDeserializationState(signature: IdSignature): FileDeserializationState? = moduleReversedFileIndex[signature]
+
     protected val ir: KlibIrComponent get() = klib.irOrFail
 
     init {
