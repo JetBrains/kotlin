@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -21,8 +22,8 @@ class NullableParamTypeLookupTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Removing the class used as a nullable parameter type triggers recompilation of the call site that passes null")
     @TestMetadata("ic-scenarios/kt-85740/module-a")
-    fun testNullArgumentCallSiteTracksParameterType(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testNullArgumentCallSiteTracksParameterType(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val moduleC = module("ic-scenarios/kt-85740/module-c")
             val moduleB = module("ic-scenarios/kt-85740/module-b", dependencies = listOf(moduleC))
             val moduleA = module("ic-scenarios/kt-85740/module-a", dependencies = listOf(moduleB, moduleC))

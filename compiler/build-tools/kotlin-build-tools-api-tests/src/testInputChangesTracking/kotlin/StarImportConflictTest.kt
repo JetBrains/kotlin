@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -22,8 +23,8 @@ class StarImportConflictTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-85241: Adding a Java nested class that conflicts with a Kotlin star import should trigger an ambiguity error in IC")
     @TestMetadata("ic-scenarios/kt-85241/java-nested")
-    fun testStarImportAmbiguityDetectedAfterAddingJavaNestedClass(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testStarImportAmbiguityDetectedAfterAddingJavaNestedClass(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val mod = module("ic-scenarios/kt-85241/java-nested")
 
             mod.replaceFileWithVersion("com/example/SomeClass.java", "add-nested-class")
@@ -67,8 +68,8 @@ class StarImportConflictTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-85241: Adding a Java static method that conflicts with a Kotlin star import should trigger an ambiguity error in IC")
     @TestMetadata("ic-scenarios/kt-85241/java-static-method")
-    fun testStarImportAmbiguityDetectedAfterAddingJavaStaticMethod(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testStarImportAmbiguityDetectedAfterAddingJavaStaticMethod(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val mod = module("ic-scenarios/kt-85241/java-static-method")
 
             mod.replaceFileWithVersion("com/example/SomeClass.java", "add-static-method")

@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.PRECISE_JAVA_TRACKING
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -32,8 +33,8 @@ class IncrementalJavaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Lib: method signature ABI change in Java class recompiles dependent Kotlin files in app and same module")
     @TestMetadata("incrementalMultiprojectJava")
-    fun testAbiChangeInLib_changeMethodSignature(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testAbiChangeInLib_changeMethodSignature(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val lib =
                 module("incrementalMultiprojectJava/lib", compileJavaSources = true, icOptionsConfigAction = disablePreciseJavaTracking)
             val app =
@@ -56,8 +57,8 @@ class IncrementalJavaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Lib: method body non-ABI change in Java class does not recompile Kotlin files in app")
     @TestMetadata("incrementalMultiprojectJava")
-    fun testNonAbiChangeInLib_changeMethodBody(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testNonAbiChangeInLib_changeMethodBody(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val lib =
                 module("incrementalMultiprojectJava/lib", compileJavaSources = true, icOptionsConfigAction = disablePreciseJavaTracking)
             val app =

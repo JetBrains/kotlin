@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.IR_OUTPUT_NAME
@@ -53,10 +54,10 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ts-generation")
     @DisplayName("ES module kind produces .d.mts declarations")
-    fun moduleKindEsProducesMjsDeclarations(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+    fun moduleKindEsProducesMjsDeclarations(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        kotlinToolchains.assumeJsDtsGenerationIsSupported()
 
-        jsProject(strategyConfig) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ts-generation")
             module.compile()
 
@@ -74,10 +75,10 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ts-generation")
     @DisplayName("Per-file granularity emits declarations for each source file")
-    fun perFileGranularitySplitsDeclarations(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+    fun perFileGranularitySplitsDeclarations(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        kotlinToolchains.assumeJsDtsGenerationIsSupported()
 
-        jsProject(strategyConfig) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ts-generation")
             module.compile()
 
@@ -105,10 +106,10 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ts-generation")
     @DisplayName("Declaration file name is taken from IR_OUTPUT_NAME of the KLIB")
-    fun outputNameIsTakenFromIrOutputName(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+    fun outputNameIsTakenFromIrOutputName(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        kotlinToolchains.assumeJsDtsGenerationIsSupported()
 
-        jsProject(strategyConfig) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ts-generation")
             module.compile(compilationConfigAction = { it.compilerArguments[IR_OUTPUT_NAME] = "ir-output-name" })
 
@@ -123,10 +124,10 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ts-generation")
     @DisplayName("X_IR_MODULE_NAME of the KLIB takes precedence over IR_OUTPUT_NAME")
-    fun outputNameIsTakenFromIrModuleName(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+    fun outputNameIsTakenFromIrModuleName(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        kotlinToolchains.assumeJsDtsGenerationIsSupported()
 
-        jsProject(strategyConfig) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ts-generation")
             module.compile(compilationConfigAction = { it.compilerArguments[X_IR_MODULE_NAME] = "ir-module-name" })
 
@@ -141,10 +142,10 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ts-generation")
     @DisplayName("X_IR_PER_MODULE_OUTPUT_NAME of the KLIB takes precedence over X_IR_MODULE_NAME")
-    fun outputNameIsTakenFromPerModuleOutputName(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+    fun outputNameIsTakenFromPerModuleOutputName(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        kotlinToolchains.assumeJsDtsGenerationIsSupported()
 
-        jsProject(strategyConfig) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ts-generation")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[X_IR_MODULE_NAME] = "ir-module-name"
@@ -162,10 +163,10 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ts-generation")
     @DisplayName("Empty KLIB list succeeds without producing declarations")
-    fun emptyKlibListSucceedsWithoutOutput(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+    fun emptyKlibListSucceedsWithoutOutput(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        kotlinToolchains.assumeJsDtsGenerationIsSupported()
 
-        jsProject(strategyConfig) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ts-generation")
 
             // TODO (KT-90579): the empty KLIB list behavior is not documented; update the expected result and check the warning once it is decided
@@ -178,10 +179,10 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ts-generation")
     @DisplayName("Missing output directory is created")
-    fun missingOutputDirectoryIsCreated(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+    fun missingOutputDirectoryIsCreated(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        kotlinToolchains.assumeJsDtsGenerationIsSupported()
 
-        jsProject(strategyConfig) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ts-generation")
             module.compile()
 
@@ -196,10 +197,10 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ts-generation")
     @DisplayName("USE_UNKNOWN_INSTEAD_ANY set on the operation exports Any and dynamic as unknown")
-    fun useUnknownInsteadAnyExportsUntypedAsUnknown(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        strategyConfig.first.assumeJsDtsGenerationIsSupported()
+    fun useUnknownInsteadAnyExportsUntypedAsUnknown(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        kotlinToolchains.assumeJsDtsGenerationIsSupported()
 
-        jsProject(strategyConfig) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ts-generation")
             module.compile()
 
@@ -218,11 +219,11 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ts-generation")
     @DisplayName("OUTPUT_NAME set on the operation names the declaration file and the exported namespace")
-    fun outputNameOptionNamesDeclarationFileAndNamespace(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        strategyConfig.first.assumeJsDtsGenerationIsSupported()
-        strategyConfig.first.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+    fun outputNameOptionNamesDeclarationFileAndNamespace(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        kotlinToolchains.assumeJsDtsGenerationIsSupported()
+        kotlinToolchains.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
 
-        jsProject(strategyConfig) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ts-generation")
             module.compile()
 
@@ -244,11 +245,11 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ts-generation")
     @DisplayName("MAIN_MODULE_NAME set on the operation names the exported namespace and does not affect the declaration file name")
-    fun mainModuleNameOptionNamesNamespaceOnly(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        strategyConfig.first.assumeJsDtsGenerationIsSupported()
-        strategyConfig.first.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+    fun mainModuleNameOptionNamesNamespaceOnly(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        kotlinToolchains.assumeJsDtsGenerationIsSupported()
+        kotlinToolchains.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
 
-        jsProject(strategyConfig) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ts-generation")
             module.compile()
 
@@ -270,11 +271,11 @@ class JsDtsGenerationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ts-generation")
     @DisplayName("MAIN_MODULE_NAME set on the operation takes precedence over OUTPUT_NAME for the exported namespace")
-    fun mainModuleNameOverridesOutputNameForNamespace(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        strategyConfig.first.assumeJsDtsGenerationIsSupported()
-        strategyConfig.first.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
+    fun mainModuleNameOverridesOutputNameForNamespace(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        kotlinToolchains.assumeJsDtsGenerationIsSupported()
+        kotlinToolchains.assumeJsDtsConfigureFromArgumentResolutionIsSupported()
 
-        jsProject(strategyConfig) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ts-generation")
             module.compile()
 

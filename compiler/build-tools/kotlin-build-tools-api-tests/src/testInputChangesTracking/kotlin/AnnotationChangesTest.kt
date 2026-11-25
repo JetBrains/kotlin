@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertClassDeclarationsContain
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
@@ -113,8 +114,8 @@ class AnnotationChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-55293: Changing annotation argument on interface should lead to recompilation of implementation that propagate the annotation through bridges")
     @TestMetadata("ic-scenarios/annotations")
-    fun testAnnotationParameterChangeRecompilesBridges(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testAnnotationParameterChangeRecompilesBridges(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val lib = module("ic-scenarios/annotations/lib")
 
             lib.replaceFileWithVersion("MyInterface.kt", "add-deprecation-error")

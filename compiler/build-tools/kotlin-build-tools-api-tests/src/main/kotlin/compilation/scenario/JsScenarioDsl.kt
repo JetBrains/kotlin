@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.JsProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.assumeJsIsSupported
@@ -27,11 +26,4 @@ fun BaseCompilationTest.jsScenario(
 ) {
     kotlinToolchains.assumeJsIsSupported()
     action(JsScenarioDsl(JsProject(kotlinToolchains, strategyConfig, workingDirectory), strategyConfig, kotlinToolchains))
-}
-
-fun BaseCompilationTest.jsScenario(
-    executionStrategy: CompilerExecutionStrategyConfiguration,
-    action: Scenario<JsKlibCompilationOperation.Builder, JsHistoryBasedIncrementalCompilationConfiguration.Builder>.() -> Unit,
-) {
-    jsScenario(executionStrategy.first, executionStrategy.second, action)
 }

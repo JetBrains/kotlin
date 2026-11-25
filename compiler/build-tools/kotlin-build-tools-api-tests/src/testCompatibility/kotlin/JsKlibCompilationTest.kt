@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.NOPACK
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertIsPackedKlib
@@ -21,8 +23,8 @@ class JsKlibCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Compiling Kotlin sources produces an unpacked klib with IR and metadata fragments")
     @BtaV2StrategyAgnosticCompilationTest
-    fun compilesToUnpackedKlib(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun compilesToUnpackedKlib(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             module("js-ic-basic-lib").compile {
                 assertIsUnpackedKlibWithIr()
                 assertKnmFileCount(expectedCount = 3)
@@ -32,8 +34,8 @@ class JsKlibCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Disabled NOPACK produces a packed klib file")
     @BtaV2StrategyAgnosticCompilationTest
-    fun packedKlibIsProducedWhenNopackIsDisabled(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun packedKlibIsProducedWhenNopackIsDisabled(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[NOPACK] = false
@@ -45,8 +47,8 @@ class JsKlibCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Compilation of an empty source list is reported as a compiler error")
     @BtaV2StrategyAgnosticCompilationTest
-    fun emptySourceListIsReportedAsError(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun emptySourceListIsReportedAsError(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             module("empty").compile {
                 expectFail()
                 assertLogContainsPatterns(LogLevel.ERROR, Regex(".*Specify at least one source file or directory.*"))
@@ -56,8 +58,8 @@ class JsKlibCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Kotlin sources in named packages produce fragments in the matching package directories")
     @BtaV2StrategyAgnosticCompilationTest
-    fun namedPackageSourcesProduceFragmentsInPackageDirectory(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun namedPackageSourcesProduceFragmentsInPackageDirectory(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             module("basic-multimodule-project/module-3").compile {
                 assertIsUnpackedKlibWithIr()
                 assertKnmFileCount(packageFqName = "p", expectedCount = 1)
@@ -70,8 +72,8 @@ class JsKlibCompilationTest : BaseCompilationTest() {
 
     @DisplayName("A lib+app graph compiles the app klib against the library klib across the module graph")
     @BtaV2StrategyAgnosticCompilationTest
-    fun multiModuleGraphCompilesTheAppAgainstTheLibraryKlib(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun multiModuleGraphCompilesTheAppAgainstTheLibraryKlib(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val library = module("js-ic-basic-lib")
             val app = module("js-ic-basic-app", dependencies = listOf(library))
 

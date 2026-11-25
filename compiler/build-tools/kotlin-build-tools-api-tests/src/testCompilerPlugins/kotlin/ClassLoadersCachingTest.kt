@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.BuildOperation.Companion.ENABLE_CLASSLOADER_CACHE
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
@@ -44,7 +43,7 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
 
     @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("Test that plugins loader is used to cache compiler plugins with IC runner")
-    fun testPluginsLoaderCacheIc(scenario: ScenarioCreator) {
+    fun testPluginsLoaderCacheIc(scenario: ScenarioCreator, kotlinToolchains: KotlinToolchains) {
         scenario {
             assumeTrue(this.strategyConfig is ExecutionPolicy.InProcess)
 

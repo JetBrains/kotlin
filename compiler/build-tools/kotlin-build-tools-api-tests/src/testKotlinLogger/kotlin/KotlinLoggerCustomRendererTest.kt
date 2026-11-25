@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRendererWithDiagnosticId
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer.Severity
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer.SourceLocation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
@@ -78,7 +79,7 @@ class KotlinLoggerCustomRendererTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Custom renderer receives compiler diagnostic identifier during incremental compilation")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun customRendererReceivesDiagnosticIdentifierDuringIncrementalCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun customRendererReceivesDiagnosticIdentifierDuringIncrementalCompilation(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         val diagnosticIds = mutableListOf<String?>()
         val renderer = object : CompilerMessageRendererWithDiagnosticId {
             override fun render(severity: Severity, message: String, location: SourceLocation?, diagnosticId: String?): String {
@@ -87,7 +88,7 @@ class KotlinLoggerCustomRendererTest : BaseCompilationTest() {
             }
         }
 
-        jvmScenario(strategyConfig) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1", compilationConfigAction = {
                 it[BaseCompilationOperation.COMPILER_MESSAGE_RENDERER] = renderer
             })

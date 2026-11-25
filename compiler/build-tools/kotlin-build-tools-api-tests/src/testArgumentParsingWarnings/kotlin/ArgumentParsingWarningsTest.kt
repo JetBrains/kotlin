@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
@@ -43,8 +45,8 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("An argument set via the typed API and then via applyCommandLineArguments is reported")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testArgumentSetViaTypedApiThenArgumentStringsReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testArgumentSetViaTypedApiThenArgumentStringsReportsWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[LANGUAGE_VERSION] = KotlinVersion.V2_5
@@ -58,8 +60,8 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("An argument set via applyCommandLineArguments and then via the typed API is reported")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testArgumentSetViaArgumentStringsThenTypedApiReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testArgumentSetViaArgumentStringsThenTypedApiReportsWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.4"))
@@ -73,8 +75,8 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("An argument set just once via applyCommandLineArguments is not reported")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testArgumentSetOnlyViaApplyCommandLineArgumentsReportsNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testArgumentSetOnlyViaApplyCommandLineArgumentsReportsNoWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.4"))
@@ -87,8 +89,8 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("An argument set just once via typed API is not reported")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testArgumentSetOnlyViaTypedApiReportsNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testArgumentSetOnlyViaTypedApiReportsNoWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[LANGUAGE_VERSION] = KotlinVersion.V2_5
@@ -139,8 +141,8 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("A deprecated argument name is reported even though the compiler receives the new one")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testDeprecatedArgumentNameReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testDeprecatedArgumentNameReportsWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyCommandLineArguments(listOf("-Xjsr305-annotations=strict"))
@@ -175,10 +177,10 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("A deprecated argument that the compiler reports itself is not duplicated")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testDeprecatedLifecycleArgumentReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun testDeprecatedLifecycleArgumentReportsWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         // unlike a removed argument, a deprecated one does reach the compiler, which reports `DEPRECATED_CLI_ARG`
         // itself -- reporting argument-parsing warnings on the Build Tools API side must not duplicate it
-        jvmProject(strategyConfig) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyCommandLineArguments(listOf("-Xjvm-default=all"))
@@ -195,9 +197,9 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("An argument set via applyArgumentStrings, the typed API and applyArgumentStrings again is reported")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testArgumentSetViaArgumentStringsAroundTypedApiReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun testArgumentSetViaArgumentStringsAroundTypedApiReportsWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         // a value configured through the typed API in between two applyArgumentStrings calls has to keep its position
-        jvmProject(strategyConfig) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.4"))
@@ -212,8 +214,8 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Escalated argument parsing warning fails the build")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testEscalatedArgumentParsingWarningFailsBuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testEscalatedArgumentParsingWarningFailsBuild(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.4"))
@@ -229,8 +231,8 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("An argument set via two separate applyCommandLineArguments calls is reported")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testArgumentSetViaTwoArgumentStringsCallsReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testArgumentSetViaTwoArgumentStringsCallsReportsWarning(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.4"))

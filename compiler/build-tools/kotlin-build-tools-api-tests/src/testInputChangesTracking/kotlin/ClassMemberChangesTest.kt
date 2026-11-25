@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
@@ -63,8 +64,8 @@ class ClassMemberChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-91153: Removing a companion object whose member was imported directly should compile incrementally once the import is gone")
     @TestMetadata("ic-scenarios/companion-member-import")
-    fun testRemovingCompanionAfterDirectMemberImportIsRemoved(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testRemovingCompanionAfterDirectMemberImportIsRemoved(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val lib = module("ic-scenarios/companion-member-import/lib")
             val app = module("ic-scenarios/companion-member-import/app", listOf(lib))
 
@@ -82,8 +83,8 @@ class ClassMemberChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-91153: Removing a companion object should recompile the module importing its member via an alias")
     @TestMetadata("ic-scenarios/companion-member-import")
-    fun testRemovingCompanionRecompilesAliasedMemberImporter(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testRemovingCompanionRecompilesAliasedMemberImporter(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val lib = module("ic-scenarios/companion-member-import/lib")
             val app = module("ic-scenarios/companion-member-import/app-aliased", listOf(lib))
 
@@ -121,8 +122,8 @@ class ClassMemberChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-62632: Raising property visibility should recompile its inlined usage")
     @TestMetadata("ic-scenarios/kt-62632")
-    fun testInlineArgVisibilityChangeRecompilesCallSites(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testInlineArgVisibilityChangeRecompilesCallSites(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val mod = module("ic-scenarios/kt-62632")
             mod.replaceFileWithVersion("Base.kt", "change-property-visibility")
             mod.compile {
@@ -137,8 +138,8 @@ class ClassMemberChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-11196: Replacing a method with a property should recompile the override that goes through a Java class")
     @TestMetadata("ic-scenarios/method-to-property-in-java-hierarchy")
-    fun testReplacingMethodWithPropertyInMixedHierarchy(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testReplacingMethodWithPropertyInMixedHierarchy(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val mod = module("ic-scenarios/method-to-property-in-java-hierarchy")
 
             mod.replaceFileWithVersion("Base.kt", "method-to-property")

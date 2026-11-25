@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments.Companion.X_EXPORT_KDOC
@@ -29,8 +31,8 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("Non-incremental compilation produces only expected outputs in multi-module setup")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun multiModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun multiModule(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1")
             val module2 = module("basic-multimodule-project/module-2", listOf(module1))
 
@@ -46,13 +48,13 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("Non-incremental compilation produces only expected outputs with mixed java+kotlin setup")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("kotlin-java-mixed")
-    fun mixedJavaKotlin(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun mixedJavaKotlin(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("kotlin-java-mixed")
 
             module1.compile {
                 assertOutputs("bpkg/MainKt.class", "bpkg/BClass.class")
-                if (strategyConfig.first.unwrap()::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
+                if (kotlinToolchains.unwrap()::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
                     assertLogContainsSubstringExactlyTimes(LogLevel.DEBUG, "AClass.java", 1) // no duplication of java sources
                 }
             }
@@ -63,8 +65,8 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("Using removed argument throws on unsupported compiler versions")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun removedArgument(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun removedArgument(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1") {
                 it.compilerArguments[JvmCompilerArguments.X_USE_K2_KAPT] = true
             }
@@ -101,8 +103,8 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("Using recently added argument throws on unsupported compiler versions")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun addedArgument(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun addedArgument(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1") {
                 it.compilerArguments[JvmCompilerArguments.X_ANNOTATIONS_IN_METADATA] = true
             }
@@ -118,8 +120,8 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    fun basicJsCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun basicJsCompilation(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val libModule = module("js-ic-basic-lib")
             val appModule = module("js-ic-basic-app", listOf(libModule))
             libModule.compile()
@@ -131,8 +133,8 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    fun basicWasmCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun basicWasmCompilation(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val libModule = module("js-ic-basic-lib")
             val appModule = module("js-ic-basic-app", listOf(libModule))
             libModule.compile()
@@ -151,8 +153,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @OptIn(ExperimentalCompilerArgument::class)
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-only-ic-basic-app")
-    fun basicJsRichDtsGeneration(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val [toolchains] = strategyConfig
+    fun basicJsRichDtsGeneration(toolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         toolchains.assumeJsIsSupported()
 
         val kotlinToolingVersion = KotlinToolingVersion(toolchains.getCompilerVersion())
@@ -166,7 +167,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
 
         assumeTrue(KotlinToolingVersion(toolchains.getCompilerVersion()) >= KotlinToolingVersion(2, 5, 0, "Beta2"))
 
-        jsProject(strategyConfig, useRichDtsGenerator = true) {
+        jsProject(toolchains, executionPolicy, useRichDtsGenerator = true) {
             val libModule = module("js-ic-basic-lib")
             val appModule = module("js-only-ic-basic-app", listOf(libModule)) {
                 it.compilerArguments[X_EXPORT_KDOC] = true

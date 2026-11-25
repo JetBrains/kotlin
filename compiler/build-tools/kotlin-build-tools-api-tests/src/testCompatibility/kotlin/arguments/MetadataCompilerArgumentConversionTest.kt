@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain.Companion.metadata
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.metadata.*
 import org.jetbrains.kotlin.buildtools.tests.arguments.util.assumeArgumentAvailable
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
@@ -117,12 +118,10 @@ internal class MetadataCompilerArgumentConversionTest : BaseCompilationTest() {
 
     @InvalidRawValueMetadataCompilerArgumentsBtaV2StrategyAgnosticTest
     @DisplayName("Raw argument with non-existent BTA argument value is rejected at compilation time")
-    fun testInvalidRawArgumentCompilationFails(config: Pair<MetadataArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>) {
-        val argumentConfig = config.first
-        val strategyConfig = config.second
+    fun testInvalidRawArgumentCompilationFails(argumentConfig: MetadataArgumentConfiguration<*>, kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         argumentConfig.assumeArgumentSupported()
 
-        metadataProject(strategyConfig) {
+        metadataProject(kotlinToolchains, executionPolicy) {
             val module = module("empty")
             module.sourcesDirectory.resolve("box.kt").writeText("fun box(): String = \"OK\"")
             for (invalidValue in argumentConfig.invalidRawValues) {

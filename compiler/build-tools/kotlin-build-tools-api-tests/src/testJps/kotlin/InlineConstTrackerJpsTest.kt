@@ -6,9 +6,10 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
@@ -23,9 +24,9 @@ class InlineConstTrackerJpsTest : BaseJpsTest() {
     @DisplayName("A Java constant inlined into Kotlin code is reported")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("kotlin-java-constant")
-    fun inlinedJavaConstantIsReported(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun inlinedJavaConstantIsReported(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         val fixture = "kotlin-java-constant"
-        jvmProject(strategyConfig) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module(fixture)
             val inlineConstTracker = RecordingInlineConstTracker()
             module.compile(compilationConfigAction = { builder ->

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.buildtools.api.UnsupportedToolchainException
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinJsStdlibKlibLocation
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -76,18 +75,6 @@ fun BaseCompilationTest.jsProject(
     JsProject(kotlinToolchain, strategyConfig, workingDirectory, useRichDtsGenerator).use { project ->
         project.action()
     }
-}
-
-fun BaseCompilationTest.jsProject(executionStrategy: CompilerExecutionStrategyConfiguration, action: JsProject.() -> Unit) {
-    jsProject(executionStrategy.first, executionStrategy.second, useRichDtsGenerator = false, action)
-}
-
-fun BaseCompilationTest.jsProject(
-    executionStrategy: CompilerExecutionStrategyConfiguration,
-    useRichDtsGenerator: Boolean,
-    action: JsProject.() -> Unit,
-) {
-    jsProject(executionStrategy.first, executionStrategy.second, useRichDtsGenerator, action)
 }
 
 fun KotlinToolchains.assumeJsIsSupported() {

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.buildtools.api.UnsupportedToolchainException
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinWasmStdlibKlibLocation
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -64,10 +63,6 @@ fun BaseCompilationTest.wasmProject(kotlinToolchain: KotlinToolchains, strategyC
     WasmProject(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
         project.action()
     }
-}
-
-fun BaseCompilationTest.wasmProject(executionStrategy: CompilerExecutionStrategyConfiguration, action: WasmProject.() -> Unit) {
-    wasmProject(executionStrategy.first, executionStrategy.second, action)
 }
 
 fun KotlinToolchains.assumeWasmIsSupported() {

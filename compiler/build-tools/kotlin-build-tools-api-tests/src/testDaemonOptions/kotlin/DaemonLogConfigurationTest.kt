@@ -19,7 +19,7 @@ class DaemonLogConfigurationTest : BaseCompilationTest() {
     fun testDaemonDefaultLogsPath() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
         runSingleShotDaemonTest(kotlinToolchains) { daemonPolicy, _ ->
-            jvmProject(kotlinToolchains to daemonPolicy) {
+            jvmProject(kotlinToolchains, daemonPolicy) {
                 val module = module("basic-multimodule-project/module-1")
                 val logsPath = daemonPolicy[ExecutionPolicy.WithDaemon.LOGS_PATH]
                 module.compile {
@@ -38,7 +38,7 @@ class DaemonLogConfigurationTest : BaseCompilationTest() {
         runSingleShotDaemonTest(kotlinToolchains, additionalDaemonConfiguration = {
             this[ExecutionPolicy.WithDaemon.LOGS_PATH] = workingDirectory.resolve("daemon-logs")
         }) { daemonPolicy, _ ->
-            jvmProject(kotlinToolchains to daemonPolicy) {
+            jvmProject(kotlinToolchains, daemonPolicy) {
                 val module = module("basic-multimodule-project/module-1")
                 val logsPath = daemonPolicy[ExecutionPolicy.WithDaemon.LOGS_PATH]
                 module.compile {
@@ -62,7 +62,7 @@ class DaemonLogConfigurationTest : BaseCompilationTest() {
             this[ExecutionPolicy.WithDaemon.LOGS_FILE_COUNT_LIMIT] = expectedLogFileCount
             this[ExecutionPolicy.WithDaemon.LOGS_FILE_SIZE_LIMIT] = expectedLogFileSize
         }) { daemonPolicy, _ ->
-            jvmProject(kotlinToolchains to daemonPolicy) {
+            jvmProject(kotlinToolchains, daemonPolicy) {
                 val module = module("basic-multimodule-project/module-1")
                 module.compile {
                     val logFile = logsPath.useDirectoryEntries {

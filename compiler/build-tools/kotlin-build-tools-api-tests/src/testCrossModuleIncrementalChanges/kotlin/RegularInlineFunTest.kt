@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -23,8 +24,8 @@ class RegularInlineFunTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("When regular inline function changes, its call site is recompiled")
     @TestMetadata("ic-scenarios/regular-inline-fun/basic-change/lib")
-    fun testBasicCase(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testBasicCase(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val lib = module("ic-scenarios/regular-inline-fun/basic-change/lib")
             val app = module(
                 "ic-scenarios/regular-inline-fun/basic-change/app",
@@ -56,8 +57,8 @@ class RegularInlineFunTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Recompilation of call site affected by an inline fun in a value class")
     @TestMetadata("ic-scenarios/inline-fun-in-value-class/lib")
-    fun testJvmInlineValueClass(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testJvmInlineValueClass(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val lib = module("ic-scenarios/inline-fun-in-value-class/lib")
             val app = module(
                 "ic-scenarios/inline-fun-in-value-class/app",
@@ -88,8 +89,8 @@ class RegularInlineFunTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-89077: JS: changing an inline function body in a klib dependency must recompile its call site")
     @TestMetadata("ic-scenarios/regular-inline-fun/basic-change/lib")
-    fun testJsInlineFunBodyChangeRecompilesCallSite(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsScenario(strategyConfig) {
+    fun testJsInlineFunBodyChangeRecompilesCallSite(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsScenario(kotlinToolchains, executionPolicy) {
             checkInlineFunBodyChangeRecompilesCallSite()
         }
     }
@@ -97,8 +98,8 @@ class RegularInlineFunTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-89077: Wasm: changing an inline function body in a klib dependency must recompile its call site")
     @TestMetadata("ic-scenarios/regular-inline-fun/basic-change/lib")
-    fun testWasmInlineFunBodyChangeRecompilesCallSite(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmScenario(strategyConfig) {
+    fun testWasmInlineFunBodyChangeRecompilesCallSite(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmScenario(kotlinToolchains, executionPolicy) {
             checkInlineFunBodyChangeRecompilesCallSite()
         }
     }

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.BuildOperation.Companion.METRICS_COLLECTOR
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.PARSE_INLINED_LOCAL_CLASSES
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
@@ -17,9 +19,7 @@ import org.junit.jupiter.api.DisplayName
 class SmokeJvmClasspathSnapshottingMetricsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Basic incremental compilation metrics test")
-    fun smokeTestIncrementalCompilationMetrics(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val kotlinToolchain = strategyConfig.first
-        val executionPolicy = strategyConfig.second
+    fun smokeTestIncrementalCompilationMetrics(kotlinToolchain: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         val snapshottingOperation = kotlinToolchain.jvm.classpathSnapshottingOperationBuilder(currentKotlinStdlibLocation)
         val metricsCollector = TestBuildMetricsCollector()
         snapshottingOperation[METRICS_COLLECTOR] = metricsCollector
@@ -35,9 +35,7 @@ class SmokeJvmClasspathSnapshottingMetricsTest : BaseCompilationTest() {
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Basic incremental compilation metrics test")
-    fun smokeTestIncrementalCompilationMetricsNoInlineLocalClassesParsing(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val kotlinToolchain = strategyConfig.first
-        val executionPolicy = strategyConfig.second
+    fun smokeTestIncrementalCompilationMetricsNoInlineLocalClassesParsing(kotlinToolchain: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         val snapshottingOperation = kotlinToolchain.jvm.classpathSnapshottingOperationBuilder(currentKotlinStdlibLocation)
         val metricsCollector = TestBuildMetricsCollector()
         snapshottingOperation[METRICS_COLLECTOR] = metricsCollector

@@ -4,7 +4,8 @@
  */
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
@@ -18,8 +19,8 @@ class LocalClassesFirTest : BaseCompilationTest() {
     @DisplayName("Changing super type of local class should trigger rebuild of the local class")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("ic-scenarios/KT-85074")
-    fun localClassSuperTypeChange(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun localClassSuperTypeChange(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module = moduleWithFir("ic-scenarios/KT-85074")
 
             module.replaceFileWithVersion("Foo.kt", "addVal")
@@ -37,8 +38,8 @@ class LocalClassesFirTest : BaseCompilationTest() {
     @DisplayName("Changing local class should not trigger rebuild of usages")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("ic-scenarios/local-class-change")
-    fun localClassChange(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun localClassChange(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module = moduleWithFir("ic-scenarios/local-class-change")
 
             module.replaceFileWithVersion("Foo.kt", "changeLocalClass")

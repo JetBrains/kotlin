@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.LIBRARIES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.X_FRIEND_MODULES
@@ -22,13 +24,13 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsMainCallMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SourceMapEmbedSources
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SourceMapNamesPolicy
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.JS_KLIB
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.JS_LINKING
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.WASM_KLIB
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.WASM_LINKING
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.combineNames
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.executionPolicies
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.kotlinToolchains
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -42,56 +44,68 @@ import java.util.stream.Stream
 
 internal class AllCommonJsAndWasmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration().map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration().stream()
     }
 }
 
 internal class InvalidArgumentValueCommonJsAndWasmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.stream()
     }
 }
 
 internal class InvalidRawValueCommonJsAndWasmCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider : ArgumentsProvider {
+    val compilerArguments = commonJsAndWasmCompilerArguments.filter { it.runsInvalidRawValueTest }
+
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedInvalidRawValueBtaV2ArgumentConfigurations().map { Arguments.of(it) }.stream()
+        return kotlinToolchains(v2only = true).flatMap { kotlinToolchainsProvider: Named<() -> KotlinToolchains> ->
+            executionPolicies().flatMap { executionPolicyProvider: Named<(KotlinToolchains) -> ExecutionPolicy> ->
+                compilerArguments.flatMap { descriptor ->
+                    descriptor.operationKinds.map { operationKind ->
+                        val kotlinToolchainsArg = kotlinToolchainsProvider.payload()
+                        val executionPolicyArg = executionPolicyProvider.payload(kotlinToolchainsArg)
+                        val argumentConfigArg =
+                            named(
+                                combineNames(
+                                    operationKind.displayName,
+                                    descriptor.argumentName,
+                                    kotlinToolchainsProvider.name,
+                                    executionPolicyProvider.name
+                                ),
+                                CommonJsAndWasmArgumentConfiguration(kotlinToolchainsArg, descriptor, operationKind)
+                            )
+                        Arguments.of(argumentConfigArg, kotlinToolchainsArg, executionPolicyArg)
+                    }
+                }
+            }
+        }.stream()
     }
 }
 
 internal class NullableCommonJsAndWasmCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.runsNullableTest }.map { Arguments.of(it) }.stream()
-    }
-}
-
-private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<CommonJsAndWasmArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>>> {
-    val btaV2Strategies = BtaV2StrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments()
-    val compilerArguments = commonJsAndWasmCompilerArguments.filter { it.runsInvalidRawValueTest }
-
-    return btaV2Strategies.flatMap { namedStrategy ->
-        compilerArguments.flatMap { descriptor ->
-            descriptor.operationKinds.map { operationKind ->
-                named(
-                    namedStrategy.name + "[${operationKind.displayName}][${descriptor.argumentName}]",
-                    CommonJsAndWasmArgumentConfiguration(namedStrategy.payload.first, descriptor, operationKind) to namedStrategy.payload
-                )
-            }
-        }
+        return namedArgumentConfiguration { it.runsNullableTest }.stream()
     }
 }
 
 private fun namedArgumentConfiguration(
     argumentPredicate: (CommonJsAndWasmArgumentTestDescriptor<*>) -> Boolean = { true },
-): List<Named<CommonJsAndWasmArgumentConfiguration<*>>> {
-    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedToolchainProviders()
+): List<Arguments> {
+    val btaVersions = kotlinToolchains()
     val compilerArguments = commonJsAndWasmCompilerArguments.filter { argumentPredicate(it) }
 
     return btaVersions.flatMap { namedKotlinToolchains ->
         compilerArguments.flatMap { descriptor ->
             descriptor.operationKinds.mapNotNull { operationKind ->
-                named(
-                    namedKotlinToolchains.name + "[${operationKind.displayName}][${descriptor.argumentName}]",
-                    CommonJsAndWasmArgumentConfiguration(namedKotlinToolchains.payload(), descriptor, operationKind)
+                val toolchain = namedKotlinToolchains.payload()
+                Arguments.of(
+                    named(
+                        combineNames(
+                            operationKind.displayName, descriptor.argumentName, namedKotlinToolchains.name
+                        ),
+                        CommonJsAndWasmArgumentConfiguration(toolchain, descriptor, operationKind)
+                    ),
+                    toolchain
                 )
             }
         }

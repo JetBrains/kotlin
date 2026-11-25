@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.IR_OUTPUT_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.LIBRARIES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.NOPACK
@@ -28,8 +30,8 @@ class WasmLinkingTest : BaseCompilationTest() {
 
     @DisplayName("An unpacked klib is accepted as the Wasm linking input")
     @BtaV2StrategyAgnosticCompilationTest
-    fun linksAnUnpackedKlib(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun linksAnUnpackedKlib(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.compile()
             module.link {
@@ -47,8 +49,8 @@ class WasmLinkingTest : BaseCompilationTest() {
 
     @DisplayName("A packed klib (NOPACK=false) is accepted as the Wasm linking input")
     @BtaV2StrategyAgnosticCompilationTest
-    fun linksAPackedKlib(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun linksAPackedKlib(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.compile(compilationConfigAction = { it.compilerArguments[NOPACK] = false })
             module.link {
@@ -66,8 +68,8 @@ class WasmLinkingTest : BaseCompilationTest() {
 
     @DisplayName("A wasm-wasi klib links into a wasm-wasi artifact")
     @BtaV2StrategyAgnosticCompilationTest
-    fun wasmWasiTargetLinks(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun wasmWasiTargetLinks(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib", stdlibClasspath = listOf(currentKotlinWasmWasiStdlibKlibLocation))
             module.compile(compilationConfigAction = {
                 it.compilerArguments[X_WASM_TARGET] = WasmTarget.WASM_WASI
@@ -85,8 +87,8 @@ class WasmLinkingTest : BaseCompilationTest() {
 
     @DisplayName("The linked Wasm artifact name comes from the linking IR_OUTPUT_NAME, independent of the compiled klib name")
     @BtaV2StrategyAgnosticCompilationTest
-    fun linkedWasmArtifactNameComesFromIrOutputName(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun linkedWasmArtifactNameComesFromIrOutputName(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val module = module("js-ic-basic-lib")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[NOPACK] = false
@@ -103,8 +105,8 @@ class WasmLinkingTest : BaseCompilationTest() {
 
     @DisplayName("A lib+app graph links each module to its own Wasm and the app resolves the library across modules")
     @BtaV2StrategyAgnosticCompilationTest
-    fun multiModuleGraphLinksEachModuleToItsOwnArtifact(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun multiModuleGraphLinksEachModuleToItsOwnArtifact(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val library = module("js-ic-basic-lib")
             val app = module("js-ic-basic-app", dependencies = listOf(library))
 
@@ -125,8 +127,8 @@ class WasmLinkingTest : BaseCompilationTest() {
 
     @DisplayName("A missing dependency fails Wasm linking when partial linkage is escalated to ERROR")
     @BtaV2StrategyAgnosticCompilationTest
-    fun missingDependencyFailsLinkingWhenPartialLinkageIsError(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun missingDependencyFailsLinkingWhenPartialLinkageIsError(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val library = module("missing-dep/lib")
             val app = module("missing-dep/app", dependencies = listOf(library))
 

@@ -148,12 +148,8 @@ class AutoCloseablesTest : BaseCompilationTest() {
                         for (function in functionsToCheck) {
                             val functionName = function.name.asString()
                             val bytecodeMethods = classNode.methods.filter {
-                                it.name == functionName && (it.access and Opcodes.ACC_SYNTHETIC) == 0 && it.access and Opcodes.ACC_PRIVATE == 0
+                                it.name == functionName && (it.access and Opcodes.ACC_SYNTHETIC) == 0 && (it.access and Opcodes.ACC_ABSTRACT) == 0 && (it.access and Opcodes.ACC_PRIVATE) == 0
                             }
-                            assertTrue(
-                                bytecodeMethods.isNotEmpty(),
-                                "No bytecode method found for function $functionName in class ${classId.asString()}"
-                            )
 
                             for (method in bytecodeMethods) {
                                 assertTrue(

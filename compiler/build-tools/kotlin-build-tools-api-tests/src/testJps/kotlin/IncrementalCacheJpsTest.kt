@@ -6,9 +6,10 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerTargetId
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
@@ -34,8 +35,8 @@ class IncrementalCacheJpsTest : BaseJpsTest() {
     @DisplayName("The compiler asks the JPS components for the cache of the module being compiled")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-3")
-    fun componentsAreQueried(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun componentsAreQueried(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-3")
             val cache = RecordingIncrementalCache()
             val components = SingleCacheComponents(cache)

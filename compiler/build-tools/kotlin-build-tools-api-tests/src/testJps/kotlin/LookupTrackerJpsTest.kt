@@ -7,10 +7,11 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
@@ -26,8 +27,8 @@ class LookupTrackerJpsTest : BaseJpsTest() {
     @DisplayName("The JPS lookup tracker receives lookups")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun lookupsAreReported(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun lookupsAreReported(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             val lookupTracker = RecordingLookupTracker()
             module.compile(compilationConfigAction = { builder ->
@@ -41,8 +42,8 @@ class LookupTrackerJpsTest : BaseJpsTest() {
     @DisplayName("The JPS lookup tracker reports a top-level function lookup with the PACKAGE scope kind")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun packageLevelLookupKeepsScopeKind(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun packageLevelLookupKeepsScopeKind(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             val lookupTracker = RecordingLookupTracker()
             module.compile(compilationConfigAction = { builder ->
@@ -61,8 +62,8 @@ class LookupTrackerJpsTest : BaseJpsTest() {
     @DisplayName("The JPS lookup tracker takes precedence over the operation-level one, with a warning")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun jpsLookupTrackerTakesPrecedence(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun jpsLookupTrackerTakesPrecedence(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             val jpsTracker = RecordingLookupTracker()
             val operationTracker = RecordingLookupTracker()
@@ -85,8 +86,8 @@ class LookupTrackerJpsTest : BaseJpsTest() {
     @DisplayName("The operation-level lookup tracker receives lookups when the JPS one is not set")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun operationLookupTrackerIsUsedAsFallback(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun operationLookupTrackerIsUsedAsFallback(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             val operationTracker = RecordingLookupTracker()
             module.compile(compilationConfigAction = { builder ->

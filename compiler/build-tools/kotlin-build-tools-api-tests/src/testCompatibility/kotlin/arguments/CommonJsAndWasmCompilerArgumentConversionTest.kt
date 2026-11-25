@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.*
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm.CommonJsAndWasmArgumentOperationKind.*
 import org.jetbrains.kotlin.buildtools.tests.arguments.util.assumeArgumentAvailable
@@ -113,25 +114,24 @@ internal class CommonJsAndWasmCompilerArgumentConversionTest : BaseCompilationTe
 
     @InvalidRawValueCommonJsAndWasmCompilerArgumentsBtaV2StrategyAgnosticTest
     @DisplayName("Raw argument with non-existent BTA argument value is rejected at compilation time")
-    fun testInvalidRawArgumentCompilationFails(config: Pair<CommonJsAndWasmArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>) {
-        val [argumentConfig, strategyConfig] = config
+    fun testInvalidRawArgumentCompilationFails(argumentConfig: CommonJsAndWasmArgumentConfiguration<*>, kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         argumentConfig.assumeArgumentSupported()
 
         when (argumentConfig.operationKind) {
-            JS_KLIB -> jsProject(strategyConfig) {
+            JS_KLIB -> jsProject(kotlinToolchains, executionPolicy) {
                 val module = module("js-ic-basic-lib")
                 argumentConfig.testInvalidRawArgumentKlibCompilationFails(module)
             }
-            JS_LINKING -> jsProject(strategyConfig) {
+            JS_LINKING -> jsProject(kotlinToolchains, executionPolicy) {
                 val module = module("js-ic-basic-lib")
                 module.compile()
                 argumentConfig.testInvalidRawArgumentLinkingFails(module)
             }
-            WASM_KLIB -> wasmProject(strategyConfig) {
+            WASM_KLIB -> wasmProject(kotlinToolchains, executionPolicy) {
                 val module = module("js-ic-basic-lib")
                 argumentConfig.testInvalidRawArgumentKlibCompilationFails(module)
             }
-            WASM_LINKING -> wasmProject(strategyConfig) {
+            WASM_LINKING -> wasmProject(kotlinToolchains, executionPolicy) {
                 val module = module("js-ic-basic-lib")
                 module.compile()
                 argumentConfig.testInvalidRawArgumentLinkingFails(module)

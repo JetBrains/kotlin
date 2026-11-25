@@ -4,11 +4,12 @@
  */
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.USE_FIR_RUNNER
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -28,8 +29,8 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Adding and removing the class")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testScenario1(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testScenario1(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val module1 = moduleWithFir("basic-multimodule-project/module-1")
 
             val randomString = UUID.randomUUID().toString()
@@ -62,8 +63,8 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Throws an exception on using LV 1.9")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testScenario2(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testScenario2(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             assertThrows<IllegalStateException>(
                 message = "Compilation does not fail on LV 1.9"
             ) {
@@ -82,8 +83,8 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Throws an exception on missing -Xuse-fir-ic")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testScenario3(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testScenario3(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             assertThrows<IllegalStateException>(
                 message = "Compilation does not fail on missing -Xuse-fir-ic"
             ) {

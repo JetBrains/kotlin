@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm.AllWasmCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm.InvalidRawValueWasmCompilerArgumentsBtaV2StrategyAgnosticTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm.NullableWasmCompilerArgumentsWithBtaVersionsTest
@@ -102,12 +103,11 @@ internal class WasmCompilerArgumentConversionTest : BaseCompilationTest() {
 
     @InvalidRawValueWasmCompilerArgumentsBtaV2StrategyAgnosticTest
     @DisplayName("Raw argument with non-existent BTA argument value is rejected at compilation time")
-    fun testInvalidRawArgumentCompilationFails(config: Pair<WasmArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>) {
-        val [argumentConfig, strategyConfig] = config
+    fun testInvalidRawArgumentCompilationFails(argumentConfig: WasmArgumentConfiguration<*>, kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         argumentConfig.assumeArgumentSupported()
 
         when (argumentConfig.operationKind) {
-            KLIB -> wasmProject(strategyConfig) {
+            KLIB -> wasmProject(kotlinToolchains, executionPolicy) {
                 val module = module("js-ic-basic-lib")
                 for (invalidValue in argumentConfig.invalidRawValues) {
                     module.compile(compilationConfigAction = {
@@ -118,7 +118,7 @@ internal class WasmCompilerArgumentConversionTest : BaseCompilationTest() {
                     }
                 }
             }
-            LINKING -> wasmProject(strategyConfig) {
+            LINKING -> wasmProject(kotlinToolchains, executionPolicy) {
                 val module = module("js-ic-basic-lib")
                 module.compile()
                 for (invalidValue in argumentConfig.invalidRawValues) {

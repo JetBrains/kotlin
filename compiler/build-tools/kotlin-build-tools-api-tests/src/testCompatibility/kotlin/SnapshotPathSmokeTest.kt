@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.snapshotBasedIcConfiguration
@@ -28,8 +30,8 @@ class SnapshotPathSmokeTest : BaseCompilationTest() {
     @DisplayName("Deprecated 4-parameter builder creates snapshot with hardcoded filename ignoring custom name")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testDeprecatedBuilderIgnoresCustomSnapshotFilename(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testDeprecatedBuilderIgnoresCustomSnapshotFilename(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1")
             val customSnapshotDir = module1.buildDirectory.resolve("my-custom-snapshot")
             customSnapshotDir.createDirectories()
@@ -63,8 +65,8 @@ class SnapshotPathSmokeTest : BaseCompilationTest() {
     @DisplayName("New 3-parameter builder creates snapshot with auto-generated path under workingDirectory")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testNewBuilderAutoGeneratesSnapshotPath(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testNewBuilderAutoGeneratesSnapshotPath(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1")
             val icWorkDir = module1.buildDirectory.resolve("ic-work")
 

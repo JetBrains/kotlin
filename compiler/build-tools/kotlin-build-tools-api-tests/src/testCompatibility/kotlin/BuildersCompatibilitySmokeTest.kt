@@ -42,8 +42,7 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
 
     @DisplayName("Test builders produce independent operations")
     @DefaultStrategyAgnosticCompilationTest
-    fun buildersProduceIndependentInstances(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val toolchain = strategyConfig.first
+    fun buildersProduceIndependentInstances(toolchain: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         val sources = listOf("a.kt", "b.kt", "c.kt").map { Paths.get(it) }
         val destination = Paths.get("classes")
         val operationBuilder = toolchain.jvm.jvmCompilationOperationBuilder(sources, destination).apply {
@@ -79,8 +78,7 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
     @Suppress("DEPRECATION")
     @DisplayName("Modifying IC configuration builder after build does not affect the built configuration")
     @DefaultStrategyAgnosticCompilationTest
-    fun testICConfigBuilderImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val toolchain = strategyConfig.first
+    fun testICConfigBuilderImmutability(toolchain: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         val sources = listOf(workingDirectory.resolve("a.kt").also { it.writeText("class A") })
         val destination = workingDirectory.resolve("classes")
         val operationBuilder = toolchain.jvm.jvmCompilationOperationBuilder(sources, destination)
@@ -106,8 +104,7 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
 
     @DisplayName("toBuilder round-trip: modifying builder from toBuilder does not affect the original operation")
     @DefaultStrategyAgnosticCompilationTest
-    fun testToBuilderOperationImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val toolchain = strategyConfig.first
+    fun testToBuilderOperationImmutability(toolchain: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         val sources = listOf(workingDirectory.resolve("a.kt").also { it.writeText("class A") })
         val destination = workingDirectory.resolve("classes")
         val original = toolchain.jvm.jvmCompilationOperationBuilder(sources, destination).apply {
@@ -128,8 +125,7 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
 
     @DisplayName("Metadata: toBuilder round-trip does not affect the original operation")
     @DefaultStrategyAgnosticCompilationTest
-    fun testMetadataToBuilderOperationImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val toolchain = strategyConfig.first
+    fun testMetadataToBuilderOperationImmutability(toolchain: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         assumeTrue(toolchain.supportsMetadata())
         val sources = listOf(workingDirectory.resolve("common.kt").also { it.writeText("fun f() = 1") })
         val destination = workingDirectory.resolve("klib")
@@ -147,8 +143,7 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
 
     @DisplayName("Modifying ClasspathSnapshottingOperation builder after build does not affect the built operation")
     @DefaultStrategyAgnosticCompilationTest
-    fun testClasspathSnapshottingBuilderImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val toolchain = strategyConfig.first
+    fun testClasspathSnapshottingBuilderImmutability(toolchain: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         val classpathEntry = KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath()
         val builder = toolchain.jvm.classpathSnapshottingOperationBuilder(classpathEntry).apply {
             this[JvmClasspathSnapshottingOperation.GRANULARITY] = ClassSnapshotGranularity.CLASS_LEVEL

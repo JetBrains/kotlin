@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.IC_EVENT_COLLECTOR
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
@@ -41,8 +42,8 @@ class IcEventCollectorTest : BaseCompilationTest() {
     @DisplayName("IC_EVENT_COLLECTOR can be set and used to retrieve events in BTA V2 compilations")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun setIcEventCollectorAndCollectEvents(strategyConfig: org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun setIcEventCollectorAndCollectEvents(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module1 = module("basic-multimodule-project/module-1")
             val events = mutableListOf<IcEvent>()
             val collector = object : IcEventCollector {

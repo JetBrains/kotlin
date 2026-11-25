@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertClassDeclarations
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertClassDeclarationsContain
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
@@ -21,8 +22,8 @@ class JvmFileFacadeChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Renaming a @file:JvmName facade should remove the stale facade and generate the new one")
     @TestMetadata("ic-scenarios/file-facade-rename")
-    fun testRenamingFileFacade(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testRenamingFileFacade(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val mod = module("ic-scenarios/file-facade-rename")
 
             mod.replaceFileWithVersion("A.kt", "renamed-facade")
@@ -43,8 +44,8 @@ class JvmFileFacadeChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-89352: Replacing an object with a same-named file facade should recompile the usages of its members")
     @TestMetadata("ic-scenarios/object-to-file-facade")
-    fun testReplacingObjectWithSameNamedFileFacade(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testReplacingObjectWithSameNamedFileFacade(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val mod = module("ic-scenarios/object-to-file-facade")
 
             mod.replaceFileWithVersion("Foo.kt", "unwrap-object")
@@ -59,8 +60,8 @@ class JvmFileFacadeChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-89326: Moving a part of a @JvmMultifileClass facade to another @JvmName should keep the original facade")
     @TestMetadata("ic-scenarios/multifile-facade")
-    fun testMovingMultifileClassPartToAnotherFacade(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testMovingMultifileClassPartToAnotherFacade(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val mod = module("ic-scenarios/multifile-facade")
 
             mod.replaceFileWithVersion("b.kt", "another-facade")
@@ -75,8 +76,8 @@ class JvmFileFacadeChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-89326: Deleting a part of a @JvmMultifileClass facade should keep the facade declared by the remaining part")
     @TestMetadata("ic-scenarios/multifile-facade")
-    fun testDeletingMultifileClassPart(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testDeletingMultifileClassPart(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val mod = module("ic-scenarios/multifile-facade")
 
             mod.deleteFile("b.kt")
@@ -91,8 +92,8 @@ class JvmFileFacadeChangesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("KT-89326: Moving a part of a @JvmMultifileClass facade back should restore the facade")
     @TestMetadata("ic-scenarios/multifile-facade")
-    fun testRestoringMultifileClassFacade(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testRestoringMultifileClassFacade(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val mod = module("ic-scenarios/multifile-facade")
 
             mod.replaceFileWithVersion("b.kt", "another-facade")

@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.wasmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.isKotlinNativeCompilerAvailable
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.unwrap
-import org.jetbrains.kotlin.testFederation.testFederationAllTestsRequested
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import org.junit.jupiter.api.Named
@@ -29,73 +27,50 @@ import java.util.stream.Stream
 
 class BtaV2StrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedStrategyArguments().map { Arguments.of(it) }.stream()
-    }
-
-    companion object {
-        fun namedStrategyArguments(): List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> {
-            val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-            val v2Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> = listOf(
-                named(
-                    "[v2][${kotlinToolchains.getCompilerVersion()}][in-process]",
-                    kotlinToolchains to kotlinToolchains.createInProcessExecutionPolicy()
-                ), named(
-                    "[v2][${kotlinToolchains.getCompilerVersion()}][daemon]",
-                    kotlinToolchains to kotlinToolchains.daemonExecutionPolicyBuilder().build()
+        return kotlinToolchains(v2only = true).flatMap { kotlinToolchainsProvider: Named<() -> KotlinToolchains> ->
+            executionPolicies().map { executionPolicyProvider: Named<(KotlinToolchains) -> ExecutionPolicy> ->
+                val kotlinToolchainArg = named(
+                    combineNames(kotlinToolchainsProvider.name, executionPolicyProvider.name),
+                    kotlinToolchainsProvider.payload()
                 )
-            )
-
-            return v2Args
-        }
+                val executionPolicyArg = executionPolicyProvider.payload(kotlinToolchainArg.payload)
+                Arguments.of(kotlinToolchainArg, executionPolicyArg)
+            }
+        }.stream()
     }
 }
 
 class BtaV2StrategyAndPlatformAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedStrategyArguments().map { Arguments.of(it) }.stream()
-    }
-
-    companion object {
-        fun namedStrategyArguments(): List<Named<ProjectCreator>> {
-            return BtaV2StrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments().flatMap { strategy ->
-                val toolchain = strategy.payload.first
-                val policy = strategy.payload.second
-                BtaV2PlatformAgnosticCompilationTestArgumentProvider.projectWithPolicyCreators(toolchain, strategy.name)
-                    .map { platform ->
-                        named(platform.name) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                            platform.payload(baseTest, policy, testAction)
+        return kotlinToolchains(v2only = true).flatMap { kotlinToolchainsProvider: Named<() -> KotlinToolchains> ->
+            executionPolicies().flatMap { executionPolicyProvider: Named<(KotlinToolchains) -> ExecutionPolicy> ->
+                kotlinToolchainsProvider.payload().let { temporaryKotlinToolchains ->
+                    temporaryKotlinToolchains.platformProjects()
+                        .map { platformProject: Named<(KotlinToolchains, ExecutionPolicy) -> ProjectCreator> ->
+                            val kotlinToolchainArg = kotlinToolchainsProvider.payload()
+                            val executionPolicyArg = executionPolicyProvider.payload(kotlinToolchainArg)
+                            val projectArg = named(
+                                combineNames(kotlinToolchainsProvider.name, executionPolicyProvider.name, platformProject.name),
+                                platformProject.payload(kotlinToolchainArg, executionPolicyArg)
+                            )
+                            Arguments.of(projectArg, kotlinToolchainArg, executionPolicyArg)
                         }
-                    }
+                }
             }
-        }
+        }.stream()
     }
 }
 
 class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<Arguments> =
-        namedStrategyProviders().map { Arguments.of(named(it.name, it.payload())) }.stream()
-
-    companion object {
-        fun namedStrategyProviders(): List<Named<() -> Pair<KotlinToolchains, ExecutionPolicy>>> {
-            return BtaVersionsCompilationTestArgumentProvider.namedToolchainProviders().flatMap { namedArgument ->
-                listOfNotNull(
-                    named(
-                        "${namedArgument.name}[in-process]"
-                    ) {
-                        namedArgument.payload().let { it to it.createInProcessExecutionPolicy() }
-                    },
-
-                    // We do not test the daemon when unless the AllTests subset is requested
-                    if (testFederationAllTestsRequested) {
-                        named(
-                            "${namedArgument.name}[daemon]"
-                        ) {
-                            namedArgument.payload().let { it to it.daemonExecutionPolicy() }
-                        }
-                    } else null
-                )
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+        return kotlinToolchains().flatMap { kotlinToolchainsProvider: Named<() -> KotlinToolchains> ->
+            executionPolicies().map { executionPolicyProvider: Named<(KotlinToolchains) -> ExecutionPolicy> ->
+                val kotlinToolchainsArg =
+                    named(combineNames(kotlinToolchainsProvider.name, executionPolicyProvider.name), kotlinToolchainsProvider.payload())
+                val executionPolicyArg = executionPolicyProvider.payload(kotlinToolchainsArg.payload)
+                Arguments.of(kotlinToolchainsArg, executionPolicyArg)
             }
-        }
+        }.stream()
     }
 }
 
@@ -105,163 +80,69 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
  * itself (e.g. in-process) via the toolchain and passes it to the opener.
  */
 class BtaV2PlatformAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
-        return projectWithPolicyCreators(toolchain, "[v2][${toolchain.getCompilerVersion()}]")
-            .map { Arguments.of(it, toolchain) }.stream()
-    }
 
-    companion object {
-        fun projectWithPolicyCreators(toolchain: KotlinToolchains, labelPrefix: String): List<Named<ProjectWithPolicyCreator>> {
-            return listOfNotNull(
-                named("$labelPrefix[JVM]") { baseTest: BaseCompilationTest, policy: ExecutionPolicy, action: ProjectAction ->
-                    baseTest.jvmProject(toolchain, policy, action)
-                },
-                if (toolchain.supportsJs()) named("$labelPrefix[JS]") { baseTest: BaseCompilationTest, policy: ExecutionPolicy, action: ProjectAction ->
-                    baseTest.jsProject(toolchain, policy, action)
-                } else null,
-                if (toolchain.supportsWasm()) named("$labelPrefix[Wasm]") { baseTest: BaseCompilationTest, policy: ExecutionPolicy, action: ProjectAction ->
-                    baseTest.wasmProject(toolchain, policy, action)
-                } else null,
-                if (toolchain.supportsMetadata()) named("$labelPrefix[Metadata]") { baseTest: BaseCompilationTest, policy: ExecutionPolicy, action: ProjectAction ->
-                    baseTest.metadataProject(toolchain, policy, action)
-                } else null,
-                if (toolchain.supportsNative()) named("$labelPrefix[Native]") { baseTest: BaseCompilationTest, policy: ExecutionPolicy, action: ProjectAction ->
-                    baseTest.nativeProject(toolchain, policy, action)
-                } else null,
-            )
-        }
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+        return kotlinToolchains(v2only = true).flatMap { kotlinToolchainsProvider: Named<() -> KotlinToolchains> ->
+            kotlinToolchainsProvider.payload().let { temporaryKotlinToolchains ->
+                temporaryKotlinToolchains.platformProjects()
+                    .map { platformProject: Named<(KotlinToolchains, ExecutionPolicy) -> ProjectCreator> ->
+                        val kotlinToolchainsArg = kotlinToolchainsProvider.payload()
+                        val projectArg = named(
+                            combineNames(kotlinToolchainsProvider.name, platformProject.name)
+                        ) { baseTest: BaseCompilationTest, policy: ExecutionPolicy, action: ProjectAction ->
+                            platformProject.payload(kotlinToolchainsArg, policy)(baseTest, action)
+                        }
+                        Arguments.of(projectArg, kotlinToolchainsArg)
+                    }
+            }
+        }.stream()
     }
 }
 
 class DefaultStrategyAndPlatformAgnosticProjectTestArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<Arguments> =
-        namedProjectProviders().map { Arguments.of(named(it.name, it.payload())) }.stream()
-
-    companion object {
-        fun namedProjectProviders(): List<Named<() -> ProjectCreator>> {
-            return DefaultStrategyAgnosticCompilationTestArgumentProvider.namedStrategyProviders()
-                .flatMap { executionStrategyConfiguration ->
-                    val temporaryKotlinToolchains = executionStrategyConfiguration.payload().first
-                    listOfNotNull(
-                        named(
-                            "${executionStrategyConfiguration.name}[JVM]"
-                        ) {
-                            { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                                baseTest.jvmProject(executionStrategyConfiguration.payload(), testAction)
-                            }
-                        },
-                        if (temporaryKotlinToolchains.supportsJs()) {
-                            named(
-                                "${executionStrategyConfiguration.name}[JS]"
-                            ) {
-                                { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                                    baseTest.jsProject(executionStrategyConfiguration.payload(), testAction)
-                                }
-                            }
-                        } else null,
-                        if (temporaryKotlinToolchains.supportsWasm()) {
-                            named(
-                                "${executionStrategyConfiguration.name}[Wasm]"
-                            ) {
-                                { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                                    baseTest.wasmProject(executionStrategyConfiguration.payload(), testAction)
-                                }
-                            }
-                        } else null,
-                        if (temporaryKotlinToolchains.supportsMetadata()) {
-                            named(
-                                "${executionStrategyConfiguration.name}[Metadata]"
-                            ) {
-                                { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                                    baseTest.metadataProject(executionStrategyConfiguration.payload(), testAction)
-                                }
-                            }
-                        } else null,
-                        // Kotlin/Native compilation is not supported via the daemon yet, so only the in-process variants get [Native]
-                        if (temporaryKotlinToolchains.supportsNative() && executionStrategyConfiguration.payload().second is ExecutionPolicy.InProcess) {
-                            named(
-                                "${executionStrategyConfiguration.name}[Native]"
-                            ) {
-                                { baseTest: BaseCompilationTest, testAction: ProjectAction ->
-                                    baseTest.nativeProject(executionStrategyConfiguration.payload(), testAction)
-                                }
-                            }
-                        } else null,
-                    )
-                }
-        }
-    }
+        kotlinToolchains().flatMap { kotlinToolchainsProvider: Named<() -> KotlinToolchains> ->
+            executionPolicies().flatMap { executionPolicyProvider: Named<(KotlinToolchains) -> ExecutionPolicy> ->
+                val temporaryKotlinToolchains = kotlinToolchainsProvider.payload()
+                temporaryKotlinToolchains.platformProjects()
+                    .map { projectProvider: Named<(KotlinToolchains, ExecutionPolicy) -> ProjectCreator> ->
+                        val kotlinToolchainsArg = kotlinToolchainsProvider.payload()
+                        val executionPolicyArg = executionPolicyProvider.payload(kotlinToolchainsArg)
+                        val projectArg = named(
+                            combineNames(kotlinToolchainsProvider.name, executionPolicyProvider.name, projectProvider.name),
+                            projectProvider.payload(kotlinToolchainsArg, executionPolicyArg)
+                        )
+                        Arguments.of(projectArg, kotlinToolchainsArg, executionPolicyArg)
+                    }
+            }
+        }.stream()
 }
 
 class DefaultStrategyAndPlatformAgnosticScenarioTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> =
-        namedScenarioProviders().map { Arguments.of(named(it.name, it.payload())) }.stream()
-
-    companion object {
-        fun namedScenarioProviders(): List<Named<() -> ScenarioCreator>> {
-            return DefaultStrategyAgnosticCompilationTestArgumentProvider.namedStrategyProviders()
-                .flatMap { executionStrategyConfiguration ->
-                    val temporaryKotlinToolchains = executionStrategyConfiguration.payload().first
-
-                    listOfNotNull(
-                        named(
-                            "${executionStrategyConfiguration.name}[JVM]"
-                        ) {
-                            { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
-                                baseTest.jvmScenario(executionStrategyConfiguration.payload(), testAction)
-                            }
-                        }, if (temporaryKotlinToolchains.supportsJs()) {
-                            named(
-                                "${executionStrategyConfiguration.name}[JS]"
-                            ) {
-                                { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
-                                    baseTest.jsScenario(executionStrategyConfiguration.payload(), testAction)
-                                }
-                            }
-                        } else null,
-                        if (temporaryKotlinToolchains.supportsWasm()) {
-                            named(
-                                "${executionStrategyConfiguration.name}[Wasm]"
-                            ) {
-                                { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
-                                    baseTest.wasmScenario(executionStrategyConfiguration.payload(), testAction)
-                                }
-                            }
-                        } else null
-                    )
-                }
-        }
-    }
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<Arguments> =
+        kotlinToolchains().flatMap { kotlinToolchainsProvider: Named<() -> KotlinToolchains> ->
+            executionPolicies().flatMap { executionPolicyProvider: Named<(KotlinToolchains) -> ExecutionPolicy> ->
+                val temporaryKotlinToolchains = kotlinToolchainsProvider.payload()
+                temporaryKotlinToolchains.platformScenarios()
+                    .map { scenarioProvider: Named<(KotlinToolchains, ExecutionPolicy) -> ScenarioCreator> ->
+                        val kotlinToolchainsArg = kotlinToolchainsProvider.payload()
+                        val executionPolicyArg = executionPolicyProvider.payload(kotlinToolchainsArg)
+                        val scenarioArg = named(
+                            combineNames(kotlinToolchainsProvider.name, executionPolicyProvider.name, scenarioProvider.name),
+                            scenarioProvider.payload(kotlinToolchainsArg, executionPolicyArg)
+                        )
+                        Arguments.of(scenarioArg, kotlinToolchainsArg, executionPolicyArg)
+                    }
+            }
+        }.stream()
 }
 
 class BtaVersionsCompilationTestArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<Arguments> =
-        namedToolchainProviders().map { Arguments.of(named(it.name, it.payload())) }.stream()
-
-    companion object {
-        fun namedToolchainProviders(): List<Named<() -> KotlinToolchains>> {
-            return buildList {
-                val kotlinToolchainsProvider = { KotlinToolchains.loadImplementation(btaClassloader) }
-                val temporaryKotlinToolchains = kotlinToolchainsProvider()
-                val version = temporaryKotlinToolchains.getCompilerVersion()
-
-                val kotlinToolchainV1Adapter =
-                    if (KotlinToolingVersion(version) < KotlinToolingVersion(2, 4, 0, null)) {
-                        { KotlinToolchains.loadImplementation(btaClassloader.withoutV2Implementation()) }
-                    } else null
-                if (kotlinToolchainV1Adapter != null) {
-                    add(
-                        named("[v1][$version]", kotlinToolchainV1Adapter)
-                    )
-                }
-                if (kotlinToolchainV1Adapter == null || kotlinToolchainV1Adapter().unwrap()::class != temporaryKotlinToolchains.unwrap()::class) {
-                    add(
-                        named("[v2][$version]", kotlinToolchainsProvider)
-                    )
-                }
-            }
-        }
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+        return kotlinToolchains().map { kotlinToolchainsProvider: Named<() -> KotlinToolchains> ->
+            val argument1 = named(combineNames(kotlinToolchainsProvider.name), kotlinToolchainsProvider.payload())
+            Arguments.of(argument1)
+        }.stream()
     }
 }
 
@@ -287,3 +168,83 @@ fun KotlinToolchains.supportsMetadata() = KotlinToolingVersion(getCompilerVersio
  */
 fun KotlinToolchains.supportsNative() =
     KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 5, 20) && isKotlinNativeCompilerAvailable
+
+
+fun kotlinToolchains(v2only: Boolean = false): List<Named<() -> KotlinToolchains>> {
+    return buildList {
+        val version = KotlinToolchains.loadImplementation(btaClassloader).getCompilerVersion()
+        if (!v2only && KotlinToolingVersion(version) < KotlinToolingVersion(2, 4, 0, null)) {
+            add(named("$version][v1") { KotlinToolchains.loadImplementation(btaClassloader.withoutV2Implementation()) })
+        }
+        if (v2only || KotlinToolingVersion(version) >= KotlinToolingVersion(2, 3, 0, null)) {
+            add(named("$version][v2") { KotlinToolchains.loadImplementation(btaClassloader) })
+        }
+    }
+}
+
+fun executionPolicies(): List<Named<(KotlinToolchains) -> ExecutionPolicy>> = buildList {
+    add(named("in-process") { kotlinToolchains: KotlinToolchains -> kotlinToolchains.createInProcessExecutionPolicy() })
+    add(named("daemon") { kotlinToolchains: KotlinToolchains -> kotlinToolchains.daemonExecutionPolicy { } })
+}
+
+fun KotlinToolchains.platformScenarios(): List<Named<(KotlinToolchains, ExecutionPolicy) -> ScenarioCreator>> = buildList {
+    add(named("JVM") { kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy ->
+        { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
+            baseTest.jvmScenario(kotlinToolchains, executionPolicy, testAction)
+        }
+    })
+
+    if (supportsJs()) {
+        add(named("JS") { kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy ->
+            { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
+                baseTest.jsScenario(kotlinToolchains, executionPolicy, testAction)
+            }
+        })
+    }
+    if (supportsWasm()) {
+        add(named("Wasm") { kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy ->
+            { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
+                baseTest.wasmScenario(kotlinToolchains, executionPolicy, testAction)
+            }
+        })
+    }
+}
+
+fun KotlinToolchains.platformProjects(): List<Named<(KotlinToolchains, ExecutionPolicy) -> ProjectCreator>> = buildList {
+    add(named("JVM") { kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy ->
+        { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+            baseTest.jvmProject(kotlinToolchains, executionPolicy, testAction)
+        }
+    })
+
+    if (supportsJs()) {
+        add(named("JS") { kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy ->
+            { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                baseTest.jsProject(kotlinToolchains, executionPolicy, testAction)
+            }
+        })
+    }
+    if (supportsWasm()) {
+        add(named("Wasm") { kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy ->
+            { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                baseTest.wasmProject(kotlinToolchains, executionPolicy, testAction)
+            }
+        })
+    }
+    if (supportsMetadata()) {
+        add(named("Metadata") { kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy ->
+            { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                baseTest.metadataProject(kotlinToolchains, executionPolicy, testAction)
+            }
+        })
+    }
+    if (supportsNative()) {
+        add(named("Native") { kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy ->
+            { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                baseTest.nativeProject(kotlinToolchains, executionPolicy, testAction)
+            }
+        })
+    }
+}
+
+fun combineNames(vararg names: String) = names.joinToString("") { "[$it]" }

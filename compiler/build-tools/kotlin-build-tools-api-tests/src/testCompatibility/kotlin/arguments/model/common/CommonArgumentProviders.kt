@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.common
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.OPT_IN
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_ANNOTATION_DEFAULT_TARGET
@@ -26,9 +28,9 @@ import org.jetbrains.kotlin.buildtools.api.arguments.WarningLevel
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AnnotationDefaultTargetMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.NameBasedDestructuringMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.combineNames
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.executionPolicies
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.kotlinToolchains
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -41,60 +43,64 @@ import java.util.stream.Stream
 
 internal class AllCommonCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration().map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration().stream()
     }
 }
 
 internal class InvalidArgumentValueCommonCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsInvalidArgumentValueTest }.stream()
     }
 }
 
 internal class InvalidRawValueCommonCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.runsInvalidRawValueTest }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsInvalidRawValueTest }.stream()
     }
 }
 
 internal class NullableCommonCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedArgumentConfiguration { it.runsNullableTest }.map { Arguments.of(it) }.stream()
+        return namedArgumentConfiguration { it.runsNullableTest }.stream()
     }
 }
 
 internal class InvalidRawValueCommonCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider : ArgumentsProvider {
-    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
-        return namedInvalidRawValueBtaV2ArgumentConfigurations().map { Arguments.of(it) }.stream()
-    }
-}
-
-private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<CommonArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>>> {
-    val btaV2Strategies = BtaV2StrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments()
     val compilerArguments = commonCompilerArguments
         .filter { it.runsInvalidRawValueTest }
-        .map { named("[${it.argumentName}]", it) }
+        .map { named(it.argumentName, it) }
 
-    return btaV2Strategies.flatMap { namedStrategy ->
-        compilerArguments.map { namedArgDescriptor ->
-            named(
-                namedStrategy.name + namedArgDescriptor.name,
-                CommonArgumentConfiguration(namedStrategy.payload.first, namedArgDescriptor.payload) to namedStrategy.payload
-            )
-        }
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+        return kotlinToolchains(v2only = true).flatMap { kotlinToolchainsProvider: Named<() -> KotlinToolchains> ->
+            executionPolicies().flatMap { executionPolicyProvider: Named<(KotlinToolchains) -> ExecutionPolicy> ->
+                compilerArguments.map { descriptor ->
+                    val kotlinToolchainsArg = kotlinToolchainsProvider.payload()
+                    val executionPolicyArg = executionPolicyProvider.payload(kotlinToolchainsArg)
+                    val argumentConfigArg = named(
+                        combineNames(descriptor.name, kotlinToolchainsProvider.name, executionPolicyProvider.name),
+                        CommonArgumentConfiguration(kotlinToolchainsArg, descriptor.payload)
+                    )
+                    Arguments.of(argumentConfigArg, kotlinToolchainsArg, executionPolicyArg)
+                }
+            }
+        }.stream()
     }
 }
 
-private fun namedArgumentConfiguration(argumentPredicate: (CommonArgumentTestDescriptor<*>) -> Boolean = { true }): List<Named<CommonArgumentConfiguration<*>>> {
-    val btaVersions = BtaVersionsCompilationTestArgumentProvider.namedToolchainProviders()
-    val compilerArguments = commonCompilerArguments.filter { argumentPredicate(it) }.map { named("[${it.argumentName}]", it) }
+private fun namedArgumentConfiguration(argumentPredicate: (CommonArgumentTestDescriptor<*>) -> Boolean = { true }): List<Arguments> {
+    val btaVersions = kotlinToolchains()
+    val compilerArguments = commonCompilerArguments.filter { argumentPredicate(it) }.map { named(it.argumentName, it) }
 
     return btaVersions.flatMap { namedKotlinToolchains ->
         compilerArguments.mapNotNull { namedArgumentDescriptor ->
-            if (namedArgumentDescriptor.payload.skipBtaV1 && namedKotlinToolchains.name.contains("[v1]")) return@mapNotNull null
-            named(
-                namedKotlinToolchains.name + namedArgumentDescriptor.name,
-                CommonArgumentConfiguration(namedKotlinToolchains.payload(), namedArgumentDescriptor.payload)
+            if (namedArgumentDescriptor.payload.skipBtaV1 && namedKotlinToolchains.name.contains("v1")) return@mapNotNull null
+            val toolchain = namedKotlinToolchains.payload()
+            Arguments.of(
+                named(
+                    namedArgumentDescriptor.name,
+                    CommonArgumentConfiguration(toolchain, namedArgumentDescriptor.payload)
+                ),
+                named(namedKotlinToolchains.name, toolchain)
             )
         }
     }

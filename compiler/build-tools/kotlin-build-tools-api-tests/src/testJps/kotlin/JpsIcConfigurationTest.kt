@@ -7,12 +7,13 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.operations.jpsManagedIcConfigurationBuilder
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertExactOutput
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
@@ -90,8 +91,8 @@ class JpsIcConfigurationTest : BaseJpsTest() {
     @DisplayName("A JPS-managed compilation succeeds and produces runnable output")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("kotlin-java-mixed")
-    fun endToEndCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun endToEndCompilation(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("kotlin-java-mixed", compileJavaSources = true)
             module.compile(compilationConfigAction = { it.withJpsIc() }) {
                 // `assertOutputs` is exact, not containment. `compileJavaSources = true` makes javac emit
@@ -106,8 +107,8 @@ class JpsIcConfigurationTest : BaseJpsTest() {
     @DisplayName("The operation-level lookup tracker still fires with no incremental compilation configured")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    fun operationLookupTrackerWithoutIcConfig(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun operationLookupTrackerWithoutIcConfig(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jvmProject(kotlinToolchains, executionPolicy) {
             val module = module("basic-multimodule-project/module-1")
             val lookupTracker = RecordingLookupTracker()
             module.compile(compilationConfigAction = { builder ->

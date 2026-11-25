@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -48,27 +50,26 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("IC works with a mixed Java+Kotlin project via our internal machinery, similarly to Maven")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("kotlin-java-mixed")
-    fun mixedModuleInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val kotlinToolchain = strategyConfig.first
+    fun mixedModuleInternallyTracked(kotlinToolchain: KotlinToolchains, executionPolicy: ExecutionPolicy) {
         assumeTrue(
             KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) >= KotlinToolingVersion(2, 1, 20, "Beta1"),
             "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is ${kotlinToolchain.getCompilerVersion()}"
         )
-        runMixedModuleTest(strategyConfig, useTrackedModules = true)
+        runMixedModuleTest(kotlinToolchain, executionPolicy, useTrackedModules = true)
     }
 
     @DisplayName("IC works with a mixed Java+Kotlin project with the externally tracked changes, similarly to Gradle")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("kotlin-java-mixed")
-    fun mixedModuleExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        runMixedModuleTest(strategyConfig, useTrackedModules = false)
+    fun mixedModuleExternallyTracked(kotlinToolchain: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        runMixedModuleTest(kotlinToolchain, executionPolicy, useTrackedModules = false)
     }
 
     @DisplayName("Basic IC setup works for JS project")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ic-basic")
-    fun jsBasicIcWorks(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
+    fun jsBasicIcWorks(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        jsProject(kotlinToolchains, executionPolicy) {
             val libModule = module("js-ic-basic-lib")
             val appModule = module("js-ic-basic-app", dependencies = listOf(libModule))
 
@@ -99,8 +100,8 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("Basic IC setup works for Wasm project")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ic-basic")
-    fun wasmBasicIcWorks(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    fun wasmBasicIcWorks(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy) {
+        wasmProject(kotlinToolchains, executionPolicy) {
             val libModule = module("js-ic-basic-lib")
             val appModule = module("js-ic-basic-app", dependencies = listOf(libModule))
 
@@ -154,8 +155,8 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
         }
     }
 
-    private fun runMixedModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {
-        jvmScenario(strategyConfig) {
+    private fun runMixedModuleTest(kotlinToolchains: KotlinToolchains, executionPolicy: ExecutionPolicy, useTrackedModules: Boolean) {
+        jvmScenario(kotlinToolchains, executionPolicy) {
             val compilerArgumentsConf: (JvmCompilationOperation.Builder) -> Unit = {
                 it.compilerArguments[VERBOSE] = true
             }
@@ -170,7 +171,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
             module1.compile {
                 assertCompiledSources("main.kt", "bpkg/BClass.kt")
                 assertOutputs("bpkg/MainKt.class", "bpkg/BClass.class")
-                if (strategyConfig.first.unwrap()::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
+                if (kotlinToolchains.unwrap()::class.simpleName != "KotlinToolchainsV1Adapter") { // v1 is not producing some logs and that's expected
                     val count = if (useTrackedModules) {
                         1
                     } else {
