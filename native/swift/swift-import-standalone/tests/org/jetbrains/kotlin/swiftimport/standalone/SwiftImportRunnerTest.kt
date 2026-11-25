@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.swiftimport.standalone
 
 import org.jetbrains.kotlin.kir.KirFunction
+import org.jetbrains.kotlin.kir.KirFunctionBridge
 import org.jetbrains.kotlin.kir.KirModule
+import org.jetbrains.kotlin.kir.printer.KirPrinter
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirUnsupportedType
@@ -71,6 +73,72 @@ class SwiftImportRunnerTest {
         val module = runSwiftImport(SwiftInputModule(name = "Lib", sources = listOf(source))).getOrThrow()
 
         assertEquals(listOf("foo", "bar"), module.render())
+    }
+
+    @Test
+    fun `imported functions call bridges into swift`() {
+        val source = (tempDir / "Lib.swift").apply {
+            writeText("public func foo() {}")
+        }
+
+        val module = runSwiftImport(SwiftInputModule(name = "Lib", sources = listOf(source))).getOrThrow()
+
+        val function = module.declarations.filterIsInstance<KirFunction>().single()
+        assertEquals(listOf("Lib_foo()"), function.body?.statements)
+        val bridge = function.bridges.filterIsInstance<KirFunctionBridge>().single()
+        assertEquals("Lib_foo", bridge.name)
+        val kotlinLines = bridge.kotlinFunctionBridge.lines
+        val swiftLines = bridge.swiftFunctionBridge.lines
+        assertTrue(kotlinLines.any { it.contains("@ImportedBridge(\"Lib_foo\")") }, kotlinLines.toString())
+        assertTrue(swiftLines.any { it.contains("@_cdecl(\"Lib_foo\")") }, swiftLines.toString())
+        assertTrue(swiftLines.any { it.contains("Lib.foo()") }, swiftLines.toString())
+    }
+
+    @Test
+    fun `imported functions are printed with their bridges`() {
+        val source = (tempDir / "Lib.swift").apply {
+            writeText("public func foo() {}")
+        }
+
+        val module = runSwiftImport(SwiftInputModule(name = "Lib", sources = listOf(source))).getOrThrow()
+
+        assertEquals(
+            """
+            @file:kotlin.Suppress("DEPRECATION_ERROR")
+
+            import kotlin.native.internal.ImportedBridge
+            import kotlinx.cinterop.*
+
+            public fun foo() {
+                Lib_foo()
+            }
+
+            @ImportedBridge("Lib_foo")
+            internal external fun Lib_foo(): Boolean
+            """.trimIndent(),
+            KirPrinter().print(module),
+        )
+        assertEquals(
+            """
+            @_cdecl("Lib_foo")
+            package func Lib_foo() -> Swift.Bool {
+                let _result: Swift.Void = Lib.foo()
+                return { _result; return true }()
+            }
+
+            """.trimIndent(),
+            KirPrinter().printSwiftBridges(module),
+        )
+        assertEquals(
+            """
+            #include <Foundation/Foundation.h>
+            #include <stdint.h>
+
+            _Bool Lib_foo();
+
+            """.trimIndent(),
+            KirPrinter().printCDeclarations(module),
+        )
     }
 
     @Test
