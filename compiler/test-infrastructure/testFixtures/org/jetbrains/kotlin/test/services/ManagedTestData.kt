@@ -201,6 +201,23 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
     }
 
     /**
+     * Compares the test data the test reads, with [edit] applied, with [writeTargetFile] like the inline diagnostics, e.g., the
+     * `RUN_PIPELINE_TILL` of a test with its own phase: `updateTestData` creates the variant if the edit makes it differ from the test
+     * data it falls back to, and deletes it if the edit makes them identical.
+     */
+    fun assertWriteTargetFileUnchangedBy(edit: (String) -> String) {
+        val readFile = writeTargetFile.takeIf(File::exists) ?: fallbackFile ?: baseTestDataFile
+        writeTargetFiles.add(inlineWriteTargetFile)
+        ManagedTestAssertions.assertEqualsToTestDataFile(
+            testDataPath = baseTestDataFile.toPath(),
+            actual = edit(readFile.readText()),
+            variantChain = variantChain,
+            extension = extension,
+            mode = if (updatesTestData) TestDataManagerMode.UPDATE else TestDataManagerMode.CHECK,
+        )
+    }
+
+    /**
      * Deletes [writeTargetFile] in `updateTestData` as redundant, e.g., an `.ll.kt` which differs from the test data it falls back to only
      * in the `LL_FIR_DIVERGENCE` directive: the test data manager can't detect such redundancy itself. The deletion goes through
      * [ManagedTestAssertions], so the run reports it. A variant the test didn't compare is left alone, see [isWriteTarget].

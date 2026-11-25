@@ -1,8 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ForbidUselessTypeArgumentsIn26 +CompanionBlocks +CompanionExtensions
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
-// ^difference in declaration rendering of UNRESOLVED_REFERENCE_WRONG_RECEIVER
 class C<T>
 object O
 

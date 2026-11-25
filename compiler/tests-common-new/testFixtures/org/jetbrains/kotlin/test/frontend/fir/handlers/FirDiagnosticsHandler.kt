@@ -90,6 +90,8 @@ class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
     fun assertCollectedDiagnostics(testServices: TestServices, expectedExtension: String) {
         val directives = testServices.moduleStructure.allDirectives
         if (TestDumpDirectives.DUMP_CLASSIFIER in directives) return
+        // The mode without type alias expansion is a sanity check of the diagnostics, its dumps aren't checked, see `FirDumpHandler`
+        if (ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION in directives) return
 
         // A test implementing `ManagedTest` compares its variant of the dump, see `ManagedTestData.assertEqualsToDump`
         val managedTestData = testServices.managedTestData

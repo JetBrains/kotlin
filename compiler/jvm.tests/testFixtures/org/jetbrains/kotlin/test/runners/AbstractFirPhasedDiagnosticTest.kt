@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
+import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker
 import org.jetbrains.kotlin.test.frontend.fir.handlers.NonSourceErrorMessagesHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.PsiLightTreeMetaInfoProcessor
@@ -64,7 +65,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
         }
 
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
-        useAfterAnalysisCheckers(::NonSourceErrorMessagesHandler)
+        useAfterAnalysisCheckers(::NonSourceErrorMessagesHandler, ::FirTestDataConsistencyHandler)
         useFailureSuppressors(::PhasedPipelineChecker, ::FirFailingTestSuppressor)
         enableMetaInfoHandler()
         useAdditionalService<SuppressionChecker>(::SuppressionChecker.bind(null, null))

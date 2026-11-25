@@ -97,7 +97,9 @@ These tests are managed by the [test data manager](../../../analysis/test-data-m
   golden test of their `.kt` files; `PhasedJvmDiagnosticLightTreeWithContextSensitiveEnabledTestGenerated` over
   `tests/contextSensitiveResolutionUsingExpectedType/ideHint/`; the latest-LV runners (see
   [Latest Language Version Differences](#latest-language-version-differences)); `FirLightTreeDiagnosticsWithLanguageFeatureDisabledTestGenerated`
-  over the tests with `LANGUAGE_FEATURE_TOGGLED`, which runs them with the feature disabled.
+  over the tests with `LANGUAGE_FEATURE_TOGGLED`, which runs them with the feature disabled;
+  `FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated` over the tests with type aliases, which runs them without type alias
+  expansion.
 - The LL diagnostic tests (`:analysis:low-level-api-fir:low-level-api-fir-compiler-tests`): `LLDiagnosticsTestGenerated`,
   `LLReversedDiagnosticsTestGenerated`, `LLPartialDiagnosticsTestGenerated`, and their JS and Wasm suites over `testsWithJsStdLib/`,
   `wasmTests/` and `wasmWasiTests/` (`LLJsDiagnosticsFe10TestGenerated`, `LLWasmJsDiagnosticsFe10TestGenerated`, …).
@@ -118,6 +120,7 @@ The `.kt` file is the golden test data; a test whose output differs from it uses
 | Compiler, context-sensitive resolution | `.contextSensitive.kt` → `.kt`                                              |
 | Compiler, latest language version      | `.latestLV.kt` → `.kt`                                                      |
 | Compiler, toggled language feature off | `.disabled.kt` → `.kt`                                                      |
+| Compiler, no type alias expansion      | `.noAliasExpansion.kt` → `.kt`                                              |
 | LL                                     | `.ll.kt` → `.kt`                                                            |
 | LL, reversed resolution order          | `.reversed.kt` → `.ll.kt` → `.kt`                                           |
 | LL, partial body analysis              | `.partialBody.kt` → `.ll.kt` → `.kt`                                        |
@@ -131,9 +134,10 @@ identical, or when an `.ll.kt` differs only in the `LL_FIR_DIVERGENCE` directive
 fails until its `LL_FIR_DIVERGENCE` directive is added by hand: the divergence of LL from the compiler needs an explanation. Muted tests
 (`MUTE_LL_FIR`, `IGNORE_REVERSED_RESOLVE`, a `.fail` file, …) and tests whose analysis crashed are only checked.
 
-The `GENERATED_FIR_TAGS` and `RUN_PIPELINE_TILL` edits go into the `.kt` file and all its existing variants, `.latestLV.kt` included, but
-not `.disabled.kt`: with the feature disabled, the test may stop at another phase, so `.disabled.kt` keeps its own `RUN_PIPELINE_TILL`,
-which only the disabled test edits.
+The `GENERATED_FIR_TAGS` edits of the compiler test go into the `.kt` file and all its existing variants except `.disabled.kt`. Its
+`RUN_PIPELINE_TILL` edits also skip `.contextSensitive.kt` and `.noAliasExpansion.kt`: a test with such a variant may stop at another
+phase, e.g., with the feature disabled, so `update` writes its `RUN_PIPELINE_TILL` into its own variant, creating or deleting the variant
+as for the diagnostics.
 
 The compiler tests run first, as the LL tests fall back to their `.kt` files. Don't pass `--incremental`: it doesn't see the changes made by
 another module's run; narrow the run with `--path` instead.
@@ -143,14 +147,14 @@ another module's run; narrow the run with `--path` instead.
 The dumps of a managed test (`.fir.txt`, `.dot`, `.overrides.txt`, inference logs, `.cli.out`, …) follow the same chains as its `.kt` file,
 with the variant before the dump extension: the reversed LL test reads `foo.reversed.fir.txt` → `foo.ll.fir.txt` → `foo.fir.txt` and writes
 only `foo.reversed.fir.txt`. `update` writes them like the `.kt` file, and not after a crash. An LL test dumps the FIR without `FIR_DUMP` only
-if its own dump exists, e.g., `foo.ll.fir.txt`. `.diag.txt` is compared by the compiler tests only.
+if its own dump exists, e.g., `foo.ll.fir.txt`. The LL tests don't compare `.diag.txt`, and the test without type alias expansion, a
+sanity check of the diagnostics, compares neither `.fir.txt` nor `.diag.txt`.
 
 ### Unmanaged tests
 
 Other diagnostic tests read the same test data but are not managed: they compare with the file they read, and a Gradle run with
 `-Pkotlin.test.update.test.data=true` writes that file.
 
-- `:compiler:jvm.tests`: `FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated` (`.kt`).
 - The JS, Wasm and Native compiler diagnostic tests (`js/js.tests`, `wasm/wasm.tests`, `native/native.tests`). They also cover
   `testsWithAnyBackend/`, and the Wasm ones `tests/defaultArguments/`: run them after `update` changes a `.kt` file there.
 - The metadata diagnostic tests (`AbstractMetadataDiagnosticTest` in `:compiler:tests-common-new`) over `metadataDiagnosticTests/`, and

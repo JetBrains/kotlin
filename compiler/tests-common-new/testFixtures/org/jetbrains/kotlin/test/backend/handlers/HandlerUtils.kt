@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -65,6 +66,8 @@ fun BinaryArtifactHandler<*>.reportKtDiagnostics(module: TestModule, ktDiagnosti
 fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
     val dumper = MultiModuleInfoDumper()
     val moduleStructure = testServices.moduleStructure
+    // The mode without type alias expansion is a sanity check of the diagnostics, its dumps aren't checked, see `FirDumpHandler`
+    if (ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION in moduleStructure.allDirectives) return
     var needToVerifyDiagnostics = false
     for (module in moduleStructure.modules) {
         if (RENDER_ALL_DIAGNOSTICS_FULL_TEXT !in module.directives) continue

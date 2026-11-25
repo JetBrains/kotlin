@@ -15,6 +15,7 @@ const val LL_FIR_VARIANT = "ll"
 const val REVERSED_VARIANT = "reversed"
 const val PARTIAL_BODY_VARIANT = "partialBody"
 const val CONTEXT_SENSITIVE_VARIANT = "contextSensitive"
+const val NO_ALIAS_EXPANSION_VARIANT = "noAliasExpansion"
 const val WASM_JS_VARIANT = "wasmJs"
 const val WASM_WASI_VARIANT = "wasmWasi"
 
@@ -48,6 +49,7 @@ private val TEST_DATA_VARIANTS: List<String> = buildList {
     add(REVERSED_VARIANT)
     add(PARTIAL_BODY_VARIANT)
     add(CONTEXT_SENSITIVE_VARIANT)
+    add(NO_ALIAS_EXPANSION_VARIANT)
     for (wasmVariant in WASM_VARIANTS) {
         add(LL_FIR_VARIANT.withWasmVariant(wasmVariant))
         add(REVERSED_VARIANT.withWasmVariant(wasmVariant))
@@ -69,6 +71,21 @@ val File.withTestDataVariants: List<File>
         val extension = extensionWithDot
         val baseName = name.removeSuffix(extension)
         return (listOf(this) + TEST_DATA_VARIANTS.map { parentFile.resolve("$baseName.$it$extension") }).filter { it.exists() }
+    }
+
+/**
+ * The variants whose tests check their own phase, so the phase of the test data isn't copied to them, see [withPhaseSharingTestDataVariants].
+ */
+private val OWN_PHASE_VARIANTS: List<String> = listOf(CONTEXT_SENSITIVE_VARIANT, NO_ALIAS_EXPANSION_VARIANT)
+
+/**
+ * [withTestDataVariants] except the variants whose tests check their own phase, e.g., `foo.noAliasExpansion.kt`: the variants a
+ * `RUN_PIPELINE_TILL` edit of the test data goes to.
+ */
+val File.withPhaseSharingTestDataVariants: List<File>
+    get() {
+        val ownPhaseVariants = OWN_PHASE_VARIANTS.map { name.removeSuffix(extensionWithDot) + ".$it" + extensionWithDot }
+        return withTestDataVariants.filter { it.name !in ownPhaseVariants }
     }
 
 val File.isLatestLVTestData: Boolean

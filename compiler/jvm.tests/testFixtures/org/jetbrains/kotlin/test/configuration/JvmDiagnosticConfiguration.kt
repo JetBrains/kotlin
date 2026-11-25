@@ -300,7 +300,6 @@ fun TestConfigurationBuilder.configurationForTestWithLanguageFeatureDisabled() {
         TestDumpDirectives.DUMP_CLASSIFIER with "disabled"
     }
     useMetaTestConfigurators(::LanguageFeatureDisabledMetaConfigurator)
-    useAfterAnalysisCheckers(::FirTestDataConsistencyHandler)
 }
 
 /**
