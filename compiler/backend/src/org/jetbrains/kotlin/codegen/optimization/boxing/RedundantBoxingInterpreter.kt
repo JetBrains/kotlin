@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import com.google.common.collect.ImmutableSet
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -28,8 +27,8 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 internal class RedundantBoxingInterpreter(
     methodNode: MethodNode,
-    generationState: GenerationState,
-) : BoxingInterpreter(methodNode.instructions, generationState) {
+    inlineClassUnboxer: InlineClassUnboxer,
+) : BoxingInterpreter(methodNode.instructions, inlineClassUnboxer) {
 
     val candidatesBoxedValues = RedundantBoxedValuesCollection()
 

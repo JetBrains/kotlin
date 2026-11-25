@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpr
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.codegen.pseudoInsns.isPseudo
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -31,7 +30,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
-class NullabilityInterpreter(private val generationState: GenerationState) : OptimizationBasicInterpreter() {
+class NullabilityInterpreter(private val inlineClassUnboxer: InlineClassUnboxer) : OptimizationBasicInterpreter() {
     override fun newOperation(insn: AbstractInsnNode): BasicValue? {
         val defaultResult = super.newOperation(insn)
         val resultType = defaultResult?.type
@@ -88,7 +87,7 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
         val resultType = defaultResult?.type
 
         return when {
-            insn.isBoxing(generationState) ->
+            insn.isBoxing(inlineClassUnboxer) ->
                 NotNullBasicValue(resultType)
             insn.isIteratorMethodCallOfProgression(values) ->
                 ProgressionIteratorBasicValue.byProgressionClassType(values[0].type)

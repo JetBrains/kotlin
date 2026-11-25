@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.topLevelClassInternalName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -27,7 +26,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 abstract class BoxingInterpreter(
     private val insnList: InsnList,
-    private val generationState: GenerationState
+    private val inlineClassUnboxer: InlineClassUnboxer,
 ) : OptimizationBasicInterpreter() {
     private val boxingPlaces = HashMap<Int, BoxedBasicValue>()
     private val progressionIterators = HashMap<AbstractInsnNode, ProgressionIteratorBasicValue>()
@@ -38,7 +37,7 @@ abstract class BoxingInterpreter(
         progressionIterator: ProgressionIteratorBasicValue?
     ): BasicValue =
         boxingPlaces.getOrPut(insnList.indexOf(insn)) {
-            val boxedBasicValue = CleanBoxedValue(type, insn, progressionIterator, generationState)
+            val boxedBasicValue = CleanBoxedValue(type, insn, progressionIterator, inlineClassUnboxer)
             onNewBoxedValue(boxedBasicValue)
             boxedBasicValue
         }
@@ -58,7 +57,7 @@ abstract class BoxingInterpreter(
         val firstArg = values.firstOrNull() ?: return value
 
         return when {
-            insn.isBoxing(generationState) -> {
+            insn.isBoxing(inlineClassUnboxer) -> {
                 /*
                 * It's possible to have chain of several boxings and it's important to retain these boxing methods, consider:
                 *
@@ -74,7 +73,7 @@ abstract class BoxingInterpreter(
                 values.markBoxedArgumentValues()
                 createNewBoxing(insn, value.type, null)
             }
-            insn.isUnboxing(generationState) && firstArg is BoxedBasicValue -> {
+            insn.isUnboxing(inlineClassUnboxer) && firstArg is BoxedBasicValue -> {
                 onUnboxing(insn, firstArg, value.type)
                 value
             }
@@ -95,7 +94,7 @@ abstract class BoxingInterpreter(
                     ?: throw AssertionError("firstArg should be progression iterator")
                 createNewBoxing(insn, progressionIterator.boxedElementType, progressionIterator)
             }
-            insn.isAreEqualIntrinsicForSameTypedBoxedValues(values) && canValuesBeUnboxedForAreEqual(values, generationState) -> {
+            insn.isAreEqualIntrinsicForSameTypedBoxedValues(values) && canValuesBeUnboxedForAreEqual(values, inlineClassUnboxer) -> {
                 onAreEqual(insn, values[0] as BoxedBasicValue, values[1] as BoxedBasicValue)
                 value
             }
@@ -211,11 +210,11 @@ private val UNBOXING_METHOD_NAMES =
 private val KCLASS_TO_JLCLASS = Type.getMethodDescriptor(AsmTypes.JAVA_CLASS_TYPE, AsmTypes.K_CLASS_TYPE)
 private val JLCLASS_TO_KCLASS = Type.getMethodDescriptor(AsmTypes.K_CLASS_TYPE, AsmTypes.JAVA_CLASS_TYPE)
 
-fun AbstractInsnNode.isUnboxing(state: GenerationState) =
-    isPrimitiveUnboxing() || isJavaLangClassUnboxing() || isInlineClassUnboxing(state)
+fun AbstractInsnNode.isUnboxing(inlineClassUnboxer: InlineClassUnboxer) =
+    isPrimitiveUnboxing() || isJavaLangClassUnboxing() || isInlineClassUnboxing(inlineClassUnboxer)
 
-fun AbstractInsnNode.isBoxing(state: GenerationState) =
-    isPrimitiveBoxing() || isJavaLangClassBoxing() || isInlineClassBoxing(state) || isCoroutinePrimitiveBoxing()
+fun AbstractInsnNode.isBoxing(inlineClassUnboxer: InlineClassUnboxer) =
+    isPrimitiveBoxing() || isJavaLangClassBoxing() || isInlineClassBoxing(inlineClassUnboxer) || isCoroutinePrimitiveBoxing()
 
 fun AbstractInsnNode.isPrimitiveUnboxing() =
     isMethodInsnWith(Opcodes.INVOKEVIRTUAL) {
@@ -271,29 +270,29 @@ fun AbstractInsnNode.isJavaLangClassBoxing() =
                 desc == JLCLASS_TO_KCLASS
     }
 
-private fun AbstractInsnNode.isInlineClassBoxing(state: GenerationState) =
+private fun AbstractInsnNode.isInlineClassBoxing(inlineClassUnboxer: InlineClassUnboxer) =
     isMethodInsnWith(Opcodes.INVOKESTATIC) {
-        isInlineClassBoxingMethodDescriptor(state)
+        isInlineClassBoxingMethodDescriptor(inlineClassUnboxer)
     }
 
-private fun AbstractInsnNode.isInlineClassUnboxing(state: GenerationState) =
+private fun AbstractInsnNode.isInlineClassUnboxing(inlineClassUnboxer: InlineClassUnboxer) =
     isMethodInsnWith(Opcodes.INVOKEVIRTUAL) {
-        isInlineClassUnboxingMethodDescriptor(state)
+        isInlineClassUnboxingMethodDescriptor(inlineClassUnboxer)
     }
 
-private fun MethodInsnNode.isInlineClassBoxingMethodDescriptor(state: GenerationState): Boolean {
+private fun MethodInsnNode.isInlineClassBoxingMethodDescriptor(inlineClassUnboxer: InlineClassUnboxer): Boolean {
     if (name != KotlinTypeMapper.BOX_JVM_METHOD_NAME) return false
 
     val ownerType = Type.getObjectType(owner)
-    val unboxedType = unboxedTypeOfInlineClass(ownerType, state) ?: return false
+    val unboxedType = inlineClassUnboxer.unboxInlineClass(ownerType) ?: return false
     return desc == Type.getMethodDescriptor(ownerType, unboxedType)
 }
 
-private fun MethodInsnNode.isInlineClassUnboxingMethodDescriptor(state: GenerationState): Boolean {
+private fun MethodInsnNode.isInlineClassUnboxingMethodDescriptor(inlineClassUnboxer: InlineClassUnboxer): Boolean {
     if (name != KotlinTypeMapper.UNBOX_JVM_METHOD_NAME) return false
 
     val ownerType = Type.getObjectType(owner)
-    val unboxedType = unboxedTypeOfInlineClass(ownerType, state) ?: return false
+    val unboxedType = inlineClassUnboxer.unboxInlineClass(ownerType) ?: return false
     return desc == Type.getMethodDescriptor(unboxedType)
 }
 
@@ -345,8 +344,8 @@ fun AbstractInsnNode.isAreEqualIntrinsic() =
 
 private val shouldUseEqualsForWrappers = setOf(Type.DOUBLE_TYPE, Type.FLOAT_TYPE, AsmTypes.JAVA_CLASS_TYPE)
 
-fun canValuesBeUnboxedForAreEqual(values: List<BasicValue>, generationState: GenerationState): Boolean = values.none {
-    val unboxedType = getUnboxedType(it.type, generationState)
+fun canValuesBeUnboxedForAreEqual(values: List<BasicValue>, inlineClassUnboxer: InlineClassUnboxer): Boolean = values.none {
+    val unboxedType = getUnboxedType(it.type, inlineClassUnboxer)
     unboxedType in shouldUseEqualsForWrappers
 }
 
