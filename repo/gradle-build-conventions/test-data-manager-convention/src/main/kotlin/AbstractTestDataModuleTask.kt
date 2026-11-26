@@ -112,6 +112,10 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
     @get:Internal
     abstract val reportDirectory: DirectoryProperty
 
+    /** Whether the task runs from IDEA, which reads the test events the runner prints, see [IjLogLineOutputStream]. */
+    @get:Internal
+    abstract val ideIntegration: Property<Boolean>
+
     /**
      * Environment variables inherited from the carrier `Test` task.
      *
@@ -157,6 +161,7 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
         systemProperty(TestDataManagerOption.REPORT_DIR, reportDirectory.get().asFile.absolutePath)
         val packages = testPackages.get()
         if (packages.isNotEmpty()) systemProperty(TestDataManagerOption.TEST_PACKAGES, packages.joinToString(","))
+        if (ideIntegration.getOrElse(false)) standardOutput = IjLogLineOutputStream(System.out)
         super.exec()
     }
 
