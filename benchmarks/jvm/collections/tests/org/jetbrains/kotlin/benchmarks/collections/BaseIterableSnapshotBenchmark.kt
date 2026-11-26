@@ -9,13 +9,7 @@ import kotlinx.benchmark.*
 
 @State(Scope.Benchmark)
 abstract class BaseIterableSnapshotBenchmark {
-    @Param(
-        "ArrayList",
-        // Name rationale: it implements to `List` but doesn't inherit `AbstractCollection` nor implements `RandomAccess`
-        "ListWorstCase",
-        "HashSet",
-    )
-    var sourceKind: String = ""
+    abstract var sourceKind: String
 
     @Param("0", "1", "2", "10", "100", "1000", "10000", "100000")
     var size: Int = 0
@@ -26,7 +20,32 @@ abstract class BaseIterableSnapshotBenchmark {
     fun setUp() {
         collection = when (sourceKind) {
             "ArrayList" -> sizedArrayList(size)
-            "ListWorstCase" -> object : List<String> by sizedArrayList(size) {}
+            "ListWorstCase" -> object : List<String> by sizedArrayList(size) {
+                override fun iterator(): Iterator<String> {
+                    val iterator = listIterator()
+                    return object : Iterator<String> {
+                        override fun hasNext(): Boolean = iterator.hasNext()
+                        override fun next(): String = iterator.next()
+                    }
+                }
+            }
+            "NoSuchElementThrowingList" -> {
+                // Used to provide a lying iterator that will throw `NoSuchElementException` instead of returning the last element, hitting
+                // the exception handling path in the Kotlin/Native `Iterable<T>.toList() implementation.
+                // Note that this effectively reduces the benchmarks with size of 0 and 1 to `ListWorstCase`.
+                val backing = sizedArrayList((size - 1).coerceAtLeast(0))
+
+                object : List<String> by sizedArrayList(size) {
+                    override fun iterator(): Iterator<String> {
+                        val iterator = backing.listIterator()
+
+                        return object : Iterator<String> {
+                            override fun hasNext(): Boolean = iterator.hasNext()
+                            override fun next(): String = iterator.next()
+                        }
+                    }
+                }
+            }
             "HashSet" -> HashSet(sizedArrayList(size))
             else -> throw IllegalStateException("Unknown source kind: $sourceKind")
         }
