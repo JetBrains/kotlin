@@ -83,7 +83,11 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
         }
     }
 
-    override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
+    override fun afterDeserialization(
+        messageReporter: (Message) -> Unit,
+        compilerFacade: CompilerServicesFacadeBase?,
+        onCompilationFinished: (action: () -> Unit) -> Unit
+    ) {
         if (hasMetricsCollector) {
             metricsCollector = MessageReportingMetricsCollector(messageReporter)
         }

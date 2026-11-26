@@ -118,13 +118,23 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
     override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> = buildList {
         addAll(super.beforeSerialization(logger))
         incrementalCompilation.asSerializationHooksProvider()?.let { incrementalCompilation ->
-            addAll(incrementalCompilation.beforeSerialization(logger))
+            val visitorsFromIc = incrementalCompilation.beforeSerialization(logger)
+            // LookupVisitor coming from IC takes precedence, and we don't want to have two registered. Remove the one coming from BuildOperation.
+            if (visitorsFromIc.filterIsInstance<LookupMessageVisitor>().isNotEmpty()) {
+                singleOrNull { it is LookupMessageVisitor }?.let { remove(it) }
+                hasLookupTracker = false
+            }
+            addAll(visitorsFromIc)
         }
     }
 
-    override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
-        super.afterDeserialization(messageReporter, compilerFacade)
-        incrementalCompilation.asSerializationHooksProvider()?.afterDeserialization(messageReporter, compilerFacade)
+    override fun afterDeserialization(
+        messageReporter: (Message) -> Unit,
+        compilerFacade: CompilerServicesFacadeBase?,
+        onCompilationFinished: (action: () -> Unit) -> Unit
+    ) {
+        super.afterDeserialization(messageReporter, compilerFacade, onCompilationFinished)
+        incrementalCompilation.asSerializationHooksProvider()?.afterDeserialization(messageReporter, compilerFacade, onCompilationFinished)
     }
 
     override fun deepCopy(): JvmCompilationOperationImpl {

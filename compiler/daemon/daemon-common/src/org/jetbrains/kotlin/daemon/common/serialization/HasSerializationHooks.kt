@@ -30,7 +30,11 @@ interface HasSerializationHooks {
      * The new mechanism using [messageReporter] should be preferred for new callbacks. The [compilerFacade] is provided as a fallback for
      * operations that cannot be performed using the new mechanism at this time, such as JPS incremental caches passing.
      */
-    fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase? = null)
+    fun afterDeserialization(
+        messageReporter: (Message) -> Unit,
+        compilerFacade: CompilerServicesFacadeBase? = null,
+        onCompilationFinished: (action: () -> Unit) -> Unit
+    )
 }
 
 @OptIn(ExperimentalBuildToolsApi::class)

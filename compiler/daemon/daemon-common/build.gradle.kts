@@ -16,6 +16,8 @@ dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     api(kotlin("stdlib", coreDepsVersion))
     compileOnly(libs.kotlinx.serialization.protobuf)
+    compileOnly(libs.intellij.fastutil)
+    compileOnly(intellijCore())
 }
 
 sourceSets {

@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import org.jetbrains.kotlin.daemon.common.RemoteIncrementalCompilationComponentsClient
+import org.jetbrains.kotlin.daemon.common.serialization.DeduplicatingMessageReportingLookupTracker
 import org.jetbrains.kotlin.daemon.common.serialization.HasSerializationHooks
 import org.jetbrains.kotlin.daemon.common.serialization.Message
 import org.jetbrains.kotlin.daemon.common.serialization.MessageVisitor
@@ -206,19 +207,26 @@ internal class JvmJpsManagedIncrementalCompilationConfigurationImpl(
         inlineConstTracker = other.inlineConstTracker
     }
 
-    override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
-        val messageVisitors = mutableListOf<MessageVisitor>()
-        lookupTracker?.let { messageVisitors.add(LookupMessageVisitor(it)) }
-        fileMappingTracker?.let { messageVisitors.add(FileMappingVisitor(it)) }
-        enumWhenTracker?.let { messageVisitors.add(EnumWhenVisitor(it)) }
-        importTracker?.let { messageVisitors.add(ImportVisitor(it)) }
-        inlineConstTracker?.let { messageVisitors.add(InlineConstVisitor(it)) }
-        return messageVisitors
+    override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> = buildList {
+        lookupTracker?.let { add(LookupMessageVisitor(it)) }
+        fileMappingTracker?.let { add(FileMappingVisitor(it)) }
+        enumWhenTracker?.let { add(EnumWhenVisitor(it)) }
+        importTracker?.let { add(ImportVisitor(it)) }
+        inlineConstTracker?.let { add(InlineConstVisitor(it)) }
     }
 
-    override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
+    override fun afterDeserialization(
+        messageReporter: (Message) -> Unit,
+        compilerFacade: CompilerServicesFacadeBase?,
+        onCompilationFinished: (action: () -> Unit) -> Unit
+    ) {
         if (hasLookupTracker) {
-            lookupTracker = MessageReportingCompilerLookupTracker(messageReporter)
+            lookupTracker =
+                DeduplicatingMessageReportingLookupTracker(MessageReportingCompilerLookupTracker(messageReporter)).also { deduplicatingTracker ->
+                    onCompilationFinished {
+                        deduplicatingTracker.flush()
+                    }
+                }
         }
         if (hasFileMappingTracker) {
             fileMappingTracker = MessageReportingCompilerFileMappingTracker(messageReporter)
