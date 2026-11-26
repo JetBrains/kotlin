@@ -44,9 +44,15 @@ data class TypeAliasConstructorInfo<T : FirFunction>(
     }
 }
 
+/**
+ * **NB!** When using this attribute, please consider typealias-to-SAM case.
+ */
 var <T : FirFunction> T.typeAliasConstructorInfo: TypeAliasConstructorInfo<T>? by FirDeclarationDataRegistry.data(TypeAliasConstructorInfoKey)
 
-val FirConstructorSymbol.typeAliasConstructorInfo: TypeAliasConstructorInfo<*>?
+/**
+ * **NB!** When using this attribute, please consider typealias-to-SAM case.
+ */
+val FirFunctionSymbol<*>.typeAliasConstructorInfo: TypeAliasConstructorInfo<*>?
     get() = fir.typeAliasConstructorInfo
 
 /**

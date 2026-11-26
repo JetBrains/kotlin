@@ -1,0 +1,37 @@
+FILE: A.kt
+    package a
+
+    public final class Base<K : R|kotlin/collections/List<kotlin/CharSequence>|> : R|kotlin/Any| {
+        public constructor<K : R|kotlin/collections/List<kotlin/CharSequence>|>(): R|a/Base<K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final typealias Alias<T> = R|a/Base<kotlin/collections/List<T>>|
+    public abstract fun interface Sam<K : R|kotlin/collections/List<kotlin/CharSequence>|> : R|kotlin/Any| {
+        public abstract fun bar(): R|kotlin/Unit|
+
+    }
+    public final typealias SamAlias<T> = R|a/Sam<kotlin/collections/List<T>>|
+FILE: B.kt
+    package b
+
+    public final class Box<B> : R|kotlin/Any| {
+        public constructor<B>(): R|b/Box<B>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final typealias Alias<K> = R|b/Box<K>|
+    public abstract fun interface SamBox<B> : R|kotlin/Any| {
+        public abstract fun bar(): R|kotlin/Unit|
+
+    }
+    public final typealias SamAlias<K> = R|b/SamBox<K>|
+    public final val a: R|{b/Alias<kotlin/Any>=} b/Box<kotlin/Any>| = R|b/Box.Box|<R|kotlin/Any|>()
+        public get(): R|{b/Alias<kotlin/Any>=} b/Box<kotlin/Any>|
+    public final val sa: R|{a/SamAlias<kotlin/Any>=} a/Sam<kotlin/collections/List<kotlin/Any>>| = R|a/SamAlias|<R|kotlin/Any|>(<L> = SamAlias@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^@SamAlias Unit
+    }
+    )
+        public get(): R|{a/SamAlias<kotlin/Any>=} a/Sam<kotlin/collections/List<kotlin/Any>>|

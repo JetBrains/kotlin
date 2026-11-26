@@ -982,6 +982,7 @@ internal object CheckVisibility : ResolutionStage() {
         if (!visibilityChecker.isVisible(declaration, candidate)) {
             sink.yieldVisibilityError(candidate.callInfo)
         } else {
+            // TODO (KT-92010): typealias-to-sam case is missed
             (declaration as? FirConstructor)?.typeAliasConstructorInfo?.typeAliasSymbol?.let { typeAlias ->
                 if (!visibilityChecker.isVisible(typeAlias.fir, candidate)) {
                     sink.yieldVisibilityError(candidate.callInfo)
@@ -1080,6 +1081,8 @@ internal object CheckHiddenDeclaration : ResolutionStage() {
         }
 
         if (symbol.isDeprecatedHidden(candidate.callInfo) ||
+            // TODO: KT-86427. We only report diagnostics for fake typealias constructors here and miss the real constructors.
+            //  We also miss typealias-to-SAM constructors.
             (symbol is FirConstructorSymbol && symbol.typeAliasConstructorInfo?.typeAliasSymbol?.isDeprecatedHidden(candidate.callInfo) == true) ||
             isHiddenForThisCallSite(symbol, candidate.callInfo, candidate)
         ) {

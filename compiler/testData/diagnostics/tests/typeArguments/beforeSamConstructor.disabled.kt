@@ -15,6 +15,9 @@ class K<TP> {
     fun interface I {
         fun foo()
     }
+
+    typealias T = I
+    typealias JT = J.I
 }
 
 fun test() {
@@ -24,6 +27,10 @@ fun test() {
     J<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.I { }
     K<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><*, *><!>.I { }
     J<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><*, *><!>.I { }
+    K.T { }
+    K.JT { }
+    K<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.T { }
+    K<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.JT { }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funInterface, functionDeclaration, interfaceDeclaration, javaType,

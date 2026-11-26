@@ -232,6 +232,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
         val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType }, context.session)
             .let {
+                // TODO(KT-92053): missed typealias-to-SAM constructor
                 val typeAliasConstructorSubstitutor = (declaration as? FirConstructor)?.typeAliasConstructorInfo?.substitutor
                 if (typeAliasConstructorSubstitutor != null) {
                     ChainedSubstitutor(typeAliasConstructorSubstitutor, it)
@@ -264,6 +265,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         toFreshVariables: ConeSubstitutor,
         freshTypeVariables: List<ConeTypeParameterBasedTypeVariable>,
     ): List<Pair<ConeKotlinType, ConeKotlinType>> {
+        // TODO(KT-92053): missed typealias-to-SAM constructor
         val typeAliasConstructorInfo = (declaration as? FirConstructor)?.typeAliasConstructorInfo
         val isTypealiasConstructor = typeAliasConstructorInfo != null
 

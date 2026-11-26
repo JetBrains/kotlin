@@ -17,14 +17,21 @@ class K<T> {
     fun interface I {
         fun foo()
     }
+
+    typealias T = I
+    typealias JT = J.I
 }
 
 fun test() {
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>K<!>::I
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>J<!>::<!JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE!>I<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>K<!>::T
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>K<!>::<!JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE!>JT<!>
 
     K<Any>::I
     J<Any>::<!JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE!>I<!>
+    K<Any>::T
+    K<Any>::<!JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE!>JT<!>
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, funInterface, functionDeclaration, interfaceDeclaration,

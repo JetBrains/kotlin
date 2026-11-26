@@ -800,6 +800,7 @@ fun createConeDiagnosticForCandidateWithError(
         CandidateApplicability.K2_VISIBILITY_ERROR -> {
             val session = candidate.callInfo.session
 
+            // TODO (KT-92010): typealias-to-sam case is missed
             (symbol as? FirConstructorSymbol)?.typeAliasConstructorInfo?.typeAliasSymbol?.let {
                 if (!session.visibilityChecker.isVisible(it.fir, candidate)) {
                     return ConeVisibilityError(it)

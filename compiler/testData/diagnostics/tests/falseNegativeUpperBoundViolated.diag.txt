@@ -1,11 +1,21 @@
-/falseNegativeUpperBoundViolated.kt:18:15: error: Type argument is not within its bounds: type parameter 'T (of class Container<T : Element<K>, K : Key>)' must be subtype of 'Element<BetaKey>', but actual: 'Alpha'.
+/falseNegativeUpperBoundViolated.kt:24:15: error: Type argument is not within its bounds: type parameter 'T (of class Container<T : Element<K>, K : Key>)' must be subtype of 'Element<BetaKey>', but actual: 'Alpha'.
 
-/falseNegativeUpperBoundViolated.kt:19:15: error: Type argument is not within its bounds: type parameter 'T (of class Container<T : Element<K>, K : Key>)' must be subtype of 'Element<String>', but actual: 'Alpha'.
+/falseNegativeUpperBoundViolated.kt:25:15: error: Type argument is not within its bounds: type parameter 'T (of class Container<T : Element<K>, K : Key>)' must be subtype of 'Element<String>', but actual: 'Alpha'.
 
-/falseNegativeUpperBoundViolated.kt:19:22: error: Type argument is not within its bounds: type parameter 'K (of class Container<T : Element<K>, K : Key>)' must be subtype of 'Key', but actual: 'String'.
+/falseNegativeUpperBoundViolated.kt:25:22: error: Type argument is not within its bounds: type parameter 'K (of class Container<T : Element<K>, K : Key>)' must be subtype of 'Key', but actual: 'String'.
 
-/falseNegativeUpperBoundViolated.kt:21:8: error: Type argument is not within its bounds: type parameter 'T (of class Container<T : Element<K>, K : Key>)' must be subtype of 'Element<BetaKey>', but actual: 'Alpha'.
+/falseNegativeUpperBoundViolated.kt:27:8: error: Type argument is not within its bounds: type parameter 'T (of class Container<T : Element<K>, K : Key>)' must be subtype of 'Element<BetaKey>', but actual: 'Alpha'.
 
-/falseNegativeUpperBoundViolated.kt:22:8: error: Type argument is not within its bounds: type parameter 'T (of class Container<T : Element<K>, K : Key>)' must be subtype of 'Element<String>', but actual: 'Alpha'.
+/falseNegativeUpperBoundViolated.kt:28:8: error: Type argument is not within its bounds: type parameter 'T (of class Container<T : Element<K>, K : Key>)' must be subtype of 'Element<String>', but actual: 'Alpha'.
 
-/falseNegativeUpperBoundViolated.kt:22:15: error: Type argument is not within its bounds: type parameter 'K (of class Container<T : Element<K>, K : Key>)' must be subtype of 'Key', but actual: 'String'.
+/falseNegativeUpperBoundViolated.kt:28:15: error: Type argument is not within its bounds: type parameter 'K (of class Container<T : Element<K>, K : Key>)' must be subtype of 'Key', but actual: 'String'.
+
+/falseNegativeUpperBoundViolated.kt:30:18: error: Type argument is not within its bounds: type parameter 'T (of fun <T : Element<K>, K : Key> SamContainer)' must be subtype of 'Element<BetaKey>', but actual: 'Alpha'.
+
+/falseNegativeUpperBoundViolated.kt:30:34: error: Expression '{ }' of type '() -> Unit' does not conform to value parameter 'function' of type '() -> Unit'.
+
+/falseNegativeUpperBoundViolated.kt:31:18: error: Type argument is not within its bounds: type parameter 'T (of fun <T : Element<K>, K : Key> SamContainer)' must be subtype of 'Element<String>', but actual: 'Alpha'.
+
+/falseNegativeUpperBoundViolated.kt:31:25: error: Type argument is not within its bounds: type parameter 'K (of fun <T : Element<K>, K : Key> SamContainer)' must be subtype of 'Key', but actual: 'String'.
+
+/falseNegativeUpperBoundViolated.kt:31:33: error: Expression '{ }' of type '() -> Unit' does not conform to value parameter 'function' of type '() -> Unit'.

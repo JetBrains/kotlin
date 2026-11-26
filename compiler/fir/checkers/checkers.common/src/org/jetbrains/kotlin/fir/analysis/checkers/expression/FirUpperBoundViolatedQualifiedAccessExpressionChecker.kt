@@ -81,6 +81,7 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
             typeArguments: List<ConeTypeProjection>,
             mustRelaxDueToArgumentInteractionsBug: Boolean,
         ) {
+            // TODO (KT-92047): missed typealias-to-SAM constructor
             val typeAliasConstructorInfo = (calleeSymbol as? FirConstructorSymbol)?.typeAliasConstructorInfo
 
             if (typeAliasConstructorInfo != null) {
