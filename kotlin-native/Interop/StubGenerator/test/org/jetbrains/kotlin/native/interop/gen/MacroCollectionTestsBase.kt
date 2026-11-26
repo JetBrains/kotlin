@@ -23,7 +23,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 private inline fun <reified T : TypedConstantDef<V>, V> Collection<ConstantDef>.getByName(name: String): V? = this
@@ -122,9 +121,8 @@ abstract class MacroCollectionTestsBase : InteropTestsBase() {
         assertEquals(42, macros.getByName<IntegerConstantDef, _>("MACRO_CONST_EXPR_INT"))
         assertEquals(42.42, assertNotNull(macros.getByName<FloatingConstantDef, _>("MACRO_CONST_EXPR_FLOAT")), 1e-9)
 
-        // KT-85610: This should work but currently doesn't. Update the expectation once we support that kind of macro.
-        assertNull(macros.getByName<StringConstantDef, _>("MACRO_CONST_EXPR_STR"))
-        assertNull(macros.getByName<StringConstantDef, _>("MACRO_CONST_EXPR_STR_CONCAT"))
+        assertEquals("foobar", macros.getByName<StringConstantDef, _>("MACRO_CONST_EXPR_STR"))
+        assertEquals("foobar", macros.getByName<StringConstantDef, _>("MACRO_CONST_EXPR_STR_CONCAT"))
     }
 
     @Test
