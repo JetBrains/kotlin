@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeCompilerKlibArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.appendFatalErrors
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -996,6 +997,15 @@ internal class NativeArgumentsImpl() : CommonKlibBasedArgumentsImpl(), NativeCom
   override fun toArgumentStrings(): List<String> {
     val arguments = toCompilerArguments().compilerToArgumentStrings(allowArgFileInValues = false)
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  internal override fun collectRestrictedArgViolations(compilerArgs: CommonToolArguments, defaultArgs: CommonToolArguments) {
+    super.collectRestrictedArgViolations(compilerArgs, defaultArgs)
+    val args = compilerArgs as K2NativeCompilerArguments
+    val castedDefaults = defaultArgs as K2NativeCompilerArguments
+    if (args.outputName != castedDefaults.outputName) _restrictedArgViolations.add(RestrictedArgViolation.Error("Argument '-output'/'-o' is not supported in the Build Tools API. The destination is configured via the destination parameter of nativeKlibCompilationOperationBuilder."))
+    if (args.produce != castedDefaults.produce) _restrictedArgViolations.add(RestrictedArgViolation.Error("Argument '-produce'/'-p' is not supported in the Build Tools API. Klib compilation always produces a library.", CompilerPhase.KLIB_COMPILATION))
   }
 
   /**

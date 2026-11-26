@@ -967,11 +967,13 @@ internal class BtaImplOptionsGenerator(
             kotlinVersion >= info.warningSince -> "Warning" to warningMessage
             else -> return
         }
+        val phaseArgument = info.onlyInPhase?.let { CodeBlock.of(", %T.%L", ClassName(targetPackage, "CompilerPhase"), it.name) }
+            ?: CodeBlock.of("")
         addCode(
             CodeBlock.of(
-                "if (%L.%N != %L.%N) _restrictedArgViolations.add(%T.%L(%S))\n",
+                "if (%L.%N != %L.%N) _restrictedArgViolations.add(%T.%L(%S%L))\n",
                 argsVarName, info.fieldName, defaultsVarName, info.fieldName,
-                restrictedArgViolationClass, violationType, message,
+                restrictedArgViolationClass, violationType, message, phaseArgument,
             )
         )
     }

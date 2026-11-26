@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.arguments.CompilerPhase
 import org.jetbrains.kotlin.buildtools.internal.arguments.NativeArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.bc.K2Native
@@ -85,6 +86,8 @@ internal class NativeKlibCompilationOperationImpl :
     }
 
     override fun getRootProjectDir(): Path? = null
+
+    override val compilerPhase: CompilerPhase get() = CompilerPhase.KLIB_COMPILATION
 
     override fun createAndPrepareCompilerArguments(): K2NativeCompilerArguments =
         compilerArguments.toCompilerArguments().also { compilerArguments ->

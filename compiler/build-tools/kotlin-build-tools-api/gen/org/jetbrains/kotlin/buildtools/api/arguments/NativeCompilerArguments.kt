@@ -124,13 +124,6 @@ public interface NativeCompilerArguments : CommonKlibBasedArguments {
         NativeCompilerArgument("NOSTDLIB", KotlinReleaseVersion(1, 5, 20))
 
     /**
-     * Output name.
-     */
-    @JvmField
-    public val OUTPUT: NativeCompilerArgument<Path?> =
-        NativeCompilerArgument("OUTPUT", KotlinReleaseVersion(1, 5, 20))
-
-    /**
      * Set the hardware target.
      */
     @JvmField

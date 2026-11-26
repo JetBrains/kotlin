@@ -208,7 +208,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         kotlinLogger: KotlinLogger,
         messageCollector: MessageCollectorWithDiagnosticId,
     ): Boolean {
-        compilerArguments.reportRestrictedViolations(kotlinLogger)
+        compilerArguments.reportRestrictedViolations(kotlinLogger, compilerPhase)
         if (compilerArguments.hasValidationErrors()) {
             compilerArguments.reportValidationErrors(kotlinLogger)
             return true
@@ -218,6 +218,15 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     }
 
     abstract val targetPlatform: CompileService.TargetPlatform
+
+    /**
+     * The compiler phase performed by the operation, for the operations of the klib-based platforms
+     * having separate klib compilation and linking operations.
+     *
+     * It allows arguments to be restricted in one of these operations only.
+     */
+    protected open val compilerPhase: CompilerPhase? get() = null
+
     open val ktsExtensionsAsArray: Array<String>? = null
 
     abstract fun getIcOptionsOrNull(

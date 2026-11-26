@@ -1052,7 +1052,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Na
 	public static final field NATIVE_LIBRARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
 	public static final field NOSTDLIB Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
 	public static final field NO_DEFAULT_LIBS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
-	public static final field OUTPUT Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
 	public static final field TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
 	public static final field X_EXPORT_KDOC Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
 	public static final field X_PRINT_IR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeCompilerArguments$NativeCompilerArgument;
