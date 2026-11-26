@@ -106,7 +106,7 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
     }
 
     @TestMetadata("new-mpp-lib-with-tests")
-    @DisplayName("Test tasks are up-to-date when called after `allTests`")
+    @DisplayName("Test tasks are up-to-date after `allTests`; Kotlin test tasks re-run when the suppression mode changes")
     @GradleTest
     fun testSuccessfulTestTasksAreUpToDate(gradleVersion: GradleVersion) {
         project(
@@ -155,7 +155,12 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
             }
 
             build(":${nativeTarget}Test") {
-                assertTasksUpToDate(
+                // Unlike the invocation through the aggregated test report, the
+                // standalone run does not suppress test failures. The suppression
+                // state is tracked as a task input to keep the build cache entries
+                // of the two invocation modes apart, so the task is re-executed
+                // when the mode changes:
+                assertTasksExecuted(
                     ":${nativeTarget}Test",
                 )
                 assertNoTestsStateFileException()
