@@ -1,0 +1,12 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/analysis-api/analysis-api-syntax-surface.xml"/>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <stubElementTypeHolder externalIdPrefix="kotlin." class="org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes"/>
+
+    <applicationService
+        serviceInterface="org.jetbrains.kotlin.psi.impl.KotlinElementFactory"
+        serviceImplementation="org.jetbrains.kotlin.psi.impl.KotlinElementFactoryImpl"
+    />
+  </extensions>
+</idea-plugin>

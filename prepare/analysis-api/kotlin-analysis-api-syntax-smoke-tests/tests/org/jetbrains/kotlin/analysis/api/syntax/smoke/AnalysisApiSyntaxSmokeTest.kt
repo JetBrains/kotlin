@@ -21,7 +21,11 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
+import org.w3c.dom.Element
+import javax.xml.parsers.DocumentBuilderFactory
 
 class AnalysisApiSyntaxSmokeTest {
     @Test
@@ -69,6 +73,42 @@ class AnalysisApiSyntaxSmokeTest {
             val property = KtPsiFactory(project).createProperty("val answer = 42")
             assertEquals("answer", property.name)
             assertNotNull(property.initializer)
+        }
+    }
+
+    @Test
+    fun testDescriptorClasses() {
+        val classNames = collectDescriptorClassNames("/META-INF/analysis-api/analysis-api-syntax-implementation.xml")
+        assertTrue(KotlinFileType::class.java.name in classNames, "The syntax surface descriptor is not included")
+
+        // Everything the descriptors register has to be shipped with the syntax artifacts
+        for (className in classNames) {
+            Class.forName(className, false, javaClass.classLoader)
+        }
+    }
+}
+
+private val descriptorClassAttributes = listOf(
+    "class", "implementation", "implementationClass", "interface", "serviceInterface", "serviceImplementation",
+)
+
+/**
+ * Collects the classes mentioned in the plugin descriptor at [path] and in the descriptors it includes.
+ */
+private fun collectDescriptorClassNames(path: String): Set<String> {
+    val document = AnalysisApiSyntaxSmokeTest::class.java.getResourceAsStream(path)
+        ?.use { DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(it) }
+        ?: fail("No descriptor at '$path'")
+
+    val elements = document.getElementsByTagName("*")
+    return buildSet {
+        for (index in 0 until elements.length) {
+            val element = elements.item(index) as Element
+            if (element.tagName == "xi:include") {
+                addAll(collectDescriptorClassNames(element.getAttribute("href")))
+            } else {
+                descriptorClassAttributes.mapNotNullTo(this) { element.getAttribute(it).ifEmpty { null } }
+            }
         }
     }
 }
