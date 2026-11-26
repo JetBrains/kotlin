@@ -1,1 +1,2 @@
 no\ classes\ should\ call\ method\ Project.getRootProject(),\ because\ Project.rootProject\ is\ incompatible\ with\ Isolated\ Projects.=project-root-project-usages.txt
+no\ classes\ should\ depend\ on\ classes\ that\ reside\ in\ a\ package\ 'org.gradle..internal..',\ because\ Gradle\ internal\ API\ is\ not\ covered\ by\ Gradle\ compatibility\ guarantees\ and\ may\ break\ between\ Gradle\ versions.=gradle-internal-api-usages.txt
