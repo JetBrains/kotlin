@@ -128,23 +128,24 @@ fun <SourceFile> serializeModuleIntoKlib(
     val compiledKotlinFiles = buildList {
         addAll(cleanFiles)
         metadataSerializer.forEachFile { i, ioFile, sourceFile, ktSourceFile, packageFqName ->
-            val binaryFile = serializedDirtyFiles?.get(i)?.also {
-                assert(ktSourceFile == null || ktSourceFile.path == it.path) {
-                    """The Kt and Ir files are put in different order
-                    Kt: ${ktSourceFile?.path}
-                    Ir: ${it.path}
-                    """.trimMargin()
-                }
-            }
-
-            val inlineBinaryFile = serializedDirtyInlineFiles?.firstOrNull { it.path == binaryFile?.path && it.fqName == binaryFile.fqName }
-
             val protoBuf = metadataSerializer.serializeSingleFileMetadata(sourceFile)
             val metadata = protoBuf.toByteArray()
-            val compiledKotlinFile = if (binaryFile == null)
+
+            val binaryFile = serializedDirtyFiles?.get(i)
+            val compiledKotlinFile = if (binaryFile == null) {
                 KotlinFileSerializedData(metadata, ktSourceFile?.path, packageFqName.asString())
-            else
+            } else {
+                require(ktSourceFile == null || ktSourceFile.path == binaryFile.path) {
+                    """The Kt and Ir files are put in different order
+                    Kt: ${ktSourceFile?.path}
+                    Ir: ${binaryFile.path}
+                    """.trimMargin()
+                }
+
+                val inlineBinaryFile = serializedDirtyInlineFiles?.firstOrNull { it.path == binaryFile.path && it.fqName == binaryFile.fqName }
+
                 KotlinFileSerializedData(metadata, binaryFile, inlineBinaryFile)
+            }
 
             if (processCompiledFileData != null) {
                 val callableIds = callableIdsOfInlineFunByFile.entries
