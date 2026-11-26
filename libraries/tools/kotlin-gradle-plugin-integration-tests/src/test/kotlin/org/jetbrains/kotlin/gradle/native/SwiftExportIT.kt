@@ -45,7 +45,7 @@ class SwiftExportIT : KGPBaseTest() {
     // See docs/swift-export/testing-usr-stability.md.
 
     private companion object {
-        private const val DEFAULT_IOS_DEPLOYMENT_TARGET = "18.0"
+        private const val DEFAULT_IOS_DEPLOYMENT_TARGET = "16.0"
     }
 
     @DisplayName("embedSwiftExportForXcode fails for missing configured architecture")
@@ -731,10 +731,10 @@ class SwiftExportIT : KGPBaseTest() {
                 assertHasDiagnostic(KotlinToolingDiagnostics.SwiftExportMinimumDeployTargetError)
             }
 
-            // Build with the minimum supported deployment target, it should succeed
+            // Build with iOS sdk 17, it should succeed
             build(
                 ":embedSwiftExportForXcode",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, iphoneOsDeploymentTarget = "17.0")
             ) {
                 assertTasksExecuted(":iosArm64DebugBuildSPMPackage")
             }
@@ -744,7 +744,7 @@ class SwiftExportIT : KGPBaseTest() {
             assertSwiftModuleSymbols(
                 workingDir = projectPath.toFile(),
                 moduleName = "Shared",
-                target = "arm64-apple-ios$DEFAULT_IOS_DEPLOYMENT_TARGET",
+                target = "arm64-apple-ios17.0",
                 sdk = "iphoneos",
                 searchPaths = listOf(builtProductsDir.toFile()),
                 expectedSymbols = setOf(

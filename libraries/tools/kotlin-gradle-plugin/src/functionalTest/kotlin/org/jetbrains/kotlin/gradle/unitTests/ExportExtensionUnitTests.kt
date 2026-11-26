@@ -2878,7 +2878,7 @@ class ExportExtensionSwiftPackageIntegrationTests {
     @Test
     fun `test the package platforms are sorted and have no duplicates`() {
         assertEquals(
-            listOf(SwiftPackagePlatform("iOS", "18.0"), SwiftPackagePlatform("macOS", "15.0")),
+            listOf(SwiftPackagePlatform("iOS", "16.0"), SwiftPackagePlatform("macOS", "13.0")),
             swiftPackagePlatforms(listOf(Family.OSX, Family.IOS, Family.IOS)),
         )
     }
@@ -2895,7 +2895,7 @@ class ExportExtensionSwiftPackageIntegrationTests {
         }
 
         val generateTask = assertIs<GenerateSPMPackageFromSwiftExport>(project.tasks.findByName("generateDebugSwiftPackage"))
-        assertEquals(listOf(SwiftPackagePlatform("iOS", "18.0")), generateTask.platforms.get())
+        assertEquals(listOf(SwiftPackagePlatform("iOS", "16.0")), generateTask.platforms.get())
     }
 
     // KT-91059

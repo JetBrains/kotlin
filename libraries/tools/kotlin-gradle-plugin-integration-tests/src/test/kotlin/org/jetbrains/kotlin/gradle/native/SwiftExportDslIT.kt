@@ -244,7 +244,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                 }
             }
 
-            // Coroutines export is only supported for iOS 18.0 and above
+            // Coroutines export is only supported for iOS 16.0 and above
             build(
                 ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
