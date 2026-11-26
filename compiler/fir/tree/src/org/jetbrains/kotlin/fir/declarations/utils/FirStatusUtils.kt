@@ -34,27 +34,30 @@ inline val FirMemberDeclaration.isOverridable: Boolean
 
 inline val FirMemberDeclaration.isActual: Boolean get() = status.isActual
 inline val FirMemberDeclaration.isExpect: Boolean get() = status.isExpect
-inline val FirMemberDeclaration.isInner: Boolean get() = status.isInner
-inline val FirMemberDeclaration.isStatic: Boolean get() = status.isStatic
-inline val FirMemberDeclaration.isOverride: Boolean get() = status.isOverride
-inline val FirMemberDeclaration.isOperator: Boolean get() = status.isOperator
-inline val FirMemberDeclaration.isInfix: Boolean get() = status.isInfix
-inline val FirMemberDeclaration.isInline: Boolean get() = status.isInline
+
+
+inline val FirClassLikeDeclaration.isInner: Boolean get() = status.isInner
+inline val FirCallableDeclaration.isStatic: Boolean get() = status.isStatic
+inline val FirCallableDeclaration.isOverride: Boolean get() = status.isOverride
+inline val FirCallableDeclaration.isOperator: Boolean get() = status.isOperator
+inline val FirCallableDeclaration.isInfix: Boolean get() = status.isInfix
+inline val FirCallableDeclaration.isInline: Boolean get() = status.isInline
+inline val FirClassLikeDeclaration.isInline: Boolean get() = status.isInline
 
 inline val FirClass.isValue: Boolean get() = status.isValue
 
 @Deprecated("Use `isValue` instead.", ReplaceWith("isValue"), level = ERROR)
 inline val FirClass.isInlineOrValue: Boolean get() = status.isValue
 
-inline val FirMemberDeclaration.isTailRec: Boolean get() = status.isTailRec
+inline val FirCallableDeclaration.isTailRec: Boolean get() = status.isTailRec
 inline val FirMemberDeclaration.isExternal: Boolean get() = status.isExternal
-inline val FirMemberDeclaration.isSuspend: Boolean get() = status.isSuspend
-inline val FirMemberDeclaration.isConst: Boolean get() = status.isConst
-inline val FirMemberDeclaration.isLateInit: Boolean get() = status.isLateInit
+inline val FirCallableDeclaration.isSuspend: Boolean get() = status.isSuspend
+inline val FirCallableDeclaration.isConst: Boolean get() = status.isConst
+inline val FirCallableDeclaration.isLateInit: Boolean get() = status.isLateInit
 inline val FirMemberDeclaration.isFromSealedClass: Boolean get() = status.isFromSealedClass
 inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEnumClass
-inline val FirMemberDeclaration.isFun: Boolean get() = status.isFun
-inline val FirMemberDeclaration.hasStableParameterNames: Boolean get() = status.hasStableParameterNames
+inline val FirClassLikeDeclaration.isFun: Boolean get() = status.isFun
+inline val FirCallableDeclaration.hasStableParameterNames: Boolean get() = status.hasStableParameterNames
 
 inline val FirClass.isInterface: Boolean
     get() = classKind.isInterface

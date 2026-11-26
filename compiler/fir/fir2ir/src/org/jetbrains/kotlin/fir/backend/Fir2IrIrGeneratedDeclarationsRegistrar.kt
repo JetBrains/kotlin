@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.compilerPluginMetadata
 import org.jetbrains.kotlin.fir.deserialization.buildEnumEntryAccessExpression
@@ -100,7 +101,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         val firFunction = buildNamedFunction {
             moduleData = session.moduleData
             origin = GeneratedForMetadata.origin
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedCallableDeclarationStatusImpl(
                 irFunction.visibility.delegate,
                 irFunction.modality,
                 irFunction.visibility.delegate.toEffectiveVisibility(owner = null)
@@ -142,7 +143,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         val firConstructor = buildConstructor {
             moduleData = session.moduleData
             origin = GeneratedForMetadata.origin
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedCallableDeclarationStatusImpl(
                 irConstructor.visibility.delegate,
                 Modality.FINAL,
                 irConstructor.visibility.delegate.toEffectiveVisibility(owner = null)
@@ -188,7 +189,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 propertySymbol = firPropertySymbol
                 isVar = irProperty.isVar
                 isVal = !irProperty.isVar
-                status = FirResolvedDeclarationStatusImpl(
+                status = FirResolvedCallableDeclarationStatusImpl(
                     irBf.visibility.delegate,
                     Modality.FINAL,
                     irBf.visibility.delegate.toEffectiveVisibility(owner = null)
@@ -200,7 +201,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         val firProperty = buildProperty {
             moduleData = session.moduleData
             origin = GeneratedForMetadata.origin
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedCallableDeclarationStatusImpl(
                 irProperty.visibility.delegate,
                 irProperty.modality,
                 irProperty.visibility.delegate.toEffectiveVisibility(owner = null)
@@ -272,7 +273,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             firGetter = buildPropertyAccessor {
                 moduleData = session.moduleData
                 origin = GeneratedForMetadata.origin
-                status = FirResolvedDeclarationStatusImpl(
+                status = FirResolvedCallableDeclarationStatusImpl(
                     irGetter.visibility.delegate,
                     irGetter.modality,
                     irGetter.visibility.delegate.toEffectiveVisibility(owner = null)
@@ -319,7 +320,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 buildPropertyAccessor {
                     moduleData = session.moduleData
                     origin = GeneratedForMetadata.origin
-                    status = FirResolvedDeclarationStatusImpl(
+                    status = FirResolvedCallableDeclarationStatusImpl(
                         irSetter.visibility.delegate,
                         irSetter.modality,
                         irSetter.visibility.delegate.toEffectiveVisibility(owner = null)
@@ -383,7 +384,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             classKind = irClass.kind
             name = irClass.name
             symbol = firClassSymbol
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedClassLikeDeclarationStatusImpl(
                 irClass.visibility.delegate,
                 irClass.modality,
                 irClass.visibility.delegate.toEffectiveVisibility(owner = null),

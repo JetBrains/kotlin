@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusWithLazyEffectiveVisibility
+import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
+import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.deserialization.addCloneForArrayIfNeeded
-import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.deserialization.applyKDoc
 import org.jetbrains.kotlin.fir.deserialization.deserializationExtension
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
@@ -51,7 +53,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFullValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinInlineClassRepresentation
@@ -61,7 +62,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import java.util.Properties
+import java.util.*
 
 internal val KtModifierListOwner.visibility: Visibility
     get() = with(modifierList) {
@@ -137,7 +138,7 @@ internal fun deserializeClassToSymbol(
     }
     val modality = classOrObject.modality
     val visibility = classOrObject.visibility
-    val status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+    val status = FirResolvedClassLikeDeclarationStatusWithLazyEffectiveVisibility(
         visibility,
         modality,
         visibility.toLazyEffectiveVisibility(parentContext?.outerClassSymbol, session, forClass = true)
@@ -388,7 +389,7 @@ private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(
             coneType = ConeClassLikeTypeImpl(anyLookupId, typeArguments = emptyArray(), isMarkedNullable = false)
         }
 
-        status = FirResolvedDeclarationStatusImpl(
+        status = FirResolvedCallableDeclarationStatusImpl(
             Visibilities.Protected,
             Modality.FINAL,
             EffectiveVisibility.Protected(anyLookupId)

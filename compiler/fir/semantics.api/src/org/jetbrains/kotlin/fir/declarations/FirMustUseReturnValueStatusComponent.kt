@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.fir.FirSession
@@ -16,17 +15,8 @@ import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.hasError
-import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -40,7 +30,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
         isLocal: Boolean,
         containingClass: FirClassLikeSymbol<*>?,
         containingProperty: FirPropertySymbol?,
-        overriddenStatuses: List<FirResolvedDeclarationStatus>,
+        overriddenStatuses: List<FirResolvedCallableDeclarationStatus>,
     ): ReturnValueStatus
 
     abstract fun computeMustUseReturnValueForJavaCallable(
@@ -94,7 +84,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             isLocal: Boolean,
             containingClass: FirClassLikeSymbol<*>?,
             containingProperty: FirPropertySymbol?,
-            overriddenStatuses: List<FirResolvedDeclarationStatus>,
+            overriddenStatuses: List<FirResolvedCallableDeclarationStatus>,
         ): ReturnValueStatus {
             return overriddenStatuses.firstOrNull()?.returnValueStatus ?: ReturnValueStatus.Unspecified
         }
@@ -141,7 +131,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             isLocal: Boolean,
             containingClass: FirClassLikeSymbol<*>?,
             containingProperty: FirPropertySymbol?,
-            overriddenStatuses: List<FirResolvedDeclarationStatus>,
+            overriddenStatuses: List<FirResolvedCallableDeclarationStatus>,
         ): ReturnValueStatus {
             val analysisMode = session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode)
             if (isLocal) {

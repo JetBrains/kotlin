@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.hasEnumEntries
@@ -342,10 +342,10 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             moduleData = snippet.moduleData
             origin = FirDeclarationOrigin.FromOtherReplSnippet
             this.name = name
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedClassLikeDeclarationStatusImpl(
                 Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public
+                FINAL,
+                Public
             )
             classKind = ClassKind.CLASS
             this.symbol = firSnippetClassSymbol

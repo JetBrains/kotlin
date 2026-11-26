@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -40,6 +42,17 @@ public class ClassBuildingContext(
     private val classKind: ClassKind,
 ) : DeclarationBuildingContext<FirRegularClass>(session, key, owner) {
     private val superTypeProviders = mutableListOf<(List<FirTypeParameterRef>) -> ConeKotlinType>()
+    private val statusConfigs: MutableList<FirResolvedClassLikeDeclarationStatusImpl.() -> Unit> = mutableListOf()
+
+    /**
+     * Allows to configure flags in status of declaration
+     * For full list of possible flags refer to [org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclarationStatus] class
+     * Note that not all flags are meaningful for each declaration
+     *   E.g. there is no point to mark function as inner
+     */
+    public fun status(statusConfig: FirResolvedClassLikeDeclarationStatusImpl.() -> Unit) {
+        statusConfigs += statusConfig
+    }
 
     /**
      * Adds [type] as supertype for constructed class
@@ -60,6 +73,18 @@ public class ClassBuildingContext(
      */
     public fun superType(typeProvider: (List<FirTypeParameterRef>) -> ConeKotlinType) {
         superTypeProviders += typeProvider
+    }
+
+    private fun generateStatus(): FirResolvedClassLikeDeclarationStatusImpl {
+        return FirResolvedClassLikeDeclarationStatusImpl(
+            visibility,
+            modality,
+            visibility.toEffectiveVisibility(owner, forClass = true)
+        ).also {
+            for (statusConfig in statusConfigs) {
+                it.apply(statusConfig)
+            }
+        }
     }
 
     override fun build(): FirRegularClass {

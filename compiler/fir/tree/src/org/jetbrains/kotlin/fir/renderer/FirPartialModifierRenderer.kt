@@ -17,32 +17,32 @@ class FirPartialModifierRenderer(private val staticPolicy: StaticPolicy) : FirMo
         if (memberDeclaration.isActual) {
             renderModifier("actual")
         }
-        if (memberDeclaration.isStatic) {
+        if (memberDeclaration is FirCallableDeclaration && memberDeclaration.isStatic) {
             memberDeclaration.origin
             renderModifier(staticPolicy.renderStatic(memberDeclaration))
         }
-        if (memberDeclaration.isInner) {
+        if (memberDeclaration is FirClassLikeDeclaration && memberDeclaration.isInner) {
             renderModifier("inner")
         }
         // `companion/data/fun` modifiers are only valid for FirRegularClass, but we render them to make sure they are not
         // incorrectly loaded for other declarations during deserialization.
-        if (memberDeclaration.status.isCompanion) {
+        if (memberDeclaration is FirClassLikeDeclaration && memberDeclaration.status.isCompanion) {
             renderModifier("companion")
         }
-        if (memberDeclaration.status.isData) {
+        if (memberDeclaration is FirClassLikeDeclaration && memberDeclaration.status.isData) {
             renderModifier("data")
         }
         // All Java interfaces are considered `fun` (functional interfaces) for resolution purposes
         // (see JavaSymbolProvider.createFirJavaClass). Don't render `fun` for Java interfaces; it's not a modifier in Java.
         val isJavaInterface =
             memberDeclaration is FirRegularClass && memberDeclaration.classKind == ClassKind.INTERFACE && memberDeclaration.isJava
-        if (memberDeclaration.status.isFun && !isJavaInterface) {
+        if (memberDeclaration is FirClassLikeDeclaration && memberDeclaration.status.isFun && !isJavaInterface) {
             renderModifier("fun")
         }
-        if (memberDeclaration.status.isRichError) {
+        if (memberDeclaration is FirClassLikeDeclaration && memberDeclaration.status.isRichError) {
             renderModifier("error")
         }
-        if (memberDeclaration.isSuspend) {
+        if (memberDeclaration is FirCallableDeclaration && memberDeclaration.isSuspend) {
             renderModifier("suspend")
         }
     }

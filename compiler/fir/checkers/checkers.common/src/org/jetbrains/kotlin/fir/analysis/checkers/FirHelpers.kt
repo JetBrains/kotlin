@@ -292,7 +292,7 @@ fun FirMemberDeclaration.redundantModalities(defaultModality: Modality): Set<Mod
     val containingClass = context.findClosestClassOrObject() ?: return setOf(defaultModality)
 
     return when {
-        isOverride && !containingClass.isFinal -> setOf(Modality.OPEN)
+        this is FirCallableDeclaration && isOverride && !containingClass.isFinal -> setOf(Modality.OPEN)
         containingClass.isInterface -> when {
             hasBody() -> setOf(Modality.OPEN)
             else -> setOf(Modality.ABSTRACT, Modality.OPEN)
@@ -759,7 +759,7 @@ fun getActualTargetList(container: FirAnnotationContainer, session: FirSession):
             )
         }
         is FirEnumEntry -> AnnotationTargetList(
-            KotlinTarget.classActualTargets(ClassKind.ENUM_ENTRY, annotated.isInner, isCompanionObject = false, isLocalClass = false)
+            KotlinTarget.classActualTargets(ClassKind.ENUM_ENTRY, isInnerClass = false, isCompanionObject = false, isLocalClass = false)
         )
         is FirProperty -> {
             when {

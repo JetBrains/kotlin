@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.buildWhenSubjectAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
@@ -104,7 +104,7 @@ internal fun generateTemporaryVariable(
         this.initializer = initializer
         symbol = FirLocalPropertySymbol()
         isVar = false
-        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+        status = FirCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
         isLocal = true
         (source.psi as? KtAnnotated)?.extractAnnotationsTo(this)
     }

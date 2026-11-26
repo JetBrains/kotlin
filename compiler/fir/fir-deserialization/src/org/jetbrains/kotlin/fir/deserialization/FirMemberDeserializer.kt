@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.AnnotationDeserializer.CallableKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -229,7 +226,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.scopeProvider = scopeProvider
             this.name = classId.shortClassName
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
-            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+            status = FirResolvedClassLikeDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 Modality.FINAL,
                 visibility.toLazyEffectiveVisibility(owner = null),
@@ -273,7 +270,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 this.returnTypeRef = returnTypeRef
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 isGetter = true
-                status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(visibility, accessorModality, effectiveVisibility).apply {
+                status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(visibility, accessorModality, effectiveVisibility).apply {
                     isInline = Flags.IS_INLINE_ACCESSOR.get(getterFlags)
                     isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
                     this.isStatic = isStatic
@@ -291,7 +288,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 FirDeclarationOrigin.Library,
                 returnTypeRef,
                 propertySymbol,
-                status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(visibility, propertyModality, effectiveVisibility).apply {
+                status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(visibility, propertyModality, effectiveVisibility).apply {
                     this.isStatic = isStatic
                 },
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
@@ -329,7 +326,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 this.returnTypeRef = FirImplicitUnitTypeRef(source)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 isGetter = false
-                status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(visibility, accessorModality, effectiveVisibility).apply {
+                status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(visibility, accessorModality, effectiveVisibility).apply {
                     isInline = Flags.IS_INLINE_ACCESSOR.get(setterFlags)
                     isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
                     this.isStatic = isStatic
@@ -357,7 +354,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 FirDeclarationOrigin.Library,
                 returnTypeRef,
                 propertySymbol,
-                status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(visibility, propertyModality, effectiveVisibility).apply {
+                status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(visibility, propertyModality, effectiveVisibility).apply {
                     this.isStatic = isStatic
                 },
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
@@ -434,7 +431,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             dispatchReceiverType = runUnless(isStatic) { c.dispatchReceiver }
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
 
-            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+            status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 propertyModality,
                 visibility.toLazyEffectiveVisibility(classSymbol)
@@ -687,7 +684,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
             name = callableName
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
-            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+            status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
                 visibility.toLazyEffectiveVisibility(classSymbol)
@@ -787,7 +784,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             returnTypeRef = delegatedSelfType
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             val isInner = classBuilder.status.isInner
-            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+            status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 Modality.FINAL,
                 visibility.toLazyEffectiveVisibility(classBuilder.symbol)
@@ -798,7 +795,6 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 hasStableParameterNames = !Flags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES.get(flags)
                 isActual = false
                 isOverride = false
-                this.isInner = isInner
                 returnValueStatus = ProtoEnumFlags.returnValueStatus(Flags.RETURN_VALUE_STATUS_CTOR.get(flags))
             }
             isLocal = false

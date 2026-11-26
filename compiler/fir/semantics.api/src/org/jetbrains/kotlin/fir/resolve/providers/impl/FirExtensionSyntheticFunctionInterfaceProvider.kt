@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBuiltin
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -18,11 +16,12 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
@@ -184,10 +183,10 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                     moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
                     origin = builtInOrigin
                     name = relativeClassName.shortName()
-                    status = FirResolvedDeclarationStatusImpl(
+                    status = FirResolvedClassLikeDeclarationStatusImpl(
                         Visibilities.Public,
-                        Modality.ABSTRACT,
-                        EffectiveVisibility.Public
+                        ABSTRACT,
+                        Public
                     )
                     classKind = ClassKind.INTERFACE
                     scopeProvider = kotlinScopeProvider
@@ -222,10 +221,10 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                         },
                     )
                     val name = OperatorNameConventions.INVOKE
-                    val functionStatus = FirResolvedDeclarationStatusImpl(
+                    val functionStatus = FirResolvedCallableDeclarationStatusImpl(
                         Visibilities.Public,
-                        Modality.ABSTRACT,
-                        EffectiveVisibility.Public
+                        ABSTRACT,
+                        Public
                     ).apply {
                         isOperator = true
                         isSuspend = kind.isSuspendOrKSuspendFunction

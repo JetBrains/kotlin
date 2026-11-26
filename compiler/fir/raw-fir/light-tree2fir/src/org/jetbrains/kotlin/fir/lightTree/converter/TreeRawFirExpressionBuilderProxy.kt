@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -44,11 +44,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
-import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
-import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
-import org.jetbrains.kotlin.syntax.SyntaxId
-import org.jetbrains.kotlin.syntax.SyntaxIdSet
+import org.jetbrains.kotlin.syntax.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -989,7 +985,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                             initializer = variable.initializer
                             isVar = false
                             symbol = FirLocalPropertySymbol()
-                            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                            status = FirCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                             isLocal = true
                             receiverParameter = variable.receiverParameter?.let { receiverParameter ->
                                 buildReceiverParameterCopy(receiverParameter) {
@@ -1022,7 +1018,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                 initializer = subjectExpression
                 isVar = false
                 symbol = FirLocalPropertySymbol()
-                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                status = FirCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                 isLocal = true
             }
         }
@@ -1528,7 +1524,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = parameter.returnTypeRef
                         isVar = false
-                        status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+                        status = FirResolvedCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                         isLocal = true
                         this.name = parameter.name
                         symbol = FirLocalPropertySymbol()

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import kotlin.reflect.KClass
@@ -131,29 +133,45 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
 
 val FirExtensionService.statusTransformerExtensions: List<FirStatusTransformerExtension> by FirExtensionService.registeredExtensions()
 
-inline fun FirDeclarationStatus.transform(
+inline fun FirCallableDeclarationStatus.transform(
     visibility: Visibility = this.visibility,
     modality: Modality? = this.modality,
-    init: FirDeclarationStatusImpl.() -> Unit = {}
+    init: FirCallableDeclarationStatusImpl.() -> Unit = {}
 ): FirDeclarationStatus {
     @Suppress("DuplicatedCode")
-    return FirDeclarationStatusImpl(visibility, modality).apply {
+    return FirCallableDeclarationStatusImpl(visibility, modality).apply {
         isExpect = this@transform.isExpect
         isActual = this@transform.isActual
         isOverride = this@transform.isOverride
         isOperator = this@transform.isOperator
         isInfix = this@transform.isInfix
         isInline = this@transform.isInline
-        isValue = this@transform.isValue
         isTailRec = this@transform.isTailRec
         isExternal = this@transform.isExternal
         isConst = this@transform.isConst
         isLateInit = this@transform.isLateInit
+        isSuspend = this@transform.isSuspend
+        isStatic = this@transform.isStatic
+        isFromSealedClass = this@transform.isFromSealedClass
+        isFromEnumClass = this@transform.isFromEnumClass
+    }.apply(init)
+}
+
+inline fun FirClassLikeDeclarationStatus.transform(
+    visibility: Visibility = this.visibility,
+    modality: Modality? = this.modality,
+    init: FirDeclarationStatusImpl.() -> Unit = {}
+): FirClassLikeDeclarationStatus {
+    @Suppress("DuplicatedCode")
+    return FirClassLikeDeclarationStatusImpl(visibility, modality).apply {
+        isExpect = this@transform.isExpect
+        isActual = this@transform.isActual
+        isInline = this@transform.isInline
+        isValue = this@transform.isValue
+        isExternal = this@transform.isExternal
         isInner = this@transform.isInner
         isCompanion = this@transform.isCompanion
         isData = this@transform.isData
-        isSuspend = this@transform.isSuspend
-        isStatic = this@transform.isStatic
         isFromSealedClass = this@transform.isFromSealedClass
         isFromEnumClass = this@transform.isFromEnumClass
     }.apply(init)

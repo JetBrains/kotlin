@@ -23,7 +23,6 @@ inline val FirCallableSymbol<*>.effectiveVisibility: EffectiveVisibility get() =
 
 inline val FirCallableSymbol<*>.isActual: Boolean get() = rawStatus.isActual
 inline val FirCallableSymbol<*>.isExpect: Boolean get() = rawStatus.isExpect
-inline val FirCallableSymbol<*>.isInner: Boolean get() = rawStatus.isInner
 inline val FirCallableSymbol<*>.isStatic: Boolean get() = rawStatus.isStatic
 inline val FirCallableSymbol<*>.isOverride: Boolean get() = resolvedStatus.isOverride
 inline val FirCallableSymbol<*>.isOperator: Boolean get() = resolvedStatus.isOperator
@@ -36,7 +35,6 @@ inline val FirCallableSymbol<*>.isConst: Boolean get() = rawStatus.isConst
 inline val FirCallableSymbol<*>.isLateInit: Boolean get() = rawStatus.isLateInit
 inline val FirCallableSymbol<*>.isFromSealedClass: Boolean get() = rawStatus.isFromSealedClass
 inline val FirCallableSymbol<*>.isFromEnumClass: Boolean get() = rawStatus.isFromEnumClass
-inline val FirCallableSymbol<*>.isFun: Boolean get() = rawStatus.isFun
 
 // ---------------------- class like with status ----------------------
 
@@ -50,7 +48,6 @@ inline val FirClassLikeSymbol<*>.effectiveVisibility: EffectiveVisibility get() 
 inline val FirClassLikeSymbol<*>.isActual: Boolean get() = rawStatus.isActual
 inline val FirClassLikeSymbol<*>.isExpect: Boolean get() = rawStatus.isExpect
 inline val FirClassLikeSymbol<*>.isInner: Boolean get() = rawStatus.isInner
-inline val FirClassLikeSymbol<*>.isStatic: Boolean get() = rawStatus.isStatic
 inline val FirClassLikeSymbol<*>.isRichError: Boolean get() = rawStatus.isRichError
 
 inline val FirClassLikeSymbol<*>.isInline: Boolean get() = resolvedStatus.isInline

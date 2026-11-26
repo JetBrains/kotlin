@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunctionCopy
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -423,7 +423,7 @@ class JavaClassUseSiteMemberScope(
             returnTypeRef = buildResolvedTypeRef {
                 coneType = returnType
             }
-            (status as FirDeclarationStatusImpl).isSuspend = true
+            (status as FirCallableDeclarationStatusImpl).isSuspend = true
         }.symbol
     }
 

@@ -39,7 +39,7 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
     override val returnTypeRef: FirTypeRef
         get() = delegate.returnTypeRef
 
-    override val status: FirDeclarationStatus
+    override val status: FirCallableDeclarationStatus
         get() = delegate.status
 
     override val dispatchReceiverType: ConeSimpleKotlinType?
@@ -168,7 +168,7 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
         notSupported()
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirCallableDeclarationStatus) {
         notSupported()
     }
 

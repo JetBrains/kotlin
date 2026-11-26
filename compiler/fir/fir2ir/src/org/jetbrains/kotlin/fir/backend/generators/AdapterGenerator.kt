@@ -292,7 +292,7 @@ class AdapterGenerator(
         isSetter: Boolean,
     ): IrSimpleFunction {
         val parameterTypes = adaptedType.arguments.dropLast(1).map { it.typeOrNull ?: builtins.anyNType }
-        val firMemberAdaptee = firAdaptee as FirMemberDeclaration
+        val firMemberAdaptee = firAdaptee
         val name = when (firAdaptee) {
             is FirConstructor -> SpecialNames.INIT
             else -> firAdaptee.symbol.name

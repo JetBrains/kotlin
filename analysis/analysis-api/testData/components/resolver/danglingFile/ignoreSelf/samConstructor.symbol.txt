@@ -6,5 +6,5 @@ KtNameReferenceExpression(69,79): 'MyRunnable'
     candidateSymbols = [
       /MyRunnable(function: () -> kotlin.Unit): MyRunnable
     ]
-    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'fun fun MyRunnable(function: () -> Unit): MyRunnable': it is private in file.>
+    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'fun MyRunnable(function: () -> Unit): MyRunnable': it is private in file.>
   additional: [samConstructor.kt]

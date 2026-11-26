@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
@@ -38,7 +38,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val symbol: FirFieldSymbol,
     override val name: Name,
     override var returnTypeRef: FirTypeRef,
-    private val originalStatus: FirResolvedDeclarationStatusImpl,
+    private val originalStatus: FirResolvedCallableDeclarationStatusImpl,
     override val isVar: Boolean,
     private val annotationList: FirJavaAnnotationList,
     lazyInitializer: Lazy<FirExpression?>,
@@ -97,9 +97,9 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
-    override val status: FirDeclarationStatus by lazy {
+    override val status: FirCallableDeclarationStatus by lazy {
         applyStatusTransformerExtensions(this, originalStatus) {
-            transformStatus(it, this@FirJavaField, containingClassSymbol, isLocal = false)
+            transformStatus(it, this@FirJavaField, containingClassSymbol, isLocal = false) as FirCallableDeclarationStatus
         }
     }
 
@@ -210,7 +210,7 @@ class FirJavaField @FirImplementationDetail constructor(
         error("Body cannot be replaced for FirJavaField")
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirCallableDeclarationStatus) {
         shouldNotBeCalled(::replaceStatus, ::status)
     }
 }
@@ -233,7 +233,7 @@ class FirJavaFieldBuilder : FirFieldBuilder() {
             symbol,
             name,
             returnTypeRef,
-            status as FirResolvedDeclarationStatusImpl,
+            status as FirResolvedCallableDeclarationStatusImpl,
             isVar,
             annotationList,
             lazyInitializer ?: lazyOf(initializer),

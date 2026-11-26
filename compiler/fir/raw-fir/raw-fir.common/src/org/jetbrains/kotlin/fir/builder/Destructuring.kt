@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -147,7 +147,7 @@ fun <T> AbstractRawFirBuilder<*, *>.buildDestructuringVariable(
             }
             this.isVar = entry.isVar
             source = entry.source
-            status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL).apply {
+            status = FirCallableDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL).apply {
                 isStatic = isCompanionBlockMember
             }
 
@@ -164,7 +164,7 @@ fun <T> AbstractRawFirBuilder<*, *>.buildDestructuringVariable(
                     origin = FirDeclarationOrigin.Source,
                     propertyTypeRef = returnTypeRef,
                     propertySymbol = symbol,
-                    status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply { isStatic = isCompanionBlockMember },
+                    status = FirCallableDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply { isStatic = isCompanionBlockMember },
                 )
                 if (entry.isVar) {
                     setter = FirDefaultPropertySetter(
@@ -173,7 +173,7 @@ fun <T> AbstractRawFirBuilder<*, *>.buildDestructuringVariable(
                         origin = FirDeclarationOrigin.Source,
                         propertyTypeRef = returnTypeRef,
                         propertySymbol = symbol,
-                        status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply { isStatic = isCompanionBlockMember },
+                        status = FirCallableDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply { isStatic = isCompanionBlockMember },
                     )
                 }
             }

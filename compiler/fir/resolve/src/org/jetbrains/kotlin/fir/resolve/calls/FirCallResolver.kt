@@ -886,7 +886,7 @@ class FirCallResolver(
             singleCandidate?.updateSourcesOfReceivers()
             if (singleCandidate != null) {
                 val symbol = singleCandidate.symbol
-                if (symbol is FirConstructorSymbol && symbol.fir.isInner) {
+                if (symbol is FirConstructorSymbol && symbol.isInner) {
                     replaceDispatchReceiver(singleCandidate.dispatchReceiverExpression())
                 }
                 replaceContextArguments(singleCandidate.contextArguments())

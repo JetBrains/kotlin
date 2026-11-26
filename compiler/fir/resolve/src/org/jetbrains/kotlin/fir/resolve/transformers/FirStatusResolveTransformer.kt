@@ -378,7 +378,7 @@ abstract class AbstractFirStatusResolveTransformer(
     private fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
         containingProperty: FirProperty,
-        overriddenStatuses: List<FirResolvedDeclarationStatus> = emptyList(),
+        overriddenStatuses: List<FirResolvedCallableDeclarationStatus> = emptyList(),
     ): Unit = whileAnalysing(session, propertyAccessor) {
         propertyAccessor.transformStatus(
             this,
@@ -442,10 +442,10 @@ abstract class AbstractFirStatusResolveTransformer(
     }
 
     fun transformProperty(property: FirProperty, overriddenProperties: List<FirProperty>) {
-        val overriddenStatuses = overriddenProperties.map { it.status as FirResolvedDeclarationStatus }
+        val overriddenStatuses = overriddenProperties.map { it.status as FirResolvedCallableDeclarationStatus }
         val overriddenSetters = overriddenProperties.mapNotNull {
             val setter = it.setter ?: return@mapNotNull null
-            setter.status as FirResolvedDeclarationStatus
+            setter.status as FirResolvedCallableDeclarationStatus
         }
 
         property.transformStatus(

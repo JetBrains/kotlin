@@ -64,10 +64,10 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
     val contextParameterSymbols: List<FirValueParameterSymbol>
         get() = fir.contextParameters.map { it.symbol }
 
-    val resolvedStatus: FirResolvedDeclarationStatus
+    val resolvedStatus: FirResolvedCallableDeclarationStatus
         get() = fir.resolvedStatus()
 
-    val rawStatus: FirDeclarationStatus
+    val rawStatus: FirCallableDeclarationStatus
         get() = fir.status
 
     val isLocal: Boolean

@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
@@ -180,7 +181,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
                 }
             }
 
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedClassLikeDeclarationStatusImpl(
                 visibility,
                 javaClass.modality,
                 effectiveVisibility
@@ -430,10 +431,10 @@ private fun createDeclarationsForJavaRecord(
             this.name = name
             javaOrigin = javaOrigin(recordComponent.isFromSource)
             returnTypeRef = recordComponent.type.toFirJavaTypeRef(session, source)
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedCallableDeclarationStatusImpl(
                 Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public
+                FINAL,
+                Public
             )
             dispatchReceiverType = classType
         }.apply {
@@ -455,7 +456,7 @@ private fun createDeclarationsForJavaRecord(
             origin = javaOrigin(javaClass.isFromSource)
             val constructorId = CallableId(classId, classId.shortClassName)
             symbol = FirConstructorSymbol(constructorId)
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedCallableDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
                 EffectiveVisibility.Public
@@ -505,7 +506,7 @@ private fun convertJavaFieldToFir(
                 this.moduleData = moduleData
                 symbol = FirEnumEntrySymbol(fieldId)
                 name = fieldName
-                status = FirResolvedDeclarationStatusImpl(
+                status = FirResolvedCallableDeclarationStatusImpl(
                     javaField.visibility,
                     javaField.modality,
                     javaField.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
@@ -530,7 +531,7 @@ private fun convertJavaFieldToFir(
             symbol = FirFieldSymbol(fieldId)
             name = fieldName
             javaOrigin = javaOrigin(javaField.isFromSource)
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedCallableDeclarationStatusImpl(
                 javaField.visibility,
                 javaField.modality,
                 javaField.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
@@ -577,7 +578,7 @@ private fun convertJavaMethodToFir(
     val methodId = CallableId(classId.packageFqName, classId.relativeClassName, methodName)
     val methodSymbol = FirNamedFunctionSymbol(methodId)
     val returnType = javaMethod.returnType
-    val methodStatus = FirResolvedDeclarationStatusImpl(
+    val methodStatus = FirResolvedCallableDeclarationStatusImpl(
         javaMethod.visibility,
         javaMethod.modality,
         javaMethod.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
@@ -651,12 +652,11 @@ private fun convertJavaConstructorToFir(
     val javaFirClass = classSymbol.fir as FirJavaClass
     val visibility = javaConstructor?.visibility ?: javaFirClass.originalStatus.visibility
     val classIsInner = javaClass.outerClass != null && !javaClass.isStatic
-    val methodStatus = FirResolvedDeclarationStatusImpl(
+    val methodStatus = FirResolvedCallableDeclarationStatusImpl(
         visibility,
         Modality.FINAL,
         visibility.toEffectiveVisibility(classSymbol)
     ).apply {
-        isInner = classIsInner
         hasStableParameterNames = false
     }
 
@@ -715,7 +715,7 @@ private fun buildConstructorForAnnotationClass(
         this.moduleData = moduleData
         origin = javaOrigin(javaClass.isFromSource)
         symbol = FirConstructorSymbol(constructorId)
-        status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
+        status = FirResolvedCallableDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
         returnTypeRef = buildResolvedTypeRef {
             coneType = classSymbol.defaultType()
         }

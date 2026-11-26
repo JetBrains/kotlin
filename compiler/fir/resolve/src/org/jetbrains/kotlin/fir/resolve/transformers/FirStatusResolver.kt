@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.DeclarationStatusModifier
+import org.jetbrains.kotlin.fir.declarations.impl.FirCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirClassLikeDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -103,10 +105,10 @@ class FirStatusResolver(
         property: FirProperty,
         containingClass: FirClass?,
         isLocal: Boolean,
-        overriddenStatuses: List<FirResolvedDeclarationStatus>? = null,
+        overriddenStatuses: List<FirResolvedCallableDeclarationStatus>? = null,
     ): FirResolvedDeclarationStatus {
         val statuses = overriddenStatuses
-            ?: getOverriddenProperties(property, containingClass).map { it.status as FirResolvedDeclarationStatus }
+            ?: getOverriddenProperties(property, containingClass).map { it.status as FirResolvedCallableDeclarationStatus }
 
         val status = property.applyExtensionTransformers { transformStatus(it, property, containingClass?.symbol, isLocal) }
         return resolveStatus(property, status, containingClass, null, isLocal, statuses)
@@ -158,7 +160,7 @@ class FirStatusResolver(
             function.setEqualityBoundTypeFromOverridden(overriddenFunctions, session)
         }
 
-        val statuses = overriddenFunctions.map { it.status as FirResolvedDeclarationStatus }
+        val statuses = overriddenFunctions.map { it.status as FirResolvedCallableDeclarationStatus }
 
         return resolveStatus(function, status, containingClass, null, isLocal, statuses)
     }
@@ -212,7 +214,7 @@ class FirStatusResolver(
         containingClass: FirClass?,
         containingProperty: FirProperty?,
         isLocal: Boolean,
-        overriddenStatuses: List<FirResolvedDeclarationStatus> = emptyList(),
+        overriddenStatuses: List<FirResolvedCallableDeclarationStatus> = emptyList(),
     ): FirResolvedDeclarationStatus {
         val status = propertyAccessor.applyExtensionTransformers {
             transformStatus(it, propertyAccessor, containingClass?.symbol, containingProperty, isLocal)
@@ -255,7 +257,7 @@ class FirStatusResolver(
         containingClass: FirClass?,
         containingProperty: FirProperty?,
         isLocal: Boolean,
-        overriddenStatuses: List<FirResolvedDeclarationStatus>
+        overriddenStatuses: List<FirResolvedCallableDeclarationStatus>
     ): FirResolvedDeclarationStatus {
         if (status is FirResolvedDeclarationStatus) return status
         require(status is FirDeclarationStatusImpl)
@@ -293,7 +295,7 @@ class FirStatusResolver(
         )
         val effectiveVisibility = parentEffectiveVisibility.lowerBound(selfEffectiveVisibility, session.typeContext)
 
-        if (declaration is FirClass && status.isValue) {
+        if (declaration is FirClass && status is FirClassLikeDeclarationStatusImpl && status.isValue) {
             val jvmInlineAnnotation = StandardClassIds.Annotations.JvmInline
             val isAnnotatedWithJvmInline = declaration.hasAnnotation(jvmInlineAnnotation, session)
             if (isAnnotatedWithJvmInline || LanguageFeature.FullValueClasses.isDisabled()) {
@@ -327,7 +329,9 @@ class FirStatusResolver(
             status.isExpect = true
         }
 
-        status.returnValueStatus = computeMustUseReturnValue(declaration, isLocal, containingClass, containingProperty, overriddenStatuses)
+        if (status is FirCallableDeclarationStatusImpl) {
+            status.returnValueStatus = computeMustUseReturnValue(declaration, isLocal, containingClass, containingProperty, overriddenStatuses)
+        }
 
         return status.resolved(visibility, modality, effectiveVisibility)
     }
@@ -337,7 +341,7 @@ class FirStatusResolver(
         isLocal: Boolean,
         containingClass: FirClass?,
         containingProperty: FirProperty?,
-        overriddenStatuses: List<FirResolvedDeclarationStatus>,
+        overriddenStatuses: List<FirResolvedCallableDeclarationStatus>,
     ): ReturnValueStatus {
         if (declaration !is FirCallableDeclaration) return ReturnValueStatus.Unspecified
 

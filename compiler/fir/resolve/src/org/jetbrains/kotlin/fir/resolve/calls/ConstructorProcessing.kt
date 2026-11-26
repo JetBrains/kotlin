@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
@@ -31,11 +30,11 @@ internal enum class ConstructorFilter {
     OnlyNested,
     Both;
 
-    fun accepts(memberDeclaration: FirMemberDeclaration): Boolean {
+    fun accepts(classLikeDeclaration: FirClassLikeDeclaration): Boolean {
         return when (this) {
             Both -> true
-            OnlyInner -> memberDeclaration.isInner
-            OnlyNested -> !memberDeclaration.isInner
+            OnlyInner -> classLikeDeclaration.isInner
+            OnlyNested -> !classLikeDeclaration.isInner
         }
     }
 }
