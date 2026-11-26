@@ -12,6 +12,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
+import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -147,6 +148,7 @@ object LightTreePositioningStrategies {
 
         @OptIn(DiagnosticLossRisk::class)
         override fun isValid(element: KtSourceElement): Boolean {
+            require(element is KtLightSourceElement)
             val elementToMark = getElementToMark(element.lighterASTNode, element.treeStructure)
             return !hasSyntaxErrors(elementToMark, element.treeStructure)
         }
@@ -1326,19 +1328,20 @@ object LightTreePositioningStrategies {
 
     val UNREACHABLE_CODE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
-            val element = diagnostic.element as KtSourceElement
+            val element = diagnostic.element
+            require(element is KtLightSourceElement)
 
             @Suppress("UNCHECKED_CAST")
-            val typed = diagnostic as KtDiagnosticWithParameters2<Set<KtSourceElement>, Set<KtSourceElement>>
+            val (reachable = a, unreachable = b) = diagnostic as KtDiagnosticWithParameters2<Set<KtLightSourceElement>, Set<KtLightSourceElement>>
             with(UnreachableCodeLightTreeHelper(element.treeStructure)) {
-                val reachable = typed.a.map { it.lighterASTNode }.toSet()
-                val unreachable = typed.b.map { it.lighterASTNode }.toSet()
-                if (!element.lighterASTNode.hasChildrenInSet(reachable)) {
+                val reachableNodes = reachable.map { it.lighterASTNode }.toSet()
+                val unreachableNodes = unreachable.map { it.lighterASTNode }.toSet()
+                if (!element.lighterASTNode.hasChildrenInSet(reachableNodes)) {
                     return super.markDiagnostic(diagnostic)
                 }
 
-                val nodesToMark = element.lighterASTNode.getLeavesOrReachableChildren(reachable, unreachable)
-                    .removeReachableElementsWithMeaninglessSiblings(reachable)
+                val nodesToMark = element.lighterASTNode.getLeavesOrReachableChildren(reachableNodes, unreachableNodes)
+                    .removeReachableElementsWithMeaninglessSiblings(reachableNodes)
 
                 if (nodesToMark.isEmpty()) {
                     return super.markDiagnostic(diagnostic)
@@ -1582,9 +1585,6 @@ fun KtSourceElement.hasValOrVar(): Boolean =
 fun KtSourceElement.hasVar(): Boolean =
     treeStructure.findChildByType(lighterASTNode, VAR_KEYWORD) != null
 
-fun KtSourceElement.hasPrimaryConstructor(): Boolean =
-    treeStructure.primaryConstructor(lighterASTNode) != null
-
 private fun FlyweightCapableTreeStructure<LighterASTNode>.companionKeyword(node: LighterASTNode): LighterASTNode? =
     modifierList(node)?.let { findChildByType(it, COMPANION_KEYWORD) }
 
@@ -1658,32 +1658,11 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(
     return result
 }
 
-fun FlyweightCapableTreeStructure<LighterASTNode>.unwrapParenthesesLabelsAndAnnotations(node: LighterASTNode): LighterASTNode {
-    var unwrapped = node
-    while (true) {
-        unwrapped = when (unwrapped.tokenType) {
-            KtNodeTypes.PARENTHESIZED -> firstChildExpression(unwrapped) ?: return unwrapped
-            KtNodeTypes.LABELED_EXPRESSION -> lastChildExpression(unwrapped) ?: return unwrapped
-            KtNodeTypes.ANNOTATED_EXPRESSION -> firstChildExpression(unwrapped) ?: return unwrapped
-            else -> return unwrapped
-        }
-    }
-}
-
 private fun FlyweightCapableTreeStructure<LighterASTNode>.findExpressionDeep(node: LighterASTNode): LighterASTNode? =
     findFirstDescendant(node) { it.isExpression() }
 
-private fun FlyweightCapableTreeStructure<LighterASTNode>.rightParenthesis(node: LighterASTNode): LighterASTNode? =
-    findChildByType(node, RPAR)
-
 private fun FlyweightCapableTreeStructure<LighterASTNode>.objectKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, OBJECT_KEYWORD)
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.visibilityModifier(declaration: LighterASTNode): LighterASTNode? =
-    modifierList(declaration)?.let { findChildByType(it, VISIBILITY_MODIFIERS) }
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.overrideModifier(declaration: LighterASTNode): LighterASTNode? =
-    modifierList(declaration)?.let { findChildByType(it, OVERRIDE_KEYWORD) }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.inlineModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, INLINE_KEYWORD) }
@@ -1832,25 +1811,6 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.findFirstDescendant(
     val nodes = childrenRef.get()
     return nodes?.firstOrNull { it != null && predicate(it) }
         ?: nodes?.firstNotNullOfOrNull { child -> child?.let { findFirstDescendant(it, predicate) } }
-}
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.findLastDescendant(
-    node: LighterASTNode,
-    predicate: (LighterASTNode) -> Boolean
-): LighterASTNode? {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    getChildren(node, childrenRef)
-    val nodes = childrenRef.get()
-    return nodes?.lastOrNull { it != null && predicate(it) }
-        ?: run {
-            for (child in nodes.reversed()) {
-                val result = child?.let { findLastDescendant(it, predicate) }
-                if (result != null) {
-                    return result
-                }
-            }
-            return null
-        }
 }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.traverseDescendants(

@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.util.getChildren
 
 open class LightTreePositioningStrategy : PositioningStrategy() {
     override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
-        val element = diagnostic.element as KtLightSourceElement
+        val element = diagnostic.element
+        require(element is KtLightSourceElement)
         return mark(element.lighterASTNode, element.startOffset, element.endOffset, element.treeStructure)
     }
 
@@ -33,6 +34,7 @@ open class LightTreePositioningStrategy : PositioningStrategy() {
 
     @DiagnosticLossRisk
     override fun isValid(element: KtSourceElement): Boolean {
+        require(element is KtLightSourceElement)
         return !hasSyntaxErrors(element.lighterASTNode, element.treeStructure)
     }
 }
