@@ -18,6 +18,7 @@ org/jetbrains/kotlin/psi/KtExpression
 org/jetbrains/kotlin/psi/KtIfExpression
 org/jetbrains/kotlin/psi/KtLambdaExpression
 org/jetbrains/kotlin/psi/KtModifierList
+org/jetbrains/kotlin/psi/KtNameReferenceExpression
 org/jetbrains/kotlin/psi/KtNamedDeclaration
 org/jetbrains/kotlin/psi/KtNamedFunction
 org/jetbrains/kotlin/psi/KtPackageDirective

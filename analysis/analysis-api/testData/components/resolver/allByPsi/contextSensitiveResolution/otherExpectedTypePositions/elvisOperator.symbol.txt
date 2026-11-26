@@ -262,7 +262,6 @@ KtNameReferenceExpression(417,432): 'NestedInheritor'
 KtOperationReferenceExpression(433,435): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(436,447): 'myClassProp'
@@ -313,7 +312,6 @@ KtNameReferenceExpression(472,487): 'NestedInheritor'
 KtOperationReferenceExpression(488,490): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(491,501): 'stringProp'
@@ -364,7 +362,6 @@ KtNameReferenceExpression(526,541): 'NestedInheritor'
 KtOperationReferenceExpression(542,544): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtCallExpression(545,565): 'getNestedInheritor()'
@@ -446,7 +443,6 @@ KtNameReferenceExpression(588,603): 'NestedInheritor'
 KtOperationReferenceExpression(604,606): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(607,618): 'myClassProp'
@@ -523,7 +519,6 @@ KtNameReferenceExpression(641,656): 'NestedInheritor'
 KtOperationReferenceExpression(657,659): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(660,670): 'stringProp'
@@ -598,7 +593,6 @@ KtNameReferenceExpression(693,708): 'NestedInheritor'
 KtOperationReferenceExpression(709,711): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtCallExpression(712,732): 'getNestedInheritor()'

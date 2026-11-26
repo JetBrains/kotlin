@@ -1,0 +1,210 @@
+KtFile: 'primaryConstructorProperties.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(0,11): 'interface I'
+  NO_CANDIDATES
+
+KtNamedFunction(12,105): 'fun f(x: I) {'
+  NO_CANDIDATES
+
+KtParameterList(17,23): '(x: I)'
+  NO_CANDIDATES
+
+KtParameter(18,22): 'x: I'
+  NO_CANDIDATES
+
+KtTypeReference(21,22): 'I'
+  NO_CANDIDATES
+
+KtUserType(21,22): 'I'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(21,22): 'I'
+  NO_CANDIDATES
+
+KtBlockExpression(24,105): '{'
+  NO_CANDIDATES
+
+KtClass(30,52): 'class A(x: I) : I by x'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(37,43): '(x: I)'
+  NO_CANDIDATES
+
+KtParameterList(37,43): '(x: I)'
+  NO_CANDIDATES
+
+KtParameter(38,42): 'x: I'
+  NO_CANDIDATES
+
+KtTypeReference(41,42): 'I'
+  NO_CANDIDATES
+
+KtUserType(41,42): 'I'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(41,42): 'I'
+  NO_CANDIDATES
+
+KtSuperTypeList(46,52): 'I by x'
+  NO_CANDIDATES
+
+KtDelegatedSuperTypeEntry(46,52): 'I by x'
+  NO_CANDIDATES
+
+KtTypeReference(46,47): 'I'
+  NO_CANDIDATES
+
+KtUserType(46,47): 'I'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(46,47): 'I'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(51,52): 'x'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = I
+        symbol = x: I
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = I
+        symbol = x: I
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtClass(57,82): 'class B(val x: I): I by x'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(64,74): '(val x: I)'
+  NO_CANDIDATES
+
+KtParameterList(64,74): '(val x: I)'
+  NO_CANDIDATES
+
+KtParameter(65,73): 'val x: I'
+  NO_CANDIDATES
+
+KtTypeReference(72,73): 'I'
+  NO_CANDIDATES
+
+KtUserType(72,73): 'I'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(72,73): 'I'
+  NO_CANDIDATES
+
+KtSuperTypeList(76,82): 'I by x'
+  NO_CANDIDATES
+
+KtDelegatedSuperTypeEntry(76,82): 'I by x'
+  NO_CANDIDATES
+
+KtTypeReference(76,77): 'I'
+  NO_CANDIDATES
+
+KtUserType(76,77): 'I'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(76,77): 'I'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(81,82): 'x'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = I
+        symbol = x: I
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = I
+        symbol = x: I
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtClass(87,103): 'class C : I by x'
+  NO_CANDIDATES
+
+KtSuperTypeList(97,103): 'I by x'
+  NO_CANDIDATES
+
+KtDelegatedSuperTypeEntry(97,103): 'I by x'
+  NO_CANDIDATES
+
+KtTypeReference(97,98): 'I'
+  NO_CANDIDATES
+
+KtUserType(97,98): 'I'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(97,98): 'I'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(102,103): 'x'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = I
+        symbol = x: I
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

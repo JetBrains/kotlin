@@ -680,7 +680,7 @@ KtNameReferenceExpression(420,424): 'prop'
 KtNameReferenceExpression(427,428): 'U'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       U
@@ -849,7 +849,7 @@ KtUserType(487,488): 'T'
 KtNameReferenceExpression(487,488): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
@@ -873,7 +873,7 @@ KtUserType(490,491): 'U'
 KtNameReferenceExpression(490,491): 'U'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       U
@@ -964,7 +964,7 @@ KtNameReferenceExpression(530,534): 'prop'
 KtNameReferenceExpression(537,538): 'U'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       U

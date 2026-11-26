@@ -227,6 +227,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("catchClauseParameter.kt")
+  public void testCatchClauseParameter() {
+    run("catchClauseParameter.kt");
+  }
+
+  @Test
   @TestMetadata("checkNotNullCall.kt")
   public void testCheckNotNullCall() {
     run("checkNotNullCall.kt");
@@ -251,6 +257,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("classNamedItInClassLiteralPositionInsideLambda.kt")
+  public void testClassNamedItInClassLiteralPositionInsideLambda() {
+    run("classNamedItInClassLiteralPositionInsideLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("classNamedItInTypePositionInsideLambda.kt")
+  public void testClassNamedItInTypePositionInsideLambda() {
+    run("classNamedItInTypePositionInsideLambda.kt");
+  }
+
+  @Test
   @TestMetadata("ClassObjectClassLiteralReference.kt")
   public void testClassObjectClassLiteralReference() {
     run("ClassObjectClassLiteralReference.kt");
@@ -272,6 +290,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   @TestMetadata("ClassReferenceInImport.kt")
   public void testClassReferenceInImport() {
     run("ClassReferenceInImport.kt");
+  }
+
+  @Test
+  @TestMetadata("classWithTypeParameterSameName.kt")
+  public void testClassWithTypeParameterSameName() {
+    run("classWithTypeParameterSameName.kt");
   }
 
   @Test
@@ -413,6 +437,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("delegatedSupertypeByValue.kt")
+  public void testDelegatedSupertypeByValue() {
+    run("delegatedSupertypeByValue.kt");
+  }
+
+  @Test
   @TestMetadata("Deprecated.kt")
   public void testDeprecated() {
     run("Deprecated.kt");
@@ -530,6 +560,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   @TestMetadata("explicitFunctionalInterfaceInvoke_parameter.kt")
   public void testExplicitFunctionalInterfaceInvoke_parameter() {
     run("explicitFunctionalInterfaceInvoke_parameter.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitItLocalShadowingImplicitLambdaParameter.kt")
+  public void testExplicitItLocalShadowingImplicitLambdaParameter() {
+    run("explicitItLocalShadowingImplicitLambdaParameter.kt");
   }
 
   @Test
@@ -743,6 +779,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("implicitLambdaParameterShadowingExplicitLocal.kt")
+  public void testImplicitLambdaParameterShadowingExplicitLocal() {
+    run("implicitLambdaParameterShadowingExplicitLocal.kt");
+  }
+
+  @Test
   @TestMetadata("importAlias.kt")
   public void testImportAlias() {
     run("importAlias.kt");
@@ -935,6 +977,42 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("localClassPrimaryConstructorParameterShadows.kt")
+  public void testLocalClassPrimaryConstructorParameterShadows() {
+    run("localClassPrimaryConstructorParameterShadows.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassTypeParameterShadows.kt")
+  public void testLocalClassTypeParameterShadows() {
+    run("localClassTypeParameterShadows.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassWithTypeParam.kt")
+  public void testLocalClassWithTypeParam() {
+    run("localClassWithTypeParam.kt");
+  }
+
+  @Test
+  @TestMetadata("lookupLocallyClassLiterals.kt")
+  public void testLookupLocallyClassLiterals() {
+    run("lookupLocallyClassLiterals.kt");
+  }
+
+  @Test
+  @TestMetadata("lookupLocallyShouldNotResolveNonLocalProperties.kt")
+  public void testLookupLocallyShouldNotResolveNonLocalProperties() {
+    run("lookupLocallyShouldNotResolveNonLocalProperties.kt");
+  }
+
+  @Test
+  @TestMetadata("lookupLocallyShouldNotResolveNonLocalProperties2.kt")
+  public void testLookupLocallyShouldNotResolveNonLocalProperties2() {
+    run("lookupLocallyShouldNotResolveNonLocalProperties2.kt");
+  }
+
+  @Test
   @TestMetadata("memberFunctionCallWithTypeArgument.kt")
   public void testMemberFunctionCallWithTypeArgument() {
     run("memberFunctionCallWithTypeArgument.kt");
@@ -1121,6 +1199,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("propertyTypeParameter.kt")
+  public void testPropertyTypeParameter() {
+    run("propertyTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("qualifiedCallSelector.kt")
   public void testQualifiedCallSelector() {
     run("qualifiedCallSelector.kt");
@@ -1283,6 +1367,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("setterParameter.kt")
+  public void testSetterParameter() {
+    run("setterParameter.kt");
+  }
+
+  @Test
   @TestMetadata("SeveralOverrides.kt")
   public void testSeveralOverrides() {
     run("SeveralOverrides.kt");
@@ -1415,6 +1505,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("superDelegateConstructorParameter.kt")
+  public void testSuperDelegateConstructorParameter() {
+    run("superDelegateConstructorParameter.kt");
+  }
+
+  @Test
   @TestMetadata("SuperTypePrimaryConstructor.kt")
   public void testSuperTypePrimaryConstructor() {
     run("SuperTypePrimaryConstructor.kt");
@@ -1532,6 +1628,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   @TestMetadata("TopLevelObjectVsLocalClassQualifier.kt")
   public void testTopLevelObjectVsLocalClassQualifier() {
     run("TopLevelObjectVsLocalClassQualifier.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParamInSuperCall.kt")
+  public void testTypeParamInSuperCall() {
+    run("typeParamInSuperCall.kt");
   }
 
   @Test
@@ -7987,6 +8089,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     @TestMetadata("KotlinPropertyWithGetterAndSetterAssignmentWithErrors.kt")
     public void testKotlinPropertyWithGetterAndSetterAssignmentWithErrors() {
       run("KotlinPropertyWithGetterAndSetterAssignmentWithErrors.kt");
+    }
+
+    @Test
+    @TestMetadata("localClassWithCompanionObject.kt")
+    public void testLocalClassWithCompanionObject() {
+      run("localClassWithCompanionObject.kt");
     }
 
     @Test

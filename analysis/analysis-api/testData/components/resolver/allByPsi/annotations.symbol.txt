@@ -1042,7 +1042,6 @@ KtNameReferenceExpression(800,814): 'stringConstant'
 KtOperationReferenceExpression(815,816): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String

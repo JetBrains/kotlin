@@ -361,7 +361,6 @@ KtLiteralStringTemplateEntry(252,253): 'A'
 KtOperationReferenceExpression(257,259): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(260,266): 'String'

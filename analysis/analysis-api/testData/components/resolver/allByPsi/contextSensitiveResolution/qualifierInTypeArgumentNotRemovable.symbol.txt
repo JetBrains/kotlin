@@ -100,7 +100,7 @@ KtUserType(144,145): 'T'
 KtNameReferenceExpression(144,145): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
@@ -184,7 +184,6 @@ KtNameReferenceExpression(182,183): 'b'
 KtOperationReferenceExpression(184,186): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(187,202): 'Base.Child<Foo>'

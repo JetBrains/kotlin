@@ -61,7 +61,7 @@ KtClassLiteralExpression(63,71): 'T::class'
 KtNameReferenceExpression(63,64): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       T

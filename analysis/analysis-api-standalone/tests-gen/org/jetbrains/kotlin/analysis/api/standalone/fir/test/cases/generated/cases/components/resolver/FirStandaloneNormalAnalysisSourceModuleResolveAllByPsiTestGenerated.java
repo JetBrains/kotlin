@@ -285,6 +285,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveAllByPsiTestGenerated
   }
 
   @Test
+  @TestMetadata("primaryConstructorProperties.kt")
+  public void testPrimaryConstructorProperties() {
+    run("primaryConstructorProperties.kt");
+  }
+
+  @Test
   @TestMetadata("primaryConstructorVsCompanionInvoke.kt")
   public void testPrimaryConstructorVsCompanionInvoke() {
     run("primaryConstructorVsCompanionInvoke.kt");
