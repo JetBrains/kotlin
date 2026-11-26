@@ -71,7 +71,17 @@ public fun runTypeScriptExport(
         }
     }
 
-    if (exportModel.isEmpty() || diagnosticReporter.hasErrors) return emptyList()
+    if (diagnosticReporter.hasErrors) return emptyList()
+
+    if (exportModel.isEmpty()) {
+        val moduleName = when (config.artifactConfiguration.tsCompilationStrategy) {
+            TsCompilationStrategy.NONE -> return emptyList()
+            TsCompilationStrategy.MERGED -> config.artifactConfiguration.moduleName
+            TsCompilationStrategy.EACH_FILE -> config.artifactConfiguration.outputJsFile().name
+        }
+        config.artifactConfiguration.outputDirectory.normalizedAbsoluteFile.mkdirs()
+        return writeMergedTsFile(emptyList(), config.artifactConfiguration, moduleName)
+    }
 
     val artifacts = TsArtifactProducer.generateArtifacts(exportModel, config.artifactConfiguration.granularity)
     config.artifactConfiguration.outputDirectory.normalizedAbsoluteFile.mkdirs()
