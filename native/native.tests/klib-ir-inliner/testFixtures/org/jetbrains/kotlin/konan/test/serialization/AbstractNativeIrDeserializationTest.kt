@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.SerializedIrDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.SignatureAndKindHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.deserializedIrHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
@@ -48,7 +49,10 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerNativeTes
         klibArtifactsHandlersStep {
             useHandlers(::KlibBackendDiagnosticsHandler)
         }
-        deserializedIrHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) }) }
+        deserializedIrHandlersStep {
+            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) })
+            useHandlers(::SignatureAndKindHandler)
+        }
 
         defaultDirectives {
             +ALLOW_KOTLIN_PACKAGE

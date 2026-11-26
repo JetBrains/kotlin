@@ -18,6 +18,44 @@ import org.jetbrains.kotlin.name.FqName
 data class SignatureAndKind(val signature: IdSignature, val kind: SymbolKind) {
     val packageFqName: FqName get() = signature.packageFqName()
 
+    /**
+     * Return the signature and the kind representing the top-level declaration for the declaration represented by
+     * the current instance of [SignatureAndKind]:
+     * - For a top-level declaration: the current instance itself.
+     * - For an accessor or a backing field of a top-level property: the property.
+     * - For a declaration nested into a class: the top-level class.
+     * - For a local declaration, such as a type parameter, value parameter or a declaration located inside a body: `null`.
+     */
+    fun topLevelOrNull(): SignatureAndKind? {
+        val propertyOrSelf = correspondingPropertyOrNull() ?: this
+        if (propertyOrSelf.signature.isLocal) return null
+
+        val topLevelSignature = propertyOrSelf.signature.topLevelSignature()
+
+        return if (topLevelSignature == propertyOrSelf.signature)
+            propertyOrSelf
+        else
+            SignatureAndKind(topLevelSignature, CLASS_SYMBOL)
+    }
+
+    /**
+     * Return the signature and the kind representing the corresponding property if the current instance of [SignatureAndKind]
+     * represents one of the following:
+     * - An accessor.
+     * - A backing field, or a (standalone) field of a delegated property or an accessor-less property.
+     *
+     * Otherwise, return `null`.
+     */
+    fun correspondingPropertyOrNull(): SignatureAndKind? {
+        val propertySignature = when (kind) {
+            FUNCTION_SYMBOL -> signature.propertyOfAccessorOrNull()
+            FIELD_SYMBOL, STANDALONE_FIELD_SYMBOL -> signature.propertyOfFieldOrNull()
+            else -> null
+        } ?: return null
+
+        return SignatureAndKind(propertySignature, PROPERTY_SYMBOL)
+    }
+
     override fun toString() = "${signature.render()}, kind=$kind"
 }
 
@@ -32,3 +70,15 @@ val IrSymbol.signatureAndKindOrNull: SignatureAndKind?
 val IrSymbol.signatureAndKind: SignatureAndKind
     get() = signatureAndKindOrNull
         ?: error("Can not create ${SignatureAndKind::class.java.simpleName} for a symbol without a signature: $this")
+
+private fun IdSignature.propertyOfAccessorOrNull(): IdSignature? = when (this) {
+    is IdSignature.AccessorSignature -> propertySignature
+    is IdSignature.CompositeSignature if container is IdSignature.FileSignature ->
+        inner.propertyOfAccessorOrNull()?.let { IdSignature.CompositeSignature(container, it) }
+    else -> null
+}
+
+private fun IdSignature.propertyOfFieldOrNull(): IdSignature? = when (this) {
+    is IdSignature.CompositeSignature if inner is IdSignature.LocalSignature -> container
+    else -> null
+}
