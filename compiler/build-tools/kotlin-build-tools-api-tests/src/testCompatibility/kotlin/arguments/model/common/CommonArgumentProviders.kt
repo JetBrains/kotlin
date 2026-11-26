@@ -97,10 +97,10 @@ private fun namedArgumentConfiguration(argumentPredicate: (CommonArgumentTestDes
             val toolchain = namedKotlinToolchains.payload()
             Arguments.of(
                 named(
-                    namedArgumentDescriptor.name,
+                    combineNames(namedArgumentDescriptor.name, namedKotlinToolchains.name),
                     CommonArgumentConfiguration(toolchain, namedArgumentDescriptor.payload)
                 ),
-                named(namedKotlinToolchains.name, toolchain)
+                toolchain
             )
         }
     }
