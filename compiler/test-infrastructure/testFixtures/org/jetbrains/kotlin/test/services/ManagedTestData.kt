@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.services
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions
 import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerMode
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.impl.testConfiguration
 import java.io.File
@@ -19,8 +20,10 @@ import java.io.File
  * variant of `foo.kt`. Such a file is both the input of the test and its expected output: [ManagedTestDataConfigurator] makes the
  * test read the expected file of its [variantChain], and [assertEqualsToTestDataFile] compares the actual output with the same file
  * via [ManagedTestAssertions].
+ *
+ * The variants of the compiler test data are the constants next to [LL_FIR_VARIANT][org.jetbrains.kotlin.test.utils.LL_FIR_VARIANT].
  */
-class ManagedTestData(private val testServices: TestServices, private val variantChain: List<String>) : TestService {
+class ManagedTestData(private val testServices: TestServices, private val variantChain: TestVariantChain) : TestService {
     /**
      * The test data file without a variant, which [ManagedTestDataConfigurator] replaces with the expected file.
      */
