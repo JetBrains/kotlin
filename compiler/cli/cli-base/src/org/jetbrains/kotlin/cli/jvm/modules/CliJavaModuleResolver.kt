@@ -70,7 +70,7 @@ class CliJavaModuleResolver(
 
     /** The module owning the binary classpath root [rootId], looked up in the user modules first. */
     private fun findJavaModule(rootId: JvmClasspathRootId): JavaModule? =
-        userModules.firstOrNull { module -> rootId in module } ?: systemModules.firstOrNull { module -> rootId in module }
+        userModules.firstOrNull { module -> rootId in module } ?: findSystemModule(rootId)
 
     private operator fun JavaModule.contains(rootId: JvmClasspathRootId): Boolean =
         moduleRoots.any { root -> root.isBinary && root.id == rootId }

@@ -552,10 +552,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
             ?: error("Cannot find a virtual file for $outsidePath")
         val checker = KotlinJavaModuleAccessibilityChecker.getInstance(setup.session.project)
 
-        Assertions.assertEquals(
-            KotlinJavaModuleAccessibilityError.ModuleDoesNotReadUnnamedModule,
-            checker.checkAccessibility(sharedFile.virtualFile, outsideFile, FqName.ROOT),
-        )
+        Assertions.assertNull(checker.checkAccessibility(sharedFile.virtualFile, outsideFile, FqName.ROOT))
     }
 
     @Test
@@ -586,7 +583,14 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val sourceBFile = session.modulesWithFiles.getValue(sourceB).single()
         val checker = KotlinJavaModuleAccessibilityChecker.getInstance(session.project)
 
-        Assertions.assertNull(checker.checkAccessibility(sourceAFile.virtualFile, sourceBFile.virtualFile, FqName.ROOT))
+        val exception = Assertions.assertThrows(IllegalStateException::class.java) {
+            checker.checkAccessibility(sourceAFile.virtualFile, sourceBFile.virtualFile, FqName.ROOT)
+        }
+        Assertions.assertEquals(
+            "Java module 'duplicate' is already registered; " +
+                    "Standalone cannot resolve multiple Java modules with the same name",
+            exception.message,
+        )
     }
 
     private fun buildJavaModuleResolutionTestSession(): JavaModuleResolutionTestSetup {

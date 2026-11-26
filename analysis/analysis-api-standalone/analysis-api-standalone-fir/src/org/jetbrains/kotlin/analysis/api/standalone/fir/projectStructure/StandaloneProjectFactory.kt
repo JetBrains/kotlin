@@ -313,9 +313,9 @@ object StandaloneProjectFactory {
         val delegateJavaModuleResolver = StandaloneJavaModuleResolver(
             javaModuleGraph,
             javaModuleFinder,
-            javaModuleFinder.systemModules.toList(),
             projectStructureProvider,
             project,
+            fileFinderFactory,
         )
         project.registerService(
             KotlinJavaModuleAccessibilityChecker::class.java,

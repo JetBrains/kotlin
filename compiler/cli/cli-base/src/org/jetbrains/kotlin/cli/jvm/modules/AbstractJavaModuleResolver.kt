@@ -11,13 +11,20 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
-abstract class AbstractJavaModuleResolver protected constructor(
+/**
+ * Handles system modules and common accessibility checks for Java module resolvers.
+ *
+ * [findSourceModule] and [findBinaryModule] resolve non-system files. JRT and `.sig` files are handled before these hooks
+ * are called.
+ */
+abstract class AbstractJavaModuleResolver(
     private val moduleGraph: JavaModuleGraph,
-    protected val systemModules: List<JavaModule.Explicit>
+    private val systemModules: List<JavaModule.Explicit>
 ) : JavaModuleResolver {
     protected abstract fun findSourceModule(file: VirtualFile): JavaModule?
 
@@ -37,6 +44,9 @@ abstract class AbstractJavaModuleResolver protected constructor(
         if (!isSystemModuleFile(file)) return null
         return systemModules.firstOrNull { module -> file in module }
     }
+
+    protected fun findSystemModule(rootId: JvmClasspathRootId): JavaModule.Explicit? =
+        systemModules.firstOrNull { module -> module.moduleRoots.any { root -> root.isBinary && root.id == rootId } }
 
     protected fun isSystemModuleFile(file: VirtualFile): Boolean =
         file.fileSystem.protocol == StandardFileSystems.JRT_PROTOCOL || file.extension == "sig"

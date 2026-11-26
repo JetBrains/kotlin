@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.java
 
-import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
@@ -14,14 +13,16 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
 import org.jetbrains.kotlin.analysis.api.projectStructure.isDangling
 import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.KotlinStaticProjectStructureProvider
+import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
+import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinderFactory
 import org.jetbrains.kotlin.cli.jvm.modules.AbstractJavaModuleResolver
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.impl.JavaAnnotationImpl
 import org.jetbrains.kotlin.load.java.structure.impl.convert
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -32,23 +33,32 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 internal class StandaloneJavaModuleResolver(
     javaModuleGraph: JavaModuleGraph,
     javaModuleFinder: CliJavaModuleFinder,
-    systemModules: List<JavaModule.Explicit>,
     private val projectStructureProvider: KotlinStaticProjectStructureProvider,
     project: Project,
-) : AbstractJavaModuleResolver(javaModuleGraph, systemModules) {
+    fileFinderFactory: CliVirtualFileFinderFactory
+) : AbstractJavaModuleResolver(javaModuleGraph, javaModuleFinder.systemModules.toList()) {
     private val javaModulesByKaSourceModule by lazy {
         createJavaModulesByKaSourceModule().also { modules ->
-            modules.values.forEach { module -> javaModuleFinder.addUserModule(module) }
+            modules.values.forEach { module ->
+                check(javaModuleFinder.findModule(module.name) == null) {
+                    "Java module '${module.name}' is already registered; " +
+                            "Standalone cannot resolve multiple Java modules with the same name"
+                }
+                javaModuleFinder.addUserModule(module)
+            }
         }
     }
 
     private val javaModuleByPhysicalSourceFile = NullableCaffeineCache<VirtualFile, JavaModule.Explicit> { it }
 
     private val psiManager = PsiManager.getInstance(project)
-    private val virtualFileFinder by lazy { VirtualFileFinder.getInstance(project) }
+    private val sourceFileFinder = fileFinderFactory.create(AllJavaSourcesInProjectScope(project))
+    private val classpathFinder = fileFinderFactory.create(JvmClasspath.ProjectLibraries())
 
     override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? {
-        val virtualFile = virtualFileFinder.findSourceOrBinaryVirtualFile(classId) ?: return null
+        val virtualFile = sourceFileFinder.findSourceOrBinaryVirtualFile(classId)
+            ?: classpathFinder.findSourceOrBinaryVirtualFile(classId)
+            ?: return null
         return (findJavaModule(virtualFile) as? JavaModule.Explicit)?.moduleInfo?.annotations
     }
 
@@ -67,13 +77,18 @@ internal class StandaloneJavaModuleResolver(
         referencedFile: VirtualFile,
         referencedPackage: FqName?,
     ): JavaModuleResolver.AccessError? {
-        if (referencedFile.fileType == JavaClassFileType.INSTANCE && !isSystemModuleFile(referencedFile)) {
-            // TODO(KT-91827): Binary Java modules are not resolved per use-site, so preserve Standalone's fail-open behavior.
+        val referencedModule = findJavaModule(referencedFile)
+        if (referencedModule == null && !isSystemModuleFile(referencedFile) && !isOwnedBySourceModule(referencedFile)) {
+            // TODO(KT-91827): Java modules are resolved only for source modules, so preserve Standalone's fail-open behavior
+            // otherwise.
             return null
         }
 
-        return super.checkAccessibility(fileFromOurModule, referencedFile, referencedPackage)
+        return checkAccessibility(fileFromOurModule?.let(::findJavaModule), referencedModule, referencedPackage)
     }
+
+    private fun isOwnedBySourceModule(file: VirtualFile): Boolean =
+        psiManager.findFile(file)?.let(::findKaSourceModule) != null
 
     private fun findJavaModule(file: PsiFile): JavaModule.Explicit? =
         findKaSourceModule(file)?.let(javaModulesByKaSourceModule::get)
