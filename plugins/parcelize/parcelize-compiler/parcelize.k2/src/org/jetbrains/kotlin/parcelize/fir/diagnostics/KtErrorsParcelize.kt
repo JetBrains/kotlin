@@ -54,6 +54,7 @@ object KtErrorsParcelize : KtDiagnosticsContainer() {
     val DEPRECATED_PARCELER by error0()
     val INAPPLICABLE_IGNORED_ON_PARCEL by warning0()
     val INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY by error0()
+    val INAPPLICABLE_DATA_CLASS by warning0()
     val VALUE_PARAMETER_USED_IN_CLASS_BODY by error0()
 
     val POLYMORPHIC_SEALED_MUST_BE_SEALED by error0(NAME_IDENTIFIER)
