@@ -233,6 +233,10 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
         }
     }
 
+    override fun KtSourceElement.isChildOfForLoop(): Boolean {
+        return unwrap().psi.parent is KtForExpression
+    }
+
     override fun KtSourceElement.findUnderscoreTypeArgumentAnnotationSources(typeArgument: KtSourceElement): List<KtSourceElement> {
         val typeReference = (typeArgument.unwrap().psi as? KtTypeProjection)?.typeReference ?: return emptyList()
         if (!typeReference.isPlaceholder) return emptyList()

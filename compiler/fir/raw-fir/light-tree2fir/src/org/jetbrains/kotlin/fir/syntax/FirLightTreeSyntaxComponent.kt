@@ -328,6 +328,11 @@ object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() 
         }
     }
 
+    override fun KtSourceElement.isChildOfForLoop(): Boolean {
+        val source = unwrap()
+        return source.treeStructure.getParent(source.lighterASTNode)?.tokenType == KtNodeTypes.FOR
+    }
+
     override fun KtSourceElement.findUnderscoreTypeArgumentAnnotationSources(typeArgument: KtSourceElement): List<KtSourceElement> {
         val source = unwrap()
         val tree = source.treeStructure

@@ -226,6 +226,11 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
     abstract fun KtSourceElement.forEachWhenConditionOperation(process: (expression: KtSourceElement, operation: SyntaxId) -> Unit)
 
     /**
+     * Returns whether the element is a direct child of a `for` loop (e.g., the loop parameter).
+     */
+    abstract fun KtSourceElement.isChildOfForLoop(): Boolean
+
+    /**
      * Finds the annotations on [typeArgument] of the call if it's an underscore type argument (`_`).
      * Here, the receiver is the call.
      */

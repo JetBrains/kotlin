@@ -118,6 +118,10 @@ object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
         notYetImplemented()
     }
 
+    override fun KtSourceElement.isChildOfForLoop(): Boolean {
+        notYetImplemented()
+    }
+
     override fun KtSourceElement.findUnderscoreTypeArgumentAnnotationSources(typeArgument: KtSourceElement): List<KtSourceElement> {
         notYetImplemented()
     }

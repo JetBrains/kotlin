@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
-import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.StandardTypes
@@ -32,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -59,12 +58,9 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultConstructor
 import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
@@ -580,7 +576,7 @@ class Fir2IrVisitor(
         val initializer = variable.initializer
         val isNextVariable = initializer is FirFunctionCall &&
                 initializer.calleeReference.toResolvedNamedFunctionSymbol()?.callableId?.isIteratorNext() == true &&
-                variable.source?.isChildOfForLoop == true
+                variable.source?.let { withSyntax { it.isChildOfForLoop() } } == true
         val irVariable = declarationStorage.createAndCacheIrVariable(
             variable, conversionScope.parentFromStack(),
             if (isNextVariable) {
@@ -1447,12 +1443,6 @@ class Fir2IrVisitor(
         val origin = when (whenExpression.source?.syntaxId) {
             KotlinSyntaxNodeTypeIds.WHEN -> IrStatementOrigin.WHEN
             KotlinSyntaxNodeTypeIds.IF -> IrStatementOrigin.IF
-            KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION -> when (whenExpression.source?.operationToken) {
-                KtTokens.OROR -> IrStatementOrigin.OROR
-                KtTokens.ANDAND -> IrStatementOrigin.ANDAND
-                else -> null
-            }
-            KotlinSyntaxNodeTypeIds.POSTFIX_EXPRESSION -> IrStatementOrigin.EXCLEXCL
             else -> null
         }
         return conversionScope.withWhenSubject(subjectVariable) {
@@ -2166,16 +2156,3 @@ class Fir2IrVisitor(
         configuration.skipBodies && annotationMode &&
                 expression is FirGetClassCall && expression.argument.resolvedType is ConeErrorType
 }
-
-val KtSourceElement.isChildOfForLoop: Boolean
-    get() =
-        if (this is KtPsiSourceElement) psi.parent is KtForExpression
-        else treeStructure.getParent(lighterASTNode)?.tokenType == KtNodeTypes.FOR
-
-val KtSourceElement.operationToken: IElementType?
-    get() {
-        assert(syntaxId == KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION)
-        return if (this is KtPsiSourceElement) (psi as? KtBinaryExpression)?.operationToken
-        else treeStructure.findChildByType(lighterASTNode, KtNodeTypes.OPERATION_REFERENCE)?.tokenType
-            ?: error("No operation reference for binary expression: $lighterASTNode")
-    }
