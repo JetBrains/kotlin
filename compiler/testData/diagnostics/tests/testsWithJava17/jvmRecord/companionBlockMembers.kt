@@ -2,7 +2,6 @@
 // ISSUE: KT-89457
 // LANGUAGE: +CompanionBlocks
 // JVM_TARGET: 17
-// ENABLE_JVM_PREVIEW
 
 @JvmRecord
 data class MyRec(val name: String) {

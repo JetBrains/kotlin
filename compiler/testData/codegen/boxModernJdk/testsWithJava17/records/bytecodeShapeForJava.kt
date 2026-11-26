@@ -1,5 +1,3 @@
-// API_VERSION: 1.5
-// ENABLE_JVM_PREVIEW
 // FILE: JavaClass.java
 public class JavaClass {
     public static String box() {

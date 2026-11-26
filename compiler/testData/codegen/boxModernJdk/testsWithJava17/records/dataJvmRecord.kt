@@ -1,6 +1,3 @@
-// API_VERSION: 1.5
-// ENABLE_JVM_PREVIEW
-
 @JvmRecord
 data class MyRec<R>(val x: String, val y: R)
 

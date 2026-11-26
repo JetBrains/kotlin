@@ -1,6 +1,3 @@
-// API_VERSION: 1.5
-// ENABLE_JVM_PREVIEW
-
 // MODULE: lib
 // FILE: A.kt
 @JvmRecord
