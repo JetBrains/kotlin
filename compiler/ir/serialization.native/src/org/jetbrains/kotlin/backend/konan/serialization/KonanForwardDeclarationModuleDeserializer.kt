@@ -121,6 +121,9 @@ internal class KonanForwardDeclarationModuleDeserializer(
         output: MutableCollection<IdSignature>,
     ) = Unit
 
+    @IrLinkerInternalApi
+    override fun finalizeInitialization() = Unit
+
     companion object {
         private val FORWARD_DECLARATION_ORIGIN by IrDeclarationOriginImpl.Regular
     }

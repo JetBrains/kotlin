@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 
 /**
- * Various settings used during deserialization of IR modules and IR files.
+ * Various settings used during deserialization of IR files.
  *
  * @property allowErrorNodes Whether serialization of [IrErrorType] and [IrErrorExpression] is permitted.
  *   Caution: This setting is not safe to use, as it can lead to crashes in the frontend or backend.
@@ -30,13 +30,22 @@ import org.jetbrains.kotlin.ir.types.IrType
  * @property deserializeTypeAliases Whether to deserialize [org.jetbrains.kotlin.ir.declarations.IrTypeAlias] declarations.
  *   Type aliases don't need to be (de)serialized anymore. See KT-86632.
  *   The only case for enabling it is the klib tool and its ability to dump (even older) KLIBs.
- */
+ * @property eagerlyDeserializeExplicitlyExportedDeclarations Whether the file should be immediately enqueued for
+ *   deserialization if it has explicitly exported declarations (e.g. top-level initializers).
+ *   Explicitly exported declarations are always scheduled to be deserialized before any other declarations of the file.
+ *   If `false`, they are deserialized only when the file gets enqueued for another reason, for example,
+ *   when some declaration in the file turns out to be reachable.
+ * @property deserializeAllTopLevelDeclarations Whether to schedule deserialization of all top-level declarations
+ *   in the file, no matter if they are reachable from other deserialized declarations or not.
+ *   If `false`, only the declarations that are actually reachable are deserialized. */
 class IrDeserializationSettings(
     val allowErrorNodes: Boolean = false,
     val deserializeFunctionBodies: DeserializeFunctionBodies = DeserializeFunctionBodies.ALL,
     val nullableAnyAsAnnotationConstructorCallType: IrType? = null,
     val fixSwappedKProperty2TypeParameterOrder: Boolean = false,
     val deserializeTypeAliases: Boolean = false,
+    val eagerlyDeserializeExplicitlyExportedDeclarations: Boolean = false,
+    val deserializeAllTopLevelDeclarations: Boolean = false,
 ) {
     enum class DeserializeFunctionBodies { ALL, ONLY_INLINE, NONE }
 }

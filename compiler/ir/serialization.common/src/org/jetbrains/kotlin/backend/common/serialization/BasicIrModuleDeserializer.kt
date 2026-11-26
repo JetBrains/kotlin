@@ -99,6 +99,12 @@ abstract class BasicIrModuleDeserializer(
         }
     }
 
+    override fun finalizeInitialization() {
+        for (fileState in fileDeserializationStates) {
+            fileState.enqueueDeclarationsToFinalizeInitialization(moduleDeserializationState::enqueueFile)
+        }
+    }
+
     // TODO: fix to topLevel checker
     override fun contains(idSig: IdSignature): Boolean = idSig.topLevelSignature() in moduleReversedFileIndex
 
@@ -137,6 +143,8 @@ abstract class BasicIrModuleDeserializer(
                 },
                 fixSwappedKProperty2TypeParameterOrder = moduleDeserializer.compatibilityMode.swappedKProperty2TypeParameterOrder,
                 deserializeTypeAliases = deserializeTypeAliases,
+                eagerlyDeserializeExplicitlyExportedDeclarations = fileStrategy.explicitlyExported,
+                deserializeAllTopLevelDeclarations = fileStrategy.theWholeWorld,
             ),
             moduleDeserializer,
         )
@@ -146,13 +154,6 @@ abstract class BasicIrModuleDeserializer(
 
         for ([signature, _] in fileDeserializationState.fileDeserializer.topLevelDeclarationIndex.keys) {
             moduleReversedFileIndex[signature] = fileDeserializationState
-        }
-
-        if (fileStrategy.theWholeWorld) {
-            fileDeserializationState.enqueueAllDeclarations()
-        }
-        if (fileStrategy.theWholeWorld || fileStrategy.explicitlyExported) {
-            moduleDeserializationState.enqueueFile(fileDeserializationState)
         }
 
         return fileDeserializationState

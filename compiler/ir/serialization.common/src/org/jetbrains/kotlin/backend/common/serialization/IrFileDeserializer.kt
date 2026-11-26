@@ -96,6 +96,22 @@ class IrFileDeserializer(
         }
     }
 
+    internal val explicitlyExportedDeclarations: List<SignatureAndKind> = buildList {
+        fileProto.explicitlyExportedToCompilerList.forEach { symbolId ->
+            val symbolData = BinarySymbolData.decode(symbolId)
+            val signature = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
+
+            val explicitlyExported: SignatureAndKind = signature and symbolData.kind
+            val topLevel = explicitlyExported.topLevelOrNull()
+                ?: error(
+                    "Cannot compute the top-level signature and kind for the explicitly exported declaration " +
+                            "$explicitlyExported in file ${file.fileEntry.name} of module ${file.module.name}"
+                )
+
+            this += topLevel
+        }
+    }
+
     // TODO(KT-91417): Drop this legacy index after completely migrating to signature+symbolKind addressing scheme.
     private val reversedSignatureIndex: Map<IdSignature, Int> = topLevelDeclarationIndex.mapKeys { it.key.signature }
 
@@ -150,7 +166,7 @@ class FileDeserializationState(
     val file: IrFile,
     val fileReader: IrLibraryFileFromBytes,
     fileProto: ProtoFile,
-    settings: IrDeserializationSettings,
+    private val settings: IrDeserializationSettings,
     moduleDeserializer: IrModuleDeserializer
 ) {
     private val symbolDeserializer = IrSymbolDeserializer(
@@ -198,7 +214,7 @@ class FileDeserializationState(
     /**
      * This is the queue of top-level declarations in the current file to be deserialized.
      *
-     * A declaration can be enqueued using one of the available ways: [addIdSignature], [enqueueAllDeclarations].
+     * A declaration can be enqueued using [addIdSignature].
      * The deserialization happens on invocation of [deserializeAllFileReachableTopLevel].
      *
      * Note 1: The signature is removed from the queue during deserialization of the corresponding declaration.
@@ -210,17 +226,6 @@ class FileDeserializationState(
      */
     private val reachableTopLevels = LinkedHashSet<IdSignature>()
 
-    init {
-        // Explicitly exported declarations (e.g. top-level initializers) must be deserialized before all other declarations.
-        // Thus we schedule their deserialization in deserializer's constructor.
-        fileProto.explicitlyExportedToCompilerList.forEach {
-            val symbolData = symbolDeserializer.parseSymbolData(it)
-            val sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
-            assert(!sig.isPackageSignature())
-            addIdSignature(sig.topLevelSignature())
-        }
-    }
-
     /**
      * Schedule deserialization of a top-level declaration with the given signature.
      */
@@ -228,11 +233,19 @@ class FileDeserializationState(
         reachableTopLevels.add(topLevelDeclarationSignature)
     }
 
-    /**
-     * Schedule deserialization of all top-level declarations in this file.
-     */
-    internal fun enqueueAllDeclarations() {
-        fileDeserializer.topLevelDeclarationIndex.keys.mapTo(reachableTopLevels) { it.signature }
+    internal inline fun enqueueDeclarationsToFinalizeInitialization(enqueueFile: (FileDeserializationState) -> Unit) {
+        // Important: Explicitly exported declarations (e.g. top-level initializers) must be deserialized before all other declarations.
+        fileDeserializer.explicitlyExportedDeclarations.mapTo(reachableTopLevels) { it.signature }
+        if (settings.eagerlyDeserializeExplicitlyExportedDeclarations) {
+            // Do it eagerly.
+            enqueueFile(this)
+        }
+
+        // Schedule deserialization of all top-level declarations in this file.
+        if (settings.deserializeAllTopLevelDeclarations) {
+            fileDeserializer.topLevelDeclarationIndex.keys.mapTo(reachableTopLevels) { it.signature }
+            enqueueFile(this)
+        }
     }
 
     /**

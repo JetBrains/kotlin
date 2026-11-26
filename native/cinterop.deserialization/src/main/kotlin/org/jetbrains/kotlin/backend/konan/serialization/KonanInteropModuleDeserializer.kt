@@ -157,6 +157,9 @@ class KonanInteropModuleDeserializer(
 
     private fun IdSignature.isInteropSignature() = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
 
+    @IrLinkerInternalApi
+    override fun finalizeInitialization() = Unit
+
     override fun contains(idSig: IdSignature): Boolean {
         if (!idSig.isInteropSignature()) {
             return false
