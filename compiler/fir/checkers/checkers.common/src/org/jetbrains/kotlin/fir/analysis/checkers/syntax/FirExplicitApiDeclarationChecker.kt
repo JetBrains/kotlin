@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 
 object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclaration>() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkPsiOrLightTree(
+    override fun check(
         element: FirDeclaration,
         source: KtSourceElement,
     ) {

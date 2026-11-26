@@ -11,22 +11,28 @@ import com.intellij.lang.PsiBuilder
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.DOT_QUALIFIED_EXPRESSION
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.diagnostics.annotations
 import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.diagnostics.findChildrenByType
 import org.jetbrains.kotlin.diagnostics.getAssignmentLhsIfUnwrappable
+import org.jetbrains.kotlin.diagnostics.getChildrenArray
 import org.jetbrains.kotlin.diagnostics.nameIdentifier
+import org.jetbrains.kotlin.diagnostics.userType
 import org.jetbrains.kotlin.diagnostics.valOrVarKeyword
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.builder.isUnderscore
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.LightTreeParseTreeKind
 import org.jetbrains.kotlin.syntax.ParseTreeKind
 import org.jetbrains.kotlin.syntax.SyntaxId
@@ -35,6 +41,7 @@ import org.jetbrains.kotlin.syntax.syntaxId
 import org.jetbrains.kotlin.toKtLightSourceElement
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.util.getPreviousSibling
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @NoMutableState
 object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() {
@@ -255,4 +262,97 @@ object FirLightTreeSyntaxComponent : FirSyntaxComponent<KtLightSourceElement>() 
         val source = unwrap()
         return source.lighterASTNode.getChildren(source.treeStructure).any { it.tokenType == KtNodeTypes.INITIALIZER_LIST }
     }
+
+    override fun KtSourceElement.isAnnotatedBinaryExpressionStatement(): Boolean {
+        val source = unwrap()
+        val tree = source.treeStructure
+        var current = source.lighterASTNode
+
+        if (tree.getChildrenArray(current).firstOrNull()?.tokenType != KtNodeTypes.ANNOTATED_EXPRESSION) return false
+
+        var parent: LighterASTNode? = tree.getParent(current)
+
+        while (parent?.tokenType == KtNodeTypes.BINARY_EXPRESSION) {
+            if (tree.getChildrenArray(parent).firstOrNull() != current) {
+                return false
+            }
+
+            current = parent
+            parent = tree.getParent(parent)
+        }
+
+        return parent?.isStatementContainer == true
+    }
+
+    private val LighterASTNode.isStatementContainer: Boolean
+        get() = tokenType == KtNodeTypes.BLOCK
+                || tokenType == KtNodeTypes.WHEN_ENTRY
+                || isContainerNodeForControlStructureBody
+
+    private val LighterASTNode.isContainerNodeForControlStructureBody: Boolean
+        get() = tokenType == KtNodeTypes.BODY
+                || tokenType == KtNodeTypes.ELSE
+                || tokenType == KtNodeTypes.THEN
+
+    override fun KtSourceElement.findDelegatedSuperTypeEntrySource(): KtSourceElement? {
+        val source = unwrap()
+        val tree = source.treeStructure
+        val parent = tree.getParent(source.lighterASTNode) ?: return null
+        return runIf(parent.tokenType == KtNodeTypes.DELEGATED_SUPER_TYPE_ENTRY) { parent.toKtLightSourceElement(tree) }
+    }
+
+    override fun KtSourceElement.forEachWhenConditionOperation(process: (expression: KtSourceElement, operation: SyntaxId) -> Unit) {
+        val source = unwrap()
+        val tree = source.treeStructure
+        val offset = source.startOffset - source.lighterASTNode.startOffset
+        for (entry in source.lighterASTNode.getChildren(tree)) {
+            if (entry.tokenType != KtNodeTypes.WHEN_ENTRY) continue
+            for (node in entry.getChildren(tree)) {
+                val expression = when (node.tokenType) {
+                    KtNodeTypes.WHEN_CONDITION_EXPRESSION -> node.getChildren(tree).firstOrNull { it.isExpression() }
+                    KtNodeTypes.WHEN_CONDITION_IN_RANGE -> node.getChildren(tree)
+                        .firstOrNull { it.tokenType != KtNodeTypes.OPERATION_REFERENCE && it.isExpression() }
+                    else -> null
+                } ?: continue
+                val operation = when (expression.tokenType) {
+                    KtNodeTypes.IS_EXPRESSION -> KotlinSyntaxNodeTypeIds.IS_EXPRESSION
+                    KtNodeTypes.BINARY_EXPRESSION -> {
+                        val operationReference = expression.getChildren(tree).first { it.tokenType == KtNodeTypes.OPERATION_REFERENCE }
+                        @OptIn(KtImplementationDetail::class)
+                        operationReference.getOperationSymbol(tree).syntaxId()
+                    }
+                    else -> continue
+                }
+                process(KtLightSourceElement(expression, offset + expression.startOffset, offset + expression.endOffset, tree), operation)
+            }
+        }
+    }
+
+    override fun KtSourceElement.findUnderscoreTypeArgumentAnnotationSources(typeArgument: KtSourceElement): List<KtSourceElement> {
+        val source = unwrap()
+        val tree = source.treeStructure
+        val typeArgumentNode = typeArgument.unwrap().lighterASTNode
+        if (!tree.userType(typeArgumentNode).toString().isUnderscore) return emptyList()
+        val annotations = tree.annotations(typeArgumentNode) ?: return emptyList()
+        return annotations.map {
+            // Keeps 'padding' of parent node in child node
+            val offsetDelta = source.startOffset - source.lighterASTNode.startOffset
+            it.toKtLightSourceElement(
+                source.treeStructure,
+                startOffset = it.startOffset + offsetDelta,
+                endOffset = it.endOffset + offsetDelta
+            )
+        }
+    }
+
+    /**
+     * Always `null`: `KotlinLightParser.checkOrReportSyntaxErrors` already walks the whole tree in document order right after parsing
+     * and reports the problem.
+     */
+    override fun KtSourceElement.findProhibitedLiteralPrefixSource(): KtSourceElement? = null
+
+    /**
+     * See [findProhibitedLiteralPrefixSource].
+     */
+    override fun KtSourceElement.findProhibitedLiteralSuffixSource(): KtSourceElement? = null
 }

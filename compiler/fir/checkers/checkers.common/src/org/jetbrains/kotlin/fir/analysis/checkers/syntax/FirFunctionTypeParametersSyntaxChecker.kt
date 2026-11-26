@@ -6,48 +6,29 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.nameIdentifier
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.diagnostics.typeParametersList
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.fir.syntax.withSyntax
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object FirFunctionTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker<FirNamedFunction>() {
-    override fun isApplicable(element: FirNamedFunction, source: KtSourceElement): Boolean =
-        source.kind !is KtFakeSourceElementKind
-
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkPsi(
+    override fun check(
         element: FirNamedFunction,
-        source: KtPsiSourceElement,
+        source: KtSourceElement,
     ) {
-        val psi = source.psi as KtFunction
-        val typeParamsNode = psi.typeParameterList
-        val nameNode = psi.nameIdentifier
+        if (source.kind is KtFakeSourceElementKind) return
 
-        if (typeParamsNode != null && nameNode != null && typeParamsNode.startOffset > nameNode.startOffset) {
-            reporter.reportOn(
-                source,
-                FirErrors.DEPRECATED_TYPE_PARAMETER_SYNTAX
-            )
-        }
-    }
+        val typeParameterList = withSyntax { source.getChild(KotlinSyntaxNodeTypeIds.TYPE_PARAMETER_LIST, depth = 1) ?: return }
+        val name = withSyntax { source.getChild(KotlinSyntaxTokenIds.IDENTIFIER, depth = 1) ?: return }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkLightTree(
-        element: FirNamedFunction,
-        source: KtLightSourceElement,
-    ) {
-        val typeParamsNode = source.treeStructure.typeParametersList(source.lighterASTNode)
-        val nameNode = source.treeStructure.nameIdentifier(source.lighterASTNode)
-        if (typeParamsNode != null && nameNode != null && typeParamsNode.startOffset > nameNode.startOffset) {
+        if (typeParameterList.startOffset > name.startOffset) {
             reporter.reportOn(
                 source,
                 FirErrors.DEPRECATED_TYPE_PARAMETER_SYNTAX

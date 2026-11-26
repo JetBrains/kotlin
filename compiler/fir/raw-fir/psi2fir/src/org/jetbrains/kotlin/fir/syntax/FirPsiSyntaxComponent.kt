@@ -11,6 +11,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtLiteralPrefixAndSuffix
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
@@ -20,19 +21,24 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiUtil.isStatementContainer
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentLhsIfUnwrappable
 import org.jetbrains.kotlin.psi.psiUtil.getExplicitReceiverOfDotQualified
+import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
+import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.syntax.ParseTreeKind
 import org.jetbrains.kotlin.syntax.PsiParseTreeKind
 import org.jetbrains.kotlin.syntax.SyntaxId
 import org.jetbrains.kotlin.syntax.elementType
 import org.jetbrains.kotlin.syntax.syntaxId
 import org.jetbrains.kotlin.toKtPsiSourceElement
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -178,5 +184,81 @@ object FirPsiSyntaxComponent : FirSyntaxComponent<KtPsiSourceElement>() {
 
     override fun KtSourceElement.hasEnumEntryInitializer(): Boolean {
         return (unwrap().psi as? KtEnumEntry)?.initializerList != null
+    }
+
+    override fun KtSourceElement.isAnnotatedBinaryExpressionStatement(): Boolean {
+        var current = unwrap().psi as? KtBinaryExpression ?: return false
+
+        if (current.left !is KtAnnotatedExpression) return false
+
+        var parent = current.parent
+
+        while (parent is KtBinaryExpression) {
+            if (parent.left != current) {
+                return false
+            }
+
+            current = parent
+            parent = parent.parent
+        }
+
+        return isStatementContainer(parent)
+    }
+
+    override fun KtSourceElement.findDelegatedSuperTypeEntrySource(): KtSourceElement? {
+        return (unwrap().psi.parent as? KtDelegatedSuperTypeEntry)?.toKtPsiSourceElement()
+    }
+
+    override fun KtSourceElement.forEachWhenConditionOperation(process: (expression: KtSourceElement, operation: SyntaxId) -> Unit) {
+        val whenExpression = unwrap().psi as? KtWhenExpression ?: return
+        if (whenExpression.subjectExpression == null && whenExpression.subjectVariable == null) return
+        for (entry in whenExpression.entries) {
+            for (condition in entry.conditions) {
+                val rawExpression = when (condition) {
+                    is KtWhenConditionWithExpression -> condition.expression
+                    is KtWhenConditionInRange -> condition.rangeExpression
+                    else -> null
+                } ?: continue
+                if (rawExpression is KtParenthesizedExpression) continue
+                val operation = when (val expression = KtPsiUtil.safeDeparenthesize(rawExpression)) {
+                    is KtIsExpression -> KotlinSyntaxNodeTypeIds.IS_EXPRESSION
+                    is KtBinaryExpression -> {
+                        @OptIn(KtImplementationDetail::class)
+                        expression.operationToken.syntaxId()
+                    }
+                    else -> continue
+                }
+                process(rawExpression.toKtPsiSourceElement(), operation)
+            }
+        }
+    }
+
+    override fun KtSourceElement.findUnderscoreTypeArgumentAnnotationSources(typeArgument: KtSourceElement): List<KtSourceElement> {
+        val typeReference = (typeArgument.unwrap().psi as? KtTypeProjection)?.typeReference ?: return emptyList()
+        if (!typeReference.isPlaceholder) return emptyList()
+        return typeReference.annotationEntries.map { it.toKtPsiSourceElement() }
+    }
+
+    /**
+     * Reaches the neighbors of the literal with [prevLeaf], which climbs the tree back up once per literal (KT-88399).
+     * Its cost is unclear, but the PSI path is not performance-critical, so it is acceptable here.
+     */
+    override fun KtSourceElement.findProhibitedLiteralPrefixSource(): KtSourceElement? {
+        return findProhibitedLiteralAffix { it.prevLeaf() }
+    }
+
+    /**
+     * See [findProhibitedLiteralPrefixSource].
+     */
+    override fun KtSourceElement.findProhibitedLiteralSuffixSource(): KtSourceElement? {
+        return findProhibitedLiteralAffix { it.nextLeaf() }
+    }
+
+    @OptIn(KtImplementationDetail::class)
+    private inline fun KtSourceElement.findProhibitedLiteralAffix(getAffix: (PsiElement) -> PsiElement?): KtSourceElement? {
+        val psi = unwrap().psi
+        if (psi.node?.elementType !in KtLiteralPrefixAndSuffix.relevantLiteralTypes) return null
+        val affix = getAffix(psi) ?: return null
+        return runIf(KtLiteralPrefixAndSuffix.isProhibitedPrefixOrSuffix(affix.node.elementType)) { affix.toKtPsiSourceElement() }
     }
 }

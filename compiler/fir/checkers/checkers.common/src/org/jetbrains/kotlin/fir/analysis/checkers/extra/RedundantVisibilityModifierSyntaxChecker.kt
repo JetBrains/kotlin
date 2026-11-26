@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.fir.types.typeContext
 
 object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration>() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkPsiOrLightTree(
+    override fun check(
         element: FirDeclaration,
         source: KtSourceElement,
     ) {

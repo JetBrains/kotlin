@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDefaultValueI
 
 object FirUnsupportedDefaultValueInFunctionTypeParameterChecker : FirFunctionalTypeParameterSyntaxChecker() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkPsiOrLightTree(
+    override fun check(
         element: FirFunctionTypeParameter,
         source: KtSourceElement,
     ) {

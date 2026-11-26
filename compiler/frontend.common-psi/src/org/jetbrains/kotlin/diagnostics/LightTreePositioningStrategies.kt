@@ -1572,12 +1572,6 @@ fun LighterASTNode.isExpression(): Boolean {
     return isExpression()
 }
 
-fun FlyweightCapableTreeStructure<LighterASTNode>.getChildrenArray(node: LighterASTNode): Array<LighterASTNode?> {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    getChildren(node, childrenRef)
-    return childrenRef.get() ?: emptyArray()
-}
-
 /**
  * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for diagnostics
  * on super and unresolved references. For example, with the following, only the part inside the parentheses should be highlighted.
@@ -1642,17 +1636,6 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.inlineModifier(declaration: Li
 fun FlyweightCapableTreeStructure<LighterASTNode>.typeParametersList(declaration: LighterASTNode): LighterASTNode? =
     findChildByType(declaration, KtNodeTypes.TYPE_PARAMETER_LIST)
 
-fun FlyweightCapableTreeStructure<LighterASTNode>.annotations(node: LighterASTNode): List<LighterASTNode>? {
-    val typeReference = findChildByType(node, KtNodeTypes.TYPE_REFERENCE) ?: return null
-    val modifiers = modifierList(typeReference) ?: return null
-    return collectDescendantsOfType(modifiers, KtNodeTypes.ANNOTATION_ENTRY)
-}
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.userType(node: LighterASTNode): LighterASTNode? {
-    val typeReference = findChildByType(node, KtNodeTypes.TYPE_REFERENCE) ?: return null
-    return findChildByType(typeReference, KtNodeTypes.USER_TYPE)
-}
-
 private fun FlyweightCapableTreeStructure<LighterASTNode>.supertypesList(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.SUPER_TYPE_LIST)
 
@@ -1674,9 +1657,6 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.setter(node: LighterAS
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.accessorNamePlaceholder(node: LighterASTNode): LighterASTNode =
     findChildByType(node, GET_KEYWORD) ?: findChildByType(node, SET_KEYWORD)!!
-
-private fun FlyweightCapableTreeStructure<LighterASTNode>.modifierList(node: LighterASTNode): LighterASTNode? =
-    findChildByType(node, KtNodeTypes.MODIFIER_LIST)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.primaryConstructor(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.PRIMARY_CONSTRUCTOR)
@@ -1816,35 +1796,6 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.findLastDescendant(
             }
             return null
         }
-}
-
-fun FlyweightCapableTreeStructure<LighterASTNode>.collectDescendantsOfType(
-    node: LighterASTNode, type: IElementType,
-    predicate: (LighterASTNode) -> Boolean = { true }
-): List<LighterASTNode> {
-    val result = mutableListOf<LighterASTNode>()
-
-    fun FlyweightCapableTreeStructure<LighterASTNode>.collectDescendantByType(node: LighterASTNode) {
-        val childrenRef = Ref<Array<LighterASTNode?>>()
-        getChildren(node, childrenRef)
-
-        val childrenRefGet = childrenRef.get()
-        if (childrenRefGet != null) {
-            for (child in childrenRefGet) {
-                if (child?.tokenType == type && predicate(child)) {
-                    result.add(child)
-                }
-
-                if (child != null) {
-                    collectDescendantByType(child)
-                }
-            }
-        }
-    }
-
-    collectDescendantByType(node)
-
-    return result
 }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.traverseDescendants(

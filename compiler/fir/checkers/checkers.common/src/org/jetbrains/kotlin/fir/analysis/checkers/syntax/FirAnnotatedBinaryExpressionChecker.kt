@@ -5,82 +5,23 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
-import com.intellij.lang.LighterASTNode
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.getChildrenArray
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.psi.KtAnnotatedExpression
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtPsiUtil.isStatementContainer
+import org.jetbrains.kotlin.fir.syntax.withSyntax
 import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 
 object FirAnnotatedBinaryExpressionChecker : FirExpressionSyntaxChecker<FirStatement>() {
-    override fun isApplicable(element: FirStatement, source: KtSourceElement): Boolean {
-        return source.kind is KtRealSourceElementKind && source.syntaxId == KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION
-    }
-
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkPsi(
-        element: FirStatement,
-        source: KtPsiSourceElement,
-    ) {
-        var current = source.psi
+    override fun check(element: FirStatement, source: KtSourceElement) {
+        if (source.kind !is KtRealSourceElementKind || source.syntaxId != KotlinSyntaxNodeTypeIds.BINARY_EXPRESSION) return
 
-        if ((current as? KtBinaryExpression)?.left !is KtAnnotatedExpression) return
-
-        var parent = current.parent
-
-        while (parent is KtBinaryExpression) {
-            if (parent.left != current) {
-                return
-            }
-
-            current = parent
-            parent = parent.parent
-        }
-
-        if (isStatementContainer(parent)) {
+        if (withSyntax { source.isAnnotatedBinaryExpressionStatement() }) {
             reporter.reportOn(source, FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE)
         }
     }
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkLightTree(
-        element: FirStatement,
-        source: KtLightSourceElement,
-    ) {
-        var current = source.lighterASTNode
-        val treeStructure = source.treeStructure
-
-        if (treeStructure.getChildrenArray(current).firstOrNull()?.tokenType != KtNodeTypes.ANNOTATED_EXPRESSION) return
-
-        var parent: LighterASTNode? = treeStructure.getParent(current)
-
-        while (parent?.tokenType == KtNodeTypes.BINARY_EXPRESSION) {
-            if (treeStructure.getChildrenArray(parent).firstOrNull() != current) {
-                return
-            }
-
-            current = parent
-            parent = treeStructure.getParent(parent)
-        }
-
-        if (parent?.isStatementContainer == true) {
-            reporter.reportOn(source, FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE)
-        }
-    }
-
-    private val LighterASTNode.isStatementContainer: Boolean
-        get() = tokenType == KtNodeTypes.BLOCK
-                || tokenType == KtNodeTypes.WHEN_ENTRY
-                || isContainerNodeForControlStructureBody
-
-    private val LighterASTNode.isContainerNodeForControlStructureBody: Boolean
-        get() = tokenType == KtNodeTypes.BODY
-                || tokenType == KtNodeTypes.ELSE
-                || tokenType == KtNodeTypes.THEN
 }

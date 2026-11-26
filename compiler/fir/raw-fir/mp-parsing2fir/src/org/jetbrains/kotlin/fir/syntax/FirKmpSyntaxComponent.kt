@@ -106,5 +106,25 @@ object FirKmpSyntaxComponent : FirSyntaxComponent<Any>() {
         notYetImplemented()
     }
 
+    override fun KtSourceElement.isAnnotatedBinaryExpressionStatement(): Boolean {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.findDelegatedSuperTypeEntrySource(): KtSourceElement? {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.forEachWhenConditionOperation(process: (expression: KtSourceElement, operation: SyntaxId) -> Unit) {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.findUnderscoreTypeArgumentAnnotationSources(typeArgument: KtSourceElement): List<KtSourceElement> {
+        notYetImplemented()
+    }
+
+    override fun KtSourceElement.findProhibitedLiteralPrefixSource(): KtSourceElement? = null
+
+    override fun KtSourceElement.findProhibitedLiteralSuffixSource(): KtSourceElement? = null
+
     private fun notYetImplemented(): Nothing = TODO("Not yet implemented: KT-91322")
 }

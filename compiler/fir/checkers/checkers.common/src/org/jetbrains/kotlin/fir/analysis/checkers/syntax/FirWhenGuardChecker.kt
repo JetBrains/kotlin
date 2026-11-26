@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 
 object FirWhenGuardChecker : FirExpressionSyntaxChecker<FirWhenExpression>() {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkPsiOrLightTree(
+    override fun check(
         element: FirWhenExpression,
         source: KtSourceElement,
     ) {

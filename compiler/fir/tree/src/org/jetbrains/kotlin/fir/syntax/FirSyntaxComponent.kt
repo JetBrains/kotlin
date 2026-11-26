@@ -184,6 +184,66 @@ abstract class FirSyntaxComponent<T> : FirSessionComponent {
      * Reason of implementing this at source level and not in FIR is same as in [hasEnumEntryBody] method.
      */
     abstract fun KtSourceElement.hasEnumEntryInitializer(): Boolean
+
+    /**
+     * Whether the element is a binary expression with an annotated leftmost operand that is placed directly in a statement container,
+     * possibly as the leftmost operand of an enclosing chain of binary expressions.
+     *
+     * The annotation applies only to the leftmost operand, not to the whole expression, as one might expect:
+     *
+     * ```kotlin
+     * fun foo(x: Int, y: Int) {
+     *     @Ann x + y * 2 > 0 // `true` for `@Ann x + y * 2`, the leftmost operand of `> 0`
+     *     1 + @Ann x         // `false`: the annotated operand is not the leftmost one
+     *     val z = @Ann x + y // `false`: not a statement
+     * }
+     * ```
+     */
+    abstract fun KtSourceElement.isAnnotatedBinaryExpressionStatement(): Boolean
+
+    /**
+     * Finds the delegated super type entry (`Foo by bar`) that directly contains the element.
+     */
+    abstract fun KtSourceElement.findDelegatedSuperTypeEntrySource(): KtSourceElement?
+
+    /**
+     * Invokes [process] for each `is` or binary expression that is the condition expression or the range of a `when` branch.
+     * The receiver is a `when` expression with a subject, and [process] gets the condition expression and its operation,
+     * which is either [org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds.IS_EXPRESSION] or the ID of the operator token of the binary
+     * expression.
+     *
+     * Parenthesized conditions are skipped:
+     *
+     * ```kotlin
+     * when (x) {
+     *     a < b -> {}       // `a < b` with `LT`
+     *     in a..b -> {}     // `a..b` with `RANGE`
+     *     y is String -> {} // `y is String` with `IS_EXPRESSION`
+     *     (a < b) -> {}     // skipped
+     * }
+     * ```
+     */
+    abstract fun KtSourceElement.forEachWhenConditionOperation(process: (expression: KtSourceElement, operation: SyntaxId) -> Unit)
+
+    /**
+     * Finds the annotations on [typeArgument] of the call if it's an underscore type argument (`_`).
+     * Here, the receiver is the call.
+     */
+    abstract fun KtSourceElement.findUnderscoreTypeArgumentAnnotationSources(typeArgument: KtSourceElement): List<KtSourceElement>
+
+    /**
+     * Finds the token glued to the start of the literal if the element is a literal and such a token is prohibited, as in `a foo"bar"`.
+     * See `org.jetbrains.kotlin.KtLiteralPrefixAndSuffix`.
+     *
+     * The implementations for the trees whose parser already reports the problem return `null` (LightTree, KMP)
+     */
+    abstract fun KtSourceElement.findProhibitedLiteralPrefixSource(): KtSourceElement?
+
+    /**
+     * Finds the token glued to the end of the literal if the element is a literal and such a token is prohibited, as in `1in a`.
+     * See [findProhibitedLiteralPrefixSource].
+     */
+    abstract fun KtSourceElement.findProhibitedLiteralSuffixSource(): KtSourceElement?
 }
 
 val FirSession.syntaxComponent: FirSyntaxComponent<*> by FirSession.Companion.sessionComponentAccessor()
