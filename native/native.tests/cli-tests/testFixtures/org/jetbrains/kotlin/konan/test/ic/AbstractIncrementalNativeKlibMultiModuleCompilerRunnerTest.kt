@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,22 +8,34 @@ package org.jetbrains.kotlin.konan.test.klib.ic
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
+import org.jetbrains.kotlin.cli.bc.IncrementalNativeCompilerRunner
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.ic.IncrementalNativeCompilerRunner
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.AbstractIncrementalMultiModuleCompilerRunnerTest
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
-import org.jetbrains.kotlin.konan.test.blackbox.support.NativeKlibICTestSupport
-import org.jetbrains.kotlin.konan.test.blackbox.support.NativeMutliModuleKlibICTestSupport
+import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createSimpleTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.NativeTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.SimpleTestRunSettings
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
+import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.ExtensionContext
 import java.io.File
+
+class NativeMutliModuleKlibICTestSupport : BeforeEachCallback {
+    override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
+        val settings = createSimpleTestRunSettings()
+
+        // Inject the required properties to test instance.
+        with(settings.get<NativeTestInstances<AbstractIncrementalNativeKlibMultiModuleCompilerRunnerTest>>().enclosingTestInstance) {
+            testRunSettings = settings
+        }
+    }
+}
 
 @ExtendWith(NativeMutliModuleKlibICTestSupport::class)
 abstract class AbstractIncrementalNativeKlibMultiModuleCompilerRunnerTest :

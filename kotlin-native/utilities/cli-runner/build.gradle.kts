@@ -9,7 +9,6 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:cli-base"))
-    implementation(project(":compiler:incremental-compilation-impl"))
     implementation(project(":native:unsafe-mem"))
     implementation(project(":kotlin-native:Interop:StubGenerator"))
     implementation(project(":kotlin-native:backend.native")) // used by generatePlatformLibraries command for cache generation

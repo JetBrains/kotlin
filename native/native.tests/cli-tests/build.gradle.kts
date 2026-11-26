@@ -15,6 +15,7 @@ dependencies {
     testFixturesImplementation(project(":native:cli-native"))
 
     testFixturesApi(testFixtures(project(":native:native.tests")))
+    testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
 }
 
 sourceSets {
@@ -25,6 +26,7 @@ sourceSets {
 
 projectTests {
     testData(isolated, "testData")
+    testData(project(":jps").isolated, "jps-plugin/testData")
 
     nativeTestTask(
         "test",

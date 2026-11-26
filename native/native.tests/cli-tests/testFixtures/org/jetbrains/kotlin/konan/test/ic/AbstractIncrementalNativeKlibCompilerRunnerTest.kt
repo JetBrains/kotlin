@@ -7,21 +7,35 @@ package org.jetbrains.kotlin.konan.test.klib.ic
 
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
+import org.jetbrains.kotlin.cli.bc.IncrementalNativeCompilerRunner
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.AbstractIncrementalCompilerRunnerTestBase
 import org.jetbrains.kotlin.incremental.ChangedFiles
-import org.jetbrains.kotlin.cli.ic.IncrementalNativeCompilerRunner
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
 import org.jetbrains.kotlin.incremental.utils.TestICReporter
-import org.jetbrains.kotlin.konan.test.blackbox.support.NativeKlibICTestSupport
+import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createSimpleTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.NativeTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.SimpleTestRunSettings
+import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.ExtensionContext
 import java.io.File
+
+class NativeKlibICTestSupport : BeforeEachCallback {
+    override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
+        val settings = createSimpleTestRunSettings()
+
+        // Inject the required properties to test instance.
+        with(settings.get<NativeTestInstances<AbstractIncrementalNativeKlibCompilerRunnerTest>>().enclosingTestInstance) {
+            testRunSettings = settings
+        }
+    }
+}
 
 @ExtendWith(NativeKlibICTestSupport::class)
 abstract class AbstractIncrementalNativeKlibCompilerRunnerTest : AbstractIncrementalCompilerRunnerTestBase<K2NativeCompilerArguments>() {
