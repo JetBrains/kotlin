@@ -27,7 +27,7 @@ class JarArchiveCache(
         droppedArchives += it
     }
 
-    fun archive(path: String): JarArchive {
+    operator fun get(path: String): JarArchive {
         archives[path]?.let { return it }
         // Parsed outside the map, so that parsing one archive does not block requests for others.
         val archive = JarArchive(File(path), unmapBuffer, onInvalidArchive, ::readContents)

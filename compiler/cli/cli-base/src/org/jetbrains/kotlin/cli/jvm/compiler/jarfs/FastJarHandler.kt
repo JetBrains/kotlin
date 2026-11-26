@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 
 class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
-    internal val archive: JarArchive = fileSystem.archives.archive(path)
+    internal val archive: JarArchive = fileSystem.archives[path]
 
     internal val file: File
         get() = archive.file

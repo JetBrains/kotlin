@@ -91,16 +91,16 @@ class JarArchiveCacheTest {
     @Test
     fun archiveIsParsedOnceUntilCleared() {
         val path = jar("lib.jar", mapOf("p/A.txt" to "a")).path
-        val archive = archives.archive(path)
-        assertSame(archive, archives.archive(path))
+        val archive = archives[path]
+        assertSame(archive, archives[path])
         archives.clear()
-        assertNotSame(archive, archives.archive(path))
+        assertNotSame(archive, archives[path])
     }
 
     @Test
     fun treeHasAllParentDirectoriesInEntryOrder() {
         val path = jar("lib.jar", mapOf("b/B.txt" to "b", "a/x/A.txt" to "a", "b/C.txt" to "c", "R.txt" to "r")).path
-        val archive = archives.archive(path)
+        val archive = archives[path]
         assertEquals("/(b/(B.txt,C.txt),a/(x/(A.txt)),R.txt)", archive.buildTree(NodeFactory).render())
         assertNotSame(archive.buildTree(NodeFactory), archive.buildTree(NodeFactory))
     }
@@ -108,9 +108,9 @@ class JarArchiveCacheTest {
     @Test
     fun virtualFilesUseTheSharedArchives() {
         val path = jar("lib.jar", mapOf("p/A.txt" to "a")).path
-        val archive = archives.archive(path)
+        val archive = archives[path]
         val file = fileSystem!!.findFileByPath("$path!/p/A.txt")!!
-        assertSame(archive, archives.archive(path))
+        assertSame(archive, archives[path])
         assertSame(file, fileSystem!!.findFileByPath("$path!/p/A.txt"))
         assertSame(file.parent, fileSystem!!.findFileByPath("$path!/p"))
         assertEquals("a", String(file.contentsToByteArray()))
@@ -122,22 +122,22 @@ class JarArchiveCacheTest {
         val jars = (0 until 40).map { jar("lib$it.jar", mapOf("p/A.txt" to "a$it")).path }
         repeat(2) {
             for ([i, path] in jars.withIndex()) {
-                assertEquals("a$i", archives.archive(path).read("p/A.txt"))
+                assertEquals("a$i", archives[path].read("p/A.txt"))
             }
         }
         archives.closeOpenArchives()
-        assertEquals("a0", archives.archive(jars[0]).read("p/A.txt"))
+        assertEquals("a0", archives[jars[0]].read("p/A.txt"))
     }
 
     @Test
     fun archivesReadRepeatedlyStayOpenWhileManyOthersAreReadOnce() {
         val path = jar("lib.jar", mapOf("p/A.txt" to "a", "p/B.txt" to "b")).path
-        val archive = archives.archive(path)
+        val archive = archives[path]
         assertEquals("a", archive.read("p/A.txt"))
         assertEquals("a", archive.read("p/A.txt"))
         for (i in 0 until 30) {
             val other = jar("other$i.jar", mapOf("p/A.txt" to "a$i")).path
-            assertEquals("a$i", archives.archive(other).read("p/A.txt"))
+            assertEquals("a$i", archives[other].read("p/A.txt"))
         }
         // The archive can only be read without its file if it is still open.
         assumeTrue(File(path).delete())
@@ -153,7 +153,7 @@ class JarArchiveCacheTest {
                 executor.submit<Boolean> {
                     val i = (n * 7) % jars.size
                     if (n % 100 == 0) archives.closeOpenArchives()
-                    archives.archive(jars[i]).read("p/F${n % 10}.txt") == "$i-${n % 10}"
+                    archives[jars[i]].read("p/F${n % 10}.txt") == "$i-${n % 10}"
                 }
             }
             assertTrue(results.all { it.get(1, TimeUnit.MINUTES) })
@@ -169,7 +169,7 @@ class JarArchiveCacheTest {
             mainAttributes[Attributes.Name("Automatic-Module-Name")] = "auto.lib"
         }
         val path = jar("lib.jar", mapOf("p/A.txt" to "a"), manifest).path
-        val archive = archives.archive(path)
+        val archive = archives[path]
         val entry = archive.node("META-INF/MANIFEST.MF").entry!!
         val bytes = archive.contentsToByteArray(entry)
         assertTrue(String(bytes).contains("Automatic-Module-Name: auto.lib"))
@@ -183,7 +183,7 @@ class JarArchiveCacheTest {
         val file = File(tempDir, "broken.jar").apply { writeText("not a zip") }
         val reported = mutableListOf<File>()
         val cache = JarArchiveCache(unmapBuffer = {}) { invalid, _ -> reported += invalid }
-        val archive = cache.archive(file.path)
+        val archive = cache[file.path]
         assertTrue(archive.buildTree(NodeFactory).children.isEmpty())
         assertEquals(listOf(file), reported)
     }
