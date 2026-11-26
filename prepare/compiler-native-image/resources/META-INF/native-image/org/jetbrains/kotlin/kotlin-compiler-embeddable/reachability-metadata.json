@@ -1417,6 +1417,986 @@
       "type": "org.jetbrains.kotlin.io.opentelemetry.api.incubator.trace.ExtendedDefaultTracerProvider"
     },
     {
+      "type": "org.jetbrains.kotlin.lexer.KtTokens",
+      "fields": [
+        {
+          "name": "ABSTRACT_KEYWORD"
+        },
+        {
+          "name": "ABSTRACT_KEYWORD_Id"
+        },
+        {
+          "name": "ACTUAL_KEYWORD"
+        },
+        {
+          "name": "ACTUAL_KEYWORD_Id"
+        },
+        {
+          "name": "ALL_ASSIGNMENTS"
+        },
+        {
+          "name": "ALL_KEYWORD"
+        },
+        {
+          "name": "ALL_KEYWORD_Id"
+        },
+        {
+          "name": "ALL_SAFE_ACCESSES"
+        },
+        {
+          "name": "AND"
+        },
+        {
+          "name": "ANDAND"
+        },
+        {
+          "name": "ANDAND_Id"
+        },
+        {
+          "name": "AND_Id"
+        },
+        {
+          "name": "ANNOTATION_KEYWORD"
+        },
+        {
+          "name": "ANNOTATION_KEYWORD_Id"
+        },
+        {
+          "name": "ARROW"
+        },
+        {
+          "name": "ARROW_Id"
+        },
+        {
+          "name": "AS_KEYWORD"
+        },
+        {
+          "name": "AS_KEYWORD_Id"
+        },
+        {
+          "name": "AS_SAFE"
+        },
+        {
+          "name": "AS_SAFE_Id"
+        },
+        {
+          "name": "AT"
+        },
+        {
+          "name": "AT_Id"
+        },
+        {
+          "name": "AUGMENTED_ASSIGNMENTS"
+        },
+        {
+          "name": "BLOCK_COMMENT"
+        },
+        {
+          "name": "BLOCK_COMMENT_Id"
+        },
+        {
+          "name": "BREAK_KEYWORD"
+        },
+        {
+          "name": "BREAK_KEYWORD_Id"
+        },
+        {
+          "name": "BY_KEYWORD"
+        },
+        {
+          "name": "BY_KEYWORD_Id"
+        },
+        {
+          "name": "CATCH_KEYWORD"
+        },
+        {
+          "name": "CATCH_KEYWORD_Id"
+        },
+        {
+          "name": "CHARACTER_LITERAL"
+        },
+        {
+          "name": "CHARACTER_LITERAL_Id"
+        },
+        {
+          "name": "CLASS_KEYWORD"
+        },
+        {
+          "name": "CLASS_KEYWORD_Id"
+        },
+        {
+          "name": "CLOSING_QUOTE"
+        },
+        {
+          "name": "CLOSING_QUOTE_Id"
+        },
+        {
+          "name": "COLON"
+        },
+        {
+          "name": "COLONCOLON"
+        },
+        {
+          "name": "COLONCOLON_Id"
+        },
+        {
+          "name": "COLON_Id"
+        },
+        {
+          "name": "COMMA"
+        },
+        {
+          "name": "COMMA_Id"
+        },
+        {
+          "name": "COMMENTS"
+        },
+        {
+          "name": "COMPANION_KEYWORD"
+        },
+        {
+          "name": "COMPANION_KEYWORD_Id"
+        },
+        {
+          "name": "CONSTRUCTOR_KEYWORD"
+        },
+        {
+          "name": "CONSTRUCTOR_KEYWORD_Id"
+        },
+        {
+          "name": "CONST_KEYWORD"
+        },
+        {
+          "name": "CONST_KEYWORD_Id"
+        },
+        {
+          "name": "CONTEXT_KEYWORD"
+        },
+        {
+          "name": "CONTEXT_KEYWORD_Id"
+        },
+        {
+          "name": "CONTINUE_KEYWORD"
+        },
+        {
+          "name": "CONTINUE_KEYWORD_Id"
+        },
+        {
+          "name": "CONTRACT_KEYWORD"
+        },
+        {
+          "name": "CONTRACT_KEYWORD_Id"
+        },
+        {
+          "name": "CROSSINLINE_KEYWORD"
+        },
+        {
+          "name": "CROSSINLINE_KEYWORD_Id"
+        },
+        {
+          "name": "DANGLING_NEWLINE"
+        },
+        {
+          "name": "DANGLING_NEWLINE_Id"
+        },
+        {
+          "name": "DATA_KEYWORD"
+        },
+        {
+          "name": "DATA_KEYWORD_Id"
+        },
+        {
+          "name": "DELEGATE_KEYWORD"
+        },
+        {
+          "name": "DELEGATE_KEYWORD_Id"
+        },
+        {
+          "name": "DIV"
+        },
+        {
+          "name": "DIVEQ"
+        },
+        {
+          "name": "DIVEQ_Id"
+        },
+        {
+          "name": "DIV_Id"
+        },
+        {
+          "name": "DOC_COMMENT"
+        },
+        {
+          "name": "DOT"
+        },
+        {
+          "name": "DOT_Id"
+        },
+        {
+          "name": "DOUBLE_ARROW"
+        },
+        {
+          "name": "DOUBLE_ARROW_Id"
+        },
+        {
+          "name": "DOUBLE_SEMICOLON"
+        },
+        {
+          "name": "DOUBLE_SEMICOLON_Id"
+        },
+        {
+          "name": "DO_KEYWORD"
+        },
+        {
+          "name": "DO_KEYWORD_Id"
+        },
+        {
+          "name": "DYNAMIC_KEYWORD"
+        },
+        {
+          "name": "DYNAMIC_KEYWORD_Id"
+        },
+        {
+          "name": "ELSE_KEYWORD"
+        },
+        {
+          "name": "ELSE_KEYWORD_Id"
+        },
+        {
+          "name": "ELVIS"
+        },
+        {
+          "name": "ELVIS_Id"
+        },
+        {
+          "name": "ENUM_KEYWORD"
+        },
+        {
+          "name": "ENUM_KEYWORD_Id"
+        },
+        {
+          "name": "EOF"
+        },
+        {
+          "name": "EOF_Id"
+        },
+        {
+          "name": "EOL_COMMENT"
+        },
+        {
+          "name": "EOL_COMMENT_Id"
+        },
+        {
+          "name": "EOL_OR_SEMICOLON"
+        },
+        {
+          "name": "EOL_OR_SEMICOLON_Id"
+        },
+        {
+          "name": "EQ"
+        },
+        {
+          "name": "EQEQ"
+        },
+        {
+          "name": "EQEQEQ"
+        },
+        {
+          "name": "EQEQEQ_Id"
+        },
+        {
+          "name": "EQEQ_Id"
+        },
+        {
+          "name": "EQ_Id"
+        },
+        {
+          "name": "ERROR_KEYWORD"
+        },
+        {
+          "name": "ERROR_KEYWORD_Id"
+        },
+        {
+          "name": "ERROR_SAFE_ACCESS"
+        },
+        {
+          "name": "ERROR_SAFE_ACCESS_Id"
+        },
+        {
+          "name": "ESCAPE_SEQUENCE"
+        },
+        {
+          "name": "ESCAPE_SEQUENCE_Id"
+        },
+        {
+          "name": "EXCL"
+        },
+        {
+          "name": "EXCLEQ"
+        },
+        {
+          "name": "EXCLEQEQEQ"
+        },
+        {
+          "name": "EXCLEQEQEQ_Id"
+        },
+        {
+          "name": "EXCLEQ_Id"
+        },
+        {
+          "name": "EXCLEXCL"
+        },
+        {
+          "name": "EXCLEXCL_Id"
+        },
+        {
+          "name": "EXCL_Id"
+        },
+        {
+          "name": "EXPECT_KEYWORD"
+        },
+        {
+          "name": "EXPECT_KEYWORD_Id"
+        },
+        {
+          "name": "EXTERNAL_KEYWORD"
+        },
+        {
+          "name": "EXTERNAL_KEYWORD_Id"
+        },
+        {
+          "name": "FALSE_KEYWORD"
+        },
+        {
+          "name": "FALSE_KEYWORD_Id"
+        },
+        {
+          "name": "FIELD_IDENTIFIER"
+        },
+        {
+          "name": "FIELD_IDENTIFIER_Id"
+        },
+        {
+          "name": "FIELD_KEYWORD"
+        },
+        {
+          "name": "FIELD_KEYWORD_Id"
+        },
+        {
+          "name": "FILE_KEYWORD"
+        },
+        {
+          "name": "FILE_KEYWORD_Id"
+        },
+        {
+          "name": "FINALLY_KEYWORD"
+        },
+        {
+          "name": "FINALLY_KEYWORD_Id"
+        },
+        {
+          "name": "FINAL_KEYWORD"
+        },
+        {
+          "name": "FINAL_KEYWORD_Id"
+        },
+        {
+          "name": "FLOAT_LITERAL"
+        },
+        {
+          "name": "FLOAT_LITERAL_Id"
+        },
+        {
+          "name": "FOR_KEYWORD"
+        },
+        {
+          "name": "FOR_KEYWORD_Id"
+        },
+        {
+          "name": "FUN_KEYWORD"
+        },
+        {
+          "name": "FUN_KEYWORD_Id"
+        },
+        {
+          "name": "GET_KEYWORD"
+        },
+        {
+          "name": "GET_KEYWORD_Id"
+        },
+        {
+          "name": "GT"
+        },
+        {
+          "name": "GTEQ"
+        },
+        {
+          "name": "GTEQ_Id"
+        },
+        {
+          "name": "GT_Id"
+        },
+        {
+          "name": "HASH"
+        },
+        {
+          "name": "HASH_Id"
+        },
+        {
+          "name": "IDENTIFIER"
+        },
+        {
+          "name": "IDENTIFIER_Id"
+        },
+        {
+          "name": "IF_KEYWORD"
+        },
+        {
+          "name": "IF_KEYWORD_Id"
+        },
+        {
+          "name": "IMPORT_KEYWORD"
+        },
+        {
+          "name": "IMPORT_KEYWORD_Id"
+        },
+        {
+          "name": "INCREMENT_AND_DECREMENT"
+        },
+        {
+          "name": "INFIX_KEYWORD"
+        },
+        {
+          "name": "INFIX_KEYWORD_Id"
+        },
+        {
+          "name": "INIT_KEYWORD"
+        },
+        {
+          "name": "INIT_KEYWORD_Id"
+        },
+        {
+          "name": "INLINE_KEYWORD"
+        },
+        {
+          "name": "INLINE_KEYWORD_Id"
+        },
+        {
+          "name": "INNER_KEYWORD"
+        },
+        {
+          "name": "INNER_KEYWORD_Id"
+        },
+        {
+          "name": "INTEGER_LITERAL"
+        },
+        {
+          "name": "INTEGER_LITERAL_Id"
+        },
+        {
+          "name": "INTERFACE_KEYWORD"
+        },
+        {
+          "name": "INTERFACE_KEYWORD_Id"
+        },
+        {
+          "name": "INTERNAL_KEYWORD"
+        },
+        {
+          "name": "INTERNAL_KEYWORD_Id"
+        },
+        {
+          "name": "INTERPOLATION_PREFIX"
+        },
+        {
+          "name": "INTERPOLATION_PREFIX_Id"
+        },
+        {
+          "name": "INVALID_Id"
+        },
+        {
+          "name": "IN_KEYWORD"
+        },
+        {
+          "name": "IN_KEYWORD_Id"
+        },
+        {
+          "name": "IS_KEYWORD"
+        },
+        {
+          "name": "IS_KEYWORD_Id"
+        },
+        {
+          "name": "KEYWORDS"
+        },
+        {
+          "name": "LATEINIT_KEYWORD"
+        },
+        {
+          "name": "LATEINIT_KEYWORD_Id"
+        },
+        {
+          "name": "LBRACE"
+        },
+        {
+          "name": "LBRACE_Id"
+        },
+        {
+          "name": "LBRACKET"
+        },
+        {
+          "name": "LBRACKET_Id"
+        },
+        {
+          "name": "LONG_TEMPLATE_ENTRY_END"
+        },
+        {
+          "name": "LONG_TEMPLATE_ENTRY_END_Id"
+        },
+        {
+          "name": "LONG_TEMPLATE_ENTRY_START"
+        },
+        {
+          "name": "LONG_TEMPLATE_ENTRY_START_Id"
+        },
+        {
+          "name": "LPAR"
+        },
+        {
+          "name": "LPAR_Id"
+        },
+        {
+          "name": "LT"
+        },
+        {
+          "name": "LTEQ"
+        },
+        {
+          "name": "LTEQ_Id"
+        },
+        {
+          "name": "LT_Id"
+        },
+        {
+          "name": "MINUS"
+        },
+        {
+          "name": "MINUSEQ"
+        },
+        {
+          "name": "MINUSEQ_Id"
+        },
+        {
+          "name": "MINUSMINUS"
+        },
+        {
+          "name": "MINUSMINUS_Id"
+        },
+        {
+          "name": "MINUS_Id"
+        },
+        {
+          "name": "MODALITY_MODIFIERS"
+        },
+        {
+          "name": "MODIFIER_KEYWORDS"
+        },
+        {
+          "name": "MODIFIER_KEYWORDS_ARRAY"
+        },
+        {
+          "name": "MUL"
+        },
+        {
+          "name": "MULTEQ"
+        },
+        {
+          "name": "MULTEQ_Id"
+        },
+        {
+          "name": "MUL_Id"
+        },
+        {
+          "name": "NOINLINE_KEYWORD"
+        },
+        {
+          "name": "NOINLINE_KEYWORD_Id"
+        },
+        {
+          "name": "NOT_IN"
+        },
+        {
+          "name": "NOT_IN_Id"
+        },
+        {
+          "name": "NOT_IS"
+        },
+        {
+          "name": "NOT_IS_Id"
+        },
+        {
+          "name": "NULL_KEYWORD"
+        },
+        {
+          "name": "NULL_KEYWORD_Id"
+        },
+        {
+          "name": "OBJECT_KEYWORD"
+        },
+        {
+          "name": "OBJECT_KEYWORD_Id"
+        },
+        {
+          "name": "OPEN_KEYWORD"
+        },
+        {
+          "name": "OPEN_KEYWORD_Id"
+        },
+        {
+          "name": "OPEN_QUOTE"
+        },
+        {
+          "name": "OPEN_QUOTE_Id"
+        },
+        {
+          "name": "OPERATIONS"
+        },
+        {
+          "name": "OPERATOR_KEYWORD"
+        },
+        {
+          "name": "OPERATOR_KEYWORD_Id"
+        },
+        {
+          "name": "OR"
+        },
+        {
+          "name": "OROR"
+        },
+        {
+          "name": "OROR_Id"
+        },
+        {
+          "name": "OR_Id"
+        },
+        {
+          "name": "OUT_KEYWORD"
+        },
+        {
+          "name": "OUT_KEYWORD_Id"
+        },
+        {
+          "name": "OVERRIDE_KEYWORD"
+        },
+        {
+          "name": "OVERRIDE_KEYWORD_Id"
+        },
+        {
+          "name": "PACKAGE_KEYWORD"
+        },
+        {
+          "name": "PACKAGE_KEYWORD_Id"
+        },
+        {
+          "name": "PARAM_KEYWORD"
+        },
+        {
+          "name": "PARAM_KEYWORD_Id"
+        },
+        {
+          "name": "PERC"
+        },
+        {
+          "name": "PERCEQ"
+        },
+        {
+          "name": "PERCEQ_Id"
+        },
+        {
+          "name": "PERC_Id"
+        },
+        {
+          "name": "PLUS"
+        },
+        {
+          "name": "PLUSEQ"
+        },
+        {
+          "name": "PLUSEQ_Id"
+        },
+        {
+          "name": "PLUSPLUS"
+        },
+        {
+          "name": "PLUSPLUS_Id"
+        },
+        {
+          "name": "PLUS_Id"
+        },
+        {
+          "name": "PRIVATE_KEYWORD"
+        },
+        {
+          "name": "PRIVATE_KEYWORD_Id"
+        },
+        {
+          "name": "PROPERTY_KEYWORD"
+        },
+        {
+          "name": "PROPERTY_KEYWORD_Id"
+        },
+        {
+          "name": "PROTECTED_KEYWORD"
+        },
+        {
+          "name": "PROTECTED_KEYWORD_Id"
+        },
+        {
+          "name": "PUBLIC_KEYWORD"
+        },
+        {
+          "name": "PUBLIC_KEYWORD_Id"
+        },
+        {
+          "name": "QUALIFIED_ACCESS"
+        },
+        {
+          "name": "QUEST"
+        },
+        {
+          "name": "QUEST_Id"
+        },
+        {
+          "name": "RANGE"
+        },
+        {
+          "name": "RANGE_Id"
+        },
+        {
+          "name": "RANGE_UNTIL"
+        },
+        {
+          "name": "RANGE_UNTIL_Id"
+        },
+        {
+          "name": "RBRACE"
+        },
+        {
+          "name": "RBRACE_Id"
+        },
+        {
+          "name": "RBRACKET"
+        },
+        {
+          "name": "RBRACKET_Id"
+        },
+        {
+          "name": "RECEIVER_KEYWORD"
+        },
+        {
+          "name": "RECEIVER_KEYWORD_Id"
+        },
+        {
+          "name": "REGULAR_STRING_PART"
+        },
+        {
+          "name": "REGULAR_STRING_PART_Id"
+        },
+        {
+          "name": "REIFIED_KEYWORD"
+        },
+        {
+          "name": "REIFIED_KEYWORD_Id"
+        },
+        {
+          "name": "RESERVED"
+        },
+        {
+          "name": "RESERVED_Id"
+        },
+        {
+          "name": "RESERVED_VALUE_PARAMETER_MODIFIER_KEYWORDS"
+        },
+        {
+          "name": "RETURN_KEYWORD"
+        },
+        {
+          "name": "RETURN_KEYWORD_Id"
+        },
+        {
+          "name": "RPAR"
+        },
+        {
+          "name": "RPAR_Id"
+        },
+        {
+          "name": "SAFE_ACCESS"
+        },
+        {
+          "name": "SAFE_ACCESS_Id"
+        },
+        {
+          "name": "SEALED_KEYWORD"
+        },
+        {
+          "name": "SEALED_KEYWORD_Id"
+        },
+        {
+          "name": "SEMICOLON"
+        },
+        {
+          "name": "SEMICOLON_Id"
+        },
+        {
+          "name": "SETPARAM_KEYWORD"
+        },
+        {
+          "name": "SETPARAM_KEYWORD_Id"
+        },
+        {
+          "name": "SET_KEYWORD"
+        },
+        {
+          "name": "SET_KEYWORD_Id"
+        },
+        {
+          "name": "SHEBANG_COMMENT"
+        },
+        {
+          "name": "SHEBANG_COMMENT_Id"
+        },
+        {
+          "name": "SHORT_TEMPLATE_ENTRY_START"
+        },
+        {
+          "name": "SHORT_TEMPLATE_ENTRY_START_Id"
+        },
+        {
+          "name": "SOFT_KEYWORDS"
+        },
+        {
+          "name": "STRINGS"
+        },
+        {
+          "name": "SUPER_KEYWORD"
+        },
+        {
+          "name": "SUPER_KEYWORD_Id"
+        },
+        {
+          "name": "SUSPEND_KEYWORD"
+        },
+        {
+          "name": "SUSPEND_KEYWORD_Id"
+        },
+        {
+          "name": "TAILREC_KEYWORD"
+        },
+        {
+          "name": "TAILREC_KEYWORD_Id"
+        },
+        {
+          "name": "THIS_KEYWORD"
+        },
+        {
+          "name": "THIS_KEYWORD_Id"
+        },
+        {
+          "name": "THROW_KEYWORD"
+        },
+        {
+          "name": "THROW_KEYWORD_Id"
+        },
+        {
+          "name": "TRUE_KEYWORD"
+        },
+        {
+          "name": "TRUE_KEYWORD_Id"
+        },
+        {
+          "name": "TRY_KEYWORD"
+        },
+        {
+          "name": "TRY_KEYWORD_Id"
+        },
+        {
+          "name": "TYPEOF_KEYWORD"
+        },
+        {
+          "name": "TYPEOF_KEYWORD_Id"
+        },
+        {
+          "name": "TYPE_ALIAS_KEYWORD"
+        },
+        {
+          "name": "TYPE_ALIAS_KEYWORD_Id"
+        },
+        {
+          "name": "TYPE_ARGUMENT_MODIFIER_KEYWORDS"
+        },
+        {
+          "name": "TYPE_MODIFIER_KEYWORDS"
+        },
+        {
+          "name": "VALUE_KEYWORD"
+        },
+        {
+          "name": "VALUE_KEYWORD_Id"
+        },
+        {
+          "name": "VAL_KEYWORD"
+        },
+        {
+          "name": "VAL_KEYWORD_Id"
+        },
+        {
+          "name": "VAL_VAR"
+        },
+        {
+          "name": "VARARG_KEYWORD"
+        },
+        {
+          "name": "VARARG_KEYWORD_Id"
+        },
+        {
+          "name": "VAR_KEYWORD"
+        },
+        {
+          "name": "VAR_KEYWORD_Id"
+        },
+        {
+          "name": "VISIBILITY_MODIFIERS"
+        },
+        {
+          "name": "WHEN_KEYWORD"
+        },
+        {
+          "name": "WHEN_KEYWORD_Id"
+        },
+        {
+          "name": "WHERE_KEYWORD"
+        },
+        {
+          "name": "WHERE_KEYWORD_Id"
+        },
+        {
+          "name": "WHILE_KEYWORD"
+        },
+        {
+          "name": "WHILE_KEYWORD_Id"
+        },
+        {
+          "name": "WHITESPACES"
+        },
+        {
+          "name": "WHITE_SPACE"
+        },
+        {
+          "name": "WHITE_SPACE_OR_COMMENT_BIT_SET"
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.load.java.ErasedOverridabilityCondition"
     },
     {
@@ -1451,6 +2431,9 @@
           "parameterTypes": []
         }
       ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.metadata.ProtoBuf$Visibility[]"
     },
     {
       "type": "org.jetbrains.kotlin.name.ClassId",
