@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.resolveUpperBound
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.isUnavailable
+import org.jetbrains.kotlin.sir.util.swiftIdentifier
+import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.sirModality
@@ -75,7 +78,7 @@ internal open class SirFunctionFromKtSymbol(
 
     override val isOverride: Boolean get() = overrideStatus is OverrideStatus.Overrides
 
-    private val overrideStatus: OverrideStatus<SirFunction>? by lazy { computeIsOverride() }
+    internal val overrideStatus: OverrideStatus<SirFunction>? by lazy { computeIsOverride() }
 
     override val isInstance: Boolean
         get() = !ktSymbol.isTopLevel && (ktSymbol as KaNamedFunctionSymbol).let { !it.isStatic }
@@ -191,6 +194,55 @@ internal open class SirFunctionFromKtSymbol(
     override var body: SirFunctionBody?
         set(_) {}
         get() = withSessions { bridgeProxy?.let { forwardBridgedBody(it, isAbstractKotlinMethod, memberKind = "member", memberName = name) } }
+
+    // NOTE: KT-90372
+    /** [takenInSwift]: superclass members that other functions of the class already override in Swift. */
+    internal fun erasedOverrideTrampolineOrNull(takenInSwift: Set<SirFunction>): SirFunction? = withSessions {
+        val unmatchedKotlinOverriddenMember: SirFunction? = run {
+            if (parent !is SirClass || !isInstance || overrideStatus != null)
+                return@run null
+            else
+                ktSymbol.directlyOverriddenSymbols
+                    .map { it.fakeOverrideOriginal }
+                    .filter { (it.containingSymbol as? KaClassSymbol)?.classKind == KaClassKind.CLASS }
+                    .firstNotNullOfOrNull { it.toSir().primaryDeclaration as? SirFunction }
+                    ?.takeIf { it in (this@SirFunctionFromKtSymbol as SirFunction).overridableCandidates }
+        }
+
+        val overridden = unmatchedKotlinOverriddenMember ?: return@withSessions null
+        if (overridden in takenInSwift) return@withSessions null
+        if (isUnavailable || overridden.isUnavailable) return@withSessions null
+        if (overridden.isAsync != isAsync || overridden.errorType != errorType) return@withSessions null
+        if (contextParameter != null || extensionReceiverParameter != null) return@withSessions null
+        if (!returnType.isConvertibleTo(overridden.returnType)) return@withSessions null
+        val parameterPairs = overridden.parameters.zipIfSizesAreEqual(parameters) ?: return@withSessions null
+        if (parameterPairs.any { [base, own] -> !own.type.isConvertibleTo(base.type) || own.isVariadic || base.isVariadic }) {
+            return@withSessions null
+        }
+        if (parameterPairs.any { [base, _] -> base.parameterName == null && base.argumentName == null }) return@withSessions null
+
+        val arguments = parameterPairs.joinToString { [base, own] ->
+            val name = (base.parameterName ?: base.argumentName!!).swiftIdentifier
+            val value = if (own.type == base.type) name else "$name as! ${own.type.swiftName}"
+            own.argumentName?.let { "${it.swiftIdentifier}: $value" } ?: value
+        }
+        val call = buildString {
+            if (errorType != SirType.never) append("try ")
+            if (isAsync) append("await ")
+            append("self.${name.swiftIdentifier}($arguments) as ${returnType.swiftName}")
+        }
+        val containingClass = parent as SirClass
+        buildFunctionCopy(overridden) {
+            origin = SirOrigin.Trampoline(this@SirFunctionFromKtSymbol)
+            documentation = null
+            attributes.retainAll { it is SirAttribute.SPI }
+            attributes.add(SirAttribute.DisfavoredOverload)
+            isOverride = true
+            modality = if (containingClass.modality == SirModality.FINAL) SirModality.UNSPECIFIED else SirModality.FINAL
+            bridges.clear()
+            body = SirFunctionBody(listOf("return $call"))
+        }.also { it.parent = containingClass }
+    }
 
     internal fun directDispatchProtocolWitnessOrNull(): SirFunction? = withSessions {
         if (parent !is SirProtocol) return@withSessions null

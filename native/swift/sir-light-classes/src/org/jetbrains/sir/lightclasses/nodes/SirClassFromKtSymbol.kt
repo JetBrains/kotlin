@@ -112,8 +112,8 @@ internal abstract class SirAbstractClassFromKtSymbol(
     }
 
     override val declarations: List<SirDeclaration> by lazyWithSessions {
-        childDeclarations + intersectionOverrideDeclarations + inheritedInterfaceMethodDeclarations + syntheticDeclarations() +
-                sealedTypeFunctions
+        childDeclarations + intersectionOverrideDeclarations + inheritedInterfaceMethodDeclarations + erasedOverrideTrampolines +
+                syntheticDeclarations() + sealedTypeFunctions
     }
 
     override val attributes: List<SirAttribute> by lazy {
@@ -161,6 +161,12 @@ internal abstract class SirAbstractClassFromKtSymbol(
             .filter { it.toSir().allDeclarations.firstIsInstanceOrNull<SirFunctionFromKtSymbol>() != null }
             .map { SirInheritedFunctionFromKtSymbol(it, sirSession, this@SirAbstractClassFromKtSymbol) }
             .toList()
+    }
+
+    private val erasedOverrideTrampolines: List<SirDeclaration> by lazyWithSessions {
+        val functions = childDeclarations.filterIsInstance<SirFunctionFromKtSymbol>()
+        val takenInSwift = functions.mapNotNullTo(hashSetOf()) { it.overrideStatus?.declaration }
+        functions.mapNotNull { it.erasedOverrideTrampolineOrNull(takenInSwift) }
     }
 
     private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInitCopy(KotlinRuntimeModule.kotlinBaseDesignatedInit) {

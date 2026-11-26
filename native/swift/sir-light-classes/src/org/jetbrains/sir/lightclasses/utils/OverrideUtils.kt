@@ -6,6 +6,9 @@
 package org.jetbrains.sir.lightclasses.utils;
 
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
@@ -44,6 +47,38 @@ internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
             && this.parameterTypes.zipIfSizesAreEqual(other.parameterTypes)?.all { it.second.isSubtypeOf(it.first) } ?: false
 
     else -> false
+}
+
+internal fun SirType.isConvertibleTo(target: SirType): Boolean {
+    val isAnyKotlinBridgeable: Boolean = target.run {
+        this is SirExistentialType && protocols.singleOrNull()?.first == KotlinRuntimeSupportModule.kotlinBridgeable
+    }
+
+    // See the `_KotlinBridgeable` conformances in KotlinRuntimeSupport.swift.
+    val swiftTypesConformingToKotlinBridgeable: Set<SirDeclaration> = with(SirSwiftModule) {
+        setOf(
+            bool, int8, int16, int32, int64, uint8, uint16, uint32, uint64, utf16CodeUnit, float, double,
+            string, array, set, dictionary,
+        )
+    }
+
+    val conformsToKotlinBridgeable: Boolean = when (this) {
+        is SirOptionalType -> false
+        is SirNominalType -> typeDeclaration.let {
+            it in swiftTypesConformingToKotlinBridgeable
+                    || it.isSubclassOf(KotlinRuntimeModule.kotlinBase)
+                    || it.declaresConformance(KotlinRuntimeSupportModule.kotlinBridgeable)
+        }
+        else -> isAnyKotlinBridgeable
+    }
+
+    return when {
+        this == target -> true
+        target is SirOptionalType -> (if (this is SirOptionalType) wrappedType else this).isConvertibleTo(target.wrappedType)
+        this is SirOptionalType -> false
+        isAnyKotlinBridgeable -> conformsToKotlinBridgeable
+        else -> isSubtypeOf(target)
+    }
 }
 
 private fun SirDeclaration.isSubclassOf(other: SirDeclaration): Boolean = this == other || this is SirClass && superClass?.typeDeclaration?.isSubclassOf(other) ?: false
