@@ -22,7 +22,7 @@ object FirResolvedUnionTypeRefChecker : FirResolvedTypeRefChecker(Common) {
         val type = typeRef.coneType as? ConeUnionType
         if (type != null) {
             val canPrimaryContainRichError =
-                type.primaryType.let { it is ConeTypeParameterType && !it.isSubtypeOf(StandardTypes.NullableNonError, context.session) }
+                type.primaryType.let { it is ConeTypeParameterType && !it.isSubtypeOf(StandardTypes.NullableNonError) }
             val errorCompatibleTypeParameterCount =
                 type.richErrorTypes.count { it is ConeTypeParameterType } + if (canPrimaryContainRichError) 1 else 0
             if (errorCompatibleTypeParameterCount > 1) {

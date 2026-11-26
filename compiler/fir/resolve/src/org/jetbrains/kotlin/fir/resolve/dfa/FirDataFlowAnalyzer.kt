@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
@@ -606,7 +607,7 @@ abstract class FirDataFlowAnalyzer(
                                 }
 
                                 if (operandVariable.originalType.isUnsafeUnion() &&
-                                    type.isSubtypeOf(StandardTypes.NullableNonError, session)
+                                    type.isSubtypeOf(StandardTypes.NullableNonError)
                                 ) {
                                     flow.addImplication(variableIsTypeStatement implies operandVariable.isNullableNonError())
                                 }
@@ -637,7 +638,7 @@ abstract class FirDataFlowAnalyzer(
                     }
 
                     if (operandVariable.originalType.isUnsafeUnion() &&
-                        type.isSubtypeOf(StandardTypes.NullableNonError, session)
+                        type.isSubtypeOf(StandardTypes.NullableNonError)
                     ) {
                         flow.commitOperationStatement(operandVariable.isNullableNonError())
                     }
@@ -662,7 +663,7 @@ abstract class FirDataFlowAnalyzer(
                         flow.addImplication(expressionVariable eq null implies operandVariable.isNullableNonError())
                     } else {
                         if (operandVariable.originalType.isUnsafeUnion() &&
-                            type.isSubtypeOf(StandardTypes.NullableNonError, session)
+                            type.isSubtypeOf(StandardTypes.NullableNonError)
                         ) {
                             flow.addImplication(variableNotEqNull implies operandVariable.isNullableNonError())
                         }

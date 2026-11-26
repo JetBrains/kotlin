@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -108,7 +109,7 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
             if (approximatedType != null) {
                 val originalType = smartCastExpression.originalExpression.resolvedType
                 val originalNotNullType = originalType.withNullability(nullable = false, session.typeContext)
-                if (originalNotNullType.isSubtypeOf(approximatedType, session)) {
+                if (originalNotNullType.isSubtypeOf(approximatedType)) {
                     return expression
                 }
             }
@@ -139,11 +140,11 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
         // TODO(KT-77692) Remove if fixed on the plugin side.
         if (!forReceiver) {
             val approximatedArgumentType = argumentTypeLowerBound.approximateForIrOrNull() ?: argumentTypeLowerBound
-            if (approximatedArgumentType.isSubtypeOf(approximatedExpectedType, session)) return this
+            if (approximatedArgumentType.isSubtypeOf(approximatedExpectedType)) return this
         }
 
         return argumentTypeLowerBound.intersectedTypes
-            .firstOrNull { it.isSubtypeOf(approximatedExpectedType, session) }
+            .firstOrNull { it.isSubtypeOf(approximatedExpectedType) }
             ?.let { generateImplicitCast(this, it.toIrType(conversionScope.defaultConversionTypeOrigin())) }
             ?: this
     }
@@ -159,7 +160,7 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
         val argumentTypeWithoutNullableNothing = (expression as? FirSmartCastExpression)?.smartcastTypeWithoutNullableNothing?.coneType
             ?: return this
 
-        return applyIf(!argumentTypeWithoutNullableNothing.isSubtypeOf(expectedType.approximateForIrOrSelf(), session)) {
+        return applyIf(!argumentTypeWithoutNullableNothing.isSubtypeOf(expectedType.approximateForIrOrSelf())) {
             check(argumentTypeLowerBound.isNothingOrNullableNothing) { "Expected argument type to be Nothing or Nothing?" }
             generateImplicitCast(this, argumentTypeLowerBound.toIrType(conversionScope.defaultConversionTypeOrigin()))
         }

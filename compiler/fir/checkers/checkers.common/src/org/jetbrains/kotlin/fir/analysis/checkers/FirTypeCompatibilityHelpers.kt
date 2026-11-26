@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -146,9 +147,9 @@ private fun ConeKotlinType.getCounterpartRelativelyToPlatform(session: FirSessio
  */
 context(context: CheckerContext)
 private fun TypeInfo.isSubtypeOf(other: TypeInfo): Boolean {
-    val isDirectSubtype = notNullType.isSubtypeOf(other.notNullType, context.session)
+    val isDirectSubtype = notNullType.isSubtypeOf(other.notNullType)
     val counterpart = other.notNullType.getCounterpartRelativelyToPlatform(context.session)
-    return isDirectSubtype || counterpart?.let { notNullType.isSubtypeOf(it, context.session) } == true
+    return isDirectSubtype || counterpart?.let { notNullType.isSubtypeOf(it) } == true
 }
 
 context(context: CheckerContext)

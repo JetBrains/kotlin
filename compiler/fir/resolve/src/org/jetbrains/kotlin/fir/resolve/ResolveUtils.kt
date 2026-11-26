@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
@@ -975,7 +976,7 @@ fun FirScope.toResolvedSymbolOrigin(): FirResolvedSymbolOrigin? = when (this) {
 context(holder: SessionHolder)
 fun ConeKotlinType.isUnsafeUnion(): Boolean {
     return unionSuperTypeOrNull(holder.session) != null &&
-            !isSubtypeOf(StandardTypes.NullableNonError, holder.session)
+            !isSubtypeOf(StandardTypes.NullableNonError)
 }
 
 /**

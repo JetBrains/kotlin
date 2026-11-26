@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -174,7 +175,7 @@ private class Checker(
                 if (source !is SimpleDataColumn || target.column !is SimpleDataColumn) {
                     continue
                 }
-                if (source.type.coneType.isSubtypeOf(target.column.type.coneType, session)) {
+                if (source.type.coneType.isSubtypeOf(target.column.type.coneType)) {
                     true
                 } else {
                     missingColumns += "${target.path.path} ${target.column.name}: ${

@@ -59,7 +59,7 @@ sealed class FirJsMultipleInheritanceChecker(mppKind: MppCheckerKind) : FirClass
         functionToCheck: Name,
         supertype: ConeKotlinType,
     ) {
-        if (!defaultType().isSubtypeOf(supertype, context.session)) {
+        if (!defaultType().isSubtypeOf(supertype)) {
             return
         }
 

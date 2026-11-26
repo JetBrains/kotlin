@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType
@@ -668,7 +669,7 @@ object FirExpressionEvaluator {
         override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): FirEvaluatorResult {
             if (typeOperatorCall.operation != FirOperation.AS) return NotConst(typeOperatorCall.source)
             val result = evaluateOr<FirLiteralExpression>(typeOperatorCall.argument) { return it }
-            if (result.resolvedType.isSubtypeOf(typeOperatorCall.resolvedType, session)) {
+            if (result.resolvedType.isSubtypeOf(typeOperatorCall.resolvedType)) {
                 return result.wrap()
             }
             return NotConst(typeOperatorCall.source)

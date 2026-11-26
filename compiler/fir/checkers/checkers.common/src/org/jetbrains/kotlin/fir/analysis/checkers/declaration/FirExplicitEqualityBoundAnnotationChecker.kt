@@ -100,7 +100,7 @@ object FirExplicitEqualityBoundAnnotationChecker : FirValueParameterChecker(MppC
                 val starProjectedTypeForEnclosingClass =
                     declaration.containingDeclarationSymbol.getContainingClassSymbol()?.constructStarProjectedType() ?: return
 
-                if (!starProjectedTypeForEnclosingClass.isSubtypeOf(typeFromTypesPhase, session = context.session)) {
+                if (!starProjectedTypeForEnclosingClass.isSubtypeOf(typeFromTypesPhase)) {
                     reporter.reportOn(
                         argumentOfGetClass.source,
                         FirErrors.EQUALITY_BOUND_NOT_SUPERTYPE_OF_CONTAINING_CLASS,

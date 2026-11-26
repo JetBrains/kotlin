@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -657,7 +658,7 @@ private object WhenOnUnionTypeExhaustivenessChecker : WhenExhaustivenessChecker(
 
         for (component in listOf(unionType.primaryType) + unionType.richErrorTypes) {
             // The subject is already known to not be of this component's type, e.g., after `if (x is E1) return`.
-            if (knownNonTypes.any { component.isSubtypeOf(it, c.session) }) continue
+            if (knownNonTypes.any { component.isSubtypeOf(it) }) continue
             destination += FirWhenExhaustivenessComputer.computeMissingCasesForUnionComponent(component, whenExpression)
         }
     }
@@ -728,7 +729,7 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
 
         // If there are no cases that check for self-type or super-type, report an Unknown missing case,
         // since we do not want to suggest this sort of check.
-        return checkedTypes.any { convertedSubjectType.isSubtypeOf(it, c.session) }
+        return checkedTypes.any { convertedSubjectType.isSubtypeOf(it) }
     }
 
     private class ConditionChecker(val session: FirSession) : AbstractConditionChecker<MutableSet<ConeKotlinType>>() {

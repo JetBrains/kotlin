@@ -134,7 +134,7 @@ fun simpleColumnOf(name: String, type: ConeKotlinType): SimpleCol {
 
     val nullableDataRow = Names.DATA_ROW_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection), isMarkedNullable = true)
     val dataFrame = Names.DF_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection))
-    return if (!type.isNullableNothing && type.isSubtypeOf(nullableDataRow, facade.session)) {
+    return if (!type.isNullableNothing && type.isSubtypeOf(nullableDataRow)) {
         val schema = extractSchema()
         val group = SimpleColumnGroup(name, schema.columns())
         val column = if (type.isMarkedNullable) {
@@ -143,7 +143,7 @@ fun simpleColumnOf(name: String, type: ConeKotlinType): SimpleCol {
             group
         }
         column
-    } else if (!type.isMarkedNullable && type.isSubtypeOf(dataFrame, facade.session)) {
+    } else if (!type.isMarkedNullable && type.isSubtypeOf(dataFrame)) {
         val schema = extractSchema()
         SimpleFrameColumn(name, schema.columns())
     } else {

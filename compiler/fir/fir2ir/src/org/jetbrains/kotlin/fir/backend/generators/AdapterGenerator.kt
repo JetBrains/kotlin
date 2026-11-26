@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -599,7 +600,7 @@ class AdapterGenerator(
         // tests from FirBlackBoxCodegenTestGenerated relevant to INDY start failing once this line is removed.
         val approximateArgumentConeType = argumentConeType.approximateForIrOrSelf()
 
-        if (approximateArgumentConeType.isSubtypeOf(approximatedConeKotlinFunctionType, session)) {
+        if (approximateArgumentConeType.isSubtypeOf(approximatedConeKotlinFunctionType)) {
             return argument
         }
 
@@ -696,7 +697,7 @@ class AdapterGenerator(
 
         val originalArgumentType = argument.expression.resolvedType.fullyExpandedType()
         // No conversion should happen if an argument already satisfies the expected type requirements
-        check(!originalArgumentType.isSubtypeOf(expectedType, session))
+        check(!originalArgumentType.isSubtypeOf(expectedType))
 
         check(kind.isFromSimpleToCustom || kind.isForUnitCoercion)
         val isSuspendFunctionTypeExpected = expectedType.isSuspendOrKSuspendFunctionType(session)

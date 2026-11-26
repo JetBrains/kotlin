@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.name.StandardClassIds
 
 fun ConeKotlinType.isDataFrame(session: FirSession) =
@@ -65,5 +66,5 @@ fun ConeKotlinType.isSelfComparable(): Boolean {
         typeArguments = arrayOf(this.withNullability(nullable = false, session.typeContext)),
         isMarkedNullable = this.isMarkedNullable,
     )
-    return this.isSubtypeOf(comparable, session)
+    return this.isSubtypeOf(comparable)
 }
