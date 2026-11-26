@@ -10,6 +10,9 @@ output/jtree/sources
 output/direct/stubs
 output/direct/classes
 output/direct/sources
+output/headerMode/stubs
+output/headerMode/classes
+output/headerMode/sources
 output/noValhalla/stubs
 output/noValhalla/classes
 output/noValhalla/sources
@@ -75,6 +78,23 @@ source/Valhalla.kt
 
 # kapt
 -Xfull-value-classes
+-Xvalhalla-value-classes
+-Xjvm-enable-preview
+-jvm-target
+28
+-Kapt-stub-generation-scheme=direct
+-Kapt-header-mode=true
+-Kapt-javac-option:--enable-preview=
+-Kapt-stubs=output/headerMode/stubs
+-Kapt-classes=output/headerMode/classes
+-Kapt-sources=output/headerMode/sources
+-Kapt-classpath=output/ap:%KOTLIN_STDLIB%
+-d output/headerMode/classes
+-cp output/ap:output/lib-identity:output/lib-value:%KOTLIN_STDLIB%
+source/Valhalla.kt
+
+# kapt
+-Xfull-value-classes
 -Xjvm-enable-preview
 -jvm-target
 28
@@ -119,6 +139,129 @@ Money [final, public, value]
 Shape [abstract, public, value]
 Square [final, public, value], superclass Shape [abstract, public, value]
 
+headerMode:
+FromIdentityLibrary [final, public], superclass IdentityBase [abstract, public]
+FromMiddle [final, public], superclass Middle [abstract, public]
+FromValueLibrary [final, public, value], superclass ValueBase [abstract, public, value]
+Identity [final, public]
+Interface [abstract, public]
+Middle [abstract, public], superclass IdentityBase [abstract, public]
+Money [final, public, value]
+Shape [abstract, public, value]
+Square [final, public, value], superclass Shape [abstract, public, value]
+
 noValhalla:
 NoValhalla [final, public], superclass NoValhallaBase [abstract, public]
 NoValhallaBase [abstract, public]
+
+jtree stub:
+@apt.Inspect()
+@kotlin.Metadata()
+public final value class Money {
+
+    public Money(long cents, @org.jetbrains.annotations.NotNull()
+    java.lang.String currency) {
+        super();
+    }
+    private final long cents = 0L;
+
+    public final long getCents() {
+        return 0L;
+    }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String currency = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getCurrency() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+direct stub:
+@apt.Inspect
+@kotlin.Metadata()
+public final value class Money {
+public Money(long cents, @org.jetbrains.annotations.NotNull
+java.lang.String currency) {
+super();
+}
+private final long cents = 0L;
+
+public final long getCents() {
+return 0L;
+}
+@org.jetbrains.annotations.NotNull
+private final java.lang.String currency = null;
+
+@org.jetbrains.annotations.NotNull
+public final java.lang.String getCurrency() {
+return null;
+}
+@java.lang.Override
+public boolean equals(@org.jetbrains.annotations.Nullable
+java.lang.Object other) {
+return false;
+}
+@java.lang.Override
+public int hashCode() {
+return 0;
+}
+@java.lang.Override
+@org.jetbrains.annotations.NotNull
+public java.lang.String toString() {
+return null;
+}
+}
+
+headerMode stub:
+@apt.Inspect
+@kotlin.Metadata()
+public final value class Money {
+public Money(long cents, @org.jetbrains.annotations.NotNull
+java.lang.String currency) {
+super();
+}
+private final long cents = 0L;
+
+public final long getCents() {
+return 0L;
+}
+@org.jetbrains.annotations.NotNull
+private final java.lang.String currency = null;
+
+@org.jetbrains.annotations.NotNull
+public final java.lang.String getCurrency() {
+return null;
+}
+@java.lang.Override
+public boolean equals(@org.jetbrains.annotations.Nullable
+java.lang.Object other) {
+return false;
+}
+@java.lang.Override
+public int hashCode() {
+return 0;
+}
+@java.lang.Override
+@org.jetbrains.annotations.NotNull
+public java.lang.String toString() {
+return null;
+}
+}
