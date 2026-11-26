@@ -9,7 +9,15 @@ import kotlinx.benchmark.*
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(BenchmarkTimeUnit.NANOSECONDS)
-open class IterableSnapshotBenchmark : BaseIterableSnapshotBenchmark()
+open class IterableSnapshotBenchmark : BaseIterableSnapshotBenchmark() {
+    @Param(
+        "ArrayList",
+        // Name rationale: it implements to `List` but doesn't inherit `AbstractCollection` nor implements `RandomAccess`
+        "ListWorstCase",
+        "HashSet",
+    )
+    override var sourceKind: String = ""
+}
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(BenchmarkTimeUnit.NANOSECONDS)

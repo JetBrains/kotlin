@@ -14,6 +14,15 @@ import org.jetbrains.kotlin.benchmarks.collections.BaseSingletonListSnapshotBenc
 @OutputTimeUnit(BenchmarkTimeUnit.NANOSECONDS)
 @Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
 open class IterableSnapshotBenchmark : BaseIterableSnapshotBenchmark() {
+    @Param(
+            "ArrayList",
+            // Name rationale: it implements to `List` but doesn't inherit `AbstractCollection` nor implements `RandomAccess`
+            "ListWorstCase",
+            "NoSuchElementThrowingList",
+            "HashSet",
+    )
+    override var sourceKind: String = ""
+
     @Benchmark
     fun toTypedArray(blackhole: Blackhole) {
         blackhole.consume(collection.toTypedArray())
