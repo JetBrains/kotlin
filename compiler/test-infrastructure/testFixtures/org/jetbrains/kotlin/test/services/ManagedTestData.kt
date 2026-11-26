@@ -34,8 +34,8 @@ class ManagedTestData(private val testServices: TestServices, val variantChain: 
         private set
 
     /**
-     * Whether the test data is updated rather than checked. A muted test is checked even by `updateTestData`, as its output is expected
-     * to be wrong, and so is a test whose inline diagnostics were incomplete or failed to be written (see [assertEqualsToTestDataFile]).
+     * Whether the test data is updated rather than checked. A test which expects failures is checked even by `updateTestData` (see
+     * [mode]), and so is a test whose inline diagnostics were incomplete or failed to be written (see [assertEqualsToTestDataFile]).
      */
     internal val updatesTestData: Boolean
         get() = mode == TestDataManagerMode.UPDATE && isInlineComparisonSuccessful != false
