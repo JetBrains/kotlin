@@ -1,5 +1,3 @@
-// API_VERSION: 1.5
-// ENABLE_JVM_PREVIEW
 // JVM_DEFAULT_MODE: disable
 
 // FILE: JavaClass.java

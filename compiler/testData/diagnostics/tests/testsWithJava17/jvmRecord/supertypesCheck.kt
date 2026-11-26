@@ -1,7 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// API_VERSION: 1.5
 // JVM_TARGET: 17
-// ENABLE_JVM_PREVIEW
 
 abstract class Abstract
 interface I

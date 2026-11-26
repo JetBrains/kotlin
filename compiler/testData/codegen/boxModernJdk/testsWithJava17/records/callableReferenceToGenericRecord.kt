@@ -1,5 +1,3 @@
-// ENABLE_JVM_PREVIEW
-
 // FILE: R.java
 
 public record R<T>(T value) {}

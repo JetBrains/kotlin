@@ -1,4 +1,3 @@
-// ENABLE_JVM_PREVIEW
 // JVM_DEFAULT_MODE: enable
 
 // FILE: JavaClass.java

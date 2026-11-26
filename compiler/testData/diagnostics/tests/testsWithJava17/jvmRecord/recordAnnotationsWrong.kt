@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +AnnotationAllUseSiteTarget +PropertyParamAnnotationDefaultTargetMode
 // JVM_TARGET: 17
-// ENABLE_JVM_PREVIEW
 // DIAGNOSTICS: -DEPRECATED_JAVA_ANNOTATION
 
 // FILE: JavaParamComponent.java
