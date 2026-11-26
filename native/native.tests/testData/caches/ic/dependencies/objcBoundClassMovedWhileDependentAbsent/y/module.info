@@ -1,0 +1,18 @@
+STEP 0:
+    arguments: -opt-in=kotlin.native.internal.InternalForKotlinNative
+    modifications:
+        U : y.kt -> y.kt
+    added cache: y.kt
+
+// Bound moves to the new file y2.kt; y.kt is re-cached without it.
+STEP 1:
+    arguments: -opt-in=kotlin.native.internal.InternalForKotlinNative
+    modifications:
+        U : y.1.kt -> y.kt
+        U : y2.kt -> y2.kt
+    modified cache: y.kt
+    added cache: y2.kt
+
+STEP 2:
+    arguments: -opt-in=kotlin.native.internal.InternalForKotlinNative
+    unchanged cache: y.kt, y2.kt
