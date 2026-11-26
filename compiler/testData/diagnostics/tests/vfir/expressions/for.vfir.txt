@@ -2,7 +2,7 @@ FirFileImpl
  FirControlFlowGraphReferenceImpl
  FirPackageDirectiveImpl
  FirNamedFunctionImpl
-  FirResolvedDeclarationStatusImpl
+  FirResolvedCallableDeclarationStatusImpl
   FirImplicitUnitTypeRef
   FirControlFlowGraphReferenceImpl
   FirBlockImpl
@@ -10,18 +10,18 @@ FirFileImpl
    source.kind: KtRealSourceElementKind
   }
    FirPropertyImpl
-    FirResolvedDeclarationStatusImpl
+    FirResolvedCallableDeclarationStatusImpl
     FirResolvedTypeRefImpl
     FirLiteralExpressionImpl
     FirDefaultPropertyBackingField
      FirResolvedTypeRefImpl
-     FirResolvedDeclarationStatusImpl
+     FirResolvedCallableDeclarationStatusImpl
    FirBlockImpl
    {
     source.kind: DesugaredForLoop
    }
     FirPropertyImpl
-     FirResolvedDeclarationStatusImpl
+     FirResolvedCallableDeclarationStatusImpl
      FirResolvedTypeRefImpl
      FirFunctionCallImpl
       FirFunctionCallImpl
@@ -42,7 +42,7 @@ FirFileImpl
       source.kind: KtRealSourceElementKind
      }
       FirPropertyImpl
-       FirResolvedDeclarationStatusImpl
+       FirResolvedCallableDeclarationStatusImpl
        FirResolvedTypeRefImpl
        FirFunctionCallImpl
         FirPropertyAccessExpressionImpl

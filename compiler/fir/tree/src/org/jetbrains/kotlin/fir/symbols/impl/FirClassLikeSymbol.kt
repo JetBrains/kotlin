@@ -18,11 +18,7 @@ import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.mpp.ClassLikeSymbolMarker
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.mpp.TypeAliasSymbolMarker
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.ClassIdBasedLocality
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.*
 
 sealed class FirClassLikeSymbol<out D : FirClassLikeDeclaration>(
     val classId: ClassId,
@@ -55,10 +51,10 @@ sealed class FirClassLikeSymbol<out D : FirClassLikeDeclaration>(
         return false
     }
 
-    val rawStatus: FirDeclarationStatus
+    val rawStatus: FirClassLikeDeclarationStatus
         get() = fir.status
 
-    val resolvedStatus: FirResolvedDeclarationStatus
+    val resolvedStatus: FirResolvedClassLikeDeclarationStatus
         get() = fir.resolvedStatus()
 
     val typeParameterSymbols: List<FirTypeParameterSymbol>

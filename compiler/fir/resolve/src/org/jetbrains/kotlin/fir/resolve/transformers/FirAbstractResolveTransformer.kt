@@ -5,9 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.FirResolvedCallableDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirResolvedClassLikeDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -128,5 +133,21 @@ abstract class FirAbstractResolveTransformer<D> : FirTransformer<D>() {
 
     override fun transformOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef, data: D): FirTypeParameterRef {
         return transformTypeParameterRef(outerClassTypeParameterRef, data)
+    }
+
+    override fun transformCallableDeclarationStatus(callableDeclarationStatus: FirCallableDeclarationStatus, data: D): FirDeclarationStatus {
+        return transformDeclarationStatus(callableDeclarationStatus, data)
+    }
+
+    override fun transformClassLikeDeclarationStatus(classLikeDeclarationStatus: FirClassLikeDeclarationStatus, data: D): FirDeclarationStatus {
+        return transformDeclarationStatus(classLikeDeclarationStatus, data)
+    }
+
+    override fun transformResolvedCallableDeclarationStatus(resolvedCallableDeclarationStatus: FirResolvedCallableDeclarationStatus, data: D): FirDeclarationStatus {
+        return transformResolvedDeclarationStatus(resolvedCallableDeclarationStatus, data)
+    }
+
+    override fun transformResolvedClassLikeDeclarationStatus(resolvedClassLikeDeclarationStatus: FirResolvedClassLikeDeclarationStatus, data: D): FirDeclarationStatus {
+        return transformResolvedDeclarationStatus(resolvedClassLikeDeclarationStatus, data)
     }
 }

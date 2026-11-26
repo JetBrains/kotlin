@@ -28,7 +28,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
     override val name: Name,
     override val isVar: Boolean,
     override val symbol: FirSyntheticPropertySymbol,
-    private val customStatus: FirDeclarationStatus?,
+    private val customStatus: FirCallableDeclarationStatus?,
     override val getter: FirSyntheticPropertyAccessor,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val setter: FirSyntheticPropertyAccessor? = null,
@@ -46,7 +46,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
         }
     }
 
-    override val status: FirDeclarationStatus
+    override val status: FirCallableDeclarationStatus
         get() = customStatus ?: getter.status
 
     override val backingField: FirBackingField? get() = null
@@ -198,7 +198,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
         notSupported()
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirCallableDeclarationStatus) {
         notSupported()
     }
 

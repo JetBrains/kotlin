@@ -1651,7 +1651,7 @@ private inline fun Candidate.ifLhsResolvedToType(block: (CallableReferenceLhsAsT
         symbol is FirErrorFunctionSymbol -> CallableReferenceWithTypeLhsKind.FOR_CLASS_MEMBER
         (symbol as? FirCallableSymbol<*>)?.isStatic == true -> CallableReferenceWithTypeLhsKind.FOR_STATIC
         // inner class constructor may be called on the object / companion object child
-        (symbol as? FirCallableSymbol<*>)?.isInner == true -> CallableReferenceWithTypeLhsKind.FOR_OBJECT_MEMBER
+        (symbol as? FirConstructorSymbol)?.isInner == true -> CallableReferenceWithTypeLhsKind.FOR_OBJECT_MEMBER
         symbol is FirConstructorSymbol -> CallableReferenceWithTypeLhsKind.FOR_STATIC
         symbol.isSyntheticSamConstructor() -> CallableReferenceWithTypeLhsKind.FOR_STATIC
         else -> CallableReferenceWithTypeLhsKind.FOR_OBJECT_MEMBER

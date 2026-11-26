@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isEffectivelyFinal
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper.ContextParameterShadowing.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.util.ListMultimap
@@ -45,7 +44,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.utils.SmartSet
 
-private fun FirResolvedDeclarationStatus.isAllowedForMainFunction(): Boolean {
+private fun FirResolvedCallableDeclarationStatus.isAllowedForMainFunction(): Boolean {
     val defaultStatusForMain = DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     if (visibility != defaultStatusForMain.visibility && modality != defaultStatusForMain.modality && effectiveVisibility != defaultStatusForMain.effectiveVisibility) return false
     val cleanedStatus = this.copy(

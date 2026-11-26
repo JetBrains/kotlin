@@ -9,6 +9,7 @@ import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -89,7 +90,7 @@ private fun resolvesToSameStaticMethods(
     if (existingSymbol != candidateSymbol) return false
 
     val referencedDeclaration = existingSymbol.fir
-    return referencedDeclaration is FirMemberDeclaration && referencedDeclaration.isStatic
+    return referencedDeclaration is FirCallableDeclaration && referencedDeclaration.isStatic
 }
 
 internal val FirQualifiedAccessExpression.isResolvableByContextSensitiveResolution: Boolean

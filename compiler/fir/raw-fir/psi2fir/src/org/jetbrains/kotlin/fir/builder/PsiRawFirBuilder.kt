@@ -12,21 +12,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.childrenOfType
 import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.KtNodeTypes.ANNOTATED_EXPRESSION
-import org.jetbrains.kotlin.KtNodeTypes.ARRAY_ACCESS_EXPRESSION
-import org.jetbrains.kotlin.KtNodeTypes.BOOLEAN_CONSTANT
-import org.jetbrains.kotlin.KtNodeTypes.CHARACTER_CONSTANT
-import org.jetbrains.kotlin.KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
-import org.jetbrains.kotlin.KtNodeTypes.FLOAT_CONSTANT
-import org.jetbrains.kotlin.KtNodeTypes.INTEGER_CONSTANT
-import org.jetbrains.kotlin.KtNodeTypes.LABELED_EXPRESSION
-import org.jetbrains.kotlin.KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY
-import org.jetbrains.kotlin.KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY
-import org.jetbrains.kotlin.KtNodeTypes.NULL
-import org.jetbrains.kotlin.KtNodeTypes.PARENTHESIZED
-import org.jetbrains.kotlin.KtNodeTypes.SAFE_ACCESS_EXPRESSION
-import org.jetbrains.kotlin.KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY
-import org.jetbrains.kotlin.KtNodeTypes.STRING_INTERPOLATION_PREFIX
+import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.descriptors.*
@@ -638,7 +624,7 @@ open class PsiRawFirBuilder(
                 if (defaultVisibility != null && defaultVisibility != Visibilities.Unknown) defaultVisibility else property.getVisibility()
             // Downward propagation of `inline`, `external` and `expect` modifiers (from property to its accessors)
             val status =
-                FirDeclarationStatusImpl(accessorVisibility, this?.modality).apply {
+                FirCallableDeclarationStatusImpl(accessorVisibility, this?.modality).apply {
                     isInline = property.hasModifier(INLINE_KEYWORD) ||
                             this@toFirPropertyAccessor?.hasModifier(INLINE_KEYWORD) == true
                     isExternal = property.hasModifier(EXTERNAL_KEYWORD) ||
@@ -747,8 +733,8 @@ open class PsiRawFirBuilder(
             declaration: KtDeclaration?,
             property: KtProperty,
             isStatic: Boolean,
-        ): FirDeclarationStatus {
-            return FirDeclarationStatusImpl(componentVisibility, declaration?.modality).apply {
+        ): FirCallableDeclarationStatus {
+            return FirCallableDeclarationStatusImpl(componentVisibility, declaration?.modality).apply {
                 isInline = property.hasModifier(INLINE_KEYWORD) ||
                         declaration?.hasModifier(INLINE_KEYWORD) == true
                 isExternal = property.hasModifier(EXTERNAL_KEYWORD) ||
@@ -873,7 +859,7 @@ open class PsiRawFirBuilder(
 
         private fun KtParameter.toFirProperty(firParameter: FirValueParameter): FirProperty {
             require(hasValOrVar())
-            val status = FirDeclarationStatusImpl(getVisibility(), modality).apply {
+            val status = FirCallableDeclarationStatusImpl(getVisibility(), modality).apply {
                 isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                 isActual = hasActualModifier()
                 isOverride = hasModifier(OVERRIDE_KEYWORD)
@@ -1151,7 +1137,7 @@ open class PsiRawFirBuilder(
                 }
 
                 isVar = false
-                status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
+                status = FirCallableDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
                 isLocal = context.inLocalContext
                 dispatchReceiverType = currentDispatchReceiverType()
             }
@@ -1338,12 +1324,10 @@ open class PsiRawFirBuilder(
                 }
 
                 val explicitVisibility = this?.constructorExplicitVisibility
-                val status = FirDeclarationStatusImpl(explicitVisibility ?: constructorDefaultVisibility(owner), Modality.FINAL).apply {
+                val status = FirCallableDeclarationStatusImpl(explicitVisibility ?: constructorDefaultVisibility(owner), Modality.FINAL).apply {
                     isExpect = this@toFirConstructor?.hasExpectModifier() == true || this@PsiRawFirBuilder.context.containerIsExpect
                     isActual = this@toFirConstructor?.hasActualModifier() == true || isImplicitlyActual
 
-                    // a warning about an inner script class is reported on the class itself
-                    isInner = !owner.isScriptMember && owner.hasInnerModifier()
                     isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.Private
                     isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
                 }
@@ -1758,7 +1742,7 @@ open class PsiRawFirBuilder(
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = delegatedEnumSelfTypeRef
                     name = nameAsSafeName
-                    status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
+                    status = FirCallableDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
                         isStatic = true
                         isExpect = containingClassIsExpectClass
                     }
@@ -1783,7 +1767,7 @@ open class PsiRawFirBuilder(
                                     classKind = ClassKind.ENUM_ENTRY
                                     scopeProvider = this@PsiRawFirBuilder.baseScopeProvider
                                     symbol = FirAnonymousObjectSymbol(this@PsiRawFirBuilder.context.packageFqName)
-                                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                                    status = FirClassLikeDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
 
                                     val delegatedEntrySelfType = buildResolvedTypeRef {
                                         coneType =
@@ -1897,7 +1881,7 @@ open class PsiRawFirBuilder(
                         }
                         else -> throw AssertionError("Unexpected class or object: ${classOrObject.text}")
                     }
-                    val status = FirDeclarationStatusImpl(
+                    val status = FirClassLikeDeclarationStatusImpl(
                         if (isLocal) Visibilities.Local else classOrObject.getVisibility(publicByDefault = true),
                         classOrObject.modality,
                     ).apply {
@@ -2075,7 +2059,7 @@ open class PsiRawFirBuilder(
                             classKind = ClassKind.CLASS
                             scopeProvider = baseScopeProvider
                             symbol = anonymousObjectSymbol
-                            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                            status = FirClassLikeDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                             typeParameters += firTypeParameters
                             context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
                             val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
@@ -2124,7 +2108,7 @@ open class PsiRawFirBuilder(
                         scopeProvider = this@PsiRawFirBuilder.baseScopeProvider
                         name = typeAlias.nameAsSafeName
                         val isLocal = context.inLocalContext
-                        status = FirDeclarationStatusImpl(
+                        status = FirClassLikeDeclarationStatusImpl(
                             if (isLocal) Visibilities.Local else typeAlias.getVisibility(publicByDefault = true),
                             Modality.FINAL
                         ).apply {
@@ -2201,7 +2185,7 @@ open class PsiRawFirBuilder(
                         val isSuspend = function.hasModifier(SUSPEND_KEYWORD)
 
                         if (isExpect || isActual || isOverride || isOperator || isInfix || isInline || isTailRec || isExternal || isSuspend) {
-                            status = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.copy(
+                            status = FirResolvedCallableDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.copy(
                                 isExpect = isExpect,
                                 isActual = isActual,
                                 isOverride = isOverride,
@@ -2227,7 +2211,7 @@ open class PsiRawFirBuilder(
                         symbol = functionSymbol as FirNamedFunctionSymbol
                         dispatchReceiverType = runIf(!isLocalFunction && !isCompanionBlockMember) { currentDispatchReceiverType() }
                         isLocal = context.inLocalContext
-                        status = FirDeclarationStatusImpl(
+                        status = FirCallableDeclarationStatusImpl(
                             if (isLocalFunction) Visibilities.Local else function.getVisibility(),
                             function.modality,
                         ).apply {
@@ -2435,10 +2419,9 @@ open class PsiRawFirBuilder(
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = selfTypeRef
                     val explicitVisibility = constructorExplicitVisibility
-                    status = FirDeclarationStatusImpl(explicitVisibility ?: constructorDefaultVisibility(owner), Modality.FINAL).apply {
+                    status = FirCallableDeclarationStatusImpl(explicitVisibility ?: constructorDefaultVisibility(owner), Modality.FINAL).apply {
                         isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                         isActual = hasActualModifier()
-                        isInner = owner.hasInnerModifier()
                         isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.Private
                         isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
                     }
@@ -2573,7 +2556,7 @@ open class PsiRawFirBuilder(
                             isStatic = false,
                         )
 
-                        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL).apply {
+                        status = FirCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL).apply {
                             isLateInit = hasModifier(LATEINIT_KEYWORD)
                         }
 
@@ -2638,7 +2621,7 @@ open class PsiRawFirBuilder(
                                 isCompanionBlockMember,
                             )
 
-                            status = FirDeclarationStatusImpl(getVisibility(), modality).apply {
+                            status = FirCallableDeclarationStatusImpl(getVisibility(), modality).apply {
                                 isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                                 isActual = hasActualModifier()
                                 isOverride = hasModifier(OVERRIDE_KEYWORD)
@@ -3099,7 +3082,7 @@ open class PsiRawFirBuilder(
                                 else -> createNoTypeForParameterTypeRef(parameterSource)
                             }
                             isVar = false
-                            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+                            status = FirResolvedCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                             isLocal = true
                             this.name = name
                             symbol = FirLocalPropertySymbol()
@@ -3164,7 +3147,7 @@ open class PsiRawFirBuilder(
                         delegate = null
                         isVar = false
                         symbol = FirLocalPropertySymbol()
-                        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                        status = FirCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         isLocal = true
                         receiverParameter = ktSubjectExpression.receiverTypeReference?.let {
                             createReceiverParameter({ it.toFirType() }, context, moduleData, symbol)
@@ -3188,7 +3171,7 @@ open class PsiRawFirBuilder(
                     delegate = null
                     isVar = false
                     symbol = FirLocalPropertySymbol()
-                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                    status = FirCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     isLocal = true
                 }
             }

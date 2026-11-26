@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -42,7 +42,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val valueParameters: MutableList<FirValueParameter>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     private val annotationList: FirJavaAnnotationList,
-    private val originalStatus: FirResolvedDeclarationStatusImpl,
+    private val originalStatus: FirResolvedCallableDeclarationStatusImpl,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     private val containingClassSymbol: FirClassSymbol<*>,
 ) : FirConstructor() {
@@ -73,9 +73,9 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val annotations: List<FirAnnotation> get() = annotationList
 
     // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
-    override val status: FirDeclarationStatus by lazy {
+    override val status: FirCallableDeclarationStatus by lazy {
         applyStatusTransformerExtensions(this, originalStatus) {
-            transformStatus(it, this@FirJavaConstructor, containingClassSymbol, isLocal = false)
+            transformStatus(it, this@FirJavaConstructor, containingClassSymbol, isLocal = false) as FirCallableDeclarationStatus
         }
     }
 
@@ -187,7 +187,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         error("Body cannot be replaced for FirJavaConstructor")
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirCallableDeclarationStatus) {
         shouldNotBeCalled(::replaceStatus, ::status)
     }
 }
@@ -211,7 +211,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
             valueParameters,
             typeParameters,
             annotationList,
-            status as FirResolvedDeclarationStatusImpl,
+            status as FirResolvedCallableDeclarationStatusImpl,
             dispatchReceiverType,
             containingClassSymbol,
         )

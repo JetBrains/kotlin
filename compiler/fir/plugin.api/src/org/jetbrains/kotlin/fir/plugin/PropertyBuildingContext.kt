@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.CallableId
@@ -39,7 +39,7 @@ public class PropertyBuildingContext(
     private val isVal: Boolean,
     private val hasBackingField: Boolean,
     private val containingFileName: String?,
-) : DeclarationBuildingContext<FirProperty>(session, key, owner) {
+) : CallableDeclarationBuildingContext<FirProperty>(session, key, owner) {
     private var setterVisibility: Visibility? = null
     private var extensionReceiverTypeProvider: ((List<FirTypeParameter>) -> ConeKotlinType)? = null
     private var generateDefaultInitializer: Boolean = false

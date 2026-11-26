@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
@@ -164,7 +166,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    protected fun isImplicitlyActual(status: FirDeclarationStatus, classKind: ClassKind): Boolean {
+    protected fun isImplicitlyActual(status: FirClassLikeDeclarationStatus, classKind: ClassKind): Boolean {
         return status.isActual && (status.isInline || status.isValue || classKind == ClassKind.ANNOTATION_CLASS)
     }
 
@@ -243,7 +245,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
             returnTypeRef = implicitType
             isVar = false
             isLocal = context.inLocalContext
-            status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL).apply { isStatic = isCompanionBlockMember }
+            status = FirCallableDeclarationStatusImpl(Visibilities.Private, FINAL).apply { isStatic = isCompanionBlockMember }
             if (!isCompanionBlockMember) {
                 dispatchReceiverType = currentDispatchReceiverType()
             }
@@ -263,7 +265,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
                 origin = origin,
                 propertyTypeRef = returnTypeRef,
                 propertySymbol = symbol,
-                status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL).apply { isStatic = isCompanionBlockMember },
+                status = FirCallableDeclarationStatusImpl(Visibilities.Private, Modality.FINAL).apply { isStatic = isCompanionBlockMember },
             )
         }.apply {
             isDestructuringDeclarationContainerVariable = true
@@ -1258,7 +1260,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
                         .copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers.ComponentFunction)
 
                     this.name = name
-                    status = FirDeclarationStatusImpl(firProperty.visibility, Modality.FINAL).apply {
+                    status = FirCallableDeclarationStatusImpl(firProperty.visibility, Modality.FINAL).apply {
                         isOperator = true
                     }
                     isLocal = firPrimaryConstructor.isLocal
@@ -1437,7 +1439,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Synthetic.ReplContainerClass
                         name = snippetClassName
-                        status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                        status = FirClassLikeDeclarationStatusImpl(Visibilities.Public, FINAL)
                         classKind = ClassKind.OBJECT
                         this.scopeProvider = scopeProvider
                         symbol = classSymbol
@@ -1489,7 +1491,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
                             moduleData = baseModuleData
                             origin = FirDeclarationOrigin.Source
                             returnTypeRef = delegatedSelfType
-                            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                            status = FirCallableDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                             dispatchReceiverType = currentDispatchReceiverType()
                             isLocal = false
                             symbol = constructorSymbol
@@ -1541,7 +1543,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
             name = evalSymbol.name
             symbol = evalSymbol
             dispatchReceiverType = currentDispatchReceiverType()
-            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+            status = FirCallableDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
             returnTypeRef = ResolvedImplicitTypeRef(implicitUnitType)
             isLocal = false
 
@@ -1684,9 +1686,9 @@ fun <Node : Any> FirRegularClassBuilder.createDataClassCopyFunction(
         // We need to resolve annotations on the data class. It's not possible to do it in the RAW_FIR phase.
         // We will resolve the visibility later in the STATUS phase
         status = if (isFromLibrary) {
-            FirResolvedDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL, EffectiveVisibility.Unknown)
+            FirResolvedCallableDeclarationStatusImpl(Visibilities.Unknown, FINAL, Unknown)
         } else {
-            FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL)
+            FirCallableDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL)
         }
         isLocal = firConstructor.isLocal
 

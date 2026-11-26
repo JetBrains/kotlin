@@ -6,13 +6,8 @@
 package org.jetbrains.kotlin.fir.java.declarations
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
@@ -26,32 +21,38 @@ internal fun javaOrigin(isFromSource: Boolean, key: GeneratedDeclarationKey? = n
     }
 }
 
-internal inline fun applyStatusTransformerExtensions(
+internal inline fun <T : FirDeclarationStatus, R : FirResolvedDeclarationStatus> applyStatusTransformerExtensions(
     declaration: FirMemberDeclaration,
-    originalStatus: FirResolvedDeclarationStatusImpl,
-    operation: FirStatusTransformerExtension.(FirDeclarationStatus) -> FirDeclarationStatus,
-): FirDeclarationStatus {
+    originalStatus: R,
+    operation: FirStatusTransformerExtension.(T) -> T,
+): T {
     val statusExtensions = declaration.moduleData.session.extensionService.statusTransformerExtensions
-    if (statusExtensions.isEmpty()) return originalStatus
+
+    @Suppress("UNCHECKED_CAST")
+    if (statusExtensions.isEmpty()) return originalStatus as T
 
     val newStatus = statusExtensions.fold<FirStatusTransformerExtension, FirDeclarationStatus>(originalStatus) { acc, it ->
         if (it.needTransformStatus(declaration)) {
-            it.operation(acc)
+            @Suppress("UNCHECKED_CAST")
+            it.operation(acc as T)
         } else {
             acc
         }
     } as FirDeclarationStatusImpl
 
-    if (newStatus === originalStatus) return originalStatus
+    @Suppress("UNCHECKED_CAST")
+    if (newStatus === originalStatus) return originalStatus as T
     require(newStatus.visibility == originalStatus.visibility || declaration !is FirClassLikeDeclaration) {
         "Attempt to change visibility of a class-like: ${(declaration as? FirClassLikeDeclaration)?.symbol?.classId}, " +
                 "original visibility: ${originalStatus.visibility}, new visibility: ${newStatus.visibility}"
     }
+
+    @Suppress("UNCHECKED_CAST")
     return newStatus.resolved(
         newStatus.visibility,
         newStatus.modality ?: originalStatus.modality,
         originalStatus.effectiveVisibility
-    )
+    ) as T
 }
 
 internal fun FirDeclaration.shouldNotBeCalled(mutator: KCallable<*>, reader: KCallable<*>): Nothing {

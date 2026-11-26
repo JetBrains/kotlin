@@ -8,14 +8,12 @@
 package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildEnumEntryDeserializedAccessExpression
@@ -34,10 +32,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertNotNull
 
@@ -100,7 +95,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         moduleData = FirBinaryDependenciesModuleData(Name.special("<test>"))
         origin = FirDeclarationOrigin.Library
         name = classId.shortClassName
-        status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
+        status = FirResolvedClassLikeDeclarationStatusImpl(Visibilities.Public, FINAL, Public)
         classKind = ClassKind.ANNOTATION_CLASS
         scopeProvider = JavaScopeProvider
         symbol = FirRegularClassSymbol(classId)

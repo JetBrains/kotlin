@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isNullableString
@@ -53,16 +51,6 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
      * Allows to set modality of the declaration
      */
     public var modality: Modality = Modality.FINAL
-
-    /**
-     * Allows to configure flags in status of declaration
-     * For full list of possible flags refer to [FirDeclarationStatus] class
-     * Note that not all flags are meaningful for each declaration
-     *   E.g. there is no point to mark function as inner
-     */
-    public fun status(statusConfig: FirResolvedDeclarationStatusImpl.() -> Unit) {
-        statusConfigs += statusConfig
-    }
 
     /**
      * Adds type parameter with specified [name] and [variance] to declaration
@@ -154,8 +142,6 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
 
     protected val typeParameters: MutableList<TypeParameterData> = mutableListOf()
 
-    private val statusConfigs: MutableList<FirResolvedDeclarationStatusImpl.() -> Unit> = mutableListOf()
-
     /**
      * Sets the source of the generated declaration.
      * If this property wasn't initialized, then the fake source element based on
@@ -178,17 +164,6 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
 
     public abstract fun build(): T
 
-    protected fun generateStatus(): FirResolvedDeclarationStatusImpl {
-        return FirResolvedDeclarationStatusImpl(
-            visibility,
-            modality,
-            visibility.toEffectiveVisibility(owner, forClass = true)
-        ).also {
-            for (statusConfig in statusConfigs) {
-                it.apply(statusConfig)
-            }
-        }
-    }
 
     protected fun generateTypeParameter(
         typeParameter: TypeParameterData,

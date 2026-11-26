@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.moduleData
@@ -83,7 +83,7 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.ForeignValue
-                status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+                status = FirResolvedCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                 isLocal = true
                 returnTypeRef = typeCache.getValue(typeDescriptor, ktCodeFragment)
                 deprecationsProvider = EmptyDeprecationsProvider

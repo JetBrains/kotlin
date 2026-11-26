@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -745,7 +745,7 @@ class FirSyntheticCallGenerator(
             origin = FirDeclarationOrigin.Synthetic.FakeFunction
             this.symbol = symbol
             this.name = name
-            status = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+            status = FirResolvedCallableDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
             isLocal = false
             returnTypeRef = returnType
             resolvePhase = FirResolvePhase.BODY_RESOLVE

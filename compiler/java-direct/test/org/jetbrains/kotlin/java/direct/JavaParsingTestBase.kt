@@ -8,8 +8,6 @@
 package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -20,19 +18,15 @@ import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirNullSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
@@ -191,7 +185,7 @@ internal fun libraryClassSymbol(
     moduleData = FirBinaryDependenciesModuleData(Name.special("<test>"))
     origin = FirDeclarationOrigin.Library
     name = classId.shortClassName
-    status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
+    status = FirResolvedClassLikeDeclarationStatusImpl(Visibilities.Public, FINAL, Public)
     this.classKind = classKind
     scopeProvider = JavaScopeProvider
     symbol = FirRegularClassSymbol(classId)
@@ -205,7 +199,7 @@ internal fun libraryClassSymbol(
             returnTypeRef = buildResolvedTypeRef { coneType = classId.constructClassLikeType() }
             name = Name.identifier(entry)
             symbol = FirEnumEntrySymbol(CallableId(classId, name))
-            status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public).apply {
+            status = FirResolvedCallableDeclarationStatusImpl(Visibilities.Public, FINAL, Public).apply {
                 isStatic = true
             }
             isLocal = false

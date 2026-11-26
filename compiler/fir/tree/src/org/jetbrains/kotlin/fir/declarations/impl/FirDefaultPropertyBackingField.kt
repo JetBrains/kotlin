@@ -27,7 +27,7 @@ class FirDefaultPropertyBackingField(
     returnTypeRef: FirTypeRef,
     isVar: Boolean,
     propertySymbol: FirPropertySymbol,
-    status: FirDeclarationStatus,
+    status: FirCallableDeclarationStatus,
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
 ) : FirBackingFieldImpl(
     source = source,

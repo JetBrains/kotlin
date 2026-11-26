@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -367,9 +366,8 @@ class FirSignatureEnhancement(
                 val symbol = FirConstructorSymbol(methodId).also { functionSymbol = it }
                 val builder: FirAbstractConstructorBuilder = if (firMethod.isPrimary) {
                     FirPrimaryConstructorBuilder().apply {
-                        val resolvedStatus = firMethod.status as? FirResolvedDeclarationStatus
-                        val baseStatus = resolvedStatus ?: FirDeclarationStatusImpl(firMethod.visibility, Modality.FINAL).apply {
-                            isInner = firMethod.isInner
+                        val resolvedStatus = firMethod.status as? FirResolvedCallableDeclarationStatus
+                        val baseStatus = resolvedStatus ?: FirCallableDeclarationStatusImpl(firMethod.visibility, FINAL).apply {
                             // Java annotation class constructors have stable names, copy flag.
                             hasStableParameterNames = firMethod.hasStableParameterNames
                         }
@@ -512,11 +510,11 @@ class FirSignatureEnhancement(
     }
 
     private fun enhanceStatus(
-        original: FirDeclarationStatus,
+        original: FirCallableDeclarationStatus,
         declaration: FirCallableDeclaration,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
         overriddenMembers: List<FirCallableDeclaration>,
-    ): FirDeclarationStatus {
+    ): FirCallableDeclarationStatus {
         if (original.returnValueStatus != ReturnValueStatus.Unspecified) return original
         predefinedEnhancementInfo?.returnValueStatus?.takeIf { it != ReturnValueStatus.Unspecified }?.let { newRvStatus ->
             return original.copy(returnValueStatus = newRvStatus)

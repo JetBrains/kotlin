@@ -33,7 +33,7 @@ abstract class FirDefaultPropertyAccessor(
     valueParameters: MutableList<FirValueParameter>,
     propertySymbol: FirPropertySymbol,
     isGetter: Boolean,
-    status: FirDeclarationStatus,
+    status: FirCallableDeclarationStatus,
     symbol: FirPropertyAccessorSymbol,
     resolvePhase: FirResolvePhase,
     attributes: FirDeclarationAttributes,
@@ -105,7 +105,7 @@ class FirDefaultPropertyGetter(
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     propertySymbol: FirPropertySymbol,
-    status: FirDeclarationStatus,
+    status: FirCallableDeclarationStatus,
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -160,7 +160,7 @@ class FirDefaultPropertySetter(
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     propertySymbol: FirPropertySymbol,
-    status: FirDeclarationStatus,
+    status: FirCallableDeclarationStatus,
     propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
     parameterSource: KtSourceElement? = null,
     parameterAnnotations: List<FirAnnotation> = emptyList(),
@@ -230,9 +230,9 @@ private fun createStatus(
     isInline: Boolean,
     isOverride: Boolean,
     isStatic: Boolean,
-): FirDeclarationStatusImpl = when (effectiveVisibility) {
-    null -> FirDeclarationStatusImpl(visibility, modality)
-    else -> FirResolvedDeclarationStatusImpl(visibility, modality ?: Modality.FINAL, effectiveVisibility)
+): FirCallableDeclarationStatusImpl = when (effectiveVisibility) {
+    null -> FirCallableDeclarationStatusImpl(visibility, modality)
+    else -> FirResolvedCallableDeclarationStatusImpl(visibility, modality ?: Modality.FINAL, effectiveVisibility)
 }.apply {
     this.isInline = isInline
     this.isOverride = isOverride

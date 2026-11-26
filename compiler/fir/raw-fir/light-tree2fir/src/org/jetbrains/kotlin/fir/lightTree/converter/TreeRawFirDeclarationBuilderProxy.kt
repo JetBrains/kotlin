@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.converter
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.KtSourceFileLinesMapping
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -26,73 +22,17 @@ import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.FirAnonymousFunctionBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirPrimaryConstructorBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousObject
-import org.jetbrains.kotlin.fir.declarations.builder.buildBackingField
-import org.jetbrains.kotlin.fir.declarations.builder.buildConstructor
-import org.jetbrains.kotlin.fir.declarations.builder.buildDanglingModifierList
-import org.jetbrains.kotlin.fir.declarations.builder.buildDefaultSetterValueParameter
-import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
-import org.jetbrains.kotlin.fir.declarations.builder.buildField
-import org.jetbrains.kotlin.fir.declarations.builder.buildFile
-import org.jetbrains.kotlin.fir.declarations.builder.buildImport
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
-import org.jetbrains.kotlin.fir.declarations.builder.buildScript
-import org.jetbrains.kotlin.fir.declarations.builder.buildTypeAlias
-import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.utils.isCopiedDelegatedProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
-import org.jetbrains.kotlin.fir.diagnostics.ConeContractMayNotHaveLabel
-import org.jetbrains.kotlin.fir.diagnostics.ConeContractShouldBeFirstStatement
-import org.jetbrains.kotlin.fir.diagnostics.ConeDanglingModifierOnTopLevel
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeNoConstructorError
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.buildErrorExpression
-import org.jetbrains.kotlin.fir.expressions.builder.FirBlockBuilder
-import org.jetbrains.kotlin.fir.expressions.builder.FirWrappedDelegateExpressionBuilder
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousObjectExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.expressions.builder.buildErrorAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildMultiDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
-import org.jetbrains.kotlin.fir.lightTree.fir.ClassWrapper
-import org.jetbrains.kotlin.fir.lightTree.fir.DelegatedConstructorWrapper
-import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringDeclaration
-import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringEntry
-import org.jetbrains.kotlin.fir.lightTree.fir.PrimaryConstructor
-import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
-import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
-import org.jetbrains.kotlin.fir.lightTree.fir.addDestructuringStatements
+import org.jetbrains.kotlin.fir.lightTree.fir.*
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierList
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeParameterModifierList
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeProjectionModifierList
@@ -101,59 +41,14 @@ import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirDanglingModifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildDynamicTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildFunctionTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildIntersectionTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildPlaceholderProjection
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
-import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.builder.buildUnionTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.syntax.BasicSyntaxElementTypeIds
-import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
-import org.jetbrains.kotlin.syntax.SyntaxId
-import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
-import org.jetbrains.kotlin.syntax.SyntaxIdSet
+import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.syntax.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -619,7 +514,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 }
 
                 val isLocal = context.inLocalContext
-                val status = FirDeclarationStatusImpl(
+                val status = FirClassLikeDeclarationStatusImpl(
                     if (isLocal) Visibilities.Local else calculatedModifiers.getVisibility(publicByDefault = true),
                     calculatedModifiers.getModality(isClassOrObject = true)
                 ).apply {
@@ -883,7 +778,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                         classKind = ClassKind.CLASS
                         scopeProvider = baseScopeProvider
                         symbol = anonymousObjectSymbol
-                        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                        status = FirClassLikeDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         typeParameters += firTypeParameters
                         context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
                         val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
@@ -970,7 +865,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = classWrapper.delegatedSelfTypeRef
                 name = enumEntryName
-                status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
+                status = FirCallableDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
                     isStatic = true
                     isExpect = containingClassIsExpectClass
                 }
@@ -993,7 +888,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                             classKind = ClassKind.ENUM_ENTRY
                             scopeProvider = baseScopeProvider
                             symbol = FirAnonymousObjectSymbol(context.packageFqName)
-                            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                            status = FirClassLikeDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                             val enumClassWrapper = ClassWrapper(
                                 modifiers ?: ModifierList(),
                                 ClassKind.ENUM_ENTRY,
@@ -1261,10 +1156,9 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             val explicitVisibility = runIf(primaryConstructor != null) {
                 modifiers.getVisibility().takeUnless { it == Visibilities.Unknown }
             }
-            val status = FirDeclarationStatusImpl(explicitVisibility ?: classWrapper.defaultConstructorVisibility(), Modality.FINAL).apply {
+            val status = FirCallableDeclarationStatusImpl(explicitVisibility ?: classWrapper.defaultConstructorVisibility(), Modality.FINAL).apply {
                 isExpect = modifiers.hasExpect() || context.containerIsExpect
                 isActual = modifiers.hasActual() || isImplicitlyActual
-                isInner = classWrapper.isInner()
                 isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.Private
                 isFromEnumClass = classWrapper.isEnum()
             }
@@ -1400,10 +1294,9 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             }
 
             val explicitVisibility = calculatedModifiers.getVisibility().takeUnless { it == Visibilities.Unknown }
-            val status = FirDeclarationStatusImpl(explicitVisibility ?: classWrapper.defaultConstructorVisibility(), Modality.FINAL).apply {
+            val status = FirCallableDeclarationStatusImpl(explicitVisibility ?: classWrapper.defaultConstructorVisibility(), Modality.FINAL).apply {
                 this.isExpect = isExpect
                 isActual = calculatedModifiers.hasActual()
-                isInner = classWrapper.isInner()
                 isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.Private
                 isFromEnumClass = classWrapper.isEnum()
             }
@@ -1532,7 +1425,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                     scopeProvider = baseScopeProvider
                     name = typeAliasName
                     val isLocal = context.inLocalContext
-                    status = FirDeclarationStatusImpl(
+                    status = FirClassLikeDeclarationStatusImpl(
                         if (isLocal) Visibilities.Local else calculatedModifiers.getVisibility(publicByDefault = true),
                         Modality.FINAL,
                     ).apply {
@@ -1685,7 +1578,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                             expression = expressionConverter.getAsFirExpression(it, "Incorrect delegate expression")
                         }
                     }
-                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL).apply {
+                    status = FirCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL).apply {
                         isLateInit = calculatedModifiers.hasLateinit()
                     }
 
@@ -1716,7 +1609,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
 
                         fun defaultAccessorStatus() =
                             // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
-                            FirDeclarationStatusImpl(propertyVisibility, null).apply {
+                            FirCallableDeclarationStatusImpl(propertyVisibility, null).apply {
                                 isInline = calculatedModifiers.hasInline()
                                 isExternal = calculatedModifiers.hasExternal()
                                 this.isStatic = isStatic
@@ -1759,7 +1652,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                                 }
                             } else null
 
-                        status = FirDeclarationStatusImpl(
+                        status = FirCallableDeclarationStatusImpl(
                             propertyVisibility, calculatedModifiers.getModality(isClassOrObject = false)
                         ).apply {
                             isExpect = calculatedModifiers.hasExpect() || context.containerIsExpect
@@ -1938,7 +1831,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
         val status =
             // Downward propagation of `inline`, `external` and `expect` modifiers (from property to its accessors)
-            FirDeclarationStatusImpl(accessorVisibility, calculatedModifiers.getModality(isClassOrObject = false)).apply {
+            FirCallableDeclarationStatusImpl(accessorVisibility, calculatedModifiers.getModality(isClassOrObject = false)).apply {
                 isInline = propertyModifiers.hasInline() || calculatedModifiers.hasInline()
                 isExternal = propertyModifiers.hasExternal() || calculatedModifiers.hasExternal()
                 isExpect = propertyModifiers.hasExpect() || calculatedModifiers.hasExpect()
@@ -2067,9 +1960,9 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         modifiers: ModifierList<Node>,
         propertyModifiers: ModifierList<Node>,
         isStatic: Boolean,
-    ): FirDeclarationStatus {
+    ): FirCallableDeclarationStatus {
         // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
-        return FirDeclarationStatusImpl(componentVisibility, modifiers.getModality(isClassOrObject = false)).apply {
+        return FirCallableDeclarationStatusImpl(componentVisibility, modifiers.getModality(isClassOrObject = false)).apply {
             isInline = propertyModifiers.hasInline() || modifiers.hasInline()
             isExternal = propertyModifiers.hasExternal() || modifiers.hasExternal()
             isLateInit = modifiers.hasLateinit()
@@ -2226,7 +2119,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                     val isSuspend = calculatedModifiers.hasSuspend()
 
                     if (isExpect || isActual || isOverride || isOperator || isInfix || isInline || isTailRec || isExternal || isSuspend) {
-                        status = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.copy(
+                        status = FirResolvedCallableDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.copy(
                             isExpect = isExpect,
                             isActual = isActual,
                             isOverride = isOverride,
@@ -2248,7 +2141,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                     receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, context, baseModuleData, functionSymbol) }
                     name = functionName
                     this.isLocal = context.inLocalContext
-                    status = FirDeclarationStatusImpl(
+                    status = FirCallableDeclarationStatusImpl(
                         if (isLocal) Visibilities.Local else calculatedModifiers.getVisibility(),
                         calculatedModifiers.getModality(isClassOrObject = false)
                     ).apply {
@@ -2505,7 +2398,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             }
 
             isVar = false
-            status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
+            status = FirCallableDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
             isLocal = context.inLocalContext
             dispatchReceiverType = currentDispatchReceiverType(context)
         }.symbol

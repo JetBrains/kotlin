@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
@@ -101,8 +101,8 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val typeParameters: List<FirTypeParameterRef>
         get() = emptyList()
 
-    override val status: FirDeclarationStatus
-        get() = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+    override val status: FirCallableDeclarationStatus
+        get() = FirResolvedCallableDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 
     override val containerSource: DeserializedContainerSource?
         get() = null
@@ -214,7 +214,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         error("Body cannot be replaced for FirJavaValueParameter")
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirCallableDeclarationStatus) {
         error("Status cannot be replaced for FirJavaValueParameter")
     }
 }

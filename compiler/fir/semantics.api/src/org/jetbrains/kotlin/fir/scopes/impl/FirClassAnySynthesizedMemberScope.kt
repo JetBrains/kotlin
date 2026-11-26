@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -191,7 +190,7 @@ class FirClassAnySynthesizedMemberScope(
         moduleData = baseModuleData
         origin = originForFunctions
         this.name = name
-        status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.OPEN, EffectiveVisibility.Public).apply {
+        status = FirResolvedCallableDeclarationStatusImpl(Visibilities.Public, OPEN, Public).apply {
             this.isOperator = isOperator
 
             // kotlin.Any is compiled in FULL mode, so overrides of Any functions have to be must-use
@@ -204,7 +203,7 @@ class FirClassAnySynthesizedMemberScope(
     }
 
     @DelicateScopeAPI
-    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirClassAnySynthesizedMemberScope? {
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirClassAnySynthesizedMemberScope {
         return FirClassAnySynthesizedMemberScope(
             newSession,
             declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,

@@ -15,22 +15,24 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -264,18 +266,24 @@ fun generateEntriesGetter(
 }
 
 @OptIn(FirImplementationDetail::class)
-private fun createStatus(parentStatus: FirDeclarationStatus): FirDeclarationStatusImpl {
+private fun createStatus(parentStatus: FirDeclarationStatus): FirCallableDeclarationStatusImpl {
     return when (parentStatus) {
-        is FirResolvedDeclarationStatusImpl -> FirResolvedDeclarationStatusImpl(
+        is FirResolvedCallableDeclarationStatusImpl,
+        is FirResolvedClassLikeDeclarationStatusImpl -> FirResolvedCallableDeclarationStatusImpl(
             Visibilities.Public,
-            Modality.FINAL,
+            FINAL,
             parentStatus.effectiveVisibility
         )
-        is FirResolvedDeclarationStatusWithLazyEffectiveVisibility -> FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+        is FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility -> FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(
             Visibilities.Public,
-            Modality.FINAL,
+            FINAL,
             parentStatus.lazyEffectiveVisibility,
         )
-        else -> FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+        is FirResolvedClassLikeDeclarationStatusWithLazyEffectiveVisibility -> FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(
+            Visibilities.Public,
+            FINAL,
+            parentStatus.lazyEffectiveVisibility,
+        )
+        else -> FirCallableDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
     }
 }

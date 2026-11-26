@@ -37,17 +37,11 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.isFromCompanionBlock
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntryStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -208,7 +202,7 @@ internal class StubBasedFirMemberDeserializer(
             this.scopeProvider = scopeProvider
             this.name = name
             val visibility = typeAlias.visibility
-            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+            status = FirResolvedClassLikeDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 Modality.FINAL,
                 visibility.toLazyEffectiveVisibility(owner = null)
@@ -241,7 +235,7 @@ internal class StubBasedFirMemberDeserializer(
         propertySymbol: FirPropertySymbol,
         local: StubBasedFirDeserializationContext,
         propertySource: KtSourceElement?,
-        propertyStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility,
+        propertyStatus: FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility,
         isStatic: Boolean,
     ): FirPropertyAccessor = loadPropertyAccessor(
         psiPropertyAccessor = getter,
@@ -270,7 +264,7 @@ internal class StubBasedFirMemberDeserializer(
         propertySymbol: FirPropertySymbol,
         local: StubBasedFirDeserializationContext,
         propertySource: KtSourceElement?,
-        propertyStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility,
+        propertyStatus: FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility,
         isStatic: Boolean,
     ): FirPropertyAccessor = loadPropertyAccessor(
         psiPropertyAccessor = setter,
@@ -292,7 +286,7 @@ internal class StubBasedFirMemberDeserializer(
         propertySymbol: FirPropertySymbol,
         local: StubBasedFirDeserializationContext,
         propertySource: KtSourceElement?,
-        propertyStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility,
+        propertyStatus: FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility,
         isStatic: Boolean,
     ): FirPropertyAccessor {
         val accessor = if (psiPropertyAccessor?.hasBody() == true) {
@@ -303,7 +297,7 @@ internal class StubBasedFirMemberDeserializer(
                 this.returnTypeRef = if (isGetter) returnTypeRef else FirImplicitUnitTypeRef(source)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 this.isGetter = isGetter
-                status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+                status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(
                     psiPropertyAccessor.visibility,
                     psiPropertyAccessor.modality,
                     psiPropertyAccessor.visibility.toLazyEffectiveVisibility(classSymbol),
@@ -329,7 +323,7 @@ internal class StubBasedFirMemberDeserializer(
             }
 
             @OptIn(FirImplementationDetail::class)
-            val status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+            val status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(
                 visibility = propertyStatus.visibility,
                 modality = propertyStatus.modality,
                 lazyEffectiveVisibility = propertyStatus.lazyEffectiveVisibility,
@@ -409,7 +403,7 @@ internal class StubBasedFirMemberDeserializer(
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
             val visibility = parameter.visibility
-            val resolvedStatus = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+            val resolvedStatus = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 parameter.modality,
                 visibility.toLazyEffectiveVisibility(classSymbol),
@@ -496,7 +490,7 @@ internal class StubBasedFirMemberDeserializer(
         propertySymbol: FirPropertySymbol,
         local: StubBasedFirDeserializationContext,
         propertySource: KtSourceElement?,
-        propertyStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility,
+        propertyStatus: FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility,
     ): FirPropertyAccessor {
         val accessor = loadPropertyAccessor(
             psiPropertyAccessor = null,
@@ -557,7 +551,7 @@ internal class StubBasedFirMemberDeserializer(
             this.symbol = symbol
             dispatchReceiverType = runUnless(isStatic) { c.dispatchReceiver }
             val visibility = property.visibility
-            val resolvedStatus = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+            val resolvedStatus = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 propertyModality,
                 visibility.toLazyEffectiveVisibility(classSymbol)
@@ -663,7 +657,7 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
-    private fun FirResolvedDeclarationStatusWithLazyEffectiveVisibility.setPropertyModifiers(
+    private fun FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility.setPropertyModifiers(
         modifierListOwner: KtModifierListOwner,
         isStatic: Boolean,
     ) {
@@ -760,7 +754,7 @@ internal class StubBasedFirMemberDeserializer(
             receiverParameter = function.receiverTypeReference?.let { loadReceiverParameter(it, local, symbol) }
             name = callableName
             val visibility = function.visibility
-            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+            status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 function.modality,
                 visibility.toLazyEffectiveVisibility(classSymbol)
@@ -845,7 +839,7 @@ internal class StubBasedFirMemberDeserializer(
             returnTypeRef = delegatedSelfType
             val visibility = constructor.visibility
             val isInner = classBuilder.status.isInner
-            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+            status = FirResolvedCallableDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
                 Modality.FINAL,
                 visibility.toLazyEffectiveVisibility(classBuilder.symbol)
@@ -853,7 +847,6 @@ internal class StubBasedFirMemberDeserializer(
                 isExpect = constructor.hasExpectModifier() || classOrObject.hasExpectModifier()
                 isActual = false
                 isOverride = false
-                this.isInner = isInner
                 setSpecialFlags(constructor.modifierList)
             }
             isLocal = false
@@ -892,7 +885,7 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
-    private fun FirDeclarationStatusImpl.setSpecialFlags(modifierList: KtModifierList?) {
+    private fun FirCallableDeclarationStatusImpl.setSpecialFlags(modifierList: KtModifierList?) {
         if (modifierList == null) return
         val modifierListStub: KotlinModifierListStubImpl = modifierList.compiledStub
         val hasMustUse = modifierListStub.hasSpecialFlag(KotlinModifierListStub.SpecialFlag.MustUseReturnValue)
@@ -985,7 +978,7 @@ internal class StubBasedFirMemberDeserializer(
             returnTypeRef = buildResolvedTypeRef { coneType = enumType }
             name = Name.identifier(enumEntryName)
             this.symbol = FirEnumEntrySymbol(CallableId(classId, name))
-            this.status = FirResolvedDeclarationStatusImpl(
+            this.status = FirResolvedCallableDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
                 EffectiveVisibility.Public

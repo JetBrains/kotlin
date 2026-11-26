@@ -9,35 +9,26 @@ import org.jetbrains.kotlin.builtins.StandardNames.DYNAMIC_FQ_NAME
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
-import org.jetbrains.kotlin.fir.StandardTypes
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeDynamicType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.create
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -145,10 +136,10 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
     }
 
     private fun buildPseudoFunctionByName(name: Name): FirNamedFunction = buildNamedFunction {
-        status = FirResolvedDeclarationStatusImpl(
+        status = FirResolvedCallableDeclarationStatusImpl(
             Visibilities.Public,
-            Modality.FINAL,
-            EffectiveVisibility.Public,
+            FINAL,
+            Public,
         ).apply {
             isInfix = true
             isOperator = true
@@ -184,7 +175,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
         this.name = name
         this.symbol = FirRegularPropertySymbol(CallableId(DYNAMIC_FQ_NAME, this.name))
 
-        status = FirResolvedDeclarationStatusImpl(
+        status = FirResolvedCallableDeclarationStatusImpl(
             Visibilities.Public,
             Modality.FINAL,
             EffectiveVisibility.Public,

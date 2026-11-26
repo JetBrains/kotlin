@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -17,7 +19,7 @@ import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -458,7 +460,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             origin = FirDeclarationOrigin.Source
             returnTypeRef = FirImplicitTypeRefImplWithoutSource
             isGetter = true
-            status = FirDeclarationStatusImpl(getterStatus?.visibility ?: Visibilities.Unknown, Modality.FINAL).apply {
+            status = FirCallableDeclarationStatusImpl(getterStatus?.visibility ?: Visibilities.Unknown, Modality.FINAL).apply {
                 isInline = getterStatus?.isInline ?: isInline
                 isStatic = getterStatus?.isStatic == true
             }
@@ -509,7 +511,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             origin = FirDeclarationOrigin.Source
             returnTypeRef = moduleData.session.builtinTypes.unitType
             isGetter = false
-            status = FirDeclarationStatusImpl(setterStatus?.visibility ?: Visibilities.Unknown, Modality.FINAL).apply {
+            status = FirCallableDeclarationStatusImpl(setterStatus?.visibility ?: Visibilities.Unknown, Modality.FINAL).apply {
                 isInline = setterStatus?.isInline ?: isInline
                 isStatic = setterStatus?.isStatic == true
             }

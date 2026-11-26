@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
@@ -35,18 +34,21 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.syntax.KotlinSyntaxNodeTypeIds
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags.MAX_LINE_LENGTH
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags.TAG_PREFIX
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags.TAG_SUFFIX
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirAnalysisHandler
-import org.jetbrains.kotlin.test.isTeamCityBuild
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.utils.*
+import org.jetbrains.kotlin.test.utils.latestLVTestDataFile
+import org.jetbrains.kotlin.test.utils.llFirTestDataFile
+import org.jetbrains.kotlin.test.utils.originalTestDataFile
+import org.jetbrains.kotlin.test.utils.reversedTestDataFile
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
@@ -664,31 +666,17 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
         if (status.modality == Modality.SEALED) tags += FirTags.SEALED
         if (status.isExpect) tags += FirTags.EXPECT
         if (status.isActual) tags += FirTags.ACTUAL
-        if (status.isValue) tags += FirTags.VALUE
-        if (status.isInner) tags += FirTags.INNER
-        if (status.isData) tags += FirTags.DATA
-        if (status.isCompanion) tags += FirTags.COMPANION
-        if (status.isFun) tags += FirTags.FUN_INTERFACE
     }
 
     fun checkSimpleFunctionStatus(status: FirDeclarationStatus) {
-        if (status.isTailRec) tags += FirTags.TAILREC
-        if (status.isOperator) tags += FirTags.OPERATOR
-        if (status.isInfix) tags += FirTags.INFIX
-        if (status.isInline) tags += FirTags.INLINE
         if (status.isExternal) tags += FirTags.EXTERNAL
-        if (status.isSuspend) tags += FirTags.SUSPEND
         if (status.isActual) tags += FirTags.ACTUAL
         if (status.isExpect) tags += FirTags.EXPECT
-        if (status.isOverride) tags += FirTags.OVERRIDE
     }
 
     fun checkPropertyStatus(status: FirDeclarationStatus) {
         if (status.isExpect) tags += FirTags.EXPECT
         if (status.isActual) tags += FirTags.ACTUAL
-        if (status.isConst) tags += FirTags.CONST
-        if (status.isLateInit) tags += FirTags.LATEINIT
-        if (status.isOverride) tags += FirTags.OVERRIDE
     }
 
     fun skipSyntheticDeclaration(source: KtSourceElement?): Boolean {

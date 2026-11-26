@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -62,7 +63,7 @@ internal class FirNonStaticMembersScope(
 internal fun FirScope.processInnerClassesByName(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
     processClassifiersByNameWithSubstitution(name) { classifier, substitutor ->
         val firDeclaration = classifier.fir
-        if (firDeclaration is FirMemberDeclaration && firDeclaration.isInner) {
+        if (firDeclaration is FirClassLikeDeclaration && firDeclaration.isInner) {
             processor(classifier, substitutor)
         }
     }

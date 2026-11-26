@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
@@ -206,7 +207,15 @@ class FirSamResolver(
             source = fakeSource
             name = syntheticFunctionSymbol.name
             origin = FirDeclarationOrigin.SamConstructor
-            status = classSymbol.resolvedStatus.copy(modality = Modality.FINAL)
+            status = classSymbol.resolvedStatus.let {
+                FirResolvedCallableDeclarationStatusImpl(it.visibility, Modality.FINAL, it.effectiveVisibility).apply {
+                    isExpect = it.isExpect
+                    isActual = it.isActual
+                    isExternal = it.isExternal
+                    isFromSealedClass = it.isFromSealedClass
+                    isFromEnumClass = it.isFromEnumClass
+                }
+            }
             isLocal = firRegularClass.isLocal
             this.symbol = syntheticFunctionSymbol
             typeParameters += newTypeParameters.map { it.build() }

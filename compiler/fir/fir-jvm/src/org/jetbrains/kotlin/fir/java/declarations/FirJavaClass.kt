@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
@@ -49,7 +49,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val name: Name,
     override val origin: FirDeclarationOrigin.Java,
     private val annotationList: FirJavaAnnotationList,
-    internal val originalStatus: FirResolvedDeclarationStatusImpl,
+    internal val originalStatus: FirResolvedClassLikeDeclarationStatusImpl,
     override val classKind: ClassKind,
     val declarationList: FirJavaDeclarationList,
     override val scopeProvider: FirScopeProvider,
@@ -205,9 +205,9 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
-    override val status: FirDeclarationStatus by lazy {
+    override val status: FirClassLikeDeclarationStatus by lazy {
         applyStatusTransformerExtensions(this, originalStatus) {
-            transformStatus(it, this@FirJavaClass, containingClassSymbol, isLocal = false)
+            transformStatus(it, this@FirJavaClass, containingClassSymbol, isLocal = false) as FirClassLikeDeclarationStatus
         }
     }
 
@@ -270,7 +270,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         return this
     }
 
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+    override fun replaceStatus(newStatus: FirClassLikeDeclarationStatus) {
         shouldNotBeCalled(::replaceStatus, ::status)
     }
 
@@ -312,7 +312,7 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
             name,
             javaOrigin,
             annotationList,
-            status as FirResolvedDeclarationStatusImpl,
+            status as FirResolvedClassLikeDeclarationStatusImpl,
             classKind,
             declarationList,
             scopeProvider,

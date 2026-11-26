@@ -155,7 +155,7 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         targetSource: KtSourceElement?,
         outerProperty: FirProperty? = null,
     ) {
-        val isOverride = outerProperty?.isOverride ?: declaration.isOverride
+        val isOverride = outerProperty?.isOverride ?: (declaration is FirCallableDeclaration && declaration.isOverride)
 
         if (!isOverride || !context.containerIsNonCompanionObject(0)) {
             return

@@ -10,16 +10,12 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.NoMutableState
-import org.jetbrains.kotlin.fir.StandardTypes
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -37,7 +33,7 @@ class FirNonErrorSymbolProvider private constructor(
     session: FirSession,
     moduleData: FirModuleData,
     scopeProvider: FirScopeProvider,
-) : FirSingleClassSymbolProvider(buildNonErrorClass(moduleData, session, scopeProvider), session) {
+) : FirSingleClassSymbolProvider(buildNonErrorClass(moduleData, scopeProvider), session) {
     companion object {
         /**
          * Returns a [FirNonErrorSymbolProvider] if [LanguageFeature.RichErrors] is enabled in the given [session] or null otherwise.
@@ -61,14 +57,13 @@ class FirNonErrorSymbolProvider private constructor(
 
 private fun buildNonErrorClass(
     moduleData: FirModuleData,
-    session: FirSession,
     scopeProvider: FirScopeProvider,
 ): FirRegularClass {
     return buildRegularClass {
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         origin = FirDeclarationOrigin.Library
         this.moduleData = moduleData
-        status = FirResolvedDeclarationStatusImpl(
+        status = FirResolvedClassLikeDeclarationStatusImpl(
             Visibilities.Public,
             Modality.ABSTRACT,
             EffectiveVisibility.Public

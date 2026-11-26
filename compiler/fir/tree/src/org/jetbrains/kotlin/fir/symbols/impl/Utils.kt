@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -22,13 +20,21 @@ internal fun FirBasedSymbol<*>.errorInLazyResolve(name: String, actualClass: KCl
     }
 }
 
-internal fun FirMemberDeclaration.resolvedStatus(): FirResolvedDeclarationStatus {
+private inline fun <reified T : FirResolvedDeclarationStatus> FirMemberDeclaration.resolvedStatus(): T {
     lazyResolveToPhase(FirResolvePhase.STATUS)
 
     val status = status
-    if (status !is FirResolvedDeclarationStatus) {
-        symbol.errorInLazyResolve("status", status::class, FirResolvedDeclarationStatus::class)
+    if (status !is T) {
+        symbol.errorInLazyResolve("status", status::class, T::class)
     }
 
     return status
+}
+
+internal fun FirCallableDeclaration.resolvedStatus(): FirResolvedCallableDeclarationStatus {
+    return resolvedStatus<FirResolvedCallableDeclarationStatus>()
+}
+
+internal fun FirClassLikeDeclaration.resolvedStatus(): FirResolvedClassLikeDeclarationStatus {
+    return resolvedStatus<FirResolvedClassLikeDeclarationStatus>()
 }

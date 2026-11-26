@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusWithAlteredDefaults
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithAlteredDefaults
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -25,24 +25,19 @@ import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.packageName
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.packageName
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.STATEMENT_LIKE_OPERATORS
 import org.jetbrains.kotlin.util.wrapIntoFileAnalysisExceptionIfNeeded
 import org.jetbrains.kotlin.util.wrapIntoSourceCodeAnalysisExceptionIfNeeded
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 val FirBlock.lastExpression: FirExpression?
     get() = statements.lastOrNull() as? FirExpression
@@ -116,7 +111,7 @@ fun FirElement.renderWithType(): String =
 fun FirElement.render(): String =
     FirRenderer().renderElementAsString(this)
 
-fun FirDeclarationStatus.copy(
+fun FirCallableDeclarationStatus.copy(
     visibility: Visibility? = this.visibility,
     modality: Modality? = this.modality,
     isExpect: Boolean = this.isExpect,
@@ -125,29 +120,23 @@ fun FirDeclarationStatus.copy(
     isOperator: Boolean = this.isOperator,
     isInfix: Boolean = this.isInfix,
     isInline: Boolean = this.isInline,
-    isValue: Boolean = this.isValue,
     isTailRec: Boolean = this.isTailRec,
     isExternal: Boolean = this.isExternal,
     isConst: Boolean = this.isConst,
     isLateInit: Boolean = this.isLateInit,
-    isInner: Boolean = this.isInner,
-    isCompanion: Boolean = this.isCompanion,
-    isData: Boolean = this.isData,
     isSuspend: Boolean = this.isSuspend,
     isStatic: Boolean = this.isStatic,
     isFromSealedClass: Boolean = this.isFromSealedClass,
     isFromEnumClass: Boolean = this.isFromEnumClass,
-    isFun: Boolean = this.isFun,
-    isRichError: Boolean = this.isRichError,
     hasStableParameterNames: Boolean = this.hasStableParameterNames,
     returnValueStatus: ReturnValueStatus = this.returnValueStatus
-): FirDeclarationStatus {
+): FirCallableDeclarationStatus {
     val newVisibility = visibility ?: this.visibility
     val newModality = modality ?: this.modality
     val newStatus = if (this is FirResolvedDeclarationStatus) {
-        FirResolvedDeclarationStatusImpl(newVisibility, newModality!!, effectiveVisibility)
+        FirResolvedCallableDeclarationStatusImpl(newVisibility, newModality!!, effectiveVisibility)
     } else {
-        FirDeclarationStatusImpl(newVisibility, newModality)
+        FirCallableDeclarationStatusImpl(newVisibility, newModality)
     }
     copyStatusAttributes(
         from = this,
@@ -158,22 +147,57 @@ fun FirDeclarationStatus.copy(
         isOperator = isOperator,
         isInfix = isInfix,
         isInline = isInline,
-        isValue = isValue,
         isTailRec = isTailRec,
         isExternal = isExternal,
         isConst = isConst,
         isLateInit = isLateInit,
-        isInner = isInner,
-        isCompanion = isCompanion,
-        isData = isData,
         isSuspend = isSuspend,
         isStatic = isStatic,
         isFromSealedClass = isFromSealedClass,
         isFromEnumClass = isFromEnumClass,
-        isFun = isFun,
-        isRichError = isRichError,
         hasStableParameterNames = hasStableParameterNames,
         returnValueStatus = returnValueStatus,
+    )
+    return newStatus
+}
+fun FirClassLikeDeclarationStatus.copy(
+    visibility: Visibility? = this.visibility,
+    modality: Modality? = this.modality,
+    isExpect: Boolean = this.isExpect,
+    isActual: Boolean = this.isActual,
+    isInline: Boolean = this.isInline,
+    isValue: Boolean = this.isValue,
+    isExternal: Boolean = this.isExternal,
+    isInner: Boolean = this.isInner,
+    isCompanion: Boolean = this.isCompanion,
+    isData: Boolean = this.isData,
+    isFromSealedClass: Boolean = this.isFromSealedClass,
+    isFromEnumClass: Boolean = this.isFromEnumClass,
+    isFun: Boolean = this.isFun,
+    isRichError: Boolean = this.isRichError,
+): FirClassLikeDeclarationStatus {
+    val newVisibility = visibility ?: this.visibility
+    val newModality = modality ?: this.modality
+    val newStatus = if (this is FirResolvedDeclarationStatus) {
+        FirResolvedClassLikeDeclarationStatusImpl(newVisibility, newModality!!, effectiveVisibility)
+    } else {
+        FirClassLikeDeclarationStatusImpl(newVisibility, newModality)
+    }
+    copyStatusAttributes(
+        from = this,
+        to = newStatus,
+        isExpect = isExpect,
+        isActual = isActual,
+        isInline = isInline,
+        isValue = isValue,
+        isExternal = isExternal,
+        isInner = isInner,
+        isCompanion = isCompanion,
+        isData = isData,
+        isFromSealedClass = isFromSealedClass,
+        isFromEnumClass = isFromEnumClass,
+        isFun = isFun,
+        isRichError = isRichError,
     )
     return newStatus
 }
@@ -187,68 +211,107 @@ fun FirDeclarationStatus.copyWithNewDefaults(
     val newVisibility = visibility ?: this.visibility
     val newModality = modality ?: this.modality
 
-    val newStatus = when (this) {
-        is FirResolvedDeclarationStatus -> FirResolvedDeclarationStatusWithAlteredDefaults(
-            newVisibility, newModality!!,
-            defaultVisibility, defaultModality,
-            effectiveVisibility
-        )
-        else -> FirDeclarationStatusWithAlteredDefaults(newVisibility, newModality, defaultVisibility, defaultModality)
+    return when (this) {
+        is FirCallableDeclarationStatus -> {
+            val newStatus = when (this) {
+                is FirResolvedCallableDeclarationStatus -> FirResolvedCallableDeclarationStatusWithAlteredDefaults(
+                    newVisibility, newModality!!,
+                    defaultVisibility, defaultModality,
+                    effectiveVisibility
+                )
+                else -> FirCallableDeclarationStatusWithAlteredDefaults(
+                    newVisibility, newModality,
+                    defaultVisibility, defaultModality
+                )
+            }
+            copyStatusAttributes(from = this, to = newStatus)
+        }
+        is FirClassLikeDeclarationStatus -> {
+            val newStatus =when (this) {
+                is FirResolvedClassLikeDeclarationStatus -> FirResolvedClassLikeDeclarationStatusWithAlteredDefaults(
+                    newVisibility, newModality!!,
+                    defaultVisibility, defaultModality,
+                    effectiveVisibility
+                )
+                else -> FirClassLikeDeclarationStatusWithAlteredDefaults(
+                    newVisibility, newModality,
+                    defaultVisibility, defaultModality
+                )
+            }
+            copyStatusAttributes(from = this, to = newStatus)
+        }
+        else -> shouldNotBeCalled()
     }
-
-    copyStatusAttributes(from = this, to = newStatus)
-
-    return newStatus
 }
 
 private fun copyStatusAttributes(
-    from: FirDeclarationStatus,
-    to: FirDeclarationStatusImpl,
+    from: FirCallableDeclarationStatus,
+    to: FirCallableDeclarationStatusImpl,
     isExpect: Boolean = from.isExpect,
     isActual: Boolean = from.isActual,
     isOverride: Boolean = from.isOverride,
     isOperator: Boolean = from.isOperator,
     isInfix: Boolean = from.isInfix,
     isInline: Boolean = from.isInline,
-    isValue: Boolean = from.isValue,
     isTailRec: Boolean = from.isTailRec,
     isExternal: Boolean = from.isExternal,
     isConst: Boolean = from.isConst,
     isLateInit: Boolean = from.isLateInit,
-    isInner: Boolean = from.isInner,
-    isCompanion: Boolean = from.isCompanion,
-    isData: Boolean = from.isData,
     isSuspend: Boolean = from.isSuspend,
     isStatic: Boolean = from.isStatic,
     isFromSealedClass: Boolean = from.isFromSealedClass,
     isFromEnumClass: Boolean = from.isFromEnumClass,
-    isFun: Boolean = from.isFun,
-    isRichError: Boolean = from.isRichError,
     hasStableParameterNames: Boolean = from.hasStableParameterNames,
     returnValueStatus: ReturnValueStatus = from.returnValueStatus,
-) {
+): FirCallableDeclarationStatusImpl {
     to.isExpect = isExpect
     to.isActual = isActual
     to.isOverride = isOverride
     to.isOperator = isOperator
     to.isInfix = isInfix
     to.isInline = isInline
-    to.isValue = isValue
     to.isTailRec = isTailRec
     to.isExternal = isExternal
     to.isConst = isConst
     to.isLateInit = isLateInit
-    to.isInner = isInner
-    to.isCompanion = isCompanion
-    to.isData = isData
     to.isSuspend = isSuspend
     to.isStatic = isStatic
     to.isFromSealedClass = isFromSealedClass
     to.isFromEnumClass = isFromEnumClass
-    to.isFun = isFun
     to.hasStableParameterNames = hasStableParameterNames
     to.returnValueStatus = returnValueStatus
+    return to
+}
+
+private fun copyStatusAttributes(
+    from: FirClassLikeDeclarationStatus,
+    to: FirClassLikeDeclarationStatusImpl,
+    isExpect: Boolean = from.isExpect,
+    isActual: Boolean = from.isActual,
+    isInline: Boolean = from.isInline,
+    isValue: Boolean = from.isValue,
+    isExternal: Boolean = from.isExternal,
+    isInner: Boolean = from.isInner,
+    isCompanion: Boolean = from.isCompanion,
+    isData: Boolean = from.isData,
+    isFromSealedClass: Boolean = from.isFromSealedClass,
+    isFromEnumClass: Boolean = from.isFromEnumClass,
+    isFun: Boolean = from.isFun,
+    isRichError: Boolean = from.isRichError,
+): FirClassLikeDeclarationStatusImpl {
+    to.isExpect = isExpect
+    to.isActual = isActual
+    to.isInline = isInline
+    to.isValue = isValue
+    to.isExternal = isExternal
+    to.isInner = isInner
+    to.isCompanion = isCompanion
+    to.isData = isData
+    to.isFromSealedClass = isFromSealedClass
+    to.isFromEnumClass = isFromEnumClass
+    to.isFun = isFun
     to.isRichError = isRichError
+    return to
 }
 
 inline fun <R> whileAnalysing(session: FirSession, element: FirElement, block: () -> R): R {
