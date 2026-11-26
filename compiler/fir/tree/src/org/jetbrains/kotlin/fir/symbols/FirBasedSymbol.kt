@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
  * They ensure that the declaration is lazily resolved to the phase which the requested information requires, as for example
  * [resolvedAnnotationsWithArguments] does.
  *
- * The declaration itself is accessible via [fir]. Such direct access should be used sparingly, since it doesn't resolve the declaration:
+ * The declaration itself is accessible via [fir]. Such direct access should be used with caution, since it doesn't resolve the declaration:
  * the caller has to ensure that the declaration is in the required phase. Where possible, the symbol's API should be preferred.
  *
  * Each symbol has a [symbol ID][FirSymbolId] ([symbolId][org.jetbrains.kotlin.fir.symbols.symbolId]), which identifies the symbol and
