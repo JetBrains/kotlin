@@ -46,7 +46,7 @@ import time
 import uuid
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Iterator, List, NamedTuple, Optional, Set, Tuple
+from typing import Dict, Iterator, List, NamedTuple, Optional, Sequence, Set, Tuple
 
 OPTION_PREFIX = "org.jetbrains.kotlin.testDataManager.options"
 REPORT_LINE = re.compile(r"^Test data manager report: (.+\.json)$", re.MULTILINE)
@@ -85,6 +85,8 @@ KEPT_RUNS = 5
 UNFINISHED_RUN_AGE = 24 * 60 * 60
 LISTS = ["problems", "testErrors", "recoveredTests", "fileActions"]
 EMPTY_PATH_ERROR = "--path is empty: give a test data file or directory"
+# How many build files the error for filters matching no test names, see [no_match_error]
+MAX_NAMED_BUILD_FILES = 3
 
 
 def project_path(module: str) -> str:
@@ -183,6 +185,11 @@ def requested_project(root: Path, module: str) -> str:
 
 def module_directory(root: Path, module: str) -> Path:
     return root / custom_project_directories(root).get(module, module[1:].replace(":", "/"))
+
+
+def build_file(root: Path, module: str) -> str:
+    """The repository-relative build file of [module]."""
+    return (module_directory(root, module) / "build.gradle.kts").relative_to(root).as_posix()
 
 
 class GeneratedTests(NamedTuple):
@@ -532,10 +539,27 @@ def merge(modules: List[str], reports: Dict[str, dict]) -> Dict[str, list]:
     }
 
 
+def no_match_error(build_files: Sequence[str]) -> str:
+    """
+    The error for filters that match no managed test in any module. A module finds its managed tests only in the packages it
+    declares, so the error names the [build_files] of the modules that ran, up to [MAX_NAMED_BUILD_FILES] of them; otherwise
+    it points to the summary, which has the build file of each module.
+    """
+    error = "No managed test in any module matches the filters"
+    if not build_files:
+        return error
+    where = ", ".join(build_files) if len(build_files) <= MAX_NAMED_BUILD_FILES else \
+        "the build file of each module that ran (`buildFile` of the modules in the summary)"
+    return (f"{error}. A module finds its managed tests only in the packages of `testDataManager {{ testPackages }}` "
+            f"(`org.jetbrains.kotlin` by default): if the tests exist, check their packages there, in {where}")
+
+
 def summarize(mode: str, run_id: str, modules: List[str], reports: Dict[str, dict], merged: Dict[str, list],
               has_filters: bool, gradle_exit_code: int, gradle_log: Optional[Path], summary_file: Path,
-              skipped: List[str], selection_errors: List[str], gradle_output: str = "", interrupted: bool = False) -> dict:
+              skipped: List[str], selection_errors: List[str], gradle_output: str = "", interrupted: bool = False,
+              build_files: Optional[Dict[str, str]] = None) -> dict:
     """The index of the run: its status, the totals and counts, and the module reports holding the details."""
+    build_files = build_files or {}
     run_errors = list(selection_errors)
     if interrupted:
         run_errors.append("Interrupted before Gradle finished; the modules without a report didn't finish")
@@ -559,7 +583,7 @@ def summarize(mode: str, run_id: str, modules: List[str], reports: Dict[str, dic
                        for module in missing]
 
     if has_filters and totals["discovered"] == 0 and not run_errors:
-        run_errors.append("No managed test in any module matches the filters")
+        run_errors.append(no_match_error([build_files[module] for module in modules if module in build_files]))
     if gradle_exit_code != 0 and not run_errors and not merged["problems"] and not merged["testErrors"]:
         run_errors.append(f"Gradle failed (exit code {gradle_exit_code}) without a failing report, see the Gradle log")
 
@@ -585,9 +609,11 @@ def summarize(mode: str, run_id: str, modules: List[str], reports: Dict[str, dic
         "modules": [
             {"project": module, "status": reports[module]["status"] if module in reports else "MISSING",
              "tests": reports[module]["tests"] if module in reports else None,
-             "report": reports[module]["reportFile"] if module in reports else None}
+             "report": reports[module]["reportFile"] if module in reports else None,
+             "buildFile": build_files.get(module)}
             for module in modules
-        ] + [{"project": module, "status": "SKIPPED", "tests": None, "report": None} for module in skipped],
+        ] + [{"project": module, "status": "SKIPPED", "tests": None, "report": None, "buildFile": build_files.get(module)}
+             for module in skipped],
         "gradleLog": str(gradle_log) if gradle_log is not None else None,
         "summary": str(summary_file),
     }
@@ -796,7 +822,8 @@ def main(argv: Optional[List[str]] = None, root: Optional[Path] = None) -> int:
     merged = merge(modules, reports)
     has_filters = bool(args.paths or args.class_pattern)
     summary = summarize(args.mode.upper(), run_id, modules, reports, merged, has_filters, gradle_exit_code, gradle_log,
-                        summary_file, skipped, selection_errors, gradle_output, interrupted)
+                        summary_file, skipped, selection_errors, gradle_output, interrupted,
+                        build_files={module: build_file(root, module) for module in modules + skipped})
     write_atomically(summary_file, json.dumps(summary, indent=2) + "\n")
     delete_old_runs(output_directory, kept_run=args.rerun)
 

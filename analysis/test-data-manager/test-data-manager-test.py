@@ -465,7 +465,8 @@ class WrapperTest(unittest.TestCase):
         self.assertEqual(self.root / "build" / "test-data-manager" / f"{summary['runId']}.summary.json", summary_file)
         self.assertEqual(summary, json.loads(summary_file.read_text()))
         self.assertEqual([{"project": ":mod-b", "status": "PASSED", "tests": {"discovered": 1, "passed": 1, "failed": 0, "skipped": 0},
-                           "report": str(self.root / "mod-b" / "build" / "test-data-manager" / f"{summary['runId']}.json")}],
+                           "report": str(self.root / "mod-b" / "build" / "test-data-manager" / f"{summary['runId']}.json"),
+                           "buildFile": "mod-b/build.gradle.kts"}],
                          summary["modules"])
         self.assertTrue(self.run_text({":mod-b": {}}, "check", "--module", ":mod-b")[1].endswith("Summary: <path>\n"))
 
@@ -775,8 +776,37 @@ class WrapperTest(unittest.TestCase):
     def test_filters_matching_nothing_are_an_error(self) -> None:
         empty = {"report": {"tests": {"discovered": 0, "passed": 0, "failed": 0, "skipped": 0}}}
         stub = {module: empty for module in ALL_MODULES}
+        hint = ("A module finds its managed tests only in the packages of `testDataManager { testPackages }` (`org.jetbrains.kotlin` "
+                "by default): if the tests exist, check their packages there, in ")
         exit_code, summary = self.run_wrapper(stub, "check", "--class-pattern", ".*Nope.*")
-        self.assertEqual((2, ["No managed test in any module matches the filters"]), (exit_code, summary["runErrors"]))
+        self.assertEqual(
+            (2, ["No managed test in any module matches the filters. " + hint
+                 + "mod-a/build.gradle.kts, mod-a/nested/build.gradle.kts, mod-b/build.gradle.kts"]),
+            (exit_code, summary["runErrors"]),
+        )
+
+        # With `--path`, only the modules that ran are named; a module without generated tests always runs
+        self.generated_tests("mod-a", "mod-a/testData")
+        self.generated_tests("mod-a/nested", "mod-a/nested/testData")
+        self.generated_tests("mod-b", "mod-b/testData")
+        self.write("mod-b/testData/file.kt", "")
+        exit_code, summary = self.run_wrapper(stub, "check", "--path", "mod-b/testData/file.kt")
+        self.assertEqual(
+            (2, ["No managed test in any module matches the filters. " + hint + "mod-b/build.gradle.kts"]),
+            (exit_code, summary["runErrors"]),
+        )
+        self.assertEqual(
+            [(":mod-b", "mod-b/build.gradle.kts"), (":mod-a", "mod-a/build.gradle.kts"), (":mod-a:nested", "mod-a/nested/build.gradle.kts")],
+            [(module["project"], module["buildFile"]) for module in summary["modules"]],
+        )
+
+        # Too many modules to name: the summary has the build file of each
+        self.assertEqual(
+            "No managed test in any module matches the filters. " + hint
+            + "the build file of each module that ran (`buildFile` of the modules in the summary)",
+            tdm.no_match_error([f"mod-{index}/build.gradle.kts" for index in range(tdm.MAX_NAMED_BUILD_FILES + 1)]),
+        )
+
         exit_code, summary = self.run_wrapper(stub, "check")
         self.assertEqual((0, []), (exit_code, summary["runErrors"]))
 
