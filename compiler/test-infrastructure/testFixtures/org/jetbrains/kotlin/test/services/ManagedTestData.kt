@@ -27,8 +27,9 @@ class ManagedTestData(private val testServices: TestServices, private val varian
     private lateinit var baseTestDataFile: File
 
     /**
-     * The mode of the comparison. A muted test is compared in [TestDataManagerMode.CHECK] mode even by `updateTestData`, as its output
-     * is expected to be wrong.
+     * The mode of the comparison. A test which expects failures (see
+     * [TestFailureSuppressor.expectsFailures][org.jetbrains.kotlin.test.model.TestFailureSuppressor.expectsFailures]) is compared in
+     * [TestDataManagerMode.CHECK] mode even by `updateTestData`, as its output may be wrong.
      */
     private val mode: TestDataManagerMode
         get() {
@@ -36,8 +37,8 @@ class ManagedTestData(private val testServices: TestServices, private val varian
             if (mode != TestDataManagerMode.UPDATE) return mode
 
             @OptIn(TestInfrastructureInternals::class)
-            val isMuted = testServices.testConfiguration.failureSuppressors.any { it.testIsMuted() }
-            return if (isMuted) TestDataManagerMode.CHECK else mode
+            val expectsFailures = testServices.testConfiguration.failureSuppressors.any { it.expectsFailures() }
+            return if (expectsFailures) TestDataManagerMode.CHECK else mode
         }
 
     /**

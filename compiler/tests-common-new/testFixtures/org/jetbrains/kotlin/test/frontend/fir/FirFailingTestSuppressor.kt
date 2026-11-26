@@ -42,7 +42,7 @@ class FirFailingTestSuppressor(testServices: TestServices) : TestFailureSuppress
         throw AssertionError("Fail file exists but no exceptions was thrown. Please remove ${failFile.name}")
     }
 
-    override fun testIsMuted(): Boolean = findFailFile() != null
+    override fun expectsFailures(): Boolean = findFailFile() != null
 
     private fun findFailFile(): File? {
         val testFile = testServices.moduleStructure.originalTestDataFiles.first()

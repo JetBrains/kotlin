@@ -28,9 +28,10 @@ abstract class TestFailureSuppressor(protected val testServices: TestServices) :
     abstract fun checkIfTestShouldBeUnmuted()
 
     /**
-     * Whether the test is muted by this suppressor before it runs (e.g., by an ignore directive), so its failures are expected.
+     * Whether the test declares failures this suppressor expects, e.g., by an ignore directive or a `.fail` file, so its output may be
+     * wrong. Other failures of such a test may still be unexpected, e.g., a backend crash in a test whose `.fail` file is for a frontend one.
      */
-    open fun testIsMuted(): Boolean = false
+    open fun expectsFailures(): Boolean = false
 
     /**
      * Whether [suppressIfNeeded] would suppress [failure] as an expected one, e.g., a failure in a phase after the one the test runs till.
@@ -47,7 +48,9 @@ abstract class TestFailureSuppressor(protected val testServices: TestServices) :
 }
 
 abstract class SimpleTestFailureSuppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
-    abstract override fun testIsMuted(): Boolean
+    abstract fun testIsMuted(): Boolean
+
+    override fun expectsFailures(): Boolean = testIsMuted()
 
     final override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         return if (testIsMuted()) emptyList() else failedAssertions
