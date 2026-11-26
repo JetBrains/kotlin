@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.plugin.sandbox.fir
 
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Modality.OPEN
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.copy
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
-import org.jetbrains.kotlin.fir.extensions.transform
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
     companion object {
@@ -26,7 +29,11 @@ class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtens
 
     override fun transformStatus(status: FirDeclarationStatus, declaration: FirDeclaration): FirDeclarationStatus {
         if (status.modality != null) return status
-        return status.transform(modality = Modality.OPEN)
+        return when (status) {
+            is FirCallableDeclarationStatus -> status.copy(modality = OPEN)
+            is FirClassLikeDeclarationStatus -> status.copy(modality = OPEN)
+            else -> shouldNotBeCalled()
+        }
     }
 
     override fun needTransformStatus(declaration: FirDeclaration): Boolean {

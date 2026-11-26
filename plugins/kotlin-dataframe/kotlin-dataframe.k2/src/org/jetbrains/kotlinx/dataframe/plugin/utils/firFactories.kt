@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -11,8 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -61,9 +61,9 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
         moduleData = session.moduleData
         resolvePhase = FirResolvePhase.BODY_RESOLVE
         origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
-        status = FirResolvedDeclarationStatusImpl(
+        status = FirResolvedCallableDeclarationStatusImpl(
             Visibilities.Public,
-            Modality.FINAL,
+            FINAL,
             effectiveVisibility
         )
         isLocal = symbol?.isLocal == true
@@ -94,7 +94,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
             this.symbol = firPropertyAccessorSymbol
             this.propertySymbol = firPropertySymbol
             isGetter = true
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedCallableDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
                 effectiveVisibility

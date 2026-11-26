@@ -7,16 +7,11 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
@@ -154,10 +149,10 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
             moduleData = session.moduleData
             annotationList = object : FirJavaAnnotationList, List<FirAnnotation> by listOf(annotation) {}
             deprecationsProvider = FirJavaLazyDeprecationsProvider(listOf(annotation), session)
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedClassLikeDeclarationStatusImpl(
                 Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public,
+                FINAL,
+                Public,
             )
             classKind = ClassKind.CLASS
             symbol = FirRegularClassSymbol(classId)
@@ -192,10 +187,10 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
             dispatchReceiverType = owner.defaultType()
             name = callableId.callableName
             moduleData = session.moduleData
-            status = FirResolvedDeclarationStatusImpl(
+            status = FirResolvedCallableDeclarationStatusImpl(
                 Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public,
+                FINAL,
+                Public,
             )
             symbol = FirNamedFunctionSymbol(callableId)
             returnTypeRef = session.builtinTypes.intType

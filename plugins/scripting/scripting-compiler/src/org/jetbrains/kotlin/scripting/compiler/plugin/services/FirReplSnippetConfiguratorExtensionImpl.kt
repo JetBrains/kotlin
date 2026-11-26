@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
-import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.Context
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.fir.builder.FirReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.buildLabel
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -196,7 +197,7 @@ class FirReplSnippetConfiguratorExtensionImpl(
             returnTypeRef = propertyReturnType
             name = callableId.callableName
             isVar = false
-            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+            status = FirCallableDeclarationStatusImpl(Visibilities.Public, FINAL)
             symbol = propertySymbol
             dispatchReceiverType = context.dispatchReceiverTypesStack.lastOrNull()
             isLocal = false
