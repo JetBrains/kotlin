@@ -11,8 +11,9 @@ import java.util.Locale
 /**
  * The machine the build runs on, as the JVM reports it: its [os] and [architecture].
  *
- * Unlike `HostManager` from `kotlin-native-utils`, nothing here throws on hosts without a Kotlin/Native distribution
- * (e.g. Linux ARM64).
+ * Nothing here throws, also on hosts without a Kotlin/Native distribution such as Linux ARM64, where `HostManager`
+ * from `kotlin-native-utils` does. What Kotlin/Native supports on a host depends on the Kotlin/Native version,
+ * see [KotlinNativeTargetSupport].
  *
  * Hosts are equal if their [os] and [architecture] are equal.
  *
@@ -29,10 +30,11 @@ public sealed interface KotlinNativeHost : Serializable {
     /**
      * A host id in the form `<os>-<architecture>`, e.g. `macos-aarch64` or `freebsd-x86_64`.
      *
-     * On hosts with a Kotlin/Native distribution it is the classifier of `kotlin-native-prebuilt`. An `UNKNOWN` OS or
-     * architecture is the `os.name` or `os.arch` value in lower case, with characters other than letters, digits
-     * and `_` replaced by `_`. It is `unknown` if the value is empty or the host was created with [of]. So don't
-     * parse the name.
+     * On hosts with a Kotlin/Native distribution it is the classifier of `kotlin-native-prebuilt`.
+     *
+     * Don't parse the name. For an `UNKNOWN` OS or architecture the part is the `os.name` or `os.arch` value in lower
+     * case, with every character other than a letter, a digit or `_` replaced by `_`. It is `unknown` if that value
+     * is empty or the host was created with [of].
      */
     public val name: String
 
@@ -61,7 +63,7 @@ public sealed interface KotlinNativeHost : Serializable {
 }
 
 /**
- * Host operating system. Covers the common ones, not only those Kotlin/Native supports.
+ * Host operating system. Covers the common ones, including those Kotlin/Native does not support.
  *
  * New entries can be added, so keep an `else` branch in `when`.
  */
@@ -93,7 +95,7 @@ public enum class KotlinNativeHostOs {
 }
 
 /**
- * Host CPU architecture. Covers the common ones, not only those Kotlin/Native supports.
+ * Host CPU architecture. Covers the common ones, including those Kotlin/Native does not support.
  *
  * New entries can be added, so keep an `else` branch in `when`.
  */
@@ -145,7 +147,7 @@ private class DefaultKotlinNativeHost(
     override fun equals(other: Any?): Boolean =
         other is DefaultKotlinNativeHost && os == other.os && architecture == other.architecture
 
-    // Ordinals and not the enum hash codes, which differ between JVM runs.
+    // Ordinals, because enum hash codes differ between JVM runs.
     override fun hashCode(): Int = 31 * os.ordinal + architecture.ordinal
 
     override fun toString(): String = "KotlinNativeHost($name)"

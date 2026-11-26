@@ -1,3 +1,6 @@
+public abstract interface annotation class org/jetbrains/kotlin/buildtools/nativehost/DelicateKotlinNativeHostApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost : java/io/Serializable {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost$Companion;
 	public static fun current ()Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost;
@@ -33,5 +36,22 @@ public final class org/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHostOs;
+}
+
+public final class org/jetbrains/kotlin/buildtools/nativehost/KotlinNativeTargetSupport : java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeTargetSupport$Companion;
+	public static final fun bundled ()Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeTargetSupport;
+	public final fun canLinkBinaries (Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost;Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSupportedHosts ()Ljava/util/List;
+	public fun hashCode ()I
+	public static final fun of (Lorg/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchain;)Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeTargetSupport;
+	public final fun target (Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeHost;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KonanTarget;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/nativehost/KotlinNativeTargetSupport$Companion {
+	public final fun bundled ()Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeTargetSupport;
+	public final fun of (Lorg/jetbrains/kotlin/buildtools/api/konan/NativePlatformToolchain;)Lorg/jetbrains/kotlin/buildtools/nativehost/KotlinNativeTargetSupport;
 }
 
