@@ -11,13 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
-import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
@@ -43,6 +37,7 @@ class LombokDeclarationStatusTransformer(session: FirSession) : FirStatusTransfo
         isLocal: Boolean,
     ): FirDeclarationStatus {
         if (containingClass == null) return status
+        require(status is FirResolvedCallableDeclarationStatus)
         val lombokService = session.lombokService
         val fieldDefaults = lombokService.getFieldDefaults(containingClass)
         val visibility = when {
@@ -63,6 +58,7 @@ class LombokDeclarationStatusTransformer(session: FirSession) : FirStatusTransfo
         containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean,
     ): FirDeclarationStatus {
+        require(status is FirResolvedClassLikeDeclarationStatus)
         return if (session.lombokService.getValue(regularClass.symbol) != null &&
             status.modality != Modality.FINAL
         ) {
@@ -79,6 +75,7 @@ class LombokDeclarationStatusTransformer(session: FirSession) : FirStatusTransfo
         isLocal: Boolean,
     ): FirDeclarationStatus {
         if (containingClass == null) return status
+        require(status is FirResolvedCallableDeclarationStatus)
 
         val isHidden = if (constructor is FirJavaConstructor) {
             when {

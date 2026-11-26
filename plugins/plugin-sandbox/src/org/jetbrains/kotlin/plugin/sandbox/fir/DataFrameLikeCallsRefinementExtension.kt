@@ -21,14 +21,11 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
-import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
 import org.jetbrains.kotlin.fir.extensions.FirFunctionCallRefinementExtension
@@ -44,9 +41,9 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -75,7 +72,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
-            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
+            status = FirResolvedClassLikeDeclarationStatusImpl(Visibilities.Local, ABSTRACT, Local)
             deprecationsProvider = EmptyDeprecationsProvider
             classKind = ClassKind.CLASS
             scopeProvider = FirKotlinScopeProvider()
@@ -91,7 +88,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
-            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
+            status = FirResolvedClassLikeDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
             deprecationsProvider = EmptyDeprecationsProvider
             classKind = ClassKind.CLASS
             scopeProvider = FirKotlinScopeProvider()
@@ -166,7 +163,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
             origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
-            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
+            status = FirResolvedClassLikeDeclarationStatusImpl(Visibilities.Local, ABSTRACT, Local)
             deprecationsProvider = EmptyDeprecationsProvider
             classKind = ClassKind.CLASS
             scopeProvider = FirKotlinScopeProvider()
@@ -187,7 +184,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Plugin(DataFrameLikeCallsRefinementExtensionGeneratorKey)
-                status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+                status = FirResolvedCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                 deprecationsProvider = EmptyDeprecationsProvider
                 returnTypeRef = buildResolvedTypeRef {
                     coneType = returnType

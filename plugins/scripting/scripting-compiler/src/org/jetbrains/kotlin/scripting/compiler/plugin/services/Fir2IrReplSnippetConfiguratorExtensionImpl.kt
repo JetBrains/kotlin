@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
@@ -15,7 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
@@ -266,10 +269,10 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             val constructor = buildPrimaryConstructor {
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.FromOtherReplSnippet
-                status = FirResolvedDeclarationStatusImpl(
+                status = FirResolvedCallableDeclarationStatusImpl(
                     Visibilities.Public,
-                    Modality.FINAL,
-                    EffectiveVisibility.Public
+                    FINAL,
+                    Public
                 )
                 isLocal = false
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
@@ -281,10 +284,10 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.FromOtherReplSnippet
                 this.name = classId.shortClassName
-                status = FirResolvedDeclarationStatusImpl(
+                status = FirResolvedClassLikeDeclarationStatusImpl(
                     Visibilities.Public,
-                    Modality.FINAL,
-                    EffectiveVisibility.Public
+                    FINAL,
+                    Public
                 )
                 classKind = ClassKind.OBJECT
                 symbol = firReplStateSymbol

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirCallableDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -27,11 +27,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -129,7 +125,7 @@ class FirScriptConfiguratorExtensionImpl(
                             returnTypeRef = baseCtorParameter.returnTypeRef
                             name = baseCtorParameter.name
                             symbol = FirRegularPropertySymbol(CallableId(name))
-                            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                            status = FirCallableDeclarationStatusImpl(Visibilities.Local, FINAL)
                             isLocal = true
                             isVar = false
                         }
@@ -165,7 +161,7 @@ class FirScriptConfiguratorExtensionImpl(
                     returnTypeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(propertyType, sourceElement)
                     name = Name.identifier(propertyName)
                     symbol = FirLocalPropertySymbol()
-                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                    status = FirCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     isLocal = true
                     isVar = false
                 }
@@ -183,7 +179,7 @@ class FirScriptConfiguratorExtensionImpl(
                     returnTypeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(KotlinType(MutableMap::class), sourceElement)
                     name = Name.identifier(it)
                     symbol = FirLocalPropertySymbol()
-                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                    status = FirCallableDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     isLocal = true
                     isVar = false
                 }
@@ -222,7 +218,7 @@ class FirScriptConfiguratorExtensionImpl(
                         modality = Modality.FINAL,
                     )
 
-                    status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                    status = FirCallableDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                     isLocal = false
                     isVar = false
                 }.also {

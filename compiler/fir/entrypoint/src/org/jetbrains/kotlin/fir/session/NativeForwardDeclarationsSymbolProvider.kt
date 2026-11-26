@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -18,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -135,10 +133,10 @@ fun createSyntheticForwardDeclarationClass(
         origin = FirDeclarationOrigin.Synthetic.ForwardDeclaration
         check(!classId.isNestedClass) { "Expected top-level class when building forward declaration, got $classId" }
         name = classId.shortClassName
-        status = FirResolvedDeclarationStatusImpl(
+        status = FirResolvedClassLikeDeclarationStatusImpl(
             Visibilities.Public,
-            Modality.FINAL,
-            EffectiveVisibility.Public
+            FINAL,
+            Public
         ).apply {
             // This will be wrong if we support exported forward declarations.
             // See https://youtrack.jetbrains.com/issue/KT-51377 for more details.

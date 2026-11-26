@@ -8,18 +8,11 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.services
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedCallableDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassLikeDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.extensions.FirReplHistoryProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -202,6 +195,16 @@ private fun updateVisibility(
     val newEffective = newVisibility.toEffectiveVisibility(ownerSymbol, forClass = forClass)
     val newStatus = (current as? FirDeclarationStatusImpl)
         ?.resolved(newVisibility, modality, newEffective)
-        ?: FirResolvedDeclarationStatusImpl(newVisibility, modality, newEffective)
-    fir.replaceStatus(newStatus)
+    when (fir) {
+        is FirCallableDeclaration -> {
+            require(newStatus is FirResolvedCallableDeclarationStatus?)
+            fir.replaceStatus(newStatus ?: FirResolvedCallableDeclarationStatusImpl(newVisibility, modality, newEffective))
+        }
+        is FirClassLikeDeclaration -> {
+            require(newStatus is FirResolvedClassLikeDeclarationStatus?)
+            fir.replaceStatus(newStatus ?: FirResolvedClassLikeDeclarationStatusImpl(newVisibility, modality, newEffective))
+        }
+    }
+
+
 }
