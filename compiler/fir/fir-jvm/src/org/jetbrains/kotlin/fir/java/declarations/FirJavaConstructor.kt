@@ -75,7 +75,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val status: FirCallableDeclarationStatus by lazy {
         applyStatusTransformerExtensions(this, originalStatus) {
-            transformStatus(it, this@FirJavaConstructor, containingClassSymbol, isLocal = false) as FirCallableDeclarationStatus
+            transformConstructorStatus(it, this@FirJavaConstructor, containingClassSymbol, isLocal = false)
         }
     }
 

@@ -45,6 +45,8 @@ class MissingOverrideStatusTransformer(session: FirSession) : FirStatusTransform
         }
     }
 
+    // Keep the old function usage to test compatibility during deprecation period
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun transformStatus(
         status: FirDeclarationStatus,
         function: FirNamedFunction,
@@ -74,7 +76,7 @@ class MissingOverrideStatusTransformer(session: FirSession) : FirStatusTransform
             }
         }
 
-        return super.transformStatus(status, function, containingClass, isLocal)
+        return super.transformFunctionStatus(status, function, containingClass, isLocal)
     }
 }
 
