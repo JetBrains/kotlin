@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -92,13 +91,6 @@ fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
         val vFile = findVirtualFile(sourceRoot)
         if (vFile == null) {
             val message = "Source file or directory not found: $sourceRootPath"
-
-            val buildFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE)
-            if (buildFilePath != null && Logger.isInitialized()) {
-                Logger.getInstance(KotlinCoreEnvironment::class.java)
-                    .warn("$message\n\nbuild file path: $buildFilePath\ncontent:\n${buildFilePath.readText()}")
-            }
-
             configuration.report(ROOTS_RESOLUTION_ERROR, message, location = null)
             continue
         }

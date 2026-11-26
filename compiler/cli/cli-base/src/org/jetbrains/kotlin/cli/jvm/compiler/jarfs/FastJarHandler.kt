@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
@@ -35,7 +34,8 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
                 } catch (e: Exception) {
                     // copying the behavior of ArchiveHandler (and therefore ZipHandler)
                     // TODO: consider propagating to compiler error or warning, but take into account that both javac and K1 simply ignore invalid jars in such cases
-                    Logger.getInstance(this::class.java).warn("Error while reading zip file: ${file.path}: $e", e)
+                    System.err.println("WARN: Error while reading zip file: ${file.path}: $e")
+                    e.printStackTrace(System.err)
                     emptyList()
                 }
                 cachedManifest =

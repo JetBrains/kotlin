@@ -452,3 +452,11 @@
 -keep class com.intellij.platform.syntax.parser.SyntaxTreeBuilder {
     public *;
 }
+
+# required for `IdeaCoreLoggerFactory` in the maven plugin
+-keep class com.intellij.openapi.diagnostic.Logger {
+    public *;
+}
+-keep class org.apache.log4j.Level {
+    public *;
+}
