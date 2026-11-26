@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.ATTACH_DEBUGGER
 import org.jetbrains.kotlin.test.directives.JvmCodegenDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_LEGACY_REFLECTION_IMPLEMENTATION
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_K1_REFLECTION_IMPLEMENTATION_FOR_COLLECTIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PREFER_IN_TEST_OVER_STDLIB
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
@@ -267,8 +268,12 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     ): Process {
         // Test-infrastructure invariant violation (not a failure of the code under test): throw a
         // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-        checkTestInfrastructure(USE_LEGACY_REFLECTION_IMPLEMENTATION !in module.directives) {
-            "$USE_LEGACY_REFLECTION_IMPLEMENTATION is not supported when running the box test in a separate JVM process"
+        checkTestInfrastructure(
+            USE_LEGACY_REFLECTION_IMPLEMENTATION !in module.directives &&
+                    USE_K1_REFLECTION_IMPLEMENTATION_FOR_COLLECTIONS !in module.directives
+        ) {
+            "$USE_LEGACY_REFLECTION_IMPLEMENTATION and $USE_K1_REFLECTION_IMPLEMENTATION_FOR_COLLECTIONS are not supported " +
+                    "when running the box test in a separate JVM process"
         }
         val command = listOfNotNull(
             javaExe.absolutePath,
@@ -356,8 +361,12 @@ fun generatedTestClassLoader(
     if (PREFER_IN_TEST_OVER_STDLIB in module.directives) {
         // Test-infrastructure invariant violations (not failures of the code under test): throw
         // TestInfrastructureException so they are never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-        checkTestInfrastructure(USE_LEGACY_REFLECTION_IMPLEMENTATION !in module.directives) {
-            "$USE_LEGACY_REFLECTION_IMPLEMENTATION is incompatible with $PREFER_IN_TEST_OVER_STDLIB"
+        checkTestInfrastructure(
+            USE_LEGACY_REFLECTION_IMPLEMENTATION !in module.directives &&
+                    USE_K1_REFLECTION_IMPLEMENTATION_FOR_COLLECTIONS !in module.directives
+        ) {
+            "$USE_LEGACY_REFLECTION_IMPLEMENTATION and $USE_K1_REFLECTION_IMPLEMENTATION_FOR_COLLECTIONS are incompatible " +
+                    "with $PREFER_IN_TEST_OVER_STDLIB"
         }
         val libPathProvider = testServices.standardLibrariesPathProvider
         classpath += libPathProvider.runtimeJarForTests()
@@ -372,6 +381,8 @@ fun generatedTestClassLoader(
             !withReflection -> testServices.standardLibrariesPathProvider.getRuntimeJarClassLoader()
             USE_LEGACY_REFLECTION_IMPLEMENTATION in module.directives ->
                 testServices.standardLibrariesPathProvider.getRuntimeAndK1ReflectJarClassLoader()
+            USE_K1_REFLECTION_IMPLEMENTATION_FOR_COLLECTIONS in module.directives ->
+                testServices.standardLibrariesPathProvider.getRuntimeAndK1CollectionsReflectJarClassLoader()
             else -> testServices.standardLibrariesPathProvider.getRuntimeAndReflectJarClassLoader()
         }
         return GeneratedClassLoader(classFileFactory, parentClassLoader, *classpath.map { it.toURI().toURL() }.toTypedArray())

@@ -8,8 +8,11 @@ The main `kotlin-reflect` implementation is based on `kotlin-metadata-jvm` and J
 classes being inspected and combines it with the corresponding Java reflection information.
 
 There is also an older, K1-based implementation, built from parts of the K1 compiler. The legacy implementation is still used for collection
-subclasses (KT-85727) and can be selected for compatibility or troubleshooting with the system property
-`kotlin.reflect.jvm.useK1Implementation`.
+subclasses (KT-85727) and can be selected for compatibility or troubleshooting with the following system properties:
+
+* `kotlin.reflect.jvm.useK1Implementation` — use the K1-based implementation for all callables.
+* `kotlin.reflect.jvm.useK1ImplementationForCollections` — use it for subclasses of mapped builtin classes. This property is temporary and 
+  will be removed once we're sure that the new implementation has no regressions for these classes.
 
 The K1-based implementation is temporary and is going to be removed. It's fine to fix bugs or support new features only in the new
 implementation. Since tests run both for old and new implementations, sometimes it's necessary to check the value of the system property
@@ -35,5 +38,5 @@ difficulties in debugging in the IDE. To avoid all post-processing, add this Gra
 Run all kotlin-reflect tests with:
 
 ```text
-./gradlew :compiler:jvm.tests:cleanTest :compiler:jvm.tests:test --tests 'org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxCodegenTestGenerated$Box$Reflection' --tests 'org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxCodegenTestGenerated$BoxJvm$Reflection' --tests 'org.jetbrains.kotlin.test.runners.codegen.ReflectionLegacyImplementationTestGenerated' --tests 'org.jetbrains.kotlin.test.runners.ir.FirLightTreeJvmIrTextTestGenerated' :compiler:tests-integration:cleanTest :compiler:tests-integration:test --tests 'org.jetbrains.kotlin.reflection.ReflectionIntegrationTest'
+./gradlew :compiler:jvm.tests:cleanTest :compiler:jvm.tests:test --tests 'org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxCodegenTestGenerated$Box$Reflection' --tests 'org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxCodegenTestGenerated$BoxJvm$Reflection' --tests 'org.jetbrains.kotlin.test.runners.codegen.ReflectionLegacyImplementationTestGenerated' --tests 'org.jetbrains.kotlin.test.runners.codegen.ReflectionK1CollectionsImplementationTestGenerated' --tests 'org.jetbrains.kotlin.test.runners.ir.FirLightTreeJvmIrTextTestGenerated' :compiler:tests-integration:cleanTest :compiler:tests-integration:test --tests 'org.jetbrains.kotlin.reflection.ReflectionIntegrationTest'
 ```

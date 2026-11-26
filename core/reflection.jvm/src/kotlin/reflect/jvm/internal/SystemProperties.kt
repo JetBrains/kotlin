@@ -19,3 +19,19 @@ package kotlin.reflect.jvm.internal
 internal var useK1Implementation = runCatching {
     System.getProperty("kotlin.reflect.jvm.useK1Implementation")
 }.getOrNull()?.toBoolean() == true
+
+/**
+ * True if the system property `kotlin.reflect.jvm.useK1ImplementationForCollections` is set to true.
+ *
+ * It can be used to enable K1-based kotlin-reflect implementation specifically for mapped builtin classes and their subclasses.
+ *
+ * Note that if [useK1Implementation] is enabled, this property is ignored and all classes use the K1-based implementation.
+ *
+ * Changing the value of the system property after it has been read (i.e., after any non-trivial operation in kotlin-reflect)
+ * is not supported and might lead to unexpected or incorrect behavior.
+ *
+ * See KT-85727 for more information.
+ */
+internal var useK1ImplementationForCollections = runCatching {
+    System.getProperty("kotlin.reflect.jvm.useK1ImplementationForCollections")
+}.getOrNull()?.toBoolean() == true
