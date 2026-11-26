@@ -51,6 +51,14 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 
+/**
+ * Adds the `GENERATED_FIR_TAGS` footer listing the FIR constructs of the test to its test data and the variants which repeat its code,
+ * unless one of them has it already.
+ *
+ * It reads the FIR in the handlers step, as FIR2IR drops the bodies of the declarations it converts. In `updateTestData`, the edits of a
+ * managed test wait for the comparison of the inline diagnostics, which writes the test data from the text the test read: see
+ * `ManagedTestData`.
+ */
 class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(testServices) {
     private val tagsFromAllModules: MutableSet<String> = mutableSetOf()
     private val testDataFiles: List<File> by lazy { testServices.baseTestDataFile.withTestDataVariants }
