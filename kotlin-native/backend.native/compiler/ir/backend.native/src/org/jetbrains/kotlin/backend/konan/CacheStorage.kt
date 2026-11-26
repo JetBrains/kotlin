@@ -92,6 +92,7 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
         saveTrivialGetters()
         saveObjCAdapters()
         savePartialLinkageIssues()
+        saveDataFlowGraph()
     }
 
     private fun saveMetadata() {
@@ -181,5 +182,9 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
         if (issues.isEmpty()) return
 
         outputFiles.partialLinkageIssuesFile!!.writeBytes(PartialLinkageIssuesSerializer.serialize(issues))
+    }
+
+    private fun saveDataFlowGraph() {
+        generationState.serializedDFG?.let { outputFiles.dataFlowGraphFile!!.writeBytes(it) }
     }
 }

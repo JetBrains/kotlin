@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
+import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.nomain
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.konan.config.verifyBitcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
@@ -553,8 +555,13 @@ internal fun <Context, Output, P> PhaseEngine<Context>.runAndMeasurePhase(phase:
  */
 private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
     val optimize = context.shouldOptimize()
-    // It's ok to run global optimizations on a cache as long as it doesn't have other dependencies (stdlib)
-    val runGlobalOptimizations = optimize && !context.config.cachedLibraries.hasStaticCaches
+    // Cinterop libraries are thin wrappers over external functions with barely anything to globally optimize - don't run
+    // the DFG pipeline when building their caches. Consequently, their caches carry no DFG, and their declarations are mapped locally
+    // (as link-once) by every module referencing them (see [DataFlowIR.SymbolTable] and [DFGSerializer.deserialize]).
+    val runDFGBasedOptimizations = optimize && context.cacheInfo?.klib?.isCInteropLibrary() != true
+    // The optimizations requiring the whole world; all of them are based on the DFG.
+    // It's ok to run them on a cache as long as it doesn't have other dependencies (stdlib).
+    val runGlobalOptimizations = runDFGBasedOptimizations && !context.config.cachedLibraries.hasStaticCaches
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && runGlobalOptimizations
     runLowerings(
             // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
@@ -565,13 +572,16 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
             ),
             module,
     )
-    val moduleDFG = runAndMeasurePhase(BuildDFGPhase, module, disable = !runGlobalOptimizations)
+    val symbolTable = DataFlowIR.SymbolTable(context.context, context.llvmModuleSpecification, DataFlowIR.Module())
+    val externalFunctionDFGs = runAndMeasurePhase(DeserializeDFGPhase, symbolTable, disable = !runDFGBasedOptimizations)
+    val moduleDFG = runAndMeasurePhase(BuildDFGPhase, BuildDFGInput(module, symbolTable, externalFunctionDFGs), disable = !runDFGBasedOptimizations)
+    runAndMeasurePhase(SerializeDFGPhase, moduleDFG, disable = !runDFGBasedOptimizations || !context.config.produce.isCache)
     runAndMeasurePhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = !enablePreCodegenInliner)
     runAndMeasurePhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
-    runAndMeasurePhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !runGlobalOptimizations)
+    runAndMeasurePhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !runDFGBasedOptimizations)
     // KT-72336: This is more optimal but contradicts with the pre-codegen inliner.
     runAndMeasurePhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = enablePreCodegenInliner || !runGlobalOptimizations)
-    runAndMeasurePhase(DevirtualizationPhase, DevirtualizationInput(module, moduleDFG), disable = !runGlobalOptimizations)
+    runAndMeasurePhase(DevirtualizationPhase, DevirtualizationInput(module, moduleDFG), disable = !runDFGBasedOptimizations)
     runLowerings(
             createFilePhases(
                     ::RedundantCoercionsCleaner,
@@ -590,7 +600,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     runAndMeasurePhase(CreateLLVMDeclarationsPhase, module)
     runAndMeasurePhase(GHAPhase, module, disable = !runGlobalOptimizations || context.config.produce.isCache)
     runAndMeasurePhase(RTTIPhase, RTTIInput(module, dceResult))
-    val lifetimes = runAndMeasurePhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !runGlobalOptimizations)
+    val lifetimes = runAndMeasurePhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !runDFGBasedOptimizations)
     runAndMeasurePhase(CodegenPhase, CodegenInput(module, irBuiltIns, lifetimes))
 }
 

@@ -11,13 +11,12 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
-import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
+import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.lower.getLoweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
-import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
 import org.jetbrains.kotlin.backend.konan.util.LongArrayList
 import org.jetbrains.kotlin.backend.konan.util.LongHashSet
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -31,8 +30,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
@@ -69,37 +66,41 @@ internal object DevirtualizationAnalysis {
 
     private fun collectSymbolTableRoots(
             entryPoint: DataFlowIR.FunctionSymbol?,
-            functionSymbols: Collection<DataFlowIR.FunctionSymbol>,
+            localFunctionSymbols: Collection<DataFlowIR.FunctionSymbol>, // From current module.
             types: Collection<DataFlowIR.Type>,
-            functionsWithBodies: Set<DataFlowIR.FunctionSymbol>,
+            allFunctionsWithBodies: Set<DataFlowIR.FunctionSymbol>, // From all modules including the cached ones.
     ): MutableSet<DataFlowIR.FunctionSymbol> {
         val roots = mutableSetOf<DataFlowIR.FunctionSymbol>()
         if (entryPoint != null) {
             roots.add(entryPoint)
         } else {
             // In a library every public function and every function accessible via virtual call belongs to the rootset.
-            for (function in functionSymbols) {
+            for (function in localFunctionSymbols) {
                 if (function is DataFlowIR.FunctionSymbol.Public || (function as? DataFlowIR.FunctionSymbol.External)?.isExported == true)
                     roots.add(function)
             }
             for (type in types) {
                 for (function in type.vtable) {
-                    if (function is DataFlowIR.FunctionSymbol.Declared && function in functionsWithBodies)
+                    if (function is DataFlowIR.FunctionSymbol.Declared && function in allFunctionsWithBodies)
                         roots.add(function)
                 }
                 for (methods in type.itable.values) {
                     for (function in methods) {
-                        if (function is DataFlowIR.FunctionSymbol.Declared && function in functionsWithBodies)
+                        if (function is DataFlowIR.FunctionSymbol.Declared && function in allFunctionsWithBodies)
                             roots.add(function)
                     }
                 }
             }
         }
-        for (function in functionSymbols) {
-            if (function.isStaticFieldInitializer || function.isEagerStaticInitializer)
+        // The cached modules' initializers and exported functions aren't in the local symbol table,
+        // and nothing in the DFG calls them explicitly - the root set is what makes them reachable.
+        for (function in allFunctionsWithBodies) {
+            if (function.isStaticFieldInitializer || function.isEagerStaticInitializer || function.explicitlyExported)
                 roots.add(function)
         }
-        for (function in functionSymbols) {
+        // The bodiless ones (e.g. external @ExportForCppRuntime functions) are only in the local symbol table;
+        // as roots they are kept by the DCE in a whole-world build.
+        for (function in localFunctionSymbols) {
             if (function.explicitlyExported)
                 roots.add(function)
         }
@@ -107,7 +108,7 @@ internal object DevirtualizationAnalysis {
         return roots
     }
 
-    fun computeRootSet(context: NativeBackendContext, irModule: IrModuleFragment, moduleDFG: ModuleDFG): List<DataFlowIR.FunctionSymbol> {
+    fun computeRootSet(context: NativeBackendContext, moduleDFG: ModuleDFG): List<DataFlowIR.FunctionSymbol> {
         val entryPoint = context.symbols.entryPoint?.owner?.let { moduleDFG.symbolTable.mapFunction(it) }
         val roots = collectSymbolTableRoots(
                 entryPoint,
@@ -116,32 +117,8 @@ internal object DevirtualizationAnalysis {
                 moduleDFG.functions.keys,
         )
 
-        irModule.acceptChildrenVoid(object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                declaration.acceptChildrenVoid(this)
-
-                // Conservatively assume each associated object could be called. Its final type will be
-                // added to instantiating classes through the constructor's additional <this> parameter.
-                context.getLayoutBuilder(declaration).associatedObjects.values.forEach {
-                    assert(it.kind == ClassKind.OBJECT) { "An object expected but was ${it.dump()}" }
-                    roots.add(moduleDFG.symbolTable.mapFunction(context.getObjectClassInstanceFunction(it)))
-                }
-            }
-
-            // At this point all function references are lowered except those leaking to the native world.
-            // Conservatively assume them belonging of the root set.
-            override fun visitRawFunctionReference(expression: IrRawFunctionReference) {
-                expression.acceptChildrenVoid(this)
-
-                val function = expression.symbol.owner
-                require(function is IrSimpleFunction) { "All constructors should've been lowered: ${expression.render()}" }
-                roots.add(moduleDFG.symbolTable.mapFunction(function))
-            }
-        })
+        roots.addAll(moduleDFG.additionalRoots)
+        roots.addAll(moduleDFG.symbolTable.deserializedAdditionalRoots)
 
         return roots.toList()
     }
@@ -274,7 +251,7 @@ internal object DevirtualizationAnalysis {
                 vtable[callSite.calleeVtableIndex]
 
             is DataFlowIR.Node.ItableCall ->
-                itable[callSite.interfaceId]!![callSite.calleeItableIndex]
+                itable[callSite.interfaceId]!![callSite.calleeVtableIndex]
         }
 
         fun logPathToType(reversedEdges: IntArray, node: Node, type: Int) {
@@ -779,7 +756,7 @@ internal object DevirtualizationAnalysis {
             }
             val typeHierarchy = moduleDFG.symbolTable.typeHierarchy
             val allTypes = typeHierarchy.allTypes
-            val rootSet = computeRootSet(context, irModule, moduleDFG)
+            val rootSet = computeRootSet(context, moduleDFG)
 
             val (instantiatingClasses, directEdges, reversedEdges) = buildConstraintGraph(functions, rootSet)
 
@@ -1009,13 +986,13 @@ internal object DevirtualizationAnalysis {
                     val devirtualizedCallSite = DevirtualizedCallSite(virtualCall.callee,
                             possibleReceivers.map { possibleReceiverType ->
                                 val callee = possibleReceiverType.calleeAt(virtualCall)
-                                if (callee is DataFlowIR.FunctionSymbol.Declared && callee.symbolTableIndex < 0)
-                                    error("Function ${possibleReceiverType}.$callee cannot be called virtually," +
-                                            " but actually is at call site: ${virtualCall.debugString()}")
                                 DevirtualizedCallee(possibleReceiverType, callee)
                             })
                     result[virtualCall] = devirtualizedCallSite to function.symbol
-                    virtualCall.irCallSite?.devirtualizedCallSite = devirtualizedCallSite
+                    if (virtualCall.irCallSite != null)
+                        virtualCall.irCallSite.devirtualizedCallSite = devirtualizedCallSite
+                    else
+                        virtualCall.devirtualizedCallSite = devirtualizedCallSite
                 }
             }
 
@@ -1138,7 +1115,7 @@ internal object DevirtualizationAnalysis {
                         VirtualDispatchKey(node.receiverType.index, 0 /* Invalid value */, node.calleeVtableIndex)
 
                     is DataFlowIR.Node.ItableCall ->
-                        VirtualDispatchKey(node.receiverType.index, node.interfaceId, node.calleeItableIndex)
+                        VirtualDispatchKey(node.receiverType.index, node.interfaceId, node.calleeVtableIndex)
                 }
             }
         }
@@ -1284,7 +1261,14 @@ internal object DevirtualizationAnalysis {
             }
 
             private fun createFunctionConstraintGraph(symbol: DataFlowIR.FunctionSymbol, isRoot: Boolean): Function? {
-                if (symbol is DataFlowIR.FunctionSymbol.External) return null
+                if (symbol is DataFlowIR.FunctionSymbol.External
+                        // A declared function might have no body here: e.g. a function from a cinterop library, whose cache
+                        // carries no DFG. Nothing is known about what it returns, so its callers must treat it as an external one.
+                        || (!isRoot && symbol !in functions)
+                ) {
+                    return null
+                }
+
                 constraintGraph.functions[symbol]?.let { return it }
 
                 val parameters = Array(symbol.parameters.size) { ordinaryNode { "Param#$it\$$symbol" } }
@@ -1639,9 +1623,6 @@ internal object DevirtualizationAnalysis {
                 arguments[0] = value
             }
 
-    private fun IrBuilderWithScope.irCoerce(value: IrExpression, coercion: DataFlowIR.FunctionSymbol.Declared?) =
-            irCoerce(value, coercion?.let { it.irFunction?.symbol!! })
-
     sealed class PossiblyCoercedValue(private val coercion: IrFunctionSymbol?) {
         abstract fun getValue(irBuilder: IrBuilderWithScope): IrExpression
         fun getFullValue(irBuilder: IrBuilderWithScope): IrExpression = irBuilder.run { irCoerce(getValue(this), coercion) }
@@ -1671,7 +1652,7 @@ internal object DevirtualizationAnalysis {
         val getObjectTypeInfo = symbols.getObjectTypeInfo
         val createUninitializedInstance = symbols.createUninitializedInstance
         val kClassImplType = symbols.kClassImpl.defaultType
-        val kClassImplConstructorImpl = symbols.kClassImplConstructor.owner.loweredConstructorFunction!!
+        val kClassImplConstructorImpl = context.getLoweredConstructorFunction(symbols.kClassImplConstructor.owner)
         val throwInvalidReceiverTypeException = symbols.throwInvalidReceiverTypeException
 
         val optimize = context.shouldOptimize()
@@ -1705,19 +1686,6 @@ internal object DevirtualizationAnalysis {
                     else PossiblyCoercedValue.OverExpression(expression, null)
                 }
 
-        fun getTypeConversion(actualType: DataFlowIR.FunctionParameter,
-                              targetType: DataFlowIR.FunctionParameter): DataFlowIR.FunctionSymbol.Declared? {
-            if (actualType.boxFunction == null && targetType.boxFunction == null) return null
-            if (actualType.boxFunction != null && targetType.boxFunction != null) {
-                assert(actualType.type == targetType.type)
-                { "Inconsistent types: ${actualType.type} and ${targetType.type}" }
-                return null
-            }
-            if (actualType.boxFunction == null)
-                return targetType.unboxFunction as DataFlowIR.FunctionSymbol.Declared
-            return actualType.boxFunction as DataFlowIR.FunctionSymbol.Declared
-        }
-
         fun irDevirtualizedCall(callSite: IrCall,
                                 actualType: IrType,
                                 actualCallee: IrSimpleFunction,
@@ -1740,22 +1708,31 @@ internal object DevirtualizationAnalysis {
 
         fun IrBuilderWithScope.irDevirtualizedCall(callSite: IrCall, actualType: IrType,
                                                    actualCallee: DataFlowIR.FunctionSymbol,
+                                                   actualCalleeIr: IrSimpleFunction,
                                                    arguments: List<PossiblyCoercedValue>): IrExpression {
             return (actualCallee as? DataFlowIR.FunctionSymbol.Declared)?.bridgeTarget.let { bridgeTarget ->
-                if (bridgeTarget == null || genericSafeCasts) // Can't easily inline bridges with casts.
+                // A bridge only gets here with its IR attached (an IR-less deserialized bridge is never devirtualized, see
+                // [resolveIrFunction]), but its target might belong to a cached library with the DFG symbol having no IR attached,
+                // so the target's IR is taken from the bridge's IR instead. Such a target must be public: the DFG rebuild of
+                // the transformed callers resolves cross-module callees by hash through [DataFlowIR.SymbolTable.externalPublicFunctions].
+                val canInlineBridge = bridgeTarget != null
+                        && !genericSafeCasts // Can't easily inline bridges with casts.
+                        && (bridgeTarget.irFunction != null || bridgeTarget is DataFlowIR.FunctionSymbol.Public)
+                if (!canInlineBridge)
                     irDevirtualizedCall(callSite, actualType,
-                            actualCallee.irFunction!!,
+                            actualCalleeIr,
                             arguments.map { it.getFullValue(this@irDevirtualizedCall) }
                     )
                 else {
+                    val bridgeTargetIr = actualCalleeIr.bridgeTarget!!.target
                     val callResult = irDevirtualizedCall(callSite, actualType,
-                            bridgeTarget.irFunction!!,
+                            bridgeTargetIr,
                             arguments.mapIndexed { index, value ->
-                                val coercion = getTypeConversion(actualCallee.parameters[index], bridgeTarget.parameters[index])
+                                val coercion = context.getTypeConversion(actualCalleeIr.parameters[index].type, bridgeTargetIr.parameters[index].type)
                                 val fullValue = value.getFullValue(this@irDevirtualizedCall)
                                 coercion?.let { irCoerce(fullValue, coercion) } ?: fullValue
                             })
-                    val returnCoercion = getTypeConversion(bridgeTarget.returnParameter, actualCallee.returnParameter)
+                    val returnCoercion = context.getTypeConversion(bridgeTargetIr.returnType, actualCalleeIr.returnType)
                     irCoerce(callResult, returnCoercion)
                 }
             }
@@ -1803,6 +1780,26 @@ internal object DevirtualizationAnalysis {
                     // Callsite too complicated to devirtualize.
                     return expression
                 }
+
+                // A callee that came from a cached library's DFG has no IR attached, but its declaration can still
+                // be found in the IR of its declaring class - as the member overriding the function being called.
+                // The lookup only works when:
+                //  - the declaring class' IR is present (it is attached when anything in the current module references the class,
+                //    see [DataFlowIR.SymbolTable.mapClassReferenceType])
+                //  - the callee is not a bridge: bridges are synthesized by lowerings and don't exist in the deserialized
+                //    (unlowered) IR of a dependency
+                //  - the callee is public: only public functions are resolved cross-module by hash through
+                //    [DataFlowIR.SymbolTable.externalPublicFunctions]
+                // If some possible callee cannot be resolved, there is no way to reference it from the IR - keep the call site virtual.
+                fun DataFlowIR.FunctionSymbol.resolveIrFunction(): IrSimpleFunction? {
+                    irFunction?.let { return it }
+                    if (isBridge || this !is DataFlowIR.FunctionSymbol.Public) return null
+                    val declaringClass = declaringType?.irClass ?: return null
+                    return declaringClass.simpleFunctions().firstOrNull { it.isReal && it.overrides(callee) }
+                }
+
+                val resolvedCallees = possibleCallees.map { it.first.resolveIrFunction() ?: return expression }
+
                 ++actuallyDevirtualizedCallSitesCount
                 changedDeclarations.add(caller as IrDeclaration)
 
@@ -1828,7 +1825,7 @@ internal object DevirtualizationAnalysis {
                                     // Temporary val is not required here for a parameter, since each one is used for only one devirtualized callsite
                                     irSplitCoercion(caller, arg.second, tempName = null, arg.first.type)
                                 }
-                                +irDevirtualizedCall(expression, type, possibleCallees[0].first, parameters)
+                                +irDevirtualizedCall(expression, type, possibleCallees[0].first, resolvedCallees[0], parameters)
                             }
                         }
 
@@ -1848,17 +1845,22 @@ internal object DevirtualizationAnalysis {
                              * (since the number of possible callees is small, it is ok in terms of performance).
                              */
 
-                            data class Target(val actualCallee: DataFlowIR.FunctionSymbol, val possibleReceivers: List<DataFlowIR.Type>) {
-                                val declType = actualCallee.irFunction!!.parentAsClass
+                            data class Target(val actualCallee: DataFlowIR.FunctionSymbol,
+                                              val actualCalleeIr: IrSimpleFunction,
+                                              val possibleReceivers: List<DataFlowIR.Type>) {
+                                val declType = actualCalleeIr.parentAsClass
+                                // Comparing type infos requires the receiver class' IR; without it (a receiver type from a cached
+                                // library's DFG that nothing in the current module references), fall back to the full type check.
+                                val singleTypeInfoCheck = possibleReceivers.size == 1 && possibleReceivers[0].irClass != null
                                 val weight = when {
-                                    possibleReceivers.size == 1 -> 0 // The fastest.
+                                    singleTypeInfoCheck -> 0 // The fastest.
                                     declType.isInterface -> 2 // The slowest.
                                     else -> 1 // In between.
                                 }
                                 var used = false
                             }
 
-                            val targets = possibleCallees.map { Target(it.first, it.second) }
+                            val targets = possibleCallees.mapIndexed { index, it -> Target(it.first, resolvedCallees[index], it.second) }
                             var bestOrder: List<Target>? = null
                             var bestLexOrder = Int.MAX_VALUE
                             fun backTrack(order: List<Target>, lexOrder: Int) {
@@ -1895,20 +1897,21 @@ internal object DevirtualizationAnalysis {
                             }
                             val branches = mutableListOf<IrBranchImpl>()
                             bestOrder!!.mapIndexedTo(branches) { index, target ->
-                                (val actualCallee, val receiverTypes = possibleReceivers) = target
+                                (val actualCallee, val actualCalleeIr, val receiverTypes = possibleReceivers) = target
                                 val condition = when {
                                     optimize && index == possibleCallees.size - 1 -> {
                                         // Don't check the last type in optimize mode.
                                         irTrue()
                                     }
-                                    receiverTypes.size == 1 -> {
+                                    target.singleTypeInfoCheck -> {
                                         // It is faster to just compare type infos instead of a full type check.
                                         val receiverType = receiverTypes[0]
+                                        val receiverClass = receiverType.irClass!!
                                         val expectedTypeInfo = IrClassReferenceImpl(
                                                 startOffset, endOffset,
                                                 symbols.nativePtrType,
-                                                receiverType.irClass!!.symbol,
-                                                receiverType.irClass.defaultType
+                                                receiverClass.symbol,
+                                                receiverClass.defaultType
                                         )
                                         irCall(nativePtrEqualityOperatorSymbol).apply {
                                             this.arguments[0] = irGet(typeInfo)
@@ -1925,7 +1928,7 @@ internal object DevirtualizationAnalysis {
                                         startOffset = startOffset,
                                         endOffset = endOffset,
                                         condition = condition,
-                                        result = irDevirtualizedCall(expression, type, actualCallee, arguments)
+                                        result = irDevirtualizedCall(expression, type, actualCallee, actualCalleeIr, arguments)
                                 )
                             }
                             if (!optimize) { // Add else branch throwing exception for debug purposes.

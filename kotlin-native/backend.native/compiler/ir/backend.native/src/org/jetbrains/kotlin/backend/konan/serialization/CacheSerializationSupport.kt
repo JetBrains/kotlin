@@ -236,6 +236,13 @@ internal class ClassFieldsDeserializer(
 ) {
     private val lock = Any()
 
+    // The cache only carries the fields of the exported classes (see [CacheInfoBuilder]).
+    fun hasClassFields(irClass: IrClass): Boolean = synchronized(lock) {
+        val signature = irClass.symbol.signature ?: return false
+        if (cachedLibraries.getLibraryCache(deserializer.klib, allowIncomplete = true) == null) return false
+        classesFields[signature] != null
+    }
+
     fun deserializeClassFields(irClass: IrClass, outerThisFieldInfo: ClassLayoutBuilder.FieldInfo?): List<ClassLayoutBuilder.FieldInfo> = synchronized(lock) {
         val signature = irClass.symbol.signature
                 ?: error("No signature for ${irClass.render()}")
@@ -333,7 +340,7 @@ internal object InlineFunctionBodyReferenceSerializer {
             stream.writeInt(it.endOffset)
             stream.writeIntArray(it.defaultValues)
         }
-        return stream.buf
+        return stream.toByteArray()
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedInlineFunctionReference>) {
@@ -409,7 +416,7 @@ internal abstract class IdSignatureAwareSerializer<T : FileAwareSerializedData> 
             stream.writeInt(signatureSerializer[signatureOf(item)]!!)
             stream.writeExtraPayload(stringTable, item)
         }
-        return IrArrayWriter(listOf(signatures, signatureStrings, stream.buf), false).writeIntoMemory()
+        return IrArrayWriter(listOf(signatures, signatureStrings, stream.toByteArray()), false).writeIntoMemory()
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<T>) {
@@ -572,7 +579,7 @@ internal object ObjCAdapterSerializer {
                 }
             }
         }
-        return stream.buf
+        return stream.toByteArray()
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedObjCAdapter>) {
@@ -643,7 +650,7 @@ internal object EagerInitializedPropertySerializer {
             stream.writeInt(stringTable.indices[it.file.fqName]!!)
             stream.writeInt(stringTable.indices[it.file.path]!!)
         }
-        return stream.buf
+        return stream.toByteArray()
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedEagerInitializedFile>) {

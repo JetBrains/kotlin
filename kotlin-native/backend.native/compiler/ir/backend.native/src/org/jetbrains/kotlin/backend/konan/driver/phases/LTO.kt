@@ -27,17 +27,39 @@ internal val GHAPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Ir
         }
 )
 
-internal val BuildDFGPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, ModuleDFG>(
+internal data class BuildDFGInput(
+        val irModule: IrModuleFragment,
+        val symbolTable: DataFlowIR.SymbolTable,
+        val externalFunctionDFGs: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
+)
+
+internal val BuildDFGPhase = createSimpleNamedCompilerPhase<NativeGenerationState, BuildDFGInput, ModuleDFG>(
         name = "BuildDFG",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
-        outputIfNotEnabled = { _, _, generationState, _ ->
-            val context = generationState.context
-            val symbolTable = DataFlowIR.SymbolTable(context, DataFlowIR.Module())
-            ModuleDFG(mutableMapOf(), symbolTable)
-        },
-        op = { generationState, irModule ->
-            ModuleDFGBuilder(generationState, irModule).build()
+        outputIfNotEnabled = { _, _, _, input -> ModuleDFG(mutableMapOf(), input.symbolTable) },
+        op = { generationState, (irModule, symbolTable, externalFunctionDFGs) ->
+            ModuleDFGBuilder(generationState, irModule, symbolTable, externalFunctionDFGs).build()
+        }
+)
+
+internal val DeserializeDFGPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DataFlowIR.SymbolTable, Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>>(
+        name = "DeserializeDFG",
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
+        outputIfNotEnabled = { _, _, _, _ -> emptyMap() },
+        op = { generationState, symbolTable ->
+            DFGSerializer.deserialize(generationState.context, symbolTable)
+        }
+)
+
+internal val SerializeDFGPhase = createSimpleNamedCompilerPhase<NativeGenerationState, ModuleDFG, Unit>(
+        name = "SerializeDFG",
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
+        outputIfNotEnabled = { _, _, _, _ -> },
+        op = { generationState, moduleDFG ->
+            generationState.serializedDFG = DFGSerializer.serialize(moduleDFG)
         }
 )
 

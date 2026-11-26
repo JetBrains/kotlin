@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.ir.annotations.Escapes
 import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsTo
 import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsToKind
-import org.jetbrains.kotlin.backend.konan.ir.hasFinalizer
 import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
@@ -201,8 +200,8 @@ internal object EscapeAnalysis {
                 for (i in path.indices) {
                     if (i >= other.path.size)
                         return 1
-                    if (path[i].index != other.path[i].index)
-                        return path[i].index.compareTo(other.path[i].index)
+                    if (path[i].hash != other.path[i].hash)
+                        return path[i].hash.compareTo(other.path[i].hash)
                 }
                 if (path.size < other.path.size) return -1
                 return 0
@@ -225,7 +224,7 @@ internal object EscapeAnalysis {
                 append(root ?: kind.toString())
                 path.forEach {
                     append('.')
-                    append(it.name ?: "<no_name@${it.index}>")
+                    append(it.name ?: "<no_name@${it.hash}>")
                 }
             }
 
@@ -740,7 +739,8 @@ internal object EscapeAnalysis {
                         && !callee.name.startsWith("kfun:kotlin.concurrent")) {
                     context.log { "A function from K/N runtime - can use annotations" }
                     if (callee.irFunction?.isBuiltInOperator == false) { // If callee is a function, but not a builtin operator
-                        if (callee.escapes == null && callee.pointsTo == null) { // and it had no EA annotations
+                        if ((callee as? DataFlowIR.FunctionSymbol.External)?.escapes == null
+                                && (callee as? DataFlowIR.FunctionSymbol.External)?.pointsTo == null) { // and it had no EA annotations
                             require(callee.parameters.all { it.type.irClass == null }) { // all of its parameters must be primitive types
                                 "Function ${callee.name} has reference parameters and is missing EA annotations. Must have been handled by SpecialBackendChecksTraversal"
                             }
@@ -749,7 +749,11 @@ internal object EscapeAnalysis {
                             }
                         }
                     }
-                    FunctionEscapeAnalysisResult.fromAnnotations(callee.escapes, callee.pointsTo, callee.parameters.size)
+                    FunctionEscapeAnalysisResult.fromAnnotations(
+                            (callee as? DataFlowIR.FunctionSymbol.External)?.escapes,
+                            (callee as? DataFlowIR.FunctionSymbol.External)?.pointsTo,
+                            callee.parameters.size
+                    )
                 } else {
                     context.log { "An unknown function - assume pessimistic result" }
                     FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
@@ -1010,7 +1014,7 @@ internal object EscapeAnalysis {
                         returnsNode.getFieldNode(returnsValueField, this).addAssignmentEdge(nodes[it.node]!!)
                 }
 
-                val escapes = functionSymbol.escapes
+                val escapes = (functionSymbol as? DataFlowIR.FunctionSymbol.External)?.escapes
                 if (escapes != null) {
                     for (parameter in parameters)
                         if (escapes.escapesAt(parameter.index))
@@ -1680,14 +1684,27 @@ internal object EscapeAnalysis {
                 val allowedToAlloc = 65536
                 val stackArrayCandidates = mutableListOf<ArrayStaticAllocation>()
                 for ([node, ptgNode] in nodes) {
-                    if (node.ir == null) continue
-
                     val computedLifetime = lifetimeOf(node)
                     var lifetime = computedLifetime
 
                     if (lifetime != Lifetime.STACK) {
                         // TODO: Support other lifetimes - requires arenas.
                         lifetime = Lifetime.GLOBAL
+                    }
+
+                    if (node.ir == null) {
+                        // The node belongs to a module deserialized from a cache. That module's own analysis has already decided where
+                        // this allocation lives, and it may well be the heap even when the current analysis proves the node local.
+                        // The decision cannot be influenced from here, so treat every such allocation as potentially exiled to the heap:
+                        // whatever is stored into it must not end up on the stack.
+                        if (computedLifetime != Lifetime.GLOBAL &&
+                                node is DataFlowIR.Node.Alloc &&
+                                (propagateExiledToHeapObjects || node.type.hasFinalizer)
+                        ) {
+                            escapeOrigins += ptgNode
+                            propagateEscapeOrigin(ptgNode)
+                        }
+                        continue
                     }
 
                     if (lifetime == Lifetime.STACK && node is DataFlowIR.Node.AllocArray) {
@@ -1709,8 +1726,17 @@ internal object EscapeAnalysis {
                         }
                     }
 
-                    val isAllocOfFinalizedClass = node is DataFlowIR.Node.Alloc && node.type.irClass?.hasFinalizer == true
+                    val isAllocOfFinalizedClass = node is DataFlowIR.Node.Alloc && node.type.hasFinalizer
                     if (lifetime == Lifetime.STACK && isAllocOfFinalizedClass)
+                        lifetime = Lifetime.GLOBAL
+
+                    // A stack allocation needs the class' body layout, which is not computable for every class (e.g. for
+                    // a non-exported class of a cached library, whose fields are not serialized into the cache) - keep such
+                    // allocations on the heap.
+                    // Note: this does not concern stack arrays - their layout is built from the builtin element types.
+                    val notStackAllocatable = node is DataFlowIR.Node.AllocInstance
+                            && node.type.irClass?.let { context.getLayoutBuilder(it).isBodyLayoutComputable } != true
+                    if (lifetime == Lifetime.STACK && notStackAllocatable)
                         lifetime = Lifetime.GLOBAL
 
                     if (lifetime != computedLifetime) {

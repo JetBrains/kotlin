@@ -142,7 +142,7 @@ private class CallGraphHierarchyDispatchCache(
                 is DataFlowIR.Node.VtableCall ->
                     Key(call.receiverType.index, 0 /* Invalid interface ID */, call.calleeVtableIndex)
                 is DataFlowIR.Node.ItableCall ->
-                    Key(call.receiverType.index, call.interfaceId, call.calleeItableIndex)
+                    Key(call.receiverType.index, call.interfaceId, call.calleeVtableIndex)
             }
     ) {
         val collector = CallGraphCalleeCollector(unfoldFactor)
@@ -153,7 +153,7 @@ private class CallGraphHierarchyDispatchCache(
             if (receiverType.isAbstract) return@forEachBit
             val actualCallee = when (call) {
                 is DataFlowIR.Node.VtableCall -> receiverType.vtable[call.calleeVtableIndex]
-                is DataFlowIR.Node.ItableCall -> receiverType.itable[call.interfaceId]!![call.calleeItableIndex]
+                is DataFlowIR.Node.ItableCall -> receiverType.itable[call.interfaceId]!![call.calleeVtableIndex]
             }
             collector.add(actualCallee, handleRoot)
         }
@@ -224,7 +224,7 @@ internal class CallGraphBuilder(
     }
 
     fun build(): CallGraph {
-        val rootSet = DevirtualizationAnalysis.computeRootSet(context, irModule, moduleDFG)
+        val rootSet = DevirtualizationAnalysis.computeRootSet(context, moduleDFG)
         rootSet.forEach { handleRoot(it) }
 
         functionStack.process()
@@ -305,7 +305,9 @@ internal class CallGraphBuilder(
     private fun handleFunction(symbol: DataFlowIR.FunctionSymbol.Declared, function: DataFlowIR.Function) {
         val body = function.body
         body.forEachCallSite { call, node ->
-            val devirtualizedCallSite = (call as? DataFlowIR.Node.VirtualCall)?.irCallSite?.devirtualizedCallSite
+            val devirtualizedCallSite = (call as? DataFlowIR.Node.VirtualCall)?.let {
+                it.irCallSite?.devirtualizedCallSite ?: it.devirtualizedCallSite
+            }
             when {
                 call !is DataFlowIR.Node.VirtualCall -> staticCall(symbol, CallGraphNode.CallSite.Static.Single(call, node, call.callee))
 
