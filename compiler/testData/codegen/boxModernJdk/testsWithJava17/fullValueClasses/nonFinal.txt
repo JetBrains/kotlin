@@ -77,13 +77,6 @@ public final class FromSealedIdentity {
 }
 
 @kotlin.Metadata
-public final class Generated_Box_MainKt {
-    // source: 'Generated_Box_Main.kt'
-    public final static method main(): void
-    public synthetic static method main(p0: java.lang.String[]): void
-}
-
-@kotlin.Metadata
 public final class NonFinalKt {
     // source: 'nonFinal.kt'
     private final static @org.jetbrains.annotations.NotNull field globalIntsLog: java.util.List
