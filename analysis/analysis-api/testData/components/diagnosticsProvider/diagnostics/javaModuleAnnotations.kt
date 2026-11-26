@@ -1,4 +1,13 @@
-// MODULE: main
+// MODULE: dependency
+// MODULE_KIND: LibraryBinary
+// FILE: test/Test.java
+package test;
+
+public class Test {
+    public void foo(Integer x) {}
+}
+
+// MODULE: main(dependency)
 // FILE: org/jspecify/annotations/NullMarked.java
 package org.jspecify.annotations;
 

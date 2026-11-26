@@ -543,6 +543,52 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         )
     }
 
+    @Test
+    fun testJavaModuleResolverForFileOutsideSourceModules() {
+        val setup = buildJavaModuleResolutionTestSession()
+        val sharedFile = setup.session.modulesWithFiles.getValue(setup.sourceA).single { it.name == "shared.kt" }
+        val outsidePath = testDataPath("notUnderContentRoot").resolve("outside").resolve("outside.kt").toAbsolutePath()
+        val outsideFile = setup.session.coreApplicationEnvironment.localFileSystem.findFileByPath(outsidePath.toString())
+            ?: error("Cannot find a virtual file for $outsidePath")
+        val checker = KotlinJavaModuleAccessibilityChecker.getInstance(setup.session.project)
+
+        Assertions.assertEquals(
+            KotlinJavaModuleAccessibilityError.ModuleDoesNotReadUnnamedModule,
+            checker.checkAccessibility(sharedFile.virtualFile, outsideFile, FqName.ROOT),
+        )
+    }
+
+    @Test
+    fun testJavaModuleResolverWithDuplicateModuleNames() {
+        val root = testDataPath("javaModuleResolverDuplicateName")
+        lateinit var sourceA: KaSourceModule
+        lateinit var sourceB: KaSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                sourceA = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(root.resolve("sourceA"))
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "sourceA"
+                    }
+                )
+                sourceB = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(root.resolve("sourceB"))
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "sourceB"
+                    }
+                )
+            }
+        }
+        val sourceAFile = session.modulesWithFiles.getValue(sourceA).single()
+        val sourceBFile = session.modulesWithFiles.getValue(sourceB).single()
+        val checker = KotlinJavaModuleAccessibilityChecker.getInstance(session.project)
+
+        Assertions.assertNull(checker.checkAccessibility(sourceAFile.virtualFile, sourceBFile.virtualFile, FqName.ROOT))
+    }
+
     private fun buildJavaModuleResolutionTestSession(): JavaModuleResolutionTestSetup {
         val root = testDataPath("javaModuleResolver")
         lateinit var sourceA: KaSourceModule
