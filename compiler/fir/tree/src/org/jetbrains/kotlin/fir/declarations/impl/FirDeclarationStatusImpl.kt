@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl.Modifier.*
+import org.jetbrains.kotlin.fir.declarations.impl.DeclarationStatusModifier.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
@@ -28,9 +28,9 @@ open class FirDeclarationStatusImpl(
     @FirImplementationDetail
     internal val rawFlags get() = flags
 
-    operator fun get(modifier: Modifier): Boolean = (flags and modifier.mask) != 0
+    operator fun get(modifier: DeclarationStatusModifier): Boolean = (flags and modifier.mask) != 0
 
-    operator fun set(modifier: Modifier, value: Boolean) {
+    operator fun set(modifier: DeclarationStatusModifier, value: Boolean) {
         flags = if (value) {
             flags or modifier.mask
         } else {
@@ -177,33 +177,6 @@ open class FirDeclarationStatusImpl(
             }
         }
 
-    enum class Modifier(val mask: Int) {
-        EXPECT(0x1),
-        ACTUAL(0x2),
-        OVERRIDE(0x4),
-        OPERATOR(0x8),
-        INFIX(0x10),
-        INLINE(0x20),
-        TAILREC(0x40),
-        EXTERNAL(0x80),
-        CONST(0x100),
-        LATEINIT(0x200),
-        INNER(0x400),
-        COMPANION(0x800),
-        DATA(0x1000),
-        SUSPEND(0x2000),
-        STATIC(0x4000),
-        FROM_SEALED(0x8000),
-        FROM_ENUM(0x10000),
-        FUN(0x20000),
-        HAS_STABLE_PARAMETER_NAMES(0x40000),
-        VALUE(0x80000),
-        HAS_MUST_USE_RETURN_VALUE(0x100000),
-        HAS_IGNORABLE_RETURN_VALUE(0x200000),
-        RICH_ERROR(0x400000)
-        ;
-    }
-
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDeclarationStatusImpl {
@@ -263,3 +236,4 @@ val FirDeclarationStatus.modifiersRepresentation: Int
         is FirDeclarationStatusImpl -> rawFlags
         else -> error("Generating modifier representations for ${this::class.simpleName} is not supported")
     }
+

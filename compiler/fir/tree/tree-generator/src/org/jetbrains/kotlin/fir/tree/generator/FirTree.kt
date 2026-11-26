@@ -828,6 +828,71 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("effectiveVisibility", effectiveVisibilityType)
     }
 
+    val declarationStatusBase: Element by element(Declaration) {
+        kind = ImplementationKind.Interface
+
+        +field(visibilityType)
+        +field(modalityType, nullable = true)
+        generateBooleanFields(
+            "expect", "actual", "external", "fromSealedClass", "fromEnumClass"
+        )
+        +field("defaultVisibility", visibilityType, nullable = false)
+        +field("defaultModality", modalityType, nullable = false)
+    }
+
+    val callableDeclarationStatus: Element by element(Declaration) {
+        kind = ImplementationKind.Interface
+
+        parent(declarationStatusBase)
+
+        generateBooleanFields(
+            "override", "operator", "infix", "inline", "tailRec",
+            "const", "lateInit", "suspend", "static", "hasStableParameterNames"
+        )
+        +field("returnValueStatus", returnValueStatusType, nullable = false)
+    }
+
+    val classLikeDeclarationStatus: Element by element(Declaration) {
+        kind = ImplementationKind.Interface
+
+        parent(declarationStatusBase)
+
+        generateBooleanFields(
+            "inline", "value", "inner", "companion", "data", "fun", "richError"
+        )
+
+        fields.find { it.name == "isRichError" }!!.kDoc = "A class or object with the `error` modifier."
+    }
+
+    val resolvedDeclarationStatusBase: Element by element(Declaration) {
+        kind = ImplementationKind.Interface
+
+        parent(declarationStatusBase)
+
+        +field(modalityType, nullable = false)
+        +field("effectiveVisibility", effectiveVisibilityType)
+    }
+
+    val resolvedCallableDeclarationStatus: Element by element(Declaration) {
+        kind = ImplementationKind.Interface
+
+        parent(callableDeclarationStatus)
+        parent(resolvedDeclarationStatusBase)
+
+        +field(modalityType, nullable = false)
+        +field("effectiveVisibility", effectiveVisibilityType)
+    }
+
+    val resolvedClassLikeDeclarationStatus: Element by element(Declaration) {
+        kind = ImplementationKind.Interface
+
+        parent(classLikeDeclarationStatus)
+        parent(resolvedDeclarationStatusBase)
+
+        +field(modalityType, nullable = false)
+        +field("effectiveVisibility", effectiveVisibilityType)
+    }
+
     val implicitInvokeCall: Element by element(Expression) {
         parent(functionCall)
 

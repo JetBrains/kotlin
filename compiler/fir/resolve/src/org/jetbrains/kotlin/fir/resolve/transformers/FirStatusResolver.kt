@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.DeclarationStatusModifier
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -32,8 +33,8 @@ class FirStatusResolver(
 ) : SessionAndScopeSessionHolder {
     companion object {
         private val MODIFIERS_FROM_OVERRIDDEN = EnumSet.of(
-            FirDeclarationStatusImpl.Modifier.OPERATOR,
-            FirDeclarationStatusImpl.Modifier.INFIX,
+            DeclarationStatusModifier.OPERATOR,
+            DeclarationStatusModifier.INFIX,
         )
     }
 

@@ -49,7 +49,8 @@ class InterfaceAndAbstractClassConfigurator(val elements: List<ImplementationKin
                         ImplementationKind.AbstractClass
                 }
             } else {
-                element.kind = ImplementationKind.Interface
+                val kind = existingKind?.takeIf { it == ImplementationKind.SealedInterface } ?: ImplementationKind.Interface
+                element.kind = kind
             }
         }
     }
