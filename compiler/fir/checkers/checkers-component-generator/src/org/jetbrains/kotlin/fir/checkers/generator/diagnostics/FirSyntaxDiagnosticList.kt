@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategyKind
 
 @Suppress("UNUSED_VARIABLE", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
 object SYNTAX_DIAGNOSTIC_LIST : DiagnosticList("FirSyntaxErrors") {
     val Syntax by object : DiagnosticGroup("Syntax") {
-        val SYNTAX by error<PsiElement>(positioningStrategy = PositioningStrategy.SYNTAX_ERROR) {
+        val SYNTAX by error<PsiElement>(positioningStrategyKind = PositioningStrategyKind.SYNTAX_ERROR) {
             parameter<String>("message")
         }
         val LEADING_WHITESPACE_REQUIRED by error<PsiElement>()

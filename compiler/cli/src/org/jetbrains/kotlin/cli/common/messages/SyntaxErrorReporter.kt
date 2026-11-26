@@ -36,7 +36,7 @@ object SyntaxErrorReporter {
             val diagnostic = FirSyntaxErrors.SYNTAX.on(
                 KtRealPsiSourceElement(element),
                 message,
-                positioningStrategy = null,
+                positioningStrategyKind = null,
                 context,
             )
             diagnosticCollector.report(diagnostic, context)

@@ -13,14 +13,14 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.MaterializedSchema
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 object FirDataFrameErrors : KtDiagnosticsContainer() {
-    val CAST_ERROR by warning1<String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val CAST_TARGET_WARNING by warning1<String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val MATERIALIZED_SCHEMA_INFO by info1<MaterializedSchema>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val MATERIALIZED_SCHEMA_ON_CAST by warning1<MaterializedSchema>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE by warning0(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_GENERIC by warning0(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val DATA_SCHEMA_DECLARATION_VISIBILITY by error1<String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
-    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR by error0(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val CAST_ERROR by warning1<String>(PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED)
+    val CAST_TARGET_WARNING by warning1<String>(PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED)
+    val MATERIALIZED_SCHEMA_INFO by info1<MaterializedSchema>(PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED)
+    val MATERIALIZED_SCHEMA_ON_CAST by warning1<MaterializedSchema>(PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED)
+    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE by warning0(PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED)
+    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_GENERIC by warning0(PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED)
+    val DATA_SCHEMA_DECLARATION_VISIBILITY by error1<String>(PositioningStrategyKinds.VISIBILITY_MODIFIER)
+    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR by error0(PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED)
 
     // It could've been an error. Even though dataframe schema is inferred for property return type, scope with extensions is not injected after
     // property access, only after function call. So, trying to use this property can cause confusion.
@@ -28,11 +28,11 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
     // local DF types and as a result into red code =>
     // Better to keep it as WARNING and not introduce unnecessary adoption barriers
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE by warning1<MaterializedSchema>(
-        SourceElementPositioningStrategies.DECLARATION_NAME
+        PositioningStrategyKinds.DECLARATION_NAME
     )
-    val DATAFRAME_EXTENSION_PROPERTY_SHADOWED by warning0(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val DATA_SCHEMA_LOCAL_DECLARATION by error0(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val DATAFRAME_PLUGIN_IS_DISABLED by info1<String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val DATAFRAME_EXTENSION_PROPERTY_SHADOWED by warning0(PositioningStrategyKinds.DECLARATION_NAME)
+    val DATA_SCHEMA_LOCAL_DECLARATION by error0(PositioningStrategyKinds.DECLARATION_NAME)
+    val DATAFRAME_PLUGIN_IS_DISABLED by info1<String>(PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = DataFrameDiagnosticMessages
 
@@ -83,8 +83,8 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
 }
 
 object ImportedSchemasDiagnostics : KtDiagnosticsContainer() {
-    val CONFLICTING_COMPANION_OBJECT_DECLARATION by error1<String>(SourceElementPositioningStrategies.DEFAULT)
-    val INVALID_SUPERTYPE by error2<String, String>(SourceElementPositioningStrategies.SUPERTYPES_LIST)
+    val CONFLICTING_COMPANION_OBJECT_DECLARATION by error1<String>(PositioningStrategyKinds.DEFAULT)
+    val INVALID_SUPERTYPE by error2<String, String>(PositioningStrategyKinds.SUPERTYPES_LIST)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = ImportedSchemaDiagnosticRenderers
 

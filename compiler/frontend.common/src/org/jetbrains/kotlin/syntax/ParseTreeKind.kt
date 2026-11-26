@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.syntax
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.PositioningStrategy
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKind
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
@@ -23,7 +23,7 @@ abstract class ParseTreeKind {
     /**
      * The implementation of this parse-tree agnostic positioning strategy for the concrete parse tree.
      */
-    abstract val SourceElementPositioningStrategy.positioningStrategy: PositioningStrategy
+    abstract val PositioningStrategyKind.positioningStrategy: PositioningStrategy
 }
 
 object NoParseTreeKind : ParseTreeKind() {
@@ -31,5 +31,5 @@ object NoParseTreeKind : ParseTreeKind() {
 
     override val isPsi: Boolean get() = shouldNotBeCalled(REASON)
     override val isKmp: Boolean get() = shouldNotBeCalled(REASON)
-    override val SourceElementPositioningStrategy.positioningStrategy: PositioningStrategy get() = shouldNotBeCalled(REASON)
+    override val PositioningStrategyKind.positioningStrategy: PositioningStrategy get() = shouldNotBeCalled(REASON)
 }

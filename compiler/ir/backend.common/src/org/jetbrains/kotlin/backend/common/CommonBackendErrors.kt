@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.TAILREC_MODIFIER
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds.REFERENCED_NAME_BY_QUALIFIED
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds.TAILREC_MODIFIER
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrFunction

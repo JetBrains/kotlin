@@ -73,15 +73,15 @@ sealed class DiagnosticBuilder(
     protected val containingObjectName: String,
     protected val name: String,
     protected val psiType: KType,
-    protected val positioningStrategy: PositioningStrategy,
+    protected val positioningStrategyKind: PositioningStrategyKind,
 ) {
     class Regular(
         containingObjectName: String,
         private val severity: Severity,
         name: String,
         psiType: KType,
-        positioningStrategy: PositioningStrategy,
-    ) : DiagnosticBuilder(containingObjectName, name, psiType, positioningStrategy) {
+        positioningStrategyKind: PositioningStrategyKind,
+    ) : DiagnosticBuilder(containingObjectName, name, psiType, positioningStrategyKind) {
         var isSuppressible: Boolean = false
 
         @OptIn(PrivateForInline::class)
@@ -92,7 +92,7 @@ sealed class DiagnosticBuilder(
                 name,
                 psiType,
                 parameters,
-                positioningStrategy,
+                positioningStrategyKind,
                 isSuppressible,
             )
         }
@@ -103,8 +103,8 @@ sealed class DiagnosticBuilder(
         private val featureForError: LanguageFeature,
         name: String,
         psiType: KType,
-        positioningStrategy: PositioningStrategy,
-    ) : DiagnosticBuilder(containingObjectName, name, psiType, positioningStrategy) {
+        positioningStrategyKind: PositioningStrategyKind,
+    ) : DiagnosticBuilder(containingObjectName, name, psiType, positioningStrategyKind) {
         @OptIn(PrivateForInline::class)
         override fun build(): DeprecationDiagnosticData {
             return DeprecationDiagnosticData(
@@ -113,7 +113,7 @@ sealed class DiagnosticBuilder(
                 name,
                 psiType,
                 parameters,
-                positioningStrategy,
+                positioningStrategyKind,
             )
         }
     }

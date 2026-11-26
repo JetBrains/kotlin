@@ -28,7 +28,7 @@ object PowerAssertDiagnostics : KtDiagnosticsContainer() {
     // ===== INFOS ===== //
 
     val POWER_ASSERT_CONSTANT by DiagnosticFactory0DelegateProvider(
-        Severity.INFO, SourceElementPositioningStrategies.DEFAULT, this
+        Severity.INFO, PositioningStrategyKinds.DEFAULT, this
     )
 }
 

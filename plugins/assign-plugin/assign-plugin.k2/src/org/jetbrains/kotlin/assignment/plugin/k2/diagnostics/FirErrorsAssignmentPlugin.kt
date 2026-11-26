@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.assignment.plugin.k2.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.OPERATOR
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds.DECLARATION_RETURN_TYPE
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds.OPERATOR
 import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 

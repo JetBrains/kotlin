@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.*
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategyKind
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.upperBoundViolatedDiagnosticInit
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -40,7 +40,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
         val ILLEGAL_JVM_NAME by error<PsiElement>()
 
-        val FUNCTION_DELEGATE_MEMBER_NAME_CLASH by error<PsiElement>(PositioningStrategy.DECLARATION_NAME)
+        val FUNCTION_DELEGATE_MEMBER_NAME_CLASH by error<PsiElement>(PositioningStrategyKind.DECLARATION_NAME)
 
         val INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME by error<PsiElement>()
         val USELESS_JVM_EXPOSE_BOXED by warning<PsiElement>()
@@ -59,12 +59,12 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<String>("name")
         }
 
-        val WRONG_TYPE_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
+        val WRONG_TYPE_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategyKind.OVERRIDE_MODIFIER) {
             parameter<FirCallableSymbol<*>>("override")
             parameter<FirCallableSymbol<*>>("base")
         }
 
-        val ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE by error<KtNamedFunction>(PositioningStrategy.DECLARATION_NAME) {
+        val ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE by error<KtNamedFunction>(PositioningStrategyKind.DECLARATION_NAME) {
             parameter<FirNamedFunctionSymbol>("hidden")
             parameter<String>("overrideDescription")
             parameter<FirNamedFunctionSymbol>("regular")
@@ -77,9 +77,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<FirNamedFunctionSymbol>("override")
         }
 
-        val NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION by error<KtDeclaration>(PositioningStrategy.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
+        val NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION by error<KtDeclaration>(PositioningStrategyKind.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
 
-        val PROPERTY_HIDES_JAVA_FIELD by warning<KtCallableDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+        val PROPERTY_HIDES_JAVA_FIELD by warning<KtCallableDeclaration>(PositioningStrategyKind.DECLARATION_NAME) {
             parameter<FirFieldSymbol>("hidden")
         }
 
@@ -122,19 +122,19 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("expectedType")
         }
 
-        val JAVA_CLASS_ON_COMPANION by warning<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
+        val JAVA_CLASS_ON_COMPANION by warning<PsiElement>(PositioningStrategyKind.SELECTOR_BY_QUALIFIED) {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
         }
         val JAVA_CLASS_PROPERTY_REFERENCE by deprecationError<PsiElement>(
             featureForError = ForbidJavaClassPropertyReferences,
-            positioningStrategy = PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED,
+            positioningStrategyKind = PositioningStrategyKind.REFERENCED_NAME_BY_QUALIFIED,
         )
 
-        val UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement>(PositioningStrategy.WHEN_EXPRESSION) {
+        val UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement>(PositioningStrategyKind.WHEN_EXPRESSION) {
             parameter<ConeKotlinType>("subjectType")
         }
-        val WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA by warning<PsiElement>(PositioningStrategy.WHEN_EXPRESSION) {
+        val WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA by warning<PsiElement>(PositioningStrategyKind.WHEN_EXPRESSION) {
             parameter<ConeKotlinType>("subjectType")
         }
     }
@@ -197,7 +197,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     }
 
     val SUPER by object : DiagnosticGroup("Super") {
-        val INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
+        val INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER by error<PsiElement>(PositioningStrategyKind.REFERENCE_BY_QUALIFIED)
         val JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS by error<KtElement> {
             parameter<ClassId>("javaClassId")
             parameter<ConeKotlinType>("privateKotlinType")
@@ -206,17 +206,17 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
 
     val RECORDS by object : DiagnosticGroup("JVM Records") {
         val LOCAL_JVM_RECORD by error<PsiElement>()
-        val NON_FINAL_JVM_RECORD by error<PsiElement>(PositioningStrategy.NON_FINAL_MODIFIER_OR_NAME)
-        val ENUM_JVM_RECORD by error<PsiElement>(PositioningStrategy.ENUM_MODIFIER)
+        val NON_FINAL_JVM_RECORD by error<PsiElement>(PositioningStrategyKind.NON_FINAL_MODIFIER_OR_NAME)
+        val ENUM_JVM_RECORD by error<PsiElement>(PositioningStrategyKind.ENUM_MODIFIER)
         val JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS by error<PsiElement>()
         val NON_DATA_CLASS_JVM_RECORD by error<PsiElement>()
         val NON_DATA_VALUE_CLASS_JVM_RECORD by error<PsiElement>()
         val JVM_RECORD_NOT_VAL_PARAMETER by error<PsiElement>()
         val JVM_RECORD_NOT_LAST_VARARG_PARAMETER by error<PsiElement>()
-        val INNER_JVM_RECORD by error<PsiElement>(PositioningStrategy.INNER_MODIFIER)
-        val FIELD_IN_JVM_RECORD by error<PsiElement>(PositioningStrategy.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS)
+        val INNER_JVM_RECORD by error<PsiElement>(PositioningStrategyKind.INNER_MODIFIER)
+        val FIELD_IN_JVM_RECORD by error<PsiElement>(PositioningStrategyKind.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS)
         val DELEGATION_BY_IN_JVM_RECORD by error<PsiElement>()
-        val JVM_RECORD_EXTENDS_CLASS by error<PsiElement>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
+        val JVM_RECORD_EXTENDS_CLASS by error<PsiElement>(PositioningStrategyKind.ACTUAL_DECLARATION_NAME) {
             parameter<ConeKotlinType>("superType")
         }
         val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE by error<PsiElement>()
@@ -236,15 +236,17 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     }
 
     val JVM_DEFAULT by object : DiagnosticGroup("JVM Default") {
-        val JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE by error<KtElement>(
+            PositioningStrategyKind.DECLARATION_SIGNATURE_OR_DEFAULT
+        )
         val JVM_DEFAULT_WITH_COMPATIBILITY_NOT_IN_NO_COMPATIBILITY_MODE by error<KtElement>()
     }
 
     val EXTERNAL_DECLARATION by object : DiagnosticGroup("External Declaration") {
-        val EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT by error<KtDeclaration>(PositioningStrategy.ABSTRACT_MODIFIER)
-        val EXTERNAL_DECLARATION_CANNOT_HAVE_BODY by error<KtDeclaration>(PositioningStrategy.EXTERNAL_MODIFIER)
-        val EXTERNAL_DECLARATION_IN_INTERFACE by error<KtDeclaration>(PositioningStrategy.EXTERNAL_MODIFIER)
-        val EXTERNAL_DECLARATION_CANNOT_BE_INLINED by error<KtDeclaration>(PositioningStrategy.EXTERNAL_MODIFIER)
+        val EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT by error<KtDeclaration>(PositioningStrategyKind.ABSTRACT_MODIFIER)
+        val EXTERNAL_DECLARATION_CANNOT_HAVE_BODY by error<KtDeclaration>(PositioningStrategyKind.EXTERNAL_MODIFIER)
+        val EXTERNAL_DECLARATION_IN_INTERFACE by error<KtDeclaration>(PositioningStrategyKind.EXTERNAL_MODIFIER)
+        val EXTERNAL_DECLARATION_CANNOT_BE_INLINED by error<KtDeclaration>(PositioningStrategyKind.EXTERNAL_MODIFIER)
     }
 
     val REPEATABLE by object : DiagnosticGroup("Repeatable Annotations") {
@@ -276,7 +278,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     }
 
     val SUSPENSION_POINT by object : DiagnosticGroup("Suspension Point") {
-        val SUSPENSION_POINT_INSIDE_CRITICAL_SECTION by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+        val SUSPENSION_POINT_INSIDE_CRITICAL_SECTION by error<PsiElement>(PositioningStrategyKind.REFERENCE_BY_QUALIFIED) {
             parameter<FirCallableSymbol<*>>("function")
         }
     }
@@ -302,23 +304,23 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("valueClassOrPrimitive")
         }
         val JVM_SYNTHETIC_ON_DELEGATE by error<KtAnnotationEntry>()
-        val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
-        val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
+        val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error<PsiElement>(PositioningStrategyKind.REFERENCED_NAME_BY_QUALIFIED)
+        val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC_WARNING by warning<PsiElement>(PositioningStrategyKind.REFERENCED_NAME_BY_QUALIFIED)
         val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR by error<PsiElement>()
-        val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR by error<PsiElement>(PositioningStrategy.SPREAD_OPERATOR)
+        val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR by error<PsiElement>(PositioningStrategyKind.SPREAD_OPERATOR)
         val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()
         val NO_REFLECTION_IN_CLASS_PATH by warning<PsiElement>()
-        val SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+        val SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN by warning<PsiElement>(PositioningStrategyKind.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirNamedFunctionSymbol>("originalSymbol")
             parameter<Name>("functionName")
         }
-        val JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+        val JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY by error<PsiElement>(PositioningStrategyKind.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirPropertySymbol>("kotlinProperty")
         }
-        val MISSING_BUILT_IN_DECLARATION by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+        val MISSING_BUILT_IN_DECLARATION by error<PsiElement>(PositioningStrategyKind.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirBasedSymbol<*>>("symbol")
         }
-        val DANGEROUS_CHARACTERS by warning<KtNamedDeclaration>(PositioningStrategy.NAME_IDENTIFIER) {
+        val DANGEROUS_CHARACTERS by warning<KtNamedDeclaration>(PositioningStrategyKind.NAME_IDENTIFIER) {
             parameter<String>("characters")
         }
     }

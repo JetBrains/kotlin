@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
+import org.jetbrains.kotlin.fir.syntax.withSyntax
+import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -17,8 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.syntax.withSyntax
-import org.jetbrains.kotlin.syntax.KotlinSyntaxTokenIds
 
 object FirWhenGuardChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -40,7 +40,7 @@ object FirWhenGuardChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
 
         source.requireFeatureSupport(
             LanguageFeature.WhenGuards,
-            positioningStrategy = SourceElementPositioningStrategies.WHEN_GUARD,
+            positioningStrategyKind = PositioningStrategyKinds.WHEN_GUARD,
         )
 
         if (element.subjectVariable == null) {

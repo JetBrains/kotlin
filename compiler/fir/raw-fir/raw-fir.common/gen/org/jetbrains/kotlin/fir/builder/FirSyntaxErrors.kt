@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 
 /**
@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 @Suppress("IncorrectFormatting")
 object FirSyntaxErrors : KtDiagnosticsContainer() {
     // Syntax
-    val SYNTAX: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("SYNTAX", ERROR, SourceElementPositioningStrategies.SYNTAX_ERROR, getRendererFactory())
-    val LEADING_WHITESPACE_REQUIRED: KtDiagnosticFactory0 = KtDiagnosticFactory0("LEADING_WHITESPACE_REQUIRED", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
-    val TRAILING_WHITESPACE_REQUIRED: KtDiagnosticFactory0 = KtDiagnosticFactory0("TRAILING_WHITESPACE_REQUIRED", ERROR, SourceElementPositioningStrategies.DEFAULT, getRendererFactory())
+    val SYNTAX: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("SYNTAX", ERROR, PositioningStrategyKinds.SYNTAX_ERROR, getRendererFactory())
+    val LEADING_WHITESPACE_REQUIRED: KtDiagnosticFactory0 = KtDiagnosticFactory0("LEADING_WHITESPACE_REQUIRED", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
+    val TRAILING_WHITESPACE_REQUIRED: KtDiagnosticFactory0 = KtDiagnosticFactory0("TRAILING_WHITESPACE_REQUIRED", ERROR, PositioningStrategyKinds.DEFAULT, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirSyntaxErrorsDefaultMessages
 }

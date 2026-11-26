@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategyKind
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -36,7 +36,7 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL by error<KtElement>()
         val INAPPLICABLE_THREAD_LOCAL by error<KtElement>()
         val INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL by error<KtElement>()
-        val INVALID_CHARACTERS_NATIVE_ERROR by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER) {
+        val INVALID_CHARACTERS_NATIVE_ERROR by error<PsiElement>(PositioningStrategyKind.NAME_IDENTIFIER) {
             parameter<String>("message")
         }
         val REDUNDANT_SWIFT_REFINEMENT by error<KtElement>()
@@ -114,7 +114,7 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED by error<KtElement> {
             parameter<FirBasedSymbol<*>>("function")
         }
-        val OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED by error<KtElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
+        val OVERRIDING_VARIADIC_OBJECTIVE_C_METHODS_IS_NOT_SUPPORTED by error<KtElement>(PositioningStrategyKind.OVERRIDE_MODIFIER) {
             parameter<FirBasedSymbol<*>>("method")
         }
         val CALLABLE_REFERENCES_TO_VARIADIC_C_FUNCTIONS_ARE_NOT_SUPPORTED by error<KtElement> {

@@ -36,8 +36,8 @@ These contracts imply the following:
     - The diagnostic suppression mechanism is implemented in the checkers dispatcher, so reporting something on a sub-element can cause false-positive diagnostics if there is a `@Suppress` annotation between the root element (passed to the checker) and the sub-element. While there is a mechanism to fix this, it is not recommended to use it.
     - Checkers with a smaller scope improve IDE performance because they require fewer elements to be resolved in order to perform checks.
 5. The FIR compiler is designed to be syntax-agnostic and can work with different parsers and syntax trees (at present, it already supports PSI and LightTree syntax trees).
-   Therefore, checkers should not rely on any syntax implementation details. 
-   Instead, checkers should use [positioning strategies](../../frontend.common-psi/src/org/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategies.kt)
+   Therefore, checkers should not rely on any syntax implementation details.
+   Instead, checkers should use [positioning strategy kinds](../../frontend.common/src/org/jetbrains/kotlin/diagnostics/PositioningStrategyKinds.kt)
    for more precise positioning of diagnostics for specific elements (e.g., this allows diagnostics to be rendered on a class name while using the source of the entire class).
    Checkers that need to inspect the syntax tree do so only through [FirSyntaxComponent](../tree/src/org/jetbrains/kotlin/fir/syntax/FirSyntaxComponent.kt) (see `withSyntax`),
    which has an implementation for each parse tree.

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -149,9 +149,9 @@ object FirParenthesizedPackageQualifierChecker : FirResolvedQualifierChecker(Mpp
         reporter.reportOn(
             source,
             FirErrors.PARENTHESIZED_PACKAGE_QUALIFIER,
-            positioningStrategy =
-                if (onReceiver) SourceElementPositioningStrategies.RECEIVER_OF_DOT_QUALIFIED
-                else SourceElementPositioningStrategies.DEFAULT,
+            positioningStrategyKind =
+                if (onReceiver) PositioningStrategyKinds.RECEIVER_OF_DOT_QUALIFIED
+                else PositioningStrategyKinds.DEFAULT,
         )
     }
 

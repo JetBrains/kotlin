@@ -14,7 +14,7 @@ sealed class DiagnosticData {
     abstract val name: String
     abstract val psiType: KType
     abstract val parameters: List<DiagnosticParameter>
-    abstract val positioningStrategy: PositioningStrategy
+    abstract val positioningStrategyKind: PositioningStrategyKind
 }
 
 data class RegularDiagnosticData(
@@ -23,7 +23,7 @@ data class RegularDiagnosticData(
     override val name: String,
     override val psiType: KType,
     override val parameters: List<DiagnosticParameter>,
-    override val positioningStrategy: PositioningStrategy,
+    override val positioningStrategyKind: PositioningStrategyKind,
     val isSuppressible: Boolean,
 ) : DiagnosticData()
 
@@ -33,7 +33,7 @@ data class DeprecationDiagnosticData(
     override val name: String,
     override val psiType: KType,
     override val parameters: List<DiagnosticParameter>,
-    override val positioningStrategy: PositioningStrategy,
+    override val positioningStrategyKind: PositioningStrategyKind,
 ) : DiagnosticData()
 
 data class DiagnosticParameter(
@@ -41,7 +41,7 @@ data class DiagnosticParameter(
     val type: KType
 )
 
-enum class PositioningStrategy {
+enum class PositioningStrategyKind {
     DEFAULT,
     SYNTAX_ERROR,
     VAL_OR_VAR_NODE,
@@ -136,9 +136,9 @@ enum class PositioningStrategy {
     DEPRECATION,
     ;
 
-    val expressionToCreate get() = "SourceElementPositioningStrategies.$name"
+    val expressionToCreate get() = "PositioningStrategyKinds.$name"
 
     companion object {
-        const val importToAdd = "org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies"
+        const val importToAdd = "org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds"
     }
 }

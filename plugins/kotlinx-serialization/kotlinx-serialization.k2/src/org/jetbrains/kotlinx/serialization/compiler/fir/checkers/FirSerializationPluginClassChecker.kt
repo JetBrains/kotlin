@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -295,7 +295,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             reporter.reportOn(
                 classSymbol.source,
                 FirSerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED,
-                positioningStrategy = SourceElementPositioningStrategies.ENUM_MODIFIER
+                positioningStrategyKind = PositioningStrategyKinds.ENUM_MODIFIER
             )
             return false
         }

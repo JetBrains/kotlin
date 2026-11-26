@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -45,7 +45,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.NOT_A_MULTIPLATFORM_COMPILATION,
-                    positioningStrategy = SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
+                    positioningStrategyKind = PositioningStrategyKinds.EXPECT_ACTUAL_MODIFIER
                 )
             }
             return

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 
 object PluginErrors : KtDiagnosticsContainer() {
-    val FUNCTION_WITH_DUMMY_NAME by warning1<String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val FUNCTION_WITH_DUMMY_NAME by warning1<String>(PositioningStrategyKinds.DECLARATION_NAME)
     val ILLEGAL_NUMBER_SIGN by error2<String, String>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = Renderers

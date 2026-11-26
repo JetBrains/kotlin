@@ -517,7 +517,7 @@ private class DebugDiagnosticConsumer(
             sourceElement,
             factory.severity,
             factory,
-            factory.defaultPositioningStrategy,
+            factory.defaultPositioningStrategyKind,
             diagnosticContext,
         )
 
@@ -545,7 +545,7 @@ private class DebugDiagnosticConsumer(
             argumentFactory(),
             factory.severity,
             factory,
-            factory.defaultPositioningStrategy,
+            factory.defaultPositioningStrategyKind,
             diagnosticContext,
         )
 
@@ -804,7 +804,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                     FirSyntaxErrors.SYNTAX.on(
                         KtRealPsiSourceElement(it),
                         it.errorDescription,
-                        positioningStrategy = null,
+                        positioningStrategyKind = null,
                         psiDiagnosticContext,
                     )!!
                 }
@@ -884,7 +884,7 @@ private object KtDebugInfoDiagnostics : KtDiagnosticsContainer() {
                 KtDiagnosticFactory0(
                     "DEBUG_INFO_${prop.name}",
                     Severity.INFO,
-                    SourceElementPositioningStrategies.DEFAULT,
+                    PositioningStrategyKinds.DEFAULT,
                     this@KtDebugInfoDiagnostics.getRendererFactory()
                 )
             )
@@ -897,7 +897,7 @@ private object KtDebugInfoDiagnostics : KtDiagnosticsContainer() {
                 KtDiagnosticFactory1(
                     "DEBUG_INFO_${prop.name}",
                     Severity.INFO,
-                    SourceElementPositioningStrategies.DEFAULT,
+                    PositioningStrategyKinds.DEFAULT,
                     this@KtDebugInfoDiagnostics.getRendererFactory()
                 )
             )

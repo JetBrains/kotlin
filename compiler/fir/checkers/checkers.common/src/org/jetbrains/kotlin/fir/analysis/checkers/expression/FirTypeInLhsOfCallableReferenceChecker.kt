@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -65,11 +65,11 @@ object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecke
                 is ConeWrongNumberOfTypeArgumentsError -> {
                     val positioning =
                         if (diagnostic.isDeprecationErrorForCallableReferenceLhs) {
-                            SourceElementPositioningStrategies.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER
+                            PositioningStrategyKinds.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER
                         } else {
                             // here, `desiredCount` corresponds to the number of type parameters for all parts of the qualifier altogether,
                             // hence reporting on the whole qualifier
-                            SourceElementPositioningStrategies.DEFAULT
+                            PositioningStrategyKinds.DEFAULT
                         }
 
                     if (diagnostic.isDeprecationErrorForCallableReferenceLhs && !innerClassesProperlySupported) {
@@ -79,7 +79,7 @@ object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecke
                                 FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_LOCAL_CLASS_IN_LHS_WARNING,
                                 diagnostic.desiredCount,
                                 diagnostic.symbol,
-                                positioningStrategy = positioning,
+                                positioningStrategyKind = positioning,
                             )
                         } else {
                             reporter.reportOn(
@@ -88,7 +88,7 @@ object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecke
                                 diagnostic.desiredCount,
                                 diagnostic.symbol,
                                 lhsType,
-                                positioningStrategy = positioning,
+                                positioningStrategyKind = positioning,
                             )
                         }
                         severity = severity ?: Severity.WARNING
@@ -98,7 +98,7 @@ object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecke
                             FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
                             diagnostic.desiredCount,
                             diagnostic.symbol,
-                            positioningStrategy = positioning,
+                            positioningStrategyKind = positioning,
                         )
                         severity = Severity.ERROR
                     }

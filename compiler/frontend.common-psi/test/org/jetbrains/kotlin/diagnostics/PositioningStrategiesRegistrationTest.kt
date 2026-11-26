@@ -10,34 +10,34 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
- * Checks that every standard [SourceElementPositioningStrategy] declared in [SourceElementPositioningStrategies]
+ * Checks that every standard [PositioningStrategyKind] declared in [PositioningStrategyKinds]
  * has an implementation for each parse tree kind.
  */
 class PositioningStrategiesRegistrationTest {
-    private val standardStrategies: List<SourceElementPositioningStrategy> =
-        SourceElementPositioningStrategies::class.java.declaredClasses
-            .filter { SourceElementPositioningStrategy::class.java.isAssignableFrom(it) }
-            .map { it.getField("INSTANCE").get(null) as SourceElementPositioningStrategy }
+    private val standardStrategies: List<PositioningStrategyKind> =
+        PositioningStrategyKinds::class.java.declaredClasses
+            .filter { PositioningStrategyKind::class.java.isAssignableFrom(it) }
+            .map { it.getField("INSTANCE").get(null) as PositioningStrategyKind }
 
     @Test
     fun standardStrategiesAreCollected() {
-        assertTrue(SourceElementPositioningStrategies.DEFAULT in standardStrategies) {
+        assertTrue(PositioningStrategyKinds.DEFAULT in standardStrategies) {
             "Reflection didn't find the standard strategies"
         }
     }
 
     @Test
     fun allStandardStrategiesAreRegisteredForLightTree() {
-        checkRegistered(LightTreePositioningStrategies.keyToStrategy)
+        checkRegistered(LightTreePositioningStrategies.kindToStrategy)
     }
 
     @Test
     fun allStandardStrategiesAreRegisteredForPsi() {
-        checkRegistered(PsiPositioningStrategies.keyToStrategy)
+        checkRegistered(PsiPositioningStrategies.kindToStrategy)
     }
 
-    private fun checkRegistered(keyToStrategy: Map<SourceElementPositioningStrategy, PositioningStrategy>) {
-        val notRegistered = standardStrategies.filter { it !in keyToStrategy }.map { it::class.simpleName }
+    private fun checkRegistered(kindToStrategy: Map<PositioningStrategyKind, PositioningStrategy>) {
+        val notRegistered = standardStrategies.filter { it !in kindToStrategy }.map { it::class.simpleName }
         assertEquals(emptyList<String>(), notRegistered, "Strategies without a registered implementation")
     }
 }

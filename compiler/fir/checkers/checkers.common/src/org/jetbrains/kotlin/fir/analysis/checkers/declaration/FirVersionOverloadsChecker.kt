@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -87,19 +87,19 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.INVALID_VERSIONING_ON_LOCAL_FUNCTION,
-                    SourceElementPositioningStrategies.DECLARATION_NAME
+                    PositioningStrategyKinds.DECLARATION_NAME
                 )
             declaration !is FirConstructor && containingClassSymbol?.isFinal == false ->
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.INVALID_VERSIONING_ON_NONFINAL_CLASS,
-                    SourceElementPositioningStrategies.DECLARATION_NAME
+                    PositioningStrategyKinds.DECLARATION_NAME
                 )
             containingClassSymbol?.classKind == ClassKind.ANNOTATION_CLASS ->
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.INVALID_VERSIONING_ON_ANNOTATION_CLASS,
-                    SourceElementPositioningStrategies.DECLARATION_NAME
+                    PositioningStrategyKinds.DECLARATION_NAME
                 )
             else -> return false
         }

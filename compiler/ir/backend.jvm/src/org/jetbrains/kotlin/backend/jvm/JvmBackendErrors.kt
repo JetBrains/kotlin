@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.CLASS_ID
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKinds.DECLARATION_SIGNATURE_OR_DEFAULT
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.NAME
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
@@ -39,7 +39,7 @@ object JvmBackendErrors : KtDiagnosticsContainer() {
 
     val PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION by deprecationError1<ClassId>(LanguageFeature.ForbidExposingLessVisibleTypesInInline)
 
-    val NON_LOCAL_RETURN_IN_DISABLED_INLINE by error0(SourceElementPositioningStrategies.DEFAULT)
+    val NON_LOCAL_RETURN_IN_DISABLED_INLINE by error0(PositioningStrategyKinds.DEFAULT)
 
     val INCONSISTENT_TARGET_LIST_FOR_LAMBDA_ANNOTATION by warningWithoutSource()
 

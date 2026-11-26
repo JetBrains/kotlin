@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.syntax
 
+import org.jetbrains.kotlin.diagnostics.PositioningStrategyKind
+import org.jetbrains.kotlin.diagnostics.PsiPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.PsiPositioningStrategy
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
 
 object PsiParseTreeKind : ParseTreeKind() {
     override val isPsi: Boolean = true
 
     override val isKmp: Boolean = false
 
-    override val SourceElementPositioningStrategy.positioningStrategy: PsiPositioningStrategy<*>
-        get() = PsiPositioningStrategies.keyToStrategy[this]
+    override val PositioningStrategyKind.positioningStrategy: PsiPositioningStrategy<*>
+        get() = PsiPositioningStrategies.kindToStrategy[this]
             ?: error("No PSI positioning strategy is registered for ${this::class.simpleName}")
 }
