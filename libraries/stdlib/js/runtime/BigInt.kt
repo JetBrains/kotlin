@@ -16,18 +16,18 @@ internal external class BigInt {
         /**
          * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt/asIntN
          */
-        fun asIntN(@Suppress("unused") bits: Int, @Suppress("unused") bigint: BigInt): BigInt
+        fun asIntN(bits: Int, bigint: BigInt): BigInt
 
         /**
          * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt/asUintN
          */
-        fun asUintN(@Suppress("unused") bits: Int, @Suppress("unused") bigint: BigInt): BigInt
+        fun asUintN(bits: Int, bigint: BigInt): BigInt
     }
 
     /**
      * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt/toString
      */
-    fun toString(@Suppress("unused") radix: Int = definedExternally): String
+    fun toString(radix: Int = definedExternally): String
 }
 
 /**
@@ -56,11 +56,3 @@ internal inline infix fun BigInt.and(other: BigInt): BigInt = jsBitwiseAnd(this,
 internal inline infix fun BigInt.shl(other: BigInt): BigInt = jsBitShiftL(this, other).unsafeCast<BigInt>()
 
 internal inline infix fun BigInt.shr(other: BigInt): BigInt = jsBitShiftR(this, other).unsafeCast<BigInt>()
-
-internal inline val BigInt.isNegative: Boolean
-    get() = jsLt(this, 0)
-
-internal inline val BigInt.isZero: Boolean
-    get() = jsEqeq(this, 0)
-
-internal fun BigInt.abs(): BigInt = if (isNegative) -this else this
