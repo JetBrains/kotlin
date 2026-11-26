@@ -226,6 +226,22 @@ class WrapperTest(unittest.TestCase):
         )
         self.assertEqual((0, [":custom-plugin"]), (exit_code, [module["project"] for module in summary["modules"]]))
 
+    def test_custom_project_directories_in_another_form_fail(self) -> None:
+        self.write("settings.gradle.kts", textwrap.dedent('''\
+            project(":custom-plugin").projectDir = File("$rootDir/plugins/custom")
+            project(":other-plugin").projectDir = rootDir.resolve("plugins/other")
+            project(":block-plugin").apply { projectDir = File("$rootDir/plugins/block") }
+            if (rootProject.projectDir == rootDir) {}
+        '''))
+        with self.assertRaises(ValueError) as error:
+            tdm.custom_project_directories(self.root)
+        self.assertIn("the project directory on line 2, 3 of", str(error.exception))
+
+    def test_custom_project_directories_of_the_repository(self) -> None:
+        repository = SCRIPT.parents[2]
+        self.assertEqual("plugins/allopen", tdm.custom_project_directories(repository)[":kotlin-allopen-compiler-plugin"])
+        self.assertEqual(":kotlin-allopen-compiler-plugin", tdm.directory_project(repository, "plugins/allopen"))
+
     def test_run_id_names_the_reports_and_the_log(self) -> None:
         exit_code, summary = self.run_wrapper({":mod-b": {}}, "check", "--module", ":mod-b", "--run-id", "my-run.1")
         self.assertEqual((0, "my-run.1"), (exit_code, summary["runId"]))
