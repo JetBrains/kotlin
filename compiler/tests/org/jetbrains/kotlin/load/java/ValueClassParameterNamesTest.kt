@@ -27,6 +27,15 @@ class ValueClassParameterNamesTest {
     }
 
     @Test
+    fun sourceNameStart() {
+        val name = ValueClassParameterNames.encode("kotlin.UInt", "iv")
+        assertEquals("iv", name.substring(ValueClassParameterNames.sourceNameStart(name)))
+        assertEquals("iv\$iv", (name + "\$iv").substring(ValueClassParameterNames.sourceNameStart(name + "\$iv")))
+        assertEquals(0, ValueClassParameterNames.sourceNameStart("iv\$iv"))
+        assertEquals(0, ValueClassParameterNames.sourceNameStart("\$v\$c\$\$q\$\$iv"))
+    }
+
+    @Test
     fun malformedNamesAreNotDecoded() {
         val malformed = listOf(
             "\$v\$c\$\$u-ABB\$\$x",

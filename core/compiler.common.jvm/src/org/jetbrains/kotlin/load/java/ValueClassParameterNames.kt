@@ -92,6 +92,12 @@ object ValueClassParameterNames {
         return codePoint.takeIf { Character.isValidCodePoint(it) }
     }
 
+    /**
+     * Returns the index of the original parameter name in [name] if [name] was produced by [encode], or 0 otherwise.
+     * A suffix that the compiler adds to the name, for example for an inlined variable, starts at this index or later.
+     */
+    fun sourceNameStart(name: String): Int = decodeValueClassParameterNameOrNull(name)?.let { name.length - it.parameterName.length } ?: 0
+
     /** Returns the original parameter name if [name] was produced by [encode], or [name] itself otherwise. */
     fun originalParameterName(name: String): String = decodeValueClassParameterNameOrNull(name)?.parameterName ?: name
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.ValueClassParameterNames
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
@@ -405,7 +406,9 @@ private fun getInlineDepth(variableName: String): Int {
     var depth = 0
 
     val suffixLen = INLINE_FUN_VAR_SUFFIX.length
-    while (endIndex >= suffixLen) {
+    // A suffix never starts in the encoded inline class of the name. For example, `$v$c$kotlin$_UInt$$iv` has no suffix.
+    val sourceNameStart = ValueClassParameterNames.sourceNameStart(variableName)
+    while (endIndex - suffixLen >= sourceNameStart) {
         if (variableName.substring(endIndex - suffixLen, endIndex) != INLINE_FUN_VAR_SUFFIX) {
             break
         }
