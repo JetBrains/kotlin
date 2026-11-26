@@ -14,13 +14,8 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFile
 import org.jetbrains.kotlin.backend.common.serializeSignatures
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.callableId
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.originalOfPreparedInlineFunctionCopy
-import org.jetbrains.kotlin.ir.util.preparedInlineFunctionCopies
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.addMetadataFlagsToHeader
@@ -29,8 +24,6 @@ import org.jetbrains.kotlin.util.toMetadataVersion
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import java.util.*
-import kotlin.io.path.Path
-import kotlin.io.path.pathString
 
 /**
  * Holds the binary data for a single Kotlin file to be written to a KLIB, i.e., its metadata and IR (unless it's a metadata-only KLIB).
@@ -128,8 +121,6 @@ fun <SourceFile> serializeModuleIntoKlib(
     val globalExportedSignatures: MutableSet<IdSignature> =
         serializedIrFromDirtySources.orEmpty().flatMapTo(mutableSetOf()) { it.exportedSignatures }
 
-    val callableIdsOfInlineFunByFile: Map<IrFile, List<CallableId>> = extractCallableIdsFromInlineFuns(irModuleFragment)
-
     val compiledKotlinFiles = buildList {
         addAll(cleanFiles)
         metadataSerializer.forEachFile { i, ioFile, sourceFile, ktSourceFile, packageFqName ->
@@ -151,8 +142,7 @@ fun <SourceFile> serializeModuleIntoKlib(
             }
 
             if (processCompiledFileData != null) {
-                val callableIds = callableIdsOfInlineFunByFile.entries
-                    .firstOrNull { Path(it.key.fileEntry.name).pathString == ioFile.path }?.value ?: emptyList()
+                val callableIds = serializedIr?.callableIdsOfInlineFuns.orEmpty()
                 processCompiledFileData(ioFile, compiledKotlinFile, callableIds)
             }
 
@@ -204,17 +194,6 @@ fun <SourceFile> serializeModuleIntoKlib(
         ),
         neededLibraries = dependencies,
     )
-}
-
-private fun extractCallableIdsFromInlineFuns(irModuleFragment: IrModuleFragment?): Map<IrFile, List<CallableId>> {
-    return irModuleFragment?.preparedInlineFunctionCopies
-        ?.groupBy { it.file }
-        ?.mapValues {
-            it.value.map { func ->
-                val original = func.originalOfPreparedInlineFunctionCopy!!
-                original.correspondingPropertySymbol?.owner?.callableId ?: original.callableId
-            }
-        } ?: emptyMap()
 }
 
 private fun serializeKlibHeader(

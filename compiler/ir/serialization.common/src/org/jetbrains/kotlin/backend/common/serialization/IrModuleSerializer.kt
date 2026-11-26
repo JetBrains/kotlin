@@ -12,15 +12,19 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.packageFragmentDescriptor
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.callableId
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.originalOfPreparedInlineFunctionCopy
 import org.jetbrains.kotlin.ir.util.preparedInlineFunctionCopies
 import org.jetbrains.kotlin.library.SerializedIrFile
+import org.jetbrains.kotlin.name.CallableId
 
 class SerializedIrFiles(
     val irData: SerializedIrFile,
     val irInlineData: SerializedIrFile?,
     val exportedSignatures: Set<IdSignature.CommonSignature>,
     val importedSignatures: Set<IdSignature.CommonSignature>,
+    val callableIdsOfInlineFuns: List<CallableId>,
 )
 
 private class SerializedIrFileWithSignatures(
@@ -60,10 +64,23 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
         return createFileSerializer().serializeIrFileWithPreparedInlineFunctions(file, preparedInlineFunctionCopies)
     }
 
+    private fun extractCallableIdsFromInlineFuns(irModuleFragment: IrModuleFragment?): Map<IrFile, List<CallableId>> {
+        return irModuleFragment?.preparedInlineFunctionCopies
+            ?.groupBy { it.file }
+            ?.mapValues {
+                it.value.map { func ->
+                    val original = func.originalOfPreparedInlineFunctionCopy!!
+                    original.correspondingPropertySymbol?.owner?.callableId ?: original.callableId
+                }
+            } ?: emptyMap()
+    }
+
     fun serializedIrModule(module: IrModuleFragment): List<SerializedIrFiles> {
         val inlinableFunctionsFiles = module.preparedInlineFunctionCopies?.groupBy { it.file }?.mapValues {
             serializePreparedInlinableFunctions(it.key, it.value)
         }.orEmpty()
+
+        val callableIdsOfInlineFunByFile = extractCallableIdsFromInlineFuns(module)
 
         val serializedFiles = module.files.asSequence()
             .filter { it.packageFragmentDescriptor !is FunctionInterfacePackageFragment }
@@ -75,6 +92,7 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
                     inlinableFunctionsFiles[it],
                     declaredSignatures,
                     referencedSignatures - declaredSignatures,
+                    callableIdsOfInlineFunByFile[it] ?: emptyList(),
                 )
             }
             .toList()
