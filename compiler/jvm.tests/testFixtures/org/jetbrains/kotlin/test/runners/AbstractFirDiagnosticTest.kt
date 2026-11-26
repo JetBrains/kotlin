@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.test.services.PlatformModuleProvider
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.fir.FirWithoutAliasExpansionTestSuppressor
 import org.jetbrains.kotlin.test.services.fir.OnlyTestsWithTypeAliasesMetaConfigurator
-import org.jetbrains.kotlin.test.utils.LATEST_LV_VARIANT
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -42,7 +41,7 @@ abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKo
 abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest :
     AbstractFirDiagnosticTestBase(FirParser.LightTree), ManagedTest {
     override val variantChain: TestVariantChain
-        get() = listOf(LATEST_LV_VARIANT)
+        get() = DiagnosticsVariantChains.LATEST_LV
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -77,7 +76,7 @@ open class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : AbstractFi
  */
 open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest : AbstractKotlinCompilerJvmTest(), ManagedTest {
     override val variantChain: TestVariantChain
-        get() = listOf(LATEST_LV_VARIANT)
+        get() = DiagnosticsVariantChains.LATEST_LV
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
