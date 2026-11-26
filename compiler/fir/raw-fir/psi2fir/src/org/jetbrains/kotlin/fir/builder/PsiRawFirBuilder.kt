@@ -1045,11 +1045,14 @@ open class PsiRawFirBuilder(
             return constraintsByName.mapNotNull { [name, constraints] ->
                 if (name == null || name in typeParamNames) return@mapNotNull null
                 buildTypeParameter {
-                    source = constraints.first().subjectTypeParameterName?.toFirSourceElement(KtFakeSourceElementKind.DanglingTypeParameter)
+                    val typeParameterSource =
+                        constraints.first().subjectTypeParameterName?.toFirSourceElement(KtFakeSourceElementKind.DanglingTypeParameter)
+
+                    source = typeParameterSource
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Synthetic.DanglingTypeParameter
                     this.name = name
-                    symbol = FirTypeParameterSymbol()
+                    symbol = FirTypeParameterSymbol(symbolIdFactory.sourceBasedOrUnique(typeParameterSource))
                     containingDeclarationSymbol = declarationSymbol
                     variance = Variance.INVARIANT
                     isReified = false
