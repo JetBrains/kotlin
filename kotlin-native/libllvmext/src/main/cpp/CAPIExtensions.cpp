@@ -173,9 +173,10 @@ LLVMBool LLVMKotlinIsTargetTripleCompatible(const char *Expected,
 /// GlobalIsel is only used for aarch64 architectures.
 static bool isGlobalISelSupported(const llvm::Triple &TT,
                                   std::optional<llvm::CodeModel::Model> CM) {
-  // From our experiments on the CI, we noticed some out-of-memory error on Linux x86_64.
-  // Thus, at the moment of writing, it is not reliable enough for such targets.
-  // While on AArch64, `clang` enables GlobalISel at -O0 by default on every OS.
+  // From our experiments on the CI, we noticed some out-of-memory error on
+  // Linux x86_64. Thus, at the moment of writing, it is not reliable enough for
+  // such targets. While on AArch64, `clang` enables GlobalISel at -O0 by
+  // default on every OS.
   if (!TT.isAArch64())
     return false;
   return TT.getArch() != llvm::Triple::aarch64_32 &&
@@ -203,17 +204,28 @@ LLVMTargetMachineRef LLVMKotlinCreateTargetMachine(
   llvm::CodeGenOptLevel OptLevel = llvm::unwrap(OL);
 
   llvm::Triple TT{NormalizedTriple};
-  bool UseGlobalISel = Selector == LLVMKotlinInstructionSelectorGlobalISel &&
-                       isGlobalISelSupported(TT, CodeModel);
 
   // Inherit the compiler flags from clang contained in konan.properties.
   llvm::TargetOptions TO{};
   TO.UseInitArray = true;
 
-  if (UseGlobalISel) {
-    TO.EnableGlobalISel = true;
+  bool UseGlobalISel = Selector == LLVMKotlinInstructionSelectorGlobalISel &&
+                       isGlobalISelSupported(TT, CodeModel);
+
+  switch (Selector) {
+  case LLVMKotlinInstructionSelectorSelectionDAG:
+    TO.EnableFastISel = false;
+    TO.EnableGlobalISel = false;
+    break;
+  case LLVMKotlinInstructionSelectorGlobalISel:
     // Fall back to SelectionDAG if GlobalISel fails.
+    TO.EnableGlobalISel = UseGlobalISel;
+    TO.EnableFastISel = false;
     TO.GlobalISelAbort = llvm::GlobalISelAbortMode::Disable;
+    break;
+  default:
+    TO.EnableFastISel = true;
+    break;
   }
 
   if (TT.isOSWindows() || TT.isOSLinux()) {
@@ -228,7 +240,9 @@ LLVMTargetMachineRef LLVMKotlinCreateTargetMachine(
       Target->createTargetMachine(TT, CPU ? CPU : "", Features ? Features : "",
                                   TO, RelocModel, CodeModel, OptLevel, JIT);
   if (!TM) {
-    *ErrorMessage = LLVMCreateMessage("Could not create a TargetMachine. This should not happen, unless the target does not support code generation.");
+    *ErrorMessage = LLVMCreateMessage(
+        "Could not create a TargetMachine. This should not happen, unless the "
+        "target does not support code generation.");
     return nullptr;
   }
 
