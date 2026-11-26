@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.DEPRECAT
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.DEPRECATED_PARCELER
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.DUPLICATING_TYPE_PARCELERS
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.FORBIDDEN_DEPRECATED_ANNOTATION
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.INAPPLICABLE_DATA_CLASS
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.NO_PARCELABLE_SUPERTYPE
@@ -183,6 +184,11 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
         map.put(
             INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY,
             "'@IgnoredOnParcel' is inapplicable to properties without default value declared in the primary constructor."
+        )
+
+        map.put(
+            INAPPLICABLE_DATA_CLASS,
+            "'@DataClass' is only applicable to data classes."
         )
 
         map.put(

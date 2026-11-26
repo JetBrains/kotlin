@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.fir.diagnostics
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallCh
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedClassLikeType
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.DATA_CLASS_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.DEPRECATED_RUNTIME_PACKAGE
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_TAG_CLASS_IDS
@@ -62,6 +65,9 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
             }
             in PARCEL_TAG_CLASS_IDS -> {
                 checkParcelTagUsage(expression, context, reporter)
+            }
+            DATA_CLASS_ANNOTATION_CLASS_ID -> {
+                checkDataClassUsage(expression, context, reporter)
             }
         }
     }
@@ -198,6 +204,28 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.P
 
         if (!isContainingClassPolymorphicSealed || !implementsContainingClass) {
             reporter.reportOn(annotationCall.source, KtErrorsParcelize.INAPPLICABLE_PARCEL_TAG, context)
+        }
+    }
+
+    private fun checkDataClassUsage(
+        annotationCall: FirAnnotationCall,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        val typeRef = context.annotationContainers.lastOrNull() as? FirResolvedTypeRef ?: return
+        val varargElementTypeRef = typeRef.delegatedTypeRef as? FirResolvedTypeRef
+        // For `vararg x: @DataClass T`, FIR wraps the element type ref in `Array<out T>` while keeping `@DataClass` on the outer
+        // type ref, so unwrap `delegatedTypeRef` to inspect `T` instead of `Array`.
+        val targetType = if (varargElementTypeRef?.source?.kind == KtFakeSourceElementKind.ArrayTypeFromVarargParameter) {
+            varargElementTypeRef.coneType
+        } else {
+            typeRef.coneType
+        }
+
+        if (targetType is ConeErrorType) return
+        val symbol = targetType.toRegularClassSymbol(context.session)
+        if (symbol == null || symbol.classKind != ClassKind.CLASS || !symbol.isData) {
+            reporter.reportOn(annotationCall.source, KtErrorsParcelize.INAPPLICABLE_DATA_CLASS, context)
         }
     }
 }
