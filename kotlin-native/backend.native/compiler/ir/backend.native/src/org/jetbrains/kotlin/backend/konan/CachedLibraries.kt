@@ -241,19 +241,17 @@ class CachedLibraries(
                 // ir/{class_fields,inline_bodies,eager_init} would then throw NoSuchFileException. The cached data
                 // for those files is stale anyway (the dirty file is loaded as IR), so skip them entirely.
                 // A batched build may rebuild files of several libraries at once, so each member's files being rebuilt are skipped.
-                val filesToCache = filesBeingCached[library].orEmpty()
-                val fileIdsToCache = if (filesToCache.isEmpty()) {
-                    emptySet()
-                } else {
-                    val fileFqNames = library.getFileFqNames(filesToCache)
-                    filesToCache.zip(fileFqNames) { filePath, fqName -> cacheFileId(fqName, filePath) }.toSet()
-                }
+                val filesToCache = filesBeingCached[library].orEmpty().toSet()
                 val libraryFileDirs = library.getFilesWithFqNames().map { (filePath, fqName) ->
-                    resolve(cacheFileId(fqName, filePath))
+                    filePath to resolve(cacheFileId(fqName, filePath))
                 }
-                Cache.PerFile(target, Kind.STATIC, absolutePathString(),
-                        libraryFileDirs.filterNot { it.name in fileIdsToCache },
-                        complete = cacheDirContents.containsAll(libraryFileDirs.map { it.absolutePathString() }))
+                Cache.PerFile(
+                        target,
+                        Kind.STATIC,
+                        absolutePathString(),
+                        libraryFileDirs.mapNotNull { [filePath, dir] -> dir.takeUnless { filePath in filesToCache } },
+                        complete = cacheDirContents.containsAll(libraryFileDirs.map { [_, dir] -> dir.absolutePathString() }),
+                )
             }
         }
     }
