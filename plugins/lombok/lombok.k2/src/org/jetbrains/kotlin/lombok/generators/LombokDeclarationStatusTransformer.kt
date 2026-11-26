@@ -30,14 +30,13 @@ class LombokDeclarationStatusTransformer(session: FirSession) : FirStatusTransfo
                 declaration is FirConstructor && declaration.isPrimary
     }
 
-    override fun transformStatus(
-        status: FirDeclarationStatus,
+    override fun transformFieldStatus(
+        status: FirCallableDeclarationStatus,
         field: FirField,
         containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean,
-    ): FirDeclarationStatus {
+    ): FirCallableDeclarationStatus {
         if (containingClass == null) return status
-        require(status is FirResolvedCallableDeclarationStatus)
         val lombokService = session.lombokService
         val fieldDefaults = lombokService.getFieldDefaults(containingClass)
         val visibility = when {
@@ -52,13 +51,12 @@ class LombokDeclarationStatusTransformer(session: FirSession) : FirStatusTransfo
         return status.copy(visibility = visibility)
     }
 
-    override fun transformStatus(
-        status: FirDeclarationStatus,
+    override fun transformClassStatus(
+        status: FirClassLikeDeclarationStatus,
         regularClass: FirRegularClass,
         containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean,
-    ): FirDeclarationStatus {
-        require(status is FirResolvedClassLikeDeclarationStatus)
+    ): FirClassLikeDeclarationStatus {
         return if (session.lombokService.getValue(regularClass.symbol) != null &&
             status.modality != Modality.FINAL
         ) {
@@ -68,14 +66,13 @@ class LombokDeclarationStatusTransformer(session: FirSession) : FirStatusTransfo
         }
     }
 
-    override fun transformStatus(
-        status: FirDeclarationStatus,
+    override fun transformConstructorStatus(
+        status: FirCallableDeclarationStatus,
         constructor: FirConstructor,
         containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean,
-    ): FirDeclarationStatus {
+    ): FirCallableDeclarationStatus {
         if (containingClass == null) return status
-        require(status is FirResolvedCallableDeclarationStatus)
 
         val isHidden = if (constructor is FirJavaConstructor) {
             when {

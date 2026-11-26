@@ -45,7 +45,7 @@ class FirAllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExt
         }
     }
 
-    override fun transformStatus(status: FirDeclarationStatus, declaration: FirDeclaration): FirDeclarationStatus {
+    private fun transformStatusImpl(status: FirDeclarationStatus, declaration: FirDeclaration): FirDeclarationStatus {
         @OptIn(SymbolInternals::class)
         val explicitModality = when (declaration) {
             is FirPropertyAccessor -> declaration.propertySymbol.fir.status.modality
@@ -56,6 +56,20 @@ class FirAllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExt
             null -> status.copyWithNewDefaults(modality = Modality.OPEN, defaultModality = Modality.OPEN)
             else -> status.copyWithNewDefaults(defaultModality = Modality.OPEN)
         }
+    }
+
+    override fun transformCallableStatus(
+        status: FirCallableDeclarationStatus,
+        declaration: FirCallableDeclaration,
+    ): FirCallableDeclarationStatus {
+        return transformStatusImpl(status, declaration) as FirCallableDeclarationStatus
+    }
+
+    override fun transformClassLikeStatus(
+        status: FirClassLikeDeclarationStatus,
+        declaration: FirClassLikeDeclaration,
+    ): FirClassLikeDeclarationStatus {
+        return transformStatusImpl(status, declaration) as FirClassLikeDeclarationStatus
     }
 }
 
