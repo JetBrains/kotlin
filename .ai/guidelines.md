@@ -18,11 +18,15 @@ Note: The IntelliJ Kotlin plugin is in a separate repository (JetBrains/intellij
 ## Build Commands
 
 ```bash
-# Generate test sources (run after adding new test data files)
+# Generate test sources for runners that are *not* generated on demand.
 # Mostly required for Analysis API, CLI and some other test runners.
-# Most other tests (like diagnostic, box, etc) generate runners on demand.
 ./gradlew generateTests
 ```
+
+"On demand" means: in modules that generate runners into the build directory (e.g. `compiler/jvm.tests` → `build/tests-gen/`),
+runners are regenerated automatically whenever that module's tests are compiled or run.
+Running the root `./gradlew generateTests` separately is only needed for modules that keep generated runners in the repository
+(those register in the aggregate task), e.g. Analysis API.
  
 ## Common Pitfalls
 
@@ -36,6 +40,8 @@ follow the [Diagnostic Message Style Guide](../docs/diagnostic_message_style_gui
 ## Areas
 
 **BEFORE running tests, modifying, or investigating code — identify the area and READ its docs.**
+If you're working on a YouTrack ticket, check the "Subsystems" field to identify the area.
+If you're not sure about the area, ask the user.
 
 | Area                     | Prefixes               | Location                                                  | Docs                                                                             |
 |--------------------------|------------------------|-----------------------------------------------------------|----------------------------------------------------------------------------------|
@@ -48,9 +54,8 @@ follow the [Diagnostic Message Style Guide](../docs/diagnostic_message_style_gui
 | Build Tools Libraries    |                        | build-tools/libraries/                                    | [AGENTS.md](../build-tools/libraries/AGENTS.md)                                  |
 | Compiler plugins         |                        | plugins/                                                  | —                                                                                |
 | Dependency updates       |                        | gradle/                                                   | [ReadMe.md](../ReadMe.md#updating-a-dependency)                                  |
-| FIR (K2 frontend)        | `Fir*`                 | compiler/fir/                                             | [AGENTS.md](../compiler/AGENTS.md)                                               |
+| FIR (K2 frontend)        | `Fir*`                 | compiler/fir/                                             | [AGENTS.md](../compiler/fir/AGENTS.md)                                           |
 | IR                       | `Ir*`                  | compiler/ir/                                              | [AGENTS.md](../compiler/AGENTS.md)                                               |
-| K1 (legacy frontend)     |                        | compiler/frontend/                                        | —                                                                                |
 | Kotlin Gradle Plugin     |                        | libraries/tools/kotlin-gradle-plugin/                     | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin/AGENTS.md)                   |
 | Kotlin Gradle Plugin API |                        | libraries/tools/kotlin-gradle-plugin-api/                 | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin-api/AGENTS.md)               |
 | KGP Integration Tests    |                        | libraries/tools/kotlin-gradle-plugin-integration-tests/   | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin-integration-tests/AGENTS.md) |
@@ -78,7 +83,7 @@ Use `-q` (quiet) flag to reduce output noise. Example of commands for areas WITH
 ./gradlew :compiler:test --tests "org.jetbrains.kotlin.codegen.BlackBoxCodegenTestGenerated.testSomeTest"
 
 # Run FIR compiler tests
-./gradlew :compiler:fir:fir2ir:test --tests "org.jetbrains.kotlin.test.runners.ir.FirLightTreeJvmIrTextTestGenerated"
+./gradlew :compiler:jvm.tests:test --tests "org.jetbrains.kotlin.test.runners.ir.FirLightTreeJvmIrTextTestGenerated"
 
 # Update test data files (when format changes)
 ./gradlew :compiler:test --tests "TestClassName" -Pkotlin.test.update.test.data=true --continue
@@ -137,7 +142,12 @@ If there are many options for the JetBrains IDE MCP server, ask the user what MC
 
 ### MANDATORY - Verify After Writing Code
 
-Use JetBrains MCP `get_file_problems` with errorsOnly=false to check files for warnings. FIX any warnings related to the code changes made. You may ignore unrelated warnings.
+Use JetBrains MCP `get_file_problems` with errorsOnly=false to check **source files** for warnings.
+FIX any warnings related to the code changes made. You may ignore unrelated warnings.
+
+**Exception:** do not run `get_file_problems` on test data files (e.g. `.kt` files with diagnostic markers like
+`<!ERROR_NAME!>`) — they are not valid Kotlin, so inspections only produce bogus results.
+Running the corresponding test is the verification for test data.
 
 Run the relevant tests after making changes. Slowness is never a reason to skip. Fix failures before declaring done.
 
