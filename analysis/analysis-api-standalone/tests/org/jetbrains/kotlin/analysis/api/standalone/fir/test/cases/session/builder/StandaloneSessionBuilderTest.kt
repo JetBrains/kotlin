@@ -348,6 +348,25 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
     }
 
     @Test
+    fun testMissingBinaryRootDoesNotCrashStandaloneSessionBuilder() {
+        val missingJar = tempDir.resolve("missing.jar")
+        Assertions.assertFalse(missingJar.toFile().exists())
+        Assertions.assertDoesNotThrow {
+            buildStandaloneAnalysisAPISession(disposable) {
+                buildKtModuleProvider {
+                    platform = JvmPlatforms.defaultJvmPlatform
+                    addModule(
+                        buildKtLibraryModule {
+                            addBinaryRoot(missingJar)
+                            platform = JvmPlatforms.defaultJvmPlatform
+                            libraryName = "missing"
+                        }
+                    )
+                }
+            }
+        }
+    }
+    @Test
     fun testKotlinBinaryModuleSessionWithVirtualFile() {
         val root = "otherModuleUsage"
         lateinit var sourceModule: KaSourceModule
