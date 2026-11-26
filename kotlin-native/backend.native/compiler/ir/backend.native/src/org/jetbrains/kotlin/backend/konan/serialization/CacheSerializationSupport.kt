@@ -86,24 +86,22 @@ internal class InlineFunctionSerializer(private val deserializer: KonanPartialMo
     }
 
     private fun loadFunction(topLevelSignature: IdSignature): Pair<ProtoFunction, IrFile> {
-        val [protoDeclaration, fileDeserializationState] = loadDeclaration(topLevelSignature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL)
+        val [protoDeclaration, fileDeserializationState] = loadDeclaration(topLevelSignature and FUNCTION_SYMBOL)
         return protoDeclaration.irFunction to fileDeserializationState.file
     }
 
     private fun loadProperty(topLevelSignature: IdSignature): Pair<ProtoProperty, IrFile> {
-        val [protoDeclaration, fileDeserializationState] = loadDeclaration(topLevelSignature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL)
+        val [protoDeclaration, fileDeserializationState] = loadDeclaration(topLevelSignature and PROPERTY_SYMBOL)
         return protoDeclaration.irProperty to fileDeserializationState.file
     }
 
     private fun loadClass(topLevelSignature: IdSignature): Pair<ProtoClass, FileDeserializationState> {
-        val [protoDeclaration, fileDeserializationState] = loadDeclaration(topLevelSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL)
+        val [protoDeclaration, fileDeserializationState] = loadDeclaration(topLevelSignature and CLASS_SYMBOL)
         return protoDeclaration.irClass to fileDeserializationState
     }
 
-    private fun loadDeclaration(topLevelSignature: IdSignature, kind: BinarySymbolData.SymbolKind): Pair<ProtoDeclaration, FileDeserializationState> {
-        val signatureAndKind = SignatureAndKind(topLevelSignature, kind)
-
-        val fileDeserializationState: FileDeserializationState = deserializer.getFileDeserializationState(topLevelSignature)
+    private fun loadDeclaration(signatureAndKind: SignatureAndKind): Pair<ProtoDeclaration, FileDeserializationState> {
+        val fileDeserializationState: FileDeserializationState = deserializer.getFileDeserializationState(signatureAndKind.signature)
         val declarationIndex = fileDeserializationState.fileDeserializer.topLevelDeclarationIndex[signatureAndKind]
                 ?: error("No declaration for $signatureAndKind")
 
