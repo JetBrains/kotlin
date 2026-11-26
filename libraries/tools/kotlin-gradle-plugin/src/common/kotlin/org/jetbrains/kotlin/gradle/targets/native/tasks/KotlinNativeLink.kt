@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheSettings
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
+import org.jetbrains.kotlin.gradle.targets.native.appliesTo
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesForTargetWithKonanDistribution
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
@@ -155,11 +156,7 @@ constructor(
         simpleKotlinNativeVersion
             .map { KotlinToolingVersion(it) }
             .zip(disableCacheSettings) { version, settings ->
-                settings.any { disableSetting ->
-                    disableSetting.version.major == version.major &&
-                            disableSetting.version.minor == version.minor &&
-                            disableSetting.version.patch == version.patch
-                }
+                settings.any { it.appliesTo(version) }
             }
     )
 

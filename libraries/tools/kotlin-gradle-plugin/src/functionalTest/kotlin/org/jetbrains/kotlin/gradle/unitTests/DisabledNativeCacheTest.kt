@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheSettings
+import org.jetbrains.kotlin.gradle.targets.native.appliesTo
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.unitTests.fus.collectedFusConfigurationTimeMetrics
 import org.jetbrains.kotlin.gradle.unitTests.fus.enableFusOnCI
@@ -37,7 +39,9 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import java.net.URI
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class DisabledNativeCacheTest {
     @JvmField
@@ -279,6 +283,67 @@ class DisabledNativeCacheTest {
     }
 
     @Test
+    fun `test disabled version covers its bug-fix releases only`() {
+        fun isDisabled(disabledIn: String, nativeVersion: String) =
+            DisableNativeCacheSettings(KotlinToolingVersion(disabledIn), "reason", null).appliesTo(KotlinToolingVersion(nativeVersion))
+
+        assertTrue(isDisabled("2.4.0", "2.4.0"))
+        assertTrue(isDisabled("2.4.0", "2.4.1"))
+        assertTrue(isDisabled("2.4.0", "2.4.10"))
+        assertTrue(isDisabled("2.4.0", "2.4.11"))
+        assertTrue(isDisabled("2.4.0", "2.4.12"))
+        assertTrue(isDisabled("2.4.0", "2.4.12-RC"))
+        assertFalse(isDisabled("2.4.0", "2.4.20"))
+        assertFalse(isDisabled("2.4.0", "2.4.21"))
+        assertFalse(isDisabled("2.4.0", "2.5.0"))
+
+        assertTrue(isDisabled("2.4.20", "2.4.20"))
+        assertTrue(isDisabled("2.4.20", "2.4.21"))
+        assertTrue(isDisabled("2.4.20", "2.4.22-RC"))
+        assertFalse(isDisabled("2.4.20", "2.4.10"))
+        assertFalse(isDisabled("2.4.20", "2.4.12"))
+        assertFalse(isDisabled("2.4.20", "2.4.255-SNAPSHOT"))
+        assertFalse(isDisabled("2.4.20", "3.4.20"))
+    }
+
+    @Test
+    fun `test native cache is disabled for bug-fix release`() {
+        Assumptions.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
+        assertDebugCacheKindForNativeVersion(
+            nativeVersion = currentVersionForDisableCache.withPatch(currentVersionForDisableCache.patch + 1),
+            expected = NativeCacheKind.NONE,
+        )
+    }
+
+    @Test
+    fun `test native cache is enabled for another release`() {
+        Assumptions.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
+        assertDebugCacheKindForNativeVersion(
+            nativeVersion = currentVersionForDisableCache.withPatch(currentVersionForDisableCache.patch + 20),
+            expected = NativeCacheKind.STATIC,
+        )
+    }
+
+    private fun assertDebugCacheKindForNativeVersion(nativeVersion: String, expected: NativeCacheKind) {
+        with(mppProjectWithFakeKonan(mockKonan, nativeVersion = nativeVersion)) {
+            kotlin {
+                createCacheableTargets().first().binaries.staticLib {
+                    disableNativeCache(currentVersionForDisableCache, "Disabled for tests")
+                }
+            }
+
+            evaluate()
+
+            val linkTask = if (HostManager.hostIsMac) IOS_ARM64_LINK_DEBUG_TASK_NAME else LINUX_X64_LINK_DEBUG_TASK_NAME
+            assertEquals(
+                expected,
+                konanCacheKind(linkTask).get(),
+                "Unexpected native cache kind for $linkTask with Kotlin/Native $nativeVersion and $currentVersionForDisableCache"
+            )
+        }
+    }
+
+    @Test
     fun `test disable native cache FUS event not present`() {
         with(mppProjectWithFakeKonan(mockKonan, preApplyCode = { enableFusOnCI() })) {
             kotlin {
@@ -341,9 +406,8 @@ private fun KotlinMultiplatformExtension.createCacheableTargets(): List<KotlinNa
 /**
  * Selects the appropriate [DisableCacheInKotlinVersion] for the default native version.
  *
- * [KotlinNativeLink.disableCache] performs an exact major.minor.patch comparison between the native version
- * and the [DisableCacheInKotlinVersion]. Snapshot versions (e.g. `2.4.255-SNAPSHOT`) have a different patch
- * number than release versions (e.g. `2.4.0`), so the match would fail.
+ * [KotlinNativeLink.disableCache] matches a [DisableCacheInKotlinVersion] only with its own release and its hotfixes.
+ * Snapshot versions (e.g. `2.4.255-SNAPSHOT`) are outside of any release (e.g. `2.4.0`), so the match would fail.
  * To avoid this, the test project's `kotlin.native.version` is set to the exact version string
  * of the selected [DisableCacheInKotlinVersion].
  */
@@ -360,7 +424,9 @@ private val currentVersionForDisableCache: DisableCacheInKotlinVersion by lazy {
 }
 
 private val disableCacheVersionString: String
-    get() = "${currentVersionForDisableCache.major}.${currentVersionForDisableCache.minor}.${currentVersionForDisableCache.patch}"
+    get() = currentVersionForDisableCache.withPatch()
+
+private fun DisableCacheInKotlinVersion.withPatch(patch: Int = this.patch): String = "$major.$minor.$patch"
 
 private fun ProjectInternal.konanCacheKind(linkTask: String): Provider<NativeCacheKind> =
     tasks.named(linkTask, KotlinNativeLink::class.java).flatMap { it.konanCacheKind }
