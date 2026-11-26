@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.util
 
 import jdk.jfr.FlightRecorder
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.junit.jupiter.api.Assumptions.assumeTrue
+import java.nio.ByteBuffer
 import kotlin.concurrent.thread
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -50,6 +52,25 @@ class PerformanceManagerMemoryTest {
         assertTrue(dynamicPhase.peakHeapBytes >= allocationSize, dynamicPhase.toString())
         assertTrue(phase.allocatedBytes >= dynamicPhase.allocatedBytes, phase.toString())
         assertTrue(phase.gcCount >= dynamicPhase.gcCount, phase.toString())
+    }
+
+    @Test
+    fun nativeMemoryIsReportedInTheResidentSetSize() {
+        assumeTrue(FlightRecorder.getFlightRecorder().eventTypes.any { it.name == "jdk.ResidentSetSize" }, "Needs JDK 21")
+        val perfManager = PerformanceManagerImpl(JvmPlatforms.defaultJvmPlatform, "Test").apply { enableMemoryTracking() }
+        perfManager.measureCompilation().use {
+            perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
+                // Like the memory of LLVM, a direct buffer is outside the heap
+                val buffer = ByteBuffer.allocateDirect(allocationSize)
+                for (i in 0 until allocationSize step 4096) buffer.put(i, 1)
+                // Longer than the sampling period
+                Thread.sleep(100)
+            }
+        }
+
+        val memory = perfManager.unitStats.memoryStats!!.single { it.dynamicPhase == null }
+        val peakRss = assertNotNull(memory.peakRssBytes, memory.toString())
+        assertTrue(peakRss >= allocationSize, memory.toString())
     }
 
     @Test

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.FlexibleTypeImpl
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
@@ -78,6 +79,11 @@ fun CompilerConfiguration.setupCommonArguments(
         this.report(
             COMPILER_ARGUMENTS_WARNING,
             "'-Xreport-memory' has no effect unless '-Xreport-perf' or '-Xdump-perf' is specified."
+        )
+    } else if (arguments.reportMemory && !PerformanceManager.isMemoryTrackingSupported) {
+        this.report(
+            COMPILER_ARGUMENTS_WARNING,
+            "'-Xreport-memory' has no effect because the Java runtime lacks Java Flight Recorder (the 'jdk.jfr' module)."
         )
     }
 

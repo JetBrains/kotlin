@@ -228,6 +228,11 @@ data class GarbageCollectionStats(val kind: String, val millis: Long, val count:
  * was in use when the phase started. Like [gcCount] and [gcPauseNanos], it is attributed to every phase
  * running at the time, whatever thread or unit the phase belongs to.
  *
+ * [peakRssBytes] is the peak resident set size of the whole process, so unlike [peakHeapBytes] it includes the native memory,
+ * like that of LLVM running in the Kotlin/Native compiler. It is sampled, so it may miss short spikes and is `null`
+ * for a phase shorter than the sampling period or a JVM that can't sample it (before JDK 21).
+ * It doesn't include the memory of the processes the compiler runs, like a linker.
+ *
  * A phase measured several times under the same name, like a lowering applied per file, keeps the highest peak
  * and sums up the rest.
  */
@@ -238,12 +243,14 @@ data class MemoryStats(
     val allocatedBytes: Long,
     val gcCount: Int,
     val gcPauseNanos: Long,
+    val peakRssBytes: Long? = null,
 ) {
     operator fun plus(other: MemoryStats): MemoryStats = copy(
         peakHeapBytes = maxOf(peakHeapBytes, other.peakHeapBytes),
         allocatedBytes = allocatedBytes + other.allocatedBytes,
         gcCount = gcCount + other.gcCount,
         gcPauseNanos = gcPauseNanos + other.gcPauseNanos,
+        peakRssBytes = listOfNotNull(peakRssBytes, other.peakRssBytes).maxOrNull(),
     )
 }
 
@@ -361,9 +368,11 @@ fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
 private fun UnitStats.memoryOf(phaseType: PhaseType, dynamicPhase: String?): String {
     val stats = memoryStats?.find { it.phaseType == phaseType && it.dynamicPhase == dynamicPhase } ?: return ""
     val mb = 1024 * 1024
-    return ", heap peak %d MB, allocated %d MB, %d GCs (%d ms)".format(
-        stats.peakHeapBytes / mb, stats.allocatedBytes / mb, stats.gcCount, TimeUnit.NANOSECONDS.toMillis(stats.gcPauseNanos)
-    )
+    return ", heap peak %d MB".format(stats.peakHeapBytes / mb) +
+            stats.peakRssBytes?.let { ", RSS peak %d MB".format(it / mb) }.orEmpty() +
+            ", allocated %d MB, %d GCs (%d ms)".format(
+                stats.allocatedBytes / mb, stats.gcCount, TimeUnit.NANOSECONDS.toMillis(stats.gcPauseNanos)
+            )
 }
 
 val nanosInSecond = TimeUnit.SECONDS.toNanos(1)

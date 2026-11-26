@@ -72,6 +72,7 @@ object UnitStatsJsonDumper {
                             appendKeyValue(it::phaseType, it.phaseType.name, indent = 3)
                             it.dynamicPhase?.let { name -> appendKeyValue(it::dynamicPhase, name, indent = 3) }
                             appendKeyValue(it::peakHeapBytes, it.peakHeapBytes, indent = 3)
+                            it.peakRssBytes?.let { bytes -> appendKeyValue(it::peakRssBytes, bytes, indent = 3) }
                             appendKeyValue(it::allocatedBytes, it.allocatedBytes, indent = 3)
                             appendKeyValue(it::gcCount, it.gcCount, indent = 3)
                             appendKeyValue(it::gcPauseNanos, it.gcPauseNanos, indent = 3, trailingComma = false)

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.stats.MarkdownReportRenderer
 import org.jetbrains.kotlin.stats.SingleReportsData
 import org.jetbrains.kotlin.stats.StatsCalculator
 import java.io.File
+import java.io.IOException
 import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
@@ -27,6 +28,10 @@ import java.util.*
 abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presentableName: String) {
     companion object {
         private const val DEBUG_MODE: Boolean = false
+
+        /** `false` when the runtime lacks Java Flight Recorder, see [enableMemoryTracking]. */
+        val isMemoryTrackingSupported: Boolean
+            get() = FlightRecorderSupport.isAvailable
     }
 
     private lateinit var thread: Thread
@@ -250,9 +255,11 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     /**
      * Records the memory used by the phases of this manager and of its children (see [PerformanceManagerImpl.createChildIfNeeded])
      * while the compilation is measured, see [measureCompilation] and [MemoryStats].
+     *
+     * Does nothing when the memory tracking is not supported, see [isMemoryTrackingSupported].
      */
     fun enableMemoryTracking() {
-        if (isMemoryTrackingEnabled) return
+        if (isMemoryTrackingEnabled || !isMemoryTrackingSupported) return
         assertIfDebug(!isMeasuring) { "The memory tracking must be enabled before the compilation is measured" }
         isMemoryTrackingEnabled = true
     }
@@ -281,7 +288,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun notifyDynamicPhaseStarted(name: String) {
-        dynamicPhaseEvent = CompilationPhaseEvent.startIfEnabled()
+        dynamicPhaseEvent = startPhaseEvent()
         currentDynamicPhaseTime = currentTime()
         currentDynamicPhase = name
     }
@@ -314,7 +321,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         phaseStartTime = currentTime()
         currentPhaseType = newPhaseType
-        phaseEvent = CompilationPhaseEvent.startIfEnabled()
+        phaseEvent = startPhaseEvent()
     }
 
     fun notifyPhaseFinished(phaseType: PhaseType) {
@@ -338,7 +345,12 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
         notifyCurrentPhaseFinishedIfNeeded()
 
-        memoryStats = memoryRecording?.stop()
+        // The memory measurements are optional, so failing to read them, e.g. when the temporary directory is full, doesn't fail the compilation
+        memoryStats = try {
+            memoryRecording?.stop()
+        } catch (_: IOException) {
+            null
+        }
         memoryRecording = null
 
         if (!isExtendedStatsEnabled) return
@@ -383,6 +395,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         phaseEvent?.finish(compilationId, phaseType, null)
         phaseEvent = null
     }
+
+    // `CompilationPhaseEvent` isn't touched when `jdk.jfr` is missing, which would fail to load it
+    private fun startPhaseEvent(): CompilationPhaseEvent? =
+        if (FlightRecorderSupport.isAvailable) CompilationPhaseEvent.startIfEnabled() else null
 
     internal fun <T> measureSideTime(phaseSideType: PhaseSideType, block: () -> T): T {
         ensureNotFinalizedAndSameThread()
