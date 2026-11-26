@@ -16,6 +16,8 @@ abstract class TestFailureSuppressor(protected val testServices: TestServices) :
     /**
      * This function should be used to suppress test failures if there were any.
      * It's guaranteed that the [failedAssertions] list will not be empty.
+     *
+     * A suppressor which suppresses some failures as expected ones may also tell them in advance, see [isExpectedFailure].
      */
     abstract fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException>
 
@@ -35,7 +37,9 @@ abstract class TestFailureSuppressor(protected val testServices: TestServices) :
 
     /**
      * Whether [suppressIfNeeded] would suppress [failure] as an expected one, e.g., a failure in a phase after the one the test runs till.
-     * Unlike [suppressIfNeeded], it has no side effects.
+     * The test runner asks it before the handlers compare their output, to tell an expected failure from a crash which leaves the output
+     * incomplete, while [suppressIfNeeded] runs after all checks and may have side effects, e.g., propose edits of the test data. An
+     * override must agree with [suppressIfNeeded], which stays the function to implement.
      */
     open fun isExpectedFailure(failure: WrappedException): Boolean = false
 
