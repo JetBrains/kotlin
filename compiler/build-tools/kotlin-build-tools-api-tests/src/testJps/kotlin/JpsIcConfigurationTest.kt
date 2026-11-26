@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperatio
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertExactOutput
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2JpsStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.*
@@ -88,7 +88,7 @@ class JpsIcConfigurationTest : BaseJpsTest() {
     }
 
     @DisplayName("A JPS-managed compilation succeeds and produces runnable output")
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2JpsStrategyAgnosticCompilationTest
     @TestMetadata("kotlin-java-mixed")
     fun endToEndCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
@@ -104,7 +104,7 @@ class JpsIcConfigurationTest : BaseJpsTest() {
     }
 
     @DisplayName("The operation-level lookup tracker still fires with no incremental compilation configured")
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2JpsStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
     fun operationLookupTrackerWithoutIcConfig(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {

@@ -20,6 +20,7 @@ class SmokeJvmClasspathSnapshottingMetricsTest : BaseCompilationTest() {
     fun smokeTestIncrementalCompilationMetrics(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val kotlinToolchain = strategyConfig.first
         val executionPolicy = strategyConfig.second
+        executionPolicy.assumeDetailedMetricsAreCollected()
         val snapshottingOperation = kotlinToolchain.jvm.classpathSnapshottingOperationBuilder(currentKotlinStdlibLocation)
         val metricsCollector = TestBuildMetricsCollector()
         snapshottingOperation[METRICS_COLLECTOR] = metricsCollector
@@ -38,6 +39,7 @@ class SmokeJvmClasspathSnapshottingMetricsTest : BaseCompilationTest() {
     fun smokeTestIncrementalCompilationMetricsNoInlineLocalClassesParsing(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val kotlinToolchain = strategyConfig.first
         val executionPolicy = strategyConfig.second
+        executionPolicy.assumeDetailedMetricsAreCollected()
         val snapshottingOperation = kotlinToolchain.jvm.classpathSnapshottingOperationBuilder(currentKotlinStdlibLocation)
         val metricsCollector = TestBuildMetricsCollector()
         snapshottingOperation[METRICS_COLLECTOR] = metricsCollector

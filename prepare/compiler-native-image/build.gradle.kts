@@ -35,6 +35,7 @@ val pluginsRuntime = configurations.create("pluginsRuntime") {
 
 dependencies {
     nativeImageClasspath(project(":kotlin-compiler-embeddable", configuration = "runtimeElements"))
+    nativeImageClasspath(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
     // Bundled plugins
     nativeImageClasspath(project(":kotlin-scripting-compiler-embeddable"))
     nativeImageClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable"))
@@ -322,6 +323,7 @@ val kotlincNativeImageDist = tasks.register<Sync>("kotlincNativeImageDist") {
     val librariesStripVersionFiles = files(nativeImageClasspath)
     into("lib") {
         from(librariesStripVersionFiles) {
+            exclude("kotlin-compiler-embeddable*.jar")
             rename {
                 it.replace(Regex("-\\d.*\\.jar\$"), ".jar")
             }

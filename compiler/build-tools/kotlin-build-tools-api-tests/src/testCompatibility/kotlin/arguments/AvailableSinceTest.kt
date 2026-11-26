@@ -444,6 +444,37 @@ class AvailableSinceTest : BaseCompilationTest() {
         }
     }
 
+    @Test
+    fun testNativeImageDaemon() {
+        val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
+        assumeTrue(toolchains.hasNativeImageOptionVersionChecking())
+
+        versions.forEach { version ->
+            overrideVersionMethod.invoke(null, version)
+            with(KotlinToolingVersion(version)) {
+                toolchains.nativeImageDaemonExecutionPolicyBuilder(Path("native-image-dist")).apply {
+                    trySet(ExecutionPolicy.NativeImageDaemon.SHUTDOWN_DELAY_MILLIS.availableSinceVersion) {
+                        this[ExecutionPolicy.NativeImageDaemon.SHUTDOWN_DELAY_MILLIS] = null
+                    }
+                    @OptIn(DelicateBuildToolsApi::class)
+                    trySet(ExecutionPolicy.NativeImageDaemon.DAEMON_RUN_DIR_PATH.availableSinceVersion) {
+                        @OptIn(DelicateBuildToolsApi::class)
+                        this[ExecutionPolicy.NativeImageDaemon.DAEMON_RUN_DIR_PATH] = Path("")
+                    }
+                    trySet(ExecutionPolicy.NativeImageDaemon.LOGS_PATH.availableSinceVersion) {
+                        this[ExecutionPolicy.NativeImageDaemon.LOGS_PATH] = Path("")
+                    }
+                    trySet(ExecutionPolicy.NativeImageDaemon.LOGS_FILE_SIZE_LIMIT.availableSinceVersion) {
+                        this[ExecutionPolicy.NativeImageDaemon.LOGS_FILE_SIZE_LIMIT] = null
+                    }
+                    trySet(ExecutionPolicy.NativeImageDaemon.LOGS_FILE_COUNT_LIMIT.availableSinceVersion) {
+                        this[ExecutionPolicy.NativeImageDaemon.LOGS_FILE_COUNT_LIMIT] = null
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Sanity check: reflection-based discovery must find at least one option holder.
      */
@@ -595,6 +626,7 @@ class AvailableSinceTest : BaseCompilationTest() {
         "org.jetbrains.kotlin.buildtools.api.BuildOperation",
         "org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration",
         $$"org.jetbrains.kotlin.buildtools.api.ExecutionPolicy$WithDaemon",
+        $$"org.jetbrains.kotlin.buildtools.api.ExecutionPolicy$NativeImageDaemon",
         "org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation",
         "org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation",
         "org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation",
@@ -643,6 +675,9 @@ class AvailableSinceTest : BaseCompilationTest() {
 
     private fun KotlinToolchains.hasJsDtsOptionVersionChecking(): Boolean =
         KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 5, 0, "snapshot")
+
+    private fun KotlinToolchains.hasNativeImageOptionVersionChecking(): Boolean =
+        KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 5, 20, "snapshot")
 
     context(currentVersion: KotlinToolingVersion)
     fun trySet(availableSince: KotlinReleaseVersion, action: () -> Unit) {

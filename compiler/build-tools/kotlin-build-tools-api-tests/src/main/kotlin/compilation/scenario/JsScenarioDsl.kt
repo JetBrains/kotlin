@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.assumeNotNativeImageProcess
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.JsProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.assumeJsIsSupported
@@ -26,6 +27,7 @@ fun BaseCompilationTest.jsScenario(
     action: Scenario<JsKlibCompilationOperation.Builder, JsHistoryBasedIncrementalCompilationConfiguration.Builder>.() -> Unit,
 ) {
     kotlinToolchains.assumeJsIsSupported()
+    strategyConfig.assumeNotNativeImageProcess()
     action(JsScenarioDsl(JsProject(kotlinToolchains, strategyConfig, workingDirectory), strategyConfig, kotlinToolchains))
 }
 

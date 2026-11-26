@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.util
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths
 import java.io.File
 import java.net.URLClassLoader
+import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.toPath
 
@@ -74,3 +77,15 @@ val isKotlinNativeCompilerAvailable: Boolean
 
 val currentKotlinNativeStdlibKlibLocation
     get() = Paths.get(System.getProperty(NATIVE_STDLIB_CLASSPATH_PROPERTY))
+
+/**
+ * Whether the native image distribution with the native image daemon is available to the tests.
+ *
+ * Gradle sets [TestCompilePaths.KOTLIN_NATIVE_IMAGE_DIST_PATH] for the `testNativeImage` suite, and for every suite when the repository
+ * is built with `kotlin.build-tools-api.test.native-image-daemon-policy=true`.
+ */
+val isNativeImageDistAvailable: Boolean
+    get() = System.getProperty(TestCompilePaths.KOTLIN_NATIVE_IMAGE_DIST_PATH) != null
+
+val nativeImageDistPath: Path
+    get() = ForTestCompileRuntime.kotlinNativeImageDistForTests().toPath()

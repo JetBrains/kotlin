@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.tests.assumeNotNativeImageProcess
+
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_WARNING_LEVEL
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -54,6 +56,7 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
     fun fixedWarningIsNotEscalatedToErrorWithWerror(project: ProjectCreator) {
         project {
             assumeTrue(this !is MetadataProject) { "Metadata always warns about a missing target platform, which -Werror turns into an aborting error" }
+            defaultStrategyConfig.assumeNotNativeImageProcess()
             val module = module("deprecated-usage")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[WERROR] = true

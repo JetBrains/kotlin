@@ -141,7 +141,10 @@ abstract class CompileServiceImplBase(
 
     protected val compilationsCounter = AtomicInteger(0)
 
-    protected val classpathWatcher = LazyClasspathWatcher(compilerId.compilerClasspath)
+    protected val classpathWatcher = LazyClasspathWatcher(
+        classpath = compilerId.compilerClasspath,
+        isNativeImage = compilerId.isNativeImage,
+    )
 
     enum class Aliveness {
         // !!! ordering of values is used in state comparison
@@ -260,7 +263,7 @@ abstract class CompileServiceImplBase(
             runFileDir,
             makeRunFilenameString(
                 timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
-                digest = makeRunFileDigest(javaLanguageVersion, compilerId.compilerClasspath.map { Path(it) }),
+                digest = makeRunFileDigest(javaLanguageVersion, compilerId),
                 port = port.toString()
             )
         )
@@ -916,7 +919,8 @@ class CompileServiceImpl(
     }
 
     override fun checkCompilerId(expectedCompilerId: CompilerId): Boolean =
-        (compilerId.compilerVersion.isEmpty() || compilerId.compilerVersion == expectedCompilerId.compilerVersion) &&
+        compilerId.isNativeImage == expectedCompilerId.isNativeImage &&
+                (compilerId.compilerVersion.isEmpty() || compilerId.compilerVersion == expectedCompilerId.compilerVersion) &&
                 (compilerId.compilerClasspath.all { expectedCompilerId.compilerClasspath.contains(it) }) &&
                 !classpathWatcher.isChanged
 

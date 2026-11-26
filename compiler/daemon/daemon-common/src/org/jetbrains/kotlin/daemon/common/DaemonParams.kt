@@ -290,6 +290,20 @@ data class DaemonOptions(
 val DaemonOptions.runFilesPathOrDefault: String
     get() = if (runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else runFilesPath
 
+fun makeRunFileDigest(javaLanguageVersion: JavaLanguageVersion, compilerId: CompilerId): String = if (compilerId.isNativeImage) {
+    // Native image executables have baked-in java language version, so including it in the digest is wrong
+    // therefore, we include only properties that are explicitly unique
+    val entries = buildList {
+        add("native-image")
+        add(compilerId.compilerVersion)
+        add("${CompilerSystemProperties.JAVA_HOME.value}")
+        addAll(compilerId.compilerClasspath.distinct().sorted())
+    }
+    entries.digest().toHexString()
+} else {
+    makeRunFileDigest(javaLanguageVersion, compilerId.compilerClasspath.map { File(it).toPath() })
+}
+
 fun makeRunFileDigest(javaLanguageVersion: JavaLanguageVersion, compilerClasspath: List<Path>): String {
     val entries: List<String> = buildList {
         add("jvm")
@@ -309,6 +323,7 @@ private fun ByteArray.toHexString(): String = joinToString("", transform = { "%0
 data class CompilerId(
     var compilerClasspath: List<String> = listOf(),
     var compilerVersion: String = "",
+    var isNativeImage: Boolean = false,
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
@@ -317,10 +332,20 @@ data class CompilerId(
                 this,
                 CompilerId::compilerClasspath,
                 toString = { it.joinToString(File.pathSeparator) },
-                fromString = { it.trimQuotes().split(File.pathSeparator) }), StringPropMapper(this, CompilerId::compilerVersion)
+                fromString = { it.trimQuotes().split(File.pathSeparator) }),
+            StringPropMapper(this, CompilerId::compilerVersion),
+            BoolPropMapper(this, CompilerId::isNativeImage),
         )
 
     companion object {
+        @JvmStatic
+        fun makeNativeImageCompilerId(executable: File, compilerVersion: String): CompilerId =
+            CompilerId(
+                compilerClasspath = listOf(executable.absolutePath),
+                compilerVersion = compilerVersion,
+                isNativeImage = true,
+            )
+
         @JvmStatic
         fun makeCompilerId(vararg paths: File): CompilerId = makeCompilerId(paths.asIterable())
 

@@ -40,6 +40,11 @@ class LookupTrackerTest : BaseCompilationTest() {
                     is ExecutionPolicy.InProcess if incremental -> KotlinToolingVersion(2, 3, 0, null)
                     is ExecutionPolicy.InProcess -> KotlinToolingVersion(2, 3, 20, null)
                     is ExecutionPolicy.WithDaemon -> KotlinToolingVersion(2, 3, 20, null)
+                    is ExecutionPolicy.NativeImageDaemon -> KotlinToolingVersion(2, 5, 20, "snapshot")
+                    is ExecutionPolicy.NativeImageProcess -> {
+                        assumeTrue(false) { "Lookup tracker is not supported by the native image process strategy" }
+                        return
+                    }
                 }
             )
         }

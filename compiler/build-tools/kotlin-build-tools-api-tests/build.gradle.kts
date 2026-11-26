@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 
+import TestCompilePaths.KOTLIN_NATIVE_IMAGE_DIST_PATH
+
 plugins {
     id("common-configuration")
     kotlin("jvm")
@@ -58,6 +60,14 @@ val (nativeStdlibKlib: FileCollection, nativeCompilerClasspath: FileCollection?)
     val bootstrapNativeDistribution = registerNativeBootstrapDistribution()
     files(bootstrapNativeDistribution.map { it.stdlib }) to files(bootstrapNativeDistribution.map { it.compilerClasspath })
 }
+
+val isNativeImageDaemonEnabled = kotlinBuildProperties.booleanProperty("kotlin.build.native-image.kotlin-daemon").get()
+val includeNativeImagePolicies =
+    kotlinBuildProperties.booleanProperty("kotlin.build-tools-api.test.native-image-policies").get()
+check(!includeNativeImagePolicies || isNativeImageDaemonEnabled) {
+    "kotlin.build-tools-api.test.native-image-policies=true requires kotlin.build.native-image.kotlin-daemon=true"
+}
+val nativeImageDistribution = files(rootDir.resolve("prepare/compiler-native-image/build/dist"))
 
 class PlatformDefinition(
     val name: String,
@@ -236,6 +246,7 @@ val businessLogicTestSuits = setOf(
     "testLint",
     "testIcEvents",
     "testNative", // smoke tests for Native running even when kotlin.native.enabled == false
+    "testNativeImage",
 )
 
 val buildToolsImplConfigurationsCache = mutableMapOf<String, Configuration>()
@@ -336,6 +347,10 @@ testing {
                     if (isRegular && isKotlinNativeEnabled) {
                         addClasspathProperty(nativeStdlibKlib, NATIVE_STDLIB_CLASSPATH_PROPERTY)
                     }
+                    if (includeNativeImagePolicies || this@configureSuite.name == "testNativeImage") {
+                        dependsOn(":kotlin-compiler-native-image:kotlincNativeImageDist")
+                        addClasspathProperty(nativeImageDistribution, KOTLIN_NATIVE_IMAGE_DIST_PATH)
+                    }
                 }
             }
         }
@@ -349,6 +364,17 @@ testing {
         named<JvmTestSuite>("testEscapableCharacters") {
             configurations.named(sources.runtimeClasspathConfigurationName) {
                 testSymlinkTransformation.resolveAgainstSymlinkedArtifacts(this)
+            }
+        }
+
+        named<JvmTestSuite>("testNativeImage") {
+            dependencies {
+                implementation(project(":daemon-common"))
+            }
+            targets.all {
+                testTask.configure {
+                    enabled = isNativeImageDaemonEnabled
+                }
             }
         }
 
@@ -438,7 +464,9 @@ testing {
 }
 
 tasks.named("check") {
-    dependsOn(testing.suites.matching { it.name != "testExample" }) // do not run example tests by default
+    // do not run example tests and the native image suite by default:
+    // the native image suite builds a GraalVM native image distribution, which is too expensive for regular runs
+    dependsOn(testing.suites.matching { it.name != "testExample" && it.name != "testNativeImage" })
 }
 
 val checkCompatibilityCoverageTask = checkCompatibilityCoverage(

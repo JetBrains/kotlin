@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 import org.jetbrains.kotlin.buildtools.api.OperationCancelledException
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2JpsStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.DisplayName
 class CancellationJpsTest : BaseJpsTest() {
 
     @DisplayName("A cancelled JPS-managed compilation is reported as cancelled")
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2JpsStrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
     fun cancelledCompilationIsReported(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.KaptDetectMemoryLeaksMode
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.assumeNotNativeImageProcess
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputsContains
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.nio.file.Paths
@@ -33,6 +36,8 @@ class KaptSmokeTest : BaseCompilationTest() {
     @DisplayName("Smoke test of Kapt configuration application")
     @TestMetadata("kapt-project")
     fun testKaptConfiguration(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.assumeNotNativeImage()
+
         jvmProject(strategyConfig) {
             val module = module("kapt-project")
             module.compile(compilationConfigAction = {
@@ -79,6 +84,8 @@ class KaptSmokeTest : BaseCompilationTest() {
     @DisplayName("Test that Kapt with IC automatically adds incrementalData to compiler plugin arguments")
     @TestMetadata("kapt-project")
     fun testKaptConfiguerationWithIc(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.assumeNotNativeImage()
+
         val kotlinToolchain = strategyConfig.first
         jvmScenario(strategyConfig) {
             val moduleBuildDir = project.projectDirectory.resolve("kapt-project/build/output")
@@ -129,6 +136,13 @@ class KaptSmokeTest : BaseCompilationTest() {
                     ".*plugin:org.jetbrains.kotlin.kapt3:incrementalData=.*".toRegex(),
                 )
             }
+        }
+    }
+
+    private fun CompilerExecutionStrategyConfiguration.assumeNotNativeImage() {
+        second.assumeNotNativeImageProcess()
+        assumeFalse(second is ExecutionPolicy.NativeImageDaemon) {
+            "Kapt is not bundled into the Kotlin native image"
         }
     }
 }

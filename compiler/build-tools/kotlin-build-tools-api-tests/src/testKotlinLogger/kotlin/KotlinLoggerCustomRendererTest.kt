@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilerMessageRendererWithDiagnostic
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer.Severity
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer.SourceLocation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.assumeNotNativeImageProcess
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
@@ -58,6 +59,7 @@ class KotlinLoggerCustomRendererTest : BaseCompilationTest() {
         }
 
         project {
+            defaultStrategyConfig.assumeNotNativeImageProcess()
             val module = module("compilation-error")
             module.compile(compilationConfigAction = {
                 it[BaseCompilationOperation.COMPILER_MESSAGE_RENDERER] = renderer

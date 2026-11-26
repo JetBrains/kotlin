@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.nativeImageDaemonExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.nativeImageProcessExecutionPolicy
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.Scenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jsScenario
@@ -13,6 +15,8 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.wasmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.isKotlinNativeCompilerAvailable
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.isNativeImageDistAvailable
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.nativeImageDistPath
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.unwrap
 import org.jetbrains.kotlin.testFederation.testFederationAllTestsRequested
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -35,18 +39,47 @@ class BtaV2StrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
     companion object {
         fun namedStrategyArguments(): List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> {
             val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-            val v2Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> = listOf(
-                named(
-                    "[v2][${kotlinToolchains.getCompilerVersion()}][in-process]",
-                    kotlinToolchains to kotlinToolchains.createInProcessExecutionPolicy()
-                ), named(
-                    "[v2][${kotlinToolchains.getCompilerVersion()}][daemon]",
-                    kotlinToolchains to kotlinToolchains.daemonExecutionPolicyBuilder().build()
+            val v2Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> = buildList {
+                add(
+                    named(
+                        "[v2][${kotlinToolchains.getCompilerVersion()}][in-process]",
+                        kotlinToolchains to kotlinToolchains.createInProcessExecutionPolicy()
+                    )
                 )
-            )
+                add(
+                    named(
+                        "[v2][${kotlinToolchains.getCompilerVersion()}][daemon]",
+                        kotlinToolchains to kotlinToolchains.daemonExecutionPolicyBuilder().build()
+                    )
+                )
+
+                if (kotlinToolchains.supportsNativeImageExecutionPolicies()) {
+                    add(
+                        named(
+                            "[v2][${kotlinToolchains.getCompilerVersion()}][native-image-process]",
+                            kotlinToolchains to kotlinToolchains.nativeImageProcessExecutionPolicy(nativeImageDistPath)
+                        )
+                    )
+                    add(
+                        named(
+                            "[v2][${kotlinToolchains.getCompilerVersion()}][native-image-daemon]",
+                            kotlinToolchains to kotlinToolchains.nativeImageDaemonExecutionPolicy(nativeImageDistPath)
+                        )
+                    )
+                }
+            }
 
             return v2Args
         }
+    }
+}
+
+class BtaV2JpsStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
+    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
+        return BtaV2StrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments()
+            .filterNot { it.payload.second is ExecutionPolicy.NativeImageProcess }
+            .map { Arguments.of(it) }
+            .stream()
     }
 }
 
@@ -92,7 +125,27 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
                         ) {
                             namedArgument.payload().let { it to it.daemonExecutionPolicy() }
                         }
-                    } else null
+                    } else null,
+
+                    if (testFederationAllTestsRequested && isNativeImageDistAvailable && namedArgument.payload()
+                            .supportsNativeImageExecutionPolicies()
+                    ) {
+                        named(
+                            "${namedArgument.name}[native-image-process]"
+                        ) {
+                            namedArgument.payload().let { it to it.nativeImageProcessExecutionPolicy(nativeImageDistPath) }
+                        }
+                    } else null,
+
+                    if (testFederationAllTestsRequested && isNativeImageDistAvailable && namedArgument.payload()
+                            .supportsNativeImageExecutionPolicies()
+                    ) {
+                        named(
+                            "${namedArgument.name}[native-image-daemon]"
+                        ) {
+                            namedArgument.payload().let { it to it.nativeImageDaemonExecutionPolicy(nativeImageDistPath) }
+                        }
+                    } else null,
                 )
             }
         }
@@ -287,3 +340,10 @@ fun KotlinToolchains.supportsMetadata() = KotlinToolingVersion(getCompilerVersio
  */
 fun KotlinToolchains.supportsNative() =
     KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 5, 20) && isKotlinNativeCompilerAvailable
+
+/**
+ * The native image daemon execution policy is only included when the native image distribution is available,
+ * see [isNativeImageDistAvailable].
+ */
+fun KotlinToolchains.supportsNativeImageExecutionPolicies() =
+    KotlinToolingVersion(getCompilerVersion()).toKotlinVersion() >= KotlinVersion(2, 5, 20) && isNativeImageDistAvailable

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.assumeNotNativeImageProcess
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinMetadataStdlibKlibLocation
 import java.nio.file.Path
@@ -57,11 +58,15 @@ fun BaseCompilationTest.metadataProject(
     strategyConfig: ExecutionPolicy,
     action: MetadataProject.() -> Unit,
 ) {
+    strategyConfig.assumeNotNativeImageProcess()
     MetadataProject(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
         project.action()
     }
 }
 
-fun BaseCompilationTest.metadataProject(executionStrategy: CompilerExecutionStrategyConfiguration, action: MetadataProject.() -> Unit) {
+fun BaseCompilationTest.metadataProject(
+    executionStrategy: CompilerExecutionStrategyConfiguration,
+    action: MetadataProject.() -> Unit,
+) {
     metadataProject(executionStrategy.first, executionStrategy.second, action)
 }

@@ -118,35 +118,36 @@ object KotlinCompilerClient {
         var daemonStartupAttemptsCount = 0
         val gcAutoConfiguration = GcAutoConfiguration()
         val initialClientInfo = InitialClientInformation(clientAliveFlagFile)
-        return connectLoop(reportingTargets, autostart) { isLastAttempt ->
 
-            fun CompileService.tryToLeaseSession(): CompileServiceSession? {
-                // the newJVMOptions could be checked here for additional parameters, if needed
-                registerClient(clientAliveFlagFile.absolutePath)
-                reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
+        fun CompileService.tryToLeaseSession(): CompileServiceSession? {
+            registerClient(clientAliveFlagFile.absolutePath)
+            reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
 
-                if (!leaseSession) return CompileServiceSession(this, CompileService.NO_SESSION)
+            if (!leaseSession) return CompileServiceSession(this, CompileService.NO_SESSION)
 
-                return when (val leaseSessionResult = leaseCompileSession(sessionAliveFlagFile?.absolutePath)) {
-                    is CompileService.CallResult.Dying -> {
-                        reportingTargets.report(DaemonReportCategory.DEBUG, "the daemon is already dying, skipping it")
-                        null
-                    }
-                    is CompileService.CallResult.Good -> {
-                        val sessionId = leaseSessionResult.get()
-                        reportingTargets.report(DaemonReportCategory.DEBUG, "successfully leased a compile session (id = $sessionId)")
-                        CompileServiceSession(this, sessionId)
-                    }
-                    else -> {
-                        reportingTargets.report(DaemonReportCategory.DEBUG, "got an expected result on attempt to lease a compile session")
-                        // the call to get() below shall lead to an exception throwing
-                        // if it does happen, it indicates real problems,
-                        // so no special handling is required, and it's ok to fail-fast
-                        CompileServiceSession(this, leaseSessionResult.get())
-                    }
+            return when (val leaseSessionResult = leaseCompileSession(sessionAliveFlagFile?.absolutePath)) {
+                is CompileService.CallResult.Dying -> {
+                    reportingTargets.report(DaemonReportCategory.DEBUG, "the daemon is already dying, skipping it")
+                    null
+                }
+
+                is CompileService.CallResult.Good -> {
+                    val sessionId = leaseSessionResult.get()
+                    reportingTargets.report(DaemonReportCategory.DEBUG, "successfully leased a compile session (id = $sessionId)")
+                    CompileServiceSession(this, sessionId)
+                }
+
+                else -> {
+                    reportingTargets.report(DaemonReportCategory.DEBUG, "got an expected result on attempt to lease a compile session")
+                    // the call to get() below shall lead to an exception throwing
+                    // if it does happen, it indicates real problems,
+                    // so no special handling is required, and it's ok to fail-fast
+                    CompileServiceSession(this, leaseSessionResult.get())
                 }
             }
+        }
 
+        return connectLoop(reportingTargets, autostart) { isLastAttempt ->
             ensureServerHostnameIsSetUp()
             val result = tryFindSuitableDaemonOrNewOpts(
                 File(daemonOptions.runFilesPath),
@@ -161,10 +162,20 @@ object KotlinCompilerClient {
                     // so we shall query other daemons or start a new one
                     if (it == null) ignoredDaemonSessionFiles.add(result.runFileMarker)
                 }
+
                 is DaemonSearchResult.NotFound -> {
                     if (!isLastAttempt && autostart) {
                         reportingTargets.report(DaemonReportCategory.DEBUG, "trying to start a new compiler daemon")
-                        if (
+                        val started = if (compilerId.isNativeImage) {
+                            startNativeDaemon(
+                                compilerId,
+                                daemonLogOptions,
+                                daemonOptions,
+                                reportingTargets,
+                                daemonStartupAttemptsCount++,
+                                initialClientInfo,
+                            )
+                        } else {
                             startDaemon(
                                 compilerId,
                                 result.requiredJvmOptions,
@@ -175,7 +186,8 @@ object KotlinCompilerClient {
                                 gcAutoConfiguration,
                                 initialClientInfo,
                             )
-                        ) {
+                        }
+                        if (started) {
                             reportingTargets.report(DaemonReportCategory.DEBUG, "new compiler daemon started, trying to find it")
                         }
                     }
@@ -534,13 +546,7 @@ object KotlinCompilerClient {
     ): Boolean {
         val javaExecutable = File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
         val javaLanguageVersion = JavaLanguageVersion.parse(CompilerSystemProperties.JAVA_VERSION.value)
-        val serverHostname = CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.value
-            ?: error("${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property} is not set!")
-        val platformSpecificOptions = listOf(
-            // hide daemon window
-            "-Djava.awt.headless=true",
-            "-D${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property}=$serverHostname"
-        )
+        val platformSpecificOptions = platformSpecificOptions()
         val javaIllegalAccessWorkaround =
             if (javaLanguageVersion >= JavaLanguageVersion.of(16))
                 listOf("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED")
@@ -559,24 +565,94 @@ object KotlinCompilerClient {
             if (gcAutoConfiguration.shouldAutoConfigureGc) "-XX:+Use${gcAutoConfiguration.preferredGc}GC" else null,
         )
         // TODO: KT-72161. Investigate IDEA's JSR223 Kotlin Script integration. Possibly transform this into regular arguments
-        val initiatorInfoAsSystemProperties = listOfNotNull(
-            initialClientInfo.aliveFlagFile?.absolutePath?.let {
-                "-D${CompilerSystemProperties.COMPILE_DAEMON_INITIATOR_MARKER_FILE.property}=$it"
-            }
-        )
         val args = listOf(
             javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)
         ) +
                 platformSpecificOptions +
                 jvmArguments +
                 additionalOptimizationOptions +
-                initiatorInfoAsSystemProperties +
+                initiatorInfoAsSystemProperties(initialClientInfo) +
                 javaIllegalAccessWorkaround +
                 COMPILER_DAEMON_CLASS_FQN +
-                daemonLogOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
-                daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
-                compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
+                daemonCmdlineOptions(daemonLogOptions, daemonOptions, compilerId)
         reportingTargets.report(DaemonReportCategory.INFO, "starting the daemon as: " + args.joinToString(" "))
+        return startDaemonProcess(
+            args,
+            daemonOptions,
+            reportingTargets,
+            environmentVariablesForTests,
+            startupAttempt,
+            DaemonGcAutoConfigurationProblemsListener(gcAutoConfiguration, startupAttempt),
+        )
+    }
+
+    private fun startNativeDaemon(
+        compilerId: CompilerId,
+        daemonLogOptions: DaemonLogOptions,
+        daemonOptions: DaemonOptions,
+        reportingTargets: DaemonReportingTargets,
+        startupAttempt: Int,
+        initialClientInfo: InitialClientInformation,
+    ): Boolean {
+        val nativeImageExecutable = File(compilerId.compilerClasspath.single())
+        val args = listOf(
+            nativeImageExecutable.absolutePath,
+            "-Djava.home=${CompilerSystemProperties.JAVA_HOME.safeValue}",
+            "-Dkotlin.home=${nativeImageExecutable.absoluteFile.parentFile.parentFile.path}",
+        ) +
+                platformSpecificOptions() +
+                listOf(
+                    "-D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${daemonOptions.runFilesPath}"
+                ) +
+                initiatorInfoAsSystemProperties(initialClientInfo) +
+                daemonCmdlineOptions(daemonLogOptions, daemonOptions, compilerId)
+        reportingTargets.report(DaemonReportCategory.INFO, "starting the native image daemon as: " + args.joinToString(" "))
+        return startDaemonProcess(
+            args,
+            daemonOptions,
+            reportingTargets,
+            getEnvironmentVariablesForTests(reportingTargets),
+            startupAttempt,
+        )
+    }
+
+    /**
+     * The system properties every daemon process needs: a hidden window and the loopback RMI hostname.
+     */
+    private fun platformSpecificOptions(): List<String> {
+        val serverHostname = CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.value
+            ?: error("${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property} is not set!")
+        return listOf(
+            // hide daemon window
+            "-Djava.awt.headless=true",
+            "-D${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property}=$serverHostname"
+        )
+    }
+
+    private fun initiatorInfoAsSystemProperties(initialClientInfo: InitialClientInformation): List<String> = listOfNotNull(
+        initialClientInfo.aliveFlagFile?.absolutePath?.let {
+            "-D${CompilerSystemProperties.COMPILE_DAEMON_INITIATOR_MARKER_FILE.property}=$it"
+        }
+    )
+
+    private fun daemonCmdlineOptions(
+        daemonLogOptions: DaemonLogOptions,
+        daemonOptions: DaemonOptions,
+        compilerId: CompilerId,
+    ): List<String> = buildList {
+        daemonLogOptions.mappers.flatMapTo(this) { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
+        daemonOptions.mappers.flatMapTo(this) { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
+        compilerId.mappers.flatMapTo(this) { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
+    }
+
+    private fun startDaemonProcess(
+        args: List<String>,
+        daemonOptions: DaemonOptions,
+        reportingTargets: DaemonReportingTargets,
+        environmentVariablesForTests: Map<String, String>,
+        startupAttempt: Int,
+        vararg additionalOutputListeners: DaemonProblemReportingOutputListener,
+    ): Boolean {
         val processBuilder = ProcessBuilder(args)
         processBuilder.redirectErrorStream(true)
         processBuilder.environment().putAll(environmentVariablesForTests)
@@ -585,7 +661,7 @@ object KotlinCompilerClient {
         // assuming daemon process is deaf and (mostly) silent, so do not handle streams
         val daemon = processBuilder.start()
 
-        return checkDaemonStartedProperly(daemon, reportingTargets, daemonOptions, startupAttempt, gcAutoConfiguration)
+        return checkDaemonStartedProperly(daemon, reportingTargets, daemonOptions, startupAttempt, *additionalOutputListeners)
     }
 
     /**
@@ -599,7 +675,7 @@ object KotlinCompilerClient {
         reportingTargets: DaemonReportingTargets,
         daemonOptions: DaemonOptions,
         startupAttempt: Int,
-        gcAutoConfiguration: GcAutoConfiguration,
+        vararg additionalOutputListeners: DaemonProblemReportingOutputListener,
     ): Boolean {
         val isEchoRead = Semaphore(1)
         isEchoRead.acquire()
@@ -607,7 +683,7 @@ object KotlinCompilerClient {
         val initMessageListener = DaemonInitMessageListener()
         val outputListener = CompositeDaemonErrorReportingOutputListener(
             DaemonLastOutputLinesListener(),
-            DaemonGcAutoConfigurationProblemsListener(gcAutoConfiguration, startupAttempt),
+            *additionalOutputListeners,
             initMessageListener,
         )
 

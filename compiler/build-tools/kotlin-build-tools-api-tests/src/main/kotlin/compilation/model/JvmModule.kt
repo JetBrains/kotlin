@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.PARSE_INLINED_LOCAL_CLASSES
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.snapshotBasedIcConfiguration
+import org.jetbrains.kotlin.buildtools.tests.assumeIncrementalCompilationIsSupported
 import java.io.File
 import java.io.StringWriter
 import java.nio.charset.StandardCharsets
@@ -226,6 +227,7 @@ class JvmModule(
         icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
         assertions: context(ModuleContext) CompilationOutcome.() -> Unit,
     ): CompilationResult {
+        strategyConfig.assumeIncrementalCompilationIsSupported()
         return compile(strategyConfig, forceOutput, { compilationOperation ->
             val snapshots = dependencies.map {
                 generateClasspathSnapshot(it).toFile()

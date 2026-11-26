@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.daemon.common
 import java.io.File
 import java.nio.file.Files
 import java.rmi.registry.LocateRegistry
-import kotlin.io.path.Path
 
 
 internal const val MAX_PORT_NUMBER = 0xffff
@@ -61,7 +60,7 @@ fun walkDaemons(
     filter: (File, Int) -> Boolean = { _, _ -> true },
     report: (DaemonReportCategory, String) -> Unit = { _, _ -> },
 ): Sequence<DaemonWithMetadata> {
-    val runFileDigest = makeRunFileDigest(javaLanguageVersion, compilerId.compilerClasspath.map { Path(it) })
+    val runFileDigest = makeRunFileDigest(javaLanguageVersion, compilerId)
     val portExtractor = makePortFromRunFilenameExtractor(runFileDigest)
     return registryDir.walk()
         .map { Pair(it, portExtractor(it.name)) }

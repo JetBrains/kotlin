@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jv
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.assumeNotNativeImageProcess
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
@@ -34,6 +36,8 @@ class ScriptingTest : BaseCompilationTest() {
     @DisplayName("Smoke test of compiler plugins application (non-incremental)")
     @TestMetadata("scripting-kts")
     fun smokeTestCompilerPluginsApplicationNonIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.assumeNotNativeImage()
+
         jvmProject(strategyConfig) {
             val module = module("scripting-kts", dependencies = listOf(dependencyOnThisClasspath))
             module.compile(compilationConfigAction = configureCompilerArgs(GreetScriptTemplate::class)) {
@@ -46,6 +50,8 @@ class ScriptingTest : BaseCompilationTest() {
     @DisplayName("Smoke test of compiler plugins application with custom extension (non-incremental)")
     @TestMetadata("scripting-custom-extension")
     fun smokeTestCompilerPluginsApplicationCustomExtensionNonIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.assumeNotNativeImage()
+
         jvmProject(strategyConfig) {
             val module = module("scripting-custom-extension", dependencies = listOf(dependencyOnThisClasspath))
             module.compile(compilationConfigAction = configureCompilerArgs(GreetScriptCustomExtensionTemplate::class, "greet")) {
@@ -58,6 +64,8 @@ class ScriptingTest : BaseCompilationTest() {
     @DisplayName("Smoke test of compiler plugins application (incremental)")
     @TestMetadata("scripting-kts")
     fun smokeTestCompilerPluginsApplicationIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.assumeNotNativeImage()
+
         jvmProject(strategyConfig) {
             val module = module("scripting-kts", dependencies = listOf(dependencyOnThisClasspath))
             module.compileIncrementally(
@@ -73,6 +81,8 @@ class ScriptingTest : BaseCompilationTest() {
     @DisplayName("Smoke test of compiler plugins application with custom extension (incremental)")
     @TestMetadata("scripting-custom-extension")
     fun smokeTestCompilerPluginsApplicationCustomExtensionIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        strategyConfig.assumeNotNativeImage()
+
         jvmProject(strategyConfig) {
             val module = module("scripting-custom-extension", dependencies = listOf(dependencyOnThisClasspath))
             module.compileIncrementally(
@@ -241,6 +251,13 @@ class ScriptingTest : BaseCompilationTest() {
         it.compilerArguments[COMPILER_PLUGINS] = listOf(scriptingPlugin(scriptingTemplate))
         if (customScriptExtension != null) {
             it[KOTLINSCRIPT_EXTENSIONS] = arrayOf(customScriptExtension)
+        }
+    }
+
+    private fun CompilerExecutionStrategyConfiguration.assumeNotNativeImage() {
+        second.assumeNotNativeImageProcess()
+        assumeFalse(second is ExecutionPolicy.NativeImageDaemon) {
+            "Scripting compilation is not supported by the Kotlin native image daemon"
         }
     }
 }

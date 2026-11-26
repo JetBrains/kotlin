@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfigurati
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
@@ -26,8 +25,10 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgno
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.MetadataProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.NativeProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
+import org.jetbrains.kotlin.buildtools.tests.isDaemonBased
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.DisplayName
@@ -39,7 +40,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testFirstBuildForcesNonIncrementalRebuild(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -58,7 +59,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testSubsequentBuildWithUnchangedConfigStaysIncremental(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -129,7 +130,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testCompilerArgsRemovalTriggersNonIncrementalRebuild(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -153,7 +154,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testNonTrackedCompilerArgAdditionDoesNotTriggerRebuild(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -178,7 +179,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testNonTrackedCompilerArgChangeDoesNotTriggerRebuild(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -204,7 +205,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testNonTrackedCompilerArgRemovalDoesNotTriggerRebuild(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -230,7 +231,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testIcConfigAdditionTriggersNonIncrementalRebuild(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -257,7 +258,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testIcConfigChangeTriggersNonIncrementalRebuild(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -287,7 +288,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testIcConfigRemovalTriggersNonIncrementalRebuild(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -313,7 +314,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testNonTrackedIcConfigAdditionDoesNotTriggerRebuild(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -340,7 +341,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testNonTrackedIcConfigChangeDoesNotTriggerRebuild(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -370,7 +371,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testNonTrackedIcConfigRemovalDoesNotTriggerRebuild(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -429,7 +430,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testIcConfigChangeDoesNotTriggerRebuildWhenTrackingDisabled(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -459,7 +460,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testCompilerArgChangeDoesNotTriggerRebuildWhenTrackingDisabled(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -485,7 +486,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testCompilerArgChangeDoesNotTriggerRebuildAfterTrackingDisabled(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -512,7 +513,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     @TestMetadata("basic-multimodule-project/module-1")
     fun testEnablingTrackingInSubsequentBuildTriggersRebuild(project: ProjectCreator) {
         project {
-            assumeNotMetadata()
+            assumeIncrementalCompilationIsSupported()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -537,9 +538,10 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     }
 
     private fun AbstractProject<*, *, *>.expectedLogLevel(): LogLevel =
-        if (defaultStrategyConfig is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+        if (defaultStrategyConfig.isDaemonBased) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
 
-    private fun AbstractProject<*, *, *>.assumeNotMetadata() {
+    private fun AbstractProject<*, *, *>.assumeIncrementalCompilationIsSupported() {
         assumeFalse(this is MetadataProject)
+        assumeFalse(this is NativeProject)
     }
 }
