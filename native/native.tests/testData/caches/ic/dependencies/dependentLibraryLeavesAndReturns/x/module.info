@@ -4,12 +4,12 @@ STEP 0:
         U : x.kt -> x.kt
     added cache: x.kt
 
-// x is not in the link, so its cache stays as it is.
+// x is not in the link, so its cache is removed.
 STEP 1:
     dependencies: y
-    unchanged cache: x.kt
+    removed cache: x.kt
 
-// x.kt inlined the old y.yv(), so its cache must be rebuilt.
+// x is back, and its cache is built from scratch, with the new y.yv() inlined.
 STEP 2:
     dependencies: y
-    modified cache: x.kt
+    added cache: x.kt
