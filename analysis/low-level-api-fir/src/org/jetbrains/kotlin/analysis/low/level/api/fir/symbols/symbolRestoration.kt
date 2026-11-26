@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 /**
  * Whether [restoreSymbol] can restore the symbol of a declaration with this [PsiElement] as its source.
+ *
+ * The supported PSI elements must be kept in sync with the cases handled by [restoreSymbol].
  */
 internal val PsiElement.isSymbolRestorationSupported: Boolean
     get() = when (this) {
@@ -54,6 +56,8 @@ internal val PsiElement.isSymbolRestorationSupported: Boolean
  *   without any notice.
  * - **Performance:** The function operates on an already known session, so it does not need to retrieve the module first. This avoids
  *   costly module lookup.
+ *
+ * The handled PSI elements must be kept in sync with [isSymbolRestorationSupported].
  */
 internal fun LLFirSession.restoreSymbol(psi: PsiElement): FirBasedSymbol<*> {
     checkWithAttachment(isValid, { "Cannot restore a symbol in an invalidated session." }) {
